@@ -1,0 +1,212 @@
+;;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Define "free.DH-Master-Keyset"
+(print "==========================TX01=========================================")
+(print "==========================Define==================free.DH-Master-Keyset")
+(begin-tx)
+    (module KeysVault GOVERNANCE
+        (defcap GOVERNANCE () true)
+        (defconst DHADMIN1 "AncientHodlerPrivateKey")
+        (defconst DHADMIN2 "FloreanPrivateKey")
+        (defconst DHADMIN3 "ArionPrivateKey")
+        (defconst DH-SC1 "AutostakePoolPrivateKey")
+
+        (defconst USER001 "Cheia_useru-ului_001")
+        (defconst USER002 "Cheia_useru-ului_002")
+        (defconst USER003 "Cheia_useru-ului_003")
+        (defconst USER004 "Cheia_useru-ului_004")
+        (defconst USER005 "Cheia_useru-ului_005")
+
+        (defconst AN_USER001 "Byta")
+        (defconst AN_USER002 "Bula")
+        (defconst AN_USER003 "Lumy")
+        (defconst AN_USER004 "Kiss")
+        (defconst AN_USER005 "Emma")
+    )
+(env-data {"DemiourgosTrinity": { "keys": [KeysVault.DHADMIN1, KeysVault.DHADMIN2, KeysVault.DHADMIN1], "pred": "keys-2" },
+           "DemiourgosAutostake": { "keys": [KeysVault.DH-SC1], "pred": "keys-all"},
+           "key001": { "keys": [KeysVault.USER001], "pred": "keys-all"},
+           "key002": { "keys": [KeysVault.USER002], "pred": "keys-all"},
+           "key003": { "keys": [KeysVault.USER003], "pred": "keys-all"},
+           "key004": { "keys": [KeysVault.USER004], "pred": "keys-all"},
+           "key005": { "keys": [KeysVault.USER005], "pred": "keys-all"}})
+(namespace "free")
+;;Define Demiourgos Keysets
+(define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosTrinity"))
+(print "Defined the free.DH-Master-Keyset")
+(define-keyset "free.DH-SC_Autostake_Key" (read-keyset "DemiourgosAutostake"))
+(print "Defined the free.DH-SC_Autostake_Key")
+;;Define User Keysets
+(define-keyset "free.User001_Keyset" (read-keyset "key001"))
+(define-keyset "free.User002_Keyset" (read-keyset "key002"))
+(define-keyset "free.User003_Keyset" (read-keyset "key003"))
+(define-keyset "free.User004_Keyset" (read-keyset "key004"))
+(define-keyset "free.User005_Keyset" (read-keyset "key005"))
+(print "5 User keys have been defined")
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Load pact smart contract
+(print "==========================TX03=========================================")
+(print "==========================Load-DPTS-file===============================")
+(begin-tx "Load Pact Test file")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosS/DPTS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosS/Autostake.pact")
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 04 - Use loaded modules
+(print "==========================TX04=========================================")
+(print "==========================Use-Main-Module-tx===========================")
+(begin-tx)
+(use free.DPTS)
+(use free.DH_SC_Autostake)
+(use KeysVault)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Testing SC Function
+(print "==========================TX05=========================================")
+(print "==========================Testing-SC-Functions=========================")
+(begin-tx)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006"}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Make DPTS Tokens")
+(print "==========================TX06=========================================")
+(print "==========================Initialize-DPTS-Token========================")
+(env-sigs [ { "key": "AncientHodlerPrivateKey", "caps": [] },
+            { "key": "FloreanPrivateKey", "caps": [] },
+            { "key": "ArionPrivateKey", "caps": [] }])
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] },
+            { "key": "Cheia_useru-ului_003", "caps": [] }])
+;;Issue Ouroboros - Token Owner is Byta
+(free.DPTS.IssueDPTS 
+    free.DPTS.AN_USER001 
+    (describe-keyset free.DPTS.KEY_USER001)
+    "Ouroboros"
+    "OURO"
+    24
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+)
+(free.DPTS.IssueDPTS 
+    free.DH_SC_Autostake.SC_NAME
+    (describe-keyset free.DH_SC_Autostake.SC_KEY)
+    "Auryn"
+    "AURYN"
+    24
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+)
+(free.DPTS.IssueDPTS 
+    free.DH_SC_Autostake.SC_NAME
+    (describe-keyset free.DH_SC_Autostake.SC_KEY)
+    "EliteAuryn"
+    "ELITEAURYN"
+    24
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+)
+;;Make another DPTS Account
+(free.DPTS.MakeDPTSAccount
+    "OURO-98c486052a51"
+    free.DPTS.AN_USER002 
+    (describe-keyset free.DPTS.KEY_USER002)
+    )
+;;Issue DPTSOrigin for "OURO-98c486052a51"
+(test-capability (free.DPTS.MINT_DPTS_ORIGIN "OURO-98c486052a51" free.DPTS.AN_USER001))
+(free.DPTS.MintDPTSOrigin
+    "OURO-98c486052a51"
+    free.DPTS.AN_USER001
+    250.0
+)
+(print "Read from the DPTSPropertiesTable")
+(read free.DPTS.DPTSPropertiesTable "OURO-98c486052a51")
+;;(read free.DPTS.DPTSPropertiesTable "OURO-98c486052a51" ["name"])
+(print "======Read Byta")
+(read free.DPTS.DPTSBalancesTable "OURO-98c486052a51|Byta")
+(print "======Read Bula")
+(read free.DPTS.DPTSBalancesTable "OURO-98c486052a51|Bula")
+(print "+++++++++++Transfers start here++++++++++++++++++")
+(free.DPTS.SetTransferRole "OURO-98c486052a51" "Byta")
+(free.DPTS.TransferDPTS "OURO-98c486052a51" "Byta" "Bula" 45.0)
+(free.DPTS.SetTransferRole "OURO-98c486052a51" "Bula")
+(print "Aici")
+(free.DPTS.TransferDPTSAnew "OURO-98c486052a51" "Bula" "Lumy" (describe-keyset free.DPTS.KEY_USER003) 5.0)
+(print "LAST READ")
+(read free.DPTS.DPTSPropertiesTable "OURO-98c486052a51")
+(read free.DPTS.DPTSBalancesTable "OURO-98c486052a51|Byta")
+(read free.DPTS.DPTSBalancesTable "OURO-98c486052a51|Bula")
+(read free.DPTS.DPTSBalancesTable "OURO-98c486052a51|Lumy")
+(read free.DPTS.DPTSBalancesTable "AURYN-98c486052a51|Autostake-Pool")
+(read free.DPTS.DPTSBalancesTable "ELITEAURYN-98c486052a51|Autostake-Pool")
+(print "HERE")
+
+(keys free.DPTS.DPTSPropertiesTable)
+;;(print "======Select Function")
+;;(select free.DPTS.DPTSBalancesTable (where "balance" (>= 0.0)))
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Initialise")
+(print "==========================TX08=========================================")
+(print "==========================AUTOSTAKE-SC-Initialising====================")
+(env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] }])
+;;Testing Tx            
+(env-gas)
+(commit-tx)

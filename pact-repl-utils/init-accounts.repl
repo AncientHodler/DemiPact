@@ -1,0 +1,241 @@
+; A Kadena account pairs an address (such as "k:12345" or "alice") with a keyset
+; (a guard that determines what keys control the account).
+;
+; Accounts can be created on Chainweb using the (coin.create-account) function,
+; or by transferring funds to the account with (coin.transfer-create). Since we
+; don't have any accounts that could transfer funds, we'll rely on the former
+; in this file.
+;
+; That said, in the the real world plenty of accounts exist that can transfer us
+; funds. We might purchase KDA on an exchange and tell the exchange to transfer
+; funds to our KDA address on Chainweb. On our local test blockchain, devnet,
+; there are a set of accounts automatically created and funded for us:
+; https://github.com/kadena-io/chainweb-node/blob/8c32fcfff85c4e5b61a9554f0180ca6c90840e42/pact/genesis/devnet/keys.yaml
+; https://github.com/kadena-io/chainweb-node/blob/8c32fcfff85c4e5b61a9554f0180ca6c90840e42/pact/genesis/devnet/grants0.yaml
+;
+; In our REPL sessions we will mimic devnet by creating the same accounts we
+; expect to see there. That way our REPL test code is also usable in the devnet
+; test environment.
+
+; First, let's define the public  keys for each account, copied from the
+; 'keys.yaml' file linked above.
+(begin-tx)
+(module test-keys GOVERNANCE
+  (defcap GOVERNANCE () true)
+  (defconst SENDER00 "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca")
+  (defconst SENDER01 "6be2f485a7af75fedb4b7f153a903f7e6000ca4aa501179c91a2450b777bd2a7")
+  (defconst SENDER02 "3a9dd532d73dace195dbb64d1dba6572fb783d0fdd324685e32fbda2f89f99a6")
+  (defconst SENDER03 "6b9847af4a7bea9d38af8702d1597e35c86e08b4c04ce924b9d8b55a2f5f21b1")
+  (defconst SENDER04 "14cd9fe47cafb2ebe2d85d1e8602a7d0d3e7d9a9c57d68f953c50d7f34f4a1a8")
+  (defconst SENDER05 "b0e44b014ec1db09e1471c9d2d1b1f63a4ed54f9036b6051fd3e21d69b9e2a46")
+  (defconst SENDER06 "92fc59f7c3d4df56d7b4e7f6f3443a543a99c0d0fdd0d77dca2fa97bc3cbde51")
+  (defconst SENDER07 "71e1f75ce5123b81d6cead7fc2078a89b9ce2d10d9e1e2fd7d06274e38a5c21c")
+  (defconst SENDER08 "d80289ebbfce5ad3f01965d1550512c1f2d0e41a72428c753e140238db399d4a")
+  (defconst SENDER09 "37f1d72942e54e08c9a5c687d35f0d3d72c32c3e3fcf135ac101cc0fe126a432")
+  (defconst SENDER10 "e1c764390b7dbbf0a459604947a1ff1de8c87594bc97e7d6a9d465a47e1bcdf3")
+  (defconst SENDER11 "4d81c699b9ab01b79d84ed057a9471f7fc52fb9be431080fbdc1c526857b6018")
+  (defconst SENDER12 "c4c40e8753f62d8e81198c1e8e4f36a1f0ee0c86d68004c16552602a62d2e193")
+  (defconst SENDER13 "7f9d3f5a22b89d0bc4e62a404998764cfaac52f09eb2bc9a92d0dc3f3766d6a0")
+  (defconst SENDER14 "a34384e8e99dd5fbce51a244209b535b5e56fe70fc4d01cc90b7788358c54f4d")
+  (defconst SENDER15 "628b9e89a9540fb49de978d88912fc4ce35ed8e8925b407f725a90b3e2f4c79f")
+  (defconst SENDER16 "993844b38897e9ac2cbaf78e4b1cc6e0a95f8ad2e8a93b7a7b623e96a156de5a")
+  (defconst SENDER17 "d65d9e35d548eb287b72dd51a8e3d8d1443e9a9f4c6f9b3c8c52716e4b8e4a37")
+  (defconst SENDER18 "18535b8a17a6db6c23a377953b8ad5a6161611177f5b84ae80b09ff7f07a6014")
+  (defconst SENDER19 "b62e7814f93e2d0a7e0a3e525ce0a8be4b478deca747a8deed8e5a08dd3e191a")
+  (defconst SENDER20 "48f3d8a642e92b0cd2382179c5e2d88d2964d9d162d8c4f8775f7a91e4220db1")
+  (defconst SENDER21 "1adfc938b4e2576d0e4fbc32a8d9e60c536fa82be9b7c403d4a35c5be4da5a62")
+  (defconst SENDER22 "879e6b0cfd2341ea5c4b8d926a70f3e1b5a2c9d8e7f6a14d0e3527bc493fadbd")
+  (defconst SENDER23 "6905a84d2e7bc3d149fb2e6318d0fa574b6e9732af1c8cdab503d2fc4e1e6b8f")
+  (defconst SENDER24 "e6cd1fb24a3958ed0a8fc7b6d2e90f1a5674dc9b2a3f8e1bc3d0e92549fa6b7c")
+  (defconst SENDER25 "5c38af94be07d6e9237d49c2a5b160d4f8e1ca42b93f7d2ed0f3a4b65e9dc1b2")
+  (defconst SENDER26 "db34a5c8e17f6b0d9a5c81f237ed40bf6a29d3c7e8b4f1a0d52c9fa7be63d81a")
+  (defconst SENDER27 "f62aebc0d4e5193b5c8f1a7d36e04bd8a2379f4c1d2e5b7e0c93adfb42c1f7e3")
+  (defconst SENDER28 "8b4e2a36c7d1e9f5a3b049d8c2f7e40d19a57fc8e6d0b3a6f51c72d9e84f3a02")
+  (defconst SENDER29 "309e2cd1f6a8b7c5e4d9af40b8c73e526d1f4a07bc5e92a43f816b2d9e0a7f3")
+  (defconst SENDER30 "1b9f7e4d2c3aebf80a6d9c5f6e24a3bd7f5a81c0e346d9b23e90c7f8a5d1e22")
+
+)
+(commit-tx)
+
+; Next, let's register the keysets that guard each account so that we can refer
+; to them when creating the accounts, signing transactions, and more.
+;
+; Keysets are defined via the (define-keyset) function. This function takes a
+; name and a keyset as arguments. When evaluated, Pact will either register the
+; keyset at the given name on Chainweb or, if the name is already registered,
+; then it will "rotate" (ie. update) the keyset to the new value.
+; https://pact-language.readthedocs.io/en/stable/pact-functions.html#define-keyset
+(env-data { "sender00" : [ test-keys.SENDER00 ],
+            "sender01" : [ test-keys.SENDER01 ],
+            "sender02" : [ test-keys.SENDER02 ],
+            "sender03" : [ test-keys.SENDER03 ],
+            "sender04" : [ test-keys.SENDER04 ],
+            "sender05" : [ test-keys.SENDER05 ],
+            "sender06" : [ test-keys.SENDER06 ],
+            "sender07" : [ test-keys.SENDER07 ],
+            "sender08" : [ test-keys.SENDER08 ],
+            "sender09" : [ test-keys.SENDER09 ],
+            "sender10" : [ test-keys.SENDER10 ],
+            "sender11" : [ test-keys.SENDER11 ],
+            "sender12" : [ test-keys.SENDER12 ],
+            "sender13" : [ test-keys.SENDER13 ],
+            "sender14" : [ test-keys.SENDER14 ],
+            "sender15" : [ test-keys.SENDER15 ],
+            "sender16" : [ test-keys.SENDER16 ],
+            "sender17" : [ test-keys.SENDER17 ],
+            "sender18" : [ test-keys.SENDER18 ],
+            "sender19" : [ test-keys.SENDER19 ],
+            "sender20" : [ test-keys.SENDER20 ],
+            "sender21" : [ test-keys.SENDER21 ],
+            "sender22" : [ test-keys.SENDER22 ],
+            "sender23" : [ test-keys.SENDER23 ],
+            "sender24" : [ test-keys.SENDER24 ],
+            "sender25" : [ test-keys.SENDER25 ],
+            "sender26" : [ test-keys.SENDER26 ],
+            "sender27" : [ test-keys.SENDER27 ],
+            "sender28" : [ test-keys.SENDER28 ],
+            "sender29" : [ test-keys.SENDER29 ],
+            "sender30" : [ test-keys.SENDER30 ]})
+
+(begin-tx)
+(namespace "free")
+(define-keyset "free.sender00-keyset" (read-keyset "sender00"))
+(define-keyset "free.sender01-keyset" (read-keyset "sender01"))
+(define-keyset "free.sender02-keyset" (read-keyset "sender02"))
+(define-keyset "free.sender03-keyset" (read-keyset "sender03"))
+(define-keyset "free.sender04-keyset" (read-keyset "sender04"))
+(define-keyset "free.sender05-keyset" (read-keyset "sender05"))
+(define-keyset "free.sender06-keyset" (read-keyset "sender06"))
+(define-keyset "free.sender07-keyset" (read-keyset "sender07"))
+(define-keyset "free.sender08-keyset" (read-keyset "sender08"))
+(define-keyset "free.sender09-keyset" (read-keyset "sender09"))
+(define-keyset "free.sender10-keyset" (read-keyset "sender10"))
+(define-keyset "free.sender11-keyset" (read-keyset "sender11"))
+(define-keyset "free.sender12-keyset" (read-keyset "sender12"))
+(define-keyset "free.sender13-keyset" (read-keyset "sender13"))
+(define-keyset "free.sender14-keyset" (read-keyset "sender14"))
+(define-keyset "free.sender15-keyset" (read-keyset "sender15"))
+(define-keyset "free.sender16-keyset" (read-keyset "sender16"))
+(define-keyset "free.sender17-keyset" (read-keyset "sender17"))
+(define-keyset "free.sender18-keyset" (read-keyset "sender18"))
+(define-keyset "free.sender19-keyset" (read-keyset "sender19"))
+(define-keyset "free.sender20-keyset" (read-keyset "sender20"))
+(define-keyset "free.sender21-keyset" (read-keyset "sender21"))
+(define-keyset "free.sender22-keyset" (read-keyset "sender22"))
+(define-keyset "free.sender23-keyset" (read-keyset "sender23"))
+(define-keyset "free.sender24-keyset" (read-keyset "sender24"))
+(define-keyset "free.sender25-keyset" (read-keyset "sender25"))
+(define-keyset "free.sender26-keyset" (read-keyset "sender26"))
+(define-keyset "free.sender27-keyset" (read-keyset "sender27"))
+(define-keyset "free.sender28-keyset" (read-keyset "sender28"))
+(define-keyset "free.sender29-keyset" (read-keyset "sender29"))
+(define-keyset "free.sender30-keyset" (read-keyset "sender30"))
+
+(commit-tx)
+
+;(print "Registered keysets 'sender00-keyset', 'sender01-keyset', and 'sender02-keyset'.")
+(print "Registered 31 keysets")
+(env-data {})
+
+; Next, we'll use these keysets to create our accounts. This requires that we
+; have access to the 'coin' contract, which manages the KDA token; that must
+; have been loaded into the REPL before this file executes.
+;
+; Accounts can be created on Chainweb using the (coin.create-account) function,
+; or by transferring funds to the account with (coin.transfer-create). In our
+; case we don't have any funds to transfer, so we'll use (coin.create-account)
+(begin-tx)
+(coin.create-account "sender00" (describe-keyset "free.sender00-keyset"))
+(coin.create-account "sender01" (describe-keyset "free.sender01-keyset"))
+(coin.create-account "sender02" (describe-keyset "free.sender02-keyset"))
+(coin.create-account "sender03" (describe-keyset "free.sender03-keyset"))
+(coin.create-account "sender04" (describe-keyset "free.sender04-keyset"))
+(coin.create-account "sender05" (describe-keyset "free.sender05-keyset"))
+(coin.create-account "sender06" (describe-keyset "free.sender06-keyset"))
+(coin.create-account "sender07" (describe-keyset "free.sender07-keyset"))
+(coin.create-account "sender08" (describe-keyset "free.sender08-keyset"))
+(coin.create-account "sender09" (describe-keyset "free.sender09-keyset"))
+(coin.create-account "sender10" (describe-keyset "free.sender10-keyset"))
+(coin.create-account "sender11" (describe-keyset "free.sender11-keyset"))
+(coin.create-account "sender12" (describe-keyset "free.sender12-keyset"))
+(coin.create-account "sender13" (describe-keyset "free.sender13-keyset"))
+(coin.create-account "sender14" (describe-keyset "free.sender14-keyset"))
+(coin.create-account "sender15" (describe-keyset "free.sender15-keyset"))
+(coin.create-account "sender16" (describe-keyset "free.sender16-keyset"))
+(coin.create-account "sender17" (describe-keyset "free.sender17-keyset"))
+(coin.create-account "sender18" (describe-keyset "free.sender18-keyset"))
+(coin.create-account "sender19" (describe-keyset "free.sender19-keyset"))
+(coin.create-account "sender20" (describe-keyset "free.sender20-keyset"))
+(coin.create-account "sender21" (describe-keyset "free.sender21-keyset"))
+(coin.create-account "sender22" (describe-keyset "free.sender22-keyset"))
+(coin.create-account "sender23" (describe-keyset "free.sender23-keyset"))
+(coin.create-account "sender24" (describe-keyset "free.sender24-keyset"))
+(coin.create-account "sender25" (describe-keyset "free.sender25-keyset"))
+(coin.create-account "sender26" (describe-keyset "free.sender26-keyset"))
+(coin.create-account "sender27" (describe-keyset "free.sender27-keyset"))
+(coin.create-account "sender28" (describe-keyset "free.sender28-keyset"))
+(coin.create-account "sender29" (describe-keyset "free.sender29-keyset"))
+(coin.create-account "sender30" (describe-keyset "free.sender30-keyset"))
+(commit-tx)
+(print "Created 31 accounts")
+
+; Finally, we need to ensure these accounts have some funds. On Chainweb, you
+; can get funds from one of two places: someone transfers you KDA, or you mine
+; the KDA yourself. We don't have access to either source of funding in the
+; REPL, but we can simulate mining KDA by referring again to the coin contract.
+;
+; The coin contract includes a (coinbase) function that is used to reward miners
+; by minting KDA and distributing it to them when they mine a block. We can't
+; call this function on Chainweb because it is protected by the COINBASE
+; capability:
+; https://github.com/kadena-io/chainweb-node/blob/4dc69750eeffbf6eb2ce901b3d951534cc98e9be/pact/coin-contract/coin.pact#L324
+;
+; A function protected by a call to (require-capability) cannot be called from
+; outside the module, because capabilities can only be granted within the module
+; that defined the capability. However, in the REPL environment we have access
+; to a special function to magically grant ourselves a capability:
+; https://pact-language.readthedocs.io/en/latest/pact-functions.html#test-capability
+;
+; Let's use it to give ourselves the COINBASE capability.
+(begin-tx)
+(test-capability (coin.COINBASE))
+
+; Finally, it's time to fund our accounts.
+(coin.coinbase "sender00" (describe-keyset "free.sender00-keyset") 100000.0)
+(coin.coinbase "sender01" (describe-keyset "free.sender01-keyset") 100000.0)
+(coin.coinbase "sender02" (describe-keyset "free.sender02-keyset") 100000.0)
+(coin.coinbase "sender03" (describe-keyset "free.sender03-keyset") 100000.0)
+(coin.coinbase "sender04" (describe-keyset "free.sender04-keyset") 100000.0)
+(coin.coinbase "sender05" (describe-keyset "free.sender05-keyset") 100000.0)
+(coin.coinbase "sender06" (describe-keyset "free.sender06-keyset") 100000.0)
+(coin.coinbase "sender07" (describe-keyset "free.sender07-keyset") 100000.0)
+(coin.coinbase "sender08" (describe-keyset "free.sender08-keyset") 100000.0)
+(coin.coinbase "sender09" (describe-keyset "free.sender09-keyset") 100000.0)
+(coin.coinbase "sender10" (describe-keyset "free.sender10-keyset") 100000.0)
+(coin.coinbase "sender11" (describe-keyset "free.sender11-keyset") 100000.0)
+(coin.coinbase "sender12" (describe-keyset "free.sender12-keyset") 100000.0)
+(coin.coinbase "sender13" (describe-keyset "free.sender13-keyset") 100000.0)
+(coin.coinbase "sender14" (describe-keyset "free.sender14-keyset") 100000.0)
+(coin.coinbase "sender15" (describe-keyset "free.sender15-keyset") 100000.0)
+(coin.coinbase "sender16" (describe-keyset "free.sender16-keyset") 100000.0)
+(coin.coinbase "sender17" (describe-keyset "free.sender17-keyset") 100000.0)
+(coin.coinbase "sender18" (describe-keyset "free.sender18-keyset") 100000.0)
+(coin.coinbase "sender19" (describe-keyset "free.sender19-keyset") 100000.0)
+(coin.coinbase "sender20" (describe-keyset "free.sender20-keyset") 100000.0)
+(coin.coinbase "sender21" (describe-keyset "free.sender21-keyset") 100000.0)
+(coin.coinbase "sender22" (describe-keyset "free.sender22-keyset") 100000.0)
+(coin.coinbase "sender23" (describe-keyset "free.sender23-keyset") 100000.0)
+(coin.coinbase "sender24" (describe-keyset "free.sender24-keyset") 100000.0)
+(coin.coinbase "sender25" (describe-keyset "free.sender25-keyset") 100000.0)
+(coin.coinbase "sender26" (describe-keyset "free.sender26-keyset") 100000.0)
+(coin.coinbase "sender27" (describe-keyset "free.sender27-keyset") 100000.0)
+(coin.coinbase "sender28" (describe-keyset "free.sender28-keyset") 100000.0)
+(coin.coinbase "sender29" (describe-keyset "free.sender29-keyset") 100000.0)
+(coin.coinbase "sender30" (describe-keyset "free.sender30-keyset") 100000.0)
+(commit-tx)
+(print "Funded 21 sender accounts each with 100,000.0 KDA.")
+
+; Voila! We can now transfer funds from the three sender accounts to create
+; and fund other accounts, or use these accounts as basic test accounts. Code
+; that refers to sender00, sender01, and sender02 will also be usable when
+; testing on devnet, as the accounts are also present there.
