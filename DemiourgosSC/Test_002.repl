@@ -53,15 +53,8 @@
 (define-keyset "free.User004_Keyset" (read-keyset "key004"))
 (define-keyset "free.User005_Keyset" (read-keyset "key005"))
 (print "5 User keys have been defined")
-
-
 (env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] }])
 (env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] }])
-
-
-
-
-
 (commit-tx)
 ;;==============================================================================
 ;;
