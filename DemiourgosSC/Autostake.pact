@@ -353,7 +353,7 @@
             ;;Already granted by UPDATE_AURYNZ
             ;;(compose-capability (UPDATE_UNCOIL_LEDGER))
     )
-    (defcap CULL_AURYN(client:string culled-amount:decimal)
+    (defcap CULL_OUROBOROS(client:string culled-amount:decimal)
         ;;Autostake Transfers culled Ouroboros to Client
             (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) SC_NAME client culled-amount true))
         ;;Autostake Updates Autostake Ledger (Unbonding Ouro decrease)
@@ -475,7 +475,7 @@
     ;;      C_CoilAuryn                             Coils Auryn, securing it into the Autostake Pool, generating Elite-Auryn
     ;;      C_CurlOuroboros                         Curls Ouroboros, then Curls Auryn in a single Function
     ;;      C_UncoilAuryn                           Initiates Auryn Uncoil - does not work if all Auryn Uncoil positions are occupied
-    ;;      C_CullAuryn                             Culls all cullable Auryn Uncoil Positions
+    ;;      C_CullOuroboros                         Culls all cullable Auryn Uncoil Positions collecting Ouroboros
     ;;
     ;;--------------------------------------------------------------------------------------------------------
     ;;
@@ -1304,9 +1304,9 @@
     ;;
     ;;      C_CullAurynUncoil
     ;;
-    (defun C_CullAuryn (client:string)
-        @doc "Culls all cullable Auryn Uncoil Positions, that is all position that are ripe for harvesting \
-        \ Fails if no cullable positions exist."
+    (defun C_CullOuroboros (client:string)
+        @doc "Culls all cullable Auryn Uncoil Positions, collecting Ouroboros \
+        \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
 
         (with-capability (CULL_EXECUTOR)
             (let
@@ -1314,7 +1314,7 @@
                     (culled-amount:decimal (X_CullUncoilAll client false))
                     (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_AurynID) client))
                 )
-                (with-capability (CULL_AURYN client culled-amount)
+                (with-capability (CULL_OUROBOROS client culled-amount)
                 ;;Autostake Transfers culled Ouroboros to Client
                     (DPTF.C_MethodicTransferDPTFAnew (U_OuroborosID) SC_NAME client client-guard culled-amount)
                 ;;Autostake Updates Autostake Ledger (Unbonding Ouro decrease)

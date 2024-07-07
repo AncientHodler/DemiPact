@@ -286,7 +286,7 @@
 (print "Unbonding OURO before Cull")
 (free.DH_SC_Autostake.U_GetUnbondingOuro)
 
-(free.DH_SC_Autostake.C_CullAuryn "Bula")
+(free.DH_SC_Autostake.C_CullOuroboros "Bula")
 (print "Uncoil Ledger Bula este")
 (read free.DH_SC_Autostake.UncoilLedger "Bula")
 (format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
