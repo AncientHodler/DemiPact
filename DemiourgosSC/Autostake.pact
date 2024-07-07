@@ -226,8 +226,7 @@
     ;;
     ;;
     (defcap UNCOIL-LEDGER_BALANCE (balance:decimal)
-    @doc "Enforces Integer as Uncoil Ledger Epoch"
-    
+        @doc "Enforces Integer as Uncoil Ledger Epoch"
         (enforce
             (or
                 (>= balance 0.0)
@@ -339,7 +338,7 @@
             (compose-capability (UPDATE_AURYNZ client))
         )
     )
-    (defcap UNCOIL-AURYN(client:string auryn-input-amount:decimal)
+    (defcap UNCOIL_AURYN(client:string auryn-input-amount:decimal)
         ;;UpdateAurynzData (needed to create UncoilLedger Data in case it doesnt exist)
         (compose-capability (UPDATE_AURYNZ client))
         ;;Client Transfers AURYN to Autostake (as method) for burning
@@ -354,6 +353,33 @@
             ;;Already granted by UPDATE_AURYNZ
             ;;(compose-capability (UPDATE_UNCOIL_LEDGER))
     )
+    (defcap CULL_AURYN(client:string culled-amount:decimal)
+        ;;Autostake Transfers culled Ouroboros to Client
+            (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) SC_NAME client culled-amount true))
+        ;;Autostake Updates Autostake Ledger (Unbonding Ouro decrease)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+    )
+    (defcap CULL_EXECUTOR ()
+        true    
+    )
+    (defcap CULLABLE (account:string position:integer elite:bool)
+        @doc "Capability that enforce Auryn|Elite-Auryn Uncoil Position is cullable for Account"
+
+        (enforce (contains position (enumerate 1 7)) "Invalid Position for culling!")
+        (let*
+            (
+                (lp:integer (- position 1))
+                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
+                (cull:bool (at lp cull-boolean-slice))
+            )
+            (if (= elite false)
+                (enforce (= cull true) (format "Auryn Uncoil position {} is not cullable for DPTF Account {}" [position account]))
+                (enforce (= cull true) (format "Elite-Auryn Uncoil position {} is not cullable for DPTF Account {}" [position account]))
+            )
+        )
+        (compose-capability (UPDATE_UNCOIL_LEDGER))
+    )
+
     (defcap BURN_OUROBOROS (ouro-identifier:string ignis-identifier:string account:string)
         (compose-capability (DPTF.DPTF_BURN ouro-identifier account))
         (compose-capability (DPTF.DPTF_MINT ignis-identifier account))
@@ -394,6 +420,7 @@
     ;;      Functions Names are prefixed, so that they may be better visualised and understood.
     ;;
     ;;      UTILITY                                 U_FunctionName
+    ;;      UTILITY-AUXILIARY                       UX_FunctionName
     ;;      ADMINISTRATION                          A_FunctionName
     ;;      CLIENT                                  C_FunctionName
     ;;      AUXILIARY                               X_FunctionName
@@ -414,6 +441,10 @@
     ;;      U_GetUnbondingAuryn                     Returns as decimal the amount of Unbonding Auryn
     ;;      U_GetAuryndex                           Returns the value of Auryndex with 24 decimals
     ;;
+    ;;      U_GetMajorEliteTier                     Gets Major Elite Tier for Account
+    ;;      U_GetMinorEliteTier                     Gets Minor Elite Tier for Account
+    ;;      U_GetDEB                                Returns Account DEB
+    ;;
     ;;      U_ComputeOuroCoil                       Computes Ouro Coil Data: Outputs Auryn Output Amount
     ;;      U_ComputeAurynUncoil                    Computes Auryn Uncoil Data: Outputs Decimal List
     ;;      U_ComputeAurynUncoilFeePromile          Computes Auryn Uncoil Fee Promile
@@ -421,6 +452,13 @@
     ;;      U_ComputeCullTime                       Computes Cull Time for Auryn or Elite-Auryn using Tx present time
     ;;      U_GetUncoilPosition                     Gets best Auryn or Elite-Auryn uncoil Position
     ;;      U_GetZeroPosition                       Returns best uncoil position from a list of balances
+    ;;
+    ;;      U_CanCullUncoil                         Reads UncoilLedger and outputs a boolean list with cullable positions
+    ;;      U_GetUncoilAmount                       Reads UncoilLedger and outputs Uncoil Balance for Account and Position
+    ;;      U_GetCullAmount                         Reads UncoilLedger and outputs the Cull Balance for Account and Position
+    ;;      U_ComputeTotalCull                      Computes the sum of all balances that are cullable for Account
+    ;;
+    ;;      UX_GetEliteTier                         Core Function that returns Major or Minor Elite Tier
     ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
@@ -436,6 +474,8 @@
     ;;      C_FuelOuroboros                         Fuels the Autostake Pool with Ouroboros, increasing the Auryndex
     ;;      C_CoilAuryn                             Coils Auryn, securing it into the Autostake Pool, generating Elite-Auryn
     ;;      C_CurlOuroboros                         Curls Ouroboros, then Curls Auryn in a single Function
+    ;;      C_UncoilAuryn                           Initiates Auryn Uncoil - does not work if all Auryn Uncoil positions are occupied
+    ;;      C_CullAuryn                             Culls all cullable Auryn Uncoil Positions
     ;;
     ;;--------------------------------------------------------------------------------------------------------
     ;;
@@ -459,11 +499,14 @@
     ;;      X_UpdateUnbondingOuro                   Updates the Unbonding Ouro in the Autostake Ledger
     ;;      X_UpdateUnbondingAuryn                  Updates the Unbonding Auryn in the Autostake Ledger
     ;;
+    ;;      X_CullUncoilSingle                      Culls Uncoil position for Auryn-Uncoil or Elite-Auryn-Uncoil
+    ;;      X_ExecuteCull                           Processes an Uncoil Position for culling purposes for Account
+    ;;      X_CullUncoilAll                         Processes all Uncoils positions for culling purposes for Account
+    ;;
     ;;      XU_ManageEliteUncoilPositionWithTier    Manages Elite Auryn uncoil position based on Major Elite Tier Value
     ;;      XU_MakeHexaBooleanList                  Creates a list of 6 bolean values depending based on Major Elite Tier Value
     ;;      XU_ToggleEliteUncoilPosition            Opens or Closes Elite Auryn Uncoil Position depending on input parameters
-    ;;      XU_CheckPositionState                   Check Uncoil position state
-    ;;
+    ;;      XU_CheckPositionState                   Check Uncoil position state     
     ;;
     ;;========================================================================================================
     ;;
@@ -621,6 +664,33 @@
                 (floor (/ r-ouro-supply auryn-supply) 24)
             )
         )
+    )
+    ;;
+    ;;      U_GetMajorEliteTier
+    ;;
+    (defun U_GetMajorEliteTier:integer (account:string)
+        @doc "Gets Major Elite Tier for Account"
+        (UX_GetEliteTier account true)
+    )
+    ;;
+    ;;      U_GetMinorEliteTier
+    ;;
+    (defun U_GetMinorEliteTier:integer (account:string)
+        @doc "Gets Minor Elite Tier for Account"
+        (UX_GetEliteTier account false)
+    )
+    ;;
+    ;;      U_GetDEB
+    ;;
+    (defun U_GetDEB:decimal (account:string)
+        (let*
+            (
+                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
+                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (deb (at "deb" elite))
+            )
+            deb
+        ) 
     )
     ;;
     ;;      U_ComputeOuroCoil
@@ -801,7 +871,7 @@
                             )                                       ;;lambda body
                         )                                           ;;lambda function
                         -1                                          ;;acumulator
-                        (enumerate 0 (- (length inputlist) 1))            ;;list  
+                        (enumerate 0 (- (length inputlist) 1))      ;;list  
                     )
                 )
             )
@@ -809,6 +879,210 @@
                 -1
                 (+ position 1)
             )
+        )
+    )
+    ;;
+    ;;      U_CanCullUncoil
+    ;;
+    (defun U_CanCullUncoil:[bool] (account:string elite:bool)
+        @doc "Reads UncoilLedger and outputs a boolean list with cullable positions \
+        \ True means position is cullable, False means it is not cullable \
+        \ Boolean Elite toggles between Auryn Uncoil and Elite-Auryn Uncoil output"
+
+        (with-read UncoilLedger account
+            { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
+            (let*
+                (
+                    (present-time:time (at "block-time" (chain-data)))
+
+                    (o1v1:decimal (at "au-ob" o1))
+                    (o2v1:decimal (at "au-ob" o2))
+                    (o3v1:decimal (at "au-ob" o3))
+                    (o4v1:decimal (at "au-ob" o4))
+                    (o5v1:decimal (at "au-ob" o5))
+                    (o6v1:decimal (at "au-ob" o6))
+                    (o7v1:decimal (at "au-ob" o7))
+                    
+                    (o1v2:time (at "ae" o1))
+                    (o2v2:time (at "ae" o2))
+                    (o3v2:time (at "ae" o3))
+                    (o4v2:time (at "ae" o4))
+                    (o5v2:time (at "ae" o5))
+                    (o6v2:time (at "ae" o6))
+                    (o7v2:time (at "ae" o7))
+
+                    (o1v3:decimal (at "eau-ab" o1))
+                    (o2v3:decimal (at "eau-ab" o2))
+                    (o3v3:decimal (at "eau-ab" o3))
+                    (o4v3:decimal (at "eau-ab" o4))
+                    (o5v3:decimal (at "eau-ab" o5))
+                    (o6v3:decimal (at "eau-ab" o6))
+                    (o7v3:decimal (at "eau-ab" o7))
+                    
+                    (o1v4:time (at "eae" o1))
+                    (o2v4:time (at "eae" o2))
+                    (o3v4:time (at "eae" o3))
+                    (o4v4:time (at "eae" o4))
+                    (o5v4:time (at "eae" o5))
+                    (o6v4:time (at "eae" o6))
+                    (o7v4:time (at "eae" o7))
+
+                    (t1:decimal (diff-time present-time o1v2))
+                    (t2:decimal (diff-time present-time o2v2))
+                    (t3:decimal (diff-time present-time o3v2))
+                    (t4:decimal (diff-time present-time o4v2))
+                    (t5:decimal (diff-time present-time o5v2))
+                    (t6:decimal (diff-time present-time o6v2))
+                    (t7:decimal (diff-time present-time o7v2))
+
+                    (et1:decimal (diff-time present-time o1v4))
+                    (et2:decimal (diff-time present-time o2v4))
+                    (et3:decimal (diff-time present-time o3v4))
+                    (et4:decimal (diff-time present-time o4v4))
+                    (et5:decimal (diff-time present-time o5v4))
+                    (et6:decimal (diff-time present-time o6v4))
+                    (et7:decimal (diff-time present-time o7v4))
+
+                    (b1:bool (if (and (> o1v1 0.0)(>= t1 0.0)) true false))
+                    (b2:bool (if (and (> o2v1 0.0)(>= t2 0.0)) true false))
+                    (b3:bool (if (and (> o3v1 0.0)(>= t3 0.0)) true false))
+                    (b4:bool (if (and (> o4v1 0.0)(>= t4 0.0)) true false))
+                    (b5:bool (if (and (> o5v1 0.0)(>= t5 0.0)) true false))
+                    (b6:bool (if (and (> o6v1 0.0)(>= t6 0.0)) true false))
+                    (b7:bool (if (and (> o7v1 0.0)(>= t7 0.0)) true false))
+
+                    (eb1:bool (if (and (> o1v3 0.0)(>= et1 0.0)) true false))
+                    (eb2:bool (if (and (> o2v3 0.0)(>= et2 0.0)) true false))
+                    (eb3:bool (if (and (> o3v3 0.0)(>= et3 0.0)) true false))
+                    (eb4:bool (if (and (> o4v3 0.0)(>= et4 0.0)) true false))
+                    (eb5:bool (if (and (> o5v3 0.0)(>= et5 0.0)) true false))
+                    (eb6:bool (if (and (> o6v3 0.0)(>= et6 0.0)) true false))
+                    (eb7:bool (if (and (> o7v3 0.0)(>= et7 0.0)) true false))
+                )
+
+                (if (= elite false)
+                    [b1 b2 b3 b4 b5 b6 b7]
+                    [eb1 eb2 eb3 eb4 eb5 eb6 eb7]
+                )
+            )
+        )
+    )
+    ;;
+    ;;      U_GetUncoilAmount
+    ;;
+    (defun U_GetUncoilAmount:decimal (account:string position:integer elite:bool)
+        @doc "Reads UncoilLedger and outputs Uncoil Balance for Account and Position \
+        \ Boolen elite toggle betwen Ouro balances (Auryn Uncoil) and Auryn balances (Elite-Auryn Uncoil)"
+        (with-read UncoilLedger account
+            { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
+            (let*
+                (
+                    (ob1:decimal (at "au-ob" o1))
+                    (ob2:decimal (at "au-ob" o2))
+                    (ob3:decimal (at "au-ob" o3))
+                    (ob4:decimal (at "au-ob" o4))
+                    (ob5:decimal (at "au-ob" o5))
+                    (ob6:decimal (at "au-ob" o6))
+                    (ob7:decimal (at "au-ob" o7))
+
+                    (o1v3:decimal (at "eau-ab" o1))
+                    (o2v3:decimal (at "eau-ab" o2))
+                    (o3v3:decimal (at "eau-ab" o3))
+                    (o4v3:decimal (at "eau-ab" o4))
+                    (o5v3:decimal (at "eau-ab" o5))
+                    (o6v3:decimal (at "eau-ab" o6))
+                    (o7v3:decimal (at "eau-ab" o7))
+
+                    (ab1:decimal (if (= o1v3 -1.0) 0.0 o1v3))
+                    (ab2:decimal (if (= o2v3 -1.0) 0.0 o2v3))
+                    (ab3:decimal (if (= o3v3 -1.0) 0.0 o3v3))
+                    (ab4:decimal (if (= o4v3 -1.0) 0.0 o4v3))
+                    (ab5:decimal (if (= o5v3 -1.0) 0.0 o5v3))
+                    (ab6:decimal (if (= o6v3 -1.0) 0.0 o6v3))
+                    (ab7:decimal (if (= o7v3 -1.0) 0.0 o7v3))
+                    
+                )
+                ;;Return Uncoil Ammount
+                (cond
+                    ((and (= position 1)(= elite false)) ob1)
+                    ((and (= position 1)(= elite true)) ab1)
+
+                    ((and (= position 2)(= elite false)) ob2)
+                    ((and (= position 2)(= elite true)) ab2)
+
+                    ((and (= position 3)(= elite false)) ob3)
+                    ((and (= position 3)(= elite true)) ab3)
+
+                    ((and (= position 4)(= elite false)) ob4)
+                    ((and (= position 4)(= elite true)) ab4)
+
+                    ((and (= position 5)(= elite false)) ob5)
+                    ((and (= position 5)(= elite true)) ab5)
+
+                    ((and (= position 6)(= elite false)) ob6)
+                    ((and (= position 6)(= elite true)) ab6)
+
+                    ((and (= position 7)(= elite false)) ob7)
+                    ab7
+                )
+            )
+        )
+    )
+    ;;
+    ;;      U_GetCullAmount
+    ;;
+    (defun U_GetCullAmount:decimal (cullable:bool account:string position:integer elite:bool)
+        @doc "Reads UncoilLedger and outputs the Cull Balance for Account \
+        \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
+        \ The Cull Amount represents a cullable UncoilLedger Uncoil Balance Amount"
+        (if (= cullable true)
+            (with-capability (CULLABLE account position elite)
+                (U_GetUncoilAmount account position elite)
+            )
+            0.0
+        )
+    )
+    ;;
+    ;;      U_ComputeTotalCull
+    ;;
+    (defun U_ComputeTotalCull:decimal (account:string elite:bool)
+        @doc "Computes the sum of all balances that are cullable for Account \
+        \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
+        \ Similar to X_CullUncoilAll, but does not cull positions, \
+        \ Only reads cullable balances and adds them up"
+
+        (let*
+            (
+                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
+                (d1:decimal (U_GetCullAmount (at 0 cull-boolean-slice) account 1 elite))
+                (d2:decimal (U_GetCullAmount (at 1 cull-boolean-slice) account 2 elite))
+                (d3:decimal (U_GetCullAmount (at 2 cull-boolean-slice) account 3 elite))
+                (d4:decimal (U_GetCullAmount (at 3 cull-boolean-slice) account 4 elite))
+                (d5:decimal (U_GetCullAmount (at 4 cull-boolean-slice) account 5 elite))
+                (d6:decimal (U_GetCullAmount (at 5 cull-boolean-slice) account 6 elite))
+                (d7:decimal (U_GetCullAmount (at 6 cull-boolean-slice) account 7 elite))
+                (valid-culled-balances:[decimal] [d1 d2 d3 d4 d5 d6 d7])
+            )
+            (fold (+) 0.0 valid-culled-balances)
+        )
+    )
+    ;;
+    ;;      UX_GetEliteTier
+    ;;
+    (defun UX_GetEliteTier:integer (account:string major:bool)
+        @doc "Core Function that returns Major or Minor Elite Tier"
+        (let*
+            (
+                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
+                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (elite-tier:string (at "tier" elite))
+                (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
+                (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
+            )
+            (if (= major true)
+                major-elite-tier
+                minor-elite-tier
+            ) 
         )
     )
     ;;
@@ -998,7 +1272,7 @@
         \ Uses the best(cheapest) uncoil Position. This is determined automatically \
         \ and must not be entered as a parameter. When no position is available, function fails."
         
-        (with-capability (UNCOIL-AURYN client auryn-input-amount)
+        (with-capability (UNCOIL_AURYN client auryn-input-amount)
         ;;UpdateAurynzData (needed to create UncoilLedger Data in case it doesnt exist)
             (X_UpdateAurynzData client)
             (let*
@@ -1028,6 +1302,28 @@
         )
     )
     ;;
+    ;;      C_CullAurynUncoil
+    ;;
+    (defun C_CullAuryn (client:string)
+        @doc "Culls all cullable Auryn Uncoil Positions, that is all position that are ripe for harvesting \
+        \ Fails if no cullable positions exist."
+
+        (with-capability (CULL_EXECUTOR)
+            (let
+                (
+                    (culled-amount:decimal (X_CullUncoilAll client false))
+                    (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_AurynID) client))
+                )
+                (with-capability (CULL_AURYN client culled-amount)
+                ;;Autostake Transfers culled Ouroboros to Client
+                    (DPTF.C_MethodicTransferDPTFAnew (U_OuroborosID) SC_NAME client client-guard culled-amount)
+                ;;Autostake Updates Autostake Ledger (Unbonding Ouro decrease)
+                    (X_UpdateUnbondingOuro culled-amount false)
+                )
+            )
+        )
+    )
+    ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
     ;;      AUXILIARY FUNCTIONS
@@ -1037,17 +1333,14 @@
     (defun X_UpdateAurynzData (account:string)
         @doc "Updates Data pertaining to Demiourgos Elite Account (perks for owning Elite-Auryn)"
         (with-capability (UPDATE_AURYNZ account)
-            (let*
+            (let
                 (
-                    (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
-                    (elite:object{EliteAccountSchema} (U_ComputeElite eab))
-                    (elite-tier:string (at "tier" elite))
-                    (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
+                    (major:integer (U_GetMajorEliteTier account))
                 )
                 (X_InitialiseUncoilLedger account)      ;works when not exist
-                (if (not (or (= major-elite-tier 0) (= major-elite-tier 1)))
+                (if (not (or (= major 0) (= major 1)))
                     ;works because it was created above. Executed 
-                    (X_UpdateUncoilLedgerWithElite account major-elite-tier) 
+                    (X_UpdateUncoilLedgerWithElite account major) 
                     "No Update required for Uncoil Ledger on Elite"
                 )
                 (X_UpdateEliteTracker account)          ;works because Balance get is made with default read
@@ -1413,7 +1706,135 @@
         )
     )
     ;;
-    ;;      ManageEliteUncoilPositionWithTier
+    ;;      X_CullUncoilSingle
+    ;;
+    (defun CullUncoilSingle:decimal (account:string position:integer elite:bool)
+        @doc "Culls Uncoil position for Auryn-Uncoil or Elite-Auryn-Uncoil\
+        \ Culling Position means clearing the Uncoil Ledger and outputting culled amount as decimal"
+
+        (require-capability (CULLABLE account position elite))
+        (with-read UncoilLedger account
+            { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
+            (let*
+                (
+                    (o1v1:decimal (at "au-ob" o1))
+                    (o2v1:decimal (at "au-ob" o2))
+                    (o3v1:decimal (at "au-ob" o3))
+                    (o4v1:decimal (at "au-ob" o4))
+                    (o5v1:decimal (at "au-ob" o5))
+                    (o6v1:decimal (at "au-ob" o6))
+                    (o7v1:decimal (at "au-ob" o7))
+
+                    (o1v3:decimal (at "eau-ab" o1))
+                    (o2v3:decimal (at "eau-ab" o2))
+                    (o3v3:decimal (at "eau-ab" o3))
+                    (o4v3:decimal (at "eau-ab" o4))
+                    (o5v3:decimal (at "eau-ab" o5))
+                    (o6v3:decimal (at "eau-ab" o6))
+                    (o7v3:decimal (at "eau-ab" o7))
+                    
+                    (major:integer (U_GetMajorEliteTier account))
+
+                    (update-time:time (if (< major position) ANTITIME NULLTIME))
+                    (update-balance:decimal (if (< major position) -1.0 0.0))
+                )
+                ;; tier < position => ANTITIME
+                ;; tier = position => NULLTIME
+                ;; tier > position => NULLTIME
+
+                ;;Clear Position on UncoilLedger
+                (cond
+                    ((and (= position 1)(= elite false)) (X_UpdateUncoilLedger account 1 0.0 NULLTIME false))
+                    ((and (= position 1)(= elite true)) (X_UpdateUncoilLedger account 1 0.0 NULLTIME true))
+
+                    ((and (= position 2)(= elite false)) (X_UpdateUncoilLedger account 2 0.0 NULLTIME false))
+                    ((and (= position 2)(= elite true)) (X_UpdateUncoilLedger account 2 update-balance update-time true))
+
+                    ((and (= position 3)(= elite false)) (X_UpdateUncoilLedger account 3 0.0 NULLTIME false))
+                    ((and (= position 3)(= elite true)) (X_UpdateUncoilLedger account 3 update-balance update-time true))
+
+                    ((and (= position 4)(= elite false)) (X_UpdateUncoilLedger account 4 0.0 NULLTIME false))
+                    ((and (= position 4)(= elite true)) (X_UpdateUncoilLedger account 4 update-balance update-time true))
+
+                    ((and (= position 5)(= elite false)) (X_UpdateUncoilLedger account 5 0.0 NULLTIME false))
+                    ((and (= position 5)(= elite true)) (X_UpdateUncoilLedger account 5 update-balance update-time true))
+
+                    ((and (= position 6)(= elite false)) (X_UpdateUncoilLedger account 6 0.0 NULLTIME false))
+                    ((and (= position 6)(= elite true)) (X_UpdateUncoilLedger account 6 update-balance update-time true))
+
+                    ((and (= position 7)(= elite false)) (X_UpdateUncoilLedger account 7 0.0 NULLTIME false))
+                    ((and (= position 7)(= elite true)) (X_UpdateUncoilLedger account 7 update-balance update-time true))
+                    "No"
+                )
+
+                ;;Return Culled Amount
+                (cond
+                    ((and (= position 1)(= elite false)) o1v1)
+                    ((and (= position 1)(= elite true)) o1v3)
+
+                    ((and (= position 2)(= elite false)) o2v1)
+                    ((and (= position 2)(= elite true)) o2v3)
+
+                    ((and (= position 3)(= elite false)) o3v1)
+                    ((and (= position 3)(= elite true)) o3v3)
+
+                    ((and (= position 4)(= elite false)) o4v1)
+                    ((and (= position 4)(= elite true)) o4v3)
+
+                    ((and (= position 5)(= elite false)) o5v1)
+                    ((and (= position 5)(= elite true)) o5v3)
+
+                    ((and (= position 6)(= elite false)) o6v1)
+                    ((and (= position 6)(= elite true)) o6v3)
+
+                    ((and (= position 7)(= elite false)) o7v1)
+                    o7v3
+                )
+                
+            )
+        )
+    )
+    ;;
+    ;;      X_ExecuteCull
+    ;;
+    (defun X_ExecuteCull:decimal (cullable:bool account:string position:integer elite:bool)
+        @doc "Processes an Uncoil Position for culling purposes for Account \
+        \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
+        \ Boolean cullable informs the function if the position is cullable \
+        \ If the position is cullable, it will be culled. \
+        \ If the position is not cullable, decimal zero is returned"
+
+        (require-capability (CULL_EXECUTOR))
+        (if (= cullable true)
+            (with-capability (CULLABLE account position elite)
+                (CullUncoilSingle account position elite)
+            )
+            0.0
+        )
+    )
+    ;;
+    ;;      X_CullUncoilAll
+    ;;
+    (defun X_CullUncoilAll:decimal (account:string elite:bool)
+        @doc "Processes all Uncoils positions for culling purposes for Account \
+        \ Returns the sum of all culled positions"
+        (let*
+            (
+                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
+                (d1:decimal (X_ExecuteCull (at 0 cull-boolean-slice) account 1 elite))
+                (d2:decimal (X_ExecuteCull (at 1 cull-boolean-slice) account 2 elite))
+                (d3:decimal (X_ExecuteCull (at 2 cull-boolean-slice) account 3 elite))
+                (d4:decimal (X_ExecuteCull (at 3 cull-boolean-slice) account 4 elite))
+                (d5:decimal (X_ExecuteCull (at 4 cull-boolean-slice) account 5 elite))
+                (d6:decimal (X_ExecuteCull (at 5 cull-boolean-slice) account 6 elite))
+                (d7:decimal (X_ExecuteCull (at 6 cull-boolean-slice) account 7 elite))
+                (culled-balances:[decimal] [d1 d2 d3 d4 d5 d6 d7])
+            )
+            (fold (+) 0.0 culled-balances)
+        )
+    )
+    ;;
+    ;;      XU_ManageEliteUncoilPositionWithTier
     ;;
     (defun XU_ManageEliteUncoilPositionWithTier(account:string tier:integer)
         @doc "Manages Elite Auryn uncoil position based on Major Elite Tier Value"

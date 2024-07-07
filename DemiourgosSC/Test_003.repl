@@ -102,7 +102,8 @@
 (print "==========================Setting Enviroment Data======================")
 (begin-tx)
 (env-chain-data
-    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006"}
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-07-06T00:00:00Z")}
 )
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-gas)
@@ -243,6 +244,9 @@
 
 ;;TX_11 Bula Uncoils 5 Auryn
 (free.DH_SC_Autostake.C_UncoilAuryn "Bula" 5.0)
+(free.DH_SC_Autostake.C_UncoilAuryn "Bula" 15.0)
+(free.DH_SC_Autostake.C_UncoilAuryn "Bula" 25.0)
+
 
 ;;Tx_12 Computes Auryn (boolean false) Uncoil Duration time in hours for Bula
 (free.DH_SC_Autostake.U_ComputeUncoilDuration "Bula" false)
@@ -256,4 +260,40 @@
 ;(print "==============TEST-ClandestinMINT=========================")
 (env-gas)
 (commit-tx)
-;==============================================================================
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Testing")
+(print "==========================TX08=========================================")
+(print "==========================AUTOSTAKE-SC-Initialising====================")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] },
+            { "key": "Cheia_useru-ului_003", "caps": [] }])
+(module TimeVault GOVERNANCE
+        (defcap GOVERNANCE () true)
+        (defconst TIME00 (time "2024-07-06T00:00:00Z"))
+        (defconst TIME01 (time "2024-07-07T00:00:00Z"))
+        (defconst TIME02 (time "2024-07-26T16:00:00Z"))
+)
+(env-chain-data
+    {"block-time": TimeVault.TIME02}
+)
+(print "UNCOIL ALL Bula")
+(print "Unbonding OURO before Cull")
+(free.DH_SC_Autostake.U_GetUnbondingOuro)
+
+(free.DH_SC_Autostake.C_CullAuryn "Bula")
+(print "Uncoil Ledger Bula este")
+(read free.DH_SC_Autostake.UncoilLedger "Bula")
+(format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
+
+(print "Unbonding OURO after Cull")
+(free.DH_SC_Autostake.U_GetUnbondingOuro)
+
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
