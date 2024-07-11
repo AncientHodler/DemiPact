@@ -67,75 +67,75 @@
     (defcap DPTF_ADMIN ()
         (enforce-guard (keyset-ref-guard SC_KEY))
     )
-    ;;=======================================================================================================
-    ;;
-    ;;      CAPABILITIES
-    ;;
-    ;;      BASIC                           Basic Capabilities represent singular capability Definitions
-    ;;      COMPOSED                        Composed Capabilities are made of one or multiple Basic Capabilities
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      BASIC
-    ;;
-    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT======== 
-    ;;      DPTF_OWNER                              Enforces DPTF Token Ownership
-    ;;      DPTF_CAN-UPGRADE_ON                     Enforces DPTF Token upgrade-ability
-    ;;      DPTF_CAN-ADD-SPECIAL-ROLE_ON            Enforces Token Property as true
-    ;;      DPTF_CAN-FREEZE_ON                      Enforces Token Property as true
-    ;;      DPTF_CAN-WIPE_ON                        Enforces Token Property as true
-    ;;      DPTF_CAN-PAUSE_ON                       Enforces Token Property as true
-    ;;      DPTF_IS-PAUSED_ON                       Enforces that the DPTF Token is paused
-    ;;      DPTF_IS-PAUSED_OF                       Enforces that the DPTF Token is not paused
-    ;;      UPDATE_DPTF_SUPPLY                      Capability required to update DPTF Supply
-    ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
-    ;;      DPTF_ACCOUNT_OWNER                      Enforces DPTF Account Ownership
-    ;;      DPTF_ACCOUNT_BURN_ON                    Enforces DPTF Account has burn role on
-    ;;      DPTF_ACCOUNT_BURN_OFF                   Enforces DPTF Account has burn role off
-    ;;      DPTF_ACCOUNT_MINT_ON                    Enforces DPTF Account has mint role on
-    ;;      DPTF_ACCOUNT_MINT_OFF                   Enforces DPTF Account has mint role off
-    ;;      DPTF_ACCOUNT_TRANSFER_ON                Enforces DPTF Account has transfer role on
-    ;;      DPTF_ACCOUNT_TRANSFER_OFF               Enforces DPTF Account has transfer role off
-    ;;      DPTF_ACCOUNT_TRANSFER_DEFAULT           Transfer role capabilty required for uncreated receivers
-    ;;      DPTF_ACCOUNT_FREEZE_ON                  Enforces DPTF Account is frozen
-    ;;      DPTF_ACCOUNT_FREEZE_OFF                 Enforces DPTF Account is not frozen
-    ;;      DPTF_ORGIN_VIRGIN                       Enforces Origin Mint hasn't been executed
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      COMPOSED
-    ;;
-    ;;==================CONTROL===================== 
-    ;;      DPTF_CONTROL                            Capability required for managing DPTF Properties
-    ;;      DPTF_PAUSE                              Capability required to Pause a DPTF
-    ;;      DPTF_UNPAUSE                            Capability required to Unpause a DPTF
-    ;;      DPTF_FREEZE_ACCOUNT                     Capability required to Freeze a DPTF Account
-    ;;      DPTF_UNFREEZE_ACCOUNT                   Capability required to Unfreeze a DPTF Account
-    ;;==================SET========================= 
-    ;;      DPTF_SET_BURN-ROLE                      Capability required to Set Burn Role for DPTF Account
-    ;;      DPTF_SET_MINT-ROLE                      Capability required to Set Mint Role for DPTF Account
-    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to Set Transfer Role for DPTF Account
-    ;;==================UNSET=======================
-    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to Unset Burn Role for a DPTF Account
-    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to Unset Mint Role for a DPTF Account
-    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to Unset Transfer Role for a DPTF Account
-    ;;==================CREATE======================
-    ;;      DPTF_MINT_ORIGIN                        Capability required to mint the Origin DPTF Mint Supply
-    ;;      DPTF_MINT                               Capability required to mint a DPTF Token
-    ;;      DPTF_MINT_SMART                         Capability required to mint a DPTF Token by a Smart DPTS Account
-    ;;      DPTF_MINT_STANDARD                      Capability required to mint a DPTF Token by a Standard DPTS Account 
-    ;;==================DESTROY=====================
-    ;;      DPTF_BURN                               Capability required to burn a DPTF Token
-    ;;      DPTF_BURN_SMART                         Capability required to burn a DPTF Token by a Smart DPTS Account
-    ;;      DPTF_BURN_STANDARD                      Capability required to burn a DPTF Token by a Standard DPTS Account 
-    ;;      DPTF_WIPE                               Capability required to Wipe a DPTF Token Balance from a DPTF account
-    ;;=================CORE========================= 
-    ;;      CREDIT_DPTF                             Capability to perform crediting operations with DPTF Tokens
-    ;;      DEBIT_DPTF                              Capability to perform debiting operations on Normal DPTS Account types with DPTF Tokens
-    ;;      DEBIT_DPTF_SC                           Capability to perform debiting operations on Smart(Contract) DPTS Account types with DPTF Tokens
-    ;;      TRANSFER_DPTF                           Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier   
-    ;;
-    ;;========================================================================================================
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      CAPABILITIES                                                                                                                                ;;
+    ;;                                                                                                                                                  ;;
+    ;;      BASIC                                   Basic Capabilities represent singular capability Definitions                                        ;;
+    ;;      COMPOSED                                Composed Capabilities are made of one or multiple Basic Capabilities                                ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      BASIC                                                                                                                                       ;;
+    ;;                                                                                                                                                  ;;
+    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT========                                                                                                    ;;
+    ;;      DPTF_OWNER                              Enforces DPTF Token Ownership                                                                       ;;
+    ;;      DPTF_CAN-UPGRADE_ON                     Enforces DPTF Token upgrade-ability                                                                 ;;
+    ;;      DPTF_CAN-ADD-SPECIAL-ROLE_ON            Enforces Token Property as true                                                                     ;;
+    ;;      DPTF_CAN-FREEZE_ON                      Enforces Token Property as true                                                                     ;;
+    ;;      DPTF_CAN-WIPE_ON                        Enforces Token Property as true                                                                     ;;
+    ;;      DPTF_CAN-PAUSE_ON                       Enforces Token Property as true                                                                     ;;
+    ;;      DPTF_IS-PAUSED_ON                       Enforces that the DPTF Token is paused                                                              ;;
+    ;;      DPTF_IS-PAUSED_OF                       Enforces that the DPTF Token is not paused                                                          ;;
+    ;;      UPDATE_DPTF_SUPPLY                      Capability required to update DPTF Supply                                                           ;;
+    ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========                                                                                                    ;;
+    ;;      DPTF_ACCOUNT_OWNER                      Enforces DPTF Account Ownership                                                                     ;;
+    ;;      DPTF_ACCOUNT_BURN_ON                    Enforces DPTF Account has burn role on                                                              ;;
+    ;;      DPTF_ACCOUNT_BURN_OFF                   Enforces DPTF Account has burn role off                                                             ;;
+    ;;      DPTF_ACCOUNT_MINT_ON                    Enforces DPTF Account has mint role on                                                              ;;
+    ;;      DPTF_ACCOUNT_MINT_OFF                   Enforces DPTF Account has mint role off                                                             ;;
+    ;;      DPTF_ACCOUNT_TRANSFER_ON                Enforces DPTF Account has transfer role on                                                          ;;
+    ;;      DPTF_ACCOUNT_TRANSFER_OFF               Enforces DPTF Account has transfer role off                                                         ;;
+    ;;      DPTF_ACCOUNT_TRANSFER_DEFAULT           Transfer role capabilty required for uncreated receivers                                            ;;
+    ;;      DPTF_ACCOUNT_FREEZE_ON                  Enforces DPTF Account is frozen                                                                     ;;
+    ;;      DPTF_ACCOUNT_FREEZE_OFF                 Enforces DPTF Account is not frozen                                                                 ;;
+    ;;      DPTF_ORGIN_VIRGIN                       Enforces Origin Mint hasn't been executed                                                           ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      COMPOSED                                                                                                                                    ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      DPTF_CONTROL                            Capability required for managing DPTF Properties                                                    ;;
+    ;;      DPTF_PAUSE                              Capability required to Pause a DPTF                                                                 ;;
+    ;;      DPTF_UNPAUSE                            Capability required to Unpause a DPTF                                                               ;;
+    ;;      DPTF_FREEZE_ACCOUNT                     Capability required to Freeze a DPTF Account                                                        ;;
+    ;;      DPTF_UNFREEZE_ACCOUNT                   Capability required to Unfreeze a DPTF Account                                                      ;;
+    ;;==================SET=========================                                                                                                    ;;
+    ;;      DPTF_SET_BURN-ROLE                      Capability required to Set Burn Role for DPTF Account                                               ;;
+    ;;      DPTF_SET_MINT-ROLE                      Capability required to Set Mint Role for DPTF Account                                               ;;
+    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to Set Transfer Role for DPTF Account                                           ;;
+    ;;==================UNSET=======================                                                                                                    ;;
+    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to Unset Burn Role for a DPTF Account                                           ;;
+    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to Unset Mint Role for a DPTF Account                                           ;;
+    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to Unset Transfer Role for a DPTF Account                                       ;;
+    ;;==================CREATE======================                                                                                                    ;;
+    ;;      DPTF_MINT_ORIGIN                        Capability required to mint the Origin DPTF Mint Supply                                             ;;
+    ;;      DPTF_MINT                               Capability required to mint a DPTF Token                                                            ;;
+    ;;      DPTF_MINT_SMART                         Capability required to mint a DPTF Token by a Smart DPTS Account                                    ;;
+    ;;      DPTF_MINT_STANDARD                      Capability required to mint a DPTF Token by a Standard DPTS Account                                 ;;
+    ;;==================DESTROY=====================                                                                                                    ;;
+    ;;      DPTF_BURN                               Capability required to burn a DPTF Token                                                            ;;
+    ;;      DPTF_BURN_SMART                         Capability required to burn a DPTF Token by a Smart DPTS Account                                    ;;
+    ;;      DPTF_BURN_STANDARD                      Capability required to burn a DPTF Token by a Standard DPTS Account                                 ;;
+    ;;      DPTF_WIPE                               Capability required to Wipe a DPTF Token Balance from a DPTF account                                ;;
+    ;;=================CORE=========================                                                                                                    ;;
+    ;;      CREDIT_DPTF                             Capability to perform crediting operations with DPTF Tokens                                         ;;
+    ;;      DEBIT_DPTF                              Capability to perform debiting operations on Normal DPTS Account types with DPTF Tokens             ;;
+    ;;      DEBIT_DPTF_SC                           Capability to perform debiting operations on Smart(Contract) DPTS Account types with DPTF Tokens    ;;
+    ;;      TRANSFER_DPTF                           Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier                ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================================================================================================================================================;;
     ;;
     ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT======== 
     (defcap DPTF_OWNER (identifier:string)
