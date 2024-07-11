@@ -14,6 +14,7 @@
     (defschema DPTF-PropertiesSchema
         @doc "Schema for DPTF Token (True Fungibles) Properties \
         \ Key for Table is DPTF Token Identifier. This ensure a unique entry per Token Identifier"
+
         owner:guard                         ;;Guard of the Token Owner, Account that created the DPTF Token
         name:string                         ;;Token Name (Alpha-Numeric 3-50 Characters Long)
         ticker:string                       ;;Token Ticker (Capital Alpha-Numeric 3-20 Characters Long)
@@ -187,9 +188,9 @@
             (enforce (= ip false) (format "DPTF Token {} is already paused" [identifier]))
         )
     )
-    (defcap UPDATE_DPTF_SUPPLY () 
-        @doc "Capability required to update DPTF Supply" 
-        true
+    (defcap UPDATE_DPTF_SUPPLY (identifier:string amount:decimal) 
+        @doc "Capability required to update DPTF Supply"
+        (U_ValidateDPTFAmount identifier amount)
     )
     ;;DPTF Account Properties Enforcements
     (defcap DPTF_ACCOUNT_OWNER (identifier:string account:string)
@@ -266,164 +267,196 @@
     ;;
     ;;      COMPOSED
     ;;
-    (defcap DPTF_CONTROL (identifier)
+    (defcap DPTF_CONTROL (identifier:string)
         @doc "Capability required for managing DPTF Properties"
+        (U_ValidateDPTFIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
     )
     (defcap DPTF_PAUSE (identifier:string)
         @doc "Capability required to Pause a DPTF Token"
+        (U_ValidateDPTFIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
     )
     (defcap DPTF_UNPAUSE (identifier:string)
         @doc "Capability required to Unpause a DPTF Token"
+        (U_ValidateDPTFIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_ON identifier))
     )
     (defcap DPTF_FREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Freeze a DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
     )
     (defcap DPTF_UNFREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Unfreeze a DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
     )
     (defcap DPTF_SET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Set Burn Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
     )
     (defcap DPTF_UNSET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Burn Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
     )
     (defcap DPTF_SET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Set Mint Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
     )
     (defcap DPTF_UNSET_MINT-ROLE (identifier:string account:string)
-        @doc "Capability required to Set Mint Role for DPTF Account"
+        @doc "Capability required to Unset Mint Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
     )
     (defcap DPTF_SET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Set Transfer Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
     )
     (defcap DPTF_UNSET_TRANSFER-ROLE (identifier:string account:string)
-        @doc "Capability required to Set Transfer Role for DPTF Account"
+        @doc "Capability required to Unset Transfer Role for DPTF Account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
     )
-    (defcap DPTF_MINT_ORIGIN (identifier:string account:string)
+
+    (defcap DPTF_BURN_SMART (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+        (compose-capability (DEBIT_DPTF_SC account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_BURN_STANDARD (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
+        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+        (compose-capability (DEBIT_DPTF identifier account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_BURN (identifier:string account:string amount:decimal)
+        @doc "Capability required to burn a DPTF Token locally \
+            \ Smart-Contract Account type doesnt require their guard|key"
+        (U_ValidateDPTFAmount identifier amount)
+        (DPTS.U_ValidateAccount account)
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                (compose-capability (DPTF_BURN_SMART identifier account amount))
+                (compose-capability (DPTF_BURN_STANDARD identifier account amount))
+            )
+        )
+    )
+    (defcap DPTF_MINT_ORIGIN (identifier:string account:string amount:decimal)
         @doc "Capability required to mint the Origin DPTF Mint Supply"
+        (U_ValidateDPTFAmount identifier amount)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
         (compose-capability (DPTF_ORIGIN_VIRGIN identifier))
         (compose-capability (CREDIT_DPTF account))
-        (compose-capability (UPDATE_DPTF_SUPPLY))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
     )
-    (defcap DPTF_MINT (identifier:string account:string)
+
+    (defcap DPTF_MINT_SMART (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+        (compose-capability (CREDIT_DPTF account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_MINT_STANDARD (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
+        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+        (compose-capability (CREDIT_DPTF account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_MINT (identifier:string account:string amount:decimal)
         @doc "Capability required to mint a DPTF Token locally \
-        \ Smart-Contract Account type doesnt require their guard|key"
+            \ Smart-Contract Account type doesnt require their guard|key"
+        (U_ValidateDPTFAmount identifier amount)
+        (DPTS.U_ValidateAccount account)
         (let
             (
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
             )
             (if (= iz-sc true)
-                (let
-                    (
-                        (zero:integer 0)
-                    )
-                    (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-                    (compose-capability (CREDIT_DPTF account))
-                    (compose-capability (UPDATE_DPTF_SUPPLY))
-                )
-                (let
-                    (
-                        (zero:integer 0)
-                    )
-                    (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
-                    (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-                    (compose-capability (CREDIT_DPTF account))
-                    (compose-capability (UPDATE_DPTF_SUPPLY))
-                )
+                (compose-capability (DPTF_MINT_SMART identifier account amount))
+                (compose-capability (DPTF_MINT_STANDARD identifier account amount))
             )
         )
     )
-    (defcap DPTF_BURN (identifier:string account:string)
-        @doc "Capability required to burn a DPTF Token locally \
-        \ Smart-Contract Account type doesnt require their guard|key"
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                (let
-                    (
-                        (zero:integer 0)
-                    )
-                    (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-                    (compose-capability (DEBIT_DPTF_SC account))
-                    (compose-capability (UPDATE_DPTF_SUPPLY))
-                )
-                (let
-                    (
-                        (zero:integer 0)
-                    )
-                    (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
-                    (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-                    (compose-capability (DEBIT_DPTF identifier account))
-                    (compose-capability (UPDATE_DPTF_SUPPLY))
-                )
-            )
-        )
-    )
-    (defcap DPTF_WIPE (identifier:string account:string)
+    (defcap DPTF_WIPE (identifier:string account:string amount:decimal)
         @doc "Capability required to Wipe a DPTF Token Balance from a DPTF account"
+        (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-WIPE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
-        (compose-capability (DEBIT_DPTF identifier account))
-        (compose-capability (UPDATE_DPTF_SUPPLY))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
     )
     ;;Core Capabilities
     (defcap CREDIT_DPTF (account:string)
         @doc "Capability to perform crediting operations with DPTF Tokens"
-        (enforce (!= account "") "Invalid receiver account")
+        true
+        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
+        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
+        ;;(enforce (!= account "") "Invalid receiver account")
     )
     (defcap DEBIT_DPTF (identifier:string account:string)
-        @doc "Capability to perform debiting operations on Normal DPTS Account type for a DPTF Token"
+        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
         (enforce-guard 
             (at "guard" 
                 (read DPTF-BalancesTable (concat [identifier BAR account]) ["guard"])
             )
         )
-        (enforce (!= account "") "Invalid sender account")
+        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
+        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
+        ;;(enforce (!= account "") "Invalid sender account")
     )
-    (defcap DEBIT_DPTF_SC (account:string)
-        @doc "Capability to perform debiting operations on Smart(Contract) DPTS Account type for a DPTF Token\
+    (defcap DEBIT_DPTF_SC ()
+        @doc "Capability to perform debiting operations on a Smart(Contract) DPTS Account type for a DPTF Token\
         \ Does not enforce account guard."
-        (enforce (!= account "") "Invalid receiver account")
+        true
+        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
+        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
+        ;;(enforce (!= account "") "Invalid sender account")
     )
 
     (defcap TRANSFER_DPTF (identifier:string sender:string receiver:string amount:decimal method:bool)
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier"
-        (U_ValidateDPTFIdentifier identifier)
+
+        ;;These 3 Validation make obsolete every other similar Validation in other functions
+        ;;Becuase them other functions cant be called on their own, but with transfer functions
+        ;;That require this capability, which brings us to these Validations
         (U_ValidateDPTFAmount identifier amount)
+        (DPTS.U_ValidateSenderReceiver sender receiver)
 
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier sender))
@@ -486,6 +519,7 @@
     ;;
     ;;      UTILITY FUNCTIONS
     ;;
+    ;;      U_GetAccountTokens              Returns a list of Identifiers that exist for Account
     ;;      U_GetDPTFBalance                Returns the DPTF balance for given Token Identifier and Account
     ;;      U_GetDPTFSupply                 Return DPTF Token Total Supply for given identifier
     ;;      U_GetDPTFDecimal                Return DPTF Token number of decimals
@@ -540,16 +574,30 @@
     ;;
     ;;========================================================================================================
     ;;
-    ;;========================================================================================================
-    ;;
     ;;      UTILITY FUNCTIONS
+    ;;
+    ;;      U_GetAccountTokens 
+    ;;
+    (defun U_GetAccountDPTFTokens:[string] (account:string)
+        @doc "Returns a list of Identifiers that exist for Account"
+        (DPTS.U_ValidateAccount account)
+
+        (let*
+            (
+                (keyz:[string] (keys DPTF-BalancesTable))
+                (listoflists:[[string]] (map (lambda (x:string) (DPTS.U_SplitString DPTS.BAR x)) keyz))
+                (dptf-account-tokens:[string] (DPTS.U_FilterIdentifier listoflists account))
+            )
+            dptf-account-tokens
+        )
+    )
     ;;
     ;;      U_GetDPTFBalance
     ;;
     (defun U_GetDPTFBalance:decimal (identifier:string account:string)
         @doc "Returns the DPTF balance for given Token Identifier and Account"
-        (DPTS.U_ValidateAccount account)
         (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
 
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
             { "balance" : 0.0 }
@@ -563,6 +611,7 @@
     (defun U_GetDPTFSupply:decimal (identifier:string)
         @doc "Return <identifier> DPTF Token Total Supply"
         (U_ValidateDPTFIdentifier identifier)
+
         (at "supply" (read DPTF-PropertiesTable identifier ["supply"]))
     )
     ;;
@@ -571,6 +620,7 @@
     (defun U_GetDPTFDecimals:integer (identifier:string)
         @doc "Return <identifier> DPTF Token Decimal size"
         (U_ValidateDPTFIdentifier identifier)
+
         (at "decimals" (read DPTF-PropertiesTable identifier ["decimals"]))
     )
     ;;
@@ -579,6 +629,8 @@
     (defun U_GetDPTFAccountGuard:guard (identifier:string account:string)
         @doc "Return <identifier> DPTF Token Decimal size"
         (U_ValidateDPTFIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+
         (at "guard" (read DPTF-BalancesTable (concat [identifier BAR account]) ["guard"]))
     )
     ;;
@@ -587,6 +639,8 @@
     (defun U_ValidateDPTFAmount (identifier:string amount:decimal)
         @doc "Enforce the minimum denomination for a specific DPTF identifier \
         \ and ensure the amount is greater than zero"
+        (U_ValidateDPTFIdentifier identifier)
+
         (with-read DPTF-PropertiesTable identifier
             { "decimals" := d }
             (enforce
@@ -595,7 +649,7 @@
             )
             (enforce
                 (> amount 0.0)
-                (format "The amount of {} is not a valid transaction amount" [amount])
+                (format "The amount of {} is not a Valid Transaction amount" [amount])
             )
         )
     )
@@ -626,43 +680,42 @@
     ;;
     ;;      C_IssueDPTF
     ;;
-    (defun C_IssueDPTF:string 
+    (defun C_IssueTrueFungible:string 
         (
-        account:string 
-        owner:guard 
-        name:string 
-        ticker:string 
-        decimals:integer 
-        can-change-owner:bool 
-        can-upgrade:bool 
-        can-add-special-role:bool 
-        can-freeze:bool 
-        can-wipe:bool 
-        can-pause:bool)
+            account:string 
+            owner:guard 
+            name:string 
+            ticker:string 
+            decimals:integer 
+            can-change-owner:bool 
+            can-upgrade:bool 
+            can-add-special-role:bool 
+            can-freeze:bool 
+            can-wipe:bool 
+            can-pause:bool
+        )
         @doc "Issue a new DPTF Token. This creates an entry into the DPTF-PropertiesTable. \
-        \ Such an entry means the DPTF Token has been created. Function outputs as string the Token-Identifier \
-        \ Token Identifier is formed from ticker, followed by a dash, \ 
-        \ followed by the first 12 characters of the previous block hash to ensure uniqueness. \
-        \ \
-        \ Furthermore, The issuer creates a Standard DPTF Account for himself, as the first Account of this DPTF Token \
-        \ \
-        \ In order to be able to Issue a new DPTF Token, A DPTS Account must exist for <account> \
-        \ otherwise the function will fail. "
+            \ Such an entry means the DPTF Token has been created. Function outputs as string the Token-Identifier \
+            \ Token Identifier is formed from ticker, followed by a dash, \ 
+            \ followed by the first 12 characters of the previous block hash to ensure uniqueness. \
+            \ \
+            \ Furthermore, The issuer creates a DPTF Account for himself, as the first Account of this DPTF Token \
+            \ By default, New DPTF Account creation also creates a Standard DPTS Account, if it doesnt exist"
+        (DPTS.U_ValidateTokenName name)
+        ;; Enforce Ticker is part of identifier variable below
+        (DPTS.U_ValidateDecimals decimals)
 
         (let
             (
                 (identifier (DPTS.U_MakeDPTSIdentifier ticker))
             )
-            (DPTS.U_EnforceTokenName name)
-            ;; Enforce Ticker is part of identifier variable
-            (DPTS.U_EnforceDecimals decimals)
-
             ;; Add New Entries in the DPTF-PropertyTable
             ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
             ;; Entry is initialised with "is-paused" set to off(false).
             ;; Entry is initialised with a supply of 0.0 (decimal)
             ;; Entry is initialised with a false switch on the origin-mint, meaning origin mint hasnt been executed
             ;; Entry is initialised with an origin-mint-amount of 0.0, meaning origin mint hasnt been executed
+            ;; Entry is initiated with o to role-transfer-amount, since no Account will transfer role upon creation.
             (insert DPTF-PropertiesTable identifier
                 {"owner"                : owner
                 ,"name"                 : name
@@ -682,7 +735,7 @@
             )
             ;;Makes a new DPTF Account for the Token Issuer.
             (C_DeployDPTFAccount identifier account owner)
-            ;; Return the unique Token Identifier
+            ;;Returns the unique Token Identifier
             identifier
         )
     )
@@ -694,33 +747,57 @@
             \ A DPTS Standard Account is also created, in case it doesnt exist \
             \ If a DPTS Account exists, it remains as is. \
             \ Function fails if DPTF Account exists for Token <identifier>"
-
+        (U_ValidateDPTFIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (DPTS.U_EnforceReserved account guard)
-        (U_ValidateDPTFIdentifier identifier)
 
         ;;Automatically creates a Standard DPTS Account for <account> if one doesnt exists
         ;;If a DPTS Account exists for <account>, it remains as is
         (DPTS.C_DeployStandardDPTSAccount account guard)
 
         ;;Creates new Entry in the DPTF-BalancesTable for <identifier>|<account>
-        (insert DPTF-BalancesTable (concat [identifier BAR account])
-            { "balance"                     : 0.0
-            , "guard"                       : guard
-            , "role-burn"                   : false
-            , "role-mint"                   : false
-            , "role-transfer"               : false
-            , "frozen"                      : false
-            }
+        ;;If Entry exists, no changes are being done
+        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
+            { "balance" : 0.0
+            , "guard" : guard
+            , "role-burn" : false
+            , "role-mint" : false
+            , "role-transfer" : false
+            , "frozen" : false}
+            { "balance" := b
+            , "guard" := g
+            , "role-burn" := rb
+            , "role-mint" := rm
+            , "role-transfer" := rt
+            , "frozen" := f }
+            (write DPTF-BalancesTable (concat [identifier BAR account])
+                { "balance"                     : b
+                , "guard"                       : g
+                , "role-burn"                   : rb
+                , "role-mint"                   : rm
+                , "role-transfer"               : rt
+                , "frozen"                      : f
+                } 
+            )
         )
     )
     ;;
     ;;      C_ControlDPTF
     ;;
-    (defun C_ControlDPTF (identifier:integer can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool)
+    (defun C_ControlDPTF 
+        (
+            identifier:string
+            can-change-owner:bool 
+            can-upgrade:bool 
+            can-add-special-role:bool 
+            can-freeze:bool 
+            can-wipe:bool 
+            can-pause:bool
+        )
         @doc "Manages DPTF Token Properties via boolean triggers \
-        \ Setting the <can-upgrade> property to off(false) disables all future Properties control"
-        (U_ValidateDPTFIdentifier identifier)
+            \ Setting the <can-upgrade> property to off(false) \
+            \ disables all future Control of Properties"
+
         (with-capability (DPTF_CONTROL identifier)
             (update DPTF-PropertiesTable identifier
                 {"can-change-owner"                 : can-change-owner
@@ -737,7 +814,8 @@
     ;;
     (defun C_MintDPTFOrigin (identifier:string account:string amount:decimal)
         @doc "Mints DPTF Origin Amount, the amount that is minted with creation"
-        (with-capability (DPTF_MINT_ORIGIN identifier account)
+
+        (with-capability (DPTF_MINT_ORIGIN identifier account amount)
             (with-read DPTF-BalancesTable (concat [identifier BAR account])
                 { "guard" := g }
                 (X_CreditDPTF identifier account g amount)
@@ -751,8 +829,9 @@
     ;;
     (defun C_BurnDPTF (identifier:string account:string amount:decimal)
         @doc "Burns DPTF Tokens locally"
-        (with-capability (DPTF_BURN identifier account)
-            (X_DebitDPTF identifier account amount)
+
+        (with-capability (DPTF_BURN identifier account amount)
+            (X_DebitDPTF identifier account amount false)
             (X_UpdateDPTFSupply identifier amount false)
         )
     )
@@ -761,7 +840,8 @@
     ;;
     (defun C_SetBurnRole (identifier:string account:string)
         @doc "Sets Burn Role for Token Identifier for account \
-        \ Then this account can burn Tokens"
+            \ Then this account can burn Tokens"
+
         (with-capability (DPTF_SET_BURN-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : true}
@@ -773,7 +853,8 @@
     ;;
     (defun C_UnsetBurnRole (identifier:string account:string)
         @doc "Unsets Burn Role for Token Identifier for account \
-        \ Account can no longer burn Tokens"
+            \ Account can no longer burn Tokens"
+
         (with-capability (DPTF_UNSET_BURN-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : false}
@@ -785,12 +866,12 @@
     ;;
     (defun C_MintDPTF (identifier:string account:string amount:decimal)
         @doc "Mints DPTF Tokens locally"
-        (with-capability (DPTF_MINT identifier account)
+
+        (with-capability (DPTF_MINT identifier account amount)
             (with-read DPTF-BalancesTable (concat [identifier BAR account])
                 { "guard" := g }
                 (X_CreditDPTF identifier account g amount)
             )
-            ;(CreditDPTF identifier account guard amount)
             (X_UpdateDPTFSupply identifier amount true)
         )
     )
@@ -799,7 +880,8 @@
     ;;
     (defun C_SetMintRole (identifier:string account:string)
         @doc "Sets Mint Role for Token <identifier> for Account <account> \
-        \ Afterwards Account <account> can mint new DPTF Tokens"
+            \ Afterwards Account <account> can mint new DPTF Tokens"
+
         (with-capability (DPTF_SET_MINT-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-mint" : true}
@@ -811,7 +893,8 @@
     ;;
     (defun C_UnsetMintRole (identifier:string account:string)
         @doc "Unsets Mint Role for Token <identifier> for Account <account> \
-        \ Afterwards Account <account> can no longer mint DPTF Tokens"
+            \ Afterwards Account <account> can no longer mint DPTF Tokens"
+
         (with-capability (DPTF_UNSET_MINT-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-mint" : false}
@@ -823,7 +906,9 @@
     ;;
     (defun C_SetTransferRole (identifier:string account:string)
         @doc "Sets Transfer Role for Token <identifier> for Account <account> \
-        \ DPTF Tokens can only be transfered to Account <account>, while it can transfer to any other Account"
+            \ DPTF Tokens can only be transfered to Account <account>, \
+            \ while it can transfer to any other Account"
+
         (with-capability (DPTF_SET_TRANSFER-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-transfer" : true}
@@ -835,6 +920,7 @@
     ;;
     (defun C_UnsetTransferRole (identifier:string account:string)
         @doc "Unsets Transfer Role for Token <identifier> for <account>"
+
         (with-capability (DPTF_UNSET_TRANSFER-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : false}
@@ -846,13 +932,14 @@
     ;;
     (defun C_WipeDPTF (identifier:string account:string)
         @doc "Wipes DPTF Tokens from a frozen Account"
-        (with-capability (DPTF_WIPE identifier account)
-            (let
-                (
-                    (amount:decimal (U_GetDPTFBalance identifier account))
-                )
-                (X_DebitDPTF identifier account amount)
-                (X_UpdateDPTFSupply identifier amount false)   
+
+        (let
+            (
+                (amount:decimal (U_GetDPTFBalance identifier account))
+            )
+            (with-capability (DPTF_WIPE identifier account amount)
+                (X_DebitDPTF identifier account amount true)
+                (X_UpdateDPTFSupply identifier amount false)
             )
         )
     )
@@ -861,8 +948,7 @@
     ;;
     (defun C_FreezeDPTFAccount (identifier:string account:string)
         @doc "Freezes DPTF Token <identifier> for Account <account>"
-        (U_ValidateDPTFIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+
         (with-capability (DPTF_FREEZE_ACCOUNT identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
         )
@@ -872,8 +958,7 @@
     ;;
     (defun C_UnfreezeDPTFAccount (identifier:string account:string)
         @doc "Unfreezes DPTF Token <identifier> for Account <account>"
-        (U_ValidateDPTFIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+
         (with-capability (DPTF_UNFREEZE_ACCOUNT identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : false})
         )
@@ -883,7 +968,7 @@
     ;;
     (defun C_PauseDPTF (identifier:string)
         @doc "Pauses DPTF Token <identifier>"
-        (U_ValidateDPTFIdentifier identifier)
+
         (with-capability (DPTF_PAUSE identifier)
             (update DPTF-PropertiesTable identifier { "is-paused" : true})
         )
@@ -893,7 +978,7 @@
     ;;
     (defun C_UnpauseDPTF (identifier:string)
         @doc "Unpauses DPTF Token <identifier>"
-        (U_ValidateDPTFIdentifier identifier)
+
         (with-capability (DPTF_UNPAUSE identifier)
             (update DPTF-PropertiesTable identifier { "is-paused" : false})
         )
@@ -904,10 +989,11 @@
     (defun C_TransferDPTF (identifier:string sender:string receiver:string amount:decimal)
         @doc "Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account, \
         \ failing if <receiver> DPTF Account doesnt exist"
+
         (with-capability (TRANSFER_DPTF identifier sender receiver amount false)
-            (X_DebitDPTF identifier sender amount)
             (with-read DPTF-BalancesTable (concat [identifier BAR receiver])
                 { "guard" := guard }
+                (X_DebitDPTF identifier sender amount false)
                 (X_CreditDPTF identifier receiver guard amount)
             )
         )
@@ -919,7 +1005,7 @@
         @doc "Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account \
         \ If Target Account doesnt exist, it is created."
         (with-capability (TRANSFER_DPTF identifier sender receiver amount false)
-            (X_DebitDPTF identifier sender amount)
+            (X_DebitDPTF identifier sender amount false)
             (X_CreditDPTF identifier receiver receiver-guard amount)
         )
     )
@@ -945,7 +1031,7 @@
         \ If Target Account doesnt exist, it is created. \
         \ Methodic means the transfer is used as a Method for Smart(Contract) DPTS Account Type operations"
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
-        (X_DebitDPTF identifier sender amount)
+        (X_DebitDPTF identifier sender amount false)
         (X_CreditDPTF identifier receiver receiver-guard amount)
     )
     ;;-------------------------------------------------------------------------------------------------------
@@ -957,10 +1043,8 @@
     (defun X_CreditDPTF (identifier:string account:string guard:guard amount:decimal)
         @doc "Increases DPTF Token balance for Account <account> for Token <identifier> \
         \ Also creates a new DPTF account if the target account doesnt exist"
-        ;; Validate Inputs
-        (DPTS.U_ValidateAccount account)
-        (U_ValidateDPTFIdentifier identifier)
-        (U_ValidateDPTFAmount identifier amount)
+        ;; No Validation of Inputs required as this is auxiliary function
+        ;; and as such cannot be called on its own
 
         ;;Capability Required for Credit
         (require-capability (CREDIT_DPTF account))
@@ -971,9 +1055,10 @@
             (enforce (= retg guard) "Account guards do not match !")
             (let
                 (
-                    (is-new (if (= balance -1.0) (DPTS.U_EnforceReserved account guard) false))
+                    (is-new:bool (if (= balance -1.0) (DPTS.U_EnforceReserved account guard) false))
                 )
-                ;; First, a new DPTS Account is created for Account <account>. If DPTS Account exists for <account>, nothing is modified
+                ;; First, a new DPTS Account is created for Account <account>. 
+                ;; If DPTS Account exists for <account>, nothing is modified
                 (DPTS.C_DeployStandardDPTSAccount account guard)
                 ;; if is-new=true, this actually creates a new DPTF Account and Credits it the amount
                 ;; if is-new=false, this updates the balance by increasing it with <amount>
@@ -992,21 +1077,22 @@
     ;;
     ;;      X_DebitDPTF
     ;;
-    (defun X_DebitDPTF (identifier:string account:string amount:decimal)
+    (defun X_DebitDPTF (identifier:string account:string amount:decimal admin:bool)
         @doc "Decreases DPTF Token balance for Account <account> for Token <identifier>"
-        ;; Validate Inputs
-        (DPTS.U_ValidateAccount account)
-        (U_ValidateDPTFIdentifier identifier)
-        (U_ValidateDPTFAmount identifier amount)
+        ;; No Validation of Inputs required as this is auxiliary function
+        ;; and as such cannot be called on its own
 
         ;;Capability Required for Debit
         (let
             (
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
             )
-            (if (= iz-sc true)
-                (require-capability (DEBIT_DPTF_SC account))
-                (require-capability (DEBIT_DPTF identifier account))
+            (if (= admin true)
+                (require-capability (DPTF_OWNER identifier))
+                (if (= iz-sc true)
+                    (require-capability (DEBIT_DPTF_SC account))
+                    (require-capability (DEBIT_DPTF identifier account))
+                )
             )
             (with-read DPTF-BalancesTable (concat [identifier BAR account])
                 { "balance" := balance }
@@ -1022,11 +1108,8 @@
     ;;      X_UpdateDPTFSupply 
     ;;
     (defun X_UpdateDPTFSupply (identifier:string amount:decimal direction:bool)
-        ;; Validate Inputs
-        (U_ValidateDPTFIdentifier identifier)
-        (U_ValidateDPTFAmount identifier amount)
-
-        (require-capability (UPDATE_DPTF_SUPPLY))
+        @doc "Updates DPTF Supply. Direction dictates increase or decrease"
+        (require-capability (UPDATE_DPTF_SUPPLY identifier amount))
         (if (= direction true)
             (with-read DPTF-PropertiesTable identifier
                 { "supply" := s }

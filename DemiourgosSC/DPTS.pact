@@ -144,13 +144,28 @@
     ;;      U_CheckAccountsTransferability  Checks if transferability is satisfied between account for transfer roles
     ;;      U_MakeDPTSIdentifier            Creates the DPTS Identifier string
     ;;      U_ValidateAccount               Enforces that an account ID meets charset and length requirements
-    ;;      U_EnforceDecimals               Enforces correct decimal value for a given DPTS identifier
-    ;;      U_EnforceTokenName              Enforces correct DPTS Token Name specifications
-    ;;      U_EnforceTickerName             Enforces correct DPTS Ticker Name specifications
+    ;;      U_ValidateDecimals              Enforces correct decimal value for a given DPTS identifier
+    ;;      U_ValidateTokenName             Enforces correct DPTS Token Name specifications
+    ;;      U_ValidateTickerName            Enforces correct DPTS Ticker Name specifications
     ;;      U_IzAnCapital                   Checks if a string is alphanumeric with or without Uppercase Only
     ;;      U_IzCAnCapital                  Checks if a character is alphanumeric with or without Uppercase Only
     ;;      U_EnforceReserved               Enforce reserved account name protocols
     ;;      U_CheckReserved                 Checks account for reserved name
+    ;;
+    ;;      U_FilterIdentifier              Filters splitted BalanceTable key list for Token Identifier
+    ;;
+    ;;      U_SplitString                   Splits a string unsing a single string as splitter
+    ;;      U_Search                        Search an item into the list and returns a list of index
+    ;;      U_FirstListElement              Returns the first item of a list
+    ;;      U_SecondListElement             Returns the second item of a list
+    ;;      U_LastListElement               Returns the last item of the list
+    ;;      
+    ;;      UX_EnforceNotEmpty              Verify and Enforces that a list is not empty
+    ;;      UX_IsNotEmpty                   Return true if the list is not empty
+    ;;      UX_InsertFirst                  Insert an item at the left of the list
+    ;;      UX_AppendLast                   Append an item at the end of the list
+    ;;      UX_RemoveItem                   Remove an item from a list
+    ;;      UX_MakeMVXNonce                 Creates a MultiversX specific NFT nonce from an integer
     ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
@@ -260,9 +275,18 @@
                 (dash "-")
                 (twelve (take 12 (at "prev-block-hash" (chain-data))))
             )
-            (U_EnforceTickerName ticker)
+            (U_ValidateTickerName ticker)
             (concat [ticker dash twelve])
         )
+    )
+    ;;
+    ;;      U_ValidateSenderReceiver
+    ;;
+    (defun U_ValidateSenderReceiver (sender:string receiver:string)
+        @doc "Validates Sender and Receiver Accounts for transfer"
+            (U_ValidateAccount sender)
+            (U_ValidateAccount receiver)
+            (enforce (!= sender receiver) "Sender and Receiver must be different")
     )
     ;;
     ;;      U_ValidateAccount 
@@ -292,9 +316,9 @@
         )
     )
     ;;
-    ;;      U_EnforceDecimals
+    ;;      U_ValidateDecimals
     ;;
-    (defun U_EnforceDecimals:bool (decimals:integer)
+    (defun U_ValidateDecimals:bool (decimals:integer)
         @doc "Enforces correct decimal value for a given DPTS identifier"
         (enforce
             (and
@@ -305,9 +329,9 @@
         )
     )
     ;;
-    ;;      U_EnforceTokenName
+    ;;      U_ValidateTokenName
     ;;
-    (defun U_EnforceTokenName:bool (name:string)
+    (defun U_ValidateTokenName:bool (name:string)
         @doc "Enforces correct DPTS Token Name specifications"
         (let
             (
@@ -327,9 +351,9 @@
         )    
     )
     ;;
-    ;;      U_EnforceTickerName
+    ;;      U_ValidateTickerName
     ;;
-    (defun U_EnforceTickerName:bool (ticker:string)
+    (defun U_ValidateTickerName:bool (ticker:string)
         @doc "Enforces correct DPTS Ticker Name specifications"
         (let
             (
@@ -457,7 +481,7 @@
     ;;
     ;;      C_DeploySmartDPTSAccount
     ;;
-    (defun C_DeploySmartDPTSAccount (account:string guard:guard)
+    (defun C_DeploySmartDPTSAccount (account:string guard:guard scm-name:string)
         @doc "Deploys a Smart DPTS Account. \
         \ Before any DPTF, DPMF, DPSF, DPNF Token can be created, \
         \ a Standard or Smart DPTS Account must be deployed \
@@ -469,6 +493,7 @@
         (U_ValidateAccount account)
         (U_EnforceReserved account guard)
 
+        ;;Since it uses insert, the function only works if the DPTS account doesnt exist yet.
         (insert DPTS-AccountTable account
             { "guard"                       : guard
             , "smart-contract"              : true
@@ -486,6 +511,128 @@
             (update DPTS-AccountTable account
                 {"payable-as-smart-contract"    : payable-as-smart-contract
                 ,"payable-by-smart-contract"    : payable-by-smart-contract}
+            )
+        )
+    )
+    (defun U_GetModuleName (account:string)
+        @doc "Returns as string the module name of the Smart DPTS <account> \
+        \ Fails is <account> is not a Smart DPTS Account and is a Standard DPTS account"
+        (at "sc-module-name" (read DPTS-AccountTable account ["sc-module-name"]))   
+    )
+    ;;
+    ;;      U_FilterIdentifier
+    ;;
+    (defun U_FilterIdentifier:[string] (listoflists:[[string]] account:string)
+        @doc "Filters splitted BalanceTable key list for Token Identifier \
+        \ Designed to be used for returning DPTF Identifiers for Account"
+
+        (let 
+            (
+                (result
+                    (fold
+                        (lambda 
+                            (acc:[string] item:[string])
+                            (if (= (U_LastListElement item) account)
+                                (UX_AppendLast acc (U_FirstListElement item))
+                                acc
+                            )
+                        )
+                        []
+                        listoflists
+                    )
+                )
+            )
+            result
+        )
+    )
+    ;;
+    ;;      U_SplitString
+    ;;
+    (defun U_SplitString:[string] (splitter:string splitee:string)
+        @doc "Splits a string unsing a single string as splitter"
+        (if (= 0 (length splitee))
+            [] ;If the string is empty return a zero length list
+            (let* 
+                (
+                    (sep-pos (U_Search (str-to-list splitee) splitter))
+                    (substart (map (+ 1) (UX_InsertFirst sep-pos -1)))
+                    (sublen  (zip (-) (UX_AppendLast sep-pos 10000000) substart))
+                    (cut (lambda (start len) (take len (drop start splitee))))
+                )
+                (zip (cut) substart sublen)
+            )
+        )
+    )
+    ;;
+    ;;      U_Search
+    ;;
+    (defun U_Search:[integer] (searchee:list item)
+        @doc "Search an item into the list and returns a list of index"
+        ;; Save gas if item is not in list => use the native contains to return empty
+        (if (contains item searchee)
+            (let 
+                (
+                    (indexes (enumerate 0 (length searchee)))
+                    (match (lambda (v i) (if (= item v) i -1)))
+                )
+                (UX_RemoveItem (zip (match) searchee indexes) -1)
+            )
+            []
+        )
+    )
+    (defun U_ReplaceItem:list (in:list old-item new-item)
+        @doc"Replace each occurrence of old-item by new-item"
+        (map (lambda (x) (if (= x old-item) new-item x)) in)
+    )
+    (defun U_RemoveItem:list (in:list item)
+        @doc"Remove an item from a list"
+        (filter (!= item) in)
+    )
+    (defun U_FirstListElement (in:list)
+        @doc "Returns the first item of a list"
+        (UX_EnforceNotEmpty in)
+        (at 0 in)
+    )
+    (defun U_SecondListElement (in:list)
+        @doc "Returns the second item of a list"
+        (UX_EnforceNotEmpty in)
+        (at 1 in)
+    )
+    (defun U_LastListElement (in:list)
+        @doc "Returns the last item of the list"
+        (UX_EnforceNotEmpty in)
+        (at (- (length in) 1) in)
+    )
+    (defun UX_EnforceNotEmpty:bool (x:list)
+        @doc "Verify and Enforces that a list is not empty"
+        (enforce (UX_IsNotEmpty x) "List cannot be empty")
+    )
+    (defun UX_IsNotEmpty:bool (x:list)
+        @doc "Return true if the list is not empty"
+        (< 0 (length x)))
+
+    (defun UX_InsertFirst:list (in:list item)
+        @doc "Insert an item at the left of the list"
+        (+ [item] in)
+    )
+    (defun UX_AppendLast:list (in:list item)
+        @doc "Append an item at the end of the list"
+        (+ in [item])
+    )
+    (defun UX_RemoveItem:list (in:list item)
+        @doc "Remove an item from a list"
+        (filter (!= item) in)
+    )
+    (defun UX_MakeMVXNonce:string (nonce:integer)
+        @doc "Creates a MultiversX specific NFT nonce from an integer"
+        (let*
+            (
+                (hexa:string (int-to-str 16 nonce))
+                (hexalength:integer (length hexa))
+            )
+            (if (= (mod hexalength 2) 1 )
+                (concat ["0" hexa])
+                hexa
             )
         )
     )

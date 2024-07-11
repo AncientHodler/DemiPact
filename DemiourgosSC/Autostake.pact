@@ -6,6 +6,7 @@
     ;;Smart-Contract Key and Name Definitions
     (defconst SC_KEY "free.DH_SC_Autostake_Key")
     (defconst SC_NAME "Autostake-Pool")
+    (defconst SC_MODULE_NAME "DH_SC_Autostake")
     (defconst ET        ;;Elite Thresholds
         [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
         105.0 110.0 125.0 150.0 200.0 350.0 600.0
@@ -295,7 +296,7 @@
     ;;Autostake Updates Autostake Ledger (Resident OURO increase)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;Autostake Locally mints AURYN
-        (compose-capability (MINT_AURYN (U_AurynID) SC_NAME))
+        (compose-capability (MINT_AURYN (U_AurynID) SC_NAME (U_ComputeOuroCoil ouro-input-amount)))
     ;;Autostake Transfers AURYN To Client (as method)
         (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) SC_NAME client auryn-output-amount true))  
     ;;Since user receives Auryn, Autostake makes/updates Elite Account Information
@@ -313,7 +314,7 @@
     ;;Autostake Updates Autostake Ledger (Resident Auryn increase)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;Autostake Locally mints ELITEAURYN
-        (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME))
+        (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME auryn-input-amount))
     ;;Autostake Transfers ELITEAURYN To Client
         (compose-capability (DPTF.TRANSFER_DPTF (U_EliteAurynID) SC_NAME client auryn-input-amount true))
     ;;Since user receives Elite-Auryn, Autostake makes/updates Elite Account Information
@@ -327,11 +328,11 @@
         ;;Client Transfers OURO to Autostake (as method)    
             (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
         ;;Autostake Locally mints AURYN
-            (compose-capability (MINT_AURYN (U_AurynID) SC_NAME))
+            (compose-capability (MINT_AURYN (U_AurynID) SC_NAME auryn-computed-amount))
         ;;Autostake Updates its internal Table (Resident Ouro and Resident Auryn)    
             (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
         ;;Autostake Locally mints ELITEAURYN
-            (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME))
+            (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME auryn-computed-amount))
         ;;Autostake Transfers minted ELITEAURYN to client
             (compose-capability (DPTF.TRANSFER_DPTF (U_EliteAurynID) SC_NAME client auryn-computed-amount true))
         ;;Since client receives Elite-Auryn, Autostake makes/updates Elite Account Information
@@ -339,19 +340,28 @@
         )
     )
     (defcap UNCOIL_AURYN(client:string auryn-input-amount:decimal)
+        (let*
+            (
+                (uncoil-position:integer (U_GetUncoilPosition client false))
+                (uncoil-data:[decimal] (U_ComputeAurynUncoil auryn-input-amount uncoil-position))
+                (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
+            )
         ;;UpdateAurynzData (needed to create UncoilLedger Data in case it doesnt exist)
-        (compose-capability (UPDATE_AURYNZ client))
+            (compose-capability (UPDATE_AURYNZ client))
         ;;Client Transfers AURYN to Autostake (as method) for burning
             (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) client SC_NAME auryn-input-amount true))
         ;;Autostake Locally burns the whole AURYN transfered
-            (compose-capability (BURN_AURYN (U_AurynID) SC_NAME))
+            (compose-capability (BURN_AURYN (U_AurynID) SC_NAME auryn-input-amount))
         ;;Autostake Locally burns OURO (Ouro as uncoil fee; burning ouro automatically mints Ignis)    
-            (compose-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME))
+            (compose-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME ouro-burn-fee-amount))
         ;;Autostake Updates Autostake Ledger (Resident OURO decrease, Unbonding Ouro increase)    
             (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
         ;;Autostake Updates Uncoil Ledger 
             ;;Already granted by UPDATE_AURYNZ
             ;;(compose-capability (UPDATE_UNCOIL_LEDGER))
+        )
+
+        
     )
     (defcap CULL_OUROBOROS(client:string culled-amount:decimal)
         ;;Autostake Transfers culled Ouroboros to Client
@@ -379,25 +389,24 @@
         )
         (compose-capability (UPDATE_UNCOIL_LEDGER))
     )
-
-    (defcap BURN_OUROBOROS (ouro-identifier:string ignis-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_BURN ouro-identifier account))
-        (compose-capability (DPTF.DPTF_MINT ignis-identifier account))
+    (defcap BURN_OUROBOROS (ouro-identifier:string ignis-identifier:string account:string ouro-burn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN ouro-identifier account ouro-burn-amount))
+        (compose-capability (DPTF.DPTF_MINT ignis-identifier account (U_ComputeIgnisMintAmount ouro-burn-amount)))
     )
-    (defcap BURN_AURYN (auryn-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_BURN auryn-identifier account))
+    (defcap BURN_AURYN (auryn-identifier:string account:string auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN auryn-identifier account auryn-amount))
     )
-    (defcap BURN_ELITE-AURYN (elite-auryn-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_BURN elite-auryn-identifier account))
+    (defcap BURN_ELITE-AURYN (elite-auryn-identifier:string account:string elite-auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN elite-auryn-identifier account elite-auryn-amount))
     )
-    (defcap MINT_OUROBOROS (ouro-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_MINT ouro-identifier account))
+    (defcap MINT_OUROBOROS (ouro-identifier:string account:string ouro-amount:decimal)
+        (compose-capability (DPTF.DPTF_MINT ouro-identifier account ouro-amount))
     )
-    (defcap MINT_AURYN (auryn-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_MINT auryn-identifier account))
+    (defcap MINT_AURYN (auryn-identifier:string account:string auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_MINT auryn-identifier account auryn-amount))
     )
-    (defcap MINT_ELITE-AURYN (elite-auryn-identifier:string account:string)
-        (compose-capability (DPTF.DPTF_MINT elite-auryn-identifier account))
+    (defcap MINT_ELITE-AURYN (elite-auryn-identifier:string account:string elite-auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_MINT elite-auryn-identifier account elite-auryn-amount))
     )
     ;;=====================================================================================================
     ;;
@@ -445,6 +454,7 @@
     ;;      U_GetMinorEliteTier                     Gets Minor Elite Tier for Account
     ;;      U_GetDEB                                Returns Account DEB
     ;;
+    ;;      U_ComputeIgnisMintAmount                Computes Ignis Mint amount from Ouro-burn-amount
     ;;      U_ComputeOuroCoil                       Computes Ouro Coil Data: Outputs Auryn Output Amount
     ;;      U_ComputeAurynUncoil                    Computes Auryn Uncoil Data: Outputs Decimal List
     ;;      U_ComputeAurynUncoilFeePromile          Computes Auryn Uncoil Fee Promile
@@ -691,6 +701,19 @@
             )
             deb
         ) 
+    )
+    ;;
+    ;;      U_ComputeIgnisMintAmount
+    ;;
+    (defun U_ComputeIgnisMintAmount:decimal (ouro-burn-amount:decimal)
+        @doc "Computes Ignis Mint amount from Ouro-burn-amount"
+        (let*
+            (
+                (ignis-decimals:integer (DPTF.U_GetDPTFDecimals (U_IgnisID)))
+                (ignis-mint-amount:decimal (floor (* ouro-burn-amount 100.0) ignis-decimals))
+            )
+            ignis-mint-amount
+        )   
     )
     ;;
     ;;      U_ComputeOuroCoil
@@ -1098,13 +1121,13 @@
 
         ;;Initialise the Autostake DPTS Acount as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+        (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_MODULE_NAME)
 
         (with-capability (INIT_AUTOSTAKE)
             ;;Issue Auryns Token
             (let
                 (
-                    (AurynID:string (DPTF.C_IssueDPTF
+                    (AurynID:string (DPTF.C_IssueTrueFungible
                         SC_NAME
                         (keyset-ref-guard SC_KEY)
                         "Auryn"
@@ -1117,7 +1140,7 @@
                         false   ;;can-wipe
                         false   ;;can-pause
                     ))
-                    (EliteAurynID:string (DPTF.C_IssueDPTF
+                    (EliteAurynID:string (DPTF.C_IssueTrueFungible
                         SC_NAME
                         (keyset-ref-guard SC_KEY)
                         "EliteAuryn"
@@ -1130,7 +1153,7 @@
                         false   ;;can-wipe
                         false   ;;can-pause
                     ))
-                    (IgnisID:string (DPTF.C_IssueDPTF
+                    (IgnisID:string (DPTF.C_IssueTrueFungible
                         SC_NAME
                         (keyset-ref-guard SC_KEY)
                         "Ignis"
@@ -1563,22 +1586,16 @@
     ;;
     (defun X_BurnOuroboros (amount:decimal)
         @doc "Burns Ouroboros and generates Ignis at 100x capacity"
-        (let*
-            (
-                (ignis-decimals:integer (DPTF.U_GetDPTFDecimals (U_IgnisID)))
-                (ignis-mint-amount:decimal (floor (* amount 100.0) ignis-decimals))
-            )
-            (require-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME))
-            (DPTF.C_BurnDPTF (U_OuroborosID) SC_NAME amount)
-            (DPTF.C_MintDPTF (U_IgnisID) SC_NAME ignis-mint-amount)      
-        )
+        (require-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME amount))
+        (DPTF.C_BurnDPTF (U_OuroborosID) SC_NAME amount)
+        (DPTF.C_MintDPTF (U_IgnisID) SC_NAME (U_ComputeIgnisMintAmount amount))
     )
     ;;
     ;;      X_BurnAuryn
     ;;
     (defun X_BurnAuryn (amount:decimal)
         @doc "Burns Auryn"
-        (require-capability (BURN_AURYN (U_AurynID) SC_NAME))
+        (require-capability (BURN_AURYN (U_AurynID) SC_NAME amount))
         (DPTF.C_BurnDPTF (U_AurynID) SC_NAME amount)
     )
     ;;
@@ -1586,7 +1603,7 @@
     ;;
     (defun X_BurnEliteAuryn (amount:decimal)
         @doc "Burns Elite-Auryn"
-        (require-capability (BURN_ELITE-AURYN (U_EliteAurynID) SC_NAME))
+        (require-capability (BURN_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
         (DPTF.C_BurnDPTF (U_EliteAurynID) SC_NAME amount)
     )
     ;;
@@ -1594,7 +1611,7 @@
     ;;
     (defun X_MintOuro (amount:decimal)
         @doc "Mints Ouroboros"
-        (require-capability (MINT_OUROBOROS (U_OuroborosID) SC_NAME))
+        (require-capability (MINT_OUROBOROS (U_OuroborosID) SC_NAME amount))
         (DPTF.C_MintDPTF (U_OuroborosID) SC_NAME amount)
     )
     ;;
@@ -1602,7 +1619,7 @@
     ;;
     (defun X_MintAuryn (amount:decimal)
         @doc "Mints Auryn"
-        (require-capability (MINT_AURYN (U_AurynID) SC_NAME))
+        (require-capability (MINT_AURYN (U_AurynID) SC_NAME amount))
         (DPTF.C_MintDPTF (U_AurynID) SC_NAME amount)
     )
     ;;
@@ -1610,7 +1627,7 @@
     ;;
     (defun X_MintEliteAuryn (amount:decimal)
         @doc "Mints Elite-Auryn"
-        (require-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME))
+        (require-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
         (DPTF.C_MintDPTF (U_EliteAurynID) SC_NAME amount)
     )
     ;;
