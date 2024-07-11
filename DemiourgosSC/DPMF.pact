@@ -166,7 +166,7 @@
     ;;      TRANSFER_DPMF                           Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier                ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-
+    ;;
     ;;======DPMF-PROPERTIES-TABLE-MANAGEMENT========
     (defcap DPMF_OWNER (identifier:string)
         @doc "Enforces DPMF Token Ownership"
@@ -665,11 +665,11 @@
     ;;      C_SetAddQuantityRole                    Sets |role-nft-add-quantity| to true for MetaFungible <identifier> and DPMF Account <account>       ;;
     ;;      C_SetBurnRole                           Sets |role-nft-burn| to true for MetaFungible <identifier> and DPMF Account <account>               ;;
     ;;      C_SetTransferRole                       Sets |role-transfer| to true for MetaFungible <identifier> and DPMF Account <account>               ;;
-    ;;==================UNSET========================                                                                                                   ;;
+    ;;==================UNSET=======================                                                                                                    ;;
     ;;      C_UnsetAddQuantityRole                  Sets |role-nft-add-quantity| to false for MetaFungible <identifier> and DPMF Account <account>      ;;
     ;;      C_UnsetBurnRole                         Sets |role-nft-burn| to false for MetaFungible <identifier> and DPMF Account <account>              ;;
     ;;      C_UnsetTransferRole                     Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account>              ;;
-    ;;==================CREATE=======================                                                                                                   ;;
+    ;;==================CREATE======================                                                                                                    ;;
     ;;      C_IssueMetaFungible                     Issues a new MetaFungible                                                                           ;;
     ;;      C_DeployMetaFungibleAccount             Creates a new DPMF Account for Metafungible <identifier> and Account <account>                      ;;
     ;;      C_Mint                                  Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account>     ;;
@@ -704,8 +704,11 @@
     ;;
     ;;      UTILITY FUNCTIONS
     ;;
+    ;;==================ACCOUNT-INFO================ 
+    ;;
     ;;      U_GetAccountMetaFungibles 
     ;;
+    ;;      
     (defun U_GetAccountMetaFungibles:[string] (account:string)
         @doc "Returns a List of Metafungible Identifiers held by DPMF Accounts <account>"
         (DPTS.U_ValidateAccount account)
@@ -925,6 +928,8 @@
         (at "guard" (read DPMF-BalancesTable (concat [identifier BAR account]) ["guard"]))
     )
     ;;
+    ;;==================MF-INFO===================== 
+    ;;
     ;;      U_GetMetaFungibleSupply 
     ;;
     (defun U_GetMetaFungibleSupply:decimal (identifier:string)
@@ -961,6 +966,8 @@
 
         (at "create-role-account" (read DPMF-PropertiesTable identifier ["create-role-account"]))
     )
+    ;;
+    ;;==================VALIDATIONS=================
     ;;
     ;;      U_ValidateMetaFungibleAmount
     ;;
@@ -1086,15 +1093,18 @@
         {"nonce" : nonce, "balance" : balance, "meta-data" : meta-data}
     )
     ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      ADMINSTRATION FUNCTIONS
-    ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS 
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      ADMINISTRATION FUNCTIONS                                                                                                                    ;;
+    ;;                                                                                                                                                  ;;
+    ;;      NO ADMINISTRATOR FUNCTIONS                                                                                                                  ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;
     ;;      CLIENT FUNCTIONS
+    ;;
+    ;;
+    ;;==================CONTROL=====================
     ;;
     ;;      C_Control
     ;;
@@ -1166,6 +1176,8 @@
         )
     )
     ;;
+    ;;==================SET========================= 
+    ;;
     ;;      C_MoveCreateRole
     ;;
     (defun C_MoveCreateRole (identifier:string sender:string receiver:string receiver-guard:guard)
@@ -1234,7 +1246,8 @@
             )
         )
     )
-
+    ;;
+    ;;==================UNSET=======================
     ;;
     ;;      C_UnsetAddQuantityRole
     ;;
@@ -1276,6 +1289,9 @@
             )
         )
     )
+    ;;
+    ;;==================CREATE====================== 
+    ;;
     ;;      C_IssueMetaFungible
     ;;
     (defun C_IssueMetaFungible:string 
@@ -1440,6 +1456,8 @@
         )
     )
     ;;
+    ;;==================DESTROY=====================
+    ;;
     ;;      C_Burn
     ;;
     (defun C_Burn (identifier:string nonce:integer account:string amount:decimal)
@@ -1468,6 +1486,8 @@
             )
         )
     )
+    ;;
+    ;;==================TRANSFER====================
     ;;
     ;;      C_TransferMetaFungible
     ;;
@@ -1505,12 +1525,12 @@
             )
         )
     )
-
     ;;
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      AUXILIARY FUNCTIONS
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================TRANSFER====================
     ;;
     ;;      X_MethodicTransferMetaFungible 
     ;;
@@ -1555,6 +1575,8 @@
             (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
         )
     )
+    ;;
+    ;;==================CREDIT|DEBIT================ 
     ;;
     ;;      X_Create
     ;;
@@ -1807,6 +1829,8 @@
             (map (lambda (x:object) (X_DebitPaired identifier account x)) nonce-balance-obj-lst)
         )
     )
+    ;;
+    ;;==================UPDATE======================
     ;;
     ;;      X_UpdateSupply
     ;;
