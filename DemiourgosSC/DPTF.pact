@@ -78,65 +78,71 @@
     ;;
     ;;      BASIC
     ;;
-    ;;      DPTF_OWNER                      Enforces DPTF Token Ownership
-    ;;      DPTF_ORGIN_VIRGIN               Enforces Origin Mint hasn't been executed
-    ;;      DPTF_CAN-UPGRADE_ON             Enforces DPTF Token upgrade-ability
-    ;;      DPTF_CAN-ADD-SPECIAL-ROLE_ON    Enforces Token Property as true
-    ;;      DPTF_CAN-FREEZE_ON              Enforces Token Property as true
-    ;;      DPTF_CAN-WIPE_ON                Enforces Token Property as true
-    ;;      DPTF_CAN-PAUSE_ON               Enforces Token Property as true
-    ;;      DPTF_IS-PAUSED_ON               Enforces that the DPTF Token is paused
-    ;;      DPTF_IS-PAUSED_OF               Enforces that the DPTF Token is not paused
-    ;;      UPDATE_DPTF_SUPPLY              Capability required to update DPTF Supply
-    ;;
-    ;;      DPTF_ACCOUNT_OWNER              Enforces DPTF Account Ownership
-    ;;      DPTF_ACCOUNT_BURN_ON            Enforces DPTF Account has burn role on
-    ;;      DPTF_ACCOUNT_BURN_OFF           Enforces DPTF Account has burn role off
-    ;;      DPTF_ACCOUNT_MINT_ON            Enforces DPTF Account has mint role on
-    ;;      DPTF_ACCOUNT_MINT_OFF           Enforces DPTF Account has mint role off
-    ;;      DPTF_ACCOUNT_TRANSFER_ON        Enforces DPTF Account has transfer role on
-    ;;      DPTF_ACCOUNT_TRANSFER_OFF       Enforces DPTF Account has transfer role off
-    ;;      DPTF_ACCOUNT_TRANSFER_DEFAULT   Transfer role capabilty required for uncreated receivers
-    ;;      DPTF_ACCOUNT_FREEZE_ON          Enforces DPTF Account is frozen
-    ;;      DPTF_ACCOUNT_FREEZE_OFF         Enforces DPTF Account is not frozen
+    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT======== 
+    ;;      DPTF_OWNER                              Enforces DPTF Token Ownership
+    ;;      DPTF_CAN-UPGRADE_ON                     Enforces DPTF Token upgrade-ability
+    ;;      DPTF_CAN-ADD-SPECIAL-ROLE_ON            Enforces Token Property as true
+    ;;      DPTF_CAN-FREEZE_ON                      Enforces Token Property as true
+    ;;      DPTF_CAN-WIPE_ON                        Enforces Token Property as true
+    ;;      DPTF_CAN-PAUSE_ON                       Enforces Token Property as true
+    ;;      DPTF_IS-PAUSED_ON                       Enforces that the DPTF Token is paused
+    ;;      DPTF_IS-PAUSED_OF                       Enforces that the DPTF Token is not paused
+    ;;      UPDATE_DPTF_SUPPLY                      Capability required to update DPTF Supply
+    ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
+    ;;      DPTF_ACCOUNT_OWNER                      Enforces DPTF Account Ownership
+    ;;      DPTF_ACCOUNT_BURN_ON                    Enforces DPTF Account has burn role on
+    ;;      DPTF_ACCOUNT_BURN_OFF                   Enforces DPTF Account has burn role off
+    ;;      DPTF_ACCOUNT_MINT_ON                    Enforces DPTF Account has mint role on
+    ;;      DPTF_ACCOUNT_MINT_OFF                   Enforces DPTF Account has mint role off
+    ;;      DPTF_ACCOUNT_TRANSFER_ON                Enforces DPTF Account has transfer role on
+    ;;      DPTF_ACCOUNT_TRANSFER_OFF               Enforces DPTF Account has transfer role off
+    ;;      DPTF_ACCOUNT_TRANSFER_DEFAULT           Transfer role capabilty required for uncreated receivers
+    ;;      DPTF_ACCOUNT_FREEZE_ON                  Enforces DPTF Account is frozen
+    ;;      DPTF_ACCOUNT_FREEZE_OFF                 Enforces DPTF Account is not frozen
+    ;;      DPTF_ORGIN_VIRGIN                       Enforces Origin Mint hasn't been executed
     ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
     ;;      COMPOSED
     ;;
-    ;;      DPTF_CONTROL                    Capability required for managing DPTF Properties
-    ;;      DPTF_PAUSE                      Capability required to Pause a DPTF
-    ;;      DPTF_UNPAUSE                    Capability required to Unpause a DPTF
-    ;;      DPTF_FREEZE_ACCOUNT             Capability required to Freeze a DPTF Account
-    ;;      DPTF_UNFREEZE_ACCOUNT           Capability required to Unfreeze a DPTF Account
-    ;;      DPTF_SET_BURN-ROLE              Capability required to Set Burn Role for DPTF Account
-    ;;      DPTF_UNSET_BURN-ROLE            Capability required to Unset Burn Role for a DPTF Account
-    ;;      DPTF_SET_TRANSFER-ROLE          Capability required to Set Transfer Role for DPTF Account
-    ;;      DPTF_UNSET_TRANSFER-ROLE        Capability required to Unset Transfer Role for a DPTF Account
-    ;;      DPTF_MINT_ORIGIN                Capability required to mint the Origin DPTF Mint Supply
-    ;;      DPTF_MINT                       Capability required to mint a DPTF Token locally
-    ;;      DPTF_BURN                       Capability required to burn a DPTF Token locally
-    ;;      DPTF_WIPE                       Capability required to Wipe a DPTF Token Balance from a DPTF account
-    ;;
-    ;;      CREDIT_DPTF                     Capability to perform crediting operations with DPTF Tokens
-    ;;      DEBIT_DPTF                      Capability to perform debiting operations on Normal DPTS Account types with DPTF Tokens
-    ;;      DEBIT_DPTF_SC                   Capability to perform debiting operations on Smart(Contract) DPTS Account types with DPTF Tokens
-    ;;      TRANSFER_DPTF                   Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier   
+    ;;==================CONTROL===================== 
+    ;;      DPTF_CONTROL                            Capability required for managing DPTF Properties
+    ;;      DPTF_PAUSE                              Capability required to Pause a DPTF
+    ;;      DPTF_UNPAUSE                            Capability required to Unpause a DPTF
+    ;;      DPTF_FREEZE_ACCOUNT                     Capability required to Freeze a DPTF Account
+    ;;      DPTF_UNFREEZE_ACCOUNT                   Capability required to Unfreeze a DPTF Account
+    ;;==================SET========================= 
+    ;;      DPTF_SET_BURN-ROLE                      Capability required to Set Burn Role for DPTF Account
+    ;;      DPTF_SET_MINT-ROLE                      Capability required to Set Mint Role for DPTF Account
+    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to Set Transfer Role for DPTF Account
+    ;;==================UNSET=======================
+    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to Unset Burn Role for a DPTF Account
+    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to Unset Mint Role for a DPTF Account
+    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to Unset Transfer Role for a DPTF Account
+    ;;==================CREATE======================
+    ;;      DPTF_MINT_ORIGIN                        Capability required to mint the Origin DPTF Mint Supply
+    ;;      DPTF_MINT                               Capability required to mint a DPTF Token
+    ;;      DPTF_MINT_SMART                         Capability required to mint a DPTF Token by a Smart DPTS Account
+    ;;      DPTF_MINT_STANDARD                      Capability required to mint a DPTF Token by a Standard DPTS Account 
+    ;;==================DESTROY=====================
+    ;;      DPTF_BURN                               Capability required to burn a DPTF Token
+    ;;      DPTF_BURN_SMART                         Capability required to burn a DPTF Token by a Smart DPTS Account
+    ;;      DPTF_BURN_STANDARD                      Capability required to burn a DPTF Token by a Standard DPTS Account 
+    ;;      DPTF_WIPE                               Capability required to Wipe a DPTF Token Balance from a DPTF account
+    ;;=================CORE========================= 
+    ;;      CREDIT_DPTF                             Capability to perform crediting operations with DPTF Tokens
+    ;;      DEBIT_DPTF                              Capability to perform debiting operations on Normal DPTS Account types with DPTF Tokens
+    ;;      DEBIT_DPTF_SC                           Capability to perform debiting operations on Smart(Contract) DPTS Account types with DPTF Tokens
+    ;;      TRANSFER_DPTF                           Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier   
     ;;
     ;;========================================================================================================
-    ;;DPTF Properties Enforcements
+    ;;
+    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT======== 
     (defcap DPTF_OWNER (identifier:string)
         @doc "Enforces DPTF Token Ownership"
         (with-read DPTF-PropertiesTable identifier
             { "owner" := owg }
             (enforce-guard owg)
-        )
-    )
-    (defcap DPTF_ORIGIN_VIRGIN (identifier:string)
-        @doc "Enforces Origin Mint hasn't been executed"
-        (with-read DPTF-PropertiesTable identifier
-            { "origin-mint" := om, "origin-mint-amount" := oma}
-            (enforce (and (= om false)(= oma 0.0)) (format "Origin Mint for DPTF {} cannot be executed any more !" [identifier]))
         )
     )
     (defcap DPTF_CAN-UPGRADE_ON (identifier:string)
@@ -190,9 +196,9 @@
     )
     (defcap UPDATE_DPTF_SUPPLY (identifier:string amount:decimal) 
         @doc "Capability required to update DPTF Supply"
-        (U_ValidateDPTFAmount identifier amount)
+        (U_ValidateTrueFungibleAmount identifier amount)
     )
-    ;;DPTF Account Properties Enforcements
+    ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
     (defcap DPTF_ACCOUNT_OWNER (identifier:string account:string)
         @doc "Enforces DPTF Account Ownership"
         (with-read DPTF-BalancesTable (concat [identifier BAR account])
@@ -262,34 +268,42 @@
             (enforce (= f false) (format "DPTF {} Account is frozen" [account]))
         )
     )
+    (defcap DPTF_ORIGIN_VIRGIN (identifier:string)
+        @doc "Enforces Origin Mint hasn't been executed"
+        (with-read DPTF-PropertiesTable identifier
+            { "origin-mint" := om, "origin-mint-amount" := oma}
+            (enforce (and (= om false)(= oma 0.0)) (format "Origin Mint for DPTF {} cannot be executed any more !" [identifier]))
+        )
+    )
     ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
     ;;      COMPOSED
     ;;
+    ;;==================CONTROL===================== 
     (defcap DPTF_CONTROL (identifier:string)
         @doc "Capability required for managing DPTF Properties"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
     )
     (defcap DPTF_PAUSE (identifier:string)
         @doc "Capability required to Pause a DPTF Token"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
     )
     (defcap DPTF_UNPAUSE (identifier:string)
         @doc "Capability required to Unpause a DPTF Token"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_ON identifier))
     )
     (defcap DPTF_FREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Freeze a DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
@@ -297,87 +311,63 @@
     )
     (defcap DPTF_UNFREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Unfreeze a DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
     )
+    ;;==================SET=========================
     (defcap DPTF_SET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Set Burn Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
     )
-    (defcap DPTF_UNSET_BURN-ROLE (identifier:string account:string)
-        @doc "Capability required to Unset Burn Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-    )
     (defcap DPTF_SET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Set Mint Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
     )
-    (defcap DPTF_UNSET_MINT-ROLE (identifier:string account:string)
-        @doc "Capability required to Unset Mint Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-    )
     (defcap DPTF_SET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Set Transfer Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
     )
+    ;;==================UNSET=======================
+    (defcap DPTF_UNSET_BURN-ROLE (identifier:string account:string)
+        @doc "Capability required to Unset Burn Role for DPTF Account"
+        (U_ValidateTrueFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (compose-capability (DPTF_OWNER identifier))
+        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+    )
+    (defcap DPTF_UNSET_MINT-ROLE (identifier:string account:string)
+        @doc "Capability required to Unset Mint Role for DPTF Account"
+        (U_ValidateTrueFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (compose-capability (DPTF_OWNER identifier))
+        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+    )
     (defcap DPTF_UNSET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Transfer Role for DPTF Account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
     )
-
-    (defcap DPTF_BURN_SMART (identifier:string account:string amount:decimal)
-        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-        (compose-capability (DEBIT_DPTF_SC account))
-        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
-    )
-    (defcap DPTF_BURN_STANDARD (identifier:string account:string amount:decimal)
-        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
-        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-        (compose-capability (DEBIT_DPTF identifier account))
-        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
-    )
-    (defcap DPTF_BURN (identifier:string account:string amount:decimal)
-        @doc "Capability required to burn a DPTF Token locally \
-            \ Smart-Contract Account type doesnt require their guard|key"
-        (U_ValidateDPTFAmount identifier amount)
-        (DPTS.U_ValidateAccount account)
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                (compose-capability (DPTF_BURN_SMART identifier account amount))
-                (compose-capability (DPTF_BURN_STANDARD identifier account amount))
-            )
-        )
-    )
+    ;;==================CREATE======================
     (defcap DPTF_MINT_ORIGIN (identifier:string account:string amount:decimal)
         @doc "Capability required to mint the Origin DPTF Mint Supply"
-        (U_ValidateDPTFAmount identifier amount)
+        (U_ValidateTrueFungibleAmount identifier amount)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
@@ -385,22 +375,10 @@
         (compose-capability (CREDIT_DPTF account))
         (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
     )
-
-    (defcap DPTF_MINT_SMART (identifier:string account:string amount:decimal)
-        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-        (compose-capability (CREDIT_DPTF account))
-        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
-    )
-    (defcap DPTF_MINT_STANDARD (identifier:string account:string amount:decimal)
-        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
-        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-        (compose-capability (CREDIT_DPTF account))
-        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
-    )
     (defcap DPTF_MINT (identifier:string account:string amount:decimal)
         @doc "Capability required to mint a DPTF Token locally \
             \ Smart-Contract Account type doesnt require their guard|key"
-        (U_ValidateDPTFAmount identifier amount)
+        (U_ValidateTrueFungibleAmount identifier amount)
         (DPTS.U_ValidateAccount account)
         (let
             (
@@ -412,16 +390,54 @@
             )
         )
     )
+    (defcap DPTF_MINT_SMART (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+        (compose-capability (CREDIT_DPTF account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_MINT_STANDARD (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
+        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+        (compose-capability (CREDIT_DPTF account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    ;;==================DESTROY=====================
+    (defcap DPTF_BURN (identifier:string account:string amount:decimal)
+        @doc "Capability required to burn a DPTF Token locally \
+            \ Smart-Contract Account type doesnt require their guard|key"
+        (U_ValidateTrueFungibleAmount identifier amount)
+        (DPTS.U_ValidateAccount account)
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                (compose-capability (DPTF_BURN_SMART identifier account amount))
+                (compose-capability (DPTF_BURN_STANDARD identifier account amount))
+            )
+        )
+    )
+    (defcap DPTF_BURN_SMART (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+        (compose-capability (DEBIT_DPTF_SC account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
+    (defcap DPTF_BURN_STANDARD (identifier:string account:string amount:decimal)
+        (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
+        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+        (compose-capability (DEBIT_DPTF identifier account))
+        (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
+    )
     (defcap DPTF_WIPE (identifier:string account:string amount:decimal)
         @doc "Capability required to Wipe a DPTF Token Balance from a DPTF account"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-WIPE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
         (compose-capability (UPDATE_DPTF_SUPPLY identifier amount))
     )
-    ;;Core Capabilities
+    ;;=================CORE=========================
     (defcap CREDIT_DPTF (account:string)
         @doc "Capability to perform crediting operations with DPTF Tokens"
         true
@@ -448,14 +464,13 @@
         ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
         ;;(enforce (!= account "") "Invalid sender account")
     )
-
     (defcap TRANSFER_DPTF (identifier:string sender:string receiver:string amount:decimal method:bool)
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier"
 
         ;;These 3 Validation make obsolete every other similar Validation in other functions
         ;;Becuase them other functions cant be called on their own, but with transfer functions
         ;;That require this capability, which brings us to these Validations
-        (U_ValidateDPTFAmount identifier amount)
+        (U_ValidateTrueFungibleAmount identifier amount)
         (DPTS.U_ValidateSenderReceiver sender receiver)
 
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
@@ -486,100 +501,107 @@
         (compose-capability (CREDIT_DPTF receiver))
     )
     ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      COMPOSED
-    ;;
-    ;;=====================================================================================================
-    ;;
-    ;;      PRIMARY Functions               meant to be used as standalone functions
-    ;;
-    ;;
-    ;;      0)UTILITY                       can be called by anyone without any key|guard requirement
-    ;;                                      they are free functions             
-    ;;      1)ADMINISTRATOR                 can only be called by the SC ownership key|guard
-    ;;                                      they are administration functions
-    ;;      2)CLIENT                        can be called by any "foreign" DPTF account (SC or non-SC account)
-    ;;                                      they are client functions.
-    ;;
-    ;;-----------------------------------------------------------------------------------------------------
-    ;;
-    ;;      AUXILIARY Functions             not meant to be used at all as they are part of the Primary Functions
-    ;;      
-    ;;======================================================================================================
-    ;;
-    ;;      Functions Names are prefixed, so that they may be better visualised and understood.
-    ;;
-    ;;      UTILITY                         U_FunctionName
-    ;;      ADMINISTRATION                  A_FunctionName
-    ;;      CLIENT                          C_FunctionName
-    ;;      AUXILIARY                       X_FunctionName
-    ;;
-    ;;======================================================================================================
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
+    ;;                                                                                                                                                  ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone.                                                        ;;
+    ;;                                                  No Key|Guard required.                                                                          ;;
+    ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
+    ;;                                                  Module Key|Guard required.                                                                      ;;
+    ;;      2)CLIENT                                Client Functions: can be called by any DPMF Account.                                                ;;
+    ;;                                                  Usually Client Key|Guard is required.                                                           ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      SECONDARY Functions                                                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;      3)AUXILIARY                             Auxiliary Functions: cannot be called on their own.                                                 ;;
+    ;;                                                  Are Part of Client Function                                                                     ;;
+    ;;                                                                                                                                                  ;;      
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      Functions Names are prefixed, so that they may be better visualised and understood.                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;      UTILITY                                 U_FunctionName                                                                                      ;;
+    ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
+    ;;      CLIENT                                  C_FunctionName                                                                                      ;;
+    ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      UTILITY FUNCTIONS                                                                                                                           ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================ACCOUNT-INFO================                                                                                                    ;;
+    ;;      U_GetAccountTrueFungibles               Returns a List of Truefungible Identifiers held by DPTF Accounts <account>                          ;;
+    ;;      U_GetAccountTrueFungibleSupply          Returns total Supply for TrueFungible <identifier> held by DPTF Account <account>                   ;;
+    ;;      U_GetAccountTrueFungibleGuard           Returns the Guard of a TrueFungible <identifier> held by DPMF Account <account>                     ;;
+    ;;==================TF-INFO=====================                                                                                                    ;;
+    ;;      U_GetTrueFungibleSupply                 Returns Total existent Supply for TrueFungible <identifier>                                         ;;
+    ;;      U_GetTrueFungibleDecimals               Returns the number of Decimals the TrueFungible <identifier> was created with                       ;;
+    ;;==================VALIDATIONS=================                                                                                                    ;;
+    ;;      U_ValidateTrueFungibleAmount            Enforces the Amount <amount> is positive its decimal size conform for TrueFungible <identifier>     ;;
+    ;;      U_ValidateTrueFungibleIdentifier        Enforces the TrueFungible <identifier> exists                                                       ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      ADMINISTRATION FUNCTIONS                                                                                                                    ;;
+    ;;                                                                                                                                                  ;;
+    ;;      NO ADMINISTRATOR FUNCTIONS                                                                                                                  ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      CLIENT FUNCTIONS                                                                                                                            ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      C_Control                               Controls TrueFungible <identifier> Properties using 7 boolean control triggers                      ;;
+    ;;      C_Pause                                 Pause TrueFungible <identifier>                                                                     ;;
+    ;;      C_Unpause                               Unpause TrueFungible <identifier>                                                                   ;;
+    ;;      C_FreezeAccount                         Freeze TrueFungile <identifier> on DPTF Account <account>                                           ;;
+    ;;      C_UnfreezeAccount                       Unfreeze TrueFungile <identifier> on DPTF Account <account>                                         ;;
+    ;;==================SET=========================                                                                                                    ;;
+    ;;      C_SetBurnRole                           Sets |role-burn| to true for TrueFungible <identifier> and DPTF Account <account>                   ;;
+    ;;      C_SetMintRole                           Sets |role-mint| to true for TrueFungible <identifier> and DPTF Account <account>                   ;;
+    ;;      C_SetTransferRole                       Sets |role-transfer| to true for TrueFungible <identifier> and DPTF Account <account>               ;;
+    ;;==================UNSET=======================                                                                                                    ;;
+    ;;      C_UnsetBurnRole                         Sets |role-burn| to false for TrueFungible <identifier> and DPTF Account <account>                  ;;
+    ;;      C_UnsetMintRole                         Sets |role-mint| to false for TrueFungible <identifier> and DPTF Account <account>                  ;;
+    ;;      C_UnsetTransferRole                     Sets |role-transfer| to false for TrueFungible <identifier> and DPTF Account <account>              ;;
+    ;;==================CREATE======================                                                                                                    ;;
+    ;;      C_IssueTrueFungible                     Issues a new TrueFungible                                                                           ;;
+    ;;      C_DeployTrueFungibleAccount             Creates a new DPTF Account for TrueFungible <identifier> and Account <account>                      ;;
+    ;;      C_MintOrigin                            Mints <amount> <identifier> TrueFungible for DPTF Account <account> as initial mint amount          ;;
+    ;;      C_Mint                                  Mints <amount> <identifier> TrueFungible for DPTF Account <account>                                 ;;
+    ;;==================DESTROY=====================                                                                                                    ;;
+    ;;      C_Burn                                  Burns <amount> <identifier> TrueFungible on DPTF Account <account>                                  ;;
+    ;;      C_Wipe                                  Wipes the whole supply of <identifier> TrueFungible of a frozen DPTF Account <account>              ;;
+    ;;==================TRANSFER====================                                                                                                    ;;
+    ;;      C_TransferTrueFungible                  Transfers <identifier> TrueFungible from <sender> to <receiver> DPMF Account                        ;;
+    ;;      C_TransferTrueFungibleAnew              Same as |C_TransferTrueFungible| but with DPTF Account creation                                     ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================TRANSFER====================                                                                                                    ;;
+    ;;      X_MethodicTransferTrueFungible          Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account               ;;
+    ;;      X_MethodicTransferTrueFungibleAnew      Same as |X_MethodicTransferMetaFungible| but with DPTF Account creation                             ;;
+    ;;==================CREDIT|DEBIT================                                                                                                    ;;
+    ;;      X_Credit                                Auxiliary Function that credits a TrueFungible to a DPTF Account                                    ;;
+    ;;      X_Debit                                 Auxiliary Function that debits a TrueFungible from a DPTF Account                                   ;;
+    ;;==================UPDATE======================                                                                                                    ;;
+    ;;      X_UpdateSupply                          Updates <identifier> TrueFungible supply. Boolean <direction> used for increase|decrease            ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================================================================================================================================================;;
     ;;
     ;;      UTILITY FUNCTIONS
     ;;
-    ;;      U_GetAccountTokens              Returns a list of Identifiers that exist for Account
-    ;;      U_GetDPTFBalance                Returns the DPTF balance for given Token Identifier and Account
-    ;;      U_GetDPTFSupply                 Return DPTF Token Total Supply for given identifier
-    ;;      U_GetDPTFDecimal                Return DPTF Token number of decimals
-    ;;      U_ValidateDPTFAmount            Enforces denomination for a specific DPTF identifier and positivity
-    ;;      U_ValidateDPTFIdentifier        Enforces Identifier existance
+    ;;==================ACCOUNT-INFO================ 
     ;;
-    ;;-------------------------------------------------------------------------------------------------------
+    ;;      U_GetAccountTrueFungibles
     ;;
-    ;;      ADMINISTRATOR FUNCTIONS
-    ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      CLIENT FUNCTIONS
-    ;;
-    ;;      C_IssueDPTF                     Issues a new DPTF Token with specified properties
-    ;;      C_DeployDPTFAccount             Creates a new DPTF Account for a given Token Identifier
-    ;;      C_ControlDPTF                   Controls DPTF Token Properties via boolean triggers
-    ;;      C_MintDPTFOrigin                Mints DPTF Origin Amount, the amount that is minted with creation
-    ;;
-    ;;      C_BurnDPTF                      Burns DPTF Tokens locally
-    ;;      C_SetBurnRole                   Sets Burn Role for Token Identifier for account
-    ;;      C_UnsetBurnRole                 Unsets Burn Role for Token Identifier for account
-    ;;
-    ;;      C_MintDPTF                      Mints DPTF Tokens locally
-    ;;      C_SetMintRole                   Sets Mint Role for Token Identifier for account
-    ;;      C_UnsetMintRole                 Unsets Mint Role for Token Identifier for account
-    ;;
-    ;;      C_SetTransferRole               Sets Transfer Role for Token Identifier for account
-    ;;      C_UnsetTransferRole             Unsets Transfer Role for Token Identifier for account
-    ;;
-    ;;      C_WipeDPTF                      Wipes DPTF Tokens from a frozen DPTF Account
-    ;;      C_FreezeDPTFAccount             Freezes DPTF Token Identifier on DPTF Account
-    ;;      C_UnfreezeDPTFAccount           Unfreezes DPTF Token Identifier on DPTF Account
-    ;;
-    ;;      C_PauseDPTF                     Pauses DPTF Token Identifier
-    ;;      C_UnpauseDPTF                   Unpauses DPTF Token Identifier
-    ;;
-    ;;      C_TransferDPTF                  Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account, failing if target DPTF account doesnt exist
-    ;;      C_TransferDPTFAnew              Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account, creating new target DPTF Account if it doesnt exist
-    ;;      C_MethodicTransferDPTF          Methodic Transfer from <sender> DPTF Account to <receiver> DPTF Account, failing if target DPTF account doesnt exist
-    ;;      C_MethodicTransferDPTFAnew      Methodic Transfer from <sender> DPTF Account to <receiver> DPTF Account, creating new target DPTF Account if it doesnt exist
-    ;;
-    ;;--------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      AUXILIARY FUNCTIONS
-    ;;
-    ;;      X_CreditDPTF                    Increases DPTF Token balance for Account <account> for Token <identifier>, creating a target DPTF account if it doesnt exist
-    ;;      X_DebitDPTF                     Decreases DPTF Token balance for DPTF Account <account> for Token <identifier>
-    ;;      X_UpdateDPTFSupply              Updates DPTF Token Supply
-    ;;
-    ;;========================================================================================================
-    ;;
-    ;;      UTILITY FUNCTIONS
-    ;;
-    ;;      U_GetAccountTokens 
-    ;;
-    (defun U_GetAccountDPTFTokens:[string] (account:string)
-        @doc "Returns a list of Identifiers that exist for Account"
+    (defun U_GetAccountTrueFungibles:[string] (account:string)
+        @doc "Returns a List of Truefungible Identifiers held by DPTF Accounts <account>"
         (DPTS.U_ValidateAccount account)
 
         (let*
@@ -592,11 +614,11 @@
         )
     )
     ;;
-    ;;      U_GetDPTFBalance
+    ;;      U_GetAccountTrueFungibleSupply
     ;;
-    (defun U_GetDPTFBalance:decimal (identifier:string account:string)
-        @doc "Returns the DPTF balance for given Token Identifier and Account"
-        (U_ValidateDPTFIdentifier identifier)
+    (defun U_GetAccountTrueFungibleSupply:decimal (identifier:string account:string)
+        @doc "Returns total Supply for TrueFungible <identifier> held by DPTF Account <account>"
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
@@ -606,40 +628,44 @@
         )
     )
     ;;
-    ;;      U_GetDPTFSupply 
+    ;;      U_GetAccountTrueFungibleGuard
     ;;
-    (defun U_GetDPTFSupply:decimal (identifier:string)
-        @doc "Return <identifier> DPTF Token Total Supply"
-        (U_ValidateDPTFIdentifier identifier)
-
-        (at "supply" (read DPTF-PropertiesTable identifier ["supply"]))
-    )
-    ;;
-    ;;      U_GetDPTFDecimals
-    ;;
-    (defun U_GetDPTFDecimals:integer (identifier:string)
+    (defun U_GetAccountTrueFungibleGuard:guard (identifier:string account:string)
         @doc "Return <identifier> DPTF Token Decimal size"
-        (U_ValidateDPTFIdentifier identifier)
-
-        (at "decimals" (read DPTF-PropertiesTable identifier ["decimals"]))
-    )
-    ;;
-    ;;      U_GetDPTFAccountGuard
-    ;;
-    (defun U_GetDPTFAccountGuard:guard (identifier:string account:string)
-        @doc "Return <identifier> DPTF Token Decimal size"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (at "guard" (read DPTF-BalancesTable (concat [identifier BAR account]) ["guard"]))
     )
     ;;
-    ;;      U_ValidateDPTFAmount
+    ;;==================TF-INFO===================== 
     ;;
-    (defun U_ValidateDPTFAmount (identifier:string amount:decimal)
+    ;;      U_GetTrueFungibleSupply 
+    ;;
+    (defun U_GetTrueFungibleSupply:decimal (identifier:string)
+        @doc "Returns Total existent Supply for TrueFungible <identifier> "
+        (U_ValidateTrueFungibleIdentifier identifier)
+
+        (at "supply" (read DPTF-PropertiesTable identifier ["supply"]))
+    )
+    ;;
+    ;;      U_GetTrueFungibleDecimals
+    ;;
+    (defun U_GetTrueFungibleDecimals:integer (identifier:string)
+        @doc "Return <identifier> DPTF Token Decimal size"
+        (U_ValidateTrueFungibleIdentifier identifier)
+
+        (at "decimals" (read DPTF-PropertiesTable identifier ["decimals"]))
+    )
+    ;;
+    ;;==================VALIDATIONS=================
+    ;;
+    ;;      U_ValidateTrueFungibleAmount
+    ;;
+    (defun U_ValidateTrueFungibleAmount (identifier:string amount:decimal)
         @doc "Enforce the minimum denomination for a specific DPTF identifier \
         \ and ensure the amount is greater than zero"
-        (U_ValidateDPTFIdentifier identifier)
+        (U_ValidateTrueFungibleIdentifier identifier)
 
         (with-read DPTF-PropertiesTable identifier
             { "decimals" := d }
@@ -654,9 +680,9 @@
         )
     )
     ;;
-    ;;      U_ValidateIdentifier
+    ;;      U_ValidateTrueFungibleIdentifier
     ;;
-    (defun U_ValidateDPTFIdentifier (identifier:string)
+    (defun U_ValidateTrueFungibleIdentifier (identifier:string)
         @doc "Enforces Identifier existance"
         (with-default-read DPTF-PropertiesTable identifier
             { "supply" : -1.0 }
@@ -668,17 +694,175 @@
         )
     )
     ;;
-    ;;-------------------------------------------------------------------------------------------------------
-    ;;
-    ;;      ADMINSTRATION FUNCTIONS
-    ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS 
-    ;;
-    ;;-------------------------------------------------------------------------------------------------------
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      ADMINISTRATION FUNCTIONS                                                                                                                    ;;
+    ;;                                                                                                                                                  ;;
+    ;;      NO ADMINISTRATOR FUNCTIONS                                                                                                                  ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;
     ;;      CLIENT FUNCTIONS
     ;;
-    ;;      C_IssueDPTF
+    ;;
+    ;;==================CONTROL=====================
+    ;;
+    ;;      C_Control
+    ;;
+    (defun C_Control 
+        (
+            identifier:string
+            can-change-owner:bool 
+            can-upgrade:bool 
+            can-add-special-role:bool 
+            can-freeze:bool 
+            can-wipe:bool 
+            can-pause:bool
+        )
+        @doc "Controls TrueFungible <identifier> Properties using 7 boolean control triggers \
+            \ Setting the <can-upgrade> property to false disables all future Control of Properties"
+
+        (with-capability (DPTF_CONTROL identifier)
+            (update DPTF-PropertiesTable identifier
+                {"can-change-owner"                 : can-change-owner
+                ,"can-upgrade"                      : can-upgrade
+                ,"can-add-special-role"             : can-add-special-role
+                ,"can-freeze"                       : can-freeze
+                ,"can-wipe"                         : can-wipe
+                ,"can-pause"                        : can-pause}
+            )
+        ) 
+    )
+    ;;
+    ;;      C_Pause
+    ;;
+    (defun C_Pause (identifier:string)
+        @doc "Pause TrueFungible <identifier>"
+
+        (with-capability (DPTF_PAUSE identifier)
+            (update DPTF-PropertiesTable identifier { "is-paused" : true})
+        )
+    )
+    ;;
+    ;;      C_Unpause
+    ;;
+    (defun C_Unpause (identifier:string)
+        @doc "Unpause TrueFungible <identifier>"
+
+        (with-capability (DPTF_UNPAUSE identifier)
+            (update DPTF-PropertiesTable identifier { "is-paused" : false})
+        )
+    )
+    ;;
+    ;;      C_FreezeAccount
+    ;;
+    (defun C_FreezeAccount (identifier:string account:string)
+        @doc "Freeze TrueFungile <identifier> on DPTF Account <account>"
+
+        (with-capability (DPTF_FREEZE_ACCOUNT identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
+        )
+    )
+    ;;
+    ;;      C_UnfreezeAccount 
+    ;;
+    (defun C_Unfreezeccount (identifier:string account:string)
+        @doc "Unfreeze TrueFungile <identifier> on DPTF Account <account>"
+
+        (with-capability (DPTF_UNFREEZE_ACCOUNT identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : false})
+        )
+    )
+    ;;
+    ;;==================SET========================= 
+    ;;
+    ;;      C_SetBurnRole
+    ;;
+    (defun C_SetBurnRole (identifier:string account:string)
+        @doc "Sets |role-burn| to true for TrueFungible <identifier> and DPTF Account <account> \
+            \ Afterwards Account <account> can burn existing TrueFungible"
+
+        (with-capability (DPTF_SET_BURN-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-burn" : true}
+            )
+        )
+    )
+    ;;
+    ;;      C_SetMintRole
+    ;;
+    (defun C_SetMintRole (identifier:string account:string)
+        @doc "Sets |role-mint| to true for TrueFungible <identifier> and DPTF Account <account> \
+            \ Afterwards Account <account> can mint TrueFungible"
+
+        (with-capability (DPTF_SET_MINT-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-mint" : true}
+            )
+        )
+    )
+    ;;
+    ;;      C_SetTransferRole
+    ;;
+    (defun C_SetTransferRole (identifier:string account:string)
+        @doc "Sets |role-transfer| to true for TrueFungible <identifier> and DPTF Account <account> \
+            \ If at least one DPTF Account has the |role-transfer|set to true, then all normal transfer are restricted \
+            \ Transfer will only work towards DPTF Accounts with |role-trasnfer| true, \
+            \ while these DPTF Accounts can transfer the TrueFungible unrestricted to any other DPTF Account"
+
+        (with-capability (DPTF_SET_TRANSFER-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-transfer" : true}
+            )
+        )
+    )
+    ;;
+    ;;==================UNSET=======================
+    ;;
+    ;;      C_UnsetBurnRole 
+    ;;
+    (defun C_UnsetBurnRole (identifier:string account:string)
+        @doc "Sets |role-burn| to false for TrueFungible <identifier> and DPTF Account <account> \
+            \ Afterwards Account <account> can no longer burn existing TrueFungible"
+
+        (with-capability (DPTF_UNSET_BURN-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-burn" : false}
+            )
+        )
+    )
+    ;;
+    ;;      C_UnsetMintRole
+    ;;
+    (defun C_UnsetMintRole (identifier:string account:string)
+        @doc "Sets |role-mint| to false for TrueFungible <identifier> and DPTF Account <account> \
+            \ Afterwards Account <account> can no longer mint existing TrueFungible"
+
+        (with-capability (DPTF_UNSET_MINT-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-mint" : false}
+            )
+        )
+    )
+    ;;
+    ;;      C_UnsetTransferRole
+    ;;
+    (defun C_UnsetTransferRole (identifier:string account:string)
+        @doc "Sets |role-transfer| to false for TrueFungible <identifier> and DPTF Account <account> \
+            \ If at least one DPTF Account has the |role-transfer|set to true, then all normal transfer are restricted \
+            \ Transfer will only work towards DPTF Accounts with |role-trasnfer| true, \
+            \ while these DPTF Accounts can transfer the TrueFungible unrestricted to any other DPTF Account"
+
+        (with-capability (DPTF_UNSET_TRANSFER-ROLE identifier account)
+            (update DPTF-BalancesTable (concat [identifier BAR account])
+                {"role-burn" : false}
+            )
+        )
+    )
+    ;;
+    ;;==================CREATE====================== 
+    ;;
+    ;;      C_IssueTrueFungible
     ;;
     (defun C_IssueTrueFungible:string 
         (
@@ -694,13 +878,14 @@
             can-wipe:bool 
             can-pause:bool
         )
-        @doc "Issue a new DPTF Token. This creates an entry into the DPTF-PropertiesTable. \
+        @doc "Issue a new TrueFungible \
+            \ This creates an entry into the DPTF-PropertiesTable \
             \ Such an entry means the DPTF Token has been created. Function outputs as string the Token-Identifier \
             \ Token Identifier is formed from ticker, followed by a dash, \ 
             \ followed by the first 12 characters of the previous block hash to ensure uniqueness. \
             \ \
-            \ Furthermore, The issuer creates a DPTF Account for himself, as the first Account of this DPTF Token \
-            \ By default, New DPTF Account creation also creates a Standard DPTS Account, if it doesnt exist"
+            \ Furthermore, The issuer creates a Standard DPTF Account for himself, as the first Account of this DPTF Token \
+            \ By default, DPTF Account creation also creates a Standard DPTS Account, if it doesnt exist"
         (DPTS.U_ValidateTokenName name)
         ;; Enforce Ticker is part of identifier variable below
         (DPTS.U_ValidateDecimals decimals)
@@ -734,20 +919,21 @@
                 ,"role-transfer-amount" : 0}
             )
             ;;Makes a new DPTF Account for the Token Issuer.
-            (C_DeployDPTFAccount identifier account owner)
+            (C_DeployTrueFungibleAccount identifier account owner)
             ;;Returns the unique Token Identifier
             identifier
         )
     )
     ;;
-    ;;      C_DeployDPTFAccount
+    ;;      C_DeployTrueFungibleAccount
     ;;
-    (defun C_DeployDPTFAccount (identifier:string account:string guard:guard)
-        @doc "Creates a new DPTF Account for a given Token Identifier \
-            \ A DPTS Standard Account is also created, in case it doesnt exist \
-            \ If a DPTS Account exists, it remains as is. \
-            \ Function fails if DPTF Account exists for Token <identifier>"
-        (U_ValidateDPTFIdentifier identifier)
+    (defun C_DeployTrueFungibleAccount (identifier:string account:string guard:guard)
+        @doc "Creates a new DPTF Account for TrueFungible <identifier> and Account <account> \
+            \ If a DPTF Account already exists for <identifier> and <account>, it remains as is \
+            \ \
+            \ A Standard DPTS Account is also created, if one doesnt exist \
+            \ If a DPTS Account exists, its type remains unchanged"
+        (U_ValidateTrueFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (DPTS.U_EnforceReserved account guard)
 
@@ -782,269 +968,138 @@
         )
     )
     ;;
-    ;;      C_ControlDPTF
+    ;;      C_MintOrigin
     ;;
-    (defun C_ControlDPTF 
-        (
-            identifier:string
-            can-change-owner:bool 
-            can-upgrade:bool 
-            can-add-special-role:bool 
-            can-freeze:bool 
-            can-wipe:bool 
-            can-pause:bool
-        )
-        @doc "Manages DPTF Token Properties via boolean triggers \
-            \ Setting the <can-upgrade> property to off(false) \
-            \ disables all future Control of Properties"
-
-        (with-capability (DPTF_CONTROL identifier)
-            (update DPTF-PropertiesTable identifier
-                {"can-change-owner"                 : can-change-owner
-                ,"can-upgrade"                      : can-upgrade
-                ,"can-add-special-role"             : can-add-special-role
-                ,"can-freeze"                       : can-freeze
-                ,"can-wipe"                         : can-wipe
-                ,"can-pause"                        : can-pause}
-            )
-        ) 
-    )
-    ;;
-    ;;      C_MintDPTFOrigin
-    ;;
-    (defun C_MintDPTFOrigin (identifier:string account:string amount:decimal)
-        @doc "Mints DPTF Origin Amount, the amount that is minted with creation"
+    (defun C_MintOrigin (identifier:string account:string amount:decimal)
+        @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account> as initial mint amount"
 
         (with-capability (DPTF_MINT_ORIGIN identifier account amount)
             (with-read DPTF-BalancesTable (concat [identifier BAR account])
                 { "guard" := g }
-                (X_CreditDPTF identifier account g amount)
+                (X_Credit identifier account g amount)
             )
             (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
-            (X_UpdateDPTFSupply identifier amount true)
+            (X_UpdateSupply identifier amount true)
         )
     )
     ;;
-    ;;      C_BurnDPTF
+    ;;      C_Mint
     ;;
-    (defun C_BurnDPTF (identifier:string account:string amount:decimal)
-        @doc "Burns DPTF Tokens locally"
-
-        (with-capability (DPTF_BURN identifier account amount)
-            (X_DebitDPTF identifier account amount false)
-            (X_UpdateDPTFSupply identifier amount false)
-        )
-    )
-    ;;
-    ;;      C_SetBurnRole
-    ;;
-    (defun C_SetBurnRole (identifier:string account:string)
-        @doc "Sets Burn Role for Token Identifier for account \
-            \ Then this account can burn Tokens"
-
-        (with-capability (DPTF_SET_BURN-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-burn" : true}
-            )
-        )
-    )
-    ;;
-    ;;      C_UnsetBurnRole 
-    ;;
-    (defun C_UnsetBurnRole (identifier:string account:string)
-        @doc "Unsets Burn Role for Token Identifier for account \
-            \ Account can no longer burn Tokens"
-
-        (with-capability (DPTF_UNSET_BURN-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-burn" : false}
-            )
-        )
-    )
-    ;;
-    ;;      C_MintDPTF 
-    ;;
-    (defun C_MintDPTF (identifier:string account:string amount:decimal)
-        @doc "Mints DPTF Tokens locally"
+    (defun C_Mint (identifier:string account:string amount:decimal)
+        @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account>"
 
         (with-capability (DPTF_MINT identifier account amount)
             (with-read DPTF-BalancesTable (concat [identifier BAR account])
                 { "guard" := g }
-                (X_CreditDPTF identifier account g amount)
+                (X_Credit identifier account g amount)
             )
-            (X_UpdateDPTFSupply identifier amount true)
+            (X_UpdateSupply identifier amount true)
         )
     )
     ;;
-    ;;      C_SetMintRole
+    ;;==================DESTROY=====================
     ;;
-    (defun C_SetMintRole (identifier:string account:string)
-        @doc "Sets Mint Role for Token <identifier> for Account <account> \
-            \ Afterwards Account <account> can mint new DPTF Tokens"
+    ;;      C_Burn
+    ;;
+    (defun C_Burn (identifier:string account:string amount:decimal)
+        @doc "Burns <amount> <identifier> TrueFungible on DPTF Account <account>"
 
-        (with-capability (DPTF_SET_MINT-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-mint" : true}
-            )
+        (with-capability (DPTF_BURN identifier account amount)
+            (X_Debit identifier account amount false)
+            (X_UpdateSupply identifier amount false)
         )
     )
     ;;
-    ;;      C_UnsetMintRole
+    ;;      C_Wipe
     ;;
-    (defun C_UnsetMintRole (identifier:string account:string)
-        @doc "Unsets Mint Role for Token <identifier> for Account <account> \
-            \ Afterwards Account <account> can no longer mint DPTF Tokens"
-
-        (with-capability (DPTF_UNSET_MINT-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-mint" : false}
-            )
-        )
-    )
-    ;;
-    ;;      C_SetTransferRole
-    ;;
-    (defun C_SetTransferRole (identifier:string account:string)
-        @doc "Sets Transfer Role for Token <identifier> for Account <account> \
-            \ DPTF Tokens can only be transfered to Account <account>, \
-            \ while it can transfer to any other Account"
-
-        (with-capability (DPTF_SET_TRANSFER-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-transfer" : true}
-            )
-        )
-    )
-    ;;
-    ;;      C_UnsetTransferRole
-    ;;
-    (defun C_UnsetTransferRole (identifier:string account:string)
-        @doc "Unsets Transfer Role for Token <identifier> for <account>"
-
-        (with-capability (DPTF_UNSET_TRANSFER-ROLE identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account])
-                {"role-burn" : false}
-            )
-        )
-    )
-    ;;
-    ;;      C_WipeDPTF
-    ;;
-    (defun C_WipeDPTF (identifier:string account:string)
-        @doc "Wipes DPTF Tokens from a frozen Account"
+    (defun C_Wipe (identifier:string account:string)
+        @doc "Wipes the whole supply of <identifier> TrueFungible of a frozen DPTF Account <account>"
 
         (let
             (
-                (amount:decimal (U_GetDPTFBalance identifier account))
+                (amount:decimal (U_GetAccountTrueFungibleSupply identifier account))
             )
             (with-capability (DPTF_WIPE identifier account amount)
-                (X_DebitDPTF identifier account amount true)
-                (X_UpdateDPTFSupply identifier amount false)
+                (X_Debit identifier account amount true)
+                (X_UpdateSupply identifier amount false)
             )
         )
     )
     ;;
-    ;;      C_FreezeDPTFAccount
+    ;;==================TRANSFER====================
     ;;
-    (defun C_FreezeDPTFAccount (identifier:string account:string)
-        @doc "Freezes DPTF Token <identifier> for Account <account>"
-
-        (with-capability (DPTF_FREEZE_ACCOUNT identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
-        )
-    )
+    ;;      C_TransferTrueFungible
     ;;
-    ;;      C_UnfreezeDPTFAccount 
-    ;;
-    (defun C_UnfreezeDPTFAccount (identifier:string account:string)
-        @doc "Unfreezes DPTF Token <identifier> for Account <account>"
-
-        (with-capability (DPTF_UNFREEZE_ACCOUNT identifier account)
-            (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : false})
-        )
-    )
-    ;;
-    ;;      C_PauseDPTF
-    ;;
-    (defun C_PauseDPTF (identifier:string)
-        @doc "Pauses DPTF Token <identifier>"
-
-        (with-capability (DPTF_PAUSE identifier)
-            (update DPTF-PropertiesTable identifier { "is-paused" : true})
-        )
-    )
-    ;;
-    ;;      C_UnpauseDPTF
-    ;;
-    (defun C_UnpauseDPTF (identifier:string)
-        @doc "Unpauses DPTF Token <identifier>"
-
-        (with-capability (DPTF_UNPAUSE identifier)
-            (update DPTF-PropertiesTable identifier { "is-paused" : false})
-        )
-    )
-    ;;
-    ;;      C_TransferDPTF
-    ;;
-    (defun C_TransferDPTF (identifier:string sender:string receiver:string amount:decimal)
-        @doc "Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account, \
-        \ failing if <receiver> DPTF Account doesnt exist"
+    (defun C_TransferTrueFungible (identifier:string sender:string receiver:string amount:decimal)
+        @doc "Transfers <identifier> TrueFungible from <sender> to <receiver> DPMF Account \
+            \ Fails if <receiver> DPMF Account doesnt exist"
 
         (with-capability (TRANSFER_DPTF identifier sender receiver amount false)
             (with-read DPTF-BalancesTable (concat [identifier BAR receiver])
                 { "guard" := guard }
-                (X_DebitDPTF identifier sender amount false)
-                (X_CreditDPTF identifier receiver guard amount)
+                (X_Debit identifier sender amount false)
+                (X_Credit identifier receiver guard amount)
             )
         )
     )
     ;;
-    ;;      C_TransferDPTFAnew
+    ;;      C_TransferTrueFungibleAnew
     ;;
-    (defun C_TransferDPTFAnew (identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
-        @doc "Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account \
-        \ If Target Account doesnt exist, it is created."
+    (defun C_TransferTrueFungibleAnew (identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
+        @doc "Same as |C_TransferTrueFungible| but with DPTF Account creation \
+        \ This means <receiver> DPMF Account will be created by the transfer function"
         (with-capability (TRANSFER_DPTF identifier sender receiver amount false)
-            (X_DebitDPTF identifier sender amount false)
-            (X_CreditDPTF identifier receiver receiver-guard amount)
+            (X_Debit identifier sender amount false)
+            (X_Credit identifier receiver receiver-guard amount)
         )
     )
     ;;
-    ;;      C_MethodicTransferDPTF
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================TRANSFER====================
     ;;
-    (defun C_MethodicTransferDPTF (identifier:string sender:string receiver:string amount:decimal)
-        @doc "Methodic Transfer from <sender> DPTF Account to <receiver> DPTF Account, \
-        \ failing if <receiver> DPTF Account doesnt exist \
-        \ Methodic means the transfer is used as a Method for Smart(Contract) DPTS Account Type operations"
+    ;;      X_MethodicTransferTrueFungible
+    ;;
+    (defun X_MethodicTransferTrueFungible (identifier:string sender:string receiver:string amount:decimal)
+        @doc "Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account \
+            \ Fails if <receiver> DPTF Account doesnt exist. \
+            \ \
+            \ Methodic Transfers cannot be called directly. They are to be used within external Modules \
+            \ as transfer means when operating with Smart DPTS Account Types. \
+            \ \
+            \ This is because clients can trigger transfers to be executed towards and from Smart DPTS Account types,\
+            \ as described in the module's code, without them having the need to provide the Smart DPTS Accounts guard \
+            \ \
+            \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
+            \ Here the |payable Write-Points| are the external module functions that make use of this function"
+
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
         (with-read DPTF-BalancesTable (concat [identifier BAR receiver])
                 { "guard" := guard }
-                (X_DebitDPTF identifier sender amount)
-                (X_CreditDPTF identifier receiver guard amount)
+                (X_Debit identifier sender amount)
+                (X_Credit identifier receiver guard amount)
         )    
     )
     ;;
-    ;;      C_MethodicTransferDPTFAnew
+    ;;      X_MethodicTransferTrueFungibleAnew
     ;;
-    (defun C_MethodicTransferDPTFAnew (identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
-        @doc "Standard Transfer from <sender> DPTF Account to <receiver> DPTF Account \
-        \ If Target Account doesnt exist, it is created. \
-        \ Methodic means the transfer is used as a Method for Smart(Contract) DPTS Account Type operations"
+    (defun X_MethodicTransferTrueFungibleAnew (identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
+        @doc "Same as |X_MethodicTransferMetaFungible| but with DPTF Account creation \
+        \ This means <receiver> DPMF Account will be created by the transfer function"
+
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
-        (X_DebitDPTF identifier sender amount false)
-        (X_CreditDPTF identifier receiver receiver-guard amount)
+        (X_Debit identifier sender amount false)
+        (X_Credit identifier receiver receiver-guard amount)
     )
-    ;;-------------------------------------------------------------------------------------------------------
     ;;
-    ;;      AUXILIARY FUNCTIONS
+    ;;==================CREDIT|DEBIT================ 
     ;;
-    ;;      X_CreditDPTF
+    ;;      X_Credit
     ;;
-    (defun X_CreditDPTF (identifier:string account:string guard:guard amount:decimal)
-        @doc "Increases DPTF Token balance for Account <account> for Token <identifier> \
-        \ Also creates a new DPTF account if the target account doesnt exist"
-        ;; No Validation of Inputs required as this is auxiliary function
-        ;; and as such cannot be called on its own
+    (defun X_Credit (identifier:string account:string guard:guard amount:decimal)
+        @doc "Auxiliary Function that credits a TrueFungible to a DPTF Account"
 
         ;;Capability Required for Credit
         (require-capability (CREDIT_DPTF account))
@@ -1060,7 +1115,7 @@
                 ;; First, a new DPTS Account is created for Account <account>. 
                 ;; If DPTS Account exists for <account>, nothing is modified
                 (DPTS.C_DeployStandardDPTSAccount account guard)
-                ;; if is-new=true, this actually creates a new DPTF Account and Credits it the amount
+                ;; if is-new=true, this actually creates a new DPTF Account and credits it the amount
                 ;; if is-new=false, this updates the balance by increasing it with <amount>
                 ;; this is posible because (write) works regardless of row exists for key or not in a table
                 (write DPTF-BalancesTable (concat [identifier BAR account])
@@ -1075,14 +1130,15 @@
         )
     )
     ;;
-    ;;      X_DebitDPTF
+    ;;      X_Debit
     ;;
-    (defun X_DebitDPTF (identifier:string account:string amount:decimal admin:bool)
-        @doc "Decreases DPTF Token balance for Account <account> for Token <identifier>"
-        ;; No Validation of Inputs required as this is auxiliary function
-        ;; and as such cannot be called on its own
+    (defun X_Debit (identifier:string account:string amount:decimal admin:bool)
+        @doc "Auxiliary Function that debits a TrueFungible from a DPTF Account \
+            \ \
+            \ true <admin> boolean is used when debiting is executed as a part of wiping by the DPTF Owner \
+            \ otherwise, for normal debiting operations, false <admin> boolean must be used"
 
-        ;;Capability Required for Debit
+        ;;Capability Required for Debit is called within the let body
         (let
             (
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
@@ -1105,10 +1161,13 @@
         )
     )
     ;;
-    ;;      X_UpdateDPTFSupply 
+    ;;==================UPDATE======================
     ;;
-    (defun X_UpdateDPTFSupply (identifier:string amount:decimal direction:bool)
-        @doc "Updates DPTF Supply. Direction dictates increase or decrease"
+    ;;      X_UpdateSupply 
+    ;;
+    (defun X_UpdateSupply (identifier:string amount:decimal direction:bool)
+        @doc "Updates <identifier> TrueFungible supply. Boolean <direction> used for increase|decrease"
+        
         (require-capability (UPDATE_DPTF_SUPPLY identifier amount))
         (if (= direction true)
             (with-read DPTF-PropertiesTable identifier

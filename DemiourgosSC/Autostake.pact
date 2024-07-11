@@ -665,7 +665,7 @@
         @doc "Returns the value of Auryndex with 24 decimals"
         (let
             (
-                (auryn-supply:decimal (DPTF.U_GetDPTFSupply (U_AurynID)))
+                (auryn-supply:decimal (DPTF.U_GetTrueFungibleSupply (U_AurynID)))
                 (r-ouro-supply:decimal (U_GetResidentOuro))
             )
             (if
@@ -695,7 +695,7 @@
     (defun U_GetDEB:decimal (account:string)
         (let*
             (
-                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
+                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) account))
                 (elite:object{EliteAccountSchema} (U_ComputeElite eab))
                 (deb (at "deb" elite))
             )
@@ -709,7 +709,7 @@
         @doc "Computes Ignis Mint amount from Ouro-burn-amount"
         (let*
             (
-                (ignis-decimals:integer (DPTF.U_GetDPTFDecimals (U_IgnisID)))
+                (ignis-decimals:integer (DPTF.U_GetTrueFungibleDecimals (U_IgnisID)))
                 (ignis-mint-amount:decimal (floor (* ouro-burn-amount 100.0) ignis-decimals))
             )
             ignis-mint-amount
@@ -726,7 +726,7 @@
             (
                 (auryndex:decimal (U_GetAuryndex))
                 (r-ouro-supply:decimal (U_GetResidentOuro))
-                (auryndecimals:integer (DPTF.U_GetDPTFDecimals (U_AurynID)))
+                (auryndecimals:integer (DPTF.U_GetTrueFungibleDecimals (U_AurynID)))
             )
             (if (= auryndex 0.0)
                 ouro-input-amount
@@ -750,7 +750,7 @@
         ;;Fee Promille (depends on amount and position)
         (let*
             (
-                (ouro-decimals:integer (DPTF.U_GetDPTFDecimals (U_OuroborosID)))
+                (ouro-decimals:integer (DPTF.U_GetTrueFungibleDecimals (U_OuroborosID)))
                 (auryndex:decimal (U_GetAuryndex))
                 (ouro-redeem:decimal (floor (* auryn-input-amount auryndex) ouro-decimals))
                 (uncoil-fee-promile:decimal (U_ComputeAurynUncoilFeePromile auryn-input-amount position))
@@ -795,7 +795,7 @@
 
         (let*
             (
-                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) client))
+                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) client))
                 (elite-object:object{EliteAccountSchema} (U_ComputeElite eab))
                 (elite-tier:string (at "tier" elite-object))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
@@ -1096,7 +1096,7 @@
         @doc "Core Function that returns Major or Minor Elite Tier"
         (let*
             (
-                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
+                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) account))
                 (elite:object{EliteAccountSchema} (U_ComputeElite eab))
                 (elite-tier:string (at "tier" elite))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
@@ -1117,7 +1117,7 @@
     ;;
     (defun A_InitialiseAutostake (ouro-id:string)
         @doc "Initialises the Autostake Smart-Contract"
-        (DPTF.U_ValidateDPTFIdentifier ouro-id)
+        (DPTF.U_ValidateTrueFungibleIdentifier ouro-id)
 
         ;;Initialise the Autostake DPTS Acount as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
@@ -1168,7 +1168,7 @@
                     ))
                 )
                 ;;Issue OURO DPTF Account for the AutostakePool
-                (DPTF.C_DeployDPTFAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
+                (DPTF.C_DeployTrueFungibleAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
                 ;;SetTrinityTable
                 (insert TrinityTable TRINITY
                     {"ouro-id"                      : ouro-id
@@ -1209,17 +1209,17 @@
         (let
             (
                 (auryn-output-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
-                (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_OuroborosID) client))
+                (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_OuroborosID) client))
             )
             (with-capability (COIL_OUROBOROS client ouro-input-amount auryn-output-amount)
             ;;Client Transfers OURO to Autostake (as method)
-                (DPTF.C_MethodicTransferDPTF (U_OuroborosID) client SC_NAME ouro-input-amount)
+                (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
             ;;Autostake Updates Autostake Ledger (Resident OURO increase)
                 (X_UpdateResidentOuro ouro-input-amount true)
             ;;Autostake Locally mints AURYN
                 (X_MintAuryn auryn-output-amount)
             ;;Autostake Transfers AURYN To Client (as method)                
-                (DPTF.C_MethodicTransferDPTFAnew (U_AurynID) SC_NAME client client-guard auryn-output-amount)
+                (DPTF.X_MethodicTransferTrueFungibleAnew (U_AurynID) SC_NAME client client-guard auryn-output-amount)
             ;;Since user receives Auryn, Autostake makes/updates Elite Account Information
                 (X_UpdateAurynzData client)
             )
@@ -1232,7 +1232,7 @@
         @doc "Fuels Ouroboros to the Autostake Pool, increasing Auryndex"
         (with-capability (FUEL_OUROBOROS client ouro-input-amount)
         ;;Client Transfers Ouroboros to Autostake pool efectively injecting Ouro into the Autostake pool
-            (DPTF.C_MethodicTransferDPTF (U_OuroborosID) client SC_NAME ouro-input-amount)
+            (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
         ;;Autostake Updates Resident Ouro Information
             (X_UpdateResidentOuro ouro-input-amount true)
         )
@@ -1245,16 +1245,16 @@
         (with-capability (COIL_AURYN client auryn-input-amount)
             (let
                 (
-                    (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_AurynID) client))
+                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_AurynID) client))
                 )
             ;;Client Transfers AURYN to Autostake (as method)
-                (DPTF.C_MethodicTransferDPTF (U_AurynID) client SC_NAME auryn-input-amount)
+                (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME auryn-input-amount)
             ;;Autostake Updates Autostake Ledger (Resident Auryn increase)
                 (X_UpdateResidentAuryn auryn-input-amount true)
             ;;Autostake Locally mints ELITEAURYN
                 (X_MintEliteAuryn auryn-input-amount)
             ;;Autostake Transfers ELITEAURYN To Client
-                (DPTF.C_MethodicTransferDPTFAnew (U_EliteAurynID) SC_NAME client client-guard auryn-input-amount)
+                (DPTF.X_MethodicTransferTrueFungibleAnew (U_EliteAurynID) SC_NAME client client-guard auryn-input-amount)
             ;;Since user receives Elite-Auryn, Autostake makes/updates Elite Account Information
                 (X_UpdateAurynzData client) 
             )
@@ -1269,10 +1269,10 @@
             (let
                 (
                     (auryn-output-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
-                    (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_OuroborosID) client))
+                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_OuroborosID) client))
                 )  
             ;;Client Transfers OURO to Autostake (as method)
-                (DPTF.C_MethodicTransferDPTF (U_OuroborosID) client SC_NAME ouro-input-amount)
+                (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
             ;;Autostake Locally mints AURYN
                 (X_MintAuryn auryn-output-amount)
             ;;Autostake Updates its internal Table (Resident Ouro and Resident Auryn)
@@ -1281,7 +1281,7 @@
             ;;Autostake Locally mints ELITEAURYN
                 (X_MintEliteAuryn auryn-output-amount)
             ;;Autostake Transfers minted ELITEAURYN to client
-                (DPTF.C_MethodicTransferDPTFAnew (U_EliteAurynID) SC_NAME client client-guard auryn-output-amount)
+                (DPTF.X_MethodicTransferTrueFungibleAnew (U_EliteAurynID) SC_NAME client client-guard auryn-output-amount)
             ;;Since client receives Elite-Auryn, Autostake makes/updates Elite Account Information
                 (X_UpdateAurynzData client)   
             )
@@ -1310,7 +1310,7 @@
                 ;;Enforces a position is free for update, otherwise uncoil cannot execute
                     (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
                 ;;Client Transfers AURYN to Autostake (as method) for burning
-                    (DPTF.C_MethodicTransferDPTF (U_AurynID) client SC_NAME auryn-input-amount)
+                    (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME auryn-input-amount)
                 ;;Autostake Locally burns the whole AURYN transfered
                     (X_BurnAuryn auryn-input-amount)
                 ;;Autostake Locally burns OURO (Ouro as uncoil fee; burning ouro automatically mints Ignis)
@@ -1335,11 +1335,11 @@
             (let
                 (
                     (culled-amount:decimal (X_CullUncoilAll client false))
-                    (client-guard:guard (DPTF.U_GetDPTFAccountGuard (U_AurynID) client))
+                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_AurynID) client))
                 )
                 (with-capability (CULL_OUROBOROS client culled-amount)
                 ;;Autostake Transfers culled Ouroboros to Client
-                    (DPTF.C_MethodicTransferDPTFAnew (U_OuroborosID) SC_NAME client client-guard culled-amount)
+                    (DPTF.X_MethodicTransferTrueFungibleAnew (U_OuroborosID) SC_NAME client client-guard culled-amount)
                 ;;Autostake Updates Autostake Ledger (Unbonding Ouro decrease)
                     (X_UpdateUnbondingOuro culled-amount false)
                 )
@@ -1412,7 +1412,7 @@
         (require-capability (UPDATE_ELITE_TRACKER))
         (let*
             (
-                (eab:decimal (DPTF.U_GetDPTFBalance (U_EliteAurynID) account))
+                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) account))
                 (elite:object{EliteAccountSchema} (U_ComputeElite eab))
                 (elite-tier-class (at "class" elite))
                 (elite-tier-name (at "name" elite))
@@ -1587,8 +1587,8 @@
     (defun X_BurnOuroboros (amount:decimal)
         @doc "Burns Ouroboros and generates Ignis at 100x capacity"
         (require-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME amount))
-        (DPTF.C_BurnDPTF (U_OuroborosID) SC_NAME amount)
-        (DPTF.C_MintDPTF (U_IgnisID) SC_NAME (U_ComputeIgnisMintAmount amount))
+        (DPTF.C_Burn (U_OuroborosID) SC_NAME amount)
+        (DPTF.C_Mint (U_IgnisID) SC_NAME (U_ComputeIgnisMintAmount amount))
     )
     ;;
     ;;      X_BurnAuryn
@@ -1596,7 +1596,7 @@
     (defun X_BurnAuryn (amount:decimal)
         @doc "Burns Auryn"
         (require-capability (BURN_AURYN (U_AurynID) SC_NAME amount))
-        (DPTF.C_BurnDPTF (U_AurynID) SC_NAME amount)
+        (DPTF.C_Burn (U_AurynID) SC_NAME amount)
     )
     ;;
     ;;      X_BurnEliteAuryn
@@ -1604,7 +1604,7 @@
     (defun X_BurnEliteAuryn (amount:decimal)
         @doc "Burns Elite-Auryn"
         (require-capability (BURN_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
-        (DPTF.C_BurnDPTF (U_EliteAurynID) SC_NAME amount)
+        (DPTF.C_Burn (U_EliteAurynID) SC_NAME amount)
     )
     ;;
     ;;      X_MintOuro
@@ -1612,7 +1612,7 @@
     (defun X_MintOuro (amount:decimal)
         @doc "Mints Ouroboros"
         (require-capability (MINT_OUROBOROS (U_OuroborosID) SC_NAME amount))
-        (DPTF.C_MintDPTF (U_OuroborosID) SC_NAME amount)
+        (DPTF.C_Mint (U_OuroborosID) SC_NAME amount)
     )
     ;;
     ;;      X_MintAuryn
@@ -1620,7 +1620,7 @@
     (defun X_MintAuryn (amount:decimal)
         @doc "Mints Auryn"
         (require-capability (MINT_AURYN (U_AurynID) SC_NAME amount))
-        (DPTF.C_MintDPTF (U_AurynID) SC_NAME amount)
+        (DPTF.C_Mint (U_AurynID) SC_NAME amount)
     )
     ;;
     ;;      X_MintEliteAuryn
@@ -1628,7 +1628,7 @@
     (defun X_MintEliteAuryn (amount:decimal)
         @doc "Mints Elite-Auryn"
         (require-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
-        (DPTF.C_MintDPTF (U_EliteAurynID) SC_NAME amount)
+        (DPTF.C_Mint (U_EliteAurynID) SC_NAME amount)
     )
     ;;
     ;;      X_UpdateResidentOuro

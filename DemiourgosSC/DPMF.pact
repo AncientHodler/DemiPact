@@ -142,11 +142,11 @@
     ;;      DPMF_SET_BURN-ROLE                      Capability required to Set Burn Role for DPMF Account                                               ;;
     ;;      DPMF_SET_TRANSFER-ROLE                  Capability required to Set Transfer Role for DPMF Account                                           ;;
     ;;      DPMF_MOVE_CREATE-ROLE                   Capability required to Change Create Role to another DPMF Account                                   ;;
-    ;;==================UNSET========================                                                                                                   ;;
+    ;;==================UNSET=======================                                                                                                    ;;
     ;;      DPMF_UNSET_ADD-QUANTITY-ROLE            Capability required to Unset Add-Quantity Role for DPMF Account                                     ;;
     ;;      DPMF_UNSET_BURN-ROLE                    Capability required to Unset Burn Role for a DPMF Account                                           ;;
     ;;      DPMF_UNSET_TRANSFER-ROLE                Capability required to Unset Transfer Role for a DPMF Account                                       ;;
-    ;;==================CREATE=======================                                                                                                   ;;
+    ;;==================CREATE======================                                                                                                    ;;
     ;;      DPMF_MINT                               Capability required to mint a DPMF Token                                                            ;;
     ;;      DPMF_CREATE                             Capability that allows creation of a new MetaFungilbe nonce                                         ;;
     ;;      DPMF_CREATE_SMART                       Capability that allows creation of a new MetaFungilbe nonce by a Smart DPTS Account                 ;;
@@ -154,12 +154,12 @@
     ;;      DPMF_ADD-QUANTITY                       Capability required to add-quantity for a DPMF Token                                                ;;
     ;;      DPMF_ADD-QUANTITY_SMART                 Capability required to add-quantity for a DPMF Token by a Smart DPTS Account                        ;;
     ;;      DPMF_ADD-QUANTITY_STANDARD              Capability required to add-quantity for a DPMF Token by a Standard DPTS Account                     ;;
-    ;;==================DESTROY======================                                                                                                   ;;
+    ;;==================DESTROY=====================                                                                                                    ;;
     ;;      DPMF_BURN                               Capability required to burn a DPMF Token                                                            ;;
     ;;      DPMF_BURN_SMART                         Capability required to burn a DPMF Token by a Smart DPTS Account                                    ;;
     ;;      DPMF_BURN_STANDARD                      Capability required to burn a DPMF Token by a Standard DPTS Account                                 ;;
     ;;      DPMF_WIPE                               Capability required to Wipe all DPMF Tokens from a DPMF account                                     ;;
-    ;;=================CORE==========================                                                                                                   ;;
+    ;;=================CORE=========================                                                                                                    ;;
     ;;      CREDIT_DPMF                             Capability to perform crediting operations with DPMF Tokens                                         ;;
     ;;      DEBIT_DPMF                              Capability to perform debiting operations on Normal DPTS Account types with DPMF Tokens             ;;
     ;;      DEBIT_DPMF_SC                           Capability to perform debiting operations on Smart(Contract) DPTS Account types with DPMF Tokens    ;;
@@ -550,7 +550,6 @@
         ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
         ;;(enforce (!= account "") "Invalid sender account")
     )
-
     (defcap TRANSFER_DPMF 
         (
             identifier:string 
@@ -671,15 +670,15 @@
     ;;      C_UnsetTransferRole                     Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account>              ;;
     ;;==================CREATE======================                                                                                                    ;;
     ;;      C_IssueMetaFungible                     Issues a new MetaFungible                                                                           ;;
-    ;;      C_DeployMetaFungibleAccount             Creates a new DPMF Account for Metafungible <identifier> and Account <account>                      ;;
+    ;;      C_DeployMetaFungibleAccount             Creates a new DPMF Account for MetaFungible <identifier> and Account <account>                      ;;
     ;;      C_Mint                                  Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account>     ;;
     ;;      C_Create                                Creates a 0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account> ;;
-    ;;      C_AddQuantity                           Adds <amount> quantity to existing Metafungible <identifer> and <nonce> for DPMF Account <account>  ;;
+    ;;      C_AddQuantity                           Adds <amount> quantity to existing MetaFungible <identifer> and <nonce> for DPMF Account <account>  ;;
     ;;==================DESTROY=====================                                                                                                    ;;
     ;;      C_Burn                                  Burns <amount> <identifier>-<nonce> MetaFungible on DPMF Account <account>                          ;;
-    ;;      C_Wipe                                  Wipes the whole supply of <identifier> MetaFungible on the frozen DPMF Account <account>            ;;
+    ;;      C_Wipe                                  Wipes the whole supply of <identifier> MetaFungible of a frozen DPMF Account <account>              ;;
     ;;==================TRANSFER====================                                                                                                    ;;
-    ;;      C_TransferMetaFungible                  Transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account                ;;
+    ;;      C_TransferMetaFungible                  Transfers <identifier>-<nonce> MetaFungible from <sender> to <receiver> DPMF Account                ;;
     ;;      C_TransferMetaFungibleAnew              Same as |C_TransferMetaFungible| but with DPMF Account creation                                     ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
@@ -687,15 +686,15 @@
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================TRANSFER====================                                                                                                    ;;
-    ;;      X_MethodicTransferMetaFungible          Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account       ;;
+    ;;      X_MethodicTransferMetaFungible          Methodic transfers <identifier>-<nonce> MetaFungible from <sender> to <receiver> DPMF Account       ;;
     ;;      X_MethodicTransferDPMFAnew              Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation                             ;;
     ;;==================CREDIT|DEBIT================                                                                                                    ;;
     ;;      X_Create                                Auxiliary Function that creates a MetaFungible                                                      ;;
-    ;;      X_AddQuantity                           Auxiliary Function that adds quantity for an existing Metafungible                                  ;;
-    ;;      X_Credit                                Auxiliary Function that credit a MetaFungible to a DPMF Account                                     ;;
+    ;;      X_AddQuantity                           Auxiliary Function that adds quantity for an existing MetaFungible                                  ;;
+    ;;      X_Credit                                Auxiliary Function that credits a MetaFungible to a DPMF Account                                    ;;
     ;;      X_Debit                                 Auxiliary Function that debits a MetaFungible from a DPMF Account                                   ;;
     ;;      X_DebitPaired                           Auxiliary Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping;;
-    ;;      X_DebitMultiple                         Auxiliary Function neede for Wiping                                                                 ;;
+    ;;      X_DebitMultiple                         Auxiliary Function needed for Wiping                                                                ;;
     ;;==================UPDATE======================                                                                                                    ;;
     ;;      X_UpdateSupply                          Updates <identifier> MetaFungible supply. Boolean <direction> used for increase|decrease            ;;
     ;;      X_IncrementNonce                        Increments <identifier> MetaFungible nonce.                                                         ;;
@@ -1120,8 +1119,7 @@
             can-transfer-nft-create-role:bool
         )
         @doc "Controls MetaFungible <identifier> Properties using 7 boolean control triggers \
-            \ Setting the <can-upgrade> property to off(false) \
-            \ disables all future Control of Properties"
+            \ Setting the <can-upgrade> property to false disables all future Control of Properties"
 
         (with-capability (DPMF_CONTROL identifier)
             (update DPMF-PropertiesTable identifier
@@ -1236,9 +1234,9 @@
     ;;
     (defun C_SetTransferRole (identifier:string account:string)
         @doc "Sets |role-transfer| to true for MetaFungible <identifier> and DPMF Account <account> \
-            \ If at least one DPMF Account has the transfer role on, then all normal transfer are restricted\
-            \ Transfer will only work towards DPMF Accounts with |role-trasnfer| on, \
-            \ while these DPMF Account can transfer DPMF Tokens unrestricted to any other DPMF Account"
+            \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
+            \ Transfer will only work towards DPMF Accounts with |role-trasnfer| true, \
+            \ while these DPMF Accounts can transfer MetaFungibles unrestricted to any other DPMF Account"
 
         (with-capability (DPMF_SET_TRANSFER-ROLE identifier account)
             (update DPMF-BalancesTable (concat [identifier BAR account])
@@ -1279,9 +1277,9 @@
     ;;
     (defun C_UnsetTransferRole (identifier:string account:string)
         @doc "Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account> \
-            \ If at least one DPMF Account has the transfer role on, then all normal transfer are restricted \
-            \ Transfer will only work towards DPMF Accounts with |role-trasnfer| on, \
-            \ while these DPMF Account can transfer DPMF Tokens unrestricted to any other DPMF Account"
+            \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
+            \ Transfer will only work towards DPMF Accounts with |role-trasnfer| true, \
+            \ while these DPMF Accounts can transfer MetaFungibles unrestricted to any other DPMF Account"
 
         (with-capability (DPMF_UNSET_TRANSFER-ROLE identifier account)
             (update DPMF-BalancesTable (concat [identifier BAR account])
@@ -1472,7 +1470,7 @@
     ;;      C_WipeDPMF
     ;;
     (defun C_Wipe (identifier:string account:string)
-        @doc "Wipes the whole supply of <identifier> MetaFungible on the frozen DPMF Account <account>"
+        @doc "Wipes the whole supply of <identifier> MetaFungible of a frozen DPMF Account <account>"
 
         (let*
             (
@@ -1493,7 +1491,7 @@
     ;;
     (defun C_TransferMetaFungible (identifier:string nonce:integer sender:string receiver:string amount:decimal)
         @doc "Transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account\
-            \ Fails if <receiver> DPMF Account doesnt exist."
+            \ Fails if <receiver> DPMF Account doesnt exist"
 
         (with-capability (TRANSFER_DPMF identifier nonce sender receiver amount false)
             (let
@@ -1538,14 +1536,14 @@
         @doc "Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account \
             \ Fails if <receiver> DPMF Account doesnt exist. \
             \ \
-            \ Methodic Transfers cannot be called directly. Thery are to be used within external Modules \
+            \ Methodic Transfers cannot be called directly. They are to be used within external Modules \
             \ as transfer means when operating with Smart DPTS Account Types. \
             \ \
             \ This is because clients can trigger transfers to be executed towards and from Smart DPTS Account types,\
             \ as described in the module's code, without them having the need to provide the Smart DPTS Accounts guard \
             \ \
             \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
-            \ Here the |payable Write-Points| are the external module functions that make use of this function."
+            \ Here the |payable Write-Points| are the external module functions that make use of this function"
 
         (require-capability (TRANSFER_DPMF identifier nonce sender receiver amount true))
         (let
@@ -1564,7 +1562,7 @@
     ;;
     (defun X_MethodicTransferDPMFAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation \
-            \ This means <receiver> DPMF Account will be created by the transfer function "
+            \ This means <receiver> DPMF Account will be created by the transfer function"
         
         (require-capability (TRANSFER_DPMF identifier nonce sender receiver amount true))
         (let
@@ -1746,10 +1744,8 @@
             \ \
             \ true <admin> boolean is used when debiting is executed as a part of wiping by the DPMF Owner \
             \ otherwise, for normal debiting operations, false <admin> boolean must be used"
-        ;; No Validation of Inputs required as this is auxiliary function
-        ;; and as such cannot be called on its own
 
-        ;;Capability Required for Debit
+        ;;Capability Required for Debit is called within the let body
         (let
             (
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))

@@ -140,13 +140,13 @@
 )
 (read free.DPTF.DPTF-PropertiesTable "OURO-98c486052a51")
 ;; TX_02: Byta Issues 5000 OUROBOROS as Origin Mint
-(free.DPTF.C_MintDPTFOrigin
+(free.DPTF.C_MintOrigin
     "OURO-98c486052a51"
     KeysVault.AN_USER001
     5000.0
 )
 ;; TX_03: Bula issues an OUROBOROS DPTF Account
-(free.DPTF.C_DeployDPTFAccount
+(free.DPTF.C_DeployTrueFungibleAccount
     "OURO-98c486052a51"
     KeysVault.AN_USER002
     (describe-keyset "free.User002_Keyset")
@@ -204,13 +204,13 @@
 (print "======MUST FAIL=====")
 (format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
 (format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
-(free.DPTF.C_TransferDPTF "OURO-98c486052a51" "Byta" "Bula" 2500.0)
+(free.DPTF.C_TransferTrueFungible "OURO-98c486052a51" "Byta" "Bula" 2500.0)
 (format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
 (format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
 
 
 ;;Tx_03 = Byta transfer to Lumy 1500 OURO, Lumy being a new OUROBOROS DPTF Account
-(free.DPTF.C_TransferDPTFAnew "OURO-98c486052a51" "Byta" "Lumy" (describe-keyset "free.User003_Keyset") 1500.0)
+(free.DPTF.C_TransferTrueFungibleAnew "OURO-98c486052a51" "Byta" "Lumy" (describe-keyset "free.User003_Keyset") 1500.0)
 
 ;;Tx_04 = Checks how much OURO Byta hase left, and Auryndex
 (format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
