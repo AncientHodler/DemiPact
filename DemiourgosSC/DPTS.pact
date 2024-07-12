@@ -373,6 +373,31 @@
         )
     )
     ;;
+    ;;      U_ValidateObject
+    ;;
+    (defun U_ValidateObject:bool (obj:object obj-size:integer obj-keys:[string])
+        @doc "Validates that an Object has the required size and keys"
+
+        (let
+            (
+                (keys-number:integer (length obj-keys))
+                (contains-keys:bool 
+                    (fold
+                        (lambda 
+                            (acc:bool key:string)
+                            (and acc (contains key obj))
+                        )
+                        true
+                        obj-keys
+                    )
+                )
+            )
+            (enforce (= obj-size keys-number) "Object Keys are not of the reuired amount")
+            (enforce (= contains-keys true) "Not all Keys appear in the Object")
+        )
+
+    )
+    ;;
     ;;      U_IzAnCapital
     ;;
     (defun U_IzAnCapital:bool (s:string capital:bool)
@@ -481,7 +506,7 @@
     ;;
     ;;      C_DeploySmartDPTSAccount
     ;;
-    (defun C_DeploySmartDPTSAccount (account:string guard:guard scm-name:string)
+    (defun C_DeploySmartDPTSAccount (account:string guard:guard)
         @doc "Deploys a Smart DPTS Account. \
         \ Before any DPTF, DPMF, DPSF, DPNF Token can be created, \
         \ a Standard or Smart DPTS Account must be deployed \

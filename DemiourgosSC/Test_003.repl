@@ -73,6 +73,7 @@
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTF.pact")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
 (env-gas)
 (commit-tx)
 ;;==============================================================================
@@ -90,6 +91,7 @@
 (use free.DPTF)
 (use free.DPMF)
 (use free.DH_SC_Autostake)
+(use free.DH_SC_Vesting)
 (use KeysVault)
 (commit-tx)
 ;;==============================================================================

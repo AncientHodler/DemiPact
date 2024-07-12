@@ -3,7 +3,6 @@
     \ DPMF-Tokens = Demiourgos Pact Meta Fungible Tokens \
     \ DPMF-Tokens mimic the functionality of the Meta-ESDT Token introduced by MultiversX (former Elrond) Blockchain"
 
-
     ;;CONSTANTS
     ;;Smart-Contract Key and Name Definitions
     (defconst SC_KEY "free.DH-Master-Keyset")
@@ -57,16 +56,17 @@
         ;;States
         frozen:bool                         ;;Determines wheter Account is frozen for DPMF Token Identifier
     )
-    (defschema MetaFungible
-        @doc "Schema that Stores MetaFungible Data \
-        \ The MetaFungible Schema is not used directly anywhere, but rather indirectly \
-        \ Through Object Validations such that they fit this schema \
-        \ As such, it it written here for displaying purposes"
+    ;;SCHEMA for MetaFungible defined as constants to be used as Object Keys
+    (defconst MFKEY1 "nonce")               ;;integer
+    (defconst MFKEY2 "balance")             ;;decimal
+    (defconst MFKEY3 "meta-data")           ;;object
+    (defconst MFKEYS [MFKEY1 MFKEY2 MFKEY3])
+    (defconst MFTYP1 "integer")
+    (defconst MFTYP2 "decimal")
+    (defconst MFTYP3 "[*]")
+    (defconst MFTYP4 "object:*")
+    (defconst MFTYP5 "[<a>]")
 
-        nonce:integer
-        balance:decimal
-        meta-data:object
-    )
     ;;TABLES Definitions
     (deftable DPMF-PropertiesTable:{DPMF-PropertiesSchema})
     (deftable DPMF-BalancesTable:{DPMF-BalanceSchema})
@@ -74,9 +74,8 @@
     (defconst NEUTRAL_META-FUNGIBLE
         { "nonce": 0
         , "balance": 0.0
-        , "meta-data": {} }
+        , "meta-data": [{}] }
     )
-
     ;;
     ;;=======================================================================================================
     ;;
@@ -553,7 +552,6 @@
     (defcap TRANSFER_DPMF 
         (
             identifier:string 
-            nonce:integer 
             sender:string 
             receiver:string 
             amount:decimal 
@@ -584,7 +582,7 @@
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType sender)))
             )
             (if (and (= iz-sc true) (= method true))
-                (compose-capability (DEBIT_DPMF_SC sender))
+                (compose-capability (DEBIT_DPMF_SC))
                 (compose-capability (DEBIT_DPMF identifier sender))
             )
         )   
@@ -876,7 +874,7 @@
     ;;
     ;;      U_GetAccountMetaFungibleMetaData
     ;;
-    (defun U_GetAccountMetaFungibleMetaData:object (identifier:string nonce:integer account:string)
+    (defun U_GetAccountMetaFungibleMetaData (identifier:string nonce:integer account:string)
         @doc "Returns the meta-data of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>"
         (U_ValidateMetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
@@ -891,14 +889,14 @@
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
                     (
-                        (result-meta-data:object
+                        (result-meta-data
                             (fold
                                 (lambda 
-                                    (acc:object item:object)
+                                    (acc item:object)
                                     (let
                                         (
                                             (nonce-val:integer (at "nonce" item))
-                                            (meta-data-val:object (at "meta-data" item))
+                                            (meta-data-val (at "meta-data" item))
                                         )
                                         (if (= nonce-val nonce)
                                             meta-data-val
@@ -906,7 +904,7 @@
                                         )
                                     )
                                 )
-                                {}
+                                []
                                 read-unit
                             )
                         )
@@ -1005,7 +1003,7 @@
     ;;      U_ValidateObjectListAsMetaFungibleList
     ;;
     (defun U_ValidateObjectListAsMetaFungibleList:bool (mflst:[object])
-        @doc "Validates that a list of Objects contains Objects conform to the MetaFungible Schema"
+        @doc "Validates that a list of Objects contains Objects conform to the MetaFungible SCHEMA"
         (let 
             (
                 (result 
@@ -1032,30 +1030,21 @@
     ;;      U_ValidateObjectAsMetaFungible
     ;;
     (defun U_ValidateObjectAsMetaFungible:bool (obj:object)
-        @doc "Validates that an Object is conform to the MetaFungible Schema"
-        (let*
+        (let
             (
-                (exist-nonce:bool (contains "nonce" obj))
-                (exist-balance:bool (contains "balance" obj))
-                (exist-meta-data:bool (contains "meta-data" obj))
-                (exist-keys:bool (and (and (= exist-nonce true)(= exist-balance true))(= exist-meta-data true)))
+                (object-validation:bool (DPTS.U_ValidateObject obj (length MFKEYS) MFKEYS))
+                (nonce-val:integer (at MFKEY1 obj))
+                (balance-val:decimal (at MFKEY2 obj))
+                (meta-data-val:[object] (at MFKEY3 obj))
             )
-            (if (= exist-keys true)
-                (let
-                    (
-                        (nonce-val:integer (at "nonce" obj))
-                        (balance-val:decimal (at "balance" obj))
-                        (meta-data-val:object (at "meta-data" obj))
-                        (obj-size:integer (length obj))
-                    )
-                    (enforce (= (typeof nonce-val) "integer") "Invalid nonce type")
-                    (enforce (= (typeof balance-val) "decimal") "Invalid balance type")
-                    (enforce (= (typeof meta-data-val) "object:*") "Invalid meta-data type")
-                    (enforce (= obj-size 3) "Invalid length for object")
-                )
-                false
-            )
+            (enforce (= object-validation true) "Object is of incorect format to be a MetaFungible")
+            (enforce (= (typeof nonce-val) MFTYP1) "Invalid nonce type")
+            (enforce (= (typeof balance-val) MFTYP2) "Invalid balance type")
+            (enforce (= (typeof meta-data-val) MFTYP3) "Invalid meta-data type")
         )
+    )
+    (defun GetObjectType (obj:[object])
+        (typeof obj)
     )
     ;;
     ;;      U_ValidateObjectAsNonceBalancePair
@@ -1064,32 +1053,23 @@
         @doc "Validates that an Object is a pair of nonce and balances"
         (let*
             (
-                (exist-nonce:bool (contains "nonce" obj))
-                (exist-balance:bool (contains "balance" obj))
-                (exist-keys:bool (and (= exist-nonce true)(= exist-balance true)))
+                (two-lst:[string] (take 2 MFKEYS))
+                (object-validation:bool (DPTS.U_ValidateObject obj (length two-lst) two-lst))
+                (nonce-val:decimal (at MFKEY1 obj))
+                (balance-val:decimal (at MFKEY2 obj))
             )
-            (if (= exist-keys true)
-                (let
-                    (
-                        (nonce-val:integer (at "nonce" obj))
-                        (balance-val:decimal (at "balance" obj))
-                        (obj-size:integer (length obj))
-                    )
-                    (enforce (= (typeof nonce-val) "integer") "Invalid nonce type")
-                    (enforce (= (typeof balance-val) "decimal") "Invalid balance type")
-                    (enforce (= obj-size 2) "Invalid length for object")
-                )
-                false
-            )
+            (enforce (= object-validation true) "Object is of incorect format to be a Nonce-Balance Pair")
+            (enforce (= (typeof nonce-val) MFTYP1) "Invalid nonce type")
+            (enforce (= (typeof balance-val) MFTYP2) "Invalid balance type")
         )
     )
     ;;
     ;;      U_ComposeMetaFungible
     ;;
-    (defun U_ComposeMetaFungible:object (nonce:integer balance:decimal meta-data:object)
+    (defun U_ComposeMetaFungible:object (nonce:integer balance:decimal meta-data:[object])
         @doc "Composes a MetaFungible object from <nonce>, <balance> and <meta-data>"
 
-        {"nonce" : nonce, "balance" : balance, "meta-data" : meta-data}
+        {"nonce" : nonce, "balance": balance, "meta-data" : meta-data}
     )
     ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
@@ -1408,7 +1388,7 @@
     ;;
     ;;      C_Mint
     ;;
-    (defun C_Mint (identifier:string account:string amount:decimal meta-data:object)
+    (defun C_Mint:integer (identifier:string account:string amount:decimal meta-data:[object])
         @doc "Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account> \
             \ Both |role-nft-create| and |role-nft-add-quantity| are required for minting"
 
@@ -1423,6 +1403,7 @@
                     (X_AddQuantity identifier new-nonce account amount)
                     ;;Update DPMF Supply
                     (X_UpdateSupply identifier amount true)
+                    new-nonce
                 )
             )
         )
@@ -1430,14 +1411,18 @@
     ;;
     ;;      C_Create
     ;;
-    (defun C_Create:integer (identifier:string account:string meta-data:object)
+    (defun C_Create:integer (identifier:string account:string meta-data:[object])
         @doc "Creates a 0.0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account>"
 
         (with-capability (DPMF_CREATE identifier account)
             (with-read DPMF-BalancesTable (concat [identifier BAR account])
                 { "guard" := g }
-                ;;Create DPMF Token (needs function)
-                (X_Create identifier account g meta-data)
+                (let
+                    (
+                        (output-nonce:integer (X_Create identifier account g meta-data))
+                    )
+                    output-nonce
+                )
             )
         )
     )
@@ -1493,10 +1478,10 @@
         @doc "Transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account\
             \ Fails if <receiver> DPMF Account doesnt exist"
 
-        (with-capability (TRANSFER_DPMF identifier nonce sender receiver amount false)
+        (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
             (let
                 (
-                    (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
                 )
                 (X_Debit identifier nonce sender amount false)
                 (with-read DPMF-BalancesTable (concat [identifier BAR receiver])
@@ -1513,10 +1498,10 @@
         @doc "Same as |C_TransferMetaFungible| but with DPMF Account creation \
             \ This means <receiver> DPMF Account will be created by the transfer function"
 
-        (with-capability (TRANSFER_DPMF identifier nonce sender receiver amount false)
+        (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
             (let
                 (
-                    (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
                 )
                 (X_Debit identifier nonce sender amount false)
                 (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
@@ -1545,10 +1530,10 @@
             \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
             \ Here the |payable Write-Points| are the external module functions that make use of this function"
 
-        (require-capability (TRANSFER_DPMF identifier nonce sender receiver amount true))
+        (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
         (let
             (
-                (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
             )
             (X_Debit identifier nonce sender amount false)
             (with-read DPMF-BalancesTable (concat [identifier BAR receiver])
@@ -1558,16 +1543,16 @@
         )
     )
     ;;
-    ;;      X_TransferDPMFAnew
+    ;;      X_MethodicTransferMetaFungibleAnew
     ;;
-    (defun X_MethodicTransferDPMFAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
+    (defun X_MethodicTransferMetaFungibleAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation \
             \ This means <receiver> DPMF Account will be created by the transfer function"
         
-        (require-capability (TRANSFER_DPMF identifier nonce sender receiver amount true))
+        (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
         (let
             (
-                (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
             )
             (X_Debit identifier nonce sender amount false)
             (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
@@ -1578,7 +1563,7 @@
     ;;
     ;;      X_Create
     ;;
-    (defun X_Create:integer (identifier:string account:string guard:guard meta-data:object)
+    (defun X_Create:integer (identifier:string account:string guard:guard meta-data:[object])
         @doc "Auxiliary Function that creates a MetaFungible \
             \ Returns as integer the nonce of the newly created MetaFungible"
 
@@ -1647,7 +1632,7 @@
                 (
                     (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList unit))
                     (current-nonce-balance:decimal (U_GetAccountMetaFungibleBalance identifier nonce account))
-                    (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce account))
+                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce account))
                     (updated-balance:decimal (+ current-nonce-balance amount))
                     (meta-fungible-to-be-replaced:object (U_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
                     (updated-meta-fungible:object (U_ComposeMetaFungible nonce updated-balance current-nonce-meta-data))
@@ -1663,7 +1648,7 @@
     ;;
     ;;      X_Credit
     ;;
-    (defun X_Credit (identifier:string nonce:integer meta-data:object account:string account-guard:guard amount:decimal)
+    (defun X_Credit (identifier:string nonce:integer meta-data:[object] account:string account-guard:guard amount:decimal)
         @doc "Auxiliary Function that credit a MetaFungible to a DPMF Account \
             \ Also creates a new DPMF Account if it doesnt exist. \
             \ If account already has DPMF nonce, it is simply increased \
@@ -1753,7 +1738,7 @@
             (if (= admin true)
                 (require-capability (DPMF_OWNER identifier))
                 (if (= iz-sc true)
-                    (require-capability (DEBIT_DPMF_SC account))
+                    (require-capability (DEBIT_DPMF_SC))
                     (require-capability (DEBIT_DPMF identifier account))
                 )
             )
@@ -1764,7 +1749,7 @@
                     (
                         (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList unit))
                         (current-nonce-balance:decimal (U_GetAccountMetaFungibleBalance identifier nonce account))
-                        (current-nonce-meta-data:object (U_GetAccountMetaFungibleMetaData identifier nonce account))
+                        (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce account))
                         (debited-balance:decimal (- current-nonce-balance amount))
                         (meta-fungible-to-be-replaced:object (U_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
                         (debited-meta-fungible:object (U_ComposeMetaFungible nonce debited-balance current-nonce-meta-data))

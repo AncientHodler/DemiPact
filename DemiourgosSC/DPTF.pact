@@ -494,7 +494,7 @@
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType sender)))
             )
             (if (and (= iz-sc true) (= method true))
-                (compose-capability (DEBIT_DPTF_SC sender))
+                (compose-capability (DEBIT_DPTF_SC))
                 (compose-capability (DEBIT_DPTF identifier sender))
             )
         )   
@@ -671,7 +671,7 @@
             { "decimals" := d }
             (enforce
                 (= (floor amount d) amount)
-                (format "The amount of {} does not conform with the {} number decimals." [amount identifier])
+                (format "The amount of {} does not conform with the {} decimals number" [amount identifier])
             )
             (enforce
                 (> amount 0.0)
@@ -1078,7 +1078,7 @@
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
         (with-read DPTF-BalancesTable (concat [identifier BAR receiver])
                 { "guard" := guard }
-                (X_Debit identifier sender amount)
+                (X_Debit identifier sender amount false)
                 (X_Credit identifier receiver guard amount)
         )    
     )

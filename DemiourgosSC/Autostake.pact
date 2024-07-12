@@ -5,8 +5,8 @@
     ;;CONSTANTS
     ;;Smart-Contract Key and Name Definitions
     (defconst SC_KEY "free.DH_SC_Autostake_Key")
-    (defconst SC_NAME "Autostake-Pool")
-    (defconst SC_MODULE_NAME "DH_SC_Autostake")
+    (defconst SC_NAME "Snake_Autostake")
+
     (defconst ET        ;;Elite Thresholds
         [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
         105.0 110.0 125.0 150.0 200.0 350.0 600.0
@@ -1119,53 +1119,59 @@
         @doc "Initialises the Autostake Smart-Contract"
         (DPTF.U_ValidateTrueFungibleIdentifier ouro-id)
 
-        ;;Initialise the Autostake DPTS Acount as a Smart Account
+        ;;Initialise the Autostake DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_MODULE_NAME)
+        (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
 
         (with-capability (INIT_AUTOSTAKE)
             ;;Issue Auryns Token
             (let
                 (
-                    (AurynID:string (DPTF.C_IssueTrueFungible
-                        SC_NAME
-                        (keyset-ref-guard SC_KEY)
-                        "Auryn"
-                        "AURYN"
-                        24
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        true    ;;can-freeze
-                        false   ;;can-wipe
-                        false   ;;can-pause
-                    ))
-                    (EliteAurynID:string (DPTF.C_IssueTrueFungible
-                        SC_NAME
-                        (keyset-ref-guard SC_KEY)
-                        "EliteAuryn"
-                        "ELITEAURYN"
-                        24
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        true    ;;can-freeze
-                        false   ;;can-wipe
-                        false   ;;can-pause
-                    ))
-                    (IgnisID:string (DPTF.C_IssueTrueFungible
-                        SC_NAME
-                        (keyset-ref-guard SC_KEY)
-                        "Ignis"
-                        "IGNIS"
-                        24
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        true    ;;can-freeze
-                        false   ;;can-wipe
-                        false   ;;can-pause
-                    ))
+                    (AurynID:string 
+                        (DPTF.C_IssueTrueFungible
+                            SC_NAME
+                            (keyset-ref-guard SC_KEY)
+                            "Auryn"
+                            "AURYN"
+                            24
+                            true    ;;can-change-owner
+                            true    ;;can-upgrade
+                            true    ;;can-add-special-role
+                            true    ;;can-freeze
+                            false   ;;can-wipe
+                            false   ;;can-pause
+                        )
+                    )
+                    (EliteAurynID:string 
+                        (DPTF.C_IssueTrueFungible
+                            SC_NAME
+                            (keyset-ref-guard SC_KEY)
+                            "EliteAuryn"
+                            "ELITEAURYN"
+                            24
+                            true    ;;can-change-owner
+                            true    ;;can-upgrade
+                            true    ;;can-add-special-role
+                            true    ;;can-freeze
+                            false   ;;can-wipe
+                            false   ;;can-pause
+                        )
+                    )
+                    (IgnisID:string 
+                        (DPTF.C_IssueTrueFungible
+                            SC_NAME
+                            (keyset-ref-guard SC_KEY)
+                            "Ignis"
+                            "IGNIS"
+                            24
+                            true    ;;can-change-owner
+                            true    ;;can-upgrade
+                            true    ;;can-add-special-role
+                            true    ;;can-freeze
+                            false   ;;can-wipe
+                            false   ;;can-pause
+                        )
+                    )
                 )
                 ;;Issue OURO DPTF Account for the AutostakePool
                 (DPTF.C_DeployTrueFungibleAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
@@ -1185,11 +1191,13 @@
                 )
                 ;;SetTokenRoles
                 (DPTF.C_SetBurnRole AurynID SC_NAME)
-                (DPTF.C_SetMintRole AurynID SC_NAME)
-                (DPTF.C_SetTransferRole AurynID SC_NAME)
                 (DPTF.C_SetBurnRole EliteAurynID SC_NAME)
+
+                (DPTF.C_SetMintRole AurynID SC_NAME)
                 (DPTF.C_SetMintRole EliteAurynID SC_NAME)
                 (DPTF.C_SetMintRole IgnisID SC_NAME)
+
+                (DPTF.C_SetTransferRole AurynID SC_NAME)
                 (DPTF.C_SetTransferRole EliteAurynID SC_NAME)
             )    
         )

@@ -1,0 +1,39 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(load "Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "TESTING")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "======================================================================")
+(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
+            { "key": "PrivateKey_Emma", "caps": [] }])
+
+
+(free.DPTF.C_TransferTrueFungibleAnew "OURO-98c486052a51" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 2500.0)    ;;AncientHodler Key
+(free.DPTF.C_TransferTrueFungibleAnew "OURO-98c486052a51" "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 1500.0)    ;;AncientHodler Key
+
+(format "AncientHodler are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|AncientHodler"))])
+(format "Emma are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Emma"))])
+(format "Lumy are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Lumy"))])
+
+(print "Vesting Test")
+
+;(free.DH_SC_Vesting.TestMetaFungible 250.0 86400 86400 2)
+;(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Snake_Vesting"))])
+
+(free.DH_SC_Vesting.A_VestOuroborosToVestedOuroboros "Emma" "Lumy" (describe-keyset "free.User002_Keyset") 250.0 86400 86400 6)     ;;Emma key
+(format "Emma are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Emma"))])
+(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Lumy"))])
+(format "Snake_Vesting are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Snake_Vesting"))])
+
+(env-gas)
+(commit-tx)
