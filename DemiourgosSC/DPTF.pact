@@ -480,9 +480,12 @@
             { "role-transfer-amount" := rta }
             (if (!= rta 0)
                 ;;if true
-                (or
-                    (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier sender))
-                    (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier receiver))
+                (enforce-one
+                    (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
+                    [
+                        (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier sender))
+                        (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier receiver))
+                    ]
                 )
                 ;;if false
                 (format "No transfer Role restrictions exist for Token {}" [identifier])
@@ -539,6 +542,7 @@
     ;;==================TF-INFO=====================                                                                                                    ;;
     ;;      U_GetTrueFungibleSupply                 Returns Total existent Supply for TrueFungible <identifier>                                         ;;
     ;;      U_GetTrueFungibleDecimals               Returns the number of Decimals the TrueFungible <identifier> was created with                       ;;
+    ;;      U_GetTrueFungibleTransferRoleAmount     Returns <identifier> DPTF Transfer-Role Amount
     ;;==================VALIDATIONS=================                                                                                                    ;;
     ;;      U_ValidateTrueFungibleAmount            Enforces the Amount <amount> is positive its decimal size conform for TrueFungible <identifier>     ;;
     ;;      U_ValidateTrueFungibleIdentifier        Enforces the TrueFungible <identifier> exists                                                       ;;
@@ -652,10 +656,19 @@
     ;;      U_GetTrueFungibleDecimals
     ;;
     (defun U_GetTrueFungibleDecimals:integer (identifier:string)
-        @doc "Return <identifier> DPTF Token Decimal size"
+        @doc "Returns <identifier> DPTF Token Decimal size"
         (U_ValidateTrueFungibleIdentifier identifier)
 
         (at "decimals" (read DPTF-PropertiesTable identifier ["decimals"]))
+    )
+    ;;
+    ;;      U_GetTrueFungibleTransferRoleAmount
+    ;;
+    (defun U_GetTrueFungibleTransferRoleAmount:integer (identifier:string)
+        @doc "Retursn <identifier> DPTF Transfer-Role Amount"
+        (U_ValidateTrueFungibleIdentifier identifier)
+
+        (at "role-transfer-amount" (read DPTF-PropertiesTable identifier ["role-transfer-amount"]))
     )
     ;;
     ;;==================VALIDATIONS=================
@@ -815,6 +828,12 @@
                 {"role-transfer" : true}
             )
         )
+        (with-read DPTF-PropertiesTable identifier
+            { "role-transfer-amount" := rta }
+            (update DPTF-PropertiesTable identifier
+                {"role-transfer-amount" : (+ rta 1)}
+            )
+        )
     )
     ;;
     ;;==================UNSET=======================
@@ -856,6 +875,12 @@
         (with-capability (DPTF_UNSET_TRANSFER-ROLE identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : false}
+            )
+        )
+        (with-read DPTF-PropertiesTable identifier
+            { "role-transfer-amount" := rta }
+            (update DPTF-PropertiesTable identifier
+                {"role-transfer-amount" : (- rta 1)}
             )
         )
     )
@@ -1121,10 +1146,10 @@
                 (write DPTF-BalancesTable (concat [identifier BAR account])
                     {"balance"          : (if is-new amount (+ balance amount))
                     ,"guard"            : retg
-                    , "role-burn"       : (if is-new false rb)
-                    , "role-mint"       : (if is-new false rm)
-                    , "role-transfer"   : (if is-new false rt)
-                    , "frozen"          : (if is-new false fr)}
+                    , "role-burn"       : rb
+                    , "role-mint"       : rm
+                    , "role-transfer"   : rt
+                    , "frozen"          : fr}
                 )
             )
         )
@@ -1146,7 +1171,7 @@
             (if (= admin true)
                 (require-capability (DPTF_OWNER identifier))
                 (if (= iz-sc true)
-                    (require-capability (DEBIT_DPTF_SC account))
+                    (require-capability (DEBIT_DPTF_SC))
                     (require-capability (DEBIT_DPTF identifier account))
                 )
             )

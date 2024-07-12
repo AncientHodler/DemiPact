@@ -174,8 +174,30 @@
         false
         ;(compose-capability (AUTOSTAKE_ADMIN))
     )
+    (defcap AUTOSTAKE_INIT ()
+        (compose-capability (AUTOSTAKE_MASTER))
+        (compose-capability (AUTOSTAKE_GENESIS))
+    )
+    (defcap AUTOSTAKE_MASTER ()
+        (enforce-one
+            "Either Demiourgos Trinity or Vesting Key can perform Vesting"
+            [
+                (compose-capability (AUTOSTAKE_ADMIN))
+                (compose-capability (DPTS.DPTS_ADMIN))
+            ]
+        )
+    )
     (defcap AUTOSTAKE_ADMIN ()
         (enforce-guard (keyset-ref-guard SC_KEY))
+    )
+    (defcap AUTOSTAKE_GENESIS ()
+        @doc "Ensure AutostakeLedger is empty. This allows for Autostake initialisation \
+        \ IF Autostake was already initialise, re-initialising it wont work a second time"
+        (with-default-read AutostakeLedger AUTOSTAKEHOLDINGS
+            { "resident-ouro" : 0.0 }
+            { "resident-ouro" := ro }
+            (enforce (= ro 0.0) (format "Autostake Holdings already have {} Resident Ouroboros" [ro]))
+        )
     )
     ;;=======================================================================================================
     ;;
@@ -212,15 +234,6 @@
     ;;
     ;;      BASIC
     ;;
-    (defcap GENESISAUTOSTAKE ()
-        @doc "Ensure AutostakeLedger is empty. This allows for Autostake initialisation \
-        \ IF Autostake was already initialise, re-initialising it wont work a second time"
-        (with-default-read AutostakeLedger AUTOSTAKEHOLDINGS
-            { "resident-ouro" : 0.0 }
-            { "resident-ouro" := ro }
-            (enforce (= ro 0.0) (format "Autostake Holdings already have {} Resident Ouroboros" [ro]))
-        )
-    )
     (defcap UPDATE_AUTOSTAKE_LEDGER()
         true
     )
@@ -253,28 +266,25 @@
         true
     )
     (defcap SNAKE_TOKEN_OWNERSHIP (account:string)
-        (with-read DPTF.DPTF-BalancesTable (concat [(U_OuroborosID) BAR account])
-            { "guard" := og }
-            (with-default-read DPTF.DPTF-BalancesTable (concat [(U_AurynID) BAR account])
-                { "guard" : og }
-                { "guard" := ag }
-                (with-default-read DPTF.DPTF-BalancesTable (concat [(U_EliteAurynID) BAR account])
-                    { "guard" : ag }
-                    { "guard" := eag }
-                    (or
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                true
+                (enforce-one
+                    (format "Account ownership is not enforced for {} Account" [account])
+                    [
                         (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_OuroborosID) account))
-                        (or
-                            (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_AurynID) account))
-                            (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_EliteAurynID) account))
-                        )
-                    )
+                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_AurynID) account))
+                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_EliteAurynID) account))
+                    ]
                 )
             )
+
         )
-    )
-    (defcap AUXS_UTILS ()
-        @doc "Capability to conduct computation required for Auxiliary Utility functions"
-        true
+
+        
     )
     (defcap UPDATE_AURYNZ (account:string)
         (compose-capability (SNAKE_TOKEN_OWNERSHIP account))
@@ -286,11 +296,12 @@
     ;;
     ;;      COMPOSED
     ;;
-    (defcap INIT_AUTOSTAKE ()
-        (compose-capability (AUTOSTAKE_ADMIN))
-        (compose-capability (GENESISAUTOSTAKE))
-    )
-    (defcap COIL_OUROBOROS(client:string ouro-input-amount:decimal auryn-output-amount:decimal)
+    (defcap COIL_OUROBOROS(client:string ouro-input-amount:decimal)
+
+    (let 
+        (
+            (auryn-computed-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
+        )
     ;;Client Transfers OURO to Autostake (as method)   
         (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;Autostake Updates Autostake Ledger (Resident OURO increase)
@@ -298,9 +309,12 @@
     ;;Autostake Locally mints AURYN
         (compose-capability (MINT_AURYN (U_AurynID) SC_NAME (U_ComputeOuroCoil ouro-input-amount)))
     ;;Autostake Transfers AURYN To Client (as method)
-        (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) SC_NAME client auryn-output-amount true))  
+        (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) SC_NAME client auryn-computed-amount true))  
     ;;Since user receives Auryn, Autostake makes/updates Elite Account Information
         (compose-capability (UPDATE_AURYNZ client))
+    )
+
+    
     )
     (defcap FUEL_OUROBOROS(client:string ouro-input-amount:decimal)
     ;;Client Transfers Ouroboros to Autostake pool efectively injecting Ouro into the Autostake pool
@@ -1123,7 +1137,7 @@
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
         (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
 
-        (with-capability (INIT_AUTOSTAKE)
+        (with-capability (AUTOSTAKE_INIT)
             ;;Issue Auryns Token
             (let
                 (
@@ -1211,15 +1225,16 @@
     ;;
     ;;      C_CoilOuroboros
     ;;
-    (defun C_CoilOuroboros (client:string ouro-input-amount:decimal)
-        @doc "Coils Ouroboros, staking it into the Autostake Pool, generating Auryn"
+    (defun C_CoilOuroboros:decimal (client:string ouro-input-amount:decimal)
+        @doc "Coils Ouroboros, staking it into the Autostake Pool, generating Auryn \
+            \ Returns as decimal amount of generated Auryn"
 
         (let
             (
                 (auryn-output-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
                 (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_OuroborosID) client))
             )
-            (with-capability (COIL_OUROBOROS client ouro-input-amount auryn-output-amount)
+            (with-capability (COIL_OUROBOROS client ouro-input-amount)
             ;;Client Transfers OURO to Autostake (as method)
                 (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
             ;;Autostake Updates Autostake Ledger (Resident OURO increase)
@@ -1231,6 +1246,7 @@
             ;;Since user receives Auryn, Autostake makes/updates Elite Account Information
                 (X_UpdateAurynzData client)
             )
+            auryn-output-amount
         )
     )
     ;;
@@ -1271,7 +1287,7 @@
     ;;
     ;;      C_CurlOuroboros
     ;;
-    (defun C_CurlOuroboros (client:string ouro-input-amount:decimal)
+    (defun C_CurlOuroboros:decimal (client:string ouro-input-amount:decimal)
         @doc "Curls Ouroboros, then Curls Auryn in a single Function"
         (with-capability (CURL_OUROBOROS client ouro-input-amount)
             (let
@@ -1291,7 +1307,8 @@
             ;;Autostake Transfers minted ELITEAURYN to client
                 (DPTF.X_MethodicTransferTrueFungibleAnew (U_EliteAurynID) SC_NAME client client-guard auryn-output-amount)
             ;;Since client receives Elite-Auryn, Autostake makes/updates Elite Account Information
-                (X_UpdateAurynzData client)   
+                (X_UpdateAurynzData client)  
+                auryn-output-amount 
             )
         )
     )
@@ -1418,8 +1435,11 @@
     (defun X_UpdateEliteTracker (account:string)
         @doc "Updates Elite-Account Information which tracks Elite-Auryn Ammounts"
         (require-capability (UPDATE_ELITE_TRACKER))
+
+        ;; modify to include vested elite auryn
         (let*
             (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
                 (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) account))
                 (elite:object{EliteAccountSchema} (U_ComputeElite eab))
                 (elite-tier-class (at "class" elite))
@@ -1427,15 +1447,17 @@
                 (elite-tier (at "tier" elite))
                 (deb (at "deb" elite))
             )
-            ;;Assumes that Account exists for Ouro, when an Elite Account Update is called.
-            (require-capability (DPTF.DPTF_ACCOUNT_OWNER (U_OuroborosID) account))
-            (write EliteTracker account
-                { "class"   : elite-tier-class
-                , "name"    : elite-tier-name
-                , "tier"    : elite-tier
-                , "deb"     : deb
-                }  
+            (if (= iz-sc false)
+                (write EliteTracker account
+                    { "class"   : elite-tier-class
+                    , "name"    : elite-tier-name
+                    , "tier"    : elite-tier
+                    , "deb"     : deb
+                    }  
+                )
+                (format "Account {} cannot be tracked in the Elite Tracker since it is a Smart DPTS Account"[account])
             )
+           
         )
     )
     ;;

@@ -568,9 +568,12 @@
             { "role-transfer-amount" := rta }
             (if (!= rta 0)
                 ;;if true
-                (or
-                    (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier sender))
-                    (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier receiver))
+                (enforce-one
+                    (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
+                    [
+                        (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier sender))
+                        (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier receiver))
+                    ]
                 )
                 ;;if false
                 (format "No transfer Role restrictions exist for Token {}" [identifier])
@@ -1223,6 +1226,12 @@
                 {"role-transfer" : true}
             )
         )
+        (with-read DPMF-PropertiesTable identifier
+            { "role-transfer-amount" := rta }
+            (update DPMF-PropertiesTable identifier
+                {"role-transfer-amount" : (+ rta 1)}
+            )
+        )
     )
     ;;
     ;;==================UNSET=======================
@@ -1264,6 +1273,12 @@
         (with-capability (DPMF_UNSET_TRANSFER-ROLE identifier account)
             (update DPMF-BalancesTable (concat [identifier BAR account])
                 {"role-transfer" : false}
+            )
+        )
+        (with-read DPMF-PropertiesTable identifier
+            { "role-transfer-amount" := rta }
+            (update DPMF-PropertiesTable identifier
+                {"role-transfer-amount" : (- rta 1)}
             )
         )
     )
@@ -1594,7 +1609,6 @@
                 (let*
                     (
                         (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList u))
-                        (is-new:bool (if (= u [NEUTRAL_META-FUNGIBLE]) (DPTS.U_EnforceReserved account guard) false))
                         (meta-fungible:object (U_ComposeMetaFungible new-nonce 0.0 meta-data))
                         (appended-meta-fungible:[object] (DPTS.UX_AppendLast u meta-fungible))
                     )
@@ -1605,11 +1619,11 @@
                     (write DPMF-BalancesTable (concat [identifier BAR account])
                         { "unit"                        : appended-meta-fungible
                         , "guard"                       : retg
-                        , "role-nft-add-quantity"       : (if is-new false rnaq)
-                        , "role-nft-burn"               : (if is-new false rb)
-                        , "role-nft-create"             : (if is-new role-nft-create-boolean rnc)
-                        , "role-transfer"               : (if is-new false rt)
-                        , "frozen"                      : (if is-new false f)}
+                        , "role-nft-add-quantity"       : rnaq
+                        , "role-nft-burn"               : rb
+                        , "role-nft-create"             : rnc
+                        , "role-transfer"               : rt
+                        , "frozen"                      : f}
                     )
                 )
                 (X_IncrementNonce identifier)

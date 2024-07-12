@@ -58,7 +58,7 @@
 
 (env-data
     {
-        "DemiourgosTrinity": { "keys": [KC.DHADMIN1, KC.DHADMIN2, KC.DHADMIN1], "pred": "keys-2" },
+        "DemiourgosTrinity": { "keys": [KC.DHADMIN1, KC.DHADMIN2, KC.DHADMIN1], "pred": "keys-any" },
 
         "KEY_SC_Autostake-Pool": { "keys": [KC.DH_SC001]},
         "KEY_SC_Vesting": { "keys": [KC.DH_SC002]},
@@ -200,8 +200,11 @@
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")
-(free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Snake_Autostake")
+(free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")                ;;Autostake-Pool Key
+
+;;Set BurnRole to Autostake for OURO
+(free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Snake_Autostake")                 ;;AH Key
+
 (env-gas)
 (commit-tx)
 
@@ -210,6 +213,17 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_Vesting", "caps": [] }])
 
-(free.DH_SC_Vesting.A_InitialiseVesting)
+(free.DH_SC_Vesting.A_InitialiseVesting)                                        ;;Either Vesting Key or AH Key
+(env-gas)
+(commit-tx)
+
+;;Set transfer role for Auryns to Vesting SC
+(begin-tx "Setting transfer Role for Auryns to Vesting Account")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
+
+(free.DPTF.C_SetTransferRole "AURYN-98c486052a51" "Snake_Vesting")              ;;Autostake Pool Key
+(free.DPTF.C_SetTransferRole "ELITEAURYN-98c486052a51" "Snake_Vesting")         ;;Autostake Pool Key
+
 (env-gas)
 (commit-tx)

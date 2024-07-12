@@ -25,15 +25,68 @@
 (format "Emma are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Emma"))])
 (format "Lumy are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Lumy"))])
 
-(print "Vesting Test")
+(print "Coil|Curl and Vesting Test")
+(free.DH_SC_Autostake.C_CoilOuroboros "AncientHodler" 5000.0)
+(free.DH_SC_Autostake.C_FuelOuroboros "AncientHodler" 200.0)
+(free.DH_SC_Autostake.C_CoilAuryn "AncientHodler" 400.0)
+(free.DH_SC_Autostake.C_CurlOuroboros "Emma" 100.0)
+
+;;Vesting Tests
+
+;;ouro to ouro
+(free.DH_SC_Vesting.A_VestOuroVOuro "Emma" "Lumy" (describe-keyset "free.User002_Keyset") 1.0 86400 86400 2)     ;;Emma key
+(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Lumy"))])
+
+
+
+;;auryn to auryn
+(free.DH_SC_Vesting.A_VestAurynVAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 17.0 86400 86400 4)     ;;AH key
+(format "Lumy are {} Vested-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
+
+;;elite-auryn to elite-auryn
+(free.DH_SC_Vesting.A_VestEAurynVEAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 77.0 86400 86400 3)     ;;AH key
+(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
+
+;;
+
+(print "++++++++++++++++++++++++++++")
+(format "Snake_Vesting4 has add-q {}" [(at "role-nft-add-quantity" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Snake_Vesting"))])
+
+(print "==============================================LAST 3================================================")
+;;
+;;ouro to auryn
+(free.DH_SC_Vesting.A_VestOuroVAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
+(format "Lumy are {} Vested-Auryn" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
+(print "Lumy has this total of Vested Auryn")
+(free.DPMF.U_GetAccountMetaFungibleSupply "VAURYN-98c486052a51" "Lumy")
+
+;;ouro to elite auryn
+(free.DH_SC_Vesting.A_VestOuroVEAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
+(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
+
+(print "Lumy has this total of Vested Elite Auryn")
+(free.DPMF.U_GetAccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
+
+;;auryn to elite auryn
+(free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
+(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
+
+
+(print "Lumy has this total of Vested Elite Auryn in the end")
+(free.DPMF.U_GetAccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
+
+;;(print "Auryn transfer Role Amount is")
+;;(free.DPTF.U_GetTrueFungibleTransferRoleAmount "AURYN-98c486052a51")
+
+;;(print "Elite-Auryn transfer Role Amount is")
+;;(free.DPTF.U_GetTrueFungibleTransferRoleAmount "ELITEAURYN-98c486052a51")
 
 ;(free.DH_SC_Vesting.TestMetaFungible 250.0 86400 86400 2)
 ;(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Snake_Vesting"))])
 
-(free.DH_SC_Vesting.A_VestOuroborosToVestedOuroboros "Emma" "Lumy" (describe-keyset "free.User002_Keyset") 250.0 86400 86400 6)     ;;Emma key
-(format "Emma are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Emma"))])
-(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Lumy"))])
-(format "Snake_Vesting are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Snake_Vesting"))])
+
+;(format "Emma are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Emma"))])
+;(format "Snake_Vesting are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Snake_Vesting"))])
 
 (env-gas)
 (commit-tx)
