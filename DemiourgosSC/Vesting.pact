@@ -90,7 +90,7 @@
     (defcap VEST_OURO_VOURO (client:string target-account:string ouro-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
         (compose-capability (VESTING_MASTER))
-    ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+    ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
         (compose-capability (DPMF.DPMF_MINT (U_VOuroborosID) SC_NAME ouro-input-amount))
@@ -104,7 +104,7 @@
             )
         ;;0]Only the Master Vesters can perform Vesting
             (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
             (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
         ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn
             (compose-capability (DH_SC_Autostake.COIL_OUROBOROS SC_NAME ouro-input-amount))
@@ -121,7 +121,7 @@
             )
         ;;0]Only the Master Vesters can perform Vesting
             (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
             (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
         ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>
             (compose-capability (DH_SC_Autostake.CURL_OUROBOROS SC_NAME ouro-input-amount))
@@ -134,7 +134,7 @@
     (defcap VEST_AURYN_VAURYN (client:string target-account:string auryn-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
         (compose-capability (VESTING_MASTER))
-    ;;1]Client transfers <AURYN|Auryn> to the Vesting Account
+    ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) client SC_NAME auryn-input-amount true))
     ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
         (compose-capability (DPMF.DPMF_MINT (U_VAurynID) SC_NAME auryn-input-amount))
@@ -144,7 +144,7 @@
     (defcap VEST_AURYN_VEAURYN (client:string target-account:string auryn-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
         (compose-capability (VESTING_MASTER))
-    ;;1]Client transfers <AURYN|Auryn> to the Vesting Account
+    ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) client SC_NAME auryn-input-amount true))
     ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
         (compose-capability (DH_SC_Autostake.COIL_AURYN SC_NAME auryn-input-amount))
@@ -156,7 +156,7 @@
     (defcap VEST_EAURYN_VEAURYN (client:string target-account:string elite-auryn-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
         (compose-capability (VESTING_MASTER))
-    ;;1]Client transfers <EAURYN|Elite-Auryn> to the Vesting Account
+    ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (U_EliteAurynID) client SC_NAME elite-auryn-input-amount true))
     ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
         (compose-capability (DPMF.DPMF_MINT (U_VEliteAurynID) SC_NAME elite-auryn-input-amount))
@@ -534,7 +534,7 @@
     
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_OURO_VOURO client target-account amount)
-            ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME amount)
             ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
             (let*
@@ -556,7 +556,7 @@
     
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_OURO_VAURYN client target-account amount)
-            ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME amount)
             ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn; this outputs the auryn-amount
             ;;3]Vesting Account creates <VAURYN|Vested-Auryn>; knowing the auryn-amount
@@ -580,7 +580,7 @@
     
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_OURO_VEAURYN client target-account amount)
-            ;;1]Client transfers <OURO|Ouroboros> to the Vesting Account
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME amount)
             ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>; this outputs elite-auryn-amount
             ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>; knowing the elite-auryn-amount
@@ -604,7 +604,7 @@
     
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_AURYN_VAURYN client target-account amount)
-            ;;1]Client transfers <AURYN|Auryn> to the Vesting Account
+            ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME amount)
             ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
             (let*
@@ -627,7 +627,7 @@
 
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_AURYN_VEAURYN client target-account amount)
-            ;;1]Client transfers <AURYN|Auryn> to the Vesting Account
+            ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME amount)
             ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
             (DH_SC_Autostake.C_CoilAuryn SC_NAME amount)
@@ -651,7 +651,7 @@
     
         ;;0]Only the Master Vesters can perform Vesting
         (with-capability (VEST_EAURYN_VEAURYN client target-account amount)
-            ;;1]Client transfers <EAURYN|Elite-Auryn> to the Vesting Account
+            ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
             (DPTF.X_MethodicTransferTrueFungible (U_EliteAurynID) client SC_NAME amount)
             ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (let*

@@ -166,7 +166,12 @@
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;
+    ;;      CAPABILITIES
+    ;;
+    ;;      BASIC
+    ;;
     ;;======DPMF-PROPERTIES-TABLE-MANAGEMENT========
+    ;;
     (defcap DPMF_OWNER (identifier:string)
         @doc "Enforces DPMF Token Ownership"
         (with-read DPMF-PropertiesTable identifier
@@ -239,6 +244,17 @@
         true
     )
     ;;======DPMF-BALANCES-TABLE-MANAGEMENT==========
+    (defcap DPMF_CLIENT (identifier:string account:string)
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                true
+                (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
+            )
+        )
+    )
     (defcap DPMF_ACCOUNT_OWNER (identifier:string account:string)
         @doc "Enforces DPMF Account Ownership"
         (with-read DPMF-BalancesTable (concat [identifier BAR account])
@@ -596,7 +612,7 @@
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
     ;;                                                                                                                                                  ;;
-    ;;      0)UTILITY                               Free Functions: can can be called by anyone.                                                        ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read Functions)                         ;;
     ;;                                                  No Key|Guard required.                                                                          ;;
     ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
     ;;                                                  Module Key|Guard required.                                                                      ;;

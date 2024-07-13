@@ -166,7 +166,7 @@
 ;;==============================================================================
 ;; PART 03 - Initialise Demiourgos Ecosystem
 
-;;Issue Ouro with initial mint amount
+;;01]Issue Ouro with initial mint amount
 (begin-tx "Issue OURO Transactions")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }])
@@ -194,7 +194,7 @@
 (env-gas)
 (commit-tx)
 
-;;Initialise Autostake
+;;02]Initialise Autostake
 (begin-tx "Initialise Snake_Autostake TX")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
@@ -202,13 +202,13 @@
 
 (free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")                ;;Autostake-Pool Key
 
-;;Set BurnRole to Autostake for OURO
+;;03]Set BurnRole to Autostake for OURO
 (free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Snake_Autostake")                 ;;AH Key
 
 (env-gas)
 (commit-tx)
 
-;;Initialise Vesting
+;;04]Initialise Vesting
 (begin-tx "Initialise Vesting TX")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_Vesting", "caps": [] }])
@@ -217,13 +217,15 @@
 (env-gas)
 (commit-tx)
 
-;;Set transfer role for Auryns to Vesting SC
+;;05]Set transfer role for Auryns to Vesting SC and
+;;06]Set Vested Elite-Auryn Id in the Autostake-Pool Trinity Table
 (begin-tx "Setting transfer Role for Auryns to Vesting Account")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
 
 (free.DPTF.C_SetTransferRole "AURYN-98c486052a51" "Snake_Vesting")              ;;Autostake Pool Key
 (free.DPTF.C_SetTransferRole "ELITEAURYN-98c486052a51" "Snake_Vesting")         ;;Autostake Pool Key
+(free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
 
 (env-gas)
 (commit-tx)

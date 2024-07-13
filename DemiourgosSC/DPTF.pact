@@ -67,12 +67,32 @@
     (defcap DPTF_ADMIN ()
         (enforce-guard (keyset-ref-guard SC_KEY))
     )
+    (defcap DPTF_CLIENT (identifier:string account:string)
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                true
+                (compose-capability (DPTF_ACCOUNT_OWNER identifier account))
+            )
+        )
+    )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      CAPABILITIES                                                                                                                                ;;
     ;;                                                                                                                                                  ;;
+    ;;      CORE                                    Module Core Capabilities                                                                            ;;
     ;;      BASIC                                   Basic Capabilities represent singular capability Definitions                                        ;;
     ;;      COMPOSED                                Composed Capabilities are made of one or multiple Basic Capabilities                                ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      CORE                                                                                                                                        ;;
+    ;;                                                                                                                                                  ;;
+    ;;      GOVERNANCE                              Module Governance Capability                                                                        ;;
+    ;;      DPTF_ADMIN                              Module Admin Capability                                                                             ;;
+    ;;      DPTF_CLIENT                             Module Client Capability                                                                            ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -137,7 +157,12 @@
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;
-    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT======== 
+    ;;      CAPABILITIES
+    ;;
+    ;;      BASIC
+    ;;
+    ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT========
+    ;;
     (defcap DPTF_OWNER (identifier:string)
         @doc "Enforces DPTF Token Ownership"
         (with-read DPTF-PropertiesTable identifier
@@ -508,7 +533,7 @@
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
     ;;                                                                                                                                                  ;;
-    ;;      0)UTILITY                               Free Functions: can can be called by anyone.                                                        ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read Functions)                         ;;
     ;;                                                  No Key|Guard required.                                                                          ;;
     ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
     ;;                                                  Module Key|Guard required.                                                                      ;;
@@ -542,7 +567,7 @@
     ;;==================TF-INFO=====================                                                                                                    ;;
     ;;      U_GetTrueFungibleSupply                 Returns Total existent Supply for TrueFungible <identifier>                                         ;;
     ;;      U_GetTrueFungibleDecimals               Returns the number of Decimals the TrueFungible <identifier> was created with                       ;;
-    ;;      U_GetTrueFungibleTransferRoleAmount     Returns <identifier> DPTF Transfer-Role Amount
+    ;;      U_GetTrueFungibleTransferRoleAmount     Returns <identifier> DPTF Transfer-Role Amount                                                      ;;
     ;;==================VALIDATIONS=================                                                                                                    ;;
     ;;      U_ValidateTrueFungibleAmount            Enforces the Amount <amount> is positive its decimal size conform for TrueFungible <identifier>     ;;
     ;;      U_ValidateTrueFungibleIdentifier        Enforces the TrueFungible <identifier> exists                                                       ;;
@@ -1080,7 +1105,7 @@
     )
     ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;                                                                                                                                                  ;;
+    ;;                              F                                                                                                                    ;;
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================TRANSFER====================
