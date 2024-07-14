@@ -2,7 +2,45 @@
     @doc "DH_SC_Autostake is the Demiourgos.Holdings Smart-Contract for Autostake of Ouroboros and Auryn Tokens \
     \ It manages the Coil|Curl functions for Ouroboros|Auryn|Elite-Auryn, and the generator of Auryndex"
 
-    ;;CONSTANTS
+    ;;0]GOVERNANCE-ADMIN
+    ;;
+    ;;      GOVERNANCE|AUTOSTAKE_ADMIN|AUTOSTAKE_MASTER
+    ;;      AUTOSTAKE_INIT|AUTOSTAKE_GENESIS
+    ;;
+    (defcap GOVERNANCE ()
+        @doc "Set to false for non-upgradeability; \
+        \ Set to Autostake_Admin so that only Module Key can enact an upgrade"
+        false
+        ;(compose-capability (AUTOSTAKE_ADMIN))
+    )
+    (defcap AUTOSTAKE_ADMIN ()
+        (enforce-guard (keyset-ref-guard SC_KEY))
+    )
+    (defcap AUTOSTAKE_MASTER ()
+        (enforce-one
+            "Either Demiourgos Trinity or Vesting Key can perform Vesting"
+            [
+                (compose-capability (AUTOSTAKE_ADMIN))
+                (compose-capability (DPTS.DPTS_ADMIN))
+            ]
+        )
+    )
+    (defcap AUTOSTAKE_INIT ()
+        (compose-capability (AUTOSTAKE_MASTER))
+        (compose-capability (AUTOSTAKE_GENESIS))
+    )
+    (defcap AUTOSTAKE_GENESIS ()
+        @doc "Ensure AutostakeLedger is empty. This allows for Autostake initialisation \
+            \ IF Autostake was already initialise, re-initialising it wont work a second time"
+
+        (with-default-read AutostakeLedger AUTOSTAKEHOLDINGS
+            { "resident-ouro" : 0.0 }
+            { "resident-ouro" := ro }
+            (enforce (= ro 0.0) (format "Autostake Holdings already have {} Resident Ouroboros" [ro]))
+        )
+    )
+
+    ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
     (defconst SC_KEY "free.DH_SC_Autostake_Key")
     (defconst SC_NAME "Snake_Autostake")
@@ -121,7 +159,8 @@
     ;;TABLE-KEYS
     (defconst TRINITY "TrinityIDs")
     (defconst AUTOSTAKEHOLDINGS "AutostakeHoldings")
-    ;;SCHEMAS Definitions
+
+    ;;2]SCHEMA Definitions
     (defschema TrinitySchema
         ouro-id:string
         auryn-id:string
@@ -159,48 +198,13 @@
         eau-ab:decimal  ;;elite.auryn.uncoil-auryn.balance
         eae:time        ;;elite-auryn-epoch as cull-time
     )
-    ;;TABLES Definitions
+    ;;3]TABLES Definitions
     (deftable TrinityTable:{TrinitySchema})
     (deftable AutostakeLedger:{AutostakeSchema})
     (deftable EliteTracker:{EliteAccountSchema})
     (deftable UncoilLedger:{UncoilSchema})
-    ;;
-    ;;=======================================================================================================
-    ;;
-    ;;Governance and Administration CAPABILITIES
-    ;;
-    (defcap GOVERNANCE ()
-        @doc "Set to false for non-upgradeability; \
-        \ Set to Autostake_Admin so that only Module Key can enact an upgrade"
-        false
-        ;(compose-capability (AUTOSTAKE_ADMIN))
-    )
-    (defcap AUTOSTAKE_INIT ()
-        (compose-capability (AUTOSTAKE_MASTER))
-        (compose-capability (AUTOSTAKE_GENESIS))
-    )
-    (defcap AUTOSTAKE_MASTER ()
-        (enforce-one
-            "Either Demiourgos Trinity or Vesting Key can perform Vesting"
-            [
-                (compose-capability (AUTOSTAKE_ADMIN))
-                (compose-capability (DPTS.DPTS_ADMIN))
-            ]
-        )
-    )
-    (defcap AUTOSTAKE_ADMIN ()
-        (enforce-guard (keyset-ref-guard SC_KEY))
-    )
-    (defcap AUTOSTAKE_GENESIS ()
-        @doc "Ensure AutostakeLedger is empty. This allows for Autostake initialisation \
-            \ IF Autostake was already initialise, re-initialising it wont work a second time"
 
-        (with-default-read AutostakeLedger AUTOSTAKEHOLDINGS
-            { "resident-ouro" : 0.0 }
-            { "resident-ouro" := ro }
-            (enforce (= ro 0.0) (format "Autostake Holdings already have {} Resident Ouroboros" [ro]))
-        )
-    )
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      CAPABILITIES                                                                                                                                ;;
@@ -214,9 +218,9 @@
     ;;      CORE                                                                                                                                        ;;
     ;;                                                                                                                                                  ;;
     ;;      GOVERNANCE                              Module Governance Capability                                                                        ;;
-    ;;      AUTOSTAKE_INIT                          Module Initialisation Capability                                                                    ;;
-    ;;      AUTOSTAKE_MASTER                        Module Mastery Capability                                                                           ;;
     ;;      AUTOSTAKE_ADMIN                         Module Admin Capability                                                                             ;;
+    ;;      AUTOSTAKE_MASTER                        Module Mastery Capability                                                                           ;;
+    ;;      AUTOSTAKE_INIT                          Module Initialisation Capability                                                                    ;;
     ;;      AUTOSTAKE_GENESIS                       Module Genesis Capability                                                                           ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
@@ -257,6 +261,12 @@
     ;;
     ;;      BASIC
     ;;
+    ;;      UPDATE_AURYNZ
+    ;;      SNAKE_TOKEN_OWNERSHIP|UPDATE_UNCOIL_LEDGER|UPDATE_ELITE_TRACKER|UPDATE_AUTOSTAKE_LEDGER
+    ;;      UNCOIL-LEDGER_BALANCE|UNCOIL-LEDGER_MANAGING-POSITION|UNCOIL-LEDGER_MANAGING-TIER
+    ;;      CULL_EXECUTOR|CULLABLE
+
+    ;;
     (defcap UPDATE_AURYNZ (account:string)
         (compose-capability (SNAKE_TOKEN_OWNERSHIP account))
         (compose-capability (UPDATE_UNCOIL_LEDGER))
@@ -272,10 +282,10 @@
                 (enforce-one
                     (format "Account ownership is not enforced for {} Account" [account])
                     [
-                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_OuroborosID) account))
-                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_AurynID) account))
-                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (U_EliteAurynID) account))
-                        (compose-capability (DPMF.DPMF_ACCOUNT_OWNER (U_VEliteAurynID) account))
+                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (UR_OuroborosID) account))
+                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (UR_AurynID) account))
+                        (compose-capability (DPTF.DPTF_ACCOUNT_OWNER (UR_EliteAurynID) account))
+                        (compose-capability (DPMF.DPMF_ACCOUNT_OWNER (UR_VEliteAurynID) account))
                     ]
                 )
             )
@@ -321,7 +331,7 @@
         (let*
             (
                 (lp:integer (- position 1))
-                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
+                (cull-boolean-slice:[bool] (UR_CanCullUncoil account elite))
                 (cull:bool (at lp cull-boolean-slice))
             )
             (if (= elite false)
@@ -336,9 +346,12 @@
     ;;
     ;;      COMPOSED
     ;;
+    ;;      BURN_OUROBOROS|BURN_AURYN|BURN_ELITE-AURYN
+    ;;      MINT_OUROBOROS|MINT_AURYN|MINT_ELITE-AURYN
+    ;;
     (defcap BURN_OUROBOROS (ouro-identifier:string ignis-identifier:string account:string ouro-burn-amount:decimal)
         (compose-capability (DPTF.DPTF_BURN ouro-identifier account ouro-burn-amount))
-        (compose-capability (DPTF.DPTF_MINT ignis-identifier account (U_ComputeIgnisMintAmount ouro-burn-amount)))
+        (compose-capability (DPTF.DPTF_MINT ignis-identifier account (UC_IgnisMintAmount ouro-burn-amount)))
     )
     (defcap BURN_AURYN (auryn-identifier:string account:string auryn-amount:decimal)
         (compose-capability (DPTF.DPTF_BURN auryn-identifier account auryn-amount))
@@ -355,67 +368,68 @@
     (defcap MINT_ELITE-AURYN (elite-auryn-identifier:string account:string elite-auryn-amount:decimal)
         (compose-capability (DPTF.DPTF_MINT elite-auryn-identifier account elite-auryn-amount))
     )
+    ;;
+    ;;      COIL_OUROBOROS|FUEL_OUROBOROS|COIL-AURYN
+    ;;      CURL-OUROBOROS|UNCOIL-AURYN|CULL_OUROBOROS
+    ;;
     (defcap COIL_OUROBOROS(client:string ouro-input-amount:decimal)
-
     (let 
         (
-            (auryn-computed-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
+            (auryn-computed-amount:decimal (UC_OuroCoil ouro-input-amount))
         )
     ;;0]Any Client can perform <C_CoilOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_OuroborosID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_OuroborosID) client))
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
-        (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN (U_AurynID) SC_NAME (U_ComputeOuroCoil ouro-input-amount)))
+        (compose-capability (MINT_AURYN (UR_AurynID) SC_NAME (UC_OuroCoil ouro-input-amount)))
     ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account
-        (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) SC_NAME client auryn-computed-amount true))  
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) SC_NAME client auryn-computed-amount true))  
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
         (compose-capability (UPDATE_AURYNZ client))
     )
-
-    
     )
     (defcap FUEL_OUROBOROS(client:string ouro-input-amount:decimal)
     ;;0]Any Client can perform <C_FuelOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_OuroborosID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_OuroborosID) client))
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
-        (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))  
     )
     (defcap COIL_AURYN(client:string auryn-input-amount:decimal)
     ;;0]Any Client can perform <C_CoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_AurynID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_AurynID) client))
     ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
-        (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) client SC_NAME auryn-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME auryn-input-amount))
+        (compose-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME auryn-input-amount))
     ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (compose-capability (DPTF.TRANSFER_DPTF (U_EliteAurynID) SC_NAME client auryn-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) SC_NAME client auryn-input-amount true))
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
         (compose-capability (UPDATE_AURYNZ client))
     )
     (defcap CURL_OUROBOROS(client:string ouro-input-amount:decimal)
         (let 
             (
-                (auryn-computed-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
+                (auryn-computed-amount:decimal (UC_OuroCoil ouro-input-amount))
             )
     ;;0]Any Client can perform <C_CurlOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_OuroborosID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_OuroborosID) client))
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
-        (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) client SC_NAME ouro-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN (U_AurynID) SC_NAME auryn-computed-amount))
+        (compose-capability (MINT_AURYN (UR_AurynID) SC_NAME auryn-computed-amount))
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME auryn-computed-amount))
+        (compose-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME auryn-computed-amount))
     ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (compose-capability (DPTF.TRANSFER_DPTF (U_EliteAurynID) SC_NAME client auryn-computed-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) SC_NAME client auryn-computed-amount true))
     ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
         (compose-capability (UPDATE_AURYNZ client))
         )
@@ -423,20 +437,20 @@
     (defcap UNCOIL_AURYN(client:string auryn-input-amount:decimal)
         (let*
             (
-                (uncoil-position:integer (U_GetUncoilPosition client false))
-                (uncoil-data:[decimal] (U_ComputeAurynUncoil auryn-input-amount uncoil-position))
+                (uncoil-position:integer (UR_CanCullUncoil client false))
+                (uncoil-data:[decimal] (UC_AurynUncoil auryn-input-amount uncoil-position))
                 (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
             )
     ;;0]Any Client can perform <C_UncoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_AurynID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_AurynID) client))
     ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
         (compose-capability (UPDATE_AURYNZ client))
     ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
-        (compose-capability (DPTF.TRANSFER_DPTF (U_AurynID) client SC_NAME auryn-input-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
     ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
-        (compose-capability (BURN_AURYN (U_AurynID) SC_NAME auryn-input-amount))
+        (compose-capability (BURN_AURYN (UR_AurynID) SC_NAME auryn-input-amount))
     ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
-        (compose-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME ouro-burn-fee-amount))
+        (compose-capability (BURN_OUROBOROS (UR_OuroborosID) (UR_IgnisID) SC_NAME ouro-burn-fee-amount))
     ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;6*]<Snake_Autostake> Account updates <UncoilLedger>
@@ -445,83 +459,83 @@
     )
     (defcap CULL_OUROBOROS(client:string culled-amount:decimal)
     ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (DPTF.DPTF_CLIENT (U_OuroborosID) client))
+        (compose-capability (DPTF.DPTF_CLIENT (UR_OuroborosID) client))
     ;;1]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
-        (compose-capability (DPTF.TRANSFER_DPTF (U_OuroborosID) SC_NAME client culled-amount true))
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) SC_NAME client culled-amount true))
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     )
     
-    ;;
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
     ;;                                                                                                                                                  ;;
-    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read Functions)                         ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read|Validate Functions)                ;;
     ;;                                                  No Key|Guard required.                                                                          ;;
     ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
-    ;;                                                  Module Key|Guard required.                                                                      ;;
+    ;;                                                  DPTF_ADMIN Capability Required.                                                                 ;;
     ;;      2)CLIENT                                Client Functions: can be called by any DPMF Account.                                                ;;
-    ;;                                                  Usually Client Key|Guard is required.                                                           ;;
+    ;;                                                  DPTF_CLIENT Capability Required.                                                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      SECONDARY Functions                                                                                                                         ;;
+    ;;      SECONDARY Functions                     Auxiliary Functions: cannot be called on their own                                                  ;;
     ;;                                                                                                                                                  ;;
-    ;;      3)AUXILIARY                             Auxiliary Functions: cannot be called on their own.                                                 ;;
-    ;;                                                  Are Part of Client Function                                                                     ;;
+    ;;      3)AUXILIARY                             Are Part of Client Function                                                                         ;;
+    ;;                                                  Capabilities are required to use auxiliary Functions                                            ;;
     ;;                                                                                                                                                  ;;      
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      Functions Names are prefixed, so that they may be better visualised and understood.                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      UTILITY                                 U_FunctionName                                                                                      ;;
-    ;;      UTILITY AUXILIARY                       UX_FunctionName                                                                                     ;;
+    ;;      UTILITY-COMPUTE                         UC_FunctionName                                                                                     ;;
+    ;;      UTILITY-PRINT                           UP_FunctionName                                                                                     ;;
+    ;;      UTILITY-READ                            UR_FunctionName                                                                                     ;;
+    ;;      UTILITY-VALIDATE                        UV_FunctionName                                                                                     ;;
     ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
     ;;      CLIENT                                  C_FunctionName                                                                                      ;;
     ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
-    ;;      AUXILIARY UTILITY                       XU_FunctionName                                                                                     ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
-    ;;      UTILITY FUNCTIONS                                                                                                                           ;;
     ;;                                                                                                                                                  ;;
     ;;==================ELITE_ACCOUNT===============                                                                                                    ;;                                  ;;
-    ;;      U_ComputeElite                          Computes Elite Account Data                                                                         ;;
-    ;;      U_PrintElite                            Prints Elite Account Data                                                                           ;;
-    ;;      U_GetEliteTierClass                     Returns Demiourgos Elite Account Tier Class                                                         ;;
-    ;;      U_GetEliteTierName                      Returns Demiourgos Elite Account Tier Name                                                          ;;
-    ;;      U_GetMajorEliteTier                     Returns Demiourgos Elite Account Major Tier                                                         ;;
-    ;;      U_GetMinorEliteTier                     Returns Demiourgos Elite Account Minor Tier                                                         ;;
-    ;;      U_GetDEB                                Returns Demiourgos Elite Account Bonus (DEB)                                                        ;;
-    ;;      UX_GetEliteTier                         Core Function that returns Major or Minor Elite Tier                                                ;;
-    ;;      UX_GetEliteAurynzBalance                Returns Total Elite Auryn Balance (True and Meta Fungible)                                          ;;
+    ;;      UC_Elite                                Computes Elite Account Data                                                                         ;;
+    ;;      UP_Elite                                Prints Elite Account Data                                                                           ;;
+    ;;      UC_EliteTierClass                       Returns Demiourgos Elite Account Tier Class                                                         ;;
+    ;;      UC_EliteTierName                        Returns Demiourgos Elite Account Tier Name                                                          ;;
+    ;;      UC_MajorEliteTier                       Returns Demiourgos Elite Account Major Tier                                                         ;;
+    ;;      UC_MinorEliteTier                       Returns Demiourgos Elite Account Minor Tier                                                         ;;
+    ;;      UC_DEB                                  Returns Demiourgos Elite Account Bonus (DEB)                                                        ;;
+    ;;      UC_EliteTier                            Core Function that returns Major or Minor Elite Tier                                                ;;
+    ;;      UC_EliteAurynzBalance                   Returns Total Elite Auryn Balance (True and Meta Fungible)                                          ;;
     ;;==================IDENTIFIERS=================                                                                                                    ;;
-    ;;      U_OuroborosID                           Returns as string the Ouroboros id                                                                  ;;
-    ;;      U_AurynID                               Returns as string the Auryn id                                                                      ;;
-    ;;      U_EliteAurynID                          Returns as string the Elite-Auryn id                                                                ;;
-    ;;      U_IgnisID                               Returns as string the Ignis id                                                                      ;;
-    ;;      U_VEliteAurynID                         Returns as string the Vested Elite-Auryn id                                                         ;;
+    ;;      UR_OuroborosID                          Returns as string the Ouroboros id                                                                  ;;
+    ;;      UR_AurynID                              Returns as string the Auryn id                                                                      ;;
+    ;;      UR_EliteAurynID                         Returns as string the Elite-Auryn id                                                                ;;
+    ;;      UR_IgnisID                              Returns as string the Ignis id                                                                      ;;
+    ;;      UR_VEliteAurynID                        Returns as string the Vested Elite-Auryn id                                                         ;;
     ;;==================AUTOSTAKE-LEDGER============                                                                                                    ;;
-    ;;      U_GetResidentOuro                       Returns as decimal the amount of Resident Ouroboros                                                 ;;
-    ;;      U_GetUnbondingOuro                      Returns as decimal the amount of Unbonding Ouroboros                                                ;;
-    ;;      U_GetResidentAuryn                      Returns as decimal the amount of Resident Auryn                                                     ;;
-    ;;      U_GetUnbondingAuryn                     Returns as decimal the amount of Unbonding Auryn                                                    ;;
-    ;;      U_GetAuryndex                           Returns the value of Auryndex with 24 decimals                                                      ;;
+    ;;      UR_ResidentOuro                         Returns as decimal the amount of Resident Ouroboros                                                 ;;
+    ;;      UR_UnbondingOuro                        Returns as decimal the amount of Unbonding Ouroboros                                                ;;
+    ;;      UR_ResidentAuryn                        Returns as decimal the amount of Resident Auryn                                                     ;;
+    ;;      UR_UnbondingAuryn                       Returns as decimal the amount of Unbonding Auryn                                                    ;;
+    ;;      UR_Auryndex                             Returns the value of Auryndex with 24 decimals                                                      ;;
     ;;==================COMPUTATIONS================                                                                                                    ;;
-    ;;      U_ComputeIgnisMintAmount                Computes Ignis Mint amount from Ouro-burn-amount                                                    ;;
-    ;;      U_ComputeOuroCoil                       Computes Ouro Coil Data: Outputs Auryn Output Amount                                                ;;
-    ;;      U_ComputeAurynUncoil                    Computes Auryn Uncoil Data: Outputs Decimal List                                                    ;;
-    ;;      U_ComputeAurynUncoilFeePromile          Computes Auryn Uncoil Fee Promile                                                                   ;;
-    ;;      U_ComputeUncoilDuration                 Computes Auryn or Elite-Auryn Uncoil Duration in Hours for client                                   ;;
-    ;;      U_ComputeCullTime                       Computes Cull Time for Auryn or Elite-Auryn using Tx present time                                   ;;
-    ;;      U_ComputeTotalCull                      Computes the sum of all balances that are cullable for Account                                      ;;
+    ;;      UC_IgnisMintAmount                      Computes Ignis Mint amount from Ouro-burn-amount                                                    ;;
+    ;;      UC_OuroCoil                             Computes Ouro Coil Data: Outputs Auryn Output Amount                                                ;;
+    ;;      UC_AurynUncoil                          Computes Auryn Uncoil Data: Outputs Decimal List                                                    ;;
+    ;;      UC_AurynUncoilFeePromile                Computes Auryn Uncoil Fee Promile                                                                   ;;
+    ;;      UC_UncoilDuration                       Computes Auryn or Elite-Auryn Uncoil Duration in Hours for client                                   ;;
+    ;;      UC_CullTime                             Computes Cull Time for Auryn or Elite-Auryn using Tx present time                                   ;;
+    ;;      UC_TotalCull                            Computes the sum of all balances that are cullable for Account                                      ;;
     ;;==================UNCOIL-LEDGER_READINGS======                                                                                                    ;;
-    ;;      U_GetUncoilAmount                       Reads UncoilLedger and outputs Uncoil Balance for Account and Position                              ;;
-    ;;      U_GetCullAmount                         Reads UncoilLedger and outputs the Cull Balance for Account and Position                            ;;
-    ;;      U_GetUncoilPosition                     Gets best Auryn or Elite-Auryn uncoil Position                                                      ;;
-    ;;      U_CanCullUncoil                         Reads UncoilLedger and outputs a boolean list with cullable positions                               ;;
-    ;;      UX_GetZeroPosition                      Returns best uncoil position from a list of balances                                                ;;
+    ;;      UR_UncoilAmount                         Reads UncoilLedger and outputs Uncoil Balance for Account and Position                              ;;
+    ;;      UR_CullAmount                           Reads UncoilLedger and outputs the Cull Balance for Account and Position                            ;;
+    ;;      UR_UncoilPosition                       Reads best Auryn or Elite-Auryn uncoil Position                                                      ;;
+    ;;      UR_CanCullUncoil                        Reads UncoilLedger and outputs a boolean list with cullable positions                               ;;
+    ;;      UC_GetZeroPosition                      Computes best uncoil position from a list of balances                                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -576,15 +590,19 @@
     ;;      XU_CheckPositionState                   Check Uncoil position state                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-    ;;
-    ;;      UTILITY FUNCTIONS
-    ;;
+
+
+    ;;==============================================
+    ;;                                            ;;
+    ;;      UTILITY FUNCTIONS                     ;;
+    ;;                                            ;;
     ;;==================ELITE_ACCOUNT===============
-    ;;      U_ComputeElite|U_PrintElite
-    ;;      U_GetEliteTierClass|U_GetEliteTierName|U_GetMajorEliteTier|U_GetMinorEliteTier
-    ;;      U_GetDEB|UX_GetEliteTier|UX_GetEliteAurynzBalance
     ;;
-    (defun U_ComputeElite:object{EliteAccountSchema} (x:decimal)
+    ;;      UC_Elite|UP_Elite
+    ;;      UC_EliteTierClas|UC_EliteTierName|UC_MajorEliteTier|UC_MinorEliteTier
+    ;;      UC_DEB|UC_EliteTier|UC_EliteAurynzBalance
+    ;;
+    (defun UC_Elite:object{EliteAccountSchema} (x:decimal)
     @doc "Computes Elite Tier Name based on x as Elite-Auryn amount"
         (cond
             ;;Class Novice
@@ -647,7 +665,7 @@
             { "class": C7, "name": N77, "tier": "7.7", "deb": (at 49 DEB)}
         )
     )
-    (defun U_PrintElite (account:string)
+    (defun UP_Elite (account:string)
         @doc "Prints Elite Account Data"
         (with-default-read EliteTracker account
             { "class" : C1, "name" : N00, "tier" : "0.0" , "deb" : (at 0 DEB)}
@@ -655,61 +673,61 @@
             (format "Account {}: Class = {}; Name = {}; Tier = {}; DEB = {};" [account c n t d])
         )
     )
-    (defun U_GetEliteTierClass:decimal (account:string)
+    (defun UC_EliteTierClas:decimal (account:string)
 
         (DPTS.U_ValidateAccount account)
         (let*
             (
-                (eab:decimal (UX_GetEliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (deb (at "class" elite))
             )
             deb
         ) 
     )
-    (defun U_GetEliteTierName:decimal (account:string)
+    (defun UC_EliteTierName:decimal (account:string)
         (DPTS.U_ValidateAccount account)
         (let*
             (
-                (eab:decimal (UX_GetEliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (deb (at "name" elite))
             )
             deb
         ) 
     )
-    (defun U_GetMajorEliteTier:integer (account:string)
+    (defun UC_MajorEliteTier:integer (account:string)
         @doc "Gets Major Elite Tier for Account"
 
         (DPTS.U_ValidateAccount account)
-        (UX_GetEliteTier account true)
+        (UC_EliteTier account true)
     )
-    (defun U_GetMinorEliteTier:integer (account:string)
+    (defun UC_MinorEliteTier:integer (account:string)
         @doc "Gets Minor Elite Tier for Account"
 
         (DPTS.U_ValidateAccount account)
-        (UX_GetEliteTier account false)
+        (UC_EliteTier account false)
     )
-    (defun U_GetDEB:decimal (account:string)
+    (defun UC_DEB:decimal (account:string)
 
         (DPTS.U_ValidateAccount account)
         (let*
             (
-                (eab:decimal (UX_GetEliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (deb (at "deb" elite))
             )
             deb
         ) 
     )
-    (defun UX_GetEliteTier:integer (account:string major:bool)
+    (defun UC_EliteTier:integer (account:string major:bool)
         @doc "Core Function that returns Major or Minor Elite Tier"
 
         (DPTS.U_ValidateAccount account)
         (let*
             (
-                (eab:decimal (UX_GetEliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (elite-tier:string (at "tier" elite))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
                 (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
@@ -720,66 +738,66 @@
             ) 
         )
     )
-    (defun UX_GetEliteAurynzBalance:decimal (account:string)
+    (defun UC_EliteAurynzBalance:decimal (account:string)
 
         (DPTS.U_ValidateAccount account)
         (let
             (
-                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) account))
-                (veab:decimal (DPMF.U_GetAccountMetaFungibleSupply (U_VEliteAurynID) account))
+                (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) account))
+                (veab:decimal (DPMF.UR_AccountMetaFungibleSupply (UR_VEliteAurynID) account))
             )
             (+ eab veab)
         )
     )
     ;;==================IDENTIFIERS=================
-    ;;      U_OuroborosID|U_AurynID|U_EliteAurynID|U_IgnisID|U_VEliteAurynID
+    ;;      UR_OuroborosID|UR_AurynID|UR_EliteAurynID|UR_IgnisID|UR_VEliteAurynID
     ;;
-    (defun U_OuroborosID:string ()
+    (defun UR_OuroborosID:string ()
         @doc "Returns as string the Ouroboros id"
         (at "ouro-id" (read TrinityTable TRINITY ["ouro-id"]))
     )
-    (defun U_AurynID:string ()
+    (defun UR_AurynID:string ()
         @doc "Returns as string the Auryn id"
         (at "auryn-id" (read TrinityTable TRINITY ["auryn-id"]))
     )
-    (defun U_EliteAurynID:string ()
+    (defun UR_EliteAurynID:string ()
         @doc "Returns as string the Elite-Auryn id"
         (at "elite-auryn-id" (read TrinityTable TRINITY ["elite-auryn-id"]))
     )
-    (defun U_IgnisID:string ()
+    (defun UR_IgnisID:string ()
         @doc "Returns as string the Ignis id"
         (at "ignis-id" (read TrinityTable TRINITY ["ignis-id"]))
     )
-    (defun U_VEliteAurynID:string ()
+    (defun UR_VEliteAurynID:string ()
         @doc "Returns as string the Ignis id"
         (at "vested-elite-auryn-id" (read TrinityTable TRINITY ["vested-elite-auryn-id"]))
     )
     ;;==================AUTOSTAKE-LEDGER============
-    ;;      U_GetResidentOuro| U_GetUnbondingOuro|U_GetResidentAuryn|U_GetUnbondingAuryn
-    ;;      U_GetAuryndex
+    ;;      UR_ResidentOuro|UR_UnbondingOuro|UR_ResidentAuryn|UR_UnbondingAuryn
+    ;;      UR_Auryndex
     ;;
-    (defun U_GetResidentOuro:decimal ()
+    (defun UR_ResidentOuro:decimal ()
         @doc "Returns as decimal the amount of Resident Ouroboros"
         (at "resident-ouro" (read AutostakeLedger AUTOSTAKEHOLDINGS ["resident-ouro"]))
     )
-    (defun U_GetUnbondingOuro:decimal ()
+    (defun UR_UnbondingOuro:decimal ()
         @doc "Returns as decimal the amount of Unbonding Ouroboros"
         (at "unbonding-ouro" (read AutostakeLedger AUTOSTAKEHOLDINGS ["unbonding-ouro"]))
     )
-    (defun U_GetResidentAuryn:decimal ()
+    (defun UR_ResidentAuryn:decimal ()
         @doc "Returns as decimal the amount of Resident Auryn"
         (at "resident-auryn" (read AutostakeLedger AUTOSTAKEHOLDINGS ["resident-auryn"]))
     )
-    (defun U_GetUnbondingAuryn:decimal ()
+    (defun UR_UnbondingAuryn:decimal ()
         @doc "Returns as decimal the amount of Unbonding Auryn"
         (at "unbonding-auryn" (read AutostakeLedger AUTOSTAKEHOLDINGS ["unbonding-auryn"]))
     )
-    (defun U_GetAuryndex:decimal ()
+    (defun UR_Auryndex:decimal ()
         @doc "Returns the value of Auryndex with 24 decimals"
         (let
             (
-                (auryn-supply:decimal (DPTF.U_GetTrueFungibleSupply (U_AurynID)))
-                (r-ouro-supply:decimal (U_GetResidentOuro))
+                (auryn-supply:decimal (DPTF.UR_TrueFungibleSupply (UR_AurynID)))
+                (r-ouro-supply:decimal (UR_ResidentOuro))
             )
             (if
                 (= auryn-supply 0.0)
@@ -792,28 +810,28 @@
 
     ;;==================COMPUTATIONS================
     ;;
-    ;;      U_ComputeIgnisMintAmount|U_ComputeOuroCoil|U_ComputeAurynUncoil|U_ComputeAurynUncoilFeePromile
-    ;;      U_ComputeUncoilDuration|U_ComputeCullTime|U_ComputeTotalCull
+    ;;      UC_IgnisMintAmount|UC_OuroCoil|UC_AurynUncoil|UC_AurynUncoilFeePromile
+    ;;      UC_UncoilDuration|UC_CullTime|UC_TotalCull
     ;;
-    (defun U_ComputeIgnisMintAmount:decimal (ouro-burn-amount:decimal)
+    (defun UC_IgnisMintAmount:decimal (ouro-burn-amount:decimal)
         @doc "Computes Ignis Mint amount from Ouro-burn-amount"
         (let*
             (
-                (ignis-decimals:integer (DPTF.U_GetTrueFungibleDecimals (U_IgnisID)))
+                (ignis-decimals:integer (DPTF.UR_TrueFungibleDecimals (UR_IgnisID)))
                 (ignis-mint-amount:decimal (floor (* ouro-burn-amount 100.0) ignis-decimals))
             )
             ignis-mint-amount
         )   
     )
-    (defun U_ComputeOuroCoil:decimal (ouro-input-amount:decimal)
+    (defun UC_OuroCoil:decimal (ouro-input-amount:decimal)
         @doc "Compute Ouroboros Coil Data. This amount includes: \
         \ Auryn Output Amount as decimal via Auryndex"
 
         (let
             (
-                (auryndex:decimal (U_GetAuryndex))
-                (r-ouro-supply:decimal (U_GetResidentOuro))
-                (auryndecimals:integer (DPTF.U_GetTrueFungibleDecimals (U_AurynID)))
+                (auryndex:decimal (UR_Auryndex))
+                (r-ouro-supply:decimal (UR_ResidentOuro))
+                (auryndecimals:integer (DPTF.UR_TrueFungibleDecimals (UR_AurynID)))
             )
             (if (= auryndex 0.0)
                 ouro-input-amount
@@ -821,7 +839,7 @@
             )
         )
     )
-    (defun U_ComputeAurynUncoil:[decimal] (auryn-input-amount:decimal position:integer)
+    (defun UC_AurynUncoil:[decimal] (auryn-input-amount:decimal position:integer)
         @doc "Computes Auryn Uncoil Data and outputs them into a list of decimals \
         \ [0] Ouro-Redeem-Amount := The Total Amount of Ouro resulting from uncoil \
         \ [1] Ouro-Output-Amount := Part of the Ouro-Redeem-Amount that reaches client after Auryn Uncoil is culled \
@@ -834,17 +852,17 @@
         ;;Fee Promille (depends on amount and position)
         (let*
             (
-                (ouro-decimals:integer (DPTF.U_GetTrueFungibleDecimals (U_OuroborosID)))
-                (auryndex:decimal (U_GetAuryndex))
+                (ouro-decimals:integer (DPTF.UR_TrueFungibleDecimals (UR_OuroborosID)))
+                (auryndex:decimal (UR_Auryndex))
                 (ouro-redeem:decimal (floor (* auryn-input-amount auryndex) ouro-decimals))
-                (uncoil-fee-promile:decimal (U_ComputeAurynUncoilFeePromile auryn-input-amount position))
+                (uncoil-fee-promile:decimal (UC_AurynUncoilFeePromile auryn-input-amount position))
                 (ouro-burn-fee:decimal (floor (* (/ uncoil-fee-promile 1000.0) ouro-redeem) ouro-decimals))
                 (ouro-output:decimal (- ouro-redeem ouro-burn-fee))
             )
             [ouro-redeem ouro-output ouro-burn-fee uncoil-fee-promile]
         )
     )
-    (defun U_ComputeAurynUncoilFeePromile:decimal (x:decimal p:integer)
+    (defun UC_AurynUncoilFeePromile:decimal (x:decimal p:integer)
         @doc "Computes fee promile; x=auryn-input-amount, p=position"
         (let
             (
@@ -867,14 +885,14 @@
             )
         )
     ) 
-    (defun U_ComputeUncoilDuration:integer (client:string elite:bool)
+    (defun UC_UncoilDuration:integer (client:string elite:bool)
         @doc "Computes Auryn or Elite-Auryn Uncoil Duration in Hours for client \
         \ The boolean Elite selects between Auryn (false) and Elite-Auryn (true)"
 
         (let*
             (
-                (eab:decimal (DPTF.U_GetAccountTrueFungibleSupply (U_EliteAurynID) client))
-                (elite-object:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
+                (elite-object:object{EliteAccountSchema} (UC_Elite eab))
                 (elite-tier:string (at "tier" elite-object))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
                 (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
@@ -894,15 +912,15 @@
             )
         )
     )
-    (defun U_ComputeCullTime:time (client:string elite:bool)
+    (defun UC_CullTime:time (client:string elite:bool)
         @doc "Computes Cull Time for Auryn or Elite-Auryn using Tx present time\
         \ The boolean Elite selects between Auryn (false) and Elite-Auryn (true)"
 
         (let
             (
                 (present-time:time (at "block-time" (chain-data)))
-                (auryn-uncoil-duration:integer (U_ComputeUncoilDuration client false))
-                (elite-auryn-uncoil-duration:integer (U_ComputeUncoilDuration client true))
+                (auryn-uncoil-duration:integer (UC_UncoilDuration client false))
+                (elite-auryn-uncoil-duration:integer (UC_UncoilDuration client true))
             )
             (if (= elite false)
                 ;;Auryn Uncoil Duration
@@ -912,7 +930,7 @@
             )
         )
     )
-    (defun U_ComputeTotalCull:decimal (account:string elite:bool)
+    (defun UC_TotalCull:decimal (account:string elite:bool)
         @doc "Computes the sum of all balances that are cullable for Account \
         \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
         \ Similar to X_CullUncoilAll, but does not cull positions, \
@@ -920,14 +938,14 @@
 
         (let*
             (
-                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
-                (d1:decimal (U_GetCullAmount (at 0 cull-boolean-slice) account 1 elite))
-                (d2:decimal (U_GetCullAmount (at 1 cull-boolean-slice) account 2 elite))
-                (d3:decimal (U_GetCullAmount (at 2 cull-boolean-slice) account 3 elite))
-                (d4:decimal (U_GetCullAmount (at 3 cull-boolean-slice) account 4 elite))
-                (d5:decimal (U_GetCullAmount (at 4 cull-boolean-slice) account 5 elite))
-                (d6:decimal (U_GetCullAmount (at 5 cull-boolean-slice) account 6 elite))
-                (d7:decimal (U_GetCullAmount (at 6 cull-boolean-slice) account 7 elite))
+                (cull-boolean-slice:[bool] (UR_CanCullUncoil account elite))
+                (d1:decimal (UR_CullAmount (at 0 cull-boolean-slice) account 1 elite))
+                (d2:decimal (UR_CullAmount (at 1 cull-boolean-slice) account 2 elite))
+                (d3:decimal (UR_CullAmount (at 2 cull-boolean-slice) account 3 elite))
+                (d4:decimal (UR_CullAmount (at 3 cull-boolean-slice) account 4 elite))
+                (d5:decimal (UR_CullAmount (at 4 cull-boolean-slice) account 5 elite))
+                (d6:decimal (UR_CullAmount (at 5 cull-boolean-slice) account 6 elite))
+                (d7:decimal (UR_CullAmount (at 6 cull-boolean-slice) account 7 elite))
                 (valid-culled-balances:[decimal] [d1 d2 d3 d4 d5 d6 d7])
             )
             (fold (+) 0.0 valid-culled-balances)
@@ -935,10 +953,10 @@
     )
     ;;==================UNCOIL-LEDGER_READINGS======
     ;;
-    ;;      U_GetUncoilAmount|U_GetCullAmount|U_GetUncoilPosition
-    ;;      U_CanCullUncoil|UX_GetZeroPosition
+    ;;      UR_UncoilAmount|UR_CullAmount|UR_UncoilPosition
+    ;;      UR_CanCullUncoil|UC_GetZeroPosition
     ;;
-    (defun U_GetUncoilAmount:decimal (account:string position:integer elite:bool)
+    (defun UR_UncoilAmount:decimal (account:string position:integer elite:bool)
         @doc "Reads UncoilLedger and outputs Uncoil Balance for Account and Position \
             \ Boolen elite toggle betwen Ouro balances (Auryn Uncoil) and Auryn balances (Elite-Auryn Uncoil)"
 
@@ -997,19 +1015,19 @@
             )
         )
     )
-    (defun U_GetCullAmount:decimal (cullable:bool account:string position:integer elite:bool)
+    (defun UR_CullAmount:decimal (cullable:bool account:string position:integer elite:bool)
         @doc "Reads UncoilLedger and outputs the Cull Balance for Account \
             \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
             \ The Cull Amount represents a cullable UncoilLedger Uncoil Balance Amount"
 
         (if (= cullable true)
             (with-capability (CULLABLE account position elite)
-                (U_GetUncoilAmount account position elite)
+                (UR_UncoilAmount account position elite)
             )
             0.0
         )
     )
-    (defun U_GetUncoilPosition:integer (client:string elite:bool)
+    (defun UR_UncoilPosition:integer (client:string elite:bool)
         @doc "Gets best Auryn or Elite-Auryn uncoil Position \
             \ Assumes Uncoil Ledger already exits. If it doesnt, it will fail \
             \ Boolean elite trigger switches between Auryn (false) and Elite-Auryn(true)"
@@ -1036,13 +1054,13 @@
                     (aurynbalancelist:[decimal] [ab1 ab2 ab3 ab4 ab5 ab6 ab7])
                 )
                 (if (= elite false)
-                    (UX_GetZeroPosition ouroborosbalancelist)
-                    (UX_GetZeroPosition aurynbalancelist)
+                    (UC_GetZeroPosition ouroborosbalancelist)
+                    (UC_GetZeroPosition aurynbalancelist)
                 )
             )
         )
     )
-    (defun U_CanCullUncoil:[bool] (account:string elite:bool)
+    (defun UR_CanCullUncoil:[bool] (account:string elite:bool)
         @doc "Reads UncoilLedger and outputs a boolean list with cullable positions \
         \ True means position is cullable, False means it is not cullable \
         \ Boolean Elite toggles between Auryn Uncoil and Elite-Auryn Uncoil output"
@@ -1124,7 +1142,7 @@
             )
         )
     )
-    (defun UX_GetZeroPosition:integer (inputlist:[decimal])
+    (defun UC_GetZeroPosition:integer (inputlist:[decimal])
         @doc "Returns best uncoil position from a list of balances \
         \ Best position is the first position with a 0.0 value. \
         \ First position is considered 1. When no more position are available, returns -1"
@@ -1167,7 +1185,7 @@
     (defun A_InitialiseAutostake (ouro-id:string)
         @doc "Initialises the Autostake Smart-Contract \
         \ Returns the ids of Auryn, Elite-Auryn, Ignis in a list of strings"
-        (DPTF.U_ValidateTrueFungibleIdentifier ouro-id)
+        (DPTF.UV_TrueFungibleIdentifier ouro-id)
 
         ;;Initialise the Autostake DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
@@ -1289,7 +1307,7 @@
         (with-capability (UPDATE_AURYNZ account)
             (let
                 (
-                    (major:integer (U_GetMajorEliteTier account))
+                    (major:integer (UC_MajorEliteTier account))
                 )
                 (X_InitialiseUncoilLedger account)      ;works when not exist
                 (if (not (or (= major 0) (= major 1)))
@@ -1312,19 +1330,19 @@
     
         (let
             (
-                (auryn-output-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
-                (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_OuroborosID) client))
+                (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
+                (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_OuroborosID) client))
             )
     ;;0]Any Client can perform <C_CoilOuroboros>; Smart DPTS Accounts arent required to provide their guards
         (with-capability (COIL_OUROBOROS client ouro-input-amount)
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
-        (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
+        (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME ouro-input-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
         (X_UpdateResidentOuro ouro-input-amount true)
     ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
         (X_MintAuryn auryn-output-amount)
     ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account           
-        (DPTF.X_MethodicTransferTrueFungibleAnew (U_AurynID) SC_NAME client client-guard auryn-output-amount)
+        (DPTF.X_MethodicTransferTrueFungibleAnew (UR_AurynID) SC_NAME client client-guard auryn-output-amount)
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
         (C_UpdateAurynzData client)
             )
@@ -1337,7 +1355,7 @@
     ;;0]Any Client can perform <C_FuelOuroboros>; Smart DPTS Accounts arent required to provide their guards
         (with-capability (FUEL_OUROBOROS client ouro-input-amount)
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
-        (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
+        (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME ouro-input-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
         (X_UpdateResidentOuro ouro-input-amount true)
         )
@@ -1349,16 +1367,16 @@
         (with-capability (COIL_AURYN client auryn-input-amount)
             (let
                 (
-                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_AurynID) client))
+                    (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_AurynID) client))
                 )
     ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
-        (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME auryn-input-amount)
+        (DPTF.X_MethodicTransferTrueFungible (UR_AurynID) client SC_NAME auryn-input-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
         (X_UpdateResidentAuryn auryn-input-amount true)
     ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
         (X_MintEliteAuryn auryn-input-amount)
     ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (DPTF.X_MethodicTransferTrueFungibleAnew (U_EliteAurynID) SC_NAME client client-guard auryn-input-amount)
+        (DPTF.X_MethodicTransferTrueFungibleAnew (UR_EliteAurynID) SC_NAME client client-guard auryn-input-amount)
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
         (C_UpdateAurynzData client) 
             )
@@ -1371,11 +1389,11 @@
         (with-capability (CURL_OUROBOROS client ouro-input-amount)
             (let
                 (
-                    (auryn-output-amount:decimal (U_ComputeOuroCoil ouro-input-amount))
-                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_OuroborosID) client))
+                    (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
+                    (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_OuroborosID) client))
                 )  
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
-        (DPTF.X_MethodicTransferTrueFungible (U_OuroborosID) client SC_NAME ouro-input-amount)
+        (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME ouro-input-amount)
     ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
         (X_MintAuryn auryn-output-amount)
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
@@ -1384,7 +1402,7 @@
     ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
         (X_MintEliteAuryn auryn-output-amount)
     ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (DPTF.X_MethodicTransferTrueFungibleAnew (U_EliteAurynID) SC_NAME client client-guard auryn-output-amount)
+        (DPTF.X_MethodicTransferTrueFungibleAnew (UR_EliteAurynID) SC_NAME client client-guard auryn-output-amount)
     ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
         (C_UpdateAurynzData client)  
                 auryn-output-amount 
@@ -1406,17 +1424,17 @@
         (C_UpdateAurynzData client)
             (let*
                 (
-                    (uncoil-position:integer (U_GetUncoilPosition client false))
-                    (uncoil-data:[decimal] (U_ComputeAurynUncoil auryn-input-amount uncoil-position))
+                    (uncoil-position:integer (UR_CanCullUncoil client false))
+                    (uncoil-data:[decimal] (UC_AurynUncoil auryn-input-amount uncoil-position))
                     (ouro-redeem-amount:decimal (at 0 uncoil-data))
                     (ouro-output-amount:decimal (at 1 uncoil-data))
                     (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
-                    (cull-time:time (U_ComputeCullTime client false))
+                    (cull-time:time (UC_CullTime client false))
                 )
     ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
         (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
     ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
-        (DPTF.X_MethodicTransferTrueFungible (U_AurynID) client SC_NAME auryn-input-amount)
+        (DPTF.X_MethodicTransferTrueFungible (UR_AurynID) client SC_NAME auryn-input-amount)
     ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
         (X_BurnAuryn auryn-input-amount)
     ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
@@ -1438,12 +1456,12 @@
             (let
                 (
                     (culled-amount:decimal (X_CullUncoilAll client false))
-                    (client-guard:guard (DPTF.U_GetAccountTrueFungibleGuard (U_AurynID) client))
+                    (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_AurynID) client))
                 )
     ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
         (with-capability (CULL_OUROBOROS client culled-amount)
     ;;1]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
-        (DPTF.X_MethodicTransferTrueFungibleAnew (U_OuroborosID) SC_NAME client client-guard culled-amount)
+        (DPTF.X_MethodicTransferTrueFungibleAnew (UR_OuroborosID) SC_NAME client client-guard culled-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
         (X_UpdateUnbondingOuro culled-amount false)
                 )
@@ -1461,34 +1479,34 @@
     ;;
     (defun X_BurnOuroboros (amount:decimal)
         @doc "Burns Ouroboros and generates Ignis at 100x capacity"
-        (require-capability (BURN_OUROBOROS (U_OuroborosID) (U_IgnisID) SC_NAME amount))
-        (DPTF.C_Burn (U_OuroborosID) SC_NAME amount)
-        (DPTF.C_Mint (U_IgnisID) SC_NAME (U_ComputeIgnisMintAmount amount))
+        (require-capability (BURN_OUROBOROS (UR_OuroborosID) (UR_IgnisID) SC_NAME amount))
+        (DPTF.C_Burn (UR_OuroborosID) SC_NAME amount)
+        (DPTF.C_Mint (UR_IgnisID) SC_NAME (UC_IgnisMintAmount amount))
     )
     (defun X_BurnAuryn (amount:decimal)
         @doc "Burns Auryn"
-        (require-capability (BURN_AURYN (U_AurynID) SC_NAME amount))
-        (DPTF.C_Burn (U_AurynID) SC_NAME amount)
+        (require-capability (BURN_AURYN (UR_AurynID) SC_NAME amount))
+        (DPTF.C_Burn (UR_AurynID) SC_NAME amount)
     )
     (defun X_BurnEliteAuryn (amount:decimal)
         @doc "Burns Elite-Auryn"
-        (require-capability (BURN_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
-        (DPTF.C_Burn (U_EliteAurynID) SC_NAME amount)
+        (require-capability (BURN_ELITE-AURYN (UR_EliteAurynID) SC_NAME amount))
+        (DPTF.C_Burn (UR_EliteAurynID) SC_NAME amount)
     )
     (defun X_MintOuroboros (amount:decimal)
         @doc "Mints Ouroboros"
-        (require-capability (MINT_OUROBOROS (U_OuroborosID) SC_NAME amount))
-        (DPTF.C_Mint (U_OuroborosID) SC_NAME amount)
+        (require-capability (MINT_OUROBOROS (UR_OuroborosID) SC_NAME amount))
+        (DPTF.C_Mint (UR_OuroborosID) SC_NAME amount)
     )
     (defun X_MintAuryn (amount:decimal)
         @doc "Mints Auryn"
-        (require-capability (MINT_AURYN (U_AurynID) SC_NAME amount))
-        (DPTF.C_Mint (U_AurynID) SC_NAME amount)
+        (require-capability (MINT_AURYN (UR_AurynID) SC_NAME amount))
+        (DPTF.C_Mint (UR_AurynID) SC_NAME amount)
     )
     (defun X_MintEliteAuryn (amount:decimal)
         @doc "Mints Elite-Auryn"
-        (require-capability (MINT_ELITE-AURYN (U_EliteAurynID) SC_NAME amount))
-        (DPTF.C_Mint (U_EliteAurynID) SC_NAME amount)
+        (require-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME amount))
+        (DPTF.C_Mint (UR_EliteAurynID) SC_NAME amount)
     )
     ;;
     ;;==================UPDATE-AUTOSTAKE-LEDGER=====
@@ -1584,7 +1602,7 @@
         \ Returns the sum of all culled positions"
         (let*
             (
-                (cull-boolean-slice:[bool] (U_CanCullUncoil account elite))
+                (cull-boolean-slice:[bool] (UR_CanCullUncoil account elite))
                 (d1:decimal (X_ExecuteCull (at 0 cull-boolean-slice) account 1 elite))
                 (d2:decimal (X_ExecuteCull (at 1 cull-boolean-slice) account 2 elite))
                 (d3:decimal (X_ExecuteCull (at 2 cull-boolean-slice) account 3 elite))
@@ -1637,7 +1655,7 @@
                     (o6v3:decimal (at "eau-ab" o6))
                     (o7v3:decimal (at "eau-ab" o7))
                     
-                    (major:integer (U_GetMajorEliteTier account))
+                    (major:integer (UC_MajorEliteTier account))
 
                     (update-time:time (if (< major position) ANTITIME NULLTIME))
                     (update-balance:decimal (if (< major position) -1.0 0.0))
@@ -1886,8 +1904,8 @@
         (let*
             (
                 (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-                (eab:decimal (UX_GetEliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (U_ComputeElite eab))
+                (eab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (elite-tier-class (at "class" elite))
                 (elite-tier-name (at "name" elite))
                 (elite-tier (at "tier" elite))

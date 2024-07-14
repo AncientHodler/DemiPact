@@ -58,14 +58,14 @@
 (free.DH_SC_Vesting.A_VestOuroVAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
 (format "Lumy are {} Vested-Auryn" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
 (print "Lumy has this total of Vested Auryn")
-(free.DPMF.U_GetAccountMetaFungibleSupply "VAURYN-98c486052a51" "Lumy")
+(free.DPMF.UR_AccountMetaFungibleSupply "VAURYN-98c486052a51" "Lumy")
 
 ;;ouro to elite auryn
 (free.DH_SC_Vesting.A_VestOuroVEAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
 (format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
 (print "Lumy has this total of Vested Elite Auryn")
-(free.DPMF.U_GetAccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
+(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
 
 ;;auryn to elite auryn
 (free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "Lumy" (describe-keyset "free.User002_Keyset") 100.0 86400 86400 4)
@@ -73,7 +73,7 @@
 
 
 (print "Lumy has this total of Vested Elite Auryn in the end")
-(free.DPMF.U_GetAccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
+(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
 
 ;;(print "Auryn transfer Role Amount is")
 ;;(free.DPTF.U_GetTrueFungibleTransferRoleAmount "AURYN-98c486052a51")

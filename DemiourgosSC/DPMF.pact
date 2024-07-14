@@ -3,13 +3,38 @@
     \ DPMF-Tokens = Demiourgos Pact Meta Fungible Tokens \
     \ DPMF-Tokens mimic the functionality of the Meta-ESDT Token introduced by MultiversX (former Elrond) Blockchain"
 
-    ;;CONSTANTS
+
+    ;;0]GOVERNANCE-ADMIN
+    ;;
+    ;;      GOVERNANCE|DPMF_ADMIN|DPMF_CLIENT
+    ;;
+    (defcap GOVERNANCE ()
+        @doc "Set to false for non-upgradeability; \
+        \ Set to DPMF_ADMIN so that only Module Key can enact an upgrade"
+        false
+    )
+    (defcap DPMF_ADMIN ()
+        (enforce-guard (keyset-ref-guard SC_KEY))
+    )
+    (defcap DPMF_CLIENT (identifier:string account:string)
+        (let
+            (
+                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+            )
+            (if (= iz-sc true)
+                true
+                (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
+            )
+        )
+    )
+
+    ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
     (defconst SC_KEY "free.DH-Master-Keyset")
     (defconst SC_NAME "Demiourgos-Pact-Meta-Fungible")
     (defconst BAR DPTS.BAR)
 
-    ;;Schema Definitions
+    ;;2]SCHEMA Definitions
     ;;Demiourgos Pact META Fungible Token Standard - DPMF
     (defschema DPMF-PropertiesSchema
         @doc "Schema for DPMF Token (MEta Fungibles) Properties \
@@ -66,35 +91,33 @@
     (defconst MFTYP3 "[*]")
     (defconst MFTYP4 "object:*")
     (defconst MFTYP5 "[<a>]")
-
-    ;;TABLES Definitions
-    (deftable DPMF-PropertiesTable:{DPMF-PropertiesSchema})
-    (deftable DPMF-BalancesTable:{DPMF-BalanceSchema})
     ;;Neutral MetaFungible Definition
     (defconst NEUTRAL_META-FUNGIBLE
         { "nonce": 0
         , "balance": 0.0
         , "meta-data": [{}] }
     )
-    ;;
-    ;;=======================================================================================================
-    ;;
-    ;;Governance and Administration CAPABILITIES
-    ;;
-    (defcap GOVERNANCE ()
-        @doc "Set to false for non-upgradeability; \
-        \ Set to DPMF_ADMIN so that only Module Key can enact an upgrade"
-        false
-    )
-    (defcap DPMF_ADMIN ()
-        (enforce-guard (keyset-ref-guard SC_KEY))
-    )
+
+    ;;3]TABLES Definitions
+    (deftable DPMF-PropertiesTable:{DPMF-PropertiesSchema})
+    (deftable DPMF-BalancesTable:{DPMF-BalanceSchema})
+    
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      CAPABILITIES                                                                                                                                ;;
     ;;                                                                                                                                                  ;;
+    ;;      CORE                                    Module Core Capabilities                                                                            ;;
     ;;      BASIC                                   Basic Capabilities represent singular capability Definitions                                        ;;
     ;;      COMPOSED                                Composed Capabilities are made of one or multiple Basic Capabilities                                ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      CORE                                                                                                                                        ;;
+    ;;                                                                                                                                                  ;;
+    ;;      GOVERNANCE                              Module Governance Capability                                                                        ;;
+    ;;      DPMF_ADMIN                              Module Admin Capability                                                                             ;;
+    ;;      DPMF_CLIENT                             Module Client Capability                                                                            ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -102,6 +125,7 @@
     ;;                                                                                                                                                  ;;
     ;;======DPMF-PROPERTIES-TABLE-MANAGEMENT========                                                                                                    ;;
     ;;      DPMF_OWNER                              Enforces DPMF Token Ownership                                                                       ;;
+    ;;      DPMF_CAN-CHANGE-OWNER_ON                Enforced DPTF Token Ownership can be changed                                                        ;;
     ;;      DPMF_CAN-UPGRADE_ON                     Enforces DPMF Token upgrade-ability                                                                 ;;
     ;;      DPMF_CAN-ADD-SPECIAL-ROLE_ON            Enforces Token Property as true                                                                     ;;
     ;;      DPMF_CAN-FREEZE_ON                      Enforces Token Property as true                                                                     ;;
@@ -110,7 +134,7 @@
     ;;      DPMF_IS-PAUSED_ON                       Enforces that the DPMF Token is paused                                                              ;;
     ;;      DPMF_IS-PAUSED_OF                       Enforces that the DPMF Token is not paused                                                          ;;
     ;;      DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON    Enforces DPMF Token Property as true                                                                ;;
-    ;;      UPDATE_DPMF_SUPPLY                      Capability required to update DPMF Supply                                                           ;;
+    ;;      DPMF_UPDATE_SUPPLY                      Capability required to update DPMF Supply                                                           ;;
     ;;      DPMF_INCREASE_NONCE                     Capability required to update DPMF Nonce in the DPMF-PropertiesTable                                ;;
     ;;======DPMF-BALANCES-TABLE-MANAGEMENT==========                                                                                                    ;;
     ;;      DPMF_ACCOUNT_OWNER                      Enforces DPMF Account Ownership                                                                     ;;
@@ -122,7 +146,6 @@
     ;;      DPMF_ACCOUNT_CREATE_OFF                 Enforces DPMF Account has create role off                                                           ;;
     ;;      DPMF_ACCOUNT_TRANSFER_ON                Enforces DPMF Account has transfer role on                                                          ;;
     ;;      DPMF_ACCOUNT_TRANSFER_OFF               Enforces DPMF Account has transfer role off                                                         ;;
-    ;;      DPMF_ACCOUNT_TRANSFER_DEFAULT           Transfer role capabilty required for uncreated receivers                                            ;;
     ;;      DPMF_ACCOUNT_FREEZE_ON                  Enforces DPMF Account is frozen                                                                     ;;
     ;;      DPMF_ACCOUNT_FREEZE_OFF                 Enforces DPMF Account is not frozen                                                                 ;;
     ;;                                                                                                                                                  ;;
@@ -131,6 +154,7 @@
     ;;      COMPOSED                                                                                                                                    ;;
     ;;                                                                                                                                                  ;;
     ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      DPMF_OWNERSHIP-CHANGE                   Capability required for changing DPMF Token Ownership                                               ;;
     ;;      DPMF_CONTROL                            Capability required for managing DPMF Properties                                                    ;;
     ;;      DPMF_PAUSE                              Capability required to Pause a DPMF                                                                 ;;
     ;;      DPMF_UNPAUSE                            Capability required to Unpause a DPMF                                                               ;;
@@ -165,208 +189,275 @@
     ;;      TRANSFER_DPMF                           Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier                ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-    ;;
-    ;;      CAPABILITIES
-    ;;
-    ;;      BASIC
-    ;;
+    
+
+    ;;==============================================
+    ;;                                            ;;
+    ;;      CAPABILITIES                          ;;
+    ;;                                            ;;
+    ;;      BASIC                                 ;;
+    ;;                                            ;;
     ;;======DPMF-PROPERTIES-TABLE-MANAGEMENT========
+    ;;
+    ;;      DPMF_OWNER|DPMF_CAN-CHANGE-OWNER_ON|DPMF_CAN-UPGRADE_ON|DPMF_CAN-ADD-SPECIAL-ROLE_ON
+    ;;      DPMF_CAN-FREEZE_ON|DPMF_CAN-WIPE_ON|DPMF_CAN-PAUSE_ON|DPMF_IS-PAUSED_ON|DPMF_IS-PAUSED_OF
+    ;;      DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON|DPMF_UPDATE_SUPPLY|DPMF_INCREASE_NONCE     
     ;;
     (defcap DPMF_OWNER (identifier:string)
         @doc "Enforces DPMF Token Ownership"
-        (with-read DPMF-PropertiesTable identifier
-            { "owner" := owg }
-            (enforce-guard owg)
+        (enforce-guard (UR_MetaFungibleOwner identifier))
+    )
+    (defcap DPMF_CAN-CHANGE-OWNER_ON (identifier:string)
+        @doc "Enforces DPMF Token ownership is changeble"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanChangeOwner identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} ownership cannot be changed" [identifier]))
         )
     )
     (defcap DPMF_CAN-UPGRADE_ON (identifier:string)
-        @doc "Enforces DPMF Token upgrade-ability"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-upgrade" := cu }
-            (enforce (= cu true) (format "DPMF Token {} properties cannot be upgraded" [identifier]))
+        @doc "Enforces DPMF Token is upgradeable"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanUpgrade identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} properties cannot be upgraded" [identifier])
+            )
         )
     )
     (defcap DPMF_CAN-ADD-SPECIAL-ROLE_ON (identifier:string)
-        @doc "Enforces DPMF Token Property as true"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-add-special-role" := casr }
-            (enforce (= casr true) (format "For DPMF Token {} no special roles can be added" [identifier]))
+        @doc "Enforces adding special roles for DPMF Token is Meta"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanAddSpecialRole identifier))
+            )
+            (enforce (= x true) (format "For DPMF Token {} no special roles can be added" [identifier])
+            )
         )
     )
     (defcap DPMF_CAN-FREEZE_ON (identifier:string)
-        @doc "Enforces DPMF Token Property as true"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-freeze" := cf }
-            (enforce (= cf true) (format "DPMF Token {} cannot be freezed" [identifier]))
+        @doc "Enforces DPMF Token can be frozen"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanFreeze identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} cannot be freezed" [identifier])
+            )
         )
     )
     (defcap DPMF_CAN-WIPE_ON (identifier:string)
-        @doc "Enforces DPMF Token Property as true"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-wipe" := cw }
-            (enforce (= cw true) (format "DPMF Token {} cannot be wiped" [identifier]))
+        @doc "Enforces DPMF Token Property can be wiped"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanWipe identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} cannot be wiped" [identifier])
+            )
         )
     )
     (defcap DPMF_CAN-PAUSE_ON (identifier:string)
-        @doc "Enforces DPMF Token Property as true"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-pause" := cp }
-            (enforce (= cp true) (format "DPMF Token {} cannot be paused" [identifier]))
+        @doc "Enforces DPMF Token can be paused"
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanPause identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} cannot be paused" [identifier])
+            )
         )
     )
     (defcap DPMF_IS-PAUSED_ON (identifier:string)
         @doc "Enforces that the DPMF Token is paused"
-        (with-read DPMF-PropertiesTable identifier
-            { "is-paused" := ip }
-            (enforce (= ip true) (format "DPMF Token {} is already unpaused" [identifier]))
+        (let
+            (
+                (x:bool (UR_MetaFungibleIsPaused identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} is already unpaused" [identifier])
+            )
         )
     )
     (defcap DPMF_IS-PAUSED_OFF (identifier:string)
         @doc "Enforces that the DPMF Token is not paused"
-        (with-read DPMF-PropertiesTable identifier
-            { "is-paused" := ip }
-            (enforce (= ip false) (format "DPMF Token {} is already paused" [identifier]))
+        (let
+            (
+                (x:bool (UR_MetaFungibleIsPaused identifier))
+            )
+            (enforce (= x false) (format "DPMF Token {} is already paused" [identifier])
+            )
         )
     )
     (defcap DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON (identifier:string)
         @doc "Enforces DPMF Token Property as true"
-        (with-read DPMF-PropertiesTable identifier
-            { "can-transfer-nft-create-role" := ctncr }
-            (enforce (= ctncr true) (format "DPMF Token {} cannot have its creation role transfered" [identifier]))
+        (let
+            (
+                (x:bool (UR_MetaFungibleCanTransferNFTCreateRole identifier))
+            )
+            (enforce (= x true) (format "DPMF Token {} cannot have its create role transfered" [identifier])
+            )
         )
     )
-    (defcap UPDATE_DPMF_SUPPLY (identifier:string amount:decimal)
+    (defcap DPMF_UPDATE_SUPPLY (identifier:string amount:decimal) 
         @doc "Capability required to update DPMF Supply"
-        (U_ValidateMetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier amount)
+        true
     )
     (defcap DPMF_INCREASE_NONCE ()
         @doc "Capability required to update DPMF Nonce in the DPMF-PropertiesTable"
         true
     )
     ;;======DPMF-BALANCES-TABLE-MANAGEMENT==========
-    (defcap DPMF_CLIENT (identifier:string account:string)
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                true
-                (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
-            )
-        )
-    )
+    ;;
+    ;;      DPMF_ACCOUNT_OWNER
+    ;;      DPMF_ACCOUNT_ADD-QUANTITY_ON|DPMF_ACCOUNT_ADD-QUANTITY_OFF
+    ;;      DPMF_ACCOUNT_BURN_ON|DPMF_ACCOUNT_BURN_OFF
+    ;;      DPMF_ACCOUNT_CREATE_ON|DPMF_ACCOUNT_CREATE_OFF
+    ;;      DPMF_ACCOUNT_TRANSFER_ON|DPMF_ACCOUNT_TRANSFER_OFF
+    ;;      DPMF_ACCOUNT_FREEZE_ON|DPMF_ACCOUNT_FREEZE_OFF
+    ;;
     (defcap DPMF_ACCOUNT_OWNER (identifier:string account:string)
         @doc "Enforces DPMF Account Ownership"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "guard" := g }
-            (enforce-guard g)
-        )
+        (enforce-guard (UR_AccountMetaFungibleGuard identifier account))
     )
     (defcap DPMF_ACCOUNT_ADD-QUANTITY_ON (identifier:string account:string)
         @doc "Enforces DPMF Account has add-quantity role on"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-add-quantity" := rnaq }
-            (enforce (= rnaq true) (format "DPMF {} Account isnt allowed to add quantity" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleNFTAQ identifier account))
+            )
+            (enforce (= x true) (format "Account {} isnt allowed to add quantity for DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_ADD-QUANTITY_OFF (identifier:string account:string)
         @doc "Enforces DPMF Account has add-quantity role off"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-add-quantity" := rnaq }
-            (enforce (= rnaq false) (format "DPMF {} Account is allowed to add quantity" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleNFTAQ identifier account))
+            )
+            (enforce (= x false) (format "Account {} is allowed to add quantity for DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_BURN_ON (identifier:string account:string)
         @doc "Enforces DPMF Account has burn role on"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-burn" := rnb }
-            (enforce (= rnb true) (format "DPMF {} Account isnt allowed to burn" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleBurn identifier account))
+            )
+            (enforce (= x true) (format "Account {} isnt allowed to burn DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_BURN_OFF (identifier:string account:string)
         @doc "Enforces DPMF Account has burn role off"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-burn" := rnb }
-            (enforce (= rnb false) (format "DPMF {} Account is allowed to burn" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleBurn identifier account))
+            )
+            (enforce (= x false) (format "Account {} is allowed to burn DPTF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_CREATE_ON (identifier:string account:string)
         @doc "Enforces DPMF Account has create role on"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-create" := rnc }
-            (enforce (= rnc true) (format "DPMF {} Account isnt allowed to create {} Meta-Fungible" [account identifier]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleCreate identifier account))
+            )
+            (enforce (= x true) (format "Account {} isnt allowed to create DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_CREATE_OFF (identifier:string account:string)
         @doc "Enforces DPMF Account has create role off"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-nft-create" := rnc }
-            (enforce (= rnc false) (format "DPMF {} Account is allowed to create {} Meta-Fungible" [account identifier]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleCreate identifier account))
+            )
+            (enforce (= x false) (format "Account {} is allowed to create DPTF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_TRANSFER_ON (identifier:string account:string)
         @doc "Enforces DPMF Account has transfer role on"
-        (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-transfer" : false }
-            { "role-transfer" := rt }
-            (enforce (= rt true) (format "Transfer Role is not valid for DPMF {} Account" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleTransfer identifier account))
+            )
+            (enforce (= x true) (format "Account {} doesnt have a valid transfer role for DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_TRANSFER_OFF (identifier:string account:string)
-        @doc "Enforces DPMF Account has transfer role on"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "role-transfer" := rt }
-            (enforce (= rt false) (format "DPMF {} Account has transfer role" [account]))
+        @doc "Enforces DPMF Account has transfer role off"
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleRoleTransfer identifier account))
+            )
+            (enforce (= x false) (format "Account {} has a valid transfer role for DPMF {} Token" [account identifier])
+            )
         )
-    )
-    (defcap DPMF_ACCOUNT_TRANSFER_DEFAULT ()
-        @doc "Transfer role capabilty required for uncreated receivers"
-        true
     )
     (defcap DPMF_ACCOUNT_FREEZE_ON (identifier:string account:string)
         @doc "Enforces DPMF Account is frozen"
-        (with-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "frozen" := f }
-            (enforce (= f true) (format "DPMF {} Account isnt frozen" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleFrozenState identifier account))
+            )
+            (enforce (= x true) (format "Account {} isnt frozen for DPMF {} Token" [account identifier])
+            )
         )
     )
     (defcap DPMF_ACCOUNT_FREEZE_OFF (identifier:string account:string)
         @doc "Enforces DPMF Account is not frozen"
-        (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
-            { "frozen" : false}
-            { "frozen" := f }
-            (enforce (= f false) (format "DPMF {} Account is frozen" [account]))
+        (let
+            (
+                (x:bool (UR_AccountMetaFungibleFrozenState identifier account))
+            )
+            (enforce (= x false) (format "Account {} is frozen for DPMF {} Token" [account identifier])
+            )
         )
     )
+    ;;---------------------------------------------;;
+    ;;                                             ;;
+    ;;      COMPOSED                               ;;
+    ;;                                             ;;
+    ;;==================CONTROL======================
     ;;
-    ;;-------------------------------------------------------------------------------------------------------
+    ;;      DPMF_OWNERSHIP-CHANGE|DPMF_CONTROL
+    ;;      DPMF_PAUSE|DPMF_UNPAUSE|
+    ;;      DPMF_FREEZE_ACCOUNT|DPMF_UNFREEZE_ACCOUNT
     ;;
-    ;;      COMPOSED
-    ;;
-    ;;==================CONTROL===================== 
+    (defcap DPMF_OWNERSHIP-CHANGE (identifier:string new-owner:string)
+        @doc "Capability required for changing DPMF Token Ownership"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount new-owner)
+        (compose-capability (DPMF_OWNER identifier))
+        (compose-capability (DPMF_CAN-CHANGE-OWNER_ON identifier))
+    )
     (defcap DPMF_CONTROL (identifier:string)
         @doc "Capability required for managing DPMF Properties"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-UPGRADE_ON identifier))
     )
     (defcap DPMF_PAUSE (identifier:string)
         @doc "Capability required to Pause a DPMF Token"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-PAUSE_ON identifier))
         (compose-capability (DPMF_IS-PAUSED_OFF identifier))
     )
     (defcap DPMF_UNPAUSE (identifier:string)
         @doc "Capability required to Unpause a DPMF Token"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-PAUSE_ON identifier))
         (compose-capability (DPMF_IS-PAUSED_ON identifier))
     )
     (defcap DPMF_FREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Freeze a DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-FREEZE_ON identifier))
@@ -374,16 +465,20 @@
     )
     (defcap DPMF_UNFREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Unfreeze a DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-FREEZE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_FREEZE_ON identifier account))
     )
     ;;==================SET=========================
+    ;;
+    ;;      DPMF_SET_ADD-QUANTITY-ROLE|DPMF_SET_BURN-ROLE
+    ;;      DPMF_SET_TRANSFER-ROLE|DPMF_MOVE_CREATE-ROLE
+    ;;
     (defcap DPMF_SET_ADD-QUANTITY-ROLE (identifier:string account:string)
         @doc "Capability required to Set Add-Quantity Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
@@ -391,7 +486,7 @@
     )
     (defcap DPMF_SET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Set Burn Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
@@ -399,7 +494,7 @@
     )
     (defcap DPMF_SET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Set Transfer Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
@@ -407,7 +502,7 @@
     )
     (defcap DPMF_MOVE_CREATE-ROLE (identifier:string sender:string receiver:string)
         @doc "Capability required to Change Create Role to another DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateSenderReceiver sender receiver)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON identifier))
@@ -415,32 +510,38 @@
         (compose-capability (DPMF_ACCOUNT_CREATE_OFF identifier receiver))
     )
     ;;==================UNSET========================
+    ;;
+    ;;      DPMF_UNSET_ADD-QUANTITY-ROLE|DPMF_UNSET_BURN-ROLE|DPMF_UNSET_TRANSFER-ROLE
+    ;;
     (defcap DPMF_UNSET_ADD-QUANTITY-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Add-Quantity Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
     )
     (defcap DPMF_UNSET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Burn Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_ACCOUNT_BURN_ON identifier account))
     )
     (defcap DPMF_UNSET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Transfer Role for DPMF Account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier account))
     )
     ;;==================CREATE=======================
+    ;;
+    ;;      DPMF_MINT|DPMF_CREATE|DPMF_ADD-QUANTITY
+    ;;
     (defcap DPMF_MINT (identifier:string account:string amount:decimal)
         @doc "Capability required to mint a DPMF Token \
         \ Smart-Contract Account type doesnt require their guard|key"
-        (U_ValidateMetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier amount)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_CREATE identifier account))
         (compose-capability (DPMF_ADD-QUANTITY identifier account amount))
@@ -448,123 +549,60 @@
     (defcap DPMF_CREATE (identifier:string account:string)
         @doc "Capability that allows creation of a new MetaFungilbe nonce \
         \ This creates a MetaFungible with zero quantity"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                (compose-capability (DPMF_CREATE_SMART identifier account))
-                (compose-capability (DPMF_CREATE_STANDARD identifier account))
-            )
-        )
-        (compose-capability (DPMF_ACCOUNT_CREATE_ON identifier account))
-    )
-    (defcap DPMF_CREATE_SMART (identifier:string account:string)
-        @doc "Capability that allows creation of a new MetaFungilbe nonce by a Smart DPTS Account"
-        (compose-capability (DPMF_ACCOUNT_CREATE_ON identifier account))
-        (compose-capability (DPMF_INCREASE_NONCE))
-    )
-    (defcap DPMF_CREATE_STANDARD (identifier:string account:string)
-        @doc "Capability that allows creation of a new MetaFungilbe nonce by a Standard DPTS Account"
-        (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
+
+        (compose-capability (DPMF_CLIENT identifier account))
         (compose-capability (DPMF_ACCOUNT_CREATE_ON identifier account))
         (compose-capability (DPMF_INCREASE_NONCE))
     )
     (defcap DPMF_ADD-QUANTITY (identifier:string account:string amount:decimal)
         @doc "Capability required to add-quantity for a DPMF Token \
         \ Smart-Contract Account type doesnt require their guard|key"
-        (U_ValidateMetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier amount)
         (DPTS.U_ValidateAccount account)
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                (compose-capability (DPMF_ADD-QUANTITY_SMART identifier account amount))
-                (compose-capability (DPMF_ADD-QUANTITY_STANDARD identifier account amount))
-            )
-        )
-    )
-    (defcap DPMF_ADD-QUANTITY_SMART (identifier:string account:string amount:decimal)
-        @doc "Capability required to add-quantity for a DPMF Token by a Smart DPTS Account"
+
+        (compose-capability (DPMF_CLIENT identifier account))
         (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
-        (compose-capability (CREDIT_DPMF))
-        (compose-capability (UPDATE_DPMF_SUPPLY identifier amount))
-    )
-    (defcap DPMF_ADD-QUANTITY_STANDARD (identifier:string account:string amount:decimal)
-        @doc "Capability required to add-quantity for a DPMF Token by a Standard DPTS Account"
-        (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
-        (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
-        (compose-capability (CREDIT_DPMF))
-        (compose-capability (UPDATE_DPMF_SUPPLY identifier amount))
+        (compose-capability (CREDIT_DPMF identifier account))
+        (compose-capability (DPMF_UPDATE_SUPPLY identifier amount))
     )
     ;;==================DESTROY======================
+    ;;
+    ;;      DPMF_BURN|DPMF_WIPE
+    ;;
     (defcap DPMF_BURN (identifier:string nonce:integer account:string amount:decimal)
         @doc "Capability required to burn a DPMF Token locally \
         \ Smart-Contract Account type doesnt require their guard|key"
-        (U_ValidateMetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier amount)
         (DPTS.U_ValidateAccount account)
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= iz-sc true)
-                (compose-capability (DPMF_BURN_SMART identifier account amount))
-                (compose-capability (DPMF_BURN_STANDARD identifier account amount))
-            )
-        )
-    )
-    (defcap DPMF_BURN_SMART (identifier:string account:string amount:decimal)
-        @doc " Capability required to burn a DPMF Token by a Smart DPTS Account"
-        (compose-capability (DPMF_ACCOUNT_BURN_ON identifier account))
-        (compose-capability (DEBIT_DPMF_SC))
-        (compose-capability (UPDATE_DPMF_SUPPLY identifier amount))
-    )
-    (defcap DPMF_BURN_STANDARD (identifier:string account:string amount:decimal)
-        @doc "Capability required to burn a DPMF Token by a Standard DPTS Account"
-        (compose-capability (DPMF_ACCOUNT_OWNER identifier account))
         (compose-capability (DPMF_ACCOUNT_BURN_ON identifier account))
         (compose-capability (DEBIT_DPMF identifier account))
-        (compose-capability (UPDATE_DPMF_SUPPLY identifier amount))
+        (compose-capability (DPMF_UPDATE_SUPPLY identifier amount))
     )
     (defcap DPMF_WIPE (identifier:string account:string amount:decimal)
         @doc "Capability required to Wipe all DPMF Tokens from a DPMF account"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-WIPE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_FREEZE_ON identifier account))
-        (compose-capability (UPDATE_DPMF_SUPPLY identifier amount))
+        (compose-capability (DPMF_UPDATE_SUPPLY identifier amount))
     )
     ;;=================CORE==========================
-    (defcap CREDIT_DPMF ()
+    (defcap CREDIT_DPMF (identifier:string account:string)
         @doc "Capability to perform crediting operations with DPMF Tokens"
-        true
-        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
-        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
-        ;;(enforce (!= account "") "Invalid receiver account")
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
     )
     (defcap DEBIT_DPMF (identifier:string account:string)
         @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPMF Token"
-        (enforce-guard 
-            (at "guard" 
-                (read DPMF-BalancesTable (concat [identifier BAR account]) ["guard"])
-            )
-        )
-        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
-        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
-        ;;(enforce (!= account "") "Invalid sender account")
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)                
+
+        (compose-capability (DPMF_CLIENT identifier account))
     )
-    (defcap DEBIT_DPMF_SC ()
-        @doc "Capability to perform debiting operations on a Smart(Contract) DPTS Account type for a DPMF Token\
-        \ Does not enforce account guard."
-        true
-        ;;Isnt needed since DPTS.U_ValidateSenderReceiver is used which has DPTS.U_ValidateAccount
-        ;;DPTS.U_ValidateAccount enforces already length account is greater than ACCOUNT_ID_MIN_LENGTH (3)
-        ;;(enforce (!= account "") "Invalid sender account")
-    )
+
     (defcap TRANSFER_DPMF 
         (
             identifier:string 
@@ -574,7 +612,7 @@
             method:bool
         )
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier"
-        (U_ValidateMetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier amount)
         (DPTS.U_ValidateSenderReceiver sender receiver)
 
         (compose-capability (DPMF_IS-PAUSED_OFF identifier))
@@ -596,41 +634,37 @@
             )
         )
         (compose-capability (DPTS.SC_TRANSFERABILITY sender receiver method))
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType sender)))
-            )
-            (if (and (= iz-sc true) (= method true))
-                (compose-capability (DEBIT_DPMF_SC))
-                (compose-capability (DEBIT_DPMF identifier sender))
-            )
-        )   
-        (compose-capability (CREDIT_DPMF))
+        (compose-capability (DEBIT_DPMF identifier sender))  
+        (compose-capability (CREDIT_DPMF identifier receiver))
     )
-    ;;
+
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
     ;;                                                                                                                                                  ;;
-    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read Functions)                         ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read|Validate Functions)                ;;
     ;;                                                  No Key|Guard required.                                                                          ;;
     ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
-    ;;                                                  Module Key|Guard required.                                                                      ;;
+    ;;                                                  DPTF_ADMIN Capability Required.                                                                 ;;
     ;;      2)CLIENT                                Client Functions: can be called by any DPMF Account.                                                ;;
-    ;;                                                  Usually Client Key|Guard is required.                                                           ;;
+    ;;                                                  DPTF_CLIENT Capability Required.                                                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      SECONDARY Functions                                                                                                                         ;;
+    ;;      SECONDARY Functions                     Auxiliary Functions: cannot be called on their own                                                  ;;
     ;;                                                                                                                                                  ;;
-    ;;      3)AUXILIARY                             Auxiliary Functions: cannot be called on their own.                                                 ;;
-    ;;                                                  Are Part of Client Function                                                                     ;;
+    ;;      3)AUXILIARY                             Are Part of Client Function                                                                         ;;
+    ;;                                                  Capabilities are required to use auxiliary Functions                                            ;;
     ;;                                                                                                                                                  ;;      
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      Functions Names are prefixed, so that they may be better visualised and understood.                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      UTILITY                                 U_FunctionName                                                                                      ;;
+    ;;      UTILITY-COMPUTE                         UC_FunctionName                                                                                     ;;
+    ;;      UTILITY-PRINT                           UP_FunctionName                                                                                     ;;
+    ;;      UTILITY-READ                            UR_FunctionName                                                                                     ;;
+    ;;      UTILITY-VALIDATE                        UV_FunctionName                                                                                     ;;
     ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
     ;;      CLIENT                                  C_FunctionName                                                                                      ;;
     ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
@@ -640,25 +674,45 @@
     ;;      UTILITY FUNCTIONS                                                                                                                           ;;
     ;;                                                                                                                                                  ;;
     ;;==================ACCOUNT-INFO================                                                                                                    ;;
-    ;;      U_GetAccountMetaFungibles               Returns a List of Metafungible Identifiers held by DPMF Accounts <account>                          ;;
-    ;;      U_GetAccountMetaFungibleSupply          Returns total Supply for MetaFungible <identifier> (all nonces) held by DPMF Account <account>      ;;
-    ;;      U_GetAccountMetaFungibleBalances        Returns a list of Balances that exist for MetaFungible <identifier> held by DPMF Account <account>  ;;
-    ;;      U_GetAccountMetaFungibleNonces          Returns a list of Nonces that exist for MetaFungible <identifier> held by DPMF Account <account>    ;;
-    ;;      U_GetAccountMetaFungibleBalance         Returns the balance of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>     ;;
-    ;;      U_GetAccountMetaFungibleMetaData        Returns the meta-data of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>   ;;
-    ;;      U_GetAccountMetaFungibleGuard           Returns the Guard of a MetaFungible <identifier> held by DPMF Account <account>                     ;;
-    ;;==================MF-INFO=====================                                                                                                    ;;
-    ;;      U_GetMetaFungibleSupply                 Returns Total existent Supply for MetaFungible <identifier>                                         ;;
-    ;;      U_GetMetaFungibleDecimals               Returns the number of Decimals the MetaFungible <identifier> was created with                       ;;
-    ;;      U_GetMetaFungibleLastNonce              Returns the Last Nonce in use for MetaFungible <identifier>                                         ;;
-    ;;      U_GetMetaFungibleCreateRoleAccount      Returns the Account that has the current create-role for MetaFungible <identifier>                  ;;
+    ;;      UR_AccountMetaFungibles                 Returns a List of Metafungible Identifiers held by DPMF Accounts <account>                          ;;
+    ;;      UR_AccountMetaFungibleSupply            Returns Account <account> Meta Fungible <identifier> Supply (all nonces)                            ;;
+    ;;      UR_AccountMetaFungibleUnit              Returns Account <account> Meta Fungible <identifier> Unit                                           ;;
+    ;;      UR_AccountMetaFungibleGuard             Returns Account <account> Meta Fungible <identifier> Guard                                          ;;
+    ;;      UR_AccountMetaFungibleRoleNFTAQ         Returns Account <account> Meta Fungible <identifier> NFT Add Quantity Role                          ;;
+    ;;      UR_AccountMetaFungibleRoleBurn          Returns Account <account> Meta Fungible <identifier> Burn Role                                      ;;
+    ;;      UR_AccountMetaFungibleRoleCreate        Returns Account <account> Meta Fungible <identifier> Create Role                                    ;;
+    ;;      UR_AccountMetaFungibleRoleTransfer      Returns Account <account> Meta Fungible <identifier> Transfer Role                                  ;;
+    ;;      UR_AccountMetaFungibleFrozenState       Returns Account <account> Meta Fungible <identifier> Frozen State                                   ;;
+    ;;==================ACCOUNT-NONCE===============
+    ;;      UR_AccountMetaFungibleBalances          Returns a list of Balances that exist for MetaFungible <identifier> held by DPMF Account <account>  ;;
+    ;;      UR_AccountMetaFungibleNonces            Returns a list of Nonces that exist for MetaFungible <identifier> held by DPMF Account <account>    ;;
+    ;;      UR_AccountMetaFungibleBalance           Returns the balance of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>     ;;
+    ;;      UR_AccountMetaFungibleMetaData          Returns the meta-data of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>   ;;
+    ;;==================META-FUNGIBLE-INFO==========                                                                                                    ;;
+    ;;      UR_MetaFungibleOwner                    Returns Meta Fungible <identifier> Owner                                                            ;;
+    ;;      UR_MetaFungibleName                     Returns Meta Fungible <identifier> Name                                                             ;;
+    ;;      UR_MetaFungibleTicker                   Returns Meta Fungible <identifier> Ticker                                                           ;;
+    ;;      UR_MetaFungibleDecimals                 Returns Meta Fungible <identifier> Decimals                                                         ;;
+    ;;      UR_MetaFungibleCanChangeOwner           Returns Meta Fungible <identifier> Boolean can-change-owner                                         ;;
+    ;;      UR_MetaFungibleCanUpgrade               Returns Meta Fungible <identifier> Boolean can-upgrade                                              ;;
+    ;;      UR_MetaFungibleCanAddSpecialRole        Returns Meta Fungible <identifier> Boolean can-add-special-role                                     ;;
+    ;;      UR_MetaFungibleCanFreeze                Returns Meta Fungible <identifier> Boolean can-freeze                                               ;;
+    ;;      UR_MetaFungibleCanWipe                  Returns Meta Fungible <identifier> Boolean can-wipe                                                 ;;
+    ;;      UR_MetaFungibleCanPause                 Returns Meta Fungible <identifier> Boolean can-pause                                                ;;
+    ;;      UR_MetaFungibleIsPaused                 Returns Meta Fungible <identifier> Boolean is-paused                                                ;;
+    ;;      UR_MetaFungibleCanTransferNFTCreateRole Returns Meta Fungible <identifier> Boolean can-transfer-nft-create-role                             ;;
+    ;;      UR_MetaFungibleSupply                   Returns Meta Fungible <identifier> Total Supply                                                     ;;
+    ;;      UR_MetaFungibleCreateRoleAccount        Returns Meta Fungible <identifier> Create Role Account                                              ;;
+    ;;      UR_MetaFungibleTransferRoleAmount       Returns Meta Fungible <identifier> Transfer Role Amount                                             ;;
+    ;;      UR_MetaFungibleNoncesUsed               Returns Meta Fungible <identifier> Used Nonces                                                      ;;
     ;;==================VALIDATIONS=================                                                                                                    ;;
-    ;;      U_ValidateMetaFungibleAmount            Enforces the Amount <amount> is positive its decimal size conform for MetaFungible <identifier>     ;;
-    ;;      U_ValidateMetaFungibleIdentifier        Enforces the MetaFungible <identifier> exists                                                       ;;
-    ;;      U_ValidateObjectListAsMetaFungibleList  Validates that a list of Objects contains Objects conform to the MetaFungible Schema                ;;
-    ;;      U_ValidateObjectAsMetaFungible          Validates that an Object is conform to the MetaFungible Schema                                      ;;
-    ;;      U_ValidateObjectAsNonceBalancePair      Validates that an Object is a pair of nonce and balances                                            ;;
-    ;;      U_ComposeMetaFungible                   Composes a MetaFungible object from <nonce>, <balance> and <meta-data>                              ;;
+    ;;      UV_MetaFungibleAmount                   Enforces the Amount <amount> is positive its decimal size conform for MetaFungible <identifier>     ;;
+    ;;      UV_MetaFungibleIdentifier               Enforces the MetaFungible <identifier> exists                                                       ;;
+    ;;      UV_ObjectListAsMetaFungibleList         Enforces that a list of Objects contains Objects conform to the MetaFungible Schema                 ;;
+    ;;      UV_ObjectAsMetaFungible                 Enforces that an Object is conform to the MetaFungible Schema                                       ;;
+    ;;      UV_ObjectAsNonceBalancePair             Enforces that an Object is a pair of nonce and balances                                             ;;
+    ;;==================Composition=================                                                                                                    ;;
+    ;;      UC_ComposeMetaFungible                   Composes a MetaFungible object from <nonce>, <balance> and <meta-data>                             ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -671,6 +725,7 @@
     ;;      CLIENT FUNCTIONS                                                                                                                            ;;
     ;;                                                                                                                                                  ;;
     ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      C_ChangeOwnership                       Moves DPMF <identifier> Token Ownership to <new-owner> DPMF Account                                 ;;
     ;;      C_Control                               Controls MetaFungible <identifier> Properties using 7 boolean control triggers                      ;;
     ;;      C_Pause                                 Pause MetaFungible <identifier>                                                                     ;;
     ;;      C_Unpause                               Unpause MetaFungible <identifier>                                                                   ;;
@@ -717,15 +772,21 @@
     ;;      X_IncrementNonce                        Increments <identifier> MetaFungible nonce.                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
+
+
+    ;;==============================================
+    ;;                                            ;;
+    ;;      UTILITY FUNCTIONS                     ;;
+    ;;                                            ;;
+    ;;==================ACCOUNT-INFO================
     ;;
-    ;;      UTILITY FUNCTIONS
-    ;;
-    ;;==================ACCOUNT-INFO================ 
-    ;;
-    ;;      U_GetAccountMetaFungibles 
+    ;;      UR_AccountMetaFungibles
+    ;;      UR_AccountMetaFungibleSupply|UR_AccountMetaFungibleUnit|UR_AccountMetaFungibleGuard
+    ;;      UR_AccountMetaFungibleRoleNFTAQ|UR_AccountMetaFungibleRoleBurn|UR_AccountMetaFungibleRoleCreate
+    ;;      UR_AccountMetaFungibleRoleTransfer|UR_AccountMetaFungibleFrozenState
     ;;
     ;;      
-    (defun U_GetAccountMetaFungibles:[string] (account:string)
+    (defun UR_AccountMetaFungibles:[string] (account:string)
         @doc "Returns a List of Metafungible Identifiers held by DPMF Accounts <account>"
         (DPTS.U_ValidateAccount account)
 
@@ -738,12 +799,9 @@
             dpmf-account-tokens
         )
     )
-    ;;
-    ;;      U_GetAccountMetaFungibleSupply
-    ;;
-    (defun U_GetAccountMetaFungibleSupply:decimal (identifier:string account:string)
+    (defun UR_AccountMetaFungibleSupply:decimal (identifier:string account:string)
         @doc "Returns total Supply for MetaFungible <identifier> (all nonces) held by DPMF Account <account>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
@@ -751,7 +809,7 @@
             { "unit" := read-unit}
             (let
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList read-unit))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
@@ -772,13 +830,71 @@
             )
         )
     )
+    (defcap UR_AccountMetaFungibleUnit:[object] (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Unit"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (at "unit" (read DPMF-BalancesTable (concat [identifier BAR account]) ["unit"]))
+    )
+    (defun UR_AccountMetaFungibleGuard:guard (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Guard"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (at "guard" (read DPMF-BalancesTable (concat [identifier BAR account]) ["guard"]))
+    )
+    (defun UR_AccountMetaFungibleRoleNFTAQ:bool (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> NFT Add Quantity Role"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (at "role-nft-add-quantity" (read DPMF-BalancesTable (concat [identifier BAR account]) ["role-nft-add-quantity"]))
+    )
+    (defun UR_AccountMetaFungibleRoleBurn:bool (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Burn Role"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (at "role-nft-burn" (read DPMF-BalancesTable (concat [identifier BAR account]) ["role-nft-burn"]))
+    )
+    (defun UR_AccountMetaFungibleRoleCreate:bool (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Create Role"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (at "role-nft-create" (read DPMF-BalancesTable (concat [identifier BAR account]) ["role-nft-create"]))
+    )
+    (defun UR_AccountMetaFungibleRoleTransfer:bool (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Transfer Role\
+            \ with-default-read assumes the role is always false for not existing accounts \
+            \ Needed for Transfer Anew functions"
+
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
+            { "role-transfer" : false }
+            { "role-transfer" := rt }
+            rt
+        )
+    )
+    (defun UR_AccountMetaFungibleFrozenState:bool (identifier:string account:string)
+        @doc "Returns Account <account> Meta Fungible <identifier> Frozen State\
+            \ with-default-read assumes the role is always false for not existing accounts \
+            \ Needed for Transfer Anew functions"
+        (UV_MetaFungibleIdentifier identifier)
+        (DPTS.U_ValidateAccount account)
+        (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
+            { "frozen" : false}
+            { "frozen" := fr }
+            fr
+        )
+    )
     ;;
-    ;;      U_GetAccountMetaFungibleBalances
+    ;;==================ACCOUNT-NONCE===============
     ;;
-    (defun U_GetAccountMetaFungibleBalances:[decimal] (identifier:string account:string)
+    ;;      UR_AccountMetaFungibleBalances|UR_AccountMetaFungibleNonces
+    ;;      UR_AccountMetaFungibleBalance|UR_AccountMetaFungibleMetaData
+    ;;
+    (defun UR_AccountMetaFungibleBalances:[decimal] (identifier:string account:string)
         @doc "Returns a list of Balances that exist for MetaFungible <identifier> on DPMF Account <account>\
         \ Needed for Mass Debiting"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
@@ -786,7 +902,7 @@
             { "unit" := read-unit}
             (let
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList read-unit))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
@@ -810,12 +926,9 @@
             )
         )
     )
-    ;;
-    ;;      U_GetAccountMetaFungibleNonces
-    ;;
-    (defun U_GetAccountMetaFungibleNonces:[integer] (identifier:string account:string)
+    (defun UR_AccountMetaFungibleNonces:[integer] (identifier:string account:string)
         @doc "Returns a list of Nonces that exist for MetaFungible <identifier> held by DPMF Account <account>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
@@ -823,7 +936,7 @@
             { "unit" := read-unit}
             (let
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList read-unit))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
@@ -847,12 +960,9 @@
             )
         )
     )
-    ;;
-    ;;      U_GetAccountMetaFungibleBalance
-    ;;
-    (defun U_GetAccountMetaFungibleBalance:decimal (identifier:string nonce:integer account:string)
+    (defun UR_AccountMetaFungibleBalance:decimal (identifier:string nonce:integer account:string)
         @doc " Returns the balance of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
@@ -860,7 +970,7 @@
             { "unit" := read-unit}
             (let
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList read-unit))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
@@ -890,12 +1000,9 @@
             )
         )
     )
-    ;;
-    ;;      U_GetAccountMetaFungibleMetaData
-    ;;
-    (defun U_GetAccountMetaFungibleMetaData (identifier:string nonce:integer account:string)
+    (defun UR_AccountMetaFungibleMetaData (identifier:string nonce:integer account:string)
         @doc "Returns the meta-data of a MetaFungible (<identifier> and <nonce>) held by DPMF Account <account>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
 
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
@@ -903,7 +1010,7 @@
             { "unit" := read-unit}
             (let
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList read-unit))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (let 
@@ -934,62 +1041,103 @@
         )
     )
     ;;
-    ;;      U_GetAccountMetaFungibleGuard
+    ;;==================TRUE-FUNGIBLE-INFO==========
     ;;
-    (defun U_GetAccountMetaFungibleGuard:guard (identifier:string account:string)
-        @doc "Return <identifier> DPMF Token Decimal size"
-        (U_ValidateMetaFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
-
-        (at "guard" (read DPMF-BalancesTable (concat [identifier BAR account]) ["guard"]))
+    ;;      UR_MetaFungibleOwner|UR_MetaFungibleName|UR_MetaFungibleTicker|UR_MetaFungibleDecimals
+    ;;      UR_MetaFungibleCanChangeOwner|UR_MetaFungibleCanUpgrade|UR_MetaFungibleCanAddSpecialRole
+    ;;      UR_MetaFungibleCanFreeze|UR_MetaFungibleCanWipe|UR_MetaFungibleCanPause|UR_MetaFungibleIsPaused
+    ;;      UR_MetaFungibleSupply|UR_MetaFungibleCreateRoleAccount|UR_MetaFungibleTransferRoleAmount|UR_MetaFungibleNoncesUsed
+    ;;
+    (defun UR_MetaFungibleOwner:guard (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Owner"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "owner" (read DPMF-PropertiesTable identifier ["owner"]))
     )
-    ;;
-    ;;==================MF-INFO===================== 
-    ;;
-    ;;      U_GetMetaFungibleSupply 
-    ;;
-    (defun U_GetMetaFungibleSupply:decimal (identifier:string)
-        @doc "Returns Total existent Supply for MetaFungible <identifier>"
-        (U_ValidateMetaFungibleIdentifier identifier)
-
-        (at "supply" (read DPMF-PropertiesTable identifier ["supply"]))
+    (defun UR_MetaFungibleName:string (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Name"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "name" (read DPMF-PropertiesTable identifier ["name"]))
     )
-    ;;
-    ;;      U_GetMetaFungibleDecimals
-    ;;
-    (defun U_GetMetaFungibleDecimals:integer (identifier:string)
-        @doc "Returns the number of Decimals the MetaFungible <identifier> was created with"
-        (U_ValidateMetaFungibleIdentifier identifier)
-
+    (defun UR_MetaFungibleTicker:string (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Name"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "ticker" (read DPMF-PropertiesTable identifier ["ticker"]))
+    )
+    (defun UR_MetaFungibleDecimals:integer (identifier:string)
+        @doc "Returns <identifier> DPMF Token Decimal size"
+        (UV_MetaFungibleIdentifier identifier)
         (at "decimals" (read DPMF-PropertiesTable identifier ["decimals"]))
     )
-
-    ;;
-    ;;      U_GetMetaFungibleLastNonce
-    ;;
-    (defun U_GetMetaFungibleLastNonce:integer (identifier:string)
+    (defun UR_MetaFungibleCanChangeOwner:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-change-owner"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-change-owner" (read DPMF-PropertiesTable identifier ["can-change-owner"]))
+    )
+    (defun UR_MetaFungibleCanUpgrade:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-upgrade"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-upgrade" (read DPMF-PropertiesTable identifier ["can-upgrade"]))
+    )
+    (defun UR_MetaFungibleCanAddSpecialRole:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-add-special-role"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-add-special-role" (read DPMF-PropertiesTable identifier ["can-add-special-role"]))
+    )
+    (defun UR_MetaFungibleCanFreeze:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-freeze"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-freeze" (read DPMF-PropertiesTable identifier ["can-freeze"]))
+    )
+    (defun UR_MetaFungibleCanWipe:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-wipe"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-wipe" (read DPMF-PropertiesTable identifier ["can-wipe"]))
+    )
+    (defun UR_MetaFungibleCanPause:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-pause"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-pause" (read DPMF-PropertiesTable identifier ["can-pause"]))
+    )
+    (defun UR_MetaFungibleIsPaused:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean is-paused"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "is-paused" (read DPMF-PropertiesTable identifier ["is-paused"]))
+    )
+    (defun UR_MetaFungibleCanTransferNFTCreateRole:bool (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Boolean can-transfer-nft-create-role"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "can-transfer-nft-create-role" (read DPMF-PropertiesTable identifier ["can-transfer-nft-create-role"]))
+    )
+    (defun UR_MetaFungibleSupply:decimal (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Total Supply "
+        (UV_MetaFungibleIdentifier identifier)
+        (at "supply" (read DPMF-PropertiesTable identifier ["supply"]))
+    )
+    (defun UR_MetaFungibleCreateRoleAccount:string (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Create Role Account"
+        (UV_MetaFungibleIdentifier identifier)
+        (at "create-role-account" (read DPMF-PropertiesTable identifier ["create-role-account"]))
+    )
+    (defun UR_MetaFungibleTransferRoleAmount:integer (identifier:string)
+        @doc "Returns Meta Fungible <identifier> Transfer Role Amount "
+        (UV_MetaFungibleIdentifier identifier)
+        (at "role-transfer-amount" (read DPMF-PropertiesTable identifier ["role-transfer-amount"]))
+    )
+    (defun UR_MetaFungibleNoncesUsed:integer (identifier:string)
         @doc "Returns the Last Nonce in use for MetaFungible <identifier>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
 
         (at "nonces-used" (read DPMF-PropertiesTable identifier ["nonces-used"]))
     )
     ;;
-    ;;      U_GetMetaFungibleCreateRoleAccount
-    ;;
-    (defun U_GetMetaFungibleCreateRoleAccount:string (identifier:string)
-        @doc "Returns the Account that has the current create-role for MetaFungible <identifier>"
-        (U_ValidateMetaFungibleIdentifier identifier)
-
-        (at "create-role-account" (read DPMF-PropertiesTable identifier ["create-role-account"]))
-    )
-    ;;
     ;;==================VALIDATIONS=================
     ;;
-    ;;      U_ValidateMetaFungibleAmount
+    ;;      UV_MetaFungibleAmount|UV_MetaFungibleIdentifier
+    ;;      UV_ObjectListAsMetaFungibleList|UV_ObjectAsMetaFungible|UV_ObjectAsNonceBalancePair
     ;;
-    (defun U_ValidateMetaFungibleAmount (identifier:string amount:decimal)
+    (defun UV_MetaFungibleAmount (identifier:string amount:decimal)
         @doc "Enforces the Amount <amount> is positive its decimal size conform for MetaFungible <identifier>"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
 
         (with-read DPMF-PropertiesTable identifier
             { "decimals" := d }
@@ -1003,10 +1151,7 @@
             )
         )
     )
-    ;;
-    ;;      U_ValidateIdentifier
-    ;;
-    (defun U_ValidateMetaFungibleIdentifier (identifier:string)
+    (defun UV_MetaFungibleIdentifier (identifier:string)
         @doc "Enforces the MetaFungible <identifier> exists"
 
         (with-default-read DPMF-PropertiesTable identifier
@@ -1018,10 +1163,7 @@
             )
         )
     )
-    ;;
-    ;;      U_ValidateObjectListAsMetaFungibleList
-    ;;
-    (defun U_ValidateObjectListAsMetaFungibleList:bool (mflst:[object])
+    (defun UV_ObjectListAsMetaFungibleList:bool (mflst:[object])
         @doc "Validates that a list of Objects contains Objects conform to the MetaFungible SCHEMA"
         (let 
             (
@@ -1031,7 +1173,7 @@
                             (acc:bool item:object)
                             (let
                                 (
-                                    (iz-meta-fungible:bool (U_ValidateObjectAsMetaFungible item))
+                                    (iz-meta-fungible:bool (UV_ObjectAsMetaFungible item))
                                 )
                                 (enforce (= iz-meta-fungible true) "Item is not of Meta-Fungible type")
                                 (and acc iz-meta-fungible)
@@ -1045,10 +1187,7 @@
             result
         )
     )
-    ;;
-    ;;      U_ValidateObjectAsMetaFungible
-    ;;
-    (defun U_ValidateObjectAsMetaFungible:bool (obj:object)
+    (defun UV_ObjectAsMetaFungible:bool (obj:object)
         (let
             (
                 (object-validation:bool (DPTS.U_ValidateObject obj (length MFKEYS) MFKEYS))
@@ -1062,13 +1201,7 @@
             (enforce (= (typeof meta-data-val) MFTYP3) "Invalid meta-data type")
         )
     )
-    (defun GetObjectType (obj:[object])
-        (typeof obj)
-    )
-    ;;
-    ;;      U_ValidateObjectAsNonceBalancePair
-    ;;
-    (defun U_ValidateObjectAsNonceBalancePair:bool (obj:object)
+    (defun UV_ObjectAsNonceBalancePair:bool (obj:object)
         @doc "Validates that an Object is a pair of nonce and balances"
         (let*
             (
@@ -1083,29 +1216,41 @@
         )
     )
     ;;
-    ;;      U_ComposeMetaFungible
+    ;;==================Composition=================
     ;;
-    (defun U_ComposeMetaFungible:object (nonce:integer balance:decimal meta-data:[object])
+    ;;      UC_ComposeMetaFungible
+    ;;
+    (defun UC_ComposeMetaFungible:object (nonce:integer balance:decimal meta-data:[object])
         @doc "Composes a MetaFungible object from <nonce>, <balance> and <meta-data>"
-
         {"nonce" : nonce, "balance": balance, "meta-data" : meta-data}
     )
-    ;;
-    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;                                                                                                                                                  ;;
-    ;;      ADMINISTRATION FUNCTIONS                                                                                                                    ;;
-    ;;                                                                                                                                                  ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS                                                                                                                  ;;
-    ;;                                                                                                                                                  ;;
-    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;
-    ;;      CLIENT FUNCTIONS
-    ;;
-    ;;
+
+
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      ADMINISTRATION FUNCTIONS              ;;
+    ;;                                            ;;
+    ;;      NO ADMINISTRATOR FUNCTIONS            ;;
+    ;;                                            ;;
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      CLIENT FUNCTIONS                      ;;
+    ;;                                            ;;
+    ;;                                            ;;
     ;;==================CONTROL=====================
     ;;
-    ;;      C_Control
+    ;;      C_ChangeOwnership|C_Control
+    ;;      C_Pause|C_Unpause|C_FreezeAccount|C_UnfreezeAccount
     ;;
+    (defun C_ChangeOwnership (identifier:string new-owner:string)
+        @doc "Moves DPMF <identifier> Token Ownership to <new-owner> DPMF Account"
+
+        (with-capability (DPMF_OWNERSHIP-CHANGE identifier new-owner)
+            (update DPMF-PropertiesTable identifier
+                {"owner"                            : new-owner}
+            )
+        )
+    )
     (defun C_Control
         (
             identifier:string
@@ -1132,9 +1277,6 @@
             )
         ) 
     )
-    ;;
-    ;;      C_PauseDPMF
-    ;;
     (defun C_Pause (identifier:string)
         @doc "Pause MetaFungible <identifier>"
 
@@ -1142,9 +1284,6 @@
             (update DPMF-PropertiesTable identifier { "is-paused" : true})
         )
     )
-    ;;
-    ;;      C_UnpauseDPMF
-    ;;
     (defun C_Unpause (identifier:string)
         @doc "Unpause MetaFungible <identifier>"
 
@@ -1152,9 +1291,6 @@
             (update DPMF-PropertiesTable identifier { "is-paused" : false})
         )
     )
-    ;;
-    ;;      C_FreezeAccount
-    ;;
     (defun C_FreezeAccount (identifier:string account:string)
         @doc "Freeze MetaFungile <identifier> on DPMF Account <account>"
 
@@ -1162,10 +1298,7 @@
             (update DPMF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
         )
     )
-    ;;
-    ;;      C_UnfreezeDPMFAccount 
-    ;;
-    (defun C_UnfreezeDPMFAccount (identifier:string account:string)
+    (defun C_UnfreezeAccount (identifier:string account:string)
         @doc "Unfreeze MetaFungile <identifier> on DPMF Account <account>"
 
         (with-capability (DPMF_UNFREEZE_ACCOUNT identifier account)
@@ -1175,7 +1308,8 @@
     ;;
     ;;==================SET========================= 
     ;;
-    ;;      C_MoveCreateRole
+    ;;      C_MoveCreateRole|C_SetAddQuantityRole
+    ;;      C_SetBurnRole|C_SetTransferRole
     ;;
     (defun C_MoveCreateRole (identifier:string sender:string receiver:string receiver-guard:guard)
         @doc "Moves |role-nft-create| from <sender> to <receiver> DPMF Account for MetaFungible <identifier> \
@@ -1196,15 +1330,12 @@
             ;;Will executed the deployment with role-nft-create automatically set to true
             (C_DeployMetaFungibleAccount identifier receiver receiver-guard)
             ;;However, if the receiver already has a DPMF Account, a simple update is required.
-            ;;This doesnt change anything is the DPMF account was freshly deployed anew from above.
+            ;;This doesnt change anything if the DPMF account was freshly deployed anew from above.
             (update DPMF-BalancesTable (concat [identifier BAR receiver])
                 {"role-nft-create" : true}
             )
         )
     )
-    ;;
-    ;;      C_SetAddQuantityRole
-    ;;
     (defun C_SetAddQuantityRole (identifier:string account:string)
         @doc "Sets |role-nft-add-quantity| to true for MetaFungible <identifier> and DPMF Account <account> \
             \ Afterwards Account <account> can increase quantity for existing MetaFungibles"
@@ -1215,9 +1346,6 @@
             )
         )
     )
-    ;;
-    ;;      C_SetBurnRole
-    ;;
     (defun C_SetBurnRole (identifier:string account:string)
         @doc "Sets |role-nft-burn| to true for MetaFungible <identifier> and DPMF Account <account> \
             \ Afterwards Account <account> can burn existing MetaFungibles"
@@ -1228,9 +1356,6 @@
             )
         )
     )
-    ;;
-    ;;      C_SetTransferRole
-    ;;
     (defun C_SetTransferRole (identifier:string account:string)
         @doc "Sets |role-transfer| to true for MetaFungible <identifier> and DPMF Account <account> \
             \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
@@ -1252,7 +1377,7 @@
     ;;
     ;;==================UNSET=======================
     ;;
-    ;;      C_UnsetAddQuantityRole
+    ;;      C_UnsetAddQuantityRole|C_UnsetBurnRole|C_UnsetTransferRole
     ;;
     (defun C_UnsetAddQuantityRole (identifier:string account:string)
         @doc "Sets |role-nft-add-quantity| to false for MetaFungible <identifier> and DPMF Account <account> \
@@ -1264,9 +1389,6 @@
             )
         )
     )
-    ;;
-    ;;      C_UnsetBurnRole 
-    ;;
     (defun C_UnsetBurnRole (identifier:string account:string)
         @doc "Sets |role-nft-burn| to false for MetaFungible <identifier> and DPMF Account <account> \
             \ Afterwards Account <account> can no longer burn existing MetaFungibles"
@@ -1277,9 +1399,6 @@
             )
         )
     )
-    ;;
-    ;;      C_UnsetTransferRole
-    ;;
     (defun C_UnsetTransferRole (identifier:string account:string)
         @doc "Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account> \
             \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
@@ -1301,7 +1420,8 @@
     ;;
     ;;==================CREATE====================== 
     ;;
-    ;;      C_IssueMetaFungible
+    ;;      C_IssueMetaFungible|C_DeployMetaFungibleAccount
+    ;;      C_Mint|C_Create|C_AddQuantity
     ;;
     (defun C_IssueMetaFungible:string 
         (
@@ -1364,16 +1484,13 @@
             identifier
         )
     )
-    ;;
-    ;;      C_DeployMetaFungibleAccount
-    ;;
     (defun C_DeployMetaFungibleAccount (identifier:string account:string guard:guard)
         @doc "Creates a new DPMF Account for Metafungible <identifier> and Account <account> \
             \ If a DPMF Account already exists for <identifier> and <account>, it remains as is \
             \ \
             \ A Standard DPTS Account is also created, if one doesnt exist \
             \ If a DPTS Account exists, its type remains unchanged"
-        (U_ValidateMetaFungibleIdentifier identifier)
+        (UV_MetaFungibleIdentifier identifier)
         (DPTS.U_ValidateAccount account)
         (DPTS.U_EnforceReserved account guard)
 
@@ -1385,7 +1502,7 @@
         ;;If Entry exists, no changes are being done
         (let*
             (
-                (create-role-account:string (U_GetMetaFungibleCreateRoleAccount identifier))
+                (create-role-account:string (UR_MetaFungibleCreateRoleAccount identifier))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
             (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
@@ -1416,50 +1533,40 @@
             )
         )
     )
-    ;;
-    ;;      C_Mint
-    ;;
     (defun C_Mint:integer (identifier:string account:string amount:decimal meta-data:[object])
         @doc "Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account> \
             \ Both |role-nft-create| and |role-nft-add-quantity| are required for minting"
 
         (with-capability (DPMF_MINT identifier account amount)
-            (with-read DPMF-BalancesTable (concat [identifier BAR account])
-                { "guard" := g }
-                (let
-                    (
-                        (new-nonce:integer (X_Create identifier account g meta-data))
-                    )
-                    ;;Add-Quantity for the DPMF Token (needs function)
-                    (X_AddQuantity identifier new-nonce account amount)
-                    ;;Update DPMF Supply
-                    (X_UpdateSupply identifier amount true)
-                    new-nonce
+            (let*
+                (
+                    (g:guard (UR_AccountMetaFungibleGuard identifier account))
+                    (new-nonce:integer (X_Create identifier account g meta-data))
                 )
+                ;;Add-Quantity for the DPMF Token (needs function)
+                (X_AddQuantity identifier new-nonce account amount)
+                ;;Update DPMF Supply
+                (X_UpdateSupply identifier amount true)
+                new-nonce
             )
         )
+        
+
     )
-    ;;
-    ;;      C_Create
-    ;;
     (defun C_Create:integer (identifier:string account:string meta-data:[object])
         @doc "Creates a 0.0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account>"
 
         (with-capability (DPMF_CREATE identifier account)
-            (with-read DPMF-BalancesTable (concat [identifier BAR account])
-                { "guard" := g }
-                (let
-                    (
-                        (output-nonce:integer (X_Create identifier account g meta-data))
-                    )
-                    output-nonce
+            (let*
+                (
+                    (g:guard (UR_AccountMetaFungibleGuard identifier account))
+                    (output-nonce:integer (X_Create identifier account g meta-data))
                 )
+                output-nonce
             )
+
         )
     )
-    ;;
-    ;;      C_AddQuantity
-    ;;
     (defun C_AddQuantity (identifier:string nonce:integer account:string amount:decimal)
         @doc "Adds <amount> quantity to existing Metafungible <identifer> and <nonce> for DPMF Account <account>"
 
@@ -1472,7 +1579,7 @@
     ;;
     ;;==================DESTROY=====================
     ;;
-    ;;      C_Burn
+    ;;      C_Burn|C_Wipe
     ;;
     (defun C_Burn (identifier:string nonce:integer account:string amount:decimal)
         @doc "Burns <amount> <identifier>-<nonce> MetaFungible on DPMF Account <account>"
@@ -1482,16 +1589,13 @@
             (X_UpdateSupply identifier amount false)
         )
     )
-    ;;
-    ;;      C_WipeDPMF
-    ;;
     (defun C_Wipe (identifier:string account:string)
         @doc "Wipes the whole supply of <identifier> MetaFungible of a frozen DPMF Account <account>"
 
         (let*
             (
-                (nonce-lst:[integer] (U_GetAccountMetaFungibleNonces identifier account))
-                (balance-lst:[decimal] (U_GetAccountMetaFungibleBalances identifier account))
+                (nonce-lst:[integer] (UR_AccountMetaFungibleNonces identifier account))
+                (balance-lst:[decimal] (UR_AccountMetaFungibleBalances identifier account))
                 (balance-sum:decimal (fold (+) 0.0 balance-lst))
             )
             (with-capability (DPMF_WIPE identifier account balance-sum)
@@ -1503,7 +1607,7 @@
     ;;
     ;;==================TRANSFER====================
     ;;
-    ;;      C_TransferMetaFungible
+    ;;      C_TransferMetaFungible|C_TransferMetaFungibleAnew
     ;;
     (defun C_TransferMetaFungible (identifier:string nonce:integer sender:string receiver:string amount:decimal)
         @doc "Transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account\
@@ -1512,19 +1616,14 @@
         (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
             (let
                 (
-                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                    (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
+                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
                 )
                 (X_Debit identifier nonce sender amount false)
-                (with-read DPMF-BalancesTable (concat [identifier BAR receiver])
-                    { "guard" := guard }
-                    (X_Credit identifier nonce current-nonce-meta-data receiver guard amount)
-                )
+                (X_Credit identifier nonce current-nonce-meta-data receiver rg amount)
             )
         )
     )
-    ;;
-    ;;      C_TransferMetaFungibleAnew
-    ;;
     (defun C_TransferMetaFungibleAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Same as |C_TransferMetaFungible| but with DPMF Account creation \
             \ This means <receiver> DPMF Account will be created by the transfer function"
@@ -1532,21 +1631,22 @@
         (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
             (let
                 (
-                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
                 )
                 (X_Debit identifier nonce sender amount false)
                 (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
             )
         )
     )
-    ;;
-    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;                                                                                                                                                  ;;
-    ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
-    ;;                                                                                                                                                  ;;
+
+
+    ;;----------------------------------------------
+    ;;                                            ;;
+    ;;      AUXILIARY FUNCTIONS                   ;;
+    ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
-    ;;      X_MethodicTransferMetaFungible 
+    ;;      X_MethodicTransferMetaFungible|X_MethodicTransferMetaFungibleAnew
     ;;
     (defun X_MethodicTransferMetaFungible  (identifier:string nonce:integer sender:string receiver:string amount:decimal)
         @doc "Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account \
@@ -1564,18 +1664,13 @@
         (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
         (let
             (
-                (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
             )
             (X_Debit identifier nonce sender amount false)
-            (with-read DPMF-BalancesTable (concat [identifier BAR receiver])
-                { "guard" := guard }
-                (X_Credit identifier nonce current-nonce-meta-data receiver guard amount)
-            )
+            (X_Credit identifier nonce current-nonce-meta-data receiver rg amount)
         )
     )
-    ;;
-    ;;      X_MethodicTransferMetaFungibleAnew
-    ;;
     (defun X_MethodicTransferMetaFungibleAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation \
             \ This means <receiver> DPMF Account will be created by the transfer function"
@@ -1583,7 +1678,7 @@
         (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
         (let
             (
-                (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce sender))
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
             )
             (X_Debit identifier nonce sender amount false)
             (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
@@ -1592,7 +1687,8 @@
     ;;
     ;;==================CREDIT|DEBIT================ 
     ;;
-    ;;      X_Create
+    ;;      X_Create|X_AddQuantity|X_Credit
+    ;;      X_Debit|X_DebitPaired|X_DebitMultiple
     ;;
     (defun X_Create:integer (identifier:string account:string guard:guard meta-data:[object])
         @doc "Auxiliary Function that creates a MetaFungible \
@@ -1600,8 +1696,8 @@
 
         (let*
             (
-                (new-nonce:integer (+ (U_GetMetaFungibleLastNonce identifier) 1))
-                (create-role-account:string (U_GetMetaFungibleCreateRoleAccount identifier))
+                (new-nonce:integer (+ (UR_MetaFungibleNoncesUsed identifier) 1))
+                (create-role-account:string (UR_MetaFungibleCreateRoleAccount identifier))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
             (require-capability (DPMF_CREATE identifier account))
@@ -1624,8 +1720,8 @@
                 (enforce (= retg guard) "Account guards do not match !")
                 (let*
                     (
-                        (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList u))
-                        (meta-fungible:object (U_ComposeMetaFungible new-nonce 0.0 meta-data))
+                        (unit-validation:bool (UV_ObjectListAsMetaFungibleList u))
+                        (meta-fungible:object (UC_ComposeMetaFungible new-nonce 0.0 meta-data))
                         (appended-meta-fungible:[object] (DPTS.UX_AppendLast u meta-fungible))
                     )
                     (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
@@ -1647,25 +1743,22 @@
             new-nonce
         )
     )
-    ;;
-    ;;      X_AddQuantity
-    ;;
     (defun X_AddQuantity (identifier:string nonce:integer account:string amount:decimal)
         @doc "Auxiliary Function that adds quantity for an existing Metafungible \
             \ Assumes <identifier> and <nonce> exist on DPMF Account"
 
         (require-capability (DPMF_ADD-QUANTITY identifier account amount))
+
         (with-read DPMF-BalancesTable (concat [identifier BAR account])
             { "unit" := unit }
-
             (let*
                 (
-                    (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList unit))
-                    (current-nonce-balance:decimal (U_GetAccountMetaFungibleBalance identifier nonce account))
-                    (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce account))
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList unit))
+                    (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
+                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce account))
                     (updated-balance:decimal (+ current-nonce-balance amount))
-                    (meta-fungible-to-be-replaced:object (U_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
-                    (updated-meta-fungible:object (U_ComposeMetaFungible nonce updated-balance current-nonce-meta-data))
+                    (meta-fungible-to-be-replaced:object (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
+                    (updated-meta-fungible:object (UC_ComposeMetaFungible nonce updated-balance current-nonce-meta-data))
                     (processed-unit:[object] (DPTS.U_ReplaceItem unit meta-fungible-to-be-replaced updated-meta-fungible))
                 )
                 (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
@@ -1673,21 +1766,19 @@
                     {"unit" : processed-unit}    
                 )
             )
-        )  
+        )
+        
     )
-    ;;
-    ;;      X_Credit
-    ;;
     (defun X_Credit (identifier:string nonce:integer meta-data:[object] account:string account-guard:guard amount:decimal)
         @doc "Auxiliary Function that credit a MetaFungible to a DPMF Account \
             \ Also creates a new DPMF Account if it doesnt exist. \
             \ If account already has DPMF nonce, it is simply increased \
             \ If account doesnt have DPMF nonce, it is added"
-        (require-capability (CREDIT_DPMF))
 
+        (require-capability (CREDIT_DPMF identifier account))
         (let*
             (
-                (create-role-account:string (U_GetMetaFungibleCreateRoleAccount identifier))
+                (create-role-account:string (UR_MetaFungibleCreateRoleAccount identifier))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
             (with-default-read DPMF-BalancesTable (concat [identifier BAR account])
@@ -1709,12 +1800,12 @@
                 (enforce (= retg account-guard) "Account guards do not match !")
                 (let*
                     (
-                        (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList unit))
+                        (unit-validation:bool (UV_ObjectListAsMetaFungibleList unit))
                         (is-new:bool (if (= unit [NEUTRAL_META-FUNGIBLE]) (DPTS.U_EnforceReserved account account-guard) false))
-                        (current-nonce-balance:decimal (U_GetAccountMetaFungibleBalance identifier nonce account))
+                        (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
                         (credited-balance:decimal (+ current-nonce-balance amount))
-                        (present-meta-fungible:object (U_ComposeMetaFungible nonce current-nonce-balance meta-data))
-                        (credited-meta-fungible:object (U_ComposeMetaFungible nonce credited-balance meta-data))
+                        (present-meta-fungible:object (UC_ComposeMetaFungible nonce current-nonce-balance meta-data))
+                        (credited-meta-fungible:object (UC_ComposeMetaFungible nonce credited-balance meta-data))
                         (processed-unit-with-replace:[object] (DPTS.U_ReplaceItem unit present-meta-fungible credited-meta-fungible))
                         (processed-unit-with-append:[object] (DPTS.UX_AppendLast unit credited-meta-fungible))
                     )
@@ -1750,9 +1841,6 @@
             )
         )
     )
-    ;;
-    ;;      X_Credit
-    ;;
     (defun X_Debit (identifier:string nonce:integer account:string amount:decimal admin:bool)
         @doc "Auxiliary Function that debits a MetaFungible from a DPMF Account \
             \ If the amount is equal to the whole nonce amount, the whole MetaFungible is removed \
@@ -1760,51 +1848,41 @@
             \ true <admin> boolean is used when debiting is executed as a part of wiping by the DPMF Owner \
             \ otherwise, for normal debiting operations, false <admin> boolean must be used"
 
-        ;;Capability Required for Debit is called within the let body
-        (let
-            (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
-            )
-            (if (= admin true)
-                (require-capability (DPMF_OWNER identifier))
-                (if (= iz-sc true)
-                    (require-capability (DEBIT_DPMF_SC))
-                    (require-capability (DEBIT_DPMF identifier account))
-                )
-            )
-            
-            (with-read DPMF-BalancesTable (concat [identifier BAR account])
-                { "unit" := unit  }
-                (let*
-                    (
-                        (unit-validation:bool (U_ValidateObjectListAsMetaFungibleList unit))
-                        (current-nonce-balance:decimal (U_GetAccountMetaFungibleBalance identifier nonce account))
-                        (current-nonce-meta-data (U_GetAccountMetaFungibleMetaData identifier nonce account))
-                        (debited-balance:decimal (- current-nonce-balance amount))
-                        (meta-fungible-to-be-replaced:object (U_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
-                        (debited-meta-fungible:object (U_ComposeMetaFungible nonce debited-balance current-nonce-meta-data))
-                        (processed-unit-with-remove:[object] (DPTS.U_RemoveItem unit meta-fungible-to-be-replaced))
-                        (processed-unit-with-replace:[object] (DPTS.U_ReplaceItem unit meta-fungible-to-be-replaced debited-meta-fungible))
-                    )
-                    (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                    (enforce (>= debited-balance 0.0) "Insufficient Funds for debiting")
-                    (if (= debited-balance 0.0)
-                        ;;Remove Metafungible
-                        (update DPMF-BalancesTable (concat [identifier BAR account])
-                            {"unit" : processed-unit-with-remove}    
-                        )
-                        ;;Replace Metafungible
-                        (update DPMF-BalancesTable (concat [identifier BAR account])
-                            {"unit" : processed-unit-with-replace}    
-                        )
-                    )
-                )
-            )     
+        (if (= admin true)
+            (require-capability (DPMF_OWNER identifier))
+            (require-capability (DEBIT_DPMF identifier account))
         )
+
+        (with-read DPMF-BalancesTable (concat [identifier BAR account])
+            { "unit" := unit  }
+            (let*
+                (
+                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList unit))
+                    (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
+                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce account))
+                    (debited-balance:decimal (- current-nonce-balance amount))
+                    (meta-fungible-to-be-replaced:object (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
+                    (debited-meta-fungible:object (UC_ComposeMetaFungible nonce debited-balance current-nonce-meta-data))
+                    (processed-unit-with-remove:[object] (DPTS.U_RemoveItem unit meta-fungible-to-be-replaced))
+                    (processed-unit-with-replace:[object] (DPTS.U_ReplaceItem unit meta-fungible-to-be-replaced debited-meta-fungible))
+                )
+                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
+                (enforce (>= debited-balance 0.0) "Insufficient Funds for debiting")
+                (if (= debited-balance 0.0)
+                    ;;Remove Metafungible
+                    (update DPMF-BalancesTable (concat [identifier BAR account])
+                        {"unit" : processed-unit-with-remove}    
+                    )
+                    ;;Replace Metafungible
+                    (update DPMF-BalancesTable (concat [identifier BAR account])
+                        {"unit" : processed-unit-with-replace}    
+                    )
+                )
+            )
+        )
+
+        
     )
-    ;;
-    ;;      X_DebitPaired
-    ;;
     (defun X_DebitPaired (identifier:string account:string nonce-balance-obj:object)
         @doc "Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping \
             \ Same a |X_Debit| but the nonce and balance are composed into a singular <nonce-balance-obj> object \
@@ -1814,7 +1892,7 @@
 
         (let
             (
-                (iz-nonce-balance-pair:bool (U_ValidateObjectAsNonceBalancePair nonce-balance-obj))
+                (iz-nonce-balance-pair:bool (UV_ObjectAsNonceBalancePair nonce-balance-obj))
             )
             (enforce (= iz-nonce-balance-pair true) "Object is not of Nonce Balance Pair")
             (let
@@ -1826,9 +1904,6 @@
             )
         )
     )
-    ;;
-    ;;      X_DebitMultiple
-    ;;
     (defun X_DebitMultiple (identifier:string nonce-lst:[integer] account:string balance-lst:[decimal])
         @doc "Auxiliary Function needed for Wiping \
             \ Executes |X_Debit| on a list of nonces and balances via its helper Function |X_DebitPaired|"
@@ -1843,12 +1918,12 @@
     ;;
     ;;==================UPDATE======================
     ;;
-    ;;      X_UpdateSupply
+    ;;      X_UpdateSupply|X_IncrementNonce
     ;;
     (defun X_UpdateSupply (identifier:string amount:decimal direction:bool)
         @doc "Updates <identifier> MetaFungible supply. Boolean <direction> used for increase|decrease"
 
-        (require-capability (UPDATE_DPMF_SUPPLY identifier amount))
+        (require-capability (DPMF_UPDATE_SUPPLY identifier amount))
         (if (= direction true)
             (with-read DPMF-PropertiesTable identifier
                 { "supply" := s }
@@ -1862,9 +1937,6 @@
             )
         )
     )
-    ;;
-    ;;      X_UpdateSupply
-    ;;
     (defun X_IncrementNonce (identifier:string)
         @doc "Increments <identifier> MetaFungible nonce."
 
