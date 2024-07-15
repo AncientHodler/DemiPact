@@ -3,48 +3,18 @@
     \ Ouroboros to Vested-Ouroboros, Auryn to Vested-Auryn and Elite-Auryn to Vested-Elite-Auryn \
     \ Responsible for managing Vested Tokens (vest, unvest, vested-transfers etc"
 
-    ;;CONSTANTS
-    ;;Smart-Contract Key and Name Definitions
-    (defconst SC_KEY "free.DH_SC_Vesting_Key")
-    (defconst SC_NAME "Snake_Vesting")
-
-    (defconst BAR DPTS.BAR)
-
-    ;;SCHEMA for Vesting-Pair
-    (defconst VKEY1 "release-amount")       ;;decimal
-    (defconst VKEY2 "release-date")         ;;time
-    (defconst VKEYS [VKEY1 VKEY2 ])
-    (defconst VTYP1 "decimal")
-    (defconst VTYP2 "time")
-
-    ;;TABLE-KEYS
-    (defconst TRINITY "TrinityIDs")
-
-    ;;SCHEMAS Definitions
-    (defschema TrinitySchema
-        ouro-id:string
-        auryn-id:string
-        elite-auryn-id:string
-        v-ouro-id:string
-        v-auryn-id:string
-        v-elite-auryn-id:string
-    )
-    ;;TABLES Definitions
-    (deftable TrinityTable:{TrinitySchema})
+    ;;0]GOVERNANCE-ADMIN
     ;;
-    ;;      U_ValidateObjectListAsVestingPairList
-    ;;
-    ;;=======================================================================================================
-    ;;
-    ;;Governance and Administration CAPABILITIES
+    ;;      GOVERNANCE|VESTING_ADMIN|VESTING_MASTER
+    ;;      VESTING_INIT
     ;;
     (defcap GOVERNANCE ()
         @doc "Set to false for non-upgradeability; \
         \ Set to DPTF_ADMIN so that only Module Key can enact an upgrade"
         false
     )
-    (defcap VESTING_INIT ()
-        (compose-capability (VESTING_MASTER))
+    (defcap VESTING_ADMIN ()
+        (enforce-guard (keyset-ref-guard SC_KEY))
     )
     (defcap VESTING_MASTER ()
         (enforce-one
@@ -55,29 +25,62 @@
             ]
         )
     )
-    (defcap VESTING_ADMIN ()
-        (enforce-guard (keyset-ref-guard SC_KEY))
+    (defcap VESTING_INIT ()
+        (compose-capability (VESTING_MASTER))
     )
+
+    ;;1]CONSTANTS Definitions
+    ;;Smart-Contract Key and Name Definitions
+    (defconst SC_KEY "free.DH_SC_Vesting_Key")
+    (defconst SC_NAME "Snake_Vesting")
+
+    (defconst BAR DPTS.BAR)
+
+    ;;TABLE-KEYS
+    (defconst TRINITY "TrinityIDs")
+
+    ;;2]SCHEMA Definitions
+    (defschema TrinitySchema
+        ouro-id:string
+        auryn-id:string
+        elite-auryn-id:string
+        v-ouro-id:string
+        v-auryn-id:string
+        v-elite-auryn-id:string
+    )
+
+    ;;Vesting-Pair schematic
+    (defconst VKEY1 "release-amount")       ;;decimal
+    (defconst VKEY2 "release-date")         ;;time
+    (defconst VKEYS [VKEY1 VKEY2 ])
+    (defconst VTYP1 "decimal")
+    (defconst VTYP2 "time")
+
+    ;;3]TABLES Definitions
+    (deftable TrinityTable:{TrinitySchema})
+    
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      CAPABILITIES                                                                                                                                ;;
     ;;                                                                                                                                                  ;;
-    ;;      BASIC                                   Basic Capabilities represent singular capability Definitions                                        ;;
+    ;;      CORE                                    Module Core Capabilities                                                                            ;;
     ;;      COMPOSED                                Composed Capabilities are made of one or multiple Basic Capabilities                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      BASIC                                                                                                                                       ;;
+    ;;      CORE                                                                                                                                       ;;
     ;;                                                                                                                                                  ;;
     ;;      GOVERNANCE                              Modules Governance Capability                                                                       ;;
-    ;;      VESTING_INIT                            Capability required to initialise the Vesting Module                                                ;;
-    ;;      VESTING_MASTER                          Capability required to execute vesting operations                                                   ;;
     ;;      VESTING_ADMIN                           Capability denoting the module administrator                                                        ;;
+    ;;      VESTING_MASTER                          Capability required to execute vesting operations                                                   ;;
+    ;;      VESTING_INIT                            Capability required to initialise the Vesting Module                                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
     ;;      COMPOSED                                                                                                                                    ;;
     ;;                                                                                                                                                  ;;
+    ;;==================VESTING=====================                                                                                                    ;;
     ;;      VEST_OURO_VOURO                         Capability required to Vest Ouroboros into Vested Ouroboros                                         ;;
     ;;      VEST_OURO_VAURYN                        Capability required to Vest Ouroboros into Vested Auryn                                             ;;
     ;;      VEST_OURO_VEAURYN                       Capability required to Vest Ouroboros into Vested Elite-Auryn                                       ;;
@@ -86,6 +89,18 @@
     ;;      VEST_EAURYN_VEAURYN                     Capability required to Vest Elite Auryn into Vested Elite Auryn                                     ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
+    
+
+    ;;==============================================
+    ;;                                            ;;
+    ;;      CAPABILITIES                          ;;
+    ;;                                            ;;
+    ;;      COMPOSED                              ;;
+    ;;                                            ;;
+    ;;==================VESTING=====================
+    ;;
+    ;;      VEST_OURO_VOURO|VEST_OURO_VAURYN|VEST_OURO_VEAURYN
+    ;;      VEST_AURYN_VAURYN|VEST_AURYN_VEAURYN|VEST_EAURYN_VEAURYN
     ;;
     (defcap VEST_OURO_VOURO (client:string target-account:string ouro-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
@@ -93,9 +108,9 @@
     ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
-        (compose-capability (DPMF.DPMF_MINT (U_VOuroborosID) SC_NAME ouro-input-amount))
+        (compose-capability (DPMF.DPMF_MINT (UR_VOuroborosID) SC_NAME ouro-input-amount))
     ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-        (compose-capability (DPMF.TRANSFER_DPMF (U_VOuroborosID) SC_NAME target-account ouro-input-amount true))
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VOuroborosID) SC_NAME target-account ouro-input-amount true))
     )
     (defcap VEST_OURO_VAURYN (client:string target-account:string ouro-input-amount:decimal)
         (let
@@ -109,9 +124,9 @@
         ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn
             (compose-capability (DH_SC_Autostake.COIL_OUROBOROS SC_NAME ouro-input-amount))
         ;;3]Vesting Account creates <VAURYN|Vested-Auryn>
-            (compose-capability (DPMF.DPMF_MINT (U_VAurynID) SC_NAME auryn-output-amount))
+            (compose-capability (DPMF.DPMF_MINT (UR_VAurynID) SC_NAME auryn-output-amount))
         ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF (U_VAurynID) SC_NAME target-account auryn-output-amount true))
+            (compose-capability (DPMF.TRANSFER_DPMF (UR_VAurynID) SC_NAME target-account auryn-output-amount true))
         )
     )
     (defcap VEST_OURO_VEAURYN (client:string target-account:string ouro-input-amount:decimal)
@@ -126,9 +141,9 @@
         ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>
             (compose-capability (DH_SC_Autostake.CURL_OUROBOROS SC_NAME ouro-input-amount))
         ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-            (compose-capability (DPMF.DPMF_MINT (U_VEliteAurynID) SC_NAME auryn-output-amount))
+            (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME auryn-output-amount))
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF (U_VEliteAurynID) SC_NAME target-account auryn-output-amount true))
+            (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account auryn-output-amount true))
         )
     )
     (defcap VEST_AURYN_VAURYN (client:string target-account:string auryn-input-amount:decimal)
@@ -137,9 +152,9 @@
     ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
     ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
-        (compose-capability (DPMF.DPMF_MINT (U_VAurynID) SC_NAME auryn-input-amount))
+        (compose-capability (DPMF.DPMF_MINT (UR_VAurynID) SC_NAME auryn-input-amount))
     ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-        (compose-capability (DPMF.TRANSFER_DPMF (U_VAurynID) SC_NAME target-account auryn-input-amount true))
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VAurynID) SC_NAME target-account auryn-input-amount true))
     )
     (defcap VEST_AURYN_VEAURYN (client:string target-account:string auryn-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
@@ -149,9 +164,9 @@
     ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
         (compose-capability (DH_SC_Autostake.COIL_AURYN SC_NAME auryn-input-amount))
     ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-        (compose-capability (DPMF.DPMF_MINT (U_VEliteAurynID) SC_NAME auryn-input-amount))
+        (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME auryn-input-amount))
     ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-        (compose-capability (DPMF.TRANSFER_DPMF (U_VEliteAurynID) SC_NAME target-account auryn-input-amount true))
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account auryn-input-amount true))
     )
     (defcap VEST_EAURYN_VEAURYN (client:string target-account:string elite-auryn-input-amount:decimal)
     ;;0]Only the Master Vesters can perform Vesting
@@ -159,34 +174,38 @@
     ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) client SC_NAME elite-auryn-input-amount true))
     ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-        (compose-capability (DPMF.DPMF_MINT (U_VEliteAurynID) SC_NAME elite-auryn-input-amount))
+        (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME elite-auryn-input-amount))
     ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-        (compose-capability (DPMF.TRANSFER_DPMF (U_VEliteAurynID) SC_NAME target-account elite-auryn-input-amount true))
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account elite-auryn-input-amount true))
     )
-    ;;
+
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
     ;;                                                                                                                                                  ;;
-    ;;      0)UTILITY                               Free Functions: can can be called by anyone.                                                        ;;
+    ;;      0)UTILITY                               Free Functions: can can be called by anyone. (Compute|Print|Read|Validate Functions)                ;;
     ;;                                                  No Key|Guard required.                                                                          ;;
     ;;      1)ADMINISTRATOR                         Administrator Functions: can only be called by module administrator.                                ;;
-    ;;                                                  Module Key|Guard required.                                                                      ;;
+    ;;                                                  DPTF_ADMIN Capability Required.                                                                 ;;
     ;;      2)CLIENT                                Client Functions: can be called by any DPMF Account.                                                ;;
-    ;;                                                  Usually Client Key|Guard is required.                                                           ;;
+    ;;                                                  DPTF_CLIENT Capability Required.                                                                ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      SECONDARY Functions                                                                                                                         ;;
+    ;;      SECONDARY Functions                     Auxiliary Functions: cannot be called on their own                                                  ;;
     ;;                                                                                                                                                  ;;
-    ;;      3)AUXILIARY                             Auxiliary Functions: cannot be called on their own.                                                 ;;
-    ;;                                                  Are Part of Client Function                                                                     ;;
+    ;;      3)AUXILIARY                             Are Part of Client Function                                                                         ;;
+    ;;                                                  Capabilities are required to use auxiliary Functions                                            ;;
     ;;                                                                                                                                                  ;;      
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      Functions Names are prefixed, so that they may be better visualised and understood.                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      UTILITY                                 U_FunctionName                                                                                      ;;
+    ;;      UTILITY-COMPUTE                         UC_FunctionName                                                                                     ;;
+    ;;      UTILITY-PRINT                           UP_FunctionName                                                                                     ;;
+    ;;      UTILITY-READ                            UR_FunctionName                                                                                     ;;
+    ;;      UTILITY-VALIDATE                        UV_FunctionName                                                                                     ;;
     ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
     ;;      CLIENT                                  C_FunctionName                                                                                      ;;
     ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
@@ -195,22 +214,23 @@
     ;;                                                                                                                                                  ;;
     ;;      UTILITY FUNCTIONS                                                                                                                           ;;
     ;;                                                                                                                                                  ;;
+    ;;                                                                                                                                                  ;;
     ;;==================IDENTIFIERS=================                                                                                                    ;;
-    ;;      UR_OuroborosID                           Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
-    ;;      UR_AurynID                               Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
-    ;;      UR_EliteAurynID                          Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
-    ;;      U_VOuroborosID                          Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
-    ;;      U_VAurynID                              Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
-    ;;      U_VEliteAurynID                         Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_OuroborosID                          Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_AurynID                              Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_EliteAurynID                         Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_VOuroborosID                         Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_VAurynID                             Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
+    ;;      UR_VEliteAurynID                        Returns the Ouroboros identifier saved in the module Trinity Table                                  ;;
     ;;==================MATH-&-COMPOSITION==========                                                                                                    ;;
-    ;;      U_SplitBalanceForVesting                Splits an Amount according to vesting parameters                                                    ;;
-    ;;      U_MakeVestingDateList                   Makes a Times list with unvesting milestones according to vesting parameters                        ;;
-    ;;      U_MakeVestingMetaData                   Creates Vesting MetaData                                                                            ;;
+    ;;      UC_SplitBalanceForVesting               Splits an Amount according to vesting parameters                                                    ;;
+    ;;      UC_MakeVestingDateList                  Makes a Times list with unvesting milestones according to vesting parameters                        ;;
+    ;;      UC_ComposeVestingMetaData               Creates Vesting MetaData                                                                            ;;
     ;;==================VALIDATIONS=================                                                                                                    ;;
-    ;;      U_ValidateMilestone                     Restrict Milestone integer between 1 and 365 Milestones                                             ;;
-    ;;      U_ValidateMilestoneWithTime             Validates Milestone duration to be lower than 25 years                                              ;;
-    ;;      U_ValidateObjectAsVestingPair           Validates an Object as a Vesting Pair                                                               ;;
-    ;;      U_ValidateObjectListAsVestingPairList   Validates an Object List as a List of Vesting Pairs                                                 ;;
+    ;;      UV_Milestone                            Restrict Milestone integer between 1 and 365 Milestones                                             ;;
+    ;;      UV_MilestoneWithTime                    Validates Milestone duration to be lower than 25 years                                              ;;
+    ;;      UV_ObjectAsVestingPair                  Validates an Object as a Vesting Pair                                                               ;;
+    ;;      UV_ObjectListAsVestingPairList          Validates an Object List as a List of Vesting Pairs                                                 ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -237,58 +257,48 @@
     ;;      NO AUXILIARY FUNCTIONS                                                                                                                      ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-    ;;
-    ;;      UTILITY FUNCTIONS
-    ;;
+
+
+    ;;==============================================
+    ;;                                            ;;
+    ;;      UTILITY FUNCTIONS                     ;;
+    ;;                                            ;;
     ;;==================IDENTIFIERS=================  
     ;;
-    ;;      UR_OuroborosID
+    ;;      UR_OuroborosID|UR_AurynID|UR_EliteAurynID
+    ;;      UR_VOuroborosID|UR_VAurynID|UR_VEliteAurynID
     ;;
     (defun UR_OuroborosID:string ()
         @doc "Returns as string the Ouroboros id"
         (at "ouro-id" (read TrinityTable TRINITY ["ouro-id"]))
     )
-    ;;
-    ;;      UR_AurynID
-    ;;
     (defun UR_AurynID:string ()
         @doc "Returns as string the Auryn id"
         (at "auryn-id" (read TrinityTable TRINITY ["auryn-id"]))
     )
-    ;;
-    ;;      UR_EliteAurynID
-    ;;
     (defun UR_EliteAurynID:string ()
         @doc "Returns as string the Elite-Auryn id"
         (at "elite-auryn-id" (read TrinityTable TRINITY ["elite-auryn-id"]))
     )
-        ;;
-    ;;      UR_OuroborosID
-    ;;
-    (defun U_VOuroborosID:string ()
+    (defun UR_VOuroborosID:string ()
         @doc "Returns as string the Vested Ouroboros id"
         (at "v-ouro-id" (read TrinityTable TRINITY ["v-ouro-id"]))
     )
-    ;;
-    ;;      UR_AurynID
-    ;;
-    (defun U_VAurynID:string ()
+    (defun UR_VAurynID:string ()
         @doc "Returns as string the Vested Auryn id"
         (at "v-auryn-id" (read TrinityTable TRINITY ["v-auryn-id"]))
     )
-    ;;
-    ;;      UR_EliteAurynID
-    ;;
-    (defun U_VEliteAurynID:string ()
+    (defun UR_VEliteAurynID:string ()
         @doc "Returns as string the Vested Elite-Auryn id"
         (at "v-elite-auryn-id" (read TrinityTable TRINITY ["v-elite-auryn-id"]))
     )
     ;;
     ;;==================MATH-&-COMPOSITION==========
     ;;
-    ;;      U_SplitBalanceForVesting
+    ;;      UC_SplitBalanceForVesting|UC_MakeVestingDateList
+    ;;      UC_ComposeVestingMetaData
     ;;
-    (defun U_SplitBalanceForVesting:[decimal] (identifier:string amount:decimal milestone:integer)
+    (defun UC_SplitBalanceForVesting:[decimal] (identifier:string amount:decimal milestone:integer)
         @doc "Splits an Amount according to vesting parameters"
 
         (let*
@@ -309,10 +319,7 @@
             )
         )
     )
-    ;;
-    ;;      U_MakeVestingDateList
-    ;;
-    (defun U_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
+    (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
         @doc "Makes a Times list with unvesting milestones according to vesting parameters"
 
         (let*
@@ -337,21 +344,18 @@
             )
         )
     )
-    ;;
-    ;;      U_MakeVestingMetaData
-    ;;
-    (defun U_MakeVestingMetaData:[object] (identifier:string amount:decimal offset:integer duration:integer milestone:integer)
+    (defun UC_ComposeVestingMetaData:[object] (identifier:string amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Creates Vesting MetaData"
 
         (DPTF.UV_TrueFungibleAmount identifier amount)
-        (U_ValidateMilestoneWithTime offset duration milestone)
+        (UV_MilestoneWithTime offset duration milestone)
 
         (let*
             (
-                (amount-lst:[decimal] (U_SplitBalanceForVesting identifier amount milestone))
-                (date-lst:[time] (U_MakeVestingDateList offset duration milestone))
+                (amount-lst:[decimal] (UC_SplitBalanceForVesting identifier amount milestone))
+                (date-lst:[time] (UC_MakeVestingDateList offset duration milestone))
                 (meta-data:[object] (zip (lambda (x:decimal y:time) { "release-amount": x, "release-date": y }) amount-lst date-lst))
-                (validity:bool (U_ValidateObjectListAsVestingPairList meta-data))
+                (validity:bool (UV_ObjectListAsVestingPairList meta-data))
             )
             (enforce (= validity true) "Invalid Meta-Data created")
             meta-data
@@ -360,9 +364,10 @@
     ;;
     ;;==================VALIDATIONS=================
     ;;
-    ;;      U_ValidateMilestone
+    ;;      UV_Milestone|UV_MilestoneWithTime
+    ;;      UV_ObjectAsVestingPair|UV_ObjectListAsVestingPairList
     ;;
-    (defun U_ValidateMilestone:bool (milestone:integer)
+    (defun UV_Milestone:bool (milestone:integer)
         @doc "Restrict Milestone integer between 1 and 365 Milestones"
 
         (enforce 
@@ -370,27 +375,21 @@
             (format "The number {} is not conform with the allowed milestones for vesting"[milestone])
         )
     )
-    ;;
-    ;;      U_ValidateMilestoneWithTime
-    ;;
-    (defun U_ValidateMilestoneWithTime:bool (offset:integer duration:integer milestone:integer)
+    (defun UV_MilestoneWithTime:bool (offset:integer duration:integer milestone:integer)
         @doc "Validates Milestone duration to be lower than 25 years"
 
-        (U_ValidateMilestone milestone)
+        (UV_Milestone milestone)
         (enforce 
             (<= (+ (* milestone duration ) offset) 788400000) 
             "Total Vesting Time cannot be greater than 25 years"
         )
     )
-    ;;
-    ;;      U_ValidateObjectAsVestingPair
-    ;;
-    (defun U_ValidateObjectAsVestingPair:bool (obj:object)
+    (defun UV_ObjectAsVestingPair:bool (obj:object)
         @doc "Validates an Object as a Vesting Pair"
 
         (let
             (
-                (object-validation:bool (DPTS.U_ValidateObject obj (length VKEYS) VKEYS))
+                (object-validation:bool (DPTS.UV_Object obj (length VKEYS) VKEYS))
                 (release-amount-val:decimal (at VKEY1 obj))
                 (release-date-val:time (at VKEY2 obj))
             )
@@ -399,10 +398,7 @@
             (enforce (= (typeof release-date-val) VTYP2) "Invalid release-date type")
         )
     )
-    ;;
-    ;;      U_ValidateObjectListAsVestingPairList
-    ;;
-    (defun U_ValidateObjectListAsVestingPairList:bool (vplst:[object])
+    (defun UV_ObjectListAsVestingPairList:bool (vplst:[object])
         @doc "Validates an Object List as a List of Vesting Pairs"
 
         (let 
@@ -413,7 +409,7 @@
                             (acc:bool item:object)
                             (let
                                 (
-                                    (iz-vesting-pair:bool (U_ValidateObjectAsVestingPair item))
+                                    (iz-vesting-pair:bool (UV_ObjectAsVestingPair item))
                                 )
                                 (enforce (= iz-vesting-pair true) "Item is not of Vesting-Pair type")
                                 (and acc iz-vesting-pair)
@@ -427,11 +423,15 @@
             result
         )
     )
-    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;
-    ;;      ADMINISTRATION FUNCTIONS
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      ADMINISTRATION FUNCTIONS              ;;
+    ;;                                            ;;
+    ;;--------------------------------------------;;
     ;;
     ;;      A_InitialiseVesting
+    ;;      A_VestOuroVOuro|A_VestOuroVAuryn|A_VestOuroVEAuryn
+    ;;      A_VestAurynVAuryn|A_VestAurynVEAuryn|A_VestEAurynVEAuryn
     ;;
     (defun A_InitialiseVesting ()
         @doc "Initialises the Vesting Module"
@@ -525,9 +525,6 @@
             )
         )
     )
-    ;;
-    ;;      A_VestOuroVOuro
-    ;;
     (defun A_VestOuroVOuro (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Ouroboros \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -539,17 +536,14 @@
             ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
             (let*
                 (
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_OuroborosID) amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VOuroborosID) SC_NAME amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_OuroborosID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VOuroborosID) SC_NAME amount vesting-meta-data))
                 )    
                 ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VOuroborosID) new-nonce SC_NAME target-account target-account-guard amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VOuroborosID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
-    ;;
-    ;;      A_VestOuroVAuryn
-    ;;
     (defun A_VestOuroVAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -563,17 +557,14 @@
             (let*
                 (
                     (auryn-amount:decimal (DH_SC_Autostake.C_CoilOuroboros SC_NAME amount))
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_AurynID) auryn-amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VAurynID) SC_NAME auryn-amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) auryn-amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VAurynID) SC_NAME auryn-amount vesting-meta-data))
                 )
                 ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account; since auryn-amount and new-nonce are now known
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VAurynID) new-nonce SC_NAME target-account target-account-guard auryn-amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VAurynID) new-nonce SC_NAME target-account target-account-guard auryn-amount)
             )
         )
     )
-    ;;
-    ;;      A_VestOuroVEAuryn
-    ;;
     (defun A_VestOuroVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -587,17 +578,14 @@
             (let*
                 (
                     (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros SC_NAME amount))
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_AurynID) elite-auryn-amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VEliteAurynID) SC_NAME amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) elite-auryn-amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
                 )
                 ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
             )
         )
     )
-    ;;
-    ;;      A_VestAurynVAuryn
-    ;;
     (defun A_VestAurynVAuryn(client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Auryn, sending it to target account as Vested Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -609,18 +597,15 @@
             ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
             (let*
                 (
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_AurynID) amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VAurynID) SC_NAME amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VAurynID) SC_NAME amount vesting-meta-data))
                 )
                 true
                 ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VAurynID) new-nonce SC_NAME target-account target-account-guard amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VAurynID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
-    ;;
-    ;;      A_VestAurynVEAuryn
-    ;;
     (defun A_VestAurynVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Auryn, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -634,17 +619,14 @@
             ;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (let*
                 (
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_AurynID) amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VEliteAurynID) SC_NAME amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
                 )
                 ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
-    ;;
-    ;;      A_VestEAurynVEAuryn
-    ;;
     (defun A_VestEAurynVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Elite-Auryn, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
@@ -656,14 +638,27 @@
             ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (let*
                 (
-                    (vesting-meta-data:[object] (U_MakeVestingMetaData (UR_EliteAurynID) amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (U_VEliteAurynID) SC_NAME amount vesting-meta-data))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_EliteAurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
                 )
                 ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                (DPMF.X_MethodicTransferMetaFungibleAnew (U_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
+
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      CLIENT FUNCTIONS                      ;;
+    ;;                                            ;;
+    ;;      NO CLIENT FUNCTIONS                   ;;
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      AUXILIARY FUNCTIONS                   ;;
+    ;;                                            ;;
+    ;;      NO AUXILIARY FUNCTIONS                ;;
+    ;;--------------------------------------------;;
+
 )
 
 (create-table TrinityTable)

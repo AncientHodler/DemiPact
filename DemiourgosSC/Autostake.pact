@@ -265,7 +265,6 @@
     ;;      SNAKE_TOKEN_OWNERSHIP|UPDATE_UNCOIL_LEDGER|UPDATE_ELITE_TRACKER|UPDATE_AUTOSTAKE_LEDGER
     ;;      UNCOIL-LEDGER_BALANCE|UNCOIL-LEDGER_MANAGING-POSITION|UNCOIL-LEDGER_MANAGING-TIER
     ;;      CULL_EXECUTOR|CULLABLE
-
     ;;
     (defcap UPDATE_AURYNZ (account:string)
         (compose-capability (SNAKE_TOKEN_OWNERSHIP account))
@@ -275,7 +274,7 @@
     (defcap SNAKE_TOKEN_OWNERSHIP (account:string)
         (let
             (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
             )
             (if (= iz-sc true)
                 true
@@ -499,6 +498,7 @@
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
+    ;;      UTILITY FUNCTIONS                                                                                                                           ;;
     ;;                                                                                                                                                  ;;
     ;;==================ELITE_ACCOUNT===============                                                                                                    ;;                                  ;;
     ;;      UC_Elite                                Computes Elite Account Data                                                                         ;;
@@ -675,7 +675,7 @@
     )
     (defun UC_EliteTierClas:decimal (account:string)
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let*
             (
                 (eab:decimal (UC_EliteAurynzBalance account))
@@ -686,7 +686,7 @@
         ) 
     )
     (defun UC_EliteTierName:decimal (account:string)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let*
             (
                 (eab:decimal (UC_EliteAurynzBalance account))
@@ -699,18 +699,18 @@
     (defun UC_MajorEliteTier:integer (account:string)
         @doc "Gets Major Elite Tier for Account"
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (UC_EliteTier account true)
     )
     (defun UC_MinorEliteTier:integer (account:string)
         @doc "Gets Minor Elite Tier for Account"
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (UC_EliteTier account false)
     )
     (defun UC_DEB:decimal (account:string)
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let*
             (
                 (eab:decimal (UC_EliteAurynzBalance account))
@@ -723,7 +723,7 @@
     (defun UC_EliteTier:integer (account:string major:bool)
         @doc "Core Function that returns Major or Minor Elite Tier"
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let*
             (
                 (eab:decimal (UC_EliteAurynzBalance account))
@@ -740,7 +740,7 @@
     )
     (defun UC_EliteAurynzBalance:decimal (account:string)
 
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let
             (
                 (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) account))
@@ -1170,11 +1170,6 @@
             )
         )
     )
-
- 
-
-
-
     ;;
     ;;-------------------------------------------------------------------------------------------------------
     ;;
@@ -1903,7 +1898,7 @@
 
         (let*
             (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
                 (eab:decimal (UC_EliteAurynzBalance account))
                 (elite:object{EliteAccountSchema} (UC_Elite eab))
                 (elite-tier-class (at "class" elite))

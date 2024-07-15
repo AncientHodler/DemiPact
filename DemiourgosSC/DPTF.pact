@@ -19,7 +19,7 @@
     (defcap DPTF_CLIENT (identifier:string account:string)
         (let
             (
-                (iz-sc:bool (at 0 (DPTS.U_GetDPTSAccountType account)))
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
             )
             (if (= iz-sc true)
                 true
@@ -378,7 +378,7 @@
     (defcap DPTF_OWNERSHIP-CHANGE (identifier:string new-owner:string)
         @doc "Capability required for changing DPTF Token Ownership"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount new-owner)
+        (DPTS.UV_DPTS-Account new-owner)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-CHANGE-OWNER_ON identifier))
     )
@@ -405,7 +405,7 @@
     (defcap DPTF_FREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Freeze a DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
@@ -413,7 +413,7 @@
     (defcap DPTF_UNFREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Unfreeze a DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
@@ -426,7 +426,7 @@
     (defcap DPTF_SET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Set Burn Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
@@ -434,7 +434,7 @@
     (defcap DPTF_SET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Set Mint Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
@@ -442,7 +442,7 @@
     (defcap DPTF_SET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Set Transfer Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
@@ -454,21 +454,21 @@
     (defcap DPTF_UNSET_BURN-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Burn Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
     )
     (defcap DPTF_UNSET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Mint Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
     )
     (defcap DPTF_UNSET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Transfer Role for DPTF Account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
     )
@@ -479,7 +479,7 @@
     (defcap DPTF_MINT_ORIGIN (identifier:string account:string amount:decimal)
         @doc "Capability required to mint the Origin DPTF Mint Supply"
         (UV_TrueFungibleAmount identifier amount)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CLIENT identifier account))
         (compose-capability (DPTF_ORIGIN_VIRGIN identifier))
@@ -490,7 +490,7 @@
         @doc "Capability required to mint a DPTF Token locally \
             \ Smart-Contract Account type doesnt require their guard|key"
         (UV_TrueFungibleAmount identifier amount)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_CLIENT identifier account))
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
         (compose-capability (CREDIT_DPTF identifier account))
@@ -504,7 +504,7 @@
         @doc "Capability required to burn a DPTF Token locally \
             \ Smart-Contract Account type doesnt require their guard|key"
         (UV_TrueFungibleAmount identifier amount)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
         (compose-capability (DEBIT_DPTF identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY identifier amount))
@@ -513,7 +513,7 @@
     (defcap DPTF_WIPE (identifier:string account:string amount:decimal)
         @doc "Capability required to Wipe a DPTF Token Balance from a DPTF account"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-WIPE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
@@ -526,12 +526,12 @@
     (defcap CREDIT_DPTF (identifier:string account:string)
         @doc "Capability to perform crediting operations with DPTF Tokens"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
     )
     (defcap DEBIT_DPTF (identifier:string account:string)
         @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
 
         (compose-capability (DPTF_CLIENT identifier account))
     )
@@ -539,7 +539,7 @@
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier"
 
         (UV_TrueFungibleAmount identifier amount)
-        (DPTS.U_ValidateSenderReceiver sender receiver)
+        (DPTS.UV_SenderWithReceiver sender receiver)
 
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier sender))
@@ -694,12 +694,12 @@
     ;;
     (defun UR_AccountTrueFungibles:[string] (account:string)
         @doc "Returns a List of Truefungible Identifiers held by DPTF Accounts <account>"
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (let*
             (
                 (keyz:[string] (keys DPTF-BalancesTable))
-                (listoflists:[[string]] (map (lambda (x:string) (DPTS.U_SplitString DPTS.BAR x)) keyz))
-                (dptf-account-tokens:[string] (DPTS.U_FilterIdentifier listoflists account))
+                (listoflists:[[string]] (map (lambda (x:string) (DPTS.UC_SplitString DPTS.BAR x)) keyz))
+                (dptf-account-tokens:[string] (DPTS.UC_FilterIdentifier listoflists account))
             )
             dptf-account-tokens
         )
@@ -707,7 +707,7 @@
     (defun UR_AccountTrueFungibleSupply:decimal (identifier:string account:string)
         @doc "Returns Account <account> True Fungible <identifier> Supply"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
             { "balance" : 0.0 }
             { "balance" := b}
@@ -717,19 +717,19 @@
     (defun UR_AccountTrueFungibleGuard:guard (identifier:string account:string)
         @doc "Returns Account <account> True Fungible <identifier> Guard"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (at "guard" (read DPTF-BalancesTable (concat [identifier BAR account]) ["guard"]))
     )
     (defun UR_AccountTrueFungibleRoleBurn:bool (identifier:string account:string)
         @doc "Returns Account <account> True Fungible <identifier> Burn Role"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (at "role-burn" (read DPTF-BalancesTable (concat [identifier BAR account]) ["role-burn"]))
     )
     (defun UR_AccountTrueFungibleRoleMint:bool (identifier:string account:string)
         @doc "Returns Account <account> True Fungible <identifier> Mint Role"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (at "role-mint" (read DPTF-BalancesTable (concat [identifier BAR account]) ["role-mint"]))
     )
     (defun UR_AccountTrueFungibleRoleTransfer:bool (identifier:string account:string)
@@ -737,7 +737,7 @@
             \ with-default-read assumes the role is always false for not existing accounts \
             \ Needed for Transfer Anew functions"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
             { "role-transfer" : false }
             { "role-transfer" := rt }
@@ -749,7 +749,7 @@
             \ with-default-read assumes the role is always false for not existing accounts \
             \ Needed for Transfer Anew functions"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
+        (DPTS.UV_DPTS-Account account)
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
             { "frozen" : false}
             { "frozen" := fr }
@@ -1065,13 +1065,13 @@
             \ \
             \ Furthermore, The issuer creates a Standard DPTF Account for himself, as the first Account of this DPTF Token \
             \ By default, DPTF Account creation also creates a Standard DPTS Account, if it doesnt exist"
-        (DPTS.U_ValidateTokenName name)
+        (DPTS.UV_DPTS-Name name)
         ;; Enforce Ticker is part of identifier variable below
-        (DPTS.U_ValidateDecimals decimals)
+        (DPTS.UV_DPTS-Decimals decimals)
 
         (let
             (
-                (identifier (DPTS.U_MakeDPTSIdentifier ticker))
+                (identifier (DPTS.UC_MakeIdentifier ticker))
             )
             ;; Add New Entries in the DPTF-PropertyTable
             ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
@@ -1110,8 +1110,8 @@
             \ A Standard DPTS Account is also created, if one doesnt exist \
             \ If a DPTS Account exists, its type remains unchanged"
         (UV_TrueFungibleIdentifier identifier)
-        (DPTS.U_ValidateAccount account)
-        (DPTS.U_EnforceReserved account guard)
+        (DPTS.UV_DPTS-Account account)
+        (DPTS.UV_EnforceReserved account guard)
 
         ;;Automatically creates a Standard DPTS Account for <account> if one doesnt exists
         ;;If a DPTS Account exists for <account>, it remains as is
@@ -1280,7 +1280,7 @@
             (enforce (= retg guard) "Account guards do not match !")
             (let
                 (
-                    (is-new:bool (if (= balance -1.0) (DPTS.U_EnforceReserved account guard) false))
+                    (is-new:bool (if (= balance -1.0) (DPTS.UV_EnforceReserved account guard) false))
                 )
                 ;; First, a new DPTS Account is created for Account <account>. 
                 ;; If DPTS Account exists for <account>, nothing is modified
