@@ -1146,27 +1146,39 @@
     (defun C_MintOrigin (identifier:string account:string amount:decimal)
         @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account> as initial mint amount"
 
-        (with-capability (DPTF_MINT_ORIGIN identifier account amount)
-            (let
-                (
-                    (g:guard (UR_AccountTrueFungibleGuard identifier account))
+        ;;IF DPTS Account is Smart, use X Auxiliary Function, requiring the Capability
+        ;;Else (if DPTS Account is Normal), execute code granting the Capability
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+                (g:guard (UR_AccountTrueFungibleGuard identifier account))
+            )
+            (if (= iz-sc true)
+                (X_MintOrigin identifier account amount)
+                (with-capability (DPTF_MINT_ORIGIN identifier account amount)
+                    (X_Credit identifier account g amount)
+                    (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
+                    (X_UpdateSupply identifier amount true)
                 )
-                (X_Credit identifier account g amount)
-                (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
-                (X_UpdateSupply identifier amount true)
             )
         )
     )
     (defun C_Mint (identifier:string account:string amount:decimal)
         @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account>"
 
-        (with-capability (DPTF_MINT identifier account amount)
-            (let
-                (
-                    (g:guard (UR_AccountTrueFungibleGuard identifier account))
+        ;;IF DPTS Account is Smart, use X Auxiliary Function, requiring the Capability
+        ;;Else (if DPTS Account is Normal), execute code granting the Capability
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+                (g:guard (UR_AccountTrueFungibleGuard identifier account))
+            )
+            (if (= iz-sc true)
+                (X_Mint identifier account amount)
+                (with-capability (DPTF_MINT identifier account amount)
+                    (X_Credit identifier account g amount)
+                    (X_UpdateSupply identifier amount true)
                 )
-                (X_Credit identifier account g amount)
-                (X_UpdateSupply identifier amount true)
             )
         )
     )
@@ -1178,9 +1190,19 @@
     (defun C_Burn (identifier:string account:string amount:decimal)
         @doc "Burns <amount> <identifier> TrueFungible on DPTF Account <account>"
 
-        (with-capability (DPTF_BURN identifier account amount)
-            (X_Debit identifier account amount false)
-            (X_UpdateSupply identifier amount false)
+        ;;IF DPTS Account is Smart, use X Auxiliary Function, requiring the Capability
+        ;;Else (if DPTS Account is Normal), execute code granting the Capability
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+            )
+            (if (= iz-sc true)
+                (X_Burn identifier account amount)
+                (with-capability (DPTF_BURN identifier account amount)
+                    (X_Debit identifier account amount false)
+                    (X_UpdateSupply identifier amount false)
+                )
+            )
         )
     )
     (defun C_Wipe (identifier:string account:string)
@@ -1231,8 +1253,39 @@
     ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
+    ;;      X_MintOrigin|X_Mint|X_Burn
     ;;      X_MethodicTransferTrueFungible|X_MethodicTransferTrueFungibleAnew
     ;;
+    (defun X_MintOrigin (identifier:string account:string amount:decimal)
+        (require-capability (DPTF_MINT_ORIGIN identifier account amount))
+        (let
+            (
+                (g:guard (UR_AccountTrueFungibleGuard identifier account))
+            )
+            (X_Credit identifier account g amount)
+            (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
+            (X_UpdateSupply identifier amount true)
+        )
+    )
+    (defun X_Mint (identifier:string account:string amount:decimal)
+        @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account> \
+            \ as Auxiliary Function requiring the needed capability"
+        (require-capability (DPTF_MINT identifier account amount))
+        (let
+            (
+                (g:guard (UR_AccountTrueFungibleGuard identifier account))
+            )
+            (X_Credit identifier account g amount)
+            (X_UpdateSupply identifier amount true)
+        )
+    )
+    (defun X_Burn (identifier:string account:string amount:decimal)
+        @doc "Burns <amount> <identifier> TrueFungible on DPTF Account <account> \
+            \ as Auxiliary Function requiring the needed capability"
+        (require-capability (DPTF_BURN identifier account amount))
+        (X_Debit identifier account amount false)
+        (X_UpdateSupply identifier amount false)
+    )
     (defun X_MethodicTransferTrueFungible (identifier:string sender:string receiver:string amount:decimal)
         @doc "Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account \
             \ Fails if <receiver> DPTF Account doesnt exist. \

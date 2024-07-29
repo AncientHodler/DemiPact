@@ -244,7 +244,6 @@
     ;;      BURN_OUROBOROS                          Capability required to burn Ouroboros                                                               ;;
     ;;      BURN_AURYN                              Capability required to burn Auryn                                                                   ;;
     ;;      BURN_ELITE-AURYN                        Capability required to burn Elite-Auryn                                                             ;;
-    ;;      MINT_OUROBOROS                          Capability required to mint Ouroboros                                                               ;;
     ;;      MINT_AURYN                              Capability required to mint Auryn                                                                   ;;
     ;;      MINT_ELITE-AURYN                        Capability required to mint Elite-Auryn                                                             ;;
     ;;                                                                                                                                                  ;;
@@ -314,11 +313,11 @@
     )
     (defcap UNCOIL-LEDGER_MANAGING-POSITION (position:integer)
         @doc "Enforces Integer as Uncoil Ledger Elite-Auryn Uncoil optional position"
-        (enforce (contains position (enumerate 2 7)) "Invalid Position for managing")
+        (enforce (contains position (enumerate 1 7)) "Invalid Position for managing")
     )
     (defcap UNCOIL-LEDGER_MANAGING-TIER (tier:integer)
         @doc "Enforces Integer as Uncoil Ledger Elite-Auryn Uncoil optional position"
-        (enforce (contains tier (enumerate 2 7)) "Invalid Tier for Elite Uncoil Position Management and Hexa Boolean List Making")
+        (enforce (contains tier (enumerate 0 7)) "Invalid Tier for Elite Uncoil Position Management and Hexa Boolean List Making")
     )
     (defcap CULL_EXECUTOR ()
         true    
@@ -346,26 +345,23 @@
     ;;      COMPOSED
     ;;
     ;;      BURN_OUROBOROS|BURN_AURYN|BURN_ELITE-AURYN
-    ;;      MINT_OUROBOROS|MINT_AURYN|MINT_ELITE-AURYN
+    ;;      MINT_AURYN|MINT_ELITE-AURYN
     ;;
-    (defcap BURN_OUROBOROS (ouro-identifier:string ignis-identifier:string account:string ouro-burn-amount:decimal)
-        (compose-capability (DPTF.DPTF_BURN ouro-identifier account ouro-burn-amount))
-        (compose-capability (DPTF.DPTF_MINT ignis-identifier account (UC_IgnisMintAmount ouro-burn-amount)))
+    (defcap BURN_OUROBOROS (ouro-burn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN (UR_OuroborosID) SC_NAME ouro-burn-amount))
+        (compose-capability (DPTF.DPTF_MINT (UR_IgnisID ) SC_NAME (UC_IgnisMintAmount ouro-burn-amount)))
     )
-    (defcap BURN_AURYN (auryn-identifier:string account:string auryn-amount:decimal)
-        (compose-capability (DPTF.DPTF_BURN auryn-identifier account auryn-amount))
+    (defcap BURN_AURYN (auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN (UR_AurynID) SC_NAME auryn-amount))
     )
-    (defcap BURN_ELITE-AURYN (elite-auryn-identifier:string account:string elite-auryn-amount:decimal)
-        (compose-capability (DPTF.DPTF_BURN elite-auryn-identifier account elite-auryn-amount))
+    (defcap BURN_ELITE-AURYN (elite-auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_BURN (UR_EliteAurynID) SC_NAME elite-auryn-amount))
     )
-    (defcap MINT_OUROBOROS (ouro-identifier:string account:string ouro-amount:decimal)
-        (compose-capability (DPTF.DPTF_MINT ouro-identifier account ouro-amount))
+    (defcap MINT_AURYN (auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_MINT (UR_AurynID) SC_NAME auryn-amount))
     )
-    (defcap MINT_AURYN (auryn-identifier:string account:string auryn-amount:decimal)
-        (compose-capability (DPTF.DPTF_MINT auryn-identifier account auryn-amount))
-    )
-    (defcap MINT_ELITE-AURYN (elite-auryn-identifier:string account:string elite-auryn-amount:decimal)
-        (compose-capability (DPTF.DPTF_MINT elite-auryn-identifier account elite-auryn-amount))
+    (defcap MINT_ELITE-AURYN (elite-auryn-amount:decimal)
+        (compose-capability (DPTF.DPTF_MINT (UR_EliteAurynID) SC_NAME elite-auryn-amount))
     )
     ;;
     ;;      COIL_OUROBOROS|FUEL_OUROBOROS|COIL-AURYN
@@ -383,7 +379,7 @@
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN (UR_AurynID) SC_NAME (UC_OuroCoil ouro-input-amount)))
+        (compose-capability (MINT_AURYN auryn-computed-amount))
     ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) SC_NAME client auryn-computed-amount true))  
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
@@ -406,7 +402,7 @@
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME auryn-input-amount))
+        (compose-capability (MINT_ELITE-AURYN auryn-input-amount))
     ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) SC_NAME client auryn-input-amount true))
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
@@ -422,11 +418,11 @@
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
         (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
     ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN (UR_AurynID) SC_NAME auryn-computed-amount))
+        (compose-capability (MINT_AURYN auryn-computed-amount))
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME auryn-computed-amount))
+        (compose-capability (MINT_ELITE-AURYN auryn-computed-amount))
     ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) SC_NAME client auryn-computed-amount true))
     ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
@@ -436,7 +432,7 @@
     (defcap UNCOIL_AURYN(client:string auryn-input-amount:decimal)
         (let*
             (
-                (uncoil-position:integer (UR_CanCullUncoil client false))
+                (uncoil-position:integer (UR_UncoilPosition client))
                 (uncoil-data:[decimal] (UC_AurynUncoil auryn-input-amount uncoil-position))
                 (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
             )
@@ -447,9 +443,9 @@
     ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
         (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
     ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
-        (compose-capability (BURN_AURYN (UR_AurynID) SC_NAME auryn-input-amount))
+        (compose-capability (BURN_AURYN auryn-input-amount))
     ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
-        (compose-capability (BURN_OUROBOROS (UR_OuroborosID) (UR_IgnisID) SC_NAME ouro-burn-fee-amount))
+        (compose-capability (BURN_OUROBOROS ouro-burn-fee-amount))
     ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     ;;6*]<Snake_Autostake> Account updates <UncoilLedger>
@@ -459,13 +455,37 @@
     (defcap CULL_OUROBOROS(client:string culled-amount:decimal)
     ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
         (compose-capability (DPTF.DPTF_CLIENT (UR_OuroborosID) client))
-    ;;1]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
+    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+        (enforce (> culled-amount 0.0) "No Auryn Uncoil Positions are cullable yet")
+    ;;2]Snake_Autostake> Account transfers as method culled <OURO|Ouroboros> to <client> Account
         (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) SC_NAME client culled-amount true))
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
+    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
         (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
     )
-    
-
+    (defcap UNCOIL_ELITE-AURYN(client:string elite-auryn-input-amount:decimal)
+    ;;0]Any Client can perform <C_UncoilEliteAuryn>; Smart DPTS Accounts arent required to provide their guards
+        (compose-capability (DPTF.DPTF_CLIENT (UR_EliteAurynID) client))
+    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+        (compose-capability (UPDATE_AURYNZ client))
+    ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) client SC_NAME elite-auryn-input-amount true))
+    ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
+        (compose-capability (BURN_ELITE-AURYN elite-auryn-input-amount))
+    ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
+        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+    ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
+        (compose-capability (UPDATE_UNCOIL_LEDGER)) ;;Capability already granted by (UPDATE_AURYNZ)
+    )
+    (defcap CULL_AURYN(client:string culled-amount:decimal)
+    ;;0]Any Client can perform <C_CullAuryn>; Smart DPTS Accounts arent required to provide their guards
+        (compose-capability (DPTF.DPTF_CLIENT (UR_AurynID) client))
+    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+        (enforce (> culled-amount 0.0) "No Elite-Auryn Uncoil Positions are cullable yet")
+    ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) SC_NAME client culled-amount true))
+    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
+        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+    )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
@@ -527,15 +547,23 @@
     ;;      UC_OuroCoil                             Computes Ouro Coil Data: Outputs Auryn Output Amount                                                ;;
     ;;      UC_AurynUncoil                          Computes Auryn Uncoil Data: Outputs Decimal List                                                    ;;
     ;;      UC_AurynUncoilFeePromile                Computes Auryn Uncoil Fee Promile                                                                   ;;
-    ;;      UC_UncoilDuration                       Computes Auryn or Elite-Auryn Uncoil Duration in Hours for client                                   ;;
-    ;;      UC_CullTime                             Computes Cull Time for Auryn or Elite-Auryn using Tx present time                                   ;;
+    ;;      UC_UncoilDuration                       Computes Auryn Uncoil Duration in Hours for client                                                  ;;
+    ;;      UC_UncoilDurationElite                  Computes Elite-Auryn Uncoil Duration in Hours for client                                            ;;
+    ;;      UC_CullTime                             Computes Cull Time for Auryn using Tx present time                                                  ;;
+    ;;      UC_CullTimeElite                        Computes Cull Time for Elite-Auryn using Tx present time                                            ;;
     ;;      UC_TotalCull                            Computes the sum of all balances that are cullable for Account                                      ;;
+    ;;==================UNCOIL_COMPUTATIONS=========                                                                                                    ;;
+    ;;      UR_MaximUncoilAmount                    Returns the max Auryn Uncoil amount                                                                 ;;
+    ;;      UC_MinorEliteUncoilAmount               Returns the max Elite-Auryn Uncoil amount that preserves Minor Elite Account Tier                   ;;
+    ;;      UC_MajorEliteUncoilAmount               Returns the max Elite-Auryn Uncoil amount that preserves Major Elite Account Tier                   ;;
+    ;;      UC_MaximEliteUncoilAmount               Computes the max Elite-Auryn Uncoil amount                                                          ;;
+    ;;      UC_MinorMajorEliteUncoilAmount          Computes Minor and Major Elite-Auryn Uncoil Amount                                                  ;;
     ;;==================UNCOIL-LEDGER_READINGS======                                                                                                    ;;
     ;;      UR_UncoilAmount                         Reads UncoilLedger and outputs Uncoil Balance for Account and Position                              ;;
     ;;      UR_CullAmount                           Reads UncoilLedger and outputs the Cull Balance for Account and Position                            ;;
-    ;;      UR_UncoilPosition                       Reads best Auryn or Elite-Auryn uncoil Position                                                      ;;
+    ;;      UR_UncoilPosition                       Reads best Auryn or Elite-Auryn uncoil Position                                                     ;;
     ;;      UR_CanCullUncoil                        Reads UncoilLedger and outputs a boolean list with cullable positions                               ;;
-    ;;      UC_GetZeroPosition                      Computes best uncoil position from a list of balances                                                ;;
+    ;;      UC_GetZeroPosition                      Computes best uncoil position from a list of balances                                               ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -556,7 +584,10 @@
     ;;      C_CurlOuroboros                         Curls Ouroboros, then Curls Auryn in a single Function                                              ;;
     ;;==================AURYN-UNCOIL================                                                                                                    ;;
     ;;      C_UncoilAuryn                           Initiates Auryn Uncoil - does not work if all Auryn Uncoil positions are occupied                   ;;
-    ;;      C_CullOuroboros                         Culls all cullable Auryn Uncoil Positions collecting Ouroboros                                      ;;
+    ;;      C_CullOuroboros                         Culls all cullable Auryn Uncoil Positions, collecting Ouroboros                                     ;;
+    ;;==================ELITE-AURYN-UNCOIL==========                                                                                                    ;;
+    ;;      C_UncoilEliteAuryn                      Initiates Elite-Auryn Uncoil - does not work if all Elite-Auryn Uncoil positions are occupied       ;;
+    ;;      C_CullAuryn                             Culls all cullable Elite-Auryn Uncoil Positions, collecting Auryn                                   ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -566,7 +597,6 @@
     ;;      X_BurnOuroboros                         Burns Ouroboros and generates Ignis at 100x capacity                                                ;;
     ;;      X_BurnAuryn                             Burns Auryn                                                                                         ;;
     ;;      X_BurnEliteAuryn                        Burns EliteAuryn                                                                                    ;;
-    ;;      X_MintOuroboros                         Mints Ouroboros                                                                                     ;;
     ;;      X_MintAuryn                             Mints Auryn                                                                                         ;;
     ;;      X_MintEliteAuryn                        Mints EliteAuryn                                                                                    ;;
     ;;==================UPDATE-AUTOSTAKE-LEDGER=====                                                                                                    ;;
@@ -678,8 +708,8 @@
         (DPTS.UV_DPTS-Account account)
         (let*
             (
-                (eab:decimal (UC_EliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite teab))
                 (deb (at "class" elite))
             )
             deb
@@ -689,8 +719,8 @@
         (DPTS.UV_DPTS-Account account)
         (let*
             (
-                (eab:decimal (UC_EliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite teab))
                 (deb (at "name" elite))
             )
             deb
@@ -713,8 +743,8 @@
         (DPTS.UV_DPTS-Account account)
         (let*
             (
-                (eab:decimal (UC_EliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite teab))
                 (deb (at "deb" elite))
             )
             deb
@@ -726,8 +756,8 @@
         (DPTS.UV_DPTS-Account account)
         (let*
             (
-                (eab:decimal (UC_EliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite teab))
                 (elite-tier:string (at "tier" elite))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
                 (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
@@ -806,12 +836,10 @@
             )
         )
     )
-
-
     ;;==================COMPUTATIONS================
     ;;
     ;;      UC_IgnisMintAmount|UC_OuroCoil|UC_AurynUncoil|UC_AurynUncoilFeePromile
-    ;;      UC_UncoilDuration|UC_CullTime|UC_TotalCull
+    ;;      UC_UncoilDuration|UC_UncoilDurationElite|UC_CullTime|UC_CullTimeElite|UC_TotalCull
     ;;
     (defun UC_IgnisMintAmount:decimal (ouro-burn-amount:decimal)
         @doc "Computes Ignis Mint amount from Ouro-burn-amount"
@@ -885,49 +913,69 @@
             )
         )
     ) 
-    (defun UC_UncoilDuration:integer (client:string elite:bool)
-        @doc "Computes Auryn or Elite-Auryn Uncoil Duration in Hours for client \
-        \ The boolean Elite selects between Auryn (false) and Elite-Auryn (true)"
+    (defun UC_UncoilDuration:integer (client:string)
+        @doc "Computes Auryn Uncoil Duration in Hours for client "
 
         (let*
             (
-                (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
-                (elite-object:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance client))
+                (elite-object:object{EliteAccountSchema} (UC_Elite teab))
                 (elite-tier:string (at "tier" elite-object))
                 (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
                 (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
                 (order:integer (+ (* (- major-elite-tier 1) 7 ) minor-elite-tier))
             )
-            (if (= elite false)
-                ;;Auryn Uncoil Duration
-                (if (= major-elite-tier 0)
-                    (at 0 AUHD)
-                    (at order AUHD)
-                )
-                ;;Elite-Auryn Uncoil Duration
-                (if (= major-elite-tier 0)
-                    (at 0 EAUHD)
-                    (at order EAUHD)
-                )
+            (if (= major-elite-tier 0)
+                (at 0 AUHD)
+                (at order AUHD)
             )
         )
     )
-    (defun UC_CullTime:time (client:string elite:bool)
-        @doc "Computes Cull Time for Auryn or Elite-Auryn using Tx present time\
-        \ The boolean Elite selects between Auryn (false) and Elite-Auryn (true)"
+    (defun UC_UncoilDurationElite:integer (client:string elite-auryn-uncoil-amount:decimal)
+        @doc "Computes Elite-Auryn Uncoil Duration in Hours for client considering the amount to be uncoiled \
+            \ Exceptionally for an Utility Computation function, \
+            \ it also enforces that the amount to be uncoiled is smaller than amount of Elite-Auryn existing on the <client> DPTF Account"
+        (let*
+            (
+                (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
+                (teab:decimal (UC_EliteAurynzBalance client))
+                (teab-after-uncoil:decimal (- teab elite-auryn-uncoil-amount))
+                (projected-elite-object:object{EliteAccountSchema} (UC_Elite teab-after-uncoil))
+                (projected-elite-tier:string (at "tier" projected-elite-object))
+                (projected-major-elite-tier:integer (str-to-int (take 1 projected-elite-tier)))
+                (projected-minor-elite-tier:integer (str-to-int (take -1 projected-elite-tier)))
+                (projected-order:integer (+ (* (- projected-major-elite-tier 1) 7 ) projected-minor-elite-tier))
+            )
+            (enforce 
+                (<= elite-auryn-uncoil-amount eab) 
+                (format "When computing Elite-Auryn Uncoil Duration, the Elite-Auryn-Uncoil-Amount of {} cannot be greater than the total Elite-Auryn Amount of {} held by the Account {}" [elite-auryn-uncoil-amount eab client])
+            )
+            (if (= projected-major-elite-tier 0)
+                (at 0 EAUHD)
+                (at projected-order EAUHD)
+            )
+        )
+    )
+    (defun UC_CullTime:time (client:string)
+        @doc "Computes Cull Time for Auryn using Tx present time"
 
         (let
             (
                 (present-time:time (at "block-time" (chain-data)))
-                (auryn-uncoil-duration:integer (UC_UncoilDuration client false))
-                (elite-auryn-uncoil-duration:integer (UC_UncoilDuration client true))
+                (auryn-uncoil-duration:integer (UC_UncoilDuration client))
             )
-            (if (= elite false)
-                ;;Auryn Uncoil Duration
-                (add-time present-time (hours auryn-uncoil-duration))
-                ;;Elite-Auryn Uncoil Duration
-                (add-time present-time (hours elite-auryn-uncoil-duration))
+            (add-time present-time (hours auryn-uncoil-duration))
+        )
+    )
+    (defun UC_CullTimeElite:time (client:string elite-auryn-uncoil-amount:decimal)
+        @doc "Computes Cull Time for Elite-Auryn using Tx present time"
+
+        (let
+            (
+                (present-time:time (at "block-time" (chain-data)))
+                (elite-auryn-uncoil-duration:integer (UC_UncoilDurationElite client elite-auryn-uncoil-amount))
             )
+            (add-time present-time (hours elite-auryn-uncoil-duration))
         )
     )
     (defun UC_TotalCull:decimal (account:string elite:bool)
@@ -951,9 +999,114 @@
             (fold (+) 0.0 valid-culled-balances)
         )
     )
+    ;;==================UNCOIL_COMPUTATIONS=========
+    ;;
+    ;;      UR_MaximUncoilAmount|UC_MinorEliteUncoilAmount|UC_MajorEliteUncoilAmount
+    ;;      UC_MaximEliteUncoilAmount|UC_MinorMajorEliteUncoilAmount
+    ;;
+    (defun UR_MaximUncoilAmount:decimal (client:string)
+        @doc "Returns the max Auryn Uncoil amount"
+        (DPTF.UR_AccountTrueFungibleSupply (UR_AurynID) client)
+    )
+    (defun UC_MinorEliteUncoilAmount:decimal (client:string)
+        @doc "Returns the max Elite-Auryn Uncoil amount that preserves Minor Elite Account Tier"
+        (at 0 (UC_MinorMajorEliteUncoilAmount client))
+    )
+    (defun UC_MajorEliteUncoilAmount:decimal (client:string)
+        @doc "Returns the max Elite-Auryn Uncoil amount that preserves Minor Elite Account Tier"
+        (at 1 (UC_MinorMajorEliteUncoilAmount client))
+    )
+    (defun UC_MaximEliteUncoilAmount:decimal (client:string)
+        @doc "Computes the max Elite-Auryn Uncoil amount"
+
+        (with-read UncoilLedger client
+            { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
+            (let*
+                (
+                    (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
+                    (teab:decimal (UC_EliteAurynzBalance client))
+                    (elite-object:object{EliteAccountSchema} (UC_Elite teab))
+                    (elite-tier:string (at "tier" elite-object))
+                    (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
+    
+                    (ab1:decimal (at "eau-ab" o1))
+                    (ab2:decimal (at "eau-ab" o2))
+                    (ab3:decimal (at "eau-ab" o3))
+                    (ab4:decimal (at "eau-ab" o4))
+                    (ab5:decimal (at "eau-ab" o5))
+                    (ab6:decimal (at "eau-ab" o6))
+                    (ab7:decimal (at "eau-ab" o7))
+                    (aurynbalancelist:[decimal] [ab1 ab2 ab3 ab4 ab5 ab6 ab7])
+                    (current-zero-position:integer (UC_GetZeroPosition aurynbalancelist))
+    
+                    (vab1:decimal (if (> ab1 0.0 ) ab1 0.0))
+                    (vab2:decimal (if (> ab2 0.0 ) ab2 0.0))
+                    (vab3:decimal (if (> ab3 0.0 ) ab3 0.0))
+                    (vab4:decimal (if (> ab4 0.0 ) ab4 0.0))
+                    (vab5:decimal (if (> ab5 0.0 ) ab5 0.0))
+                    (vab6:decimal (if (> ab6 0.0 ) ab6 0.0))
+                    (vab7:decimal (if (> ab7 0.0 ) ab7 0.0))
+                    (valid-balances:[decimal] [vab1 vab2 vab3 vab4 vab5 vab6 vab7])
+                    (sum-valid-balances:decimal (fold (+) 0.0 valid-balances))
+                )
+                (if (= elite-tier "0.0")
+                    0.0
+                    (if (= elite-tier "0.1")
+                        (if (= vab1 0.0) eab 0.0)
+                        (let*
+                            (
+                                (first-order:integer (+ (* (- current-zero-position 1) 7) 1))
+                                (balance-at-first-order:decimal (at first-order ET))
+                                (theoretical-amount:decimal (- teab balance-at-first-order))
+                            )
+                            (if (> theoretical-amount eab)
+                                eab
+                                theoretical-amount
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (defun UC_MinorMajorEliteUncoilAmount:[decimal] (client:string)
+        @doc "Computes Minor and Major Elite-Auryn Uncoil Amount"
+
+        (let*
+            (
+                (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
+                (teab:decimal (UC_EliteAurynzBalance client))
+                (elite-object:object{EliteAccountSchema} (UC_Elite teab))
+                (elite-tier:string (at "tier" elite-object))
+                (major-elite-tier:integer (str-to-int (take 1 elite-tier)))
+                (minor-elite-tier:integer (str-to-int (take -1 elite-tier)))
+                (ea-dec:integer (DPTF.UR_TrueFungibleDecimals (UR_EliteAurynID)))
+                (atomic-unit:decimal (/ 1.0 (dec (^ 10 ea-dec))))
+            )
+            (if (= elite-tier "0.0")
+                0.0
+                (if (= elite-tier "0.1")
+                    (- eab atomic-unit)
+                    (let*
+                        (
+                            (order:integer (+ (* (- major-elite-tier 1) 7 ) minor-elite-tier))
+                            (first-order:integer (+ (* (- major-elite-tier 1) 7) 1))
+                            (balance-at-order:decimal (at order ET))
+                            (balance-at-first-order:decimal (at first-order ET))
+                            (difference:decimal (- teab balance-at-order))
+                            (difference-at-first-order:decimal (- teab balance-at-first-order))
+                            (minor-amount:decimal (if (< eab difference) eab difference))
+                            (major-amount:decimal (if (< eab difference-at-first-order) eab difference-at-first-order))
+                        )
+                        [minor-amount major-amount]
+                    ) 
+                )
+            )
+        )
+    )
     ;;==================UNCOIL-LEDGER_READINGS======
     ;;
-    ;;      UR_UncoilAmount|UR_CullAmount|UR_UncoilPosition
+    ;;      UR_UncoilAmount|UR_CullAmount|UR_UncoilPosition|UR_UncoilPositionElite
     ;;      UR_CanCullUncoil|UC_GetZeroPosition
     ;;
     (defun UR_UncoilAmount:decimal (account:string position:integer elite:bool)
@@ -1027,10 +1180,9 @@
             0.0
         )
     )
-    (defun UR_UncoilPosition:integer (client:string elite:bool)
-        @doc "Gets best Auryn or Elite-Auryn uncoil Position \
-            \ Assumes Uncoil Ledger already exits. If it doesnt, it will fail \
-            \ Boolean elite trigger switches between Auryn (false) and Elite-Auryn(true)"
+    (defun UR_UncoilPosition:integer (client:string)
+        @doc "Gets best Auryn uncoil Position \
+            \ Assumes Uncoil Ledger already exits. If it doesnt, it will fail"
 
         (with-read UncoilLedger client
             { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
@@ -1043,6 +1195,27 @@
                     (ob5:decimal (at "au-ob" o5))
                     (ob6:decimal (at "au-ob" o6))
                     (ob7:decimal (at "au-ob" o7))
+                    (ouroborosbalancelist:[decimal] [ob1 ob2 ob3 ob4 ob5 ob6 ob7])
+                )
+                (UC_GetZeroPosition ouroborosbalancelist)
+            )
+        )
+    )
+    (defun UR_UncoilPositionElite:integer (client:string elite-auryn-uncoil-amount:decimal)
+    @doc "Gets best Elite-Auryn uncoil Position considering the input <elite-auryn-uncoil-amount>\
+        \ Assumes Uncoil Ledger already exits. If it doesnt, it will fail"
+
+        (with-read UncoilLedger client
+            { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
+            (let*
+                (
+                    (eab:decimal (DPTF.UR_AccountTrueFungibleSupply (UR_EliteAurynID) client))
+                    (teab:decimal (UC_EliteAurynzBalance client))
+                    (teab-after-uncoil:decimal (- teab elite-auryn-uncoil-amount))
+                    (projected-elite-object:object{EliteAccountSchema} (UC_Elite teab-after-uncoil))
+                    (projected-elite-tier:string (at "tier" projected-elite-object))
+                    (projected-major-elite-tier:integer (str-to-int (take 1 projected-elite-tier)))
+
                     (ab1:decimal (at "eau-ab" o1))
                     (ab2:decimal (at "eau-ab" o2))
                     (ab3:decimal (at "eau-ab" o3))
@@ -1050,12 +1223,17 @@
                     (ab5:decimal (at "eau-ab" o5))
                     (ab6:decimal (at "eau-ab" o6))
                     (ab7:decimal (at "eau-ab" o7))
-                    (ouroborosbalancelist:[decimal] [ob1 ob2 ob3 ob4 ob5 ob6 ob7])
                     (aurynbalancelist:[decimal] [ab1 ab2 ab3 ab4 ab5 ab6 ab7])
+                    (current-zero-position:integer (UC_GetZeroPosition aurynbalancelist))
                 )
-                (if (= elite false)
-                    (UC_GetZeroPosition ouroborosbalancelist)
-                    (UC_GetZeroPosition aurynbalancelist)
+                (enforce 
+                    (<= elite-auryn-uncoil-amount eab) 
+                    (format "When computing Elite-Auryn Uncoil Position, the Elite-Auryn-Uncoil-Amount of {} cannot be greater than the total Elite-Auryn Amount of {} held by the Account {}" [elite-auryn-uncoil-amount eab client])
+                )
+                (if (>= projected-major-elite-tier current-zero-position)
+                    current-zero-position
+                    ;; when PMET < CZP
+                    -2
                 )
             )
         )
@@ -1304,13 +1482,9 @@
                 (
                     (major:integer (UC_MajorEliteTier account))
                 )
-                (X_InitialiseUncoilLedger account)      ;works when not exist
-                (if (not (or (= major 0) (= major 1)))
-                    ;works because it was created above. Executed 
-                    (X_UpdateUncoilLedgerWithElite account major) 
-                    "No Update required for Uncoil Ledger on Elite"
-                )
-                (X_UpdateEliteTracker account)          ;works because Balance get is made with default read
+                (X_InitialiseUncoilLedger account)              ;works when not exist
+                (X_UpdateUncoilLedgerWithElite account major)   ;always updates elite
+                (X_UpdateEliteTracker account)                  ;works because Balance get is made with default read
             )
         )
     )
@@ -1419,12 +1593,12 @@
         (C_UpdateAurynzData client)
             (let*
                 (
-                    (uncoil-position:integer (UR_CanCullUncoil client false))
+                    (uncoil-position:integer (UR_UncoilPosition client))
                     (uncoil-data:[decimal] (UC_AurynUncoil auryn-input-amount uncoil-position))
                     (ouro-redeem-amount:decimal (at 0 uncoil-data))
                     (ouro-output-amount:decimal (at 1 uncoil-data))
                     (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
-                    (cull-time:time (UC_CullTime client false))
+                    (cull-time:time (UC_CullTime client))
                 )
     ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
         (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
@@ -1444,8 +1618,7 @@
     )
     (defun C_CullOuroboros (client:string)
         @doc "Culls all cullable Auryn Uncoil Positions, collecting Ouroboros \
-        \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
-
+            \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
 
         (with-capability (CULL_EXECUTOR)
             (let
@@ -1454,11 +1627,70 @@
                     (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_AurynID) client))
                 )
     ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
+    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
         (with-capability (CULL_OUROBOROS client culled-amount)
-    ;;1]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
+    ;;2]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
         (DPTF.X_MethodicTransferTrueFungibleAnew (UR_OuroborosID) SC_NAME client client-guard culled-amount)
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
+    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
         (X_UpdateUnbondingOuro culled-amount false)
+                )
+            )
+        )
+    )
+    ;;
+    ;;==================ELITE-AURYN-UNCOIL==========
+    ;;      C_UncoilEliteAuryn|C_CullAuryn
+    ;;
+    (defun C_UncoilEliteAuryn (client:string elite-auryn-input-amount:decimal)
+        @doc "Uncoils EliteAuryn, generating Auryn for client \
+            \ Uses the best(cheapest) uncoil Position. This is determined automatically \
+            \ and must not be entered as a parameter. When no position is available, function fails."
+        
+    ;;0]Any Client can perform <C_UncoilEliteAuryn>; Smart DPTS Accounts arent required to provide their guards
+        (with-capability (UNCOIL_ELITE-AURYN client elite-auryn-input-amount)
+    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+        (C_UpdateAurynzData client)
+            (let
+                (
+                    (uncoil-position:integer (UR_UncoilPositionElite client elite-auryn-input-amount))
+                    (cull-time:time (UC_CullTimeElite client elite-auryn-input-amount))
+                )
+    ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
+        (if (= uncoil-position -2)
+            (enforce (>= uncoil-position 0) (format "Uncoiling {} Elite-Auryn surpasses the Uncoiling Position Capabilities offered by the resulted Major Elite Tier" [elite-auryn-input-amount]))
+            (enforce (>= uncoil-position 0) "No more Elite-Auryn Uncoil Positions")
+        )
+    ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
+        (DPTF.X_MethodicTransferTrueFungible (UR_EliteAurynID) client SC_NAME elite-auryn-input-amount)
+    ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
+        (X_BurnEliteAuryn elite-auryn-input-amount)
+    ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
+        (X_UpdateResidentAuryn elite-auryn-input-amount false)
+        (X_UpdateUnbondingAuryn elite-auryn-input-amount true)
+    ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
+        (X_UpdateUncoilLedger client uncoil-position elite-auryn-input-amount cull-time true)
+    ;;6]<UncoilLedger> and <EliteTracker> are updated once again with the operation since Elite-Auryn amounts will change with operation
+        (C_UpdateAurynzData client)
+            )
+        )
+    )
+    (defun C_CullAuryn (client:string)
+        @doc "Culls all cullable Elite-Auryn Uncoil Positions, collecting Auryn \
+            \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
+        
+        (with-capability (CULL_EXECUTOR)
+            (let
+                (
+                    (culled-amount:decimal (X_CullUncoilAll client true))
+                    (client-guard:guard (DPTF.UR_AccountTrueFungibleGuard (UR_AurynID) client))
+                )
+    ;;0]Any Client can perform <C_CullAuryn>; Smart DPTS Accounts arent required to provide their guards
+    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+        (with-capability (CULL_AURYN client culled-amount)
+    ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
+        (DPTF.X_MethodicTransferTrueFungibleAnew (UR_AurynID) SC_NAME client client-guard culled-amount)
+    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
+        (X_UpdateUnbondingAuryn culled-amount false)
                 )
             )
         )
@@ -1470,37 +1702,27 @@
     ;;
     ;;==================MINT|BURN-SNAKE-TOKENS======
     ;;      X_BurnOuroboros|X_BurnAuryn|X_BurnEliteAuryn
-    ;;      X_MintOuroboros|X_MintAuryn|X_MintEliteAuryn
+    ;;      X_MintAuryn|X_MintEliteAuryn
     ;;
     (defun X_BurnOuroboros (amount:decimal)
         @doc "Burns Ouroboros and generates Ignis at 100x capacity"
-        (require-capability (BURN_OUROBOROS (UR_OuroborosID) (UR_IgnisID) SC_NAME amount))
         (DPTF.C_Burn (UR_OuroborosID) SC_NAME amount)
         (DPTF.C_Mint (UR_IgnisID) SC_NAME (UC_IgnisMintAmount amount))
     )
     (defun X_BurnAuryn (amount:decimal)
         @doc "Burns Auryn"
-        (require-capability (BURN_AURYN (UR_AurynID) SC_NAME amount))
         (DPTF.C_Burn (UR_AurynID) SC_NAME amount)
     )
     (defun X_BurnEliteAuryn (amount:decimal)
         @doc "Burns Elite-Auryn"
-        (require-capability (BURN_ELITE-AURYN (UR_EliteAurynID) SC_NAME amount))
         (DPTF.C_Burn (UR_EliteAurynID) SC_NAME amount)
-    )
-    (defun X_MintOuroboros (amount:decimal)
-        @doc "Mints Ouroboros"
-        (require-capability (MINT_OUROBOROS (UR_OuroborosID) SC_NAME amount))
-        (DPTF.C_Mint (UR_OuroborosID) SC_NAME amount)
     )
     (defun X_MintAuryn (amount:decimal)
         @doc "Mints Auryn"
-        (require-capability (MINT_AURYN (UR_AurynID) SC_NAME amount))
         (DPTF.C_Mint (UR_AurynID) SC_NAME amount)
     )
     (defun X_MintEliteAuryn (amount:decimal)
         @doc "Mints Elite-Auryn"
-        (require-capability (MINT_ELITE-AURYN (UR_EliteAurynID) SC_NAME amount))
         (DPTF.C_Mint (UR_EliteAurynID) SC_NAME amount)
     )
     ;;
@@ -1612,7 +1834,7 @@
     )
     (defun X_ExecuteCull:decimal (cullable:bool account:string position:integer elite:bool)
         @doc "Processes an Uncoil Position for culling purposes for Account \
-        \ Can be used for either Auryn or Elite-Auryn (via boolean elite) \
+        \ Can be used for either Auryn or Elite-Auryn (via boolean <elite>) \
         \ Boolean cullable informs the function if the position is cullable \
         \ If the position is cullable, it will be culled. \
         \ If the position is not cullable, decimal zero is returned"
@@ -1899,8 +2121,8 @@
         (let*
             (
                 (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
-                (eab:decimal (UC_EliteAurynzBalance account))
-                (elite:object{EliteAccountSchema} (UC_Elite eab))
+                (teab:decimal (UC_EliteAurynzBalance account))
+                (elite:object{EliteAccountSchema} (UC_Elite teab))
                 (elite-tier-class (at "class" elite))
                 (elite-tier-name (at "name" elite))
                 (elite-tier (at "tier" elite))
@@ -1925,29 +2147,32 @@
     ;;
     (defun XU_ManageEliteUncoilPositionWithTier(account:string tier:integer)
         @doc "Manages Elite Auryn uncoil position based on Major Elite Tier Value"
-        (enforce (contains tier (enumerate 2 7)) "Invalid Tier for Elite Uncoil Position Management")
+        (enforce (contains tier (enumerate 0 7)) "Invalid Tier for Elite Uncoil Position Management")
         (require-capability (UNCOIL-LEDGER_MANAGING-TIER tier))
         (let
             (
                 (hexa:[bool] (XU_MakeHexaBooleanList tier))
             )
+            (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 1)
+                (XU_ToggleEliteUncoilPosition account 1 (at 0 hexa))   ;;manages position 1
+            )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 2)
-                (XU_ToggleEliteUncoilPosition account 2 (at 0 hexa))   ;;manages position 2
+                (XU_ToggleEliteUncoilPosition account 2 (at 1 hexa))   ;;manages position 2
             )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 3)
-                (XU_ToggleEliteUncoilPosition account 3 (at 1 hexa))   ;;manages position 3
+                (XU_ToggleEliteUncoilPosition account 3 (at 2 hexa))   ;;manages position 3
             )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 4)
-                (XU_ToggleEliteUncoilPosition account 4 (at 2 hexa))   ;;manages position 4
+                (XU_ToggleEliteUncoilPosition account 4 (at 3 hexa))   ;;manages position 4
             )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 5)
-                (XU_ToggleEliteUncoilPosition account 5 (at 3 hexa))   ;;manages position 5
+                (XU_ToggleEliteUncoilPosition account 5 (at 4 hexa))   ;;manages position 5
             )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 6)
-                (XU_ToggleEliteUncoilPosition account 6 (at 4 hexa))   ;;manages position 6
+                (XU_ToggleEliteUncoilPosition account 6 (at 5 hexa))   ;;manages position 6
             )
             (with-capability (UNCOIL-LEDGER_MANAGING-POSITION 7)
-                (XU_ToggleEliteUncoilPosition account 7 (at 5 hexa))   ;;manages position 7
+                (XU_ToggleEliteUncoilPosition account 7 (at 6 hexa))   ;;manages position 7
             )
         )
     )
@@ -1955,12 +2180,13 @@
         @doc "Creates a list of 6 bolean values depending based on Major Elite Tier Value"
         (require-capability (UNCOIL-LEDGER_MANAGING-TIER tier))
         (cond
-            ((= tier 2) [true false false false false false])
-            ((= tier 3) [true true false false false false])
-            ((= tier 4) [true true true false false false])
-            ((= tier 5) [true true true true false false])
-            ((= tier 6) [true true true true true false])
-            [true true true true true true]
+            ((or (= tier 0)(= tier 1))[true false false false false false false])
+            ((= tier 2) [true true false false false false false])
+            ((= tier 3) [true true true false false false false])
+            ((= tier 4) [true true true true false false false])
+            ((= tier 5) [true true true true true false false])
+            ((= tier 6) [true true true true true true false])
+            [true true true true true true true]
         )
     )
     (defun XU_ToggleEliteUncoilPosition (account:string position:integer toggle:bool)

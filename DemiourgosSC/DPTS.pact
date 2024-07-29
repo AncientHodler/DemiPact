@@ -651,6 +651,20 @@
         \ a Standard or Smart DPTS Account must be deployed \
         \ Equivalent to creating a new ERD Smart-Contract Address \
         \ \
+        \ OWNERSHIP and CONTROL \
+        \ As opossed to MVX SmartAccount ERDs, a smart DPTS Account isnt owned by another Normal DPTS Account \
+        \ Instead it is its own owner. This brings several advantages: \
+        \ Issuance of Tokens and Tokens owned by a SmartDPTS Account can be managed directly: \
+        \ (Pause, Freeze, Wipe, SetAndUnset of Transfer Roles) \
+        \ As opossed to MVX SmartAccount ERDs, where token management cannot be managed directly, \
+        \ but only indirectly through WritePoints that need to be created. \
+        \ \
+        \ SmartDPTS Accounts cannot Burn and Mint tokens directly, but only indirectly through Functions created in their own modules, \
+        \ with these functions providing the required capabilities \
+        \ \
+        \ Client Functions of Modules of Smart DPTS Account must use for Token Transfers the Methodic Transfer DPTF/DPMF/DPSF/DPNF Functions, \
+        \ while providing the required capabilities for this action \
+        \ \
         \ This function must be used when deploying \
         \ what on MultiversX would be a new Smart-Contract"
 

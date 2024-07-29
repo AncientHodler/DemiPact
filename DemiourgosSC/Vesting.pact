@@ -579,7 +579,7 @@
                 (
                     (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros SC_NAME amount))
                     (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) elite-auryn-amount offset duration milestone))
-                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME elite-auryn-amount vesting-meta-data))
                 )
                 ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
                 (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)

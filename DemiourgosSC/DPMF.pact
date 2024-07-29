@@ -1537,43 +1537,56 @@
         @doc "Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account> \
             \ Both |role-nft-create| and |role-nft-add-quantity| are required for minting"
 
-        (with-capability (DPMF_MINT identifier account amount)
-            (let*
-                (
-                    (g:guard (UR_AccountMetaFungibleGuard identifier account))
-                    (new-nonce:integer (X_Create identifier account g meta-data))
-                )
-                ;;Add-Quantity for the DPMF Token (needs function)
-                (X_AddQuantity identifier new-nonce account amount)
-                ;;Update DPMF Supply
-                (X_UpdateSupply identifier amount true)
-                new-nonce
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+                (g:guard (UR_AccountMetaFungibleGuard identifier account))
+                (new-nonce:integer (+ (UR_MetaFungibleNoncesUsed identifier) 1))
             )
+            (if (= iz-sc true)
+                (X_Mint identifier account amount meta-data)
+                (with-capability (DPMF_MINT identifier account amount)
+                    (X_CreateCore identifier account g meta-data)
+                    (X_AddQuantityCore identifier new-nonce account amount)
+                    (X_UpdateSupply identifier amount true)
+                )
+            )
+            new-nonce
         )
-        
-
     )
     (defun C_Create:integer (identifier:string account:string meta-data:[object])
         @doc "Creates a 0.0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account>"
 
-        (with-capability (DPMF_CREATE identifier account)
-            (let*
-                (
-                    (g:guard (UR_AccountMetaFungibleGuard identifier account))
-                    (output-nonce:integer (X_Create identifier account g meta-data))
-                )
-                output-nonce
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+                (g:guard (UR_AccountMetaFungibleGuard identifier account))
+                (new-nonce:integer (+ (UR_MetaFungibleNoncesUsed identifier) 1))
             )
-
+            (if (= iz-sc true)
+                (X_Create identifier account meta-data)
+                (with-capability (DPMF_CREATE identifier account)
+                    (X_CreateCore identifier account g meta-data)
+                )
+            )
+            new-nonce
         )
     )
     (defun C_AddQuantity (identifier:string nonce:integer account:string amount:decimal)
         @doc "Adds <amount> quantity to existing Metafungible <identifer> and <nonce> for DPMF Account <account>"
 
-        (with-capability (DPMF_ADD-QUANTITY identifier account amount)
-            (X_AddQuantity identifier nonce account amount)
-            ;;Update DPMF Supply
-            (X_UpdateSupply identifier amount true)
+
+        (let
+            (
+                (iz-sc:bool (DPTS.UR_DPTS-AccountType account))
+            )
+            (if (= iz-sc true)
+                (X_AddQuantity identifier nonce account amount)
+                (with-capability (DPMF_ADD-QUANTITY identifier account amount)
+                    (X_AddQuantityCore identifier nonce account amount)
+                    (X_UpdateSupply identifier amount true)
+                )
+            )
         )
     )
     ;;
@@ -1648,6 +1661,40 @@
     ;;
     ;;      X_MethodicTransferMetaFungible|X_MethodicTransferMetaFungibleAnew
     ;;
+    (defun X_Mint (identifier:string account:string amount:decimal meta-data:[object])
+        @doc "Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account> \
+            \ as Auxiliary Function requiring the needed capability"
+
+        (require-capability (DPMF_MINT identifier account amount))
+        (let*
+            (
+                (g:guard (UR_AccountMetaFungibleGuard identifier account))
+                (new-nonce:integer (+ (UR_MetaFungibleNoncesUsed identifier) 1))
+            )
+            (X_CreateCore identifier account g meta-data)
+            (X_AddQuantityCore identifier new-nonce account amount)
+            (X_UpdateSupply identifier amount true)
+        )
+    )
+    (defun X_Create (identifier:string account:string meta-data:[object])
+        @doc "Creates a 0.0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account> \
+            \ as Auxiliary Function requiring the needed capability"
+
+        (require-capability (DPMF_CREATE identifier account))
+        (let*
+            (
+                (g:guard (UR_AccountMetaFungibleGuard identifier account))
+            )
+            (X_CreateCore identifier account g meta-data)
+        )
+    )
+    (defun X_AddQuantity (identifier:string nonce:integer account:string amount:decimal)
+        @doc "Adds <amount> quantity to existing Metafungible <identifer> and <nonce> for DPMF Account <account> \
+            \ as Auxiliary Function requiring the needed capability"
+        (require-capability (DPMF_ADD-QUANTITY identifier account amount))
+        (X_AddQuantityCore identifier nonce account amount)
+        (X_UpdateSupply identifier amount true)
+    )
     (defun X_MethodicTransferMetaFungible  (identifier:string nonce:integer sender:string receiver:string amount:decimal)
         @doc "Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account \
             \ Fails if <receiver> DPMF Account doesnt exist. \
@@ -1687,10 +1734,10 @@
     ;;
     ;;==================CREDIT|DEBIT================ 
     ;;
-    ;;      X_Create|X_AddQuantity|X_Credit
+    ;;      X_CreateCore|X_AddQuantityCore|X_Credit
     ;;      X_Debit|X_DebitPaired|X_DebitMultiple
     ;;
-    (defun X_Create:integer (identifier:string account:string guard:guard meta-data:[object])
+    (defun X_CreateCore (identifier:string account:string guard:guard meta-data:[object])
         @doc "Auxiliary Function that creates a MetaFungible \
             \ Returns as integer the nonce of the newly created MetaFungible"
 
@@ -1740,10 +1787,9 @@
                 )
                 (X_IncrementNonce identifier)
             )
-            new-nonce
         )
     )
-    (defun X_AddQuantity (identifier:string nonce:integer account:string amount:decimal)
+    (defun X_AddQuantityCore (identifier:string nonce:integer account:string amount:decimal)
         @doc "Auxiliary Function that adds quantity for an existing Metafungible \
             \ Assumes <identifier> and <nonce> exist on DPMF Account"
 
