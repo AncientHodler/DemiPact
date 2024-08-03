@@ -87,6 +87,12 @@
     ;;      VEST_AURYN_VAURYN                       Capability required to Vest Auryn into Vested Auryn                                                 ;;
     ;;      VEST_AURYN_VEAURYN                      Capability required to Vest Auryn into Vested Elite Auryn                                           ;;
     ;;      VEST_EAURYN_VEAURYN                     Capability required to Vest Elite Auryn into Vested Elite Auryn                                     ;;
+    ;;==================CULLING=====================                                                                                                    ;;
+    ;;      CULL_EXECUTOR                           Capability enforcing identifier is a vested snake token identifier                                  ;;
+    ;;      CULL_VESTED_SNAKES                      Capability required for Culling Vested Snake Tokens                                                 ;;
+    ;;      IZ_SNAKE-NONCE-CULLABLE                 Capability enforcing Snake Nonce is cullable                                                        ;;
+    ;;      CULL_VESTED_SNAKES_TOTALLY              Capability required for total culling of a vested Snake Token                                       ;;
+    ;;      CULL_VESTED_SNAKES_PARTIALLY            Capability required for partial culling of a vested Snake Token                                     ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     
@@ -178,8 +184,71 @@
     ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
         (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account elite-auryn-input-amount true))
     )
-
-
+    ;;==================CULLING===================== 
+    ;;
+    ;;      CULL_EXECUTOR|CULL_VESTED_SNAKES|IZ_SNAKE-NONCE-CULLABLE
+    ;;      CULL_VESTED_SNAKES_TOTALLY|CULL_VESTED_SNAKES_PARTIALY
+    ;;
+    (defcap CULL_EXECUTOR (identifier:string)
+        (UV_VestedIdentifier identifier)
+    )
+    (defcap CULL_VESTED_SNAKES (client:string identifier:string nonce:integer)
+        (let*
+            (
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
+                (return-amount:decimal (- initial-amount culled-amount))
+            )
+        ;;0]Any Client can perform <C_CullVestedSnakes>; Smart DPTS Accounts arent required to provide their guards
+            (compose-capability (DPMF.DPMF_CLIENT identifier client))
+        ;;1]Enforces that the MetaFungible <identifier>-<nonce> held by the <Client> Account is Cullable
+            (compose-capability (IZ_SNAKE-NONCE-CULLABLE client identifier nonce))
+        ;;2]<Snake_Vesting> Account returns culled amount and remaining vested Meta-Token, if any, to client
+            ;;This happens prior to <client> transferring his Vested Tokens to the <Snake_Vesting> Account
+            ;;because the next functions assume client still has the Vested Tokens.
+            (if (= return-amount 0.0)
+                (compose-capability (CULL_VESTED_SNAKES_TOTALLY client identifier nonce))
+                (compose-capability (CULL_VESTED_SNAKES_PARTIALY client identifier nonce))
+            )
+        ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
+            (compose-capability (DPMF.TRANSFER_DPMF identifier client SC_NAME initial-amount true))
+        ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
+            (compose-capability (DPMF.DPMF_BURN identifier nonce SC_NAME initial-amount))
+        )
+    )
+    (defcap IZ_SNAKE-NONCE-CULLABLE (client:string identifier:string nonce:integer)
+        (let
+            (
+                (meta-data:[object] (DPMF.UR_AccountMetaFungibleMetaData identifier nonce client))
+                (culled-meta-data:[object] (UC_CullVestingMetaDataObject client identifier nonce))
+            )
+            (enforce (!= meta-data culled-meta-data) (format "Vested MetaFungible {}-{} is not yet cullabe" [identifier nonce]))
+        )
+    )
+    (defcap CULL_VESTED_SNAKES_TOTALLY (client:string identifier:string nonce:integer)
+    ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the whole vested amount of <amount> as DPTF Token
+        (let
+            (
+                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (return-id:string (UC_OriginalCounterpart identifier))
+            )
+            (compose-capability (DPTF.TRANSFER_DPTF return-id SC_NAME client amount true))
+        )
+    )
+    (defcap CULL_VESTED_SNAKES_PARTIALY (client:string identifier:string nonce:integer)
+    ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the a partial vested amount of <culled-amount> as DPTF Token
+        (let*
+            (
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
+                (return-amount:decimal (- initial-amount culled-amount))
+                (return-id:string (UC_OriginalCounterpart identifier))
+            )
+            (compose-capability (DPTF.TRANSFER_DPTF return-id SC_NAME client culled-amount true))
+            (compose-capability (DPMF.DPMF_MINT identifier SC_NAME return-amount))
+            (compose-capability (DPMF.TRANSFER_DPMF identifier SC_NAME client return-amount true))
+        )
+    )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
@@ -226,11 +295,15 @@
     ;;      UC_SplitBalanceForVesting               Splits an Amount according to vesting parameters                                                    ;;
     ;;      UC_MakeVestingDateList                  Makes a Times list with unvesting milestones according to vesting parameters                        ;;
     ;;      UC_ComposeVestingMetaData               Creates Vesting MetaData                                                                            ;;
+    ;;      UC_OriginalCounterpart                  Returns the non-vested Snake Token Identifier for the input identifier                              ;;
+    ;;      UC_CullVestingMetaDataAmount            Returns the amount that a cull on a vested Snake Token would produce                                ;;
+    ;;      UC_CullVestingMetaDataObject            Returns the meta-data that a cull on a vested Snake Token would produce                             ;;
     ;;==================VALIDATIONS=================                                                                                                    ;;
     ;;      UV_Milestone                            Restrict Milestone integer between 1 and 365 Milestones                                             ;;
     ;;      UV_MilestoneWithTime                    Validates Milestone duration to be lower than 25 years                                              ;;
     ;;      UV_ObjectAsVestingPair                  Validates an Object as a Vesting Pair                                                               ;;
     ;;      UV_ObjectListAsVestingPairList          Validates an Object List as a List of Vesting Pairs                                                 ;;
+    ;;      UV_VestedIdentifier                     Validates a Token Identifier as being one of the 3 Vested Snake Tokens Identifiers on record        ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -248,13 +321,17 @@
     ;;                                                                                                                                                  ;;
     ;;      CLIENT FUNCTIONS                                                                                                                            ;;
     ;;                                                                                                                                                  ;;
-    ;;      NO CLIENT FUNCTIONS                                                                                                                         ;;
+    ;;      C_CullVestedOuroboros                   Culls Vested Ouroboros of Nonce <nonce >for <client> Account                                        ;;
+    ;;      C_CullVestedAuryn                       Culls Vested Auryn of Nonce <nonce >for <client> Account                                            ;;
+    ;;      C_CullVestedEliteAuryn                  Culls Vested Elite-Auryn of Nonce <nonce >for <client> Accoun                                       ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      NO AUXILIARY FUNCTIONS                                                                                                                      ;;
+    ;;      X_CullVestedSnakes                      Culls the Vested Snake Token of Nonce <nonce>, for <client> Account                                 ;;
+    ;;      X_CullVestedSnakesTotally               Returns results of a total Cull                                                                     ;;
+    ;;      X_CullVestedSnakesPartially             Returns results of a partial Cull                                                                   ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
@@ -296,11 +373,11 @@
     ;;==================MATH-&-COMPOSITION==========
     ;;
     ;;      UC_SplitBalanceForVesting|UC_MakeVestingDateList
-    ;;      UC_ComposeVestingMetaData
+    ;;      UC_ComposeVestingMetaData|UC_OriginalCounterpart
+    ;;      UC_CullVestingMetaDataAmount|UC_CullVestingMetaDataObject
     ;;
     (defun UC_SplitBalanceForVesting:[decimal] (identifier:string amount:decimal milestone:integer)
         @doc "Splits an Amount according to vesting parameters"
-
         (let*
             (
 
@@ -321,7 +398,6 @@
     )
     (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
         @doc "Makes a Times list with unvesting milestones according to vesting parameters"
-
         (let*
             (
                 (present-time:time (at "block-time" (chain-data)))
@@ -346,7 +422,6 @@
     )
     (defun UC_ComposeVestingMetaData:[object] (identifier:string amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Creates Vesting MetaData"
-
         (DPTF.UV_TrueFungibleAmount identifier amount)
         (UV_MilestoneWithTime offset duration milestone)
 
@@ -361,15 +436,95 @@
             meta-data
         )
     )
+    (defun UC_OriginalCounterpart:string (identifier:string)
+        @doc "Returns the non-vested Snake Token Identifier for the input identifier"
+
+        (UV_VestedIdentifier identifier)
+        (let
+            (
+                (vo:string (UR_VOuroborosID))
+                (va:string (UR_VAurynID))
+                (vea:string (UR_VEliteAurynID))
+            )
+            (if (= identifier vo)
+                (UR_OuroborosID)
+                (if (= identifier va)
+                    (UR_AurynID)
+                    (UR_EliteAurynID)
+                )
+            )
+        )
+    )
+    (defun UC_CullVestingMetaDataAmount:decimal (client:string identifier:string nonce:integer)
+        @doc "Returns the amount that a cull on a vested Snake Token would produce"
+        (UV_VestedIdentifier identifier)
+        (let*
+            (
+                (meta-data:[object] (DPMF.UR_AccountMetaFungibleMetaData identifier nonce client))
+                (culled-amount:decimal
+                    (fold
+                        (lambda
+                            (acc:decimal item:object)
+                            (let*
+                                (
+                                    (balance:decimal (at "release-amount" item))
+                                    (date:time (at "release-date" item))
+                                    (present-time:time (at "block-time" (chain-data)))
+                                    (t:decimal (diff-time present-time date))
+                                )
+                                (if (>= t 0.0)
+                                    (+ acc balance)
+                                    acc
+                                )
+                            )
+                        )
+                        0.0
+                        meta-data
+                    )
+                )
+            )
+            culled-amount
+        )
+    )
+    (defun UC_CullVestingMetaDataObject:[object] (client:string identifier:string nonce:integer)
+        @doc "Returns the meta-data that a cull on a vested Snake Token would produce"
+        (UV_VestedIdentifier identifier)
+        (let*
+            (
+                (meta-data:[object] (DPMF.UR_AccountMetaFungibleMetaData identifier nonce client))
+                (culled-object:[object]
+                    (fold
+                        (lambda
+                            (acc:[object] item:object)
+                            (let*
+                                (
+                                    (date:time (at "release-date" item))
+                                    (present-time:time (at "block-time" (chain-data)))
+                                    (t:decimal (diff-time present-time date))
+                                )
+                                (if (< t 0.0)
+                                    (DPTS.UC_AppendLast acc item)
+                                    acc
+                                )
+                            )
+                        )
+                        []
+                        meta-data
+                    )
+                )
+            )
+            culled-object
+        )
+    )
     ;;
     ;;==================VALIDATIONS=================
     ;;
     ;;      UV_Milestone|UV_MilestoneWithTime
     ;;      UV_ObjectAsVestingPair|UV_ObjectListAsVestingPairList
+    ;;      UV_VestedIdentifier
     ;;
     (defun UV_Milestone:bool (milestone:integer)
         @doc "Restrict Milestone integer between 1 and 365 Milestones"
-
         (enforce 
             (and (>= milestone 1) (<= milestone 365)) 
             (format "The number {} is not conform with the allowed milestones for vesting"[milestone])
@@ -377,7 +532,6 @@
     )
     (defun UV_MilestoneWithTime:bool (offset:integer duration:integer milestone:integer)
         @doc "Validates Milestone duration to be lower than 25 years"
-
         (UV_Milestone milestone)
         (enforce 
             (<= (+ (* milestone duration ) offset) 788400000) 
@@ -400,7 +554,6 @@
     )
     (defun UV_ObjectListAsVestingPairList:bool (vplst:[object])
         @doc "Validates an Object List as a List of Vesting Pairs"
-
         (let 
             (
                 (result 
@@ -423,6 +576,24 @@
             result
         )
     )
+    (defun UV_VestedIdentifier (identifier:string)
+        @doc "Validates a Token Identifier as being one of the 3 Vested Snake Tokens Identifiers on record"
+        (let
+            (
+                (vo:string (UR_VOuroborosID))
+                (va:string (UR_VAurynID))
+                (vea:string (UR_VEliteAurynID))
+            )
+            (enforce-one
+                (format "{} is not a valid Vested Snake Token identifier" [identifier])
+                [
+                    (enforce (= identifier vo) "Identifier is not Vested Ouroborod Identifier")
+                    (enforce (= identifier va) "Identifier is not Vested Auryn Identifier")
+                    (enforce (= identifier vea) "Identifier is not Vested Elite-Auryn Identifier")
+                ]
+            )
+        )
+    )
     ;;--------------------------------------------;;
     ;;                                            ;;
     ;;      ADMINISTRATION FUNCTIONS              ;;
@@ -435,7 +606,6 @@
     ;;
     (defun A_InitialiseVesting ()
         @doc "Initialises the Vesting Module"
-
         ;;Initialise the Vesting DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
         (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
@@ -646,19 +816,99 @@
             )
         )
     )
-
     ;;--------------------------------------------;;
     ;;                                            ;;
     ;;      CLIENT FUNCTIONS                      ;;
     ;;                                            ;;
-    ;;      NO CLIENT FUNCTIONS                   ;;
+    ;;--------------------------------------------;;
+    ;;
+    ;;      C_CullVestedOuroboros|C_CullVestedAuryn|C_CullVestedEliteAuryn
+    ;;
+    (defun C_CullVestedOuroboros (client:string nonce:integer)
+        @doc "Culls Vested Ouroboros of Nonce <nonce >for <client> Account"
+        (with-capability (CULL_EXECUTOR)
+            (X_CullVestedSnakes client (UR_VOuroborosID) nonce)
+        )
+    )
+    (defun C_CullVestedAuryn (client:string nonce:integer)
+        @doc "Culls Vested Auryn of Nonce <nonce >for <client> Account"
+        (with-capability (CULL_EXECUTOR)
+            (X_CullVestedSnakes client (UR_VAurynID) nonce)
+        )
+    )
+    (defun C_CullVestedEliteAuryn (client:string nonce:integer)
+        @doc "Culls Vested Elite-Auryn of Nonce <nonce >for <client> Account"
+        (with-capability (CULL_EXECUTOR)
+            (X_CullVestedSnakes client (UR_VEliteAurynID) nonce)
+        )
+    )
     ;;--------------------------------------------;;
     ;;                                            ;;
     ;;      AUXILIARY FUNCTIONS                   ;;
     ;;                                            ;;
-    ;;      NO AUXILIARY FUNCTIONS                ;;
     ;;--------------------------------------------;;
-
+    ;;
+    ;;      C_CullVestedOuroboros|C_CullVestedAuryn|C_CullVestedEliteAuryn
+    ;;
+    (defun X_CullVestedSnakes (client:string identifier:string nonce:integer)
+        @doc "Culls the Vested Snake Token of Nonce <nonce>, for <client> Account"
+        (require-capability (CULL_EXECUTOR identifier))
+        (let*
+            (
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
+                (return-amount:decimal (- initial-amount culled-amount))
+            )
+        ;;0]Any Client can perform <C_CullVestedSnakes>; Smart DPTS Accounts arent required to provide their guards
+        ;;1]Enforces that the MetaFungible <identifier>-<nonce> held by the <Client> Account is Cullable
+            (with-capability (CULL_VESTED_SNAKES client identifier nonce)
+            ;;2]<Snake_Vesting> Account returns culled amount and remaining vested Meta-Token, if any, to client
+            ;;This happens prior to <client> transferring his Vested Tokens to the <Snake_Vesting> Account
+            ;;because the next functions assume client still has the Vested Tokens.
+                (if (= return-amount 0.0)
+                    (X_CullVestedSnakesTotally client identifier nonce)
+                    (X_CullVestedSnakesPartially client identifier nonce)
+                )
+            ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
+                (DPMF.X_MethodicTransferMetaFungible identifier nonce client SC_NAME initial-amount)
+            ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
+                (DPMF.C_Burn identifier nonce SC_NAME initial-amount)
+            )
+        )
+    )
+    (defun X_CullVestedSnakesTotally (client:string identifier:string nonce:integer)
+        @doc "Returns results of a total Cull"
+        (require-capability (CULL_VESTED_SNAKES_TOTALLY client identifier nonce))
+        (let
+            (
+                (client-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier client))
+                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (return-id:string (UC_OriginalCounterpart identifier))
+            )
+            (DPTF.X_MethodicTransferTrueFungibleAnew return-id SC_NAME client client-guard amount)
+        )
+    )
+    (defun X_CullVestedSnakesPartially (client:string identifier:string nonce:integer)
+        @doc "Returns results of a partial Cull"
+        (require-capability (CULL_VESTED_SNAKES_PARTIALY client identifier nonce))
+        (let*
+            (
+                (client-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier client))
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
+                (return-amount:decimal (- initial-amount culled-amount))
+                (remaining-vesting-meta-data:[object] (UC_CullVestingMetaDataObject client identifier nonce))
+                (return-id:string (UC_OriginalCounterpart identifier))
+            )
+            (DPTF.X_MethodicTransferTrueFungibleAnew return-id SC_NAME client client-guard culled-amount)
+            (let
+                (
+                    (new-nonce:integer (DPMF.C_Mint identifier SC_NAME return-amount remaining-vesting-meta-data))
+                )
+                (DPMF.X_MethodicTransferMetaFungibleAnew identifier new-nonce SC_NAME client client-guard return-amount)
+            )
+        )
+    )
 )
 
 (create-table TrinityTable)

@@ -172,15 +172,9 @@
     ;;==================CREATE======================                                                                                                    ;;
     ;;      DPMF_MINT                               Capability required to mint a DPMF Token                                                            ;;
     ;;      DPMF_CREATE                             Capability that allows creation of a new MetaFungilbe nonce                                         ;;
-    ;;      DPMF_CREATE_SMART                       Capability that allows creation of a new MetaFungilbe nonce by a Smart DPTS Account                 ;;
-    ;;      DPMF_CREATE_STANDARD                    Capability that allows creation of a new MetaFungilbe nonce by a Standard DPTS Account              ;;
     ;;      DPMF_ADD-QUANTITY                       Capability required to add-quantity for a DPMF Token                                                ;;
-    ;;      DPMF_ADD-QUANTITY_SMART                 Capability required to add-quantity for a DPMF Token by a Smart DPTS Account                        ;;
-    ;;      DPMF_ADD-QUANTITY_STANDARD              Capability required to add-quantity for a DPMF Token by a Standard DPTS Account                     ;;
     ;;==================DESTROY=====================                                                                                                    ;;
     ;;      DPMF_BURN                               Capability required to burn a DPMF Token                                                            ;;
-    ;;      DPMF_BURN_SMART                         Capability required to burn a DPMF Token by a Smart DPTS Account                                    ;;
-    ;;      DPMF_BURN_STANDARD                      Capability required to burn a DPMF Token by a Standard DPTS Account                                 ;;
     ;;      DPMF_WIPE                               Capability required to Wipe all DPMF Tokens from a DPMF account                                     ;;
     ;;=================CORE=========================                                                                                                    ;;
     ;;      CREDIT_DPMF                             Capability to perform crediting operations with DPMF Tokens                                         ;;
