@@ -189,8 +189,8 @@
     ;;      CULL_EXECUTOR|CULL_VESTED_SNAKES|IZ_SNAKE-NONCE-CULLABLE
     ;;      CULL_VESTED_SNAKES_TOTALLY|CULL_VESTED_SNAKES_PARTIALY
     ;;
-    (defcap CULL_EXECUTOR (identifier:string)
-        (UV_VestedIdentifier identifier)
+    (defcap CULL_EXECUTOR ()
+        true
     )
     (defcap CULL_VESTED_SNAKES (client:string identifier:string nonce:integer)
         (let*
@@ -852,7 +852,7 @@
     ;;
     (defun X_CullVestedSnakes (client:string identifier:string nonce:integer)
         @doc "Culls the Vested Snake Token of Nonce <nonce>, for <client> Account"
-        (require-capability (CULL_EXECUTOR identifier))
+        (require-capability (CULL_EXECUTOR))
         (let*
             (
                 (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))

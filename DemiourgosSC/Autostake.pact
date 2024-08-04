@@ -15,6 +15,7 @@
     )
     (defcap AUTOSTAKE_ADMIN ()
         (enforce-guard (keyset-ref-guard SC_KEY))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap AUTOSTAKE_MASTER ()
         (enforce-one
@@ -1464,6 +1465,7 @@
                     ,"vested-elite-auryn-id"    : id}
                 )
             )
+            (DPTS.X_IncrementNonce SC_NAME)
         )
     )
     ;;

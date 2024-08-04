@@ -56,6 +56,7 @@
         smart-contract:bool                 ;;when true Account is of Smart-Contract type, otherwise is Normal DPTS Account
         payable-as-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Normal DPTS Accounts
         payable-by-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Smart-Contract DPTS Accounts
+        nonce:integer                       ;;store how many transactions the account executed
     )
 
     ;;3]TABLES Definitions
@@ -117,6 +118,10 @@
             )
         )
     )
+    (defcap DPTS_INCREASE-NONCE ()
+        @doc "Capability required to update the DPTS nonce"
+        true
+    )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
@@ -157,6 +162,7 @@
     ;;      UR_DPTS-AccountType                     Returns DPTS Account <account> Boolean type                                                         ;;
     ;;      UR_DPTS-AccountPayableAs                Returns DPTS Account <account> Boolean payables-as-smart-contract                                   ;;
     ;;      UR_DPTS-AccountPayableBy                Returns DPTS Account <account> Boolean payables-by-smart-contract                                   ;;
+    ;;      UR_DPTS-AccountNonce                    Returns DPTS Account <account> nonce value                                                          ;;
     ;;      UP_DPTS-AccountProperties               Prints DPTS Account <account> Properties                                                            ;;
     ;;==================COMPUTING===================                                                                                                    ;;
     ;;      UC_DPTS-AccountsTransferability         Computes transferability between 2 DPTS Accounts, <sender> and <receiver>                           ;;
@@ -206,7 +212,7 @@
     ;;                                                                                                                                                  ;;
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      NO AUXILIARY FUNCTIONS                                                                                                                      ;;
+    ;;      X_IncrementNonce                Increments <identifier> DPTS Account nonce                                                                  ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
@@ -219,7 +225,7 @@
     ;;
     ;;      UR_DPTS-AccountGuard|UR_DPTS-AccountProperties
     ;;      UR_DPTS-AccountType|UR_DPTS-AccountPayableAs|UR_DPTS-AccountPayableBy
-    ;;      UP_DPTS-AccountProperties
+    ;;      UR_DPTS-AccountNonce|UP_DPTS-AccountProperties
     ;;
     (defun UR_AccountTrueFungibleGuard:guard (account:string)
         @doc "Returns DPTS Account <account> Guard"
@@ -229,7 +235,7 @@
     (defun UR_DPTS-AccountProperties:[bool] (account:string)
         @doc "Returns a boolean list with DPTS Account Type properties"
         (with-default-read DPTS-AccountTable account
-            { "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false }
+            { "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false}
             { "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc }
             [sc pasc pbsc]
         )
@@ -245,6 +251,14 @@
     (defun UR_DPTS-AccountAccountPayableBy:bool (account:string)
         @doc "Returns DPTS Account <account> Boolean payables-by-smart-contract"
         (at 2 (UR_DPTS-AccountProperties account))
+    )
+    (defun UR_DPTS-AccountNonce:integer (account:string)
+        @doc "Returns DPTS Account <account> nonce value"
+        (with-default-read DPTS-AccountTable account
+            { "nonce" : 0 }
+            { "nonce" := n }
+            n
+        )
     )
     (defun UP_DPTS-AccountProperties (account:string)
         @doc "Prints DPTS Account <account> Properties"
@@ -634,13 +648,14 @@
         (UV_EnforceReserved account guard)
 
         (with-default-read DPTS-AccountTable account
-            { "guard" : guard, "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false }
-            { "guard" := g, "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc }
+            { "guard" : guard, "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false, "nonce" : 0 }
+            { "guard" := g, "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc, "nonce" := n }
             (write DPTS-AccountTable account
                 { "guard"                       : g
                 , "smart-contract"              : sc
                 , "payable-as-smart-contract"   : pasc
                 , "payable-by-smart-contract"   : pbsc
+                , "nonce"                       : n
                 }  
             )
         )
@@ -677,6 +692,7 @@
             , "smart-contract"              : true
             , "payable-as-smart-contract"   : false
             , "payable-by-smart-contract"   : true
+            , "nonce"                       : 0
             }  
         )  
     )
@@ -689,6 +705,20 @@
             )
         )
     )
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      AUXILIARY FUNCTIONS                   ;;
+    ;;                                            ;;
+    ;;--------------------------------------------;;
+    ;;
+    (defun X_IncrementNonce (client:string)
+        (require-capability (DPTS_INCREASE-NONCE))
+        (with-read DPTS-AccountTable client
+            { "nonce" := n }
+            (update DPTS-AccountTable client { "nonce" : (+ n 1)})
+        )
+    )
+
 )
  
 (create-table DPTS-AccountTable)

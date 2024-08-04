@@ -211,6 +211,14 @@
 (format "Emma has {} Vested-Elite-AURYN" [(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Emma")])
 (format "Emma has {} Elite-AURYN" [(free.DPTF.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Emma")])
 
+
+(print "===============================NONCE-TESTING=======================================================")
+(format "Nonce of Ancient Hodler is {}" [(free.DPTS.UR_DPTS-AccountNonce "AncientHodler")])
+(format "Nonce of Emma is {}" [(free.DPTS.UR_DPTS-AccountNonce "Emma")])
+(format "Nonce of Autostake is {}" [(free.DPTS.UR_DPTS-AccountNonce "Snake_Autostake")])
+(format "Nonce of Vesting is {}" [(free.DPTS.UR_DPTS-AccountNonce "Snake_Vesting")])
+
+
 ;(free.DH_SC_Vesting.UC_CullVestingMetaFungible "Emma" "VEAURYN-98c486052a51" 3)
 ;;(print "Auryn transfer Role Amount is")
 ;;(free.DPTF.U_GetTrueFungibleTransferRoleAmount "AURYN-98c486052a51")

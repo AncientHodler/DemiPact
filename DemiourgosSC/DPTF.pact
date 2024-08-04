@@ -41,6 +41,7 @@
         \ Key for Table is DPTF Token Identifier. This ensure a unique entry per Token Identifier"
 
         owner:guard                                 ;;Guard of the Token Owner, Account that created the DPTF Token
+        owner-konto:string                          ;;Account of the Token Owner, Account that created the DPTF Token
         name:string                                 ;;Token Name (Alpha-Numeric 3-50 Characters Long)
         ticker:string                               ;;Token Ticker (Capital Alpha-Numeric 3-20 Characters Long)
         decimals:integer                            ;;Token Decimal Number
@@ -113,6 +114,7 @@
     ;;      DPTF_IS-PAUSED_OF                       Enforces that the DPTF Token is not paused                                                          ;;
     ;;      DPTF_ORGIN_VIRGIN                       Enforces Origin Mint hasn't been executed                                                           ;;
     ;;      DPTF_UPDATE_SUPPLY                      Capability required to update DPTF Supply                                                           ;;
+    ;;      UPDATE-ROLE-TRANSFER-AMOUNT             Capability required to update DPTF Transfer-Role-Amount                                             ;;
     ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========                                                                                                    ;;
     ;;      DPTF_ACCOUNT_OWNER                      Enforces DPTF Account Ownership                                                                     ;;
     ;;      DPTF_ACCOUNT_BURN_ON                    Enforces DPTF Account has burn role on                                                              ;;
@@ -269,7 +271,10 @@
     (defcap DPTF_UPDATE_SUPPLY (identifier:string amount:decimal) 
         @doc "Capability required to update DPTF Supply"
         (UV_TrueFungibleAmount identifier amount)
-        true
+    )
+    (defcap UPDATE-ROLE-TRANSFER-AMOUNT (identifier:string)
+        @doc "Capability required to update DPTF Transfer-Role-Amount"
+        (UV_TrueFungibleIdentifier identifier)
     )
     ;;
     ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
@@ -381,12 +386,14 @@
         (DPTS.UV_DPTS-Account new-owner)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-CHANGE-OWNER_ON identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_CONTROL (identifier:string)
         @doc "Capability required for managing DPTF Properties"
         (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_PAUSE (identifier:string)
         @doc "Capability required to Pause a DPTF Token"
@@ -394,6 +401,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNPAUSE (identifier:string)
         @doc "Capability required to Unpause a DPTF Token"
@@ -401,6 +409,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_ON identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_FREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Freeze a DPTF Account"
@@ -409,6 +418,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNFREEZE_ACCOUNT (identifier:string account:string)
         @doc "Capability required to Unfreeze a DPTF Account"
@@ -417,6 +427,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     ;;
     ;;==================SET=========================
@@ -430,6 +441,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Set Mint Role for DPTF Account"
@@ -438,6 +450,7 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Set Transfer Role for DPTF Account"
@@ -446,6 +459,8 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
+        (compose-capability (UPDATE-ROLE-TRANSFER-AMOUNT identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     ;;==================UNSET=======================
     ;;
@@ -457,6 +472,7 @@
         (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNSET_MINT-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Mint Role for DPTF Account"
@@ -464,6 +480,7 @@
         (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNSET_TRANSFER-ROLE (identifier:string account:string)
         @doc "Capability required to Unset Transfer Role for DPTF Account"
@@ -471,6 +488,8 @@
         (DPTS.UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
+        (compose-capability (UPDATE-ROLE-TRANSFER-AMOUNT identifier))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     ;;==================CREATE======================
     ;;
@@ -485,6 +504,7 @@
         (compose-capability (DPTF_ORIGIN_VIRGIN identifier))
         (compose-capability (CREDIT_DPTF identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY identifier amount))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_MINT (identifier:string account:string amount:decimal)
         @doc "Capability required to mint a DPTF Token locally \
@@ -495,6 +515,7 @@
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
         (compose-capability (CREDIT_DPTF identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY identifier amount))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     ;;==================DESTROY=====================
     ;;
@@ -508,6 +529,7 @@
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
         (compose-capability (DEBIT_DPTF identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY identifier amount))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
 
     (defcap DPTF_WIPE (identifier:string account:string amount:decimal)
@@ -518,6 +540,7 @@
         (compose-capability (DPTF_CAN-WIPE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY identifier amount))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
     ;;=================CORE=========================
     ;;
@@ -563,6 +586,7 @@
         (compose-capability (DPTS.SC_TRANSFERABILITY sender receiver method))
         (compose-capability (DEBIT_DPTF identifier sender))  
         (compose-capability (CREDIT_DPTF identifier receiver))
+        (compose-capability (DPTS.DPTS_INCREASE-NONCE))
     )
 
 
@@ -610,6 +634,7 @@
     ;;      UR_AccountTrueFungibleFrozenState       Returns Account <account> True Fungible <identifier> Frozen State                                   ;;
     ;;==================TRUE-FUNGIBLE-INFO==========                                                                                                    ;;
     ;;      UR_TrueFungibleOwner                    Returns True Fungible <identifier> Owner                                                            ;;
+    ;;      UR_TrueFungibleKonto                    Returns True Fungible <identifier> Account                                                          ;;
     ;;      UR_TrueFungibleName                     Returns True Fungible <identifier> Name                                                             ;;
     ;;      UR_TrueFungibleTicker                   Returns True Fungible <identifier> Ticker                                                           ;;
     ;;      UR_TrueFungibleDecimals                 Returns True Fungible <identifier> Decimals                                                         ;;
@@ -669,6 +694,10 @@
     ;;                                                                                                                                                  ;;
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
+    ;;==================MINT BURN===================                                                                                                    ;;
+    ;;      X_MintOrigin                            Similar to C_MintOrigin as aux function requiring its respective Capability                         ;;
+    ;;      X_Mint                                  Similar to C_Mint as aux function requiring its respective Capability                               ;;
+    ;;      X_Burn                                  Similar to C_Burn as aux function requiring its respective Capability                               ;;
     ;;==================TRANSFER====================                                                                                                    ;;
     ;;      X_MethodicTransferTrueFungible          Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account               ;;
     ;;      X_MethodicTransferTrueFungibleAnew      Same as |X_MethodicTransferMetaFungible| but with DPTF Account creation                             ;;
@@ -677,6 +706,7 @@
     ;;      X_Debit                                 Auxiliary Function that debits a TrueFungible from a DPTF Account                                   ;;
     ;;==================UPDATE======================                                                                                                    ;;
     ;;      X_UpdateSupply                          Updates <identifier> TrueFungible supply. Boolean <direction> used for increase|decrease            ;;
+    ;;      X_UpdateRoleTransferAmount              Updates <role-transfer-amount> for Token <identifier>                                               ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
@@ -759,7 +789,7 @@
     ;;
     ;;==================TRUE-FUNGIBLE-INFO==========
     ;;
-    ;;      UR_TrueFungibleOwner|UR_TrueFungibleName|UR_TrueFungibleTicker|UR_TrueFungibleDecimals
+    ;;      UR_TrueFungibleOwner|UR_TrueFungibleKonto|UR_TrueFungibleName|UR_TrueFungibleTicker|UR_TrueFungibleDecimals
     ;;      UR_TrueFungibleCanChangeOwner|UR_TrueFungibleCanUpgrade|UR_TrueFungibleCanAddSpecialRole
     ;;      UR_TrueFungibleCanFreeze|UR_TrueFungibleCanWipe|UR_TrueFungibleCanPause|UR_TrueFungibleIsPaused
     ;;      UR_TrueFungibleSupply|UR_TrueFungibleOriginMint|UR_TrueFungibleOriginAmount|UR_TrueFungibleTransferRoleAmount
@@ -768,6 +798,11 @@
         @doc "Returns True Fungible <identifier> Owner"
         (UV_TrueFungibleIdentifier identifier)
         (at "owner" (read DPTF-PropertiesTable identifier ["owner"]))
+    )
+    (defun UR_TrueFungibleKonto:string (identifier:string)
+        @doc "Returns True Fungible <identifier> Account"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "owner-konto" (read DPTF-PropertiesTable identifier ["owner-konto"]))
     )
     (defun UR_TrueFungibleName:string (identifier:string)
         @doc "Returns True Fungible <identifier> Name"
@@ -890,13 +925,15 @@
     ;;      C_ChangeOwnership|C_Control
     ;;      C_Pause|C_Unpause|C_FreezeAccount|C_UnfreezeAccount
     ;;
-    (defun C_ChangeOwnership (identifier:string new-owner:string)
+    (defun C_ChangeOwnership (identifier:string new-owner:string new-owner-guard:guard)
         @doc "Moves DPTF <identifier> Token Ownership to <new-owner> DPTF Account"
 
         (with-capability (DPTF_OWNERSHIP-CHANGE identifier new-owner)
             (update DPTF-PropertiesTable identifier
-                {"owner"                            : new-owner}
+                {"owner"                            : new-owner-guard
+                ,"owner-konto"                      : new-owner}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_Control 
@@ -921,6 +958,7 @@
                 ,"can-wipe"                         : can-wipe
                 ,"can-pause"                        : can-pause}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         ) 
     )
     (defun C_Pause (identifier:string)
@@ -928,6 +966,7 @@
 
         (with-capability (DPTF_PAUSE identifier)
             (update DPTF-PropertiesTable identifier { "is-paused" : true})
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_Unpause (identifier:string)
@@ -935,6 +974,7 @@
 
         (with-capability (DPTF_UNPAUSE identifier)
             (update DPTF-PropertiesTable identifier { "is-paused" : false})
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_FreezeAccount (identifier:string account:string)
@@ -942,6 +982,7 @@
 
         (with-capability (DPTF_FREEZE_ACCOUNT identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_Unfreezeccount (identifier:string account:string)
@@ -949,6 +990,7 @@
 
         (with-capability (DPTF_UNFREEZE_ACCOUNT identifier account)
             (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : false})
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     ;;
@@ -964,6 +1006,7 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : true}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_SetMintRole (identifier:string account:string)
@@ -974,6 +1017,7 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-mint" : true}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_SetTransferRole (identifier:string account:string)
@@ -986,12 +1030,8 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-transfer" : true}
             )
-        )
-        (with-read DPTF-PropertiesTable identifier
-            { "role-transfer-amount" := rta }
-            (update DPTF-PropertiesTable identifier
-                {"role-transfer-amount" : (+ rta 1)}
-            )
+            (X_UpdateRoleTransferAmount identifier true)
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     ;;
@@ -1007,6 +1047,7 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : false}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_UnsetMintRole (identifier:string account:string)
@@ -1017,6 +1058,7 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-mint" : false}
             )
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     (defun C_UnsetTransferRole (identifier:string account:string)
@@ -1029,12 +1071,8 @@
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"role-burn" : false}
             )
-        )
-        (with-read DPTF-PropertiesTable identifier
-            { "role-transfer-amount" := rta }
-            (update DPTF-PropertiesTable identifier
-                {"role-transfer-amount" : (- rta 1)}
-            )
+            (X_UpdateRoleTransferAmount identifier false)
+            (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
         )
     )
     ;;
@@ -1069,39 +1107,45 @@
         ;; Enforce Ticker is part of identifier variable below
         (DPTS.UV_DPTS-Decimals decimals)
 
-        (let
-            (
-                (identifier (DPTS.UC_MakeIdentifier ticker))
+        (with-capability (DPTS.DPTS_INCREASE-NONCE)
+            (let
+                (
+                    (identifier (DPTS.UC_MakeIdentifier ticker))
+                )
+                ;; Add New Entries in the DPTF-PropertyTable
+                ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
+                ;; Entry is initialised with "is-paused" set to off(false).
+                ;; Entry is initialised with a supply of 0.0 (decimal)
+                ;; Entry is initialised with a false switch on the origin-mint, meaning origin mint hasnt been executed
+                ;; Entry is initialised with an origin-mint-amount of 0.0, meaning origin mint hasnt been executed
+                ;; Entry is initiated with o to role-transfer-amount, since no Account will transfer role upon creation.
+                (insert DPTF-PropertiesTable identifier
+                    {"owner"                : owner
+                    ,"owner-konto"          : account
+                    ,"name"                 : name
+                    ,"ticker"               : ticker
+                    ,"decimals"             : decimals
+                    ,"can-change-owner"     : can-change-owner
+                    ,"can-upgrade"          : can-upgrade
+                    ,"can-add-special-role" : can-add-special-role
+                    ,"can-freeze"           : can-freeze
+                    ,"can-wipe"             : can-wipe
+                    ,"can-pause"            : can-pause
+                    ,"is-paused"            : false
+                    ,"supply"               : 0.0
+                    ,"origin-mint"          : false
+                    ,"origin-mint-amount"   : 0.0
+                    ,"role-transfer-amount" : 0}
+                )
+                ;;Makes a new DPTF Account for the Token Issuer.
+                (C_DeployTrueFungibleAccount identifier account owner)
+                ;;Increases DPTS nonce with Operation
+                (DPTS.X_IncrementNonce account)
+                ;;Returns the unique Token Identifier
+                identifier
             )
-            ;; Add New Entries in the DPTF-PropertyTable
-            ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
-            ;; Entry is initialised with "is-paused" set to off(false).
-            ;; Entry is initialised with a supply of 0.0 (decimal)
-            ;; Entry is initialised with a false switch on the origin-mint, meaning origin mint hasnt been executed
-            ;; Entry is initialised with an origin-mint-amount of 0.0, meaning origin mint hasnt been executed
-            ;; Entry is initiated with o to role-transfer-amount, since no Account will transfer role upon creation.
-            (insert DPTF-PropertiesTable identifier
-                {"owner"                : owner
-                ,"name"                 : name
-                ,"ticker"               : ticker
-                ,"decimals"             : decimals
-                ,"can-change-owner"     : can-change-owner
-                ,"can-upgrade"          : can-upgrade
-                ,"can-add-special-role" : can-add-special-role
-                ,"can-freeze"           : can-freeze
-                ,"can-wipe"             : can-wipe
-                ,"can-pause"            : can-pause
-                ,"is-paused"            : false
-                ,"supply"               : 0.0
-                ,"origin-mint"          : false
-                ,"origin-mint-amount"   : 0.0
-                ,"role-transfer-amount" : 0}
-            )
-            ;;Makes a new DPTF Account for the Token Issuer.
-            (C_DeployTrueFungibleAccount identifier account owner)
-            ;;Returns the unique Token Identifier
-            identifier
         )
+        
     )
     (defun C_DeployTrueFungibleAccount (identifier:string account:string guard:guard)
         @doc "Creates a new DPTF Account for TrueFungible <identifier> and Account <account> \
@@ -1159,6 +1203,7 @@
                     (X_Credit identifier account g amount)
                     (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
                     (X_UpdateSupply identifier amount true)
+                    (DPTS.X_IncrementNonce account)
                 )
             )
         )
@@ -1178,6 +1223,7 @@
                 (with-capability (DPTF_MINT identifier account amount)
                     (X_Credit identifier account g amount)
                     (X_UpdateSupply identifier amount true)
+                    (DPTS.X_IncrementNonce account)
                 )
             )
         )
@@ -1201,6 +1247,7 @@
                 (with-capability (DPTF_BURN identifier account amount)
                     (X_Debit identifier account amount false)
                     (X_UpdateSupply identifier amount false)
+                    (DPTS.X_IncrementNonce account)
                 )
             )
         )
@@ -1215,6 +1262,7 @@
             (with-capability (DPTF_WIPE identifier account amount)
                 (X_Debit identifier account amount true)
                 (X_UpdateSupply identifier amount false)
+                (DPTS.X_IncrementNonce (UR_TrueFungibleKonto identifier))
             )
         )
     )
@@ -1234,6 +1282,7 @@
                 )
                 (X_Debit identifier sender amount false)
                 (X_Credit identifier receiver rg amount)
+                (DPTS.X_IncrementNonce sender)
             )
         )
     )
@@ -1243,6 +1292,7 @@
         (with-capability (TRANSFER_DPTF identifier sender receiver amount false)
             (X_Debit identifier sender amount false)
             (X_Credit identifier receiver receiver-guard amount)
+            (DPTS.X_IncrementNonce sender)
         )
     )
     
@@ -1251,12 +1301,13 @@
     ;;                                            ;;
     ;;      AUXILIARY FUNCTIONS                   ;;
     ;;                                            ;;
-    ;;==================TRANSFER====================
+    ;;==================MINT BURN===================
     ;;
     ;;      X_MintOrigin|X_Mint|X_Burn
-    ;;      X_MethodicTransferTrueFungible|X_MethodicTransferTrueFungibleAnew
     ;;
     (defun X_MintOrigin (identifier:string account:string amount:decimal)
+        @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account> as initial mint amount \
+            \ as Auxiliary Function requiring the needed capability"
         (require-capability (DPTF_MINT_ORIGIN identifier account amount))
         (let
             (
@@ -1265,6 +1316,7 @@
             (X_Credit identifier account g amount)
             (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
             (X_UpdateSupply identifier amount true)
+            (DPTS.X_IncrementNonce account)
         )
     )
     (defun X_Mint (identifier:string account:string amount:decimal)
@@ -1277,6 +1329,7 @@
             )
             (X_Credit identifier account g amount)
             (X_UpdateSupply identifier amount true)
+            (DPTS.X_IncrementNonce account)
         )
     )
     (defun X_Burn (identifier:string account:string amount:decimal)
@@ -1285,7 +1338,12 @@
         (require-capability (DPTF_BURN identifier account amount))
         (X_Debit identifier account amount false)
         (X_UpdateSupply identifier amount false)
+        (DPTS.X_IncrementNonce account)
     )
+    ;;==================TRANSFER====================
+    ;;
+    ;;      X_MethodicTransferTrueFungible|X_MethodicTransferTrueFungibleAnew
+    ;;
     (defun X_MethodicTransferTrueFungible (identifier:string sender:string receiver:string amount:decimal)
         @doc "Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account \
             \ Fails if <receiver> DPTF Account doesnt exist. \
@@ -1306,6 +1364,7 @@
             )
             (X_Debit identifier sender amount false)
             (X_Credit identifier receiver rg amount)
+            (DPTS.X_IncrementNonce sender)
         )
     )
     (defun X_MethodicTransferTrueFungibleAnew (identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
@@ -1315,6 +1374,7 @@
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
         (X_Debit identifier sender amount false)
         (X_Credit identifier receiver receiver-guard amount)
+        (DPTS.X_IncrementNonce sender)
     )
     ;;
     ;;==================CREDIT|DEBIT================ 
@@ -1376,7 +1436,7 @@
     ;;
     ;;==================UPDATE======================
     ;;
-    ;;      X_UpdateSupply 
+    ;;      X_UpdateSupply|X_UpdateRoleTransferAmount
     ;;
     (defun X_UpdateSupply (identifier:string amount:decimal direction:bool)
         @doc "Updates <identifier> TrueFungible supply. Boolean <direction> used for increase|decrease"
@@ -1392,6 +1452,24 @@
                 { "supply" := s }
                 (enforce (>= (- s amount) 0.0) "DPTF Token Supply cannot be updated to negative values!")
                 (update DPTF-PropertiesTable identifier { "supply" : (- s amount)})
+            )
+        )
+    )
+    (defun X_UpdateRoleTransferAmount (identifier:string direction:bool)
+        @doc "Updates <role-transfer-amount> for Token <identifier>"
+        (require-capability (UPDATE-ROLE-TRANSFER-AMOUNT identifier))
+        (if (= direction true)
+            (with-read DPTF-PropertiesTable identifier
+                { "role-transfer-amount" := rta }
+                (update DPTF-PropertiesTable identifier
+                    {"role-transfer-amount" : (+ rta 1)}
+                )
+            )
+            (with-read DPTF-PropertiesTable identifier
+                { "role-transfer-amount" := rta }
+                (update DPTF-PropertiesTable identifier
+                    {"role-transfer-amount" : (- rta 1)}
+                )
             )
         )
     )
