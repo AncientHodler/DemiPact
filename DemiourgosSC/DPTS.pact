@@ -77,6 +77,7 @@
     ;;      IZ_DPTS_ACOUNT                          Enforces That a DPTS Account exists                                                                 ;;
     ;;      IZ_DPTS_ACOUNT_SMART                    Enforces That a DPTS Account is of a Smart DPTS Account                                             ;;
     ;;      SC_TRANSFERABILITY                      Enforce correct transferability between DPTS Accounts                                               ;;
+    ;;      DPTS_INCREASE-NONCE                     Capability required to increment the DPTS nonce                                                     ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
@@ -119,7 +120,7 @@
         )
     )
     (defcap DPTS_INCREASE-NONCE ()
-        @doc "Capability required to update the DPTS nonce"
+        @doc "Capability required to increment the DPTS nonce"
         true
     )
     ;;==================================================================================================================================================;;
