@@ -1,0 +1,184 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Define "free.DH-Master-Keyset"
+(print "==========================TX01-KEY Definitions=========================")
+(print "==========================Define==================free.DH-Master-Keyset")
+(begin-tx)
+    (module KeysVault GOVERNANCE
+        (defcap GOVERNANCE () true)
+        (defconst DHADMIN1 "AncientHodlerPrivateKey")
+        (defconst DHADMIN2 "FloreanPrivateKey")
+        (defconst DHADMIN3 "ArionPrivateKey")
+        (defconst DH-SC1 "AutostakePoolPrivateKey")
+
+        (defconst USER001 "Cheia_useru-ului_001")
+        (defconst USER002 "Cheia_useru-ului_002")
+        (defconst USER003 "Cheia_useru-ului_003")
+        (defconst USER004 "Cheia_useru-ului_004")
+        (defconst USER005 "Cheia_useru-ului_005")
+
+        (defconst AN_USER001 "Byta")
+        (defconst AN_USER002 "Bula")
+        (defconst AN_USER003 "Lumy")
+        (defconst AN_USER004 "Kiss")
+        (defconst AN_USER005 "Emma")
+    )
+(env-data {"DemiourgosTrinity": { "keys": [KeysVault.DHADMIN1, KeysVault.DHADMIN2, KeysVault.DHADMIN1], "pred": "keys-2" },
+           "DemiourgosAutostake": { "keys": [KeysVault.DH-SC1], "pred": "keys-all"},
+           "key001": { "keys": [KeysVault.USER001], "pred": "keys-all"},
+           "key002": { "keys": [KeysVault.USER002], "pred": "keys-all"},
+           "key003": { "keys": [KeysVault.USER003], "pred": "keys-all"},
+           "key004": { "keys": [KeysVault.USER004], "pred": "keys-all"},
+           "key005": { "keys": [KeysVault.USER005], "pred": "keys-all"}})
+(namespace "free")
+;;Define Demiourgos Keysets
+(define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosTrinity"))
+(print "Defined the free.DH-Master-Keyset")
+(define-keyset "free.DH_SC_Autostake_Key" (read-keyset "DemiourgosAutostake"))
+(print "Defined the free.DH-SC_Autostake_Key")
+;;Define User Keysets
+(define-keyset "free.User001_Keyset" (read-keyset "key001"))
+(define-keyset "free.User002_Keyset" (read-keyset "key002"))
+(define-keyset "free.User003_Keyset" (read-keyset "key003"))
+(define-keyset "free.User004_Keyset" (read-keyset "key004"))
+(define-keyset "free.User005_Keyset" (read-keyset "key005"))
+(print "5 User keys have been defined")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] }])
+(env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] }])
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Load pact smart contract
+(print "==========================TX02=========================================")
+(print "==========================Load-Pact-file===============================")
+(begin-tx "Load Pact Test file")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTF.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 04 - Use loaded modules
+(print "==========================TX03=========================================")
+(print "==========================Use-Modules-tx===========================")
+(begin-tx)
+(use free.DPTS)
+(use free.DPTF)
+(use free.DPMF)
+(use free.DH_SC_Autostake)
+(use free.DH_SC_Vesting)
+(use KeysVault)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Testing SC Function
+(print "==========================TX04=========================================")
+(print "==========================Setting Enviroment Data======================")
+(begin-tx)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-07-06T00:00:00Z")}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Issue OURO Transactions")
+(print "==========================TX05=========================================")
+(print "==========================Issue OURO and initial Supply================")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] }])
+            ;{ "key": "Cheia_useru-ului_003", "caps": [] }])
+
+;; TX_01: Byta Issues OUROBOROS as a DPTF Token.
+(free.DPTF.C_IssueTrueFungible
+    KeysVault.AN_USER001
+    (describe-keyset "free.User001_Keyset")
+    "Ouroboros"
+    "OURO"
+    24
+    true    ;;can-change-owner
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+)
+(read free.DPTF.DPTF-PropertiesTable "OURO-98c486052a51")
+;; TX_02: Byta Issues 5000 OUROBOROS as Origin Mint
+(free.DPTF.C_MintOrigin
+    "OURO-98c486052a51"
+    KeysVault.AN_USER001
+    5000.0
+)
+;; TX_03: Bula issues an OUROBOROS DPTF Account
+(free.DPTF.C_DeployTrueFungibleAccount
+    "OURO-98c486052a51"
+    KeysVault.AN_USER002
+    (describe-keyset "free.User002_Keyset")
+)
+;; TX_04: Keys in the DPTF Properties table are being inspected (How many DPTF Tokens have been created)
+(keys free.DPTF.DPTF-PropertiesTable)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Initialise")
+(print "==========================TX06=========================================")
+(print "==========================Vesting-SC-Initialising====================")
+(env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] },
+            { "key": "Cheia_useru-ului_001", "caps": [] }])
+
+;(free.DH_SC_Vesting.U_SplitBalanceForVesting "OURO-98c486052a51" 250.000000000000000000000000 5)
+
+;(free.DH_SC_Vesting.U_MakeVestingDateList 0 3600 7)
+
+(print "Type iz")
+;(free.DH_SC_Vesting.CheckType "OURO-98c486052a51" 250.0 86400 86400 1)
+(typeof (free.DH_SC_Vesting.U_MakeVestingMetaData "OURO-98c486052a51" 250.0 86400 86400 2))
+(free.DH_SC_Vesting.U_MakeVestingMetaData "OURO-98c486052a51" 250.0 86400 86400 2)
+(typeof free.DPMF.NEUTRAL_META-FUNGIBLE)
+
+(env-gas)
+(commit-tx)

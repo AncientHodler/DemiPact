@@ -21,7 +21,7 @@
             "Either Demiourgos Trinity or Vesting Key can perform Vesting"
             [
                 (compose-capability (VESTING_ADMIN))
-                (compose-capability (OUROBOROS.OUROBOROS_ADMIN))
+                (compose-capability (DPTS.DPTS_ADMIN))
             ]
         )
     )
@@ -34,7 +34,7 @@
     (defconst SC_KEY "free.DH_SC_Vesting_Key")
     (defconst SC_NAME "Snake_Vesting")
 
-    (defconst BAR OUROBOROS.BAR)
+    (defconst BAR DPTS.BAR)
 
     ;;TABLE-KEYS
     (defconst TRINITY "TrinityIDs")
@@ -108,115 +108,81 @@
     ;;      VEST_OURO_VOURO|VEST_OURO_VAURYN|VEST_OURO_VEAURYN
     ;;      VEST_AURYN_VAURYN|VEST_AURYN_VEAURYN|VEST_EAURYN_VEAURYN
     ;;
-    (defcap VEST_OURO_VOURO (initiator:string vester:string target-account:string ouro-input-amount:decimal)
-        (let
-            (
-                (ouro-id:string (UR_OuroborosID))
-                (v-ouro-id:string (UR_VOuroborosID))
-            )
-        ;;0]Only the Master Vesters can perform Vesting
-            (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id client SC_NAME ouro-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator ouro-id vester SC_NAME ouro-input-amount))
-        ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
-            (compose-capability (DPMF.DPMF_MINT v-ouro-id SC_NAME ouro-input-amount))
-        ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-ouro-id SC_NAME target-account ouro-input-amount true))
-        )
-    )
-    (defcap VEST_OURO_VAURYN (initiator:string vester:string target-account:string ouro-input-amount:decimal)
-        (let
-            (
-                (ouro-id:string (UR_OuroborosID))
-                (v-auryn-id:string (UR_VAurynID))
-                (auryn-output-amount:decimal (DH_SC_Autostake.UC_OuroCoil ouro-input-amount))
-            )
-        ;;0]Only the Master Vesters can perform Vesting
-            (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id client SC_NAME ouro-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator ouro-id vester SC_NAME ouro-input-amount))
-        ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn
-            (compose-capability (DH_SC_Autostake.COIL_OUROBOROS initiator SC_NAME ouro-input-amount))
-        ;;3]Vesting Account creates <VAURYN|Vested-Auryn>
-            (compose-capability (DPMF.DPMF_MINT v-auryn-id SC_NAME auryn-output-amount))
-        ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-output-amount true))
-        )
-    )
-    (defcap VEST_OURO_VEAURYN (initiator:string vester:string target-account:string ouro-input-amount:decimal)
-        (let
-            (
-                (ouro-id:string (UR_OuroborosID))
-                (v-eauryn-id:string (UR_VEliteAurynID))
-                (auryn-output-amount:decimal (DH_SC_Autostake.UC_OuroCoil ouro-input-amount))
-            )
-        ;;0]Only the Master Vesters can perform Vesting
-            (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-            ;;old (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id client SC_NAME ouro-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator ouro-id vester SC_NAME ouro-input-amount))
-        ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>
-            (compose-capability (DH_SC_Autostake.CURL_OUROBOROS initiator SC_NAME ouro-input-amount))
-        ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-            (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME auryn-output-amount))
-        ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-output-amount true))
-        )
-    )
-    (defcap VEST_AURYN_VAURYN (initiator:string vester:string target-account:string auryn-input-amount:decimal)
-        (let
-            (
-                (auryn-id:string (UR_AurynID))
-                (v-auryn-id:string (UR_VAurynID))
-            )
-        ;;0]Only the Master Vesters can perform Vesting
-            (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator auryn-id vester SC_NAME auryn-input-amount))
-        ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
-            (compose-capability (DPMF.DPMF_MINT v-auryn-id SC_NAME auryn-input-amount))
-        ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-input-amount true))
-        )
-    )
-    (defcap VEST_AURYN_VEAURYN (initiator:string vester:string target-account:string auryn-input-amount:decimal)
-        (let
-            (
-                (auryn-id:string (UR_AurynID))
-                (v-eauryn-id:string (UR_VEliteAurynID))
-            )
-        ;;0]Only the Master Vesters can perform Vesting
+    (defcap VEST_OURO_VOURO (client:string target-account:string ouro-input-amount:decimal)
+    ;;0]Only the Master Vesters can perform Vesting
         (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator auryn-id vester SC_NAME auryn-input-amount))
-        ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
-            (compose-capability (DH_SC_Autostake.COIL_AURYN initiator SC_NAME auryn-input-amount))
-        ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-            (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME auryn-input-amount))
-        ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-input-amount true))
-        )
+    ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
+    ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
+        (compose-capability (DPMF.DPMF_MINT (UR_VOuroborosID) SC_NAME ouro-input-amount))
+    ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VOuroborosID) SC_NAME target-account ouro-input-amount true))
     )
-    (defcap VEST_EAURYN_VEAURYN (initiator:string vester:string target-account:string elite-auryn-input-amount:decimal)
+    (defcap VEST_OURO_VAURYN (client:string target-account:string ouro-input-amount:decimal)
         (let
             (
-                (eauryn-id:string (UR_EliteAurynID))
-                (v-eauryn-id:string (UR_VEliteAurynID))
+                (auryn-output-amount:decimal (DH_SC_Autostake.UC_OuroCoil ouro-input-amount))
             )
         ;;0]Only the Master Vesters can perform Vesting
             (compose-capability (VESTING_MASTER))
-        ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id client SC_NAME elite-auryn-input-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator eauryn-id vester SC_NAME elite-auryn-input-amount))
-        ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-            (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME elite-auryn-input-amount))
-        ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account elite-auryn-input-amount true))
+        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+            (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
+        ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn
+            (compose-capability (DH_SC_Autostake.COIL_OUROBOROS SC_NAME ouro-input-amount))
+        ;;3]Vesting Account creates <VAURYN|Vested-Auryn>
+            (compose-capability (DPMF.DPMF_MINT (UR_VAurynID) SC_NAME auryn-output-amount))
+        ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
+            (compose-capability (DPMF.TRANSFER_DPMF (UR_VAurynID) SC_NAME target-account auryn-output-amount true))
         )
+    )
+    (defcap VEST_OURO_VEAURYN (client:string target-account:string ouro-input-amount:decimal)
+        (let
+            (
+                (auryn-output-amount:decimal (DH_SC_Autostake.UC_OuroCoil ouro-input-amount))
+            )
+        ;;0]Only the Master Vesters can perform Vesting
+            (compose-capability (VESTING_MASTER))
+        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+            (compose-capability (DPTF.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
+        ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>
+            (compose-capability (DH_SC_Autostake.CURL_OUROBOROS SC_NAME ouro-input-amount))
+        ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
+            (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME auryn-output-amount))
+        ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
+            (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account auryn-output-amount true))
+        )
+    )
+    (defcap VEST_AURYN_VAURYN (client:string target-account:string auryn-input-amount:decimal)
+    ;;0]Only the Master Vesters can perform Vesting
+        (compose-capability (VESTING_MASTER))
+    ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
+    ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
+        (compose-capability (DPMF.DPMF_MINT (UR_VAurynID) SC_NAME auryn-input-amount))
+    ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VAurynID) SC_NAME target-account auryn-input-amount true))
+    )
+    (defcap VEST_AURYN_VEAURYN (client:string target-account:string auryn-input-amount:decimal)
+    ;;0]Only the Master Vesters can perform Vesting
+        (compose-capability (VESTING_MASTER))
+    ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_AurynID) client SC_NAME auryn-input-amount true))
+    ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
+        (compose-capability (DH_SC_Autostake.COIL_AURYN SC_NAME auryn-input-amount))
+    ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
+        (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME auryn-input-amount))
+    ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account auryn-input-amount true))
+    )
+    (defcap VEST_EAURYN_VEAURYN (client:string target-account:string elite-auryn-input-amount:decimal)
+    ;;0]Only the Master Vesters can perform Vesting
+        (compose-capability (VESTING_MASTER))
+    ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
+        (compose-capability (DPTF.TRANSFER_DPTF (UR_EliteAurynID) client SC_NAME elite-auryn-input-amount true))
+    ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
+        (compose-capability (DPMF.DPMF_MINT (UR_VEliteAurynID) SC_NAME elite-auryn-input-amount))
+    ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
+        (compose-capability (DPMF.TRANSFER_DPMF (UR_VEliteAurynID) SC_NAME target-account elite-auryn-input-amount true))
     )
     ;;==================CULLING===================== 
     ;;
@@ -226,63 +192,61 @@
     (defcap CULL_EXECUTOR ()
         true
     )
-    (defcap CULL_VESTED_SNAKES (initiator:string culler:string identifier:string nonce:integer)
+    (defcap CULL_VESTED_SNAKES (client:string identifier:string nonce:integer)
         (let*
             (
-                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
-                (culled-amount:decimal (UC_CullVestingMetaDataAmount culler identifier nonce))
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
                 (return-amount:decimal (- initial-amount culled-amount))
             )
         ;;0]Any Client can perform <C_CullVestedSnakes>; Smart DPTS Accounts arent required to provide their guards
-            (compose-capability (DPMF.DPMF_CLIENT identifier initiator))
+            (compose-capability (DPMF.DPMF_CLIENT identifier client))
         ;;1]Enforces that the MetaFungible <identifier>-<nonce> held by the <Client> Account is Cullable
-            (compose-capability (IZ_SNAKE-NONCE-CULLABLE culler identifier nonce))
+            (compose-capability (IZ_SNAKE-NONCE-CULLABLE client identifier nonce))
         ;;2]<Snake_Vesting> Account returns culled amount and remaining vested Meta-Token, if any, to client
             ;;This happens prior to <client> transferring his Vested Tokens to the <Snake_Vesting> Account
             ;;because the next functions assume client still has the Vested Tokens.
             (if (= return-amount 0.0)
-                (compose-capability (CULL_VESTED_SNAKES_TOTALLY initiator culler identifier nonce))
-                (compose-capability (CULL_VESTED_SNAKES_PARTIALY initiator culler identifier nonce))
+                (compose-capability (CULL_VESTED_SNAKES_TOTALLY client identifier nonce))
+                (compose-capability (CULL_VESTED_SNAKES_PARTIALY client identifier nonce))
             )
         ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
-            (compose-capability (DPMF.TRANSFER_DPMF identifier culler SC_NAME initial-amount true))
+            (compose-capability (DPMF.TRANSFER_DPMF identifier client SC_NAME initial-amount true))
         ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
             (compose-capability (DPMF.DPMF_BURN identifier nonce SC_NAME initial-amount))
         )
     )
-    (defcap IZ_SNAKE-NONCE-CULLABLE (culler:string identifier:string nonce:integer)
+    (defcap IZ_SNAKE-NONCE-CULLABLE (client:string identifier:string nonce:integer)
         (let
             (
-                (meta-data:[object] (DPMF.UR_AccountMetaFungibleMetaData identifier nonce culler))
-                (culled-meta-data:[object] (UC_CullVestingMetaDataObject culler identifier nonce))
+                (meta-data:[object] (DPMF.UR_AccountMetaFungibleMetaData identifier nonce client))
+                (culled-meta-data:[object] (UC_CullVestingMetaDataObject client identifier nonce))
             )
             (enforce (!= meta-data culled-meta-data) (format "Vested MetaFungible {}-{} is not yet cullabe" [identifier nonce]))
         )
     )
-    (defcap CULL_VESTED_SNAKES_TOTALLY (initiator:string culler:string identifier:string nonce:integer)
-        ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the whole vested amount of <amount> as DPTF Token
+    (defcap CULL_VESTED_SNAKES_TOTALLY (client:string identifier:string nonce:integer)
+    ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the whole vested amount of <amount> as DPTF Token
         (let
             (
-                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
+                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
                 (return-id:string (UC_OriginalCounterpart identifier))
             )
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF return-id SC_NAME client amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator return-id SC_NAME culler amount))
+            (compose-capability (DPTF.TRANSFER_DPTF return-id SC_NAME client amount true))
         )
     )
-    (defcap CULL_VESTED_SNAKES_PARTIALY (initiator:string culler:string identifier:string nonce:integer)
-        ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the a partial vested amount of <culled-amount> as DPTF Token
+    (defcap CULL_VESTED_SNAKES_PARTIALY (client:string identifier:string nonce:integer)
+    ;;4.1]<Snake_Vesting> Account transfers to <Client> Account the a partial vested amount of <culled-amount> as DPTF Token
         (let*
             (
-                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
-                (culled-amount:decimal (UC_CullVestingMetaDataAmount culler identifier nonce))
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
                 (return-amount:decimal (- initial-amount culled-amount))
                 (return-id:string (UC_OriginalCounterpart identifier))
             )
-            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF return-id SC_NAME client culled-amount true))
-            (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator return-id SC_NAME culler culled-amount))
+            (compose-capability (DPTF.TRANSFER_DPTF return-id SC_NAME client culled-amount true))
             (compose-capability (DPMF.DPMF_MINT identifier SC_NAME return-amount))
-            (compose-capability (DPMF.TRANSFER_DPMF identifier SC_NAME culler return-amount true))
+            (compose-capability (DPMF.TRANSFER_DPMF identifier SC_NAME client return-amount true))
         )
     )
     ;;==================================================================================================================================================;;
@@ -417,7 +381,7 @@
         (let*
             (
 
-                (d:integer (OUROBOROS.UR_TrueFungibleDecimals identifier))
+                (d:integer (DPTF.UR_TrueFungibleDecimals identifier))
                 (split:decimal (floor (/ amount (dec milestone)) d))
                 (multiply:integer (- milestone 1))
             )
@@ -458,7 +422,7 @@
     )
     (defun UC_ComposeVestingMetaData:[object] (identifier:string amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Creates Vesting MetaData"
-        (OUROBOROS.UV_TrueFungibleAmount identifier amount)
+        (DPTF.UV_TrueFungibleAmount identifier amount)
         (UV_MilestoneWithTime offset duration milestone)
 
         (let*
@@ -539,7 +503,7 @@
                                     (t:decimal (diff-time present-time date))
                                 )
                                 (if (< t 0.0)
-                                    (OUROBOROS.UC_AppendLast acc item)
+                                    (DPTS.UC_AppendLast acc item)
                                     acc
                                 )
                             )
@@ -579,7 +543,7 @@
 
         (let
             (
-                (object-validation:bool (OUROBOROS.UV_Object obj (length VKEYS) VKEYS))
+                (object-validation:bool (DPTS.UV_Object obj (length VKEYS) VKEYS))
                 (release-amount-val:decimal (at VKEY1 obj))
                 (release-date-val:time (at VKEY2 obj))
             )
@@ -644,7 +608,7 @@
         @doc "Initialises the Vesting Module"
         ;;Initialise the Vesting DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+        (DPTS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
 
         (with-capability (VESTING_INIT)
             ;;Issue Vesting Tokens below
@@ -704,9 +668,9 @@
                     )
                 )
                 ;;Issue OURO/AURYN/ELITEAURYN DPTF Account for the Vesting SC
-                (OUROBOROS.C_DeployTrueFungibleAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
-                (OUROBOROS.C_DeployTrueFungibleAccount auryn-id SC_NAME (keyset-ref-guard SC_KEY))
-                (OUROBOROS.C_DeployTrueFungibleAccount elite-auryn-id SC_NAME (keyset-ref-guard SC_KEY))
+                (DPTF.C_DeployTrueFungibleAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
+                (DPTF.C_DeployTrueFungibleAccount auryn-id SC_NAME (keyset-ref-guard SC_KEY))
+                (DPTF.C_DeployTrueFungibleAccount elite-auryn-id SC_NAME (keyset-ref-guard SC_KEY))
                 ;;SetTrinityTable
                 (insert TrinityTable TRINITY
                     {"ouro-id"                      : ouro-id
@@ -731,164 +695,125 @@
             )
         )
     )
-    (defun A_VestOuroVOuro (initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestOuroVOuro (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Ouroboros \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
     
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_OURO_VOURO initiator vester target-account amount)
-            (let
+        (with-capability (VEST_OURO_VOURO client target-account amount)
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME amount)
+            ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
+            (let*
                 (
-                    (ouro-id:string (UR_OuroborosID))
-                    (v-ouro-id:string (UR_VOuroborosID))
-                )
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator ouro-id vester SC_NAME amount)
-        ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
-                (let*
-                    (
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData ouro-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-ouro-id SC_NAME amount vesting-meta-data))
-                    )    
-        ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-ouro-id new-nonce SC_NAME target-account target-account-guard amount)
-                )
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_OuroborosID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VOuroborosID) SC_NAME amount vesting-meta-data))
+                )    
+                ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VOuroborosID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
-    (defun A_VestOuroVAuryn (initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestOuroVAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
     
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_OURO_VAURYN initiator vester target-account amount)
-            (let
+        (with-capability (VEST_OURO_VAURYN client target-account amount)
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME amount)
+            ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn; this outputs the auryn-amount
+            ;;3]Vesting Account creates <VAURYN|Vested-Auryn>; knowing the auryn-amount
+            (let*
                 (
-                    (ouro-id:string (UR_OuroborosID))
-                    (auryn-id:string (UR_AurynID))
-                    (v-auryn-id:string (UR_VAurynID))
+                    (auryn-amount:decimal (DH_SC_Autostake.C_CoilOuroboros SC_NAME amount))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) auryn-amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VAurynID) SC_NAME auryn-amount vesting-meta-data))
                 )
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator ouro-id vester SC_NAME amount)
-        ;;2]Vesting Account coils <OURO|Ouroboros>, generating AURYN|Auryn; this outputs the auryn-amount
-        ;;3]Vesting Account creates <VAURYN|Vested-Auryn>; knowing the auryn-amount
-                (let*
-                    (
-                        (auryn-amount:decimal (DH_SC_Autostake.C_CoilOuroboros initiator SC_NAME amount))
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id auryn-amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-auryn-id SC_NAME auryn-amount vesting-meta-data))
-                    )
-        ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account; since auryn-amount and new-nonce are now known
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-auryn-id new-nonce SC_NAME target-account target-account-guard auryn-amount)
-                )
+                ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account; since auryn-amount and new-nonce are now known
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VAurynID) new-nonce SC_NAME target-account target-account-guard auryn-amount)
             )
         )
     )
-    (defun A_VestOuroVEAuryn (initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestOuroVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Ouroboros, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
     
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_OURO_VEAURYN initiator vester target-account amount)
-            (let
+        (with-capability (VEST_OURO_VEAURYN client target-account amount)
+            ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_OuroborosID) client SC_NAME amount)
+            ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>; this outputs elite-auryn-amount
+            ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>; knowing the elite-auryn-amount
+            (let*
                 (
-                    (ouro-id:string (UR_OuroborosID))
-                    (auryn-id:string (UR_AurynID))
-                    (v-eauryn-id:string (UR_VEliteAurynID))
+                    (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros SC_NAME amount))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) elite-auryn-amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME elite-auryn-amount vesting-meta-data))
                 )
-        ;;1]Client transfers <OURO|Ouroboros> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator ouro-id vester SC_NAME amount)
-        ;;2]Vesting Account curls <OURO|Ouroboros>, generating <EAURYN|Elite-Auryn>; this outputs elite-auryn-amount
-        ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>; knowing the elite-auryn-amount
-                (let*
-                    (
-                        (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros initiator SC_NAME amount))
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id elite-auryn-amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME elite-auryn-amount vesting-meta-data))
-                    )
-        ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
-                )
+                ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
             )
         )
     )
-    (defun A_VestAurynVAuryn(initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestAurynVAuryn(client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Auryn, sending it to target account as Vested Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
     
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_AURYN_VAURYN initiator vester target-account amount)
-            (let
+        (with-capability (VEST_AURYN_VAURYN client target-account amount)
+            ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_AurynID) client SC_NAME amount)
+            ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
+            (let*
                 (
-                    (auryn-id:string (UR_AurynID))
-                    (v-auryn-id:string (UR_VAurynID))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VAurynID) SC_NAME amount vesting-meta-data))
                 )
-        ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator auryn-id vester SC_NAME amount)
-        ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
-                (let*
-                    (
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-auryn-id SC_NAME amount vesting-meta-data))
-                    )
-                    true
-        ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-auryn-id new-nonce SC_NAME target-account target-account-guard amount)
-                )
+                true
+                ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VAurynID) new-nonce SC_NAME target-account target-account-guard amount)
             )
-        
         )
     )
-    (defun A_VestAurynVEAuryn (initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestAurynVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Auryn, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
 
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_AURYN_VEAURYN initiator vester target-account amount)
-            (let
+        (with-capability (VEST_AURYN_VEAURYN client target-account amount)
+            ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_AurynID) client SC_NAME amount)
+            ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
+            (DH_SC_Autostake.C_CoilAuryn SC_NAME amount)
+            ;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
+            (let*
                 (
-                    (auryn-id:string (UR_AurynID))
-                    (v-eauryn-id:string (UR_VEliteAurynID))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_AurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
                 )
-        ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator auryn-id vester SC_NAME amount)
-        ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
-                (DH_SC_Autostake.C_CoilAuryn initiator SC_NAME amount)
-        ;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-                (let*
-                    (
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
-                    )
-        ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
-                )
+                ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
             )
         )
     )
-    (defun A_VestEAurynVEAuryn (initiator:string vester:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
+    (defun A_VestEAurynVEAuryn (client:string target-account:string target-account-guard:guard amount:decimal offset:integer duration:integer milestone:integer)
         @doc "Vests Elite-Auryn, sending it to target account as Vested Elite-Auryn \
             \ Client must present administrator keys for this to work, which is why this is not a client function"
     
         ;;0]Only the Master Vesters can perform Vesting
-        (with-capability (VEST_EAURYN_VEAURYN initiator vester target-account amount)
-            (let
+        (with-capability (VEST_EAURYN_VEAURYN client target-account amount)
+            ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
+            (DPTF.X_MethodicTransferTrueFungible (UR_EliteAurynID) client SC_NAME amount)
+            ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
+            (let*
                 (
-                    (eauryn-id:string (UR_EliteAurynID))
-                    (v-eauryn-id:string (UR_VEliteAurynID))
+                    (vesting-meta-data:[object] (UC_ComposeVestingMetaData (UR_EliteAurynID) amount offset duration milestone))
+                    (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME amount vesting-meta-data))
                 )
-        ;;1]Client transfers <EAURYN|Elite-Auryn> to the <Snake_Vesting> Account
-                (OUROBOROS.XC_MethodicTransferTrueFungible initiator eauryn-id vester SC_NAME amount)
-        ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
-                (let*
-                    (
-                        (vesting-meta-data:[object] (UC_ComposeVestingMetaData eauryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
-                    )
-        ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
-                )
-            ) 
+                ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
+                (DPMF.X_MethodicTransferMetaFungibleAnew (UR_VEliteAurynID) new-nonce SC_NAME target-account target-account-guard amount)
+            )
         )
     )
     ;;--------------------------------------------;;
@@ -899,22 +824,22 @@
     ;;
     ;;      C_CullVestedOuroboros|C_CullVestedAuryn|C_CullVestedEliteAuryn
     ;;
-    (defun C_CullVestedOuroboros (initiator:string culler:string nonce:integer)
+    (defun C_CullVestedOuroboros (client:string nonce:integer)
         @doc "Culls Vested Ouroboros of Nonce <nonce >for <client> Account"
         (with-capability (CULL_EXECUTOR)
-            (X_CullVestedSnakes initiator culler (UR_VOuroborosID) nonce)
+            (X_CullVestedSnakes client (UR_VOuroborosID) nonce)
         )
     )
-    (defun C_CullVestedAuryn (initiator:string culler:string nonce:integer)
+    (defun C_CullVestedAuryn (client:string nonce:integer)
         @doc "Culls Vested Auryn of Nonce <nonce >for <client> Account"
         (with-capability (CULL_EXECUTOR)
-            (X_CullVestedSnakes initiator culler (UR_VAurynID) nonce)
+            (X_CullVestedSnakes client (UR_VAurynID) nonce)
         )
     )
-    (defun C_CullVestedEliteAuryn (initiator:string culler:string nonce:integer)
+    (defun C_CullVestedEliteAuryn (client:string nonce:integer)
         @doc "Culls Vested Elite-Auryn of Nonce <nonce >for <client> Account"
         (with-capability (CULL_EXECUTOR)
-            (X_CullVestedSnakes initiator culler (UR_VEliteAurynID) nonce)
+            (X_CullVestedSnakes client (UR_VEliteAurynID) nonce)
         )
     )
     ;;--------------------------------------------;;
@@ -925,62 +850,62 @@
     ;;
     ;;      C_CullVestedOuroboros|C_CullVestedAuryn|C_CullVestedEliteAuryn
     ;;
-    (defun X_CullVestedSnakes (initiator:string culler:string identifier:string nonce:integer)
+    (defun X_CullVestedSnakes (client:string identifier:string nonce:integer)
         @doc "Culls the Vested Snake Token of Nonce <nonce>, for <client> Account"
         (require-capability (CULL_EXECUTOR))
         (let*
             (
-                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
-                (culled-amount:decimal (UC_CullVestingMetaDataAmount culler identifier nonce))
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
                 (return-amount:decimal (- initial-amount culled-amount))
             )
         ;;0]Any Client can perform <C_CullVestedSnakes>; Smart DPTS Accounts arent required to provide their guards
         ;;1]Enforces that the MetaFungible <identifier>-<nonce> held by the <Client> Account is Cullable
-            (with-capability (CULL_VESTED_SNAKES initiator culler identifier nonce)
-        ;;2]<Snake_Vesting> Account returns culled amount and remaining vested Meta-Token, if any, to client
-        ;;This happens prior to <client> transferring his Vested Tokens to the <Snake_Vesting> Account
-        ;;because the next functions assume client still has the Vested Tokens.
+            (with-capability (CULL_VESTED_SNAKES client identifier nonce)
+            ;;2]<Snake_Vesting> Account returns culled amount and remaining vested Meta-Token, if any, to client
+            ;;This happens prior to <client> transferring his Vested Tokens to the <Snake_Vesting> Account
+            ;;because the next functions assume client still has the Vested Tokens.
                 (if (= return-amount 0.0)
-                    (X_CullVestedSnakesTotally initiator culler identifier nonce)
-                    (X_CullVestedSnakesPartially initiator culler identifier nonce)
+                    (X_CullVestedSnakesTotally client identifier nonce)
+                    (X_CullVestedSnakesPartially client identifier nonce)
                 )
-        ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
-                (DPMF.X_MethodicTransferMetaFungible identifier nonce culler SC_NAME initial-amount)
-        ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
+            ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
+                (DPMF.X_MethodicTransferMetaFungible identifier nonce client SC_NAME initial-amount)
+            ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
                 (DPMF.C_Burn identifier nonce SC_NAME initial-amount)
             )
         )
     )
-    (defun X_CullVestedSnakesTotally (initiator:string culler:string identifier:string nonce:integer)
+    (defun X_CullVestedSnakesTotally (client:string identifier:string nonce:integer)
         @doc "Returns results of a total Cull"
-        (require-capability (CULL_VESTED_SNAKES_TOTALLY initiator culler identifier nonce))
+        (require-capability (CULL_VESTED_SNAKES_TOTALLY client identifier nonce))
         (let
             (
-                (culler-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier culler))
-                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
+                (client-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier client))
+                (amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
                 (return-id:string (UC_OriginalCounterpart identifier))
             )
-            (OUROBOROS.XC_MethodicTransferTrueFungibleAnew initiator return-id SC_NAME culler culler-guard amount)
+            (DPTF.X_MethodicTransferTrueFungibleAnew return-id SC_NAME client client-guard amount)
         )
     )
-    (defun X_CullVestedSnakesPartially (initiator:string culler:string identifier:string nonce:integer)
+    (defun X_CullVestedSnakesPartially (client:string identifier:string nonce:integer)
         @doc "Returns results of a partial Cull"
-        (require-capability (CULL_VESTED_SNAKES_PARTIALY initiator culler identifier nonce))
+        (require-capability (CULL_VESTED_SNAKES_PARTIALY client identifier nonce))
         (let*
             (
-                (culler-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier culler))
-                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce culler))
-                (culled-amount:decimal (UC_CullVestingMetaDataAmount culler identifier nonce))
+                (client-guard:guard (DPMF.UR_AccountMetaFungibleGuard identifier client))
+                (initial-amount:decimal (DPMF.UR_AccountMetaFungibleBalance identifier nonce client))
+                (culled-amount:decimal (UC_CullVestingMetaDataAmount client identifier nonce))
                 (return-amount:decimal (- initial-amount culled-amount))
-                (remaining-vesting-meta-data:[object] (UC_CullVestingMetaDataObject culler identifier nonce))
+                (remaining-vesting-meta-data:[object] (UC_CullVestingMetaDataObject client identifier nonce))
                 (return-id:string (UC_OriginalCounterpart identifier))
             )
-            (OUROBOROS.XC_MethodicTransferTrueFungibleAnew initiator return-id SC_NAME culler culler-guard culled-amount)
+            (DPTF.X_MethodicTransferTrueFungibleAnew return-id SC_NAME client client-guard culled-amount)
             (let
                 (
                     (new-nonce:integer (DPMF.C_Mint identifier SC_NAME return-amount remaining-vesting-meta-data))
                 )
-                (DPMF.X_MethodicTransferMetaFungibleAnew identifier new-nonce SC_NAME culler culler-guard return-amount)
+                (DPMF.X_MethodicTransferMetaFungibleAnew identifier new-nonce SC_NAME client client-guard return-amount)
             )
         )
     )

@@ -1,0 +1,404 @@
+;;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Define "free.DH-Master-Keyset"
+(print "==========================TX01-KEY Definitions=========================")
+(print "==========================Define==================free.DH-Master-Keyset")
+(begin-tx)
+    (module KeysVault GOVERNANCE
+        (defcap GOVERNANCE () true)
+        (defconst DHADMIN1 "AncientHodlerPrivateKey")
+        (defconst DHADMIN2 "FloreanPrivateKey")
+        (defconst DHADMIN3 "ArionPrivateKey")
+        (defconst DH-SC1 "AutostakePoolPrivateKey")
+
+        (defconst USER001 "Cheia_useru-ului_001")
+        (defconst USER002 "Cheia_useru-ului_002")
+        (defconst USER003 "Cheia_useru-ului_003")
+        (defconst USER004 "Cheia_useru-ului_004")
+        (defconst USER005 "Cheia_useru-ului_005")
+
+        (defconst AN_USER001 "Byta")
+        (defconst AN_USER002 "Bula")
+        (defconst AN_USER003 "Lumy")
+        (defconst AN_USER004 "Kiss")
+        (defconst AN_USER005 "Emma")
+    )
+(env-data {"DemiourgosTrinity": { "keys": [KeysVault.DHADMIN1, KeysVault.DHADMIN2, KeysVault.DHADMIN1], "pred": "keys-2" },
+           "DemiourgosAutostake": { "keys": [KeysVault.DH-SC1], "pred": "keys-all"},
+           "key001": { "keys": [KeysVault.USER001], "pred": "keys-all"},
+           "key002": { "keys": [KeysVault.USER002], "pred": "keys-all"},
+           "key003": { "keys": [KeysVault.USER003], "pred": "keys-all"},
+           "key004": { "keys": [KeysVault.USER004], "pred": "keys-all"},
+           "key005": { "keys": [KeysVault.USER005], "pred": "keys-all"}})
+(namespace "free")
+;;Define Demiourgos Keysets
+(define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosTrinity"))
+(print "Defined the free.DH-Master-Keyset")
+(define-keyset "free.DH_SC_Autostake_Key" (read-keyset "DemiourgosAutostake"))
+(print "Defined the free.DH-SC_Autostake_Key")
+;;Define User Keysets
+(define-keyset "free.User001_Keyset" (read-keyset "key001"))
+(define-keyset "free.User002_Keyset" (read-keyset "key002"))
+(define-keyset "free.User003_Keyset" (read-keyset "key003"))
+(define-keyset "free.User004_Keyset" (read-keyset "key004"))
+(define-keyset "free.User005_Keyset" (read-keyset "key005"))
+(print "5 User keys have been defined")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] }])
+(env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] }])
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Load pact smart contract
+(print "==========================TX02=========================================")
+(print "==========================Load-Pact-file===============================")
+(begin-tx "Load Pact Test file")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTF.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 04 - Use loaded modules
+(print "==========================TX03=========================================")
+(print "==========================Use-Modules-tx===========================")
+(begin-tx)
+(use free.DPTS)
+(use free.DPTF)
+(use free.DPMF)
+(use free.DH_SC_Autostake)
+(use free.DH_SC_Vesting)
+(use KeysVault)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Testing SC Function
+(print "==========================TX04=========================================")
+(print "==========================Setting Enviroment Data======================")
+(begin-tx)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-07-06T00:00:00Z")}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Issue OURO Transactions")
+(print "==========================TX05=========================================")
+(print "==========================Issue OURO and initial Supply================")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] }])
+            ;{ "key": "Cheia_useru-ului_003", "caps": [] }])
+
+;; TX_01: Byta Issues OUROBOROS as a DPTF Token.
+(free.DPTF.C_IssueTrueFungible
+    KeysVault.AN_USER001
+    (describe-keyset "free.User001_Keyset")
+    "Ouroboros"
+    "OURO"
+    24
+    true    ;;can-change-owner
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+)
+(read free.DPTF.DPTF-PropertiesTable "OURO-98c486052a51")
+;; TX_02: Byta Issues 5000 OUROBOROS as Origin Mint
+(free.DPTF.C_MintOrigin
+    "OURO-98c486052a51"
+    KeysVault.AN_USER001
+    5000.0
+)
+;; TX_03: Bula issues an OUROBOROS DPTF Account
+(free.DPTF.C_DeployTrueFungibleAccount
+    "OURO-98c486052a51"
+    KeysVault.AN_USER002
+    (describe-keyset "free.User002_Keyset")
+)
+;; TX_04: Keys in the DPTF Properties table are being inspected (How many DPTF Tokens have been created)
+(keys free.DPTF.DPTF-PropertiesTable)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Initialise")
+(print "==========================TX06=========================================")
+(print "==========================AUTOSTAKE-SC-Initialising====================")
+(env-sigs [ { "key": "AutostakePoolPrivateKey", "caps": [] },
+            { "key": "Cheia_useru-ului_001", "caps": [] }])
+
+;;Initialising Autostake
+;;Tx_01 = AutostakePool Owner initialises the AutostakePool Smart-Contract (REQUIRED)
+;;(free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")
+(free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")
+
+;;Tx_02 = OUROBOROS DPTF Owner grants Burn Role to AutostakePool OUROBOROS DPTF Account (REQUIRED)
+;;(free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Autostake-Pool")
+(free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Autostake-Pool")
+
+;;Tx_03 = Check AutostakePool DPTS Account type (OPTIONAL)
+(free.DPTS.U_PrintDPTSAccountType "Autostake-Pool")
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Testing")
+(print "==========================TX08=========================================")
+(print "==========================AUTOSTAKE-SC-Initialising====================")
+(read free.DPTF.DPTF-BalancesTable "AURYN-98c486052a51|Autostake-Pool")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] },
+            { "key": "Cheia_useru-ului_003", "caps": [] }])
+(print "==========================OUROBOROS DPTF Transfer tests================")
+;;Tx_01 = Checks Transferability between Byta and Bula DPTS Accounts
+(free.DPTS.U_CheckAccountsTransferability "Byta" "Bula")
+
+;;Tx_02 = Byta transfers to Bula 2500 OURO
+(print "======MUST FAIL=====")
+(format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
+(format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
+(free.DPTF.C_TransferTrueFungible "OURO-98c486052a51" "Byta" "Bula" 2500.0)
+(format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
+(format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
+
+
+;;Tx_03 = Byta transfer to Lumy 1500 OURO, Lumy being a new OUROBOROS DPTF Account
+(free.DPTF.C_TransferTrueFungibleAnew "OURO-98c486052a51" "Byta" "Lumy" (describe-keyset "free.User003_Keyset") 1500.0)
+
+;;Tx_04 = Checks how much OURO Byta hase left, and Auryndex
+(format "Byta are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Byta"))])
+(format "Auryndex is {}" [(free.DH_SC_Autostake.U_GetAuryndex)])
+
+(print "========================Autostakee Coil Tests==========================");;
+;;Tx_05 Multiple Coil/Fuel/Curls for OURO/Auryn
+;(free.DH_SC_Autostake.C_CoilOuroboros "Bula" 100.0)
+;(free.DH_SC_Autostake.C_FuelOuroboros "Bula" 100.0)
+;(free.DH_SC_Autostake.C_CoilOuroboros "Bula" 20.0)
+;(free.DH_SC_Autostake.C_CoilAuryn "Bula" 10.0)
+;(free.DH_SC_Autostake.C_CurlOuroboros "Lumy" 100.0)
+
+;;Tx_06 DPTS Account Checks and Elite Account Checks for Bula and Lumy
+;(free.DPTS.U_PrintDPTSAccountType "Byta")
+;(free.DPTS.U_PrintDPTSAccountType "Bula")
+;(free.DPTS.U_PrintDPTSAccountType "Lumy")
+;(free.DH_SC_Autostake.U_PrintElite "Bula")
+;(free.DH_SC_Autostake.U_PrintElite "Lumy")
+
+;;Tx_07 Autostake Ledger is checked after multiple transactions
+(read free.DH_SC_Autostake.AutostakeLedger free.DH_SC_Autostake.AUTOSTAKEHOLDINGS)
+
+(print "========================CoilFunction Checks ===========================")
+;;Tx_08 DPTF Account Balance Checks
+;(format "Bula are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Bula"))])
+;(format "Bula are {} AURYN" [(at "balance" (read free.DPTF.DPTF-BalancesTable "AURYN-98c486052a51|Bula"))])
+;(format "Bula are {} ELITEAURYN" [(at "balance" (read free.DPTF.DPTF-BalancesTable "ELITEAURYN-98c486052a51|Bula"))])
+;(format "Lumy are {} ELITEAURYN" [(at "balance" (read free.DPTF.DPTF-BalancesTable "ELITEAURYN-98c486052a51|Lumy"))])
+;(format "Autostake are {} OURO" [(at "balance" (read free.DPTF.DPTF-BalancesTable "OURO-98c486052a51|Autostake-Pool"))])
+
+;;Tx_09 Auryn Supply and Auryndex Checks
+;(format "Auryn Supply is {}" [(free.DPTF.U_GetDPTFSupply "AURYN-98c486052a51")])
+;(format "Auryndex is {}" [(free.DH_SC_Autostake.U_GetAuryndex)])
+
+(print "========================INCEPE UNCOIL OURO AICI==========================")
+;;Tx_10 Computes Auryn Uncoil Data for 5 Auryn on Position 1
+;(free.DH_SC_Autostake.U_ComputeAurynUncoil 5.0 1)
+
+;;TX_11 Bula Uncoils 5 Auryn
+;(free.DH_SC_Autostake.C_UncoilAuryn "Bula" 5.0)
+;(free.DH_SC_Autostake.C_UncoilAuryn "Bula" 15.0)
+;(free.DH_SC_Autostake.C_UncoilAuryn "Bula" 25.0)
+
+
+;;Tx_12 Computes Auryn (boolean false) Uncoil Duration time in hours for Bula
+(free.DH_SC_Autostake.U_ComputeUncoilDuration "Bula" false)
+
+;;Tx_13 Computes Auryn (boolean false) Uncoil Time for Bula
+;(free.DH_SC_Autostake.U_ComputeCullTime "Bula" false)
+
+;;Tx_14 Checks Autostake UncoilLedger for Bula
+(print "Uncoil Ledger Bula este")
+;(read free.DH_SC_Autostake.UncoilLedger "Bula")
+;(print "==============TEST-ClandestinMINT=========================")
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "Autostake Testing")
+(print "==========================TX08=========================================")
+(print "==========================DPMF-Testing====================")
+(env-sigs [ { "key": "Cheia_useru-ului_001", "caps": [] },
+            { "key": "Cheia_useru-ului_002", "caps": [] },
+            { "key": "Cheia_useru-ului_003", "caps": [] }])
+(module TimeVault GOVERNANCE
+        (defcap GOVERNANCE () true)
+        (defconst TIME00 (time "2024-07-06T00:00:00Z"))
+        (defconst TIME01 (time "2024-07-07T00:00:00Z"))
+        (defconst TIME02 (time "2024-07-26T16:00:00Z"))
+
+        (defconst MFL
+            [ { "nonce": 0,  "balance": 0.0,  "meta-data": {} }
+              { "nonce": 1,  "balance": 2.3,  "meta-data": {} }
+              { "nonce": 23, "balance": 17.4, "meta-data": {} } ]
+        )
+        (defconst TMFL
+            [
+            [ { "nonce": 0,  "balance": 0.0,  "meta-data": {} }
+              { "nonce": 1,  "balance": 2.3,  "meta-data": {} }
+              { "nonce": 23, "balance": 17.4, "meta-data": {} } ]
+            [ { "nonce": 0,  "balance": 0.0,  "meta-data": {} }
+              { "nonce": 1,  "balance": 2.3,  "meta-data": {} }
+              { "nonce": 23, "balance": 17.4, "meta-data": {} } ]
+            [ { "nonce": 0,  "balance": 0.0,  "meta-data": {} }
+              { "nonce": 1,  "balance": 2.3,  "meta-data": {} }
+              { "nonce": 23, "balance": 17.4, "meta-data": {} } ]
+            ]
+        )
+        (defconst TMD { "release" : (time "2024-07-06T00:00:00Z") })
+)
+(env-chain-data
+    {"block-time": TimeVault.TIME02}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+;(free.DPMF.MakeMVXNonce 37857)
+;(keys free.DH_SC_Autostake.UncoilLedger)
+;(keys free.DPTF.DPTF-BalancesTable)
+;(print "Account Lumy has following token entries")
+;(free.DPTF.U_GetAccountDPTFTokens "Autostake-Pool")
+;(print "Object List Validation")
+;free.DPMF.U_ValidateObjectListAsMetaFungibleList MFL)
+;(print "Object Validation")
+;(free.DPMF.U_ValidateObjectAsMetaFungible (at 1 MFL))
+
+(free.DPMF.C_IssueMetaFungible
+    KeysVault.AN_USER001
+    (describe-keyset "free.User001_Keyset")
+    "SleepingVesta"
+    "SVESTA"
+    24
+    true    ;;can-change-owner
+    true    ;;can-upgrade
+    true    ;;can-add-special-role
+    true    ;;can-freeze
+    false   ;;can-wipe
+    false   ;;can-pause
+    true    ;;can-transfer-nft-create-role
+)
+(read free.DPMF.DPMF-PropertiesTable "SVESTA-98c486052a51")
+(print "Byta looks like this")
+(read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta")
+
+(free.DPMF.C_Create "SVESTA-98c486052a51" "Byta" TMD)
+;;Grant add quantity role
+(free.DPMF.C_SetAddQuantityRole "SVESTA-98c486052a51" "Byta")
+(free.DPMF.C_SetBurnRole "SVESTA-98c486052a51" "Byta")
+
+(free.DPMF.C_AddQuantity "SVESTA-98c486052a51" 1 "Byta" 10.0)
+(free.DPMF.C_Mint "SVESTA-98c486052a51" "Byta" 20.0 TMD)
+(free.DPMF.C_Mint "SVESTA-98c486052a51" "Byta" 30.0 TMD)
+(free.DPMF.C_AddQuantity "SVESTA-98c486052a51" 3 "Byta" 20.0)
+(free.DPMF.C_Mint "SVESTA-98c486052a51" "Byta" 50.0 TMD)
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta"))
+(print "Byta looks like this after creation")
+(print "let burn some")
+(free.DPMF.C_Burn "SVESTA-98c486052a51" 4 "Byta" 12.5)
+(free.DPMF.C_Burn "SVESTA-98c486052a51" 4 "Byta" 12.5)
+(free.DPMF.C_Burn "SVESTA-98c486052a51" 4 "Byta" 25.0)
+(free.DPMF.C_Mint "SVESTA-98c486052a51" "Byta" 60.0 TMD)
+(print "Byta looks like this after burn")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta"))
+(print "Supply before the burn is")
+(free.DPMF.U_GetMetaFungibleSupply "SVESTA-98c486052a51")
+
+;;Add Wipe on
+(free.DPMF.C_Control "SVESTA-98c486052a51" true true true true true false true)
+;;Freeze Byta
+;(free.DPMF.C_FreezeDPMFAccount "SVESTA-98c486052a51" "Byta")
+(print "Attempting Wipe") ;;attempting wipe
+;;(free.DPMF.C_WipeDPMF "SVESTA-98c486052a51" "Byta")
+;;(print "Supply before after the burn is")
+(free.DPMF.U_GetMetaFungibleSupply "SVESTA-98c486052a51")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta"))
+(print "===================================TRANSFER TEST==================")
+
+(free.DPMF.C_TransferMetaFungibleAnew "SVESTA-98c486052a51" 5 "Byta" "Lumy" (describe-keyset "free.User003_Keyset") 25.0)
+(print "Byta supply after transfer")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta"))
+(print "Lumy supply after transfer")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Lumy"))
+
+(free.DPMF.C_TransferMetaFungible "SVESTA-98c486052a51" 5 "Byta" "Lumy" 4.0)
+(free.DPMF.C_TransferMetaFungible "SVESTA-98c486052a51" 3 "Byta" "Lumy" 15.0)
+
+(print "Byta supply after second transfer")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Byta"))
+(print "Lumy supply after second transfer")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Lumy"))
+
+(print "Supply before Lumy wipe")
+(free.DPMF.U_GetMetaFungibleSupply "SVESTA-98c486052a51")
+
+;;Freeze Lumy
+(free.DPMF.C_FreezeAccount "SVESTA-98c486052a51" "Lumy")
+(free.DPMF.C_Wipe "SVESTA-98c486052a51" "Lumy")
+(at "unit" (read free.DPMF.DPMF-BalancesTable "SVESTA-98c486052a51|Lumy"))
+(print "Supply after Lumy wipe")
+(free.DPMF.U_GetMetaFungibleSupply "SVESTA-98c486052a51")
+
+
+(env-gas)
+(commit-tx)

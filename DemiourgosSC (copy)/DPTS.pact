@@ -57,6 +57,7 @@
         payable-as-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Normal DPTS Accounts
         payable-by-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Smart-Contract DPTS Accounts
         nonce:integer                       ;;store how many transactions the account executed
+        vgas:decimal                        ;;store amount of gas collected by a Smart DPTS Account. Always zero for Normal DPTS Accounts
     )
 
     ;;3]TABLES Definitions
@@ -616,8 +617,6 @@
         @doc "Return true if the list is not empty"
         (< 0 (length x))
     )
-
-
     ;;--------------------------------------------;;
     ;;                                            ;;
     ;;      ADMINISTRATION FUNCTIONS              ;;
@@ -649,14 +648,15 @@
         (UV_EnforceReserved account guard)
 
         (with-default-read DPTS-AccountTable account
-            { "guard" : guard, "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false, "nonce" : 0 }
-            { "guard" := g, "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc, "nonce" := n }
+            { "guard" : guard, "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false, "nonce" : 0, "vgas" : 0.0 }
+            { "guard" := g, "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc, "nonce" := n, "vgas" := vg }
             (write DPTS-AccountTable account
                 { "guard"                       : g
                 , "smart-contract"              : sc
                 , "payable-as-smart-contract"   : pasc
                 , "payable-by-smart-contract"   : pbsc
                 , "nonce"                       : n
+                , "vgas"                        : vg
                 }  
             )
         )
@@ -694,6 +694,7 @@
             , "payable-as-smart-contract"   : false
             , "payable-by-smart-contract"   : true
             , "nonce"                       : 0
+            , "vgas"                        : 0.0
             }  
         )  
     )

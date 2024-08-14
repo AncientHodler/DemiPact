@@ -58,8 +58,7 @@
 
 (env-data
     {
-        "DemiourgosTrinity": { "keys": [KC.DHADMIN1, KC.DHADMIN2, KC.DHADMIN3], "pred": "keys-any" },
-        "DemiourgosSithMasters": { "keys": [KC.DHADMIN1, KC.DHADMIN2], "pred": "keys-any" },
+        "DemiourgosTrinity": { "keys": [KC.DHADMIN1, KC.DHADMIN2, KC.DHADMIN1], "pred": "keys-any" },
 
         "KEY_SC_Autostake-Pool": { "keys": [KC.DH_SC001]},
         "KEY_SC_Vesting": { "keys": [KC.DH_SC002]},
@@ -80,7 +79,6 @@
 (namespace "free")
 ;; Define KeySets
 (define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosTrinity"))
-(define-keyset "free.DH-GAS-Keyset" (read-keyset "DemiourgosSithMasters"))
 (define-keyset "free.DH_SC_Autostake_Key" (read-keyset "KEY_SC_Autostake-Pool"))
 (define-keyset "free.DH_SC_Vesting_Key" (read-keyset "KEY_SC_Vesting"))
 
@@ -116,35 +114,43 @@
 (begin-tx "Load Demiourgos Pact Token Standard DPTS")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSCremade/OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTS.pact")
+;(env-gas)
+;(commit-tx)
+
+;(begin-tx "Load True Fungible DPTF")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPTF.pact")
 ;(env-gas)
 ;(commit-tx)
 
 ;(begin-tx "Load Meta Fungible DPMF")
 ;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 ;(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSCremade/DPMF.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
 ;(env-gas)
 ;(commit-tx)
 
 ;(begin-tx "Load Autostake")
 ;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 ;(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSCremade/Autostake.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
 ;(env-gas)
 ;(commit-tx)
 
 ;(begin-tx "Load Vesting")
 ;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 ;(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSCremade/Vesting.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(use free.OUROBOROS)
+(use free.DPTS)
+(use free.DPTF)
 (use free.DPMF)
 (use free.DH_SC_Autostake)
 (use free.DH_SC_Vesting)
@@ -160,15 +166,12 @@
 ;;==============================================================================
 ;; PART 03 - Initialise Demiourgos Ecosystem
 
-;;01]Issue Ouro with initial mint amount and set up the vGas
+;;01]Issue Ouro with initial mint amount
 (begin-tx "Issue OURO Transactions")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-    (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.User000_Keyset"))
-
-    (free.OUROBOROS.C_IssueTrueFungible
-        "AncientHodler"
+    (free.DPTF.C_IssueTrueFungible
         "AncientHodler"
         (describe-keyset "free.User000_Keyset")
         "Ouroboros"
@@ -178,22 +181,15 @@
         true    ;;can-upgrade
         true    ;;can-add-special-role
         true    ;;can-freeze
-        true   ;;can-wipe
-        true    ;;can-pause
+        false   ;;can-wipe
+        false   ;;can-pause
     )
 
-    (free.OUROBOROS.C_MintOrigin
-        "AncientHodler"
+    (free.DPTF.C_MintOrigin
         "OURO-98c486052a51"
         "AncientHodler"
         50000.0
     )
-
-    (free.OUROBOROS.A_InitialiseGAS "AncientHodler" "OURO-98c486052a51")
-    (free.OUROBOROS.C_SetBurnRole "AncientHodler" "OURO-98c486052a51" "Gas-Tanker")                 ;;AH Key
-    (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
-    (free.OUROBOROS.A_TurnGasOn)
-    
 
 (env-gas)
 (commit-tx)
@@ -204,13 +200,10 @@
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")                ;;Autostake-Pool Key
+(free.DH_SC_Autostake.A_InitialiseAutostake "OURO-98c486052a51")                ;;Autostake-Pool Key
 
-
-;;03]Set BurnRole to Autostake and Gas-Tanker for OURO
-(free.OUROBOROS.C_SetBurnRole "AncientHodler" "OURO-98c486052a51" "Snake_Autostake")            ;;AH Key
-
-
+;;03]Set BurnRole to Autostake for OURO
+(free.DPTF.C_SetBurnRole "OURO-98c486052a51" "Snake_Autostake")                 ;;AH Key
 
 (env-gas)
 (commit-tx)
@@ -228,11 +221,10 @@
 ;;06]Set Vested Elite-Auryn Id in the Autostake-Pool Trinity Table
 (begin-tx "Setting transfer Role for Auryns to Vesting Account")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
-            { "key": "PrivateKey_AncientHodler", "caps": [] }])
+(env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
 
-(free.OUROBOROS.C_SetTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting")              ;;Autostake Pool Key
-(free.OUROBOROS.C_SetTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting")         ;;Autostake Pool Key
+(free.DPTF.C_SetTransferRole "AURYN-98c486052a51" "Snake_Vesting")              ;;Autostake Pool Key
+(free.DPTF.C_SetTransferRole "ELITEAURYN-98c486052a51" "Snake_Vesting")         ;;Autostake Pool Key
 (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
 
 (env-gas)
