@@ -164,6 +164,25 @@
     ;;                                                                                                                                                  ;;
     ;;      COMPOSED                                                                                                                                    ;;
     ;;                                                                                                                                                  ;;
+    ;;==================WITH-GAS====================                                                                                                    ;;
+    ;;      DPMF-GAS_OWNERSHIP-CHANGE               GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_CONTROL                        GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_PAUSE                          GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_UNPAUSE                        GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_FREEZE_ACCOUNT                 GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_UNFREEZE_ACCOUNT               GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_SET_ADD-QUANTITY-ROLE          GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_SET_BURN-ROLE                  GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_SET_TRANSFER-ROLE              GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_MOVE_CREATE-ROLE               GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_UNSET_ADD-QUANTITY-ROLE        GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_UNSET_BURN-ROLE                GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_UNSET_TRANSFER-ROLE            GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_MINT                           GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_CREATE                         GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_ADD-QUANTITY                   GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_BURN                           GAS Collection Variant of Capability                                                                ;;
+    ;;      DPMF-GAS_WIPE                           GAS Collection Variant of Capability                                                                ;;
     ;;==================CONTROL=====================                                                                                                    ;;
     ;;      DPMF_OWNERSHIP-CHANGE                   Capability required for changing DPMF Token Ownership                                               ;;
     ;;      DPMF_CONTROL                            Capability required for managing DPMF Properties                                                    ;;
@@ -194,8 +213,6 @@
     ;;      TRANSFER_DPMF                           Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier                ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-    
-
     ;;==============================================
     ;;                                            ;;
     ;;      CAPABILITIES                          ;;
@@ -641,35 +658,62 @@
         (compose-capability (DPMF_UPDATE_SUPPLY identifier amount))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    ;;=================CORE==========================
-    (defcap CREDIT_DPMF (identifier:string account:string)
-        @doc "Capability to perform crediting operations with DPMF Tokens"
-        (UV_MetaFungibleIdentifier identifier)
-        (OUROBOROS.UV_DPTS-Account account)
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPTF: COMPOSED CAPABILITIES           ;;
+    ;;                                            ;;
+    ;;==================TRANSFER==================== 
+    ;;
+    ;;      ABSOLUTE_METHODIC_TRANSFER|TRANSFER_DPMF_GAS-PATRON
+    ;;      TRANSFER_DPMF_GAS|TRANSFER_DPMF|
+    ;;
+    (defcap ABSOLUTE_METHODIC_TRANSFER (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
+        (let
+            (
+                (gas-toggle:bool (OUROBOROS.UR_GasToggle))
+                (gas-id:string (OUROBOROS.UR_GasID))
+            )
+            (if (= gas-toggle false)
+                (compose-capability (TRANSFER_DPMF_GAS-PATRON initiator identifier sender receiver transfer-amount true))
+                (compose-capability (TRANSFER_DPMF_GAS initiator identifier sender receiver transfer-amount true OUROBOROS.GAS_SMALLEST))
+            )
+        )
     )
-    (defcap DEBIT_DPMF (identifier:string account:string)
-        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPMF Token"
-        (UV_MetaFungibleIdentifier identifier)
-        (OUROBOROS.UV_DPTS-Account account)                
-
-        (compose-capability (DPMF_CLIENT identifier account))
+    (defcap TRANSFER_DPMF_GAS-PATRON (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
+        (compose-capability (TRANSFER_DPMF identifier sender receiver transfer-amount true))
+        (compose-capability (OUROBOROS.GAS_PATRON initiator))
     )
-
+    (defcap TRANSFER_DPMF_GAS 
+        (
+            initiator:string
+            identifier:string 
+            sender:string 
+            receiver:string 
+            transfer-amount:decimal 
+            method:bool
+            gas-amount:decimal
+        )
+        (compose-capability (TRANSFER_DPMF identifier sender receiver transfer-amount method))
+        (compose-capability (OUROBOROS.GAS_COLLECTION initiator sender gas-amount))
+    )
     (defcap TRANSFER_DPMF 
         (
             identifier:string 
             sender:string 
             receiver:string 
-            amount:decimal 
+            transfer-amount:decimal 
             method:bool
         )
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier"
-        (UV_MetaFungibleAmount identifier amount)
+        (UV_MetaFungibleAmount identifier transfer-amount)
         (OUROBOROS.UV_SenderWithReceiver sender receiver)
 
+        ;;Checks pause and freeze statuses
         (compose-capability (DPMF_IS-PAUSED_OFF identifier))
         (compose-capability (DPMF_ACCOUNT_FREEZE_OFF identifier sender))
         (compose-capability (DPMF_ACCOUNT_FREEZE_OFF identifier receiver))
+
+        ;;Checks transfer roles of sender and receiver
         (with-read DPMF-PropertiesTable identifier
             { "role-transfer-amount" := rta }
             (if (!= rta 0)
@@ -685,12 +729,27 @@
                 (format "No transfer Role restrictions exist for Token {}" [identifier])
             )
         )
+        ;;Checks transferability between Normal and Smart DPTS Account Types
         (compose-capability (OUROBOROS.SC_TRANSFERABILITY sender receiver method))
+        ;;Add Debit and Credit capabilities
         (compose-capability (DEBIT_DPMF identifier sender))  
         (compose-capability (CREDIT_DPMF identifier receiver))
+        ;;Add Nonce increase capability
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
+    ;;=================CORE==========================
+    (defcap CREDIT_DPMF (identifier:string account:string)
+        @doc "Capability to perform crediting operations with DPMF Tokens"
+        (UV_MetaFungibleIdentifier identifier)
+        (OUROBOROS.UV_DPTS-Account account)
+    )
+    (defcap DEBIT_DPMF (identifier:string account:string)
+        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPMF Token"
+        (UV_MetaFungibleIdentifier identifier)
+        (OUROBOROS.UV_DPTS-Account account)                
 
-
+        (compose-capability (DPMF_CLIENT identifier account))
+    )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      PRIMARY Functions                       Stand-Alone Functions                                                                               ;;
@@ -810,14 +869,16 @@
     ;;                                                                                                                                                  ;;
     ;;      AUXILIARY FUNCTIONS                                                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;==================MINT BURN===================                                                                                                    ;;
-    ;;      X_Mint                                  Similar to C_Mint as aux function requiring its respective Capability                               ;;
-    ;;      X_Create                                Similar to C_Create as aux function requiring its respective Capability                             ;;
-    ;;      X_AddQuantity                           Similar to C_AddQuantity as aux function requiring its respective Capability                        ;;
-    ;;      X_Burn                                  Similar to C_Burn as aux function requiring its respective Capability                               ;;
     ;;==================TRANSFER====================                                                                                                    ;;
-    ;;      X_MethodicTransferMetaFungible          Methodic transfers <identifier>-<nonce> MetaFungible from <sender> to <receiver> DPMF Account       ;;
-    ;;      X_MethodicTransferDPMFAnew              Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation                             ;;
+    ;;      X_TransferMetaFungible                  Transfers <identifier>|<nonce> MetaFungible from <sender> to <receiver> DPMF Account without GAS    ;;
+    ;;      X_TransferMetaFungibleAnew              Similar to |X_TransferMetaFungible| but with DPMF Account creation                                  ;;
+    ;:=================METHODIC-TRANSFER===========                                                                                                     ;;
+    ;;      XC_MethodicTransferMetaFungible         Similar to |C_TransferMetaFungible| but methodic for Smart-DPTS Account type operation              ;;
+    ;;      XC_MethodicTransferMetaFungibleAnew     Similar to |C_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
+    ;;      X_MethodicTransferMetaFungibleWithGAS   Similar to |X_MethodicTransferMetaFungible| but with GAS                                            ;;
+    ;;      X_MethodicTransferMetaFungible          Similar to |X_TransferMetaFungible| but methodic for Smart-DPTS Account type operation              ;;
+    ;;      X_MethodicTransferMetaFungibleAnewWithGAS Similar to |X_MethodicTransferMetaFungibleAnew| but with GAS                                      ;;
+    ;;      X_MethodicTransferMetaFungibleAnew      Similar to |X_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
     ;;==================CREDIT|DEBIT================                                                                                                    ;;
     ;;      X_Create                                Auxiliary Function that creates a MetaFungible                                                      ;;
     ;;      X_AddQuantity                           Auxiliary Function that adds quantity for an existing MetaFungible                                  ;;
@@ -831,6 +892,26 @@
     ;;      X_UpdateRoleTransferAmount              Updates <role-transfer-amount> for Token <identifier>                                               ;;
     ;;      X_UpdateCreateRoleAccount               Updates <create-role-account> for Token <identifier> with the new Account <recipient>               ;;
     ;;      X_UpdateRoleNFTCreate                   Updates |role-nft-create| for Token <identifier> on Account <account>                               ;;
+    ;;==================AUXILIARY===================                                                                                                    ;;
+    ;;      X_ChangeOwnership                       Auxiliary function required in the main function                                                    ;;
+    ;;      X_Control                               Auxiliary function required in the main function                                                    ;;
+    ;;      X_Pause                                 Auxiliary function required in the main function                                                    ;;
+    ;;      X_Unpause                               Auxiliary function required in the main function                                                    ;;
+    ;;      X_FreezeAccount                         Auxiliary function required in the main function                                                    ;;
+    ;;      X_UnfreezeAccount                       Auxiliary function required in the main function                                                    ;;
+    ;;      X_MoveCreateRole                        Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetAddQuantityRole                    Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetBurnRole                           Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetTransferRole                       Auxiliary function required in the main function                                                    ;;
+    ;;      X_UnsetAddQuantityRole                  Auxiliary function required in the main function                                                    ;;
+    ;;      X_UnsetBurnRole                         Auxiliary function required in the main function                                                    ;;
+    ;;      X_UnsetTransferRole                     Auxiliary function required in the main function                                                    ;;
+    ;;      X_IssueMetaFungible                     Auxiliary function required in the main function                                                    ;;
+    ;;      X_Mint                                  Auxiliary function required in the main function                                                    ;;
+    ;;      X_Create                                Auxiliary function required in the main function                                                    ;;
+    ;;      X_AddQuantity                           Auxiliary function required in the main function                                                    ;;
+    ;;      X_Burn                                  Auxiliary function required in the main function                                                    ;;
+    ;;      X_Wipe                                  Auxiliary function required in the main function                                                    ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
@@ -1706,35 +1787,184 @@
     ;;
     ;;      C_TransferMetaFungible|C_TransferMetaFungibleAnew
     ;;
-    (defun C_TransferMetaFungible (identifier:string nonce:integer sender:string receiver:string amount:decimal)
+    (defun C_TransferMetaFungible (initiator:string identifier:string nonce:integer sender:string receiver:string amount:decimal)
         @doc "Transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account\
             \ Fails if <receiver> DPMF Account doesnt exist"
 
-        (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
+        (with-capability (OUROBOROS.GAS_PATRON initiator)
             (let
                 (
-                    (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
-                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
+                    (gas-id:string (OUROBOROS.UR_GasID))
+                    (gas-amount:decimal OUROBOROS.GAS_SMALLEST)
                 )
-                (X_Debit identifier nonce sender amount false)
-                (X_Credit identifier nonce current-nonce-meta-data receiver rg amount)
-                (OUROBOROS.X_IncrementNonce sender)
+                (if (= gas-toggle false)
+                    (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
+                        (X_TransferMetaFungible initiator identifier nonce sender receiver amount)
+                    )
+                    (with-capability (TRANSFER_DPMF_GAS initiator identifier sender receiver amount false gas-amount)
+                        (OUROBOROS.X_CollectGAS initiator sender gas-amount)
+                        (X_TransferMetaFungible initiator identifier nonce sender receiver amount)
+                    )
+                )
             )
         )
     )
-    (defun C_TransferMetaFungibleAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
+    (defun C_TransferMetaFungibleAnew (initiator:string identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Same as |C_TransferMetaFungible| but with DPMF Account creation \
             \ This means <receiver> DPMF Account will be created by the transfer function"
 
-        (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
+        
+        (with-capability (OUROBOROS.GAS_PATRON initiator)
             (let
                 (
-                    (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
+                    (gas-id:string (OUROBOROS.UR_GasID))
+                    (gas-amount:decimal OUROBOROS.GAS_SMALLEST)
                 )
-                (X_Debit identifier nonce sender amount false)
-                (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
-                (OUROBOROS.X_IncrementNonce sender)
+                (if (= gas-toggle false)
+                    (with-capability (TRANSFER_DPMF identifier sender receiver amount false)
+                        (X_TransferMetaFungibleAnew initiator identifier nonce sender receiver receiver-guard amount)
+                    )
+                    (with-capability (TRANSFER_DPMF_GAS initiator identifier sender receiver amount false gas-amount)
+                        (OUROBOROS.X_CollectGAS initiator sender gas-amount)
+                        (X_TransferMetaFungibleAnew initiator identifier nonce sender receiver receiver-guard amount)
+                    )
+                )
             )
+        )
+    )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPMF: AUXILIARY FUNCTIONS             ;;
+    ;;                                            ;;
+    ;;==================TRANSFER====================
+    ;;
+    ;;      X_TransferMetaFungible|X_TransferMetaFungibleAnew
+    ;;
+    (defun X_TransferMetaFungible (initiator:string identifier:string nonce:integer sender:string receiver:string amount:decimal)
+        @doc "Transfers <identifier>|<nonce> MetaFungible from <sender> to <receiver> DPMF Account without GAS"
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF identifier sender receiver amount false))
+        (let
+            (
+                (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+            )
+            (X_Debit identifier nonce sender amount false)
+            (X_Credit identifier nonce current-nonce-meta-data receiver rg amount)
+            (OUROBOROS.X_IncrementNonce sender)
+        )
+    )
+    (defun X_TransferMetaFungibleAnew (initiator:string identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
+        @doc "Similar to |X_TransferMetaFungible| but with DPMF Account creation"
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF identifier sender receiver amount false))
+        (let
+            (
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+            )
+            (X_Debit identifier nonce sender amount false)
+            (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
+            (OUROBOROS.X_IncrementNonce sender)
+        )
+    )
+    ;==================METHODIC-TRANSFER===========
+    ;;
+    ;;      XC_MethodicTransferMetaFungible|XC_MetodicTransferMetaFungibleAnew
+    ;;      X_MethodicTransferMetaFungileWithGAS|X_MethodicTransferMetaFungible
+    ;;      X_MethodicTransferMetaFungileAnewWithGAS|X_MethodicTransferMetaFungibleAnew
+    ;;
+    (defun XC_MethodicTransferMetaFungible (initiator:string identifier:string nonce:integer sender:string receiver:string transfer-amount:decimal)
+        @doc "Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account \
+        \ Fails if <receiver> DPMF Account doesnt exist. \
+        \ \
+        \ Methodic Transfers cannot be called directly. They are to be used within external Modules \
+        \ as transfer means when operating with Smart DPTS Account Types. \
+        \ \
+        \ This is because initiators can trigger transfers to be executed towards and from Smart DPTS Account types,\
+        \ as described in the module's code, without them having the need to provide the Smart DPTS Accounts guard \
+        \ \
+        \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
+        \ Here the |payable Write-Points| are the external module functions that make use of this function \
+        \ \
+        \ Similar to |C_TransferMetaFungible| but methodic for Smart-DPTS Account type operation"
+
+        (with-capability (OUROBOROS.GAS_PATRON initiator)
+            (let
+                (
+                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
+                    (gas-id:string (OUROBOROS.UR_GasID))
+                    (gas-amount:decimal OUROBOROS.GAS_SMALLEST)
+                )
+                (if (= gas-toggle false)
+                    ;;cap: (TRANSFER_DPMF identifier sender receiver transfer-amount true)
+                    (X_MethodicTransferMetaFungible initiator identifier nonce sender receiver transfer-amount)
+                    ;;cap: (TRANSFER_DPMF_GAS client identifier sender receiver transfer-amount true gas-amount)
+                    (X_MethodicTransferMetaFungibleWithGAS initiator identifier nonce sender receiver transfer-amount gas-amount)
+                )
+            )
+        )
+    )
+    (defun XC_MethodicTransferMetaFungibleAnew (initiator:string identifier:string nonce:integer sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
+        @doc "Similar to |C_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation"
+        (with-capability (OUROBOROS.GAS_PATRON initiator)
+            (let
+                (
+                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
+                    (gas-id:string (OUROBOROS.UR_GasID))
+                    (gas-amount:decimal OUROBOROS.GAS_SMALLEST)
+                )
+                (if (= gas-toggle false)
+                    ;;cap: (TRANSFER_DPMF identifier sender receiver transfer-amount true)
+                    (X_MethodicTransferMetaFungibleAnew initiator identifier nonce sender receiver receiver-guard transfer-amount)
+                    ;;cap: (TRANSFER_DPMF_GAS initiator identifier sender receiver transfer-amount true gas-amount)
+                    (X_MethodicTransferMetaFungibleAnewWithGAS initiator identifier nonce sender receiver receiver-guard transfer-amount gas-amount)
+                )
+            )
+        )
+    )
+    (defun X_MethodicTransferMetaFungibleWithGAS (initiator:string identifier:string nonce:integer sender:string receiver:string transfer-amount:decimal  gas-amount:decimal)
+        @doc "Similar to |X_MethodicTransferMetaFungible| but with GAS"
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF_GAS initiator identifier sender receiver transfer-amount true gas-amount))
+        (OUROBOROS.X_CollectGAS initiator sender gas-amount)
+        (X_MethodicTransferMetaFungible initiator identifier nonce sender receiver transfer-amount)
+    )
+    (defun X_MethodicTransferMetaFungible  (initiator:string identifier:string nonce:integer sender:string receiver:string transfer-amount:decimal)
+        @doc "Similar to |X_TransferMetaFungible| but methodic for Smart-DPTS Account type operation"
+
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF identifier sender receiver transfer-amount true))
+        (let
+            (
+                (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+            )
+            (X_Debit identifier nonce sender transfer-amount false)
+            (X_Credit identifier nonce current-nonce-meta-data receiver rg transfer-amount)
+            (OUROBOROS.X_IncrementNonce sender)
+        )
+    )
+    (defun X_MethodicTransferMetaFungibleAnewWithGAS (initiator:string identifier:string nonce:integer sender:string receiver:string receiver-guard:guard transfer-amount:decimal  gas-amount:decimal)
+        @doc "Similar to |X_MethodicTransferMetaFungibleAnew| but with GAS"
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF_GAS initiator identifier sender receiver transfer-amount true gas-amount))
+        (OUROBOROS.X_CollectGAS initiator sender gas-amount)
+        (X_MethodicTransferMetaFungibleAnew initiator identifier nonce sender receiver receiver-guard transfer-amount)
+    )
+    (defun X_MethodicTransferMetaFungibleAnew  (initiator:string identifier:string nonce:integer sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
+        @doc "Similar to |X_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation"
+
+        (require-capability (OUROBOROS.GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPMF identifier sender receiver transfer-amount true))
+        (let
+            (
+                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
+            )
+            (X_Debit identifier nonce sender transfer-amount false)
+            (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard transfer-amount)
+            (OUROBOROS.X_IncrementNonce sender)
         )
     )
     ;;----------------------------------------------
@@ -1794,44 +2024,7 @@
     ;;
     ;;      X_MethodicTransferMetaFungible|X_MethodicTransferMetaFungibleAnew
     ;;
-    (defun X_MethodicTransferMetaFungible  (identifier:string nonce:integer sender:string receiver:string amount:decimal)
-        @doc "Methodic transfers <identifier>-<nonce> Metafungible from <sender> to <receiver> DPMF Account \
-            \ Fails if <receiver> DPMF Account doesnt exist. \
-            \ \
-            \ Methodic Transfers cannot be called directly. They are to be used within external Modules \
-            \ as transfer means when operating with Smart DPTS Account Types. \
-            \ \
-            \ This is because clients can trigger transfers to be executed towards and from Smart DPTS Account types,\
-            \ as described in the module's code, without them having the need to provide the Smart DPTS Accounts guard \
-            \ \
-            \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
-            \ Here the |payable Write-Points| are the external module functions that make use of this function"
 
-        (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
-        (let
-            (
-                (rg:guard (UR_AccountMetaFungibleGuard identifier receiver))
-                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
-            )
-            (X_Debit identifier nonce sender amount false)
-            (X_Credit identifier nonce current-nonce-meta-data receiver rg amount)
-            (OUROBOROS.X_IncrementNonce sender)
-        )
-    )
-    (defun X_MethodicTransferMetaFungibleAnew (identifier:string nonce:integer sender:string receiver:string receiver-guard:guard amount:decimal)
-        @doc "Same as |X_MethodicTransferMetaFungible| but with DPMF Account creation \
-            \ This means <receiver> DPMF Account will be created by the transfer function"
-        
-        (require-capability (TRANSFER_DPMF identifier sender receiver amount true))
-        (let
-            (
-                (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce sender))
-            )
-            (X_Debit identifier nonce sender amount false)
-            (X_Credit identifier nonce current-nonce-meta-data receiver receiver-guard amount)
-            (OUROBOROS.X_IncrementNonce sender)
-        )
-    )
     ;;
     ;;==================CREDIT|DEBIT================ 
     ;;

@@ -122,7 +122,8 @@
         ;;2]Vesting Account creates <VOURO|Vested-Ouroboros>
             (compose-capability (DPMF.DPMF_MINT v-ouro-id SC_NAME ouro-input-amount))
         ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-ouro-id SC_NAME target-account ouro-input-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-ouro-id SC_NAME target-account ouro-input-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-ouro-id SC_NAME target-account ouro-input-amount))
         )
     )
     (defcap VEST_OURO_VAURYN (initiator:string vester:string target-account:string ouro-input-amount:decimal)
@@ -142,7 +143,8 @@
         ;;3]Vesting Account creates <VAURYN|Vested-Auryn>
             (compose-capability (DPMF.DPMF_MINT v-auryn-id SC_NAME auryn-output-amount))
         ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-output-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-output-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-auryn-id SC_NAME target-account auryn-output-amount))
         )
     )
     (defcap VEST_OURO_VEAURYN (initiator:string vester:string target-account:string ouro-input-amount:decimal)
@@ -162,7 +164,8 @@
         ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME auryn-output-amount))
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-output-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-output-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-eauryn-id SC_NAME target-account auryn-output-amount))
         )
     )
     (defcap VEST_AURYN_VAURYN (initiator:string vester:string target-account:string auryn-input-amount:decimal)
@@ -179,7 +182,8 @@
         ;;2]Vesting Account creates <VAURYN|Vested-Auryn>
             (compose-capability (DPMF.DPMF_MINT v-auryn-id SC_NAME auryn-input-amount))
         ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-input-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-auryn-id SC_NAME target-account auryn-input-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-auryn-id SC_NAME target-account auryn-input-amount))
         )
     )
     (defcap VEST_AURYN_VEAURYN (initiator:string vester:string target-account:string auryn-input-amount:decimal)
@@ -198,7 +202,8 @@
         ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME auryn-input-amount))
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-input-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account auryn-input-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-eauryn-id SC_NAME target-account auryn-input-amount))
         )
     )
     (defcap VEST_EAURYN_VEAURYN (initiator:string vester:string target-account:string elite-auryn-input-amount:decimal)
@@ -215,7 +220,8 @@
         ;;2]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
             (compose-capability (DPMF.DPMF_MINT v-eauryn-id SC_NAME elite-auryn-input-amount))
         ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-            (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account elite-auryn-input-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF v-eauryn-id SC_NAME target-account elite-auryn-input-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator v-eauryn-id SC_NAME target-account elite-auryn-input-amount))
         )
     )
     ;;==================CULLING===================== 
@@ -245,7 +251,8 @@
                 (compose-capability (CULL_VESTED_SNAKES_PARTIALY initiator culler identifier nonce))
             )
         ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
-            (compose-capability (DPMF.TRANSFER_DPMF identifier culler SC_NAME initial-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF identifier culler SC_NAME initial-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator identifier culler SC_NAME initial-amount))
         ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
             (compose-capability (DPMF.DPMF_BURN identifier nonce SC_NAME initial-amount))
         )
@@ -282,7 +289,9 @@
             ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF return-id SC_NAME client culled-amount true))
             (compose-capability (OUROBOROS.ABSOLUTE_METHODIC_TRANSFER initiator return-id SC_NAME culler culled-amount))
             (compose-capability (DPMF.DPMF_MINT identifier SC_NAME return-amount))
-            (compose-capability (DPMF.TRANSFER_DPMF identifier SC_NAME culler return-amount true))
+            ;;old: (compose-capability (DPMF.TRANSFER_DPMF identifier SC_NAME culler return-amount true))
+            (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator identifier SC_NAME culler return-amount))
+
         )
     )
     ;;==================================================================================================================================================;;
@@ -751,7 +760,7 @@
                         (new-nonce:integer (DPMF.C_Mint v-ouro-id SC_NAME amount vesting-meta-data))
                     )    
         ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-ouro-id new-nonce SC_NAME target-account target-account-guard amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-ouro-id new-nonce SC_NAME target-account target-account-guard amount)
                 )
             )
         )
@@ -779,7 +788,7 @@
                         (new-nonce:integer (DPMF.C_Mint v-auryn-id SC_NAME auryn-amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account; since auryn-amount and new-nonce are now known
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-auryn-id new-nonce SC_NAME target-account target-account-guard auryn-amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-auryn-id new-nonce SC_NAME target-account target-account-guard auryn-amount)
                 )
             )
         )
@@ -807,7 +816,7 @@
                         (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME elite-auryn-amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
                 )
             )
         )
@@ -833,7 +842,7 @@
                     )
                     true
         ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-auryn-id new-nonce SC_NAME target-account target-account-guard amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-auryn-id new-nonce SC_NAME target-account target-account-guard amount)
                 )
             )
         
@@ -861,7 +870,7 @@
                         (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
                 )
             )
         )
@@ -886,7 +895,7 @@
                         (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
                     )
         ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
-                    (DPMF.X_MethodicTransferMetaFungibleAnew v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
+                    (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
                 )
             ) 
         )
@@ -945,7 +954,7 @@
                     (X_CullVestedSnakesPartially initiator culler identifier nonce)
                 )
         ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
-                (DPMF.X_MethodicTransferMetaFungible identifier nonce culler SC_NAME initial-amount)
+                (DPMF.XC_MethodicTransferMetaFungible initiator identifier nonce culler SC_NAME initial-amount)
         ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
                 (DPMF.C_Burn identifier nonce SC_NAME initial-amount)
             )
@@ -980,7 +989,7 @@
                 (
                     (new-nonce:integer (DPMF.C_Mint identifier SC_NAME return-amount remaining-vesting-meta-data))
                 )
-                (DPMF.X_MethodicTransferMetaFungibleAnew identifier new-nonce SC_NAME culler culler-guard return-amount)
+                (DPMF.XC_MethodicTransferMetaFungibleAnew initiator identifier new-nonce SC_NAME culler culler-guard return-amount)
             )
         )
     )

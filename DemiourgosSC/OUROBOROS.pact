@@ -1570,20 +1570,19 @@
     ;;                                            ;;
     ;;      DPTF: COMPOSED CAPABILITIES           ;;
     ;;                                            ;;
-    ;;=================CORE=========================
+    ;;==================TRANSFER==================== 
     ;;
-    ;;      ABSOLUTE_METHODIC_TRANSFER|TRANSFER_DPTF_GAS-PATRON|TRANSFER_DPTF_GAS
-    ;;      TRANSFER_DPTF|GAS_MOVER
+    ;;      ABSOLUTE_METHODIC_TRANSFER|TRANSFER_DPTF_GAS-PATRON
+    ;;      TRANSFER_DPTF_GAS|TRANSFER_DPTF|GAS_MOVER
     ;;
     (defcap ABSOLUTE_METHODIC_TRANSFER (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
-
         (let
             (
                 (gas-toggle:bool (UR_GasToggle))
                 (gas-id:string (UR_GasID))
             )
             (if (or (= gas-toggle false) (= identifier gas-id))
-                (compose-capability (TRANSFER_DPTF_GAS-PATRON initiator identifier sender receiver transfer-amount true))
+                (compose-capability (TRANSFER_DPTF_GAS-PATRON initiator identifier sender receiver transfer-amount))
                 (compose-capability (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount true GAS_SMALLEST))
             )
         )
@@ -1592,15 +1591,15 @@
         (compose-capability (TRANSFER_DPTF identifier sender receiver transfer-amount true))
         (compose-capability (GAS_PATRON initiator))
     )
-    (defcap TRANSFER_DPTF_GAS (client:string identifier:string sender:string receiver:string transfer-amount:decimal method:bool gas-amount:decimal)
+    (defcap TRANSFER_DPTF_GAS (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal method:bool gas-amount:decimal)
         (compose-capability (TRANSFER_DPTF identifier sender receiver transfer-amount method))
-        (compose-capability (GAS_COLLECTION client sender gas-amount))
+        (compose-capability (GAS_COLLECTION initiator sender gas-amount))
     )
-    (defcap TRANSFER_DPTF (identifier:string sender:string receiver:string amount:decimal method:bool)
+    (defcap TRANSFER_DPTF (identifier:string sender:string receiver:string transfer-amount:decimal method:bool)
         @doc "Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier \
         \ The Client account is the Normal DPTS Account that initiaes the function."
 
-        (UV_TrueFungibleAmount identifier amount)
+        (UV_TrueFungibleAmount identifier transfer-amount)
         (UV_SenderWithReceiver sender receiver)
 
         ;;Checks pause and freeze statuses
@@ -1761,7 +1760,7 @@
     ;;      XC_MethodicTransferTrueFungibleAnew     Similar to |C_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
     ;;      X_MethodicTransferTrueFungileWithGAS    Similar to |X_MethodicTransferTrueFungible| but with GAS                                            ;;
     ;;      X_MethodicTransferTrueFungible          Similar to |X_TransferTrueFungible| but methodic for Smart-DPTS Account type operation              ;;
-    ;;      X_MethodicTransferTrueFungileAnewWithGAS Similar to |X_MethodicTransferTrueFungibleAnew| but with GAS                                       ;;
+    ;;      X_MethodicTransferTrueFungibleAnewWithGAS Similar to |X_MethodicTransferTrueFungibleAnew| but with GAS                                       ;;
     ;;      X_MethodicTransferTrueFungibleAnew      Similar to |X_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
     ;;==================CREDIT|DEBIT================                                                                                                    ;;
     ;;      X_Credit                                Auxiliary Function that credits a TrueFungible to a DPTF Account                                    ;;
@@ -2544,10 +2543,10 @@
     ;;
     ;;      C_TransferTrueFungible|C_TransferTrueFungibleAnew
     ;;
-    (defun C_TransferTrueFungible (client:string identifier:string sender:string receiver:string transfer-amount:decimal)
+    (defun C_TransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account"
 
-        (with-capability (GAS_PATRON client)
+        (with-capability (GAS_PATRON initiator)
             (let
                 (
                     (gas-toggle:bool (UR_GasToggle))
@@ -2556,19 +2555,19 @@
                 )
                 (if (or (= gas-toggle false) (= identifier gas-id))
                     (with-capability (TRANSFER_DPTF identifier sender receiver transfer-amount false)
-                        (X_TransferTrueFungible client identifier sender receiver transfer-amount)
+                        (X_TransferTrueFungible initiator identifier sender receiver transfer-amount)
                     )
-                    (with-capability (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount false gas-amount)
-                        (X_CollectGAS client sender gas-amount)
-                        (X_TransferTrueFungible client identifier sender receiver transfer-amount)
+                    (with-capability (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount false gas-amount)
+                        (X_CollectGAS initiator sender gas-amount)
+                        (X_TransferTrueFungible initiator identifier sender receiver transfer-amount)
                     )
                 )
             )
         )  
     )
-    (defun C_TransferTrueFungibleAnew (client:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
+    (defun C_TransferTrueFungibleAnew (initiator:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
         @doc "Same as |C_TransferTrueFungible| but with DPTF Account creation"
-        (with-capability (GAS_PATRON client)
+        (with-capability (GAS_PATRON initiator)
             (let
                 (
                     (gas-toggle:bool (UR_GasToggle))
@@ -2577,11 +2576,11 @@
                 )
                 (if (or (= gas-toggle false) (= identifier gas-id))
                     (with-capability (TRANSFER_DPTF identifier sender receiver transfer-amount false)
-                        (X_TransferTrueFungibleAnew client identifier sender receiver receiver-guard transfer-amount)
+                        (X_TransferTrueFungibleAnew initiator identifier sender receiver receiver-guard transfer-amount)
                     )
-                    (with-capability (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount false gas-amount)
-                        (X_CollectGAS client sender gas-amount)
-                        (X_TransferTrueFungibleAnew client identifier sender receiver receiver-guard transfer-amount)
+                    (with-capability (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount false gas-amount)
+                        (X_CollectGAS initiator sender gas-amount)
+                        (X_TransferTrueFungibleAnew initiator identifier sender receiver receiver-guard transfer-amount)
                     )
                 )
             )
@@ -2622,17 +2621,17 @@
     ;;
     ;;      XC_MethodicTransferTrueFungible|XC_MetodicTransferTrueFungibleAnew
     ;;      X_MethodicTransferTrueFungileWithGAS|X_MethodicTransferTrueFungible
-    ;;      X_MethodicTransferTrueFungileAnewWithGAS|X_MethodicTransferTrueFungibleAnew
+    ;;      X_MethodicTransferTrueFungibleAnewWithGAS|X_MethodicTransferTrueFungibleAnew
     ;;
 
-    (defun XC_MethodicTransferTrueFungible (client:string identifier:string sender:string receiver:string transfer-amount:decimal)
+    (defun XC_MethodicTransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account \
             \ Fails if <receiver> DPTF Account doesnt exist. \
             \ \
             \ Methodic Transfers cannot be called directly. They are to be used within external Modules \
             \ as transfer means when operating with Smart DPTS Account Types. \
             \ \
-            \ This is because clients can trigger transfers to be executed towards and from Smart DPTS Account types,\
+            \ This is because initiators can trigger transfers to be executed towards and from Smart DPTS Account types,\
             \ as described in the module's code, without them having the need to provide the Smart DPTS Accounts guard \
             \ \
             \ Designed to emulate MultiverX Smart-Contract payable Write-Points \
@@ -2641,7 +2640,7 @@
             \ Similar to |C_TransferTrueFungible| but methodic for Smart-DPTS Account type operation"
 
         
-        (with-capability (GAS_PATRON client)
+        (with-capability (GAS_PATRON initiator)
             (let
                 (
                     (gas-toggle:bool (UR_GasToggle))
@@ -2649,17 +2648,17 @@
                     (gas-amount:decimal GAS_SMALLEST)
                 )
                 (if (or (= gas-toggle false) (= identifier gas-id))
-                    ;;cap: (TRANSFER_DPTF client identifier sender receiver transfer-amount true)
-                    (X_MethodicTransferTrueFungible client identifier sender receiver transfer-amount)
-                    ;;cap: (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount true gas-amount)
-                    (X_MethodicTransferTrueFungileWithGAS client identifier sender receiver transfer-amount gas-amount)
+                    ;;cap: (TRANSFER_DPTF identifier sender receiver transfer-amount true)
+                    (X_MethodicTransferTrueFungible initiator identifier sender receiver transfer-amount)
+                    ;;cap: (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount true gas-amount)
+                    (X_MethodicTransferTrueFungileWithGAS initiator identifier sender receiver transfer-amount gas-amount)
                 )
             )
         ) 
     )
-    (defun XC_MethodicTransferTrueFungibleAnew (client:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
+    (defun XC_MethodicTransferTrueFungibleAnew (initiator:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal)
         @doc "Similar to |C_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation"
-        (with-capability (GAS_PATRON client)
+        (with-capability (GAS_PATRON initiator)
             (let
                 (
                     (gas-toggle:bool (UR_GasToggle))
@@ -2667,44 +2666,44 @@
                     (gas-amount:decimal GAS_SMALLEST)
                 )
                 (if (or (= gas-toggle false) (= identifier gas-id))
-                    ;;cap: (TRANSFER_DPTF client identifier sender receiver amount true)
-                    (X_MethodicTransferTrueFungibleAnew client identifier sender receiver receiver-guard transfer-amount)
-                    ;;cap: (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount true gas-amount)
-                    (X_MethodicTransferTrueFungileAnewWithGAS client identifier sender receiver receiver-guard transfer-amount gas-amount)
+                    ;;cap: (TRANSFER_DPTF identifier sender receiver amount true)
+                    (X_MethodicTransferTrueFungibleAnew initiator identifier sender receiver receiver-guard transfer-amount)
+                    ;;cap: (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount true gas-amount)
+                    (X_MethodicTransferTrueFungibleAnewWithGAS initiator identifier sender receiver receiver-guard transfer-amount gas-amount)
                 )
             )
         ) 
     )
-    (defun X_MethodicTransferTrueFungileWithGAS (client:string identifier:string sender:string receiver:string transfer-amount:decimal gas-amount:decimal)
+    (defun X_MethodicTransferTrueFungileWithGAS (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal gas-amount:decimal)
         @doc "Similar to |X_MethodicTransferTrueFungible| but with GAS"
-        (require-capability (GAS_PATRON client))
-        (require-capability (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount true gas-amount))
-        (X_CollectGAS client sender gas-amount)
-        (X_MethodicTransferTrueFungible client identifier sender receiver transfer-amount)
+        (require-capability (GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount true gas-amount))
+        (X_CollectGAS initiator sender gas-amount)
+        (X_MethodicTransferTrueFungible initiator identifier sender receiver transfer-amount)
     )
-    (defun X_MethodicTransferTrueFungible (client:string identifier:string sender:string receiver:string amount:decimal)
+    (defun X_MethodicTransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Similar to |X_TransferTrueFungible| but methodic for Smart-DPTS Account type operation"
-        (require-capability (GAS_PATRON client))
-        (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
+        (require-capability (GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPTF identifier sender receiver transfer-amount true))
         (let
             (
                 (rg:guard (UR_AccountTrueFungibleGuard identifier receiver))
             )
-            (X_Debit identifier sender amount false)
-            (X_Credit identifier receiver rg amount)
+            (X_Debit identifier sender transfer-amount false)
+            (X_Credit identifier receiver rg transfer-amount)
             (X_IncrementNonce sender)
         )
     )
-    (defun X_MethodicTransferTrueFungileAnewWithGAS (client:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal gas-amount:decimal)
+    (defun X_MethodicTransferTrueFungibleAnewWithGAS (initiator:string identifier:string sender:string receiver:string receiver-guard:guard transfer-amount:decimal gas-amount:decimal)
         @doc "Similar to |X_MethodicTransferTrueFungibleAnew| but with GAS"
-        (require-capability (GAS_PATRON client))
-        (require-capability (TRANSFER_DPTF_GAS client identifier sender receiver transfer-amount true gas-amount))
-        (X_CollectGAS client sender gas-amount)
-        (X_MethodicTransferTrueFungibleAnew client identifier sender receiver receiver-guard transfer-amount)
+        (require-capability (GAS_PATRON initiator))
+        (require-capability (TRANSFER_DPTF_GAS initiator identifier sender receiver transfer-amount true gas-amount))
+        (X_CollectGAS initiator sender gas-amount)
+        (X_MethodicTransferTrueFungibleAnew initiator identifier sender receiver receiver-guard transfer-amount)
     )
-    (defun X_MethodicTransferTrueFungibleAnew (client:string identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
+    (defun X_MethodicTransferTrueFungibleAnew (initiator:string identifier:string sender:string receiver:string receiver-guard:guard amount:decimal)
         @doc "Similar to |X_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation"
-        (require-capability (GAS_PATRON client))
+        (require-capability (GAS_PATRON initiator))
         (require-capability (TRANSFER_DPTF identifier sender receiver amount true))
         (X_Debit identifier sender amount false)
         (X_Credit identifier receiver receiver-guard amount)
