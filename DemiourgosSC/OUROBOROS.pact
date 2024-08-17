@@ -921,6 +921,7 @@
     ;;      DPTF: BASIC CAPABILITIES                Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT========                                                                                                    ;;
+    ;;      DPTF_UPDATE-PROPERTIES                  Capability Required to update DPTF Properties                                                       ;;
     ;;      DPTF_OWNER                              Enforces DPTF Token Ownership                                                                       ;;
     ;;      DPTF_CAN-CHANGE-OWNER_ON                Enforced DPTF Token Ownership can be changed                                                        ;;
     ;;      DPTF_CAN-UPGRADE_ON                     Enforces DPTF Token upgrade-ability                                                                 ;;
@@ -1006,10 +1007,16 @@
     ;;                                            ;;
     ;;======DPTF-PROPERTIES-TABLE-MANAGEMENT========
     ;;
-    ;;      DPTF_OWNER|DPTF_CAN-CHANGE-OWNER_ON|DPTF_CAN-UPGRADE_ON|DPTF_CAN-ADD-SPECIAL-ROLE_ON
+    ;;      DPTF_UPDATE-PROPERTIES|DPTF_OWNER
+    ;;      DPTF_CAN-CHANGE-OWNER_ON|DPTF_CAN-UPGRADE_ON|DPTF_CAN-ADD-SPECIAL-ROLE_ON
     ;;      DPTF_CAN-FREEZE_ON|DPTF_CAN-WIPE_ON|DPTF_CAN-PAUSE_ON|DPTF_IS-PAUSED_ON|DPTF_IS-PAUSED_OF
-    ;;      DPTF_UPDATE_SUPPLY
+    ;;      DPTF_UPDATE_SUPPLY|UPDATE-ROLE-TRANSFER-AMOUNT
     ;;
+    (defcap DPTF_UPDATE-PROPERTIES (identifier:string)
+        @doc "Capability Required to update DPTF Properties"
+        (UV_TrueFungibleIdentifier identifier)
+        (compose-capability (DPTF_OWNER identifier))
+    )
     (defcap DPTF_OWNER (identifier:string)
         @doc "Enforces DPTF Token Ownership"
         (enforce-guard (UR_TrueFungibleOwner identifier))
@@ -1112,12 +1119,6 @@
     )
     (defcap UPDATE-ROLE-TRANSFER-AMOUNT ()
         @doc "Capability required to update DPTF Transfer-Role-Amount"
-        true
-    )
-    (defcap DPTF_UPDATE-PROPERTIES (identifier:string)
-        @doc "Capability Required to update DPTF Properties"
-        (UV_TrueFungibleIdentifier identifier)
-        (compose-capability (DPTF_OWNER identifier))
         true
     )
     ;;==============================================
@@ -1252,7 +1253,7 @@
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
-            (compose-capability (DPTF-CONTROL initiator identifier))
+            (compose-capability (DPTF_CONTROL identifier))
             (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )
     )
@@ -1262,7 +1263,7 @@
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
-            (compose-capability (DPTF_PAUSE initiator identifier))
+            (compose-capability (DPTF_PAUSE identifier))
             (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_MEDIUM))
         )
     )
@@ -1272,7 +1273,7 @@
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
-            (compose-capability (DPTF_UNPAUSE initiator identifier))
+            (compose-capability (DPTF_UNPAUSE identifier))
             (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_MEDIUM))
         )
     )
@@ -1303,7 +1304,7 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_SET_BURN-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
     (defcap DPTF-GAS_SET_MINT-ROLE (initiator:string identifier:string account:string)
@@ -1313,7 +1314,7 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_SET_MINT-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
     (defcap DPTF-GAS_SET_TRANSFER-ROLE (initiator:string identifier:string account:string)
@@ -1323,7 +1324,7 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_SET_TRANSFER-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
     (defcap DPTF-GAS_UNSET_BURN-ROLE (initiator:string identifier:string account:string)
@@ -1333,7 +1334,7 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_UNSET_BURN-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
     (defcap DPTF-GAS_UNSET_MINT-ROLE (initiator:string identifier:string account:string)
@@ -1343,7 +1344,7 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_UNSET_MINT-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
     (defcap DPTF-GAS_UNSET_TRANSFER-ROLE (initiator:string identifier:string account:string)
@@ -1353,10 +1354,10 @@
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (compose-capability (DPTF_UNSET_TRANSFER-ROLE identifier account))
-            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALLEST))
+            (compose-capability (GAS_COLLECTION initiator current-owner-account GAS_SMALL))
         )   
     )
-    (defcap DPTF-GAS_ISSUE (initiator:string account:string )
+    (defcap DPTF-GAS_ISSUE (initiator:string account:string)
         (UV_DPTS-Account initiator)
         (compose-capability (DPTF_ISSUE account))
         (compose-capability (GAS_COLLECTION initiator account GAS_ISSUE))
@@ -1401,7 +1402,7 @@
             (compose-capability (DPTS_INCREASE-NONCE)) 
         )
     )
-    (defcap DPTF-CONTROL (identifier:string)
+    (defcap DPTF_CONTROL (identifier:string)
         (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_UPDATE-PROPERTIES identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
@@ -1509,6 +1510,7 @@
     ;;      DPTF_ISSUE|DPTF_MINT_ORIGIN|DPTF_MINT
     ;;
     (defcap DPTF_ISSUE (account:string)
+        @doc "Capability required to issue a DPTF Token"
         (UV_DPTS-Account account)
         (compose-capability (DPTS_INCREASE-NONCE))
     )
@@ -2007,7 +2009,6 @@
     ;;
     (defun C_ChangeOwnership (initiator:string identifier:string new-owner:string)
         @doc "Moves DPTF <identifier> Token Ownership to <new-owner> DPTF Account"
-
         (with-capability (GAS_PATRON initiator)
             (let
                 (
@@ -2049,7 +2050,7 @@
                     (current-owner-account:string (UR_TrueFungibleKonto identifier))
                 )
                 (if (= gas-toggle false)
-                    (with-capability (DPTF-CONTROL initiator identifier)
+                    (with-capability (DPTF_CONTROL identifier)
                         (X_Control initiator identifier can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
                         (X_IncrementNonce initiator)
                     )
@@ -2064,7 +2065,6 @@
     )
     (defun C_Pause (initiator:string identifier:string)
         @doc "Pause TrueFungible <identifier>"
-
         (with-capability (GAS_PATRON initiator)
             (let
                 (
@@ -2087,7 +2087,6 @@
     )
     (defun C_Unpause (initiator:string identifier:string)
         @doc "Unpause TrueFungible <identifier>"
-
         (with-capability (GAS_PATRON initiator)
             (let
                 (
@@ -2110,7 +2109,6 @@
     )
     (defun C_FreezeAccount (initiator:string identifier:string account:string)
         @doc "Freeze TrueFungile <identifier> on DPTF Account <account>"
-
         (with-capability (GAS_PATRON initiator)
             (let
                 (
@@ -2133,7 +2131,6 @@
     )
     (defun C_UnfreezeAccount (initiator:string identifier:string account:string)
         @doc "Unfreeze TrueFungile <identifier> on DPTF Account <account>"
-
         (with-capability (GAS_PATRON initiator)
             (let
                 (
@@ -2178,7 +2175,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_SET_BURN-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_SetBurnRole initiator identifier account)
                         (X_IncrementNonce initiator)
                     )
@@ -2202,7 +2199,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_SET_MINT-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_SetMintRole initiator identifier account)
                         (X_IncrementNonce initiator)
                     )
@@ -2229,7 +2226,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_SET_TRANSFER-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_SetTransferRole initiator identifier account)
                         (X_UpdateRoleTransferAmount identifier true)
                         (X_IncrementNonce initiator)
@@ -2262,7 +2259,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_UNSET_BURN-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_UnsetBurnRole initiator identifier account)
                         (X_IncrementNonce initiator)
                     )
@@ -2286,7 +2283,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_UNSET_MINT-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_UnsetMintRole initiator identifier account)
                         (X_IncrementNonce initiator)
                     )
@@ -2313,7 +2310,7 @@
                         (X_IncrementNonce initiator)
                     )
                     (with-capability (DPTF-GAS_UNSET_TRANSFER-ROLE initiator identifier account)
-                        (X_CollectGAS initiator current-owner-account GAS_SMALLEST)
+                        (X_CollectGAS initiator current-owner-account GAS_SMALL)
                         (X_UnsetTransferRole initiator identifier account)
                         (X_UpdateRoleTransferAmount identifier false)
                         (X_IncrementNonce initiator)
@@ -2824,7 +2821,6 @@
     ;;      X_UpdateSupply|X_UpdateRoleTransferAmount
     ;;
     (defun X_ChangeOwnership (initiator:string identifier:string new-owner:string)
-        
         (let
             (
                 (new-owner-guard:guard (UR_DPTS-AccountGuard new-owner))
@@ -2866,67 +2862,87 @@
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-PAUSE_ON identifier))
         (require-capability (DPTF_IS-PAUSED_OFF identifier))
-        (update DPTF-PropertiesTable identifier { "is-paused" : true})
+        (update DPTF-PropertiesTable identifier
+            { "is-paused" : true}
+        )
     )
     (defun X_Unpause (initiator:string identifier:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-PAUSE_ON identifier))
         (require-capability (DPTF_IS-PAUSED_ON identifier))
-        (update DPTF-PropertiesTable identifier { "is-paused" : false})
+        (update DPTF-PropertiesTable identifier
+            { "is-paused" : false}
+        )
     )
     (defun X_FreezeAccount (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-FREEZE_ON identifier))
         (require-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : true})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            { "frozen" : true}
+        )
     )
     (defun X_UnfreezeAccount (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-FREEZE_ON identifier))
         (require-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) { "frozen" : false})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            { "frozen" : false}
+        )
     )
     (defun X_SetBurnRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (require-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-burn" : true})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-burn" : true}
+        )
     )
     (defun X_SetMintRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (require-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-mint" : true})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-mint" : true}
+        )
     )
     (defun X_SetTransferRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (require-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-transfer" : true})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-transfer" : true}
+        )
     )
     (defun X_UnsetBurnRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-burn" : false})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-burn" : false}
+        )
     )
     (defun X_UnsetMintRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-mint" : false})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-mint" : false}
+        )
     )
     (defun X_UnsetTransferRole (initiator:string identifier:string account:string)
         (require-capability (GAS_PATRON initiator))
         (require-capability (DPTF_UPDATE-PROPERTIES identifier))
         (require-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
-        (update DPTF-BalancesTable (concat [identifier BAR account]) {"role-transfer" : false})
+        (update DPTF-BalancesTable (concat [identifier BAR account])
+            {"role-transfer" : false}
+        )
     )
     (defun X_IssueTrueFungible:string
         (
@@ -2951,11 +2967,11 @@
             )
             ;; Add New Entries in the DPTF-PropertyTable
             ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
-            ;; Entry is initialised with "is-paused" set to off(false).
-            ;; Entry is initialised with a supply of 0.0 (decimal)
-            ;; Entry is initialised with a false switch on the origin-mint, meaning origin mint hasnt been executed
-            ;; Entry is initialised with an origin-mint-amount of 0.0, meaning origin mint hasnt been executed
-            ;; Entry is initiated with o to role-transfer-amount, since no Account will transfer role upon creation.
+            ;; Entry is initialised with <is-paused> set to off(false).
+            ;; Entry is initialised with a <supply> of 0.0 (decimal)
+            ;; Entry is initialised with a false switch on the <origin-mint>, meaning origin mint hasnt been executed
+            ;; Entry is initialised with an <origin-mint-amount> of 0.0, meaning origin mint hasnt been executed
+            ;; Entry is initiated with 0 to <role-transfer-amount>, since no Account has transfer role upon creation.
             (insert DPTF-PropertiesTable identifier
                 {"owner"                : owner
                 ,"owner-konto"          : account
@@ -2974,6 +2990,7 @@
                 ,"origin-mint-amount"   : 0.0
                 ,"role-transfer-amount" : 0}
             )
+            ;;Makes a new DPTF Account for the Token Issuer and returns identifier
             (C_DeployTrueFungibleAccount identifier account owner)
             identifier
         )
@@ -2991,7 +3008,10 @@
             )
             (X_Credit identifier account g amount)
             (X_UpdateSupply identifier amount true)
-            (update DPTF-PropertiesTable identifier { "origin-mint" : false, "origin-mint-amount" : amount})
+            (update DPTF-PropertiesTable identifier
+                { "origin-mint" : false
+                , "origin-mint-amount" : amount}
+            )
         )
     )
     (defun X_Mint (initiator:string identifier:string account:string amount:decimal)

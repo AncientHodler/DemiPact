@@ -218,9 +218,10 @@
 ;;04]Initialise Vesting
 (begin-tx "Initialise Vesting TX")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PrivateKey_Vesting", "caps": [] }])
+(env-sigs [ { "key": "PrivateKey_Vesting", "caps": [] },
+            { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.DH_SC_Vesting.A_InitialiseVesting)                                        ;;Either Vesting Key or AH Key
+(free.DH_SC_Vesting.A_InitialiseVesting "AncientHodler")                                        ;;Either Vesting Key or AH Key
 (env-gas)
 (commit-tx)
 

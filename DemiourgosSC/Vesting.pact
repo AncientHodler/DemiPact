@@ -254,7 +254,7 @@
             ;;old: (compose-capability (DPMF.TRANSFER_DPMF identifier culler SC_NAME initial-amount true))
             (compose-capability (DPMF.ABSOLUTE_METHODIC_TRANSFER initiator identifier culler SC_NAME initial-amount))
         ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
-            (compose-capability (DPMF.DPMF_BURN identifier nonce SC_NAME initial-amount))
+            (compose-capability (DPMF.DPMF_BURN identifier SC_NAME initial-amount))
         )
     )
     (defcap IZ_SNAKE-NONCE-CULLABLE (culler:string identifier:string nonce:integer)
@@ -649,7 +649,7 @@
     ;;      A_VestOuroVOuro|A_VestOuroVAuryn|A_VestOuroVEAuryn
     ;;      A_VestAurynVAuryn|A_VestAurynVEAuryn|A_VestEAurynVEAuryn
     ;;
-    (defun A_InitialiseVesting ()
+    (defun A_InitialiseVesting (initiator:string)
         @doc "Initialises the Vesting Module"
         ;;Initialise the Vesting DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
@@ -665,6 +665,7 @@
                     (elite-auryn-id:string (DH_SC_Autostake.UR_EliteAurynID))
                     (vested-ouro-id:string 
                         (DPMF.C_IssueMetaFungible
+                            initiator
                             SC_NAME
                             (keyset-ref-guard SC_KEY)
                             "VestedOuroboros"
@@ -681,6 +682,7 @@
                     )
                     (vested-auryn-id:string 
                         (DPMF.C_IssueMetaFungible
+                            initiator
                             SC_NAME
                             (keyset-ref-guard SC_KEY)
                             "VestedAuryn"
@@ -697,6 +699,7 @@
                     )
                     (vested-elite-auryn-id:string 
                         (DPMF.C_IssueMetaFungible
+                            initiator
                             SC_NAME
                             (keyset-ref-guard SC_KEY)
                             "VestedEliteAuryn"
@@ -726,17 +729,17 @@
                     ,"v-elite-auryn-id"               : vested-elite-auryn-id}
                 )
                 ;;SetTokenRoles
-                (DPMF.C_SetAddQuantityRole vested-ouro-id SC_NAME)
-                (DPMF.C_SetAddQuantityRole vested-auryn-id SC_NAME)
-                (DPMF.C_SetAddQuantityRole vested-elite-auryn-id SC_NAME)
+                (DPMF.C_SetAddQuantityRole initiator vested-ouro-id SC_NAME)
+                (DPMF.C_SetAddQuantityRole initiator vested-auryn-id SC_NAME)
+                (DPMF.C_SetAddQuantityRole initiator vested-elite-auryn-id SC_NAME)
 
-                (DPMF.C_SetBurnRole vested-ouro-id SC_NAME)
-                (DPMF.C_SetBurnRole vested-auryn-id SC_NAME)
-                (DPMF.C_SetBurnRole vested-elite-auryn-id SC_NAME)
+                (DPMF.C_SetBurnRole initiator vested-ouro-id SC_NAME)
+                (DPMF.C_SetBurnRole initiator vested-auryn-id SC_NAME)
+                (DPMF.C_SetBurnRole initiator vested-elite-auryn-id SC_NAME)
 
-                (DPMF.C_SetTransferRole vested-ouro-id SC_NAME)
-                (DPMF.C_SetTransferRole vested-auryn-id SC_NAME)
-                (DPMF.C_SetTransferRole vested-elite-auryn-id SC_NAME)
+                (DPMF.C_SetTransferRole initiator vested-ouro-id SC_NAME)
+                (DPMF.C_SetTransferRole initiator vested-auryn-id SC_NAME)
+                (DPMF.C_SetTransferRole initiator vested-elite-auryn-id SC_NAME)
             )
         )
     )
@@ -757,7 +760,7 @@
                 (let*
                     (
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData ouro-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-ouro-id SC_NAME amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-ouro-id SC_NAME amount vesting-meta-data))
                     )    
         ;;3]Vesting Account transfers <VOURO|Vested-Ouroboros> to target-account
                     (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-ouro-id new-nonce SC_NAME target-account target-account-guard amount)
@@ -785,7 +788,7 @@
                     (
                         (auryn-amount:decimal (DH_SC_Autostake.C_CoilOuroboros initiator SC_NAME amount))
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id auryn-amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-auryn-id SC_NAME auryn-amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-auryn-id SC_NAME auryn-amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account; since auryn-amount and new-nonce are now known
                     (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-auryn-id new-nonce SC_NAME target-account target-account-guard auryn-amount)
@@ -813,7 +816,7 @@
                     (
                         (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros initiator SC_NAME amount))
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id elite-auryn-amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint (UR_VEliteAurynID) SC_NAME elite-auryn-amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-eauryn-id SC_NAME elite-auryn-amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account; since elite-auryn-amount and new-nonce are now known
                     (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard elite-auryn-amount)
@@ -838,7 +841,7 @@
                 (let*
                     (
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-auryn-id SC_NAME amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-auryn-id SC_NAME amount vesting-meta-data))
                     )
                     true
         ;;3]Vesting Account transfers <VAURYN|Vested-Auryn> to target-account
@@ -867,7 +870,7 @@
                 (let*
                     (
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData auryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-eauryn-id SC_NAME amount vesting-meta-data))
                     )
         ;;4]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
                     (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
@@ -892,7 +895,7 @@
                 (let*
                     (
                         (vesting-meta-data:[object] (UC_ComposeVestingMetaData eauryn-id amount offset duration milestone))
-                        (new-nonce:integer (DPMF.C_Mint v-eauryn-id SC_NAME amount vesting-meta-data))
+                        (new-nonce:integer (DPMF.C_Mint initiator v-eauryn-id SC_NAME amount vesting-meta-data))
                     )
         ;;3]Vesting Account transfers <VEAURYN|Vested-Elite-Auryn> to target-account
                     (DPMF.XC_MethodicTransferMetaFungibleAnew initiator v-eauryn-id new-nonce SC_NAME target-account target-account-guard amount)
@@ -956,7 +959,7 @@
         ;;3]Client transfers as method the Vested Token|Nonce <identifier>|<nonce> to the <Snake_Vesting> Account for burning
                 (DPMF.XC_MethodicTransferMetaFungible initiator identifier nonce culler SC_NAME initial-amount)
         ;;4]<Snake_Vesting> Account burns the Vested-MetaFungible transferred
-                (DPMF.C_Burn identifier nonce SC_NAME initial-amount)
+                (DPMF.C_Burn initiator identifier nonce SC_NAME initial-amount)
             )
         )
     )
@@ -987,7 +990,7 @@
             (OUROBOROS.XC_MethodicTransferTrueFungibleAnew initiator return-id SC_NAME culler culler-guard culled-amount)
             (let
                 (
-                    (new-nonce:integer (DPMF.C_Mint identifier SC_NAME return-amount remaining-vesting-meta-data))
+                    (new-nonce:integer (DPMF.C_Mint initiator identifier SC_NAME return-amount remaining-vesting-meta-data))
                 )
                 (DPMF.XC_MethodicTransferMetaFungibleAnew initiator identifier new-nonce SC_NAME culler culler-guard return-amount)
             )

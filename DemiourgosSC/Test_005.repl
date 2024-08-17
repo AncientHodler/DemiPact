@@ -315,22 +315,39 @@
 (print "======================================================================")
 (env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
             { "key": "PrivateKey_Emma", "caps": [] }
-            { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
+            { "key": "PrivateKey_Autostake-Pool", "caps": [] }
+            { "key": "PrivateKey_Vesting", "caps": [] }])
 
-(free.OUROBOROS.C_ControlSmartAccount "AncientHodler" "Snake_Autostake" true true)
+(print "BEFORE SET")
+(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
 
-(free.OUROBOROS.UR_TrueFungibleKonto "OURO-98c486052a51")
-(free.OUROBOROS.C_ChangeOwnership "AncientHodler" "OURO-98c486052a51" "Emma")
-(free.OUROBOROS.UR_TrueFungibleKonto "OURO-98c486052a51")
+(free.DPMF.C_SetAddQuantityRole "AncientHodler" "VOURO-98c486052a51" "Emma")
+(free.DPMF.C_SetBurnRole "AncientHodler" "VOURO-98c486052a51" "Emma")
+(free.DPMF.C_SetTransferRole "AncientHodler" "VOURO-98c486052a51" "Emma")
 
-(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 15.0)
-(free.OUROBOROS.C_FreezeAccount "AncientHodler" "OURO-98c486052a51" "Emma")
+(print "AFTER SET")
+
+(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
 
 
+(print "BEFORE UNSET")
+(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
 
-(free.OUROBOROS.A_TurnGasOff)
+(free.DPMF.C_UnsetAddQuantityRole "AncientHodler" "VOURO-98c486052a51" "Emma")
+(free.DPMF.C_UnsetBurnRole "AncientHodler" "VOURO-98c486052a51" "Emma")
+(free.DPMF.C_UnsetTransferRole "AncientHodler" "VOURO-98c486052a51" "Emma")
 
-(free.OUROBOROS.C_Wipe "AncientHodler" "OURO-98c486052a51" "Emma")
-(free.OUROBOROS.C_UnfreezeAccount "AncientHodler" "OURO-98c486052a51" "Emma")
+(print "AFTER UNSET")
+
+(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
+(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
+
 (env-gas)
 (commit-tx)
