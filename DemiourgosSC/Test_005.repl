@@ -349,5 +349,23 @@
 (free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
 (free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
 
+(print "AT THE END")
+(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+(format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
+(format "Snake_Vesting has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Vesting")])
+(format "Gas-Tanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+
+(format "Total Gas Spent is {}" [(free.OUROBOROS.UR_GasSpent)])
+
+
+(print "BEFORE Compression")
+(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+(free.OUROBOROS.C_CompressGAS "AncientHodler" 200.0)
+(print "AFTER Compression")
+(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+
 (env-gas)
 (commit-tx)

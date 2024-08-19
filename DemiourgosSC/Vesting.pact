@@ -52,7 +52,7 @@
     ;;Vesting-Pair schematic
     (defconst VKEY1 "release-amount")       ;;decimal
     (defconst VKEY2 "release-date")         ;;time
-    (defconst VKEYS [VKEY1 VKEY2 ])
+    (defconst VKEYS [VKEY1 VKEY2])
     (defconst VTYP1 "decimal")
     (defconst VTYP2 "time")
 

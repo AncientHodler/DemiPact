@@ -3090,8 +3090,8 @@
     ;;                                                                                                                                                  ;;
     ;;==============================================                                                                                                    ;;
     ;;      GAS_IS_ON                               Enforces Gas is turned ON                                                                           ;;
-    ;;      GAS_IS_OFF                              Enforces Gas is turned OFF and Gas IDs are set so that turning ON can be executed                   ;;                                                                 ;;
-    ;;      INCREMENT_GAS-SPENT                     Capability required to increment Gas Spent
+    ;;      GAS_IS_OFF                              Enforces Gas is turned OFF and Gas IDs are set so that turning ON can be executed                   ;;
+    ;;      INCREMENT_GAS-SPENT                     Capability required to increment Gas Spent                                                          ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -3102,7 +3102,9 @@
     ;;      GAS_TURN_ON                             Capability that allows to turn on Gas collection                                                    ;;
     ;;      GAS_TURN_OFF                            Capability that allows to turn off Gas collection                                                   ;;
     ;;==================GAS-HANDLING================                                                                                                    ;;
+    ;;      GAS_PATRON                              Capability required for a client to ge a gas patron (the gas payer)                                 ;;
     ;;      MAKE_GAS                                Capability required to produce GAS                                                                  ;;
+    ;;      COMPRESS_GAS                            Capability required to compress GAS                                                                 ;;
     ;;      GAS_COLLECTION                          Capability required to collect GAS                                                                  ;;
     ;;      GAS_COLLECTER_NORMAL                    Capability required to collect GAS when Normal DPTS accounts are involved as clients                ;;
     ;;      GAS_COLLECTER_SMART                     Capability required to collect GAS when Smart DPTS accounts are involved as clients                 ;;
@@ -3166,7 +3168,7 @@
     )
     ;;==================GAS-HANDLING================ 
     ;;
-    ;;      MAKE_GAS|GAS_COLLECTION
+    ;;      GAS_PATRON|MAKE_GAS|COMPRESS_GAS|GAS_COLLECTION
     ;;      GAS_COLLECTER_NORMAL|GAS_COLLECTER_SMART
     ;;
     (defcap GAS_PATRON (gas-payer-account:string)
@@ -3179,13 +3181,12 @@
             (
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-id:string (UR_GasID))
-                (gas-source-price:decimal (UR_GasSourcePrice))
-                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                (gas-amount:decimal (floor (* (* gas-source-price-used 100.0) gas-source-amount) 0))
                 (client-guard:guard (UR_AccountTrueFungibleGuard gas-source-id client))
+                (gas-amount:decimal (UC_GasMake gas-source-amount))
             )
-        ;;01]Any client can perform GAS creation. Gas creation is always GAS free
-        ;;02]Deploy DPTF GAS Account for client
+        ;;01]Any client that is a Normal DPTS Account can perform GAS creation. Gas creation is always GAS free.
+        (compose-capability (IZ_DPTS_ACCOUNT_SMART client false))
+        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
         (compose-capability (DPTF_CLIENT gas-source-id client))
         ;;03]Client sends Gas-Source-id to the GAS Smart Contract
         (compose-capability (TRANSFER_DPTF_GAS-PATRON client gas-source-id  client SC_NAME_GAS gas-source-amount))
@@ -3193,9 +3194,34 @@
         (compose-capability (DPTF_BURN gas-source-id SC_NAME_GAS gas-source-amount))
         (compose-capability (DPTS_INCREASE-NONCE))
         ;;05]GAS Smart Contract mints GAS
-        ;;No Capability needed, since a <C_> function is used.
+        ;;NO CAPABILITY NEEDED, since a <C_Mint> function is used.
         ;;06]GAS Smart Contract transfers GAS to client
         (compose-capability (TRANSFER_DPTF_GAS-PATRON client gas-id SC_NAME_GAS client gas-amount))
+        )
+    )
+    (defcap COMPRESS_GAS (client:string gas-amount:decimal)
+        ;;Enforce only whole amounts of GAS are used for compression
+        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
+        (let*
+            (
+                (gas-id:string (UR_GasID))
+                (gas-source-id:string (UR_GasSourceID))
+                (client-guard:guard (UR_AccountTrueFungibleGuard gas-id client))
+                (gas-source-amount:decimal (UC_GasCompress gas-amount))
+            )
+            ;;01]Any client that is a Normal DPTS Account can perform GAS compression. Gas compression is always GAS free.
+            (compose-capability (IZ_DPTS_ACCOUNT_SMART client false))
+            ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
+            (compose-capability (DPTF_CLIENT gas-id client))
+            ;;03]Client sends GAS to the GAS Smart Contract: <XC_MethodicTransferTrueFungible> can be used since no GAS costs is uncurred when transferring GAS tokens
+            (compose-capability (TRANSFER_DPTF_GAS-PATRON client gas-id client SC_NAME_GAS gas-amount))
+            ;;04]GAS Smart Contract burns GAS: no GAS costs are involved when burning GAS Token
+            ;;NO CAPABILITY needed since <C_Burn> is used
+            ;;05]GAS Smart Contract mints Gas-Source Token: <X_Mint> must be used to mint without GAS costs
+            (compose-capability (GAS_PATRON client))
+            (compose-capability (DPTF_MINT gas-source-id SC_NAME_GAS gas-source-amount))
+            ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
+            (compose-capability (TRANSFER_DPTF_GAS-PATRON client gas-source-id SC_NAME_GAS client gas-source-amount))
         )
     )
     (defcap GAS_COLLECTION (client:string sender:string amount:decimal)
@@ -3238,6 +3264,9 @@
     ;;      UR_GasToggle                            Returns as boolean the Gas Toggle State                                                             ;;
     ;;      UR_GasPot                               Returns as string the Gas Pot Account                                                               ;;
     ;;      UR_GasPrice                             Returns as decimal the Gas Price in Cents                                                           ;;
+    ;;      UR_GasSpent                             Returns the amount of Gas spent                                                                     ;;
+    ;;      UC_GasMake                              Computes amount of GAS that can be made from the input <gas-source-amount>                          ;;
+    ;;      UC_GasCompress                          Computes amount of Gas Source that can be created from an input amount <gas-amount> of GAS          ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -3247,7 +3276,7 @@
     ;;      A_InitialiseGAS                         Initialises the VGAS Table                                                                          ;;
     ;;      A_SetGasIdentifier                      Sets the Gas-Source|Gas Identifier for the Virtual Blockchain                                       ;;
     ;;      A_SetGasSourcePrice                     Sets the Gas Source Price, which determines how much GAS can be created from Gas Source Token       ;;
-    ;;      A_SetGasPrice                           Sets the Gas Price in cents, which determines how much GAS can be created from Gas Source Token
+    ;;      A_SetGasPrice                           Sets the Gas Price in cents, which determines how much GAS can be created from Gas Source Token     ;;
     ;;      A_TurnGasOn                             Turns Gas collection ON                                                                             ;;
     ;;      A_TurnGasOff                            Turns Gas collection OFF                                                                            ;;
     ;;                                                                                                                                                  ;;
@@ -3255,7 +3284,8 @@
     ;;                                                                                                                                                  ;;
     ;;      VGAS: CLIENT FUNCTIONS                  Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;      C_MakeGAS                               Generates GAS from GAS Source Token                                                                 ;;                                               ;;
+    ;;      C_MakeGAS                               Generates GAS from GAS Source Token via GAS Making|Creation                                         ;;
+    ;;      C_CompressGAS                           Generates Gas-Source from GAS Token via GAS Compression                                             ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -3315,6 +3345,40 @@
         @doc "Returns as decimal the amount of Gas Spent"
         (at "gasspent" (read VGASTable VGD ["gasspent"]))
     )
+    (defun UC_GasMake (gas-source-amount:decimal)
+        @doc "Computes amount of GAS that can be made from the input <gas-source-amount>"
+        (let*
+            (
+                (gas-source-id:string (UR_GasSourceID))
+                (gas-source-decimals:integer (UR_TrueFungibleDecimals gas-source-id))
+                (gas-source-price:decimal (UR_GasSourcePrice))
+                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
+                (gas-price-in-cents:decimal (UR_GasPrice))
+                (gas-units-in-a-dollar:decimal (floor (/ 100.0 gas-price-in-cents) 3))
+                (gas-amount:decimal (floor (* (* gas-source-price-used gas-units-in-a-dollar) gas-source-amount) 0))
+            )
+            (UV_TrueFungibleAmount gas-source-id gas-source-amount)
+            gas-amount
+        )
+    )
+    (defun UC_GasCompress (gas-amount:decimal)
+        @doc "Computes amount of Gas Source that can be created from an input amount <gas-amount> of GAS"
+        ;;Enforce only whole amounts of GAS are used for compression
+        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
+        (let*
+            (
+                (gas-source-id:string (UR_GasSourceID))
+                (gas-source-price:decimal (UR_GasSourcePrice))
+                (gas-price-in-cents:decimal (UR_GasPrice))
+                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
+                (gas-cents:decimal (floor (* gas-amount gas-price-in-cents) 3))
+                (cents-in-one-gas-source:decimal (floor (* gas-source-price-used 100.0) 3))
+                (gas-source-decimals:integer (UR_TrueFungibleDecimals gas-source-id))
+                (gas-source-mint-amount:decimal (floor (/ gas-cents cents-in-one-gas-source) gas-source-decimals))
+            )
+            gas-source-mint-amount
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      VGAS: ADMINISTRATION FUNCTIONS        ;;
@@ -3357,8 +3421,12 @@
                 ;;Issue OURO DPTF Account for the GAS-Tanker
                 (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS (keyset-ref-guard SC_KEY_GAS))
                 ;;Set Token Roles
+                ;;BURN Roles
                 (C_SetBurnRole initiator GasID SC_NAME_GAS)
-                (C_SetMintRole initiator GasID SC_NAME_GAS)    
+                (C_SetBurnRole initiator gas-source-id SC_NAME_GAS)
+                ;;MINT Roles
+                (C_SetMintRole initiator GasID SC_NAME_GAS)
+                (C_SetMintRole initiator gas-source-id SC_NAME_GAS)
                 ;;Set VGASTable
                 (insert VGASTable VGD
                     {"gassid"           : gas-source-id
@@ -3414,16 +3482,16 @@
     ;;                                            ;;
     ;;==============================================
     ;;
-    ;;      C_MakeGAS|ConsumeGAS
+    ;;      C_MakeGAS|C_CompressGAS
     ;;
     (defun C_MakeGAS:decimal (client:string gas-source-amount:decimal)
-        @doc "Generates GAS from GAS Source Token \
+        @doc "Generates GAS from GAS Source Token via GAS Making|Creation\
         \ GAS generation is GAS free. \
-        \ Gas Source Price is set a minimum 1$. Uses Gas Price \
-        \ Gas amount is alway integer (even though itself is of decimal type)"
+        \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
+        \ Gas Amount generated is alway integer (even though itself is of decimal type)"
 
-        ;;01]Any client can perform GAS creation. Gas creation is always GAS free
-        ;;02]Deploy DPTF GAS Account for client
+        ;;01]Any client that is a Normal DPTS Account can perform GAS creation. Gas creation is always GAS free.
+        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
         (let*
             (
                 (gas-id:string (UR_GasID))
@@ -3432,15 +3500,11 @@
             )
             (C_DeployTrueFungibleAccount gas-id client client-guard)
             (with-capability (MAKE_GAS client gas-source-amount)
-            (let*
+            (let
                 (
-                    (gas-source-price:decimal (UR_GasSourcePrice))
-                    (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                    (gas-price:decimal (UR_GasPrice))
-                    (gas-cents-in-a-dollar:decimal (floor (/ 100.0 gas-price) 0))
-                    (gas-amount:decimal (floor (* (* gas-source-price-used gas-cents-in-a-dollar) gas-source-amount) 0))   
+                    (gas-amount:decimal (UC_GasMake gas-source-amount))
                 )
-        ;;03]Client sends Gas-Source-id to the GAS Smart Contract, without needing GAS (why the <X_> variant of the function is used)
+        ;;03]Client sends Gas-Source-id to the GAS Smart Contract; <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
                 (X_MethodicTransferTrueFungible client gas-source-id client SC_NAME_GAS gas-source-amount)
         ;;04]Smart Contract burns GAS-Source-ID without generating IGNIS, without needing GAS
                 (X_Burn client gas-source-id SC_NAME_GAS gas-source-amount)
@@ -3450,6 +3514,38 @@
         ;;06]GAS Smart Contract transfers GAS to client
                 (XC_MethodicTransferTrueFungibleAnew client gas-id SC_NAME_GAS client client-guard gas-amount)
                 gas-amount
+                )
+            )
+        )
+    )
+    (defun C_CompressGAS (client:string gas-amount:decimal)
+        @doc "Generates Gas-Source from GAS Token via GAS Compression \
+            \ GAS compression is GAS free. \
+            \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
+            \ Input GAS amount must always be integer/whole (even though itself is of decimal type)"
+        
+        ;;01]Any client can perform GAS Compression. GAS compression is always GAS free
+        ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
+        (let*
+            (
+                (gas-source-id:string (UR_GasSourceID))
+                (gas-id:string (UR_GasID))
+                (client-guard:guard (UR_AccountTrueFungibleGuard gas-id client))
+            )
+            (C_DeployTrueFungibleAccount gas-source-id client client-guard)
+            (with-capability (COMPRESS_GAS client gas-amount)
+                (let
+                    (
+                        (gas-source-amount:decimal (UC_GasCompress gas-amount))
+                    )
+        ;;03]Client sends GAS to the GAS Smart Contract: <XC_MethodicTransferTrueFungible> can be used since no GAS costs is uncurred when transferring GAS tokens
+                    (XC_MethodicTransferTrueFungible client gas-id client SC_NAME_GAS gas-amount)
+        ;;04]GAS Smart Contract burns GAS: <C_Burn> can be used since burning GAS costs no GAS
+                    (C_Burn client gas-id SC_NAME_GAS gas-amount)
+        ;;05]GAS Smart Contract mints Gas-Source Token: <X_Mint> must be used to mint without GAS costs
+                    (X_Mint client gas-source-id SC_NAME_GAS gas-source-amount)
+        ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
+                    (X_MethodicTransferTrueFungible client gas-source-id SC_NAME_GAS client gas-source-amount)
                 )
             )
         )

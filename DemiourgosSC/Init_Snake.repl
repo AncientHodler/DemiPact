@@ -190,7 +190,6 @@
     )
 
     (free.OUROBOROS.A_InitialiseGAS "AncientHodler" "OURO-98c486052a51")
-    (free.OUROBOROS.C_SetBurnRole "AncientHodler" "OURO-98c486052a51" "Gas-Tanker")                 ;;AH Key
     (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
     (free.OUROBOROS.A_TurnGasOn)
     
@@ -207,9 +206,8 @@
 (free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")                ;;Autostake-Pool Key
 
 
-;;03]Set BurnRole to Autostake and Gas-Tanker for OURO
-(free.OUROBOROS.C_SetBurnRole "AncientHodler" "OURO-98c486052a51" "Snake_Autostake")            ;;AH Key
-
+;;03]Set OURO BurnRole to Autostake and Gas-Tanker for OURO
+;;set in the Autostake initialisation function
 
 
 (env-gas)

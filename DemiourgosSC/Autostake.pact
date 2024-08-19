@@ -1496,6 +1496,7 @@
                 )
                 ;;SetTokenRoles
                 ;;BURN Roles
+                (OUROBOROS.C_SetBurnRole initiator ouro-id SC_NAME)
                 (OUROBOROS.C_SetBurnRole initiator AurynID SC_NAME)
                 (OUROBOROS.C_SetBurnRole initiator EliteAurynID SC_NAME)
                 ;;MINT Roles
