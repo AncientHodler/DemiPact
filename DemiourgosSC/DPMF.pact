@@ -83,15 +83,15 @@
         frozen:bool                         ;;Determines wheter Account is frozen for DPMF Token Identifier
     )
     ;;SCHEMA for MetaFungible defined as constants to be used as Object Keys
-    (defconst MFKEY1 "nonce")               ;;integer
-    (defconst MFKEY2 "balance")             ;;decimal
-    (defconst MFKEY3 "meta-data")           ;;object
-    (defconst MFKEYS [MFKEY1 MFKEY2 MFKEY3])
-    (defconst MFTYP1 "integer")
-    (defconst MFTYP2 "decimal")
-    (defconst MFTYP3 "[*]")
-    (defconst MFTYP4 "object:*")
-    (defconst MFTYP5 "[<a>]")
+    (defschema MetaFungible_Schema
+        nonce:integer
+        balance:decimal
+        meta-data:[object]
+    )
+    (defschema NonceBalance_Schema
+        nonce:integer
+        balance:decimal
+    )
     ;;Neutral MetaFungible Definition, used for existing MetaFungible Accounts that hold no tokens
     (defconst NEUTRAL_META-FUNGIBLE
         { "nonce": 0
@@ -1009,11 +1009,9 @@
     ;;==================VALIDATIONS=================                                                                                                    ;;
     ;;      UV_MetaFungibleAmount                   Enforces the Amount <amount> is positive its decimal size conform for MetaFungible <identifier>     ;;
     ;;      UV_MetaFungibleIdentifier               Enforces the MetaFungible <identifier> exists                                                       ;;
-    ;;      UV_ObjectListAsMetaFungibleList         Enforces that a list of Objects contains Objects conform to the MetaFungible Schema                 ;;
-    ;;      UV_ObjectAsMetaFungible                 Enforces that an Object is conform to the MetaFungible Schema                                       ;;
-    ;;      UV_ObjectAsNonceBalancePair             Enforces that an Object is a pair of nonce and balances                                             ;;
     ;;==================Composition=================                                                                                                    ;;
-    ;;      UC_ComposeMetaFungible                   Composes a MetaFungible object from <nonce>, <balance> and <meta-data>                             ;;
+    ;;      UC_ComposeMetaFungible                  Composes a MetaFungible object from <nonce>, <balance> and <meta-data>                              ;;
+    ;;      UC_Nonce-Balance_Pair                   Composes a NonceBalance object from a <nonce-lst> list and <balance-lst> list                       ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -1073,8 +1071,8 @@
     ;;      X_AddQuantityCore                       Auxiliary Core Function that adds quantity for an existing Metafungible                             ;;                                 ;;
     ;;      X_Credit                                Auxiliary Function that credits a MetaFungible to a DPMF Account                                    ;;
     ;;      X_Debit                                 Auxiliary Function that debits a MetaFungible from a DPMF Account                                   ;;
-    ;;      X_DebitPaired                           Auxiliary Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping;;
     ;;      X_DebitMultiple                         Auxiliary Function needed for Wiping                                                                ;;
+    ;;      X_DebitPaired                           Auxiliary Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping;;
     ;;==================UPDATE======================                                                                                                    ;;
     ;;      X_UpdateSupply                          Updates <identifier> MetaFungible supply. Boolean <direction> used for increase|decrease            ;;
     ;;      X_IncrementNonce                        Increments <identifier> MetaFungible nonce.                                                         ;;
@@ -1134,26 +1132,20 @@
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
             { "unit" : [NEUTRAL_META-FUNGIBLE] }
             { "unit" := read-unit}
-            (let
+            (let 
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
-                )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                (let 
-                    (
-                        (result 
-                            (fold
-                                (lambda 
-                                    (acc:decimal item:object)
-                                    (+ acc (at "balance" item))
-                                )
-                                0.0
-                                read-unit
+                    (result 
+                        (fold
+                            (lambda 
+                                (acc:decimal item:object{MetaFungible_Schema})
+                                (+ acc (at "balance" item))
                             )
+                            0.0
+                            read-unit
                         )
                     )
-                    result
                 )
+                result
             )
         )
     )
@@ -1227,29 +1219,23 @@
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
             { "unit" : [NEUTRAL_META-FUNGIBLE] }
             { "unit" := read-unit}
-            (let
+            (let 
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
-                )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                (let 
-                    (
-                        (result 
-                            (fold
-                                (lambda 
-                                    (acc:[decimal] item:object)
-                                    (if (!= (at "balance" item) 0.0)
-                                            (OUROBOROS.UC_AppendLast acc (at "balance" item))
-                                            acc
-                                    )
+                    (result 
+                        (fold
+                            (lambda 
+                                (acc:[decimal] item:object{MetaFungible_Schema})
+                                (if (!= (at "balance" item) 0.0)
+                                        (OUROBOROS.UC_AppendLast acc (at "balance" item))
+                                        acc
                                 )
-                                []
-                                read-unit
                             )
+                            []
+                            read-unit
                         )
                     )
-                    result
                 )
+                result
             )
         )
     )
@@ -1261,29 +1247,23 @@
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
             { "unit" : [NEUTRAL_META-FUNGIBLE] }
             { "unit" := read-unit}
-            (let
+            (let 
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
-                )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                (let 
-                    (
-                        (result 
-                            (fold
-                                (lambda 
-                                    (acc:[integer] item:object)
-                                    (if (!= (at "nonce" item) 0)
-                                            (OUROBOROS.UC_AppendLast acc (at "nonce" item))
-                                            acc
-                                    )
+                    (result 
+                        (fold
+                            (lambda 
+                                (acc:[integer] item:object{MetaFungible_Schema})
+                                (if (!= (at "nonce" item) 0)
+                                        (OUROBOROS.UC_AppendLast acc (at "nonce" item))
+                                        acc
                                 )
-                                []
-                                read-unit
                             )
+                            []
+                            read-unit
                         )
                     )
-                    result
                 )
+                result
             )
         )
     )
@@ -1295,35 +1275,29 @@
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
             { "unit" : [NEUTRAL_META-FUNGIBLE] }
             { "unit" := read-unit}
-            (let
+            (let 
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
-                )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                (let 
-                    (
-                        (result-balance:decimal
-                            (fold
-                                (lambda 
-                                    (acc:decimal item:object)
-                                    (let
-                                        (
-                                            (nonce-val:integer (at "nonce" item))
-                                            (balance-val:decimal (at "balance" item))
-                                        )
-                                        (if (= nonce-val nonce)
-                                            balance-val
-                                            acc
-                                        )
+                    (result-balance:decimal
+                        (fold
+                            (lambda 
+                                (acc:decimal item:object{MetaFungible_Schema})
+                                (let
+                                    (
+                                        (nonce-val:integer (at "nonce" item))
+                                        (balance-val:decimal (at "balance" item))
+                                    )
+                                    (if (= nonce-val nonce)
+                                        balance-val
+                                        acc
                                     )
                                 )
-                                0.0
-                                read-unit
                             )
+                            0.0
+                            read-unit
                         )
                     )
-                    result-balance
                 )
+                result-balance
             )
         )
     )
@@ -1335,35 +1309,29 @@
         (with-default-read DPMF-BalancesTable (concat [identifier BAR  account])
             { "unit" : [NEUTRAL_META-FUNGIBLE] }
             { "unit" := read-unit}
-            (let
+            (let 
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList read-unit))
-                )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
-                (let 
-                    (
-                        (result-meta-data
-                            (fold
-                                (lambda 
-                                    (acc item:object)
-                                    (let
-                                        (
-                                            (nonce-val:integer (at "nonce" item))
-                                            (meta-data-val (at "meta-data" item))
-                                        )
-                                        (if (= nonce-val nonce)
-                                            meta-data-val
-                                            acc
-                                        )
+                    (result-meta-data
+                        (fold
+                            (lambda 
+                                (acc item:object{MetaFungible_Schema})
+                                (let
+                                    (
+                                        (nonce-val:integer (at "nonce" item))
+                                        (meta-data-val (at "meta-data" item))
+                                    )
+                                    (if (= nonce-val nonce)
+                                        meta-data-val
+                                        acc
                                     )
                                 )
-                                []
-                                read-unit
                             )
+                            []
+                            read-unit
                         )
                     )
-                    result-meta-data
                 )
+                result-meta-data
             )
         )
     )
@@ -1465,7 +1433,6 @@
     ;;==================VALIDATIONS=================
     ;;
     ;;      UV_MetaFungibleAmount|UV_MetaFungibleIdentifier
-    ;;      UV_ObjectListAsMetaFungibleList|UV_ObjectAsMetaFungible|UV_ObjectAsNonceBalancePair
     ;;
     (defun UV_MetaFungibleAmount (identifier:string amount:decimal)
         @doc "Enforces the Amount <amount> is positive its decimal size conform for MetaFungible <identifier>"
@@ -1495,68 +1462,26 @@
             )
         )
     )
-    (defun UV_ObjectListAsMetaFungibleList:bool (mflst:[object])
-        @doc "Validates that a list of Objects contains Objects conform to the MetaFungible SCHEMA"
-        (let 
-            (
-                (result 
-                    (fold
-                        (lambda 
-                            (acc:bool item:object)
-                            (let
-                                (
-                                    (iz-meta-fungible:bool (UV_ObjectAsMetaFungible item))
-                                )
-                                (enforce (= iz-meta-fungible true) "Item is not of Meta-Fungible type")
-                                (and acc iz-meta-fungible)
-                            )
-                        )
-                        true
-                        mflst
-                    )
-                )
-            )
-            result
-        )
-    )
-    (defun UV_ObjectAsMetaFungible:bool (obj:object)
-        (let
-            (
-                (object-validation:bool (OUROBOROS.UV_Object obj (length MFKEYS) MFKEYS))
-                (nonce-val:integer (at MFKEY1 obj))
-                (balance-val:decimal (at MFKEY2 obj))
-                (meta-data-val:[object] (at MFKEY3 obj))
-            )
-            (enforce (= object-validation true) "Object is of incorect format to be a MetaFungible")
-            (enforce (= (typeof nonce-val) MFTYP1) "Invalid nonce type")
-            (enforce (= (typeof balance-val) MFTYP2) "Invalid balance type")
-            (enforce (= (typeof meta-data-val) MFTYP3) "Invalid meta-data type")
-        )
-    )
-    (defun UV_ObjectAsNonceBalancePair:bool (obj:object)
-        @doc "Validates that an Object is a pair of nonce and balances"
-        (let*
-            (
-                (two-lst:[string] (take 2 MFKEYS))
-                (object-validation:bool (OUROBOROS.UV_Object obj (length two-lst) two-lst))
-                (nonce-val:decimal (at MFKEY1 obj))
-                (balance-val:decimal (at MFKEY2 obj))
-            )
-            (enforce (= object-validation true) "Object is of incorect format to be a Nonce-Balance Pair")
-            (enforce (= (typeof nonce-val) MFTYP1) "Invalid nonce type")
-            (enforce (= (typeof balance-val) MFTYP2) "Invalid balance type")
-        )
-    )
     ;;
     ;;==================Composition=================
     ;;
-    ;;      UC_ComposeMetaFungible
+    ;;      UC_ComposeMetaFungible|UC_Nonce-Balance_Pair
     ;;
-    (defun UC_ComposeMetaFungible:object (nonce:integer balance:decimal meta-data:[object])
+    (defun UC_ComposeMetaFungible:object{MetaFungible_Schema} (nonce:integer balance:decimal meta-data:[object])
         @doc "Composes a MetaFungible object from <nonce>, <balance> and <meta-data>"
         {"nonce" : nonce, "balance": balance, "meta-data" : meta-data}
     )
-
+    (defun UC_Nonce-Balance_Pair:[object{NonceBalance_Schema}] (nonce-lst:[integer] balance-lst:[decimal])
+        @doc "Composes a NonceBalance object from a <nonce-lst> list and <balance-lst> list"
+        (let
+            (
+                (nonce-length:integer (length nonce-lst))
+                (balance-length:integer (length balance-lst))
+            )
+            (enforce (= nonce-length balance-length) "Nonce and Balance Lists are not of equal length")
+            (zip (lambda (x:integer y:decimal) { "nonce": x, "balance": y }) nonce-lst balance-lst)
+        )
+    )
 
     ;;--------------------------------------------;;
     ;;                                            ;;
@@ -2379,11 +2304,9 @@
                 (enforce (= retg guard) "Account guards do not match !")
                 (let*
                     (
-                        (unit-validation:bool (UV_ObjectListAsMetaFungibleList u))
-                        (meta-fungible:object (UC_ComposeMetaFungible new-nonce 0.0 meta-data))
-                        (appended-meta-fungible:[object] (OUROBOROS.UC_AppendLast u meta-fungible))
+                        (meta-fungible:object{MetaFungible_Schema} (UC_ComposeMetaFungible new-nonce 0.0 meta-data))
+                        (appended-meta-fungible:[object{MetaFungible_Schema}] (OUROBOROS.UC_AppendLast u meta-fungible))
                     )
-                    (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                     ;; First, a new DPTS Account is created for Account <account>. 
                     ;; If DPTS Account exists for <account>, nothing is modified
                     (OUROBOROS.C_DeployStandardDPTSAccount account guard)
@@ -2411,15 +2334,13 @@
             { "unit" := unit }
             (let*
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList unit))
                     (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
                     (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce account))
                     (updated-balance:decimal (+ current-nonce-balance amount))
-                    (meta-fungible-to-be-replaced:object (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
-                    (updated-meta-fungible:object (UC_ComposeMetaFungible nonce updated-balance current-nonce-meta-data))
-                    (processed-unit:[object] (OUROBOROS.UC_ReplaceItem unit meta-fungible-to-be-replaced updated-meta-fungible))
+                    (meta-fungible-to-be-replaced:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
+                    (updated-meta-fungible:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce updated-balance current-nonce-meta-data))
+                    (processed-unit:[object{MetaFungible_Schema}] (OUROBOROS.UC_ReplaceItem unit meta-fungible-to-be-replaced updated-meta-fungible))
                 )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (update DPMF-BalancesTable (concat [identifier BAR account])
                     {"unit" : processed-unit}    
                 )
@@ -2460,16 +2381,14 @@
                 (let*
                     (
                         (next-unit (if (= unit [NEGATIVE_META-FUNGIBLE]) [NEUTRAL_META-FUNGIBLE] unit))
-                        (unit-validation:bool (UV_ObjectListAsMetaFungibleList next-unit))
                         (is-new:bool (if (= unit [NEGATIVE_META-FUNGIBLE]) true false))
                         (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
                         (credited-balance:decimal (+ current-nonce-balance amount))
-                        (present-meta-fungible:object (UC_ComposeMetaFungible nonce current-nonce-balance meta-data))
-                        (credited-meta-fungible:object (UC_ComposeMetaFungible nonce credited-balance meta-data))
-                        (processed-unit-with-replace:[object] (OUROBOROS.UC_ReplaceItem next-unit present-meta-fungible credited-meta-fungible))
-                        (processed-unit-with-append:[object] (OUROBOROS.UC_AppendLast next-unit credited-meta-fungible))
+                        (present-meta-fungible:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce current-nonce-balance meta-data))
+                        (credited-meta-fungible:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce credited-balance meta-data))
+                        (processed-unit-with-replace:[object{MetaFungible_Schema}] (OUROBOROS.UC_ReplaceItem next-unit present-meta-fungible credited-meta-fungible))
+                        (processed-unit-with-append:[object{MetaFungible_Schema}] (OUROBOROS.UC_AppendLast next-unit credited-meta-fungible))
                     )
-                    (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                     (enforce (> amount 0.0) "Crediting amount must be greater than zero")
                     ;; First, a new DPTS Account is created for Account <account>. 
                     ;; If DPTS Account exists for <account>, nothing is modified
@@ -2523,16 +2442,14 @@
             ,"frozen"                               := f}
             (let*
                 (
-                    (unit-validation:bool (UV_ObjectListAsMetaFungibleList unit))
                     (current-nonce-balance:decimal (UR_AccountMetaFungibleBalance identifier nonce account))
                     (current-nonce-meta-data (UR_AccountMetaFungibleMetaData identifier nonce account))
                     (debited-balance:decimal (- current-nonce-balance amount))
-                    (meta-fungible-to-be-replaced:object (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
-                    (debited-meta-fungible:object (UC_ComposeMetaFungible nonce debited-balance current-nonce-meta-data))
-                    (processed-unit-with-remove:[object] (OUROBOROS.UC_RemoveItem unit meta-fungible-to-be-replaced))
-                    (processed-unit-with-replace:[object] (OUROBOROS.UC_ReplaceItem unit meta-fungible-to-be-replaced debited-meta-fungible))
+                    (meta-fungible-to-be-replaced:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce current-nonce-balance current-nonce-meta-data))
+                    (debited-meta-fungible:object{MetaFungible_Schema} (UC_ComposeMetaFungible nonce debited-balance current-nonce-meta-data))
+                    (processed-unit-with-remove:[object{MetaFungible_Schema}] (OUROBOROS.UC_RemoveItem unit meta-fungible-to-be-replaced))
+                    (processed-unit-with-replace:[object{MetaFungible_Schema}] (OUROBOROS.UC_ReplaceItem unit meta-fungible-to-be-replaced debited-meta-fungible))
                 )
-                (enforce (= unit-validation true) "Unit is a not a list of Meta-Fungibles")
                 (enforce (>= debited-balance 0.0) "Insufficient Funds for debiting")
                 (if (= debited-balance 0.0)
                     ;;Remove Metafungible
@@ -2559,7 +2476,19 @@
             )
         )
     )
-    (defun X_DebitPaired (identifier:string account:string nonce-balance-obj:object)
+    (defun X_DebitMultiple (identifier:string nonce-lst:[integer] account:string balance-lst:[decimal])
+        @doc "Auxiliary Function needed for Wiping \
+            \ Executes |X_Debit| on a list of nonces and balances via its helper Function |X_DebitPaired|"
+
+        (let
+            (
+                (nonce-balance-obj-lst:[object{NonceBalance_Schema}] (UC_Nonce-Balance_Pair nonce-lst balance-lst))
+            )
+            (map (lambda (x:object{NonceBalance_Schema}) (X_DebitPaired identifier account x)) nonce-balance-obj-lst)
+        )
+    )
+
+    (defun X_DebitPaired (identifier:string account:string nonce-balance-obj:object{NonceBalance_Schema})
         @doc "Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping \
             \ Same a |X_Debit| but the nonce and balance are composed into a singular <nonce-balance-obj> object \
             \ Within |X_DebitPaired|, |X_Debit| is called using true <admin> boolean \
@@ -2567,29 +2496,12 @@
             \ as part of the Wiping Process, where the DPMF Account key|guard isnt required"
 
         (let
-            (
-                (iz-nonce-balance-pair:bool (UV_ObjectAsNonceBalancePair nonce-balance-obj))
-            )
-            (enforce (= iz-nonce-balance-pair true) "Object is not of Nonce Balance Pair")
-            (let
                 (
                     (nonce:integer (at "nonce" nonce-balance-obj))
                     (balance:decimal (at "balance" nonce-balance-obj))
                 )
                 (X_Debit identifier nonce account balance true)
             )
-        )
-    )
-    (defun X_DebitMultiple (identifier:string nonce-lst:[integer] account:string balance-lst:[decimal])
-        @doc "Auxiliary Function needed for Wiping \
-            \ Executes |X_Debit| on a list of nonces and balances via its helper Function |X_DebitPaired|"
-
-        (let
-            (
-                (nonce-balance-obj-lst:[object] (zip (lambda (x:integer y:decimal) { "nonce": x, "balance": y }) nonce-lst balance-lst))
-            )
-            (map (lambda (x:object) (X_DebitPaired identifier account x)) nonce-balance-obj-lst)
-        )
     )
     ;;
     ;;==================UPDATE======================

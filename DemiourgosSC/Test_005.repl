@@ -367,5 +367,27 @@
 (format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
 (format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
 
+(print "VALIDATION IS")
+
+
+
+
+(print "BEFORE MultiTransfer")
+(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+(format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
+
+;;(free.OUROBOROS.UV_ID-Amount-Pair ["GAS-98c486052a51" "OURO-98c486052a51"] [23.00 12.25])
+;;MULTISEND Function Below
+(free.OUROBOROS.C_MultiTransferTrueFungible "AncientHodler" ["GAS-98c486052a51" "OURO-98c486052a51"] "AncientHodler" "Emma" [23.00 12.25])
+
+(print "After MultiTransfer")
+(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+(format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
 (env-gas)
 (commit-tx)

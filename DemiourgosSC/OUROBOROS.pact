@@ -913,6 +913,10 @@
         ;;States
         frozen:bool                                 ;;Determines wheter Account is frozen for DPTF Token Identifier
     )
+    (defschema ID-Amount_Schema
+        id:string
+        amount:decimal
+    )
     ;;3]TABLES Definitions
     (deftable DPTF-PropertiesTable:{DPTF-PropertiesSchema})
     (deftable DPTF-BalancesTable:{DPTF-BalanceSchema})
@@ -1685,6 +1689,7 @@
     ;;      DPTF: UTILITY FUNCTIONS                 Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================ACCOUNT-INFO================                                                                                                    ;;
+    ;;      UR_AccountTrueFungibleExist             Checks if DPTF Account <account> exists for DPTF Token id <identifier>                              ;;
     ;;      UR_AccountTrueFungibles                 Returns a List of Truefungible Identifiers held by DPTF Accounts <account>                          ;;
     ;;      UR_AccountTrueFungibleSupply            Returns Account <account> True Fungible <identifier> Supply                                         ;;
     ;;      UR_AccountTrueFungibleGuard             Returns Account <account> True Fungible <identifier> Guard                                          ;;
@@ -1693,8 +1698,8 @@
     ;;      UR_AccountTrueFungibleRoleTransfer      Returns Account <account> True Fungible <identifier> Transfer Role                                  ;;
     ;;      UR_AccountTrueFungibleFrozenState       Returns Account <account> True Fungible <identifier> Frozen State                                   ;;
     ;;==================TRUE-FUNGIBLE-INFO==========                                                                                                    ;;
-    ;;      UR_TrueFungibleOwner                    Returns True Fungible <identifier> Owner Guard                                                           ;;
-    ;;      UR_TrueFungibleKonto                    Returns True Fungible <identifier> Owner Account                                                          ;;
+    ;;      UR_TrueFungibleOwner                    Returns True Fungible <identifier> Owner Guard                                                      ;;
+    ;;      UR_TrueFungibleKonto                    Returns True Fungible <identifier> Owner Account                                                    ;;
     ;;      UR_TrueFungibleName                     Returns True Fungible <identifier> Name                                                             ;;
     ;;      UR_TrueFungibleTicker                   Returns True Fungible <identifier> Ticker                                                           ;;
     ;;      UR_TrueFungibleDecimals                 Returns True Fungible <identifier> Decimals                                                         ;;
@@ -1711,7 +1716,11 @@
     ;;      UR_TrueFungibleTransferRoleAmount       Returns True Fungible <identifier> Transfer Role Amount                                             ;;
     ;;==================VALIDATIONS=================                                                                                                    ;;
     ;;      UV_TrueFungibleAmount                   Enforces the Amount <amount> is positive its decimal size conform for TrueFungible <identifier>     ;;
+    ;;      UV_TrueFungibleAmountCheck              Checks if the supplied amount is valid with the decimal denomination of the identifier              ;;
     ;;      UV_TrueFungibleIdentifier               Enforces the TrueFungible <identifier> exists                                                       ;;
+    ;;==================MULTI-TRANSFER==============                                                                                                    ;;
+    ;;      UC_ID-Amount_Pair                       Creates an ID-Amount Pair (used in Multi DPTF Transfer)                                             ;;
+    ;;      UV_ID-Amount_Pair                       Checks an ID-Amount Pair to be conform so that a Multi DPTF Transfer can properly take place        ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -1747,8 +1756,11 @@
     ;;2     C_Burn                                  Burns <amount> <identifier> TrueFungible on DPTF Account <account>                                  ;;
     ;;5     C_Wipe                                  Wipes the whole supply of <identifier> TrueFungible of a frozen DPTF Account <account>              ;;
     ;;==================TRANSFER====================                                                                                                    ;;
+    ;;      C_AbsoluteTransferTrueFungible          Executes an absolute (automatic) True Fungible Transfer, assuming a DPTS <receiver> Account exists  ;;
     ;;1     C_TransferTrueFungible                  Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account                        ;;
     ;;1     C_TransferTrueFungibleAnew              Same as |C_TransferTrueFungible| but with DPTF Account creation                                     ;;
+    ;;==================MULTI-TRANSFER==============                                                                                                    ;;
+    ;;      C_MultiTransferTrueFungible             Executes a Multi DPTF transfer using 2 separate lists of multiple IDs and multiple transfer amounts ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -1762,8 +1774,10 @@
     ;;      XC_MethodicTransferTrueFungibleAnew     Similar to |C_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
     ;;      X_MethodicTransferTrueFungileWithGAS    Similar to |X_MethodicTransferTrueFungible| but with GAS                                            ;;
     ;;      X_MethodicTransferTrueFungible          Similar to |X_TransferTrueFungible| but methodic for Smart-DPTS Account type operation              ;;
-    ;;      X_MethodicTransferTrueFungibleAnewWithGAS Similar to |X_MethodicTransferTrueFungibleAnew| but with GAS                                       ;;
+    ;;      X_MethodicTransferTrueFungibleAnewWithGAS Similar to |X_MethodicTransferTrueFungibleAnew| but with GAS                                      ;;
     ;;      X_MethodicTransferTrueFungibleAnew      Similar to |X_TransferTrueFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
+    ;;==================MULTI-TRANSFER==============                                                                                                    ;;
+    ;;      X_MultiTransferTrueFungiblePaired       Helper Function needed for making a Multi DPTF Transfer possible                                    ;;
     ;;==================CREDIT|DEBIT================                                                                                                    ;;
     ;;      X_Credit                                Auxiliary Function that credits a TrueFungible to a DPTF Account                                    ;;
     ;;      X_Debit                                 Auxiliary Function that debits a TrueFungible from a DPTF Account                                   ;;
@@ -1796,11 +1810,22 @@
     ;;                                            ;;
     ;;==================ACCOUNT-INFO================
     ;;
-    ;;      UR_AccountTrueFungibles
+    ;;      UR_AccountTrueFungibleExist|UR_AccountTrueFungibles
     ;;      UR_AccountTrueFungibleSupply|UR_AccountTrueFungibleGuard
     ;;      UR_AccountTrueFungibleRoleBurn|UR_AccountTrueFungibleRoleMint
     ;;      UR_AccountTrueFungibleRoleTransfer|UR_AccountTrueFungibleFrozenState
     ;;
+    (defun UR_AccountTrueFungibleExist:bool (identifier:string account:string)
+        @doc "Checks if DPTF Account <account> exists for DPTF Token id <identifier>"
+        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
+            { "balance" : -1.0 }
+            { "balance" := b}
+            (if (= b -1.0)
+                false
+                true
+            )
+        )
+    )
     (defun UR_AccountTrueFungibles:[string] (account:string)
         @doc "Returns a List of Truefungible Identifiers held by DPTF Accounts <account>"
         (UV_DPTS-Account account)
@@ -1981,6 +2006,22 @@
             )
         )
     )
+    (defun UV_TrueFungibleAmountCheck (identifier:string amount:decimal)
+        @doc "Checks if the supplied amount is valid with the decimal denomination of the identifier \
+        \ and if the amount is greater than zero. \
+        \ Does not use enforcements, it produces a simple check. If everything checks out, returns true, if not false \
+        \ Does not use enforcements "
+
+        (let*
+            (
+                (decimals:integer (UR_TrueFungibleDecimals identifier))
+                (decimal-check:bool (if (= (floor amount decimals) amount) true false))
+                (positivity-check:bool (if (> amount 0.0) true false))
+                (result:bool (and decimal-check positivity-check))
+            )
+            result
+        )
+    )
     (defun UV_TrueFungibleIdentifier (identifier:string)
         @doc "Enforces Identifier existance"
         (with-default-read DPTF-PropertiesTable identifier
@@ -1990,6 +2031,51 @@
                 (>= s 0.0)
                 (format "Identifier {} does not exist." [identifier])
             )
+        )
+    )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPTF: UTILITY FUNCTIONS               ;;
+    ;;                                            ;;
+    ;;==================MULTI-TRANSFER==============
+    ;;
+    ;;      UC_ID-Amount_Pair|UV_ID-Amount_Pair
+    ;;
+    (defun UC_ID-Amount_Pair:[object{ID-Amount_Schema}] (id-lst:[string] transfer-amount-lst:[decimal])
+        @doc "Creates an ID-Amount Pair (used in Multi DPTF Transfer)"
+        (let
+            (
+                (id-length:integer (length id-lst))
+                (amount-length:integer (length transfer-amount-lst))
+            )
+            (enforce (= id-length amount-length) "ID and Transfer-Amount Lists are not of equal length")
+            (zip (lambda (x:string y:decimal) { "id": x, "amount": y }) id-lst transfer-amount-lst)
+        )
+    )
+    (defun UV_ID-Amount_Pair:bool (id-lst:[string] transfer-amount-lst:[decimal])
+        @doc "Checks an ID-Amount Pair to be conform so that a Multi DPTF Transfer can properly take place"
+        (let*
+            (
+                (id-amount-object-lst:[object{ID-Amount_Schema}] (UC_ID-Amount_Pair id-lst transfer-amount-lst))
+                (result
+                    (fold
+                        (lambda
+                            (acc:bool item:object{ID-Amount_Schema})
+                            (let*
+                                (
+                                    (id:string (at "id" item))
+                                    (amount:decimal (at "amount" item))
+                                    (check:bool (UV_TrueFungibleAmountCheck id amount))
+                                )
+                                (and acc check)
+                            )
+                        )
+                        true
+                        id-amount-object-lst
+                    )
+                )
+            )
+            result
         )
     )
     ;;==============================================
@@ -2538,8 +2624,27 @@
     ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
-    ;;      C_TransferTrueFungible|C_TransferTrueFungibleAnew
+    ;;      C_AbsoluteTransferTrueFungible|C_TransferTrueFungible|C_TransferTrueFungibleAnew
     ;;
+    (defun C_AbsoluteTransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
+        @doc "Executes an absolute (automatic) True Fungible Transfer, assuming a DPTS <receiver> Account exists \
+        \ \
+        \ The transfer is automatic, as in, either the <C_TransferTrueFungibleAnew> or the <C_TransferTrueFungible> is used \
+        \ Depending on wheter or not the <receiver> DPTF Account exists for Token id <iddentifier> \
+        \ If receiver doesnt exist for given Token ID <identifier>, one will be created using the Guard stored in the DPTS account \
+        \ which is why a DPTS Account must exist for Account for this function to work"
+
+        (let
+            (
+                (receiver-existance:bool (UR_AccountTrueFungibleExist identifier receiver))
+                (receiver-guard:guard (UR_DPTS-AccountGuard receiver))
+            )
+            (if (= receiver-existance false)
+                (C_TransferTrueFungibleAnew initiator identifier sender receiver receiver-guard transfer-amount)
+                (C_TransferTrueFungible initiator identifier sender receiver transfer-amount)
+            )
+        )
+    )
     (defun C_TransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account"
 
@@ -2585,7 +2690,30 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      DPTS: AUXILIARY FUNCTIONS             ;;
+    ;;      DPTF: CLIENT FUNCTIONS                ;;
+    ;;                                            ;;
+    ;;==================MULTI-TRANSFER==============
+    ;;
+    ;;      C_MultiTransferTrueFungible|CX_MultiTransferTrueFungiblePaired
+    ;;
+    (defun C_MultiTransferTrueFungible (initiator:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
+        @doc "Executes a Multi DPTF transfer using 2 separate lists of multiple IDs and multiple transfer amounts"
+        (let
+            (
+                (pair-validation:bool (UV_ID-Amount_Pair id-lst transfer-amount-lst))
+            )
+            (enforce (= pair-validation true) "Input Lists <id-lst>|<transfer-amount-lst> cannot make a valid pair list for Multi Transfer Processing")
+            (let
+                (
+                    (pair:[object{ID-Amount_Schema}] (UC_ID-Amount_Pair id-lst transfer-amount-lst))
+                )
+                (map (lambda (x:object{ID-Amount_Schema}) (X_MultiTransferTrueFungiblePaired initiator sender receiver x)) pair)
+            )
+        )
+    )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
     ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
@@ -2614,13 +2742,16 @@
         (X_Credit identifier receiver receiver-guard amount)
         (X_IncrementNonce sender)
     )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
+    ;;                                            ;;
     ;==================METHODIC-TRANSFER===========
     ;;
     ;;      XC_MethodicTransferTrueFungible|XC_MetodicTransferTrueFungibleAnew
     ;;      X_MethodicTransferTrueFungileWithGAS|X_MethodicTransferTrueFungible
     ;;      X_MethodicTransferTrueFungibleAnewWithGAS|X_MethodicTransferTrueFungibleAnew
     ;;
-
     (defun XC_MethodicTransferTrueFungible (initiator:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Methodic transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account \
             \ Fails if <receiver> DPTF Account doesnt exist. \
@@ -2708,7 +2839,26 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      DPTS: AUXILIARY FUNCTIONS             ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
+    ;;                                            ;;
+    ;;==================MULTI-TRANSFER============== 
+    ;;
+    ;;      X_MultiTransferTrueFungiblePaired
+    ;;
+    (defun X_MultiTransferTrueFungiblePaired (initiator:string sender:string receiver:string id-amount-pair:object{ID-Amount_Schema})
+        @doc "Helper Function needed for making a Multi DPTF Transfer possible"
+        (let
+            (
+                (id:string (at "id" id-amount-pair))
+                (amount:decimal (at "amount" id-amount-pair))
+            )
+            (C_AbsoluteTransferTrueFungible initiator id sender receiver amount)
+        )
+
+    )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
     ;;                                            ;;
     ;;==================CREDIT|DEBIT================ 
     ;;
@@ -2770,7 +2920,7 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      DPTS: AUXILIARY FUNCTIONS             ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
     ;;                                            ;;
     ;;==================UPDATE======================
     ;;
@@ -2814,7 +2964,7 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      DPTS: AUXILIARY FUNCTIONS             ;;
+    ;;      DPTF: AUXILIARY FUNCTIONS             ;;
     ;;                                            ;;
     ;;==================AUXILIARY=================== 
     ;;
