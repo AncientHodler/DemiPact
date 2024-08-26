@@ -27,6 +27,8 @@
     ;;SmartContract Names
     (defconst SCN001 "Snake_Autostake")
     (defconst SCN002 "Snake_Vesting")
+    (defconst SCN003 "Snake_Carrier")
+    (defconst SCN004 "Gas-Tanker")
 
     ;;Private Keys
     (defconst DHADMIN1 "PrivateKey_AncientHodler")
@@ -35,6 +37,8 @@
 
     (defconst DH_SC001 "PrivateKey_Autostake-Pool")
     (defconst DH_SC002 "PrivateKey_Vesting")
+    (defconst DH_SC003 "PrivateKey_Carrier")
+    ;(defconst DH_SC004 "PrivateKey_GasTanker")
 
     (defconst USER_001 "PrivateKey_Byta")
     (defconst USER_002 "PrivateKey_Lumy")
@@ -63,8 +67,10 @@
 
         "KEY_SC_Autostake-Pool": { "keys": [KC.DH_SC001]},
         "KEY_SC_Vesting": { "keys": [KC.DH_SC002]},
+        "KEY_SC_Carrier": { "keys": [KC.DH_SC003]},
 
         "KEY_US_AHD": { "keys": [KC.DHADMIN1]},
+        "KEY_US_FLR": { "keys": [KC.DHADMIN2]},
         
         "KEY_US_001": { "keys": [KC.USER_001]},
         "KEY_US_002": { "keys": [KC.USER_002]},
@@ -73,7 +79,6 @@
         "KEY_US_005": { "keys": [KC.USER_005]},
         "KEY_US_006": { "keys": [KC.USER_006]},
         "KEY_US_007": { "keys": [KC.USER_007]}
-        
     }
 )
 ;;Entering Namespace Free
@@ -83,8 +88,11 @@
 (define-keyset "free.DH-GAS-Keyset" (read-keyset "DemiourgosSithMasters"))
 (define-keyset "free.DH_SC_Autostake_Key" (read-keyset "KEY_SC_Autostake-Pool"))
 (define-keyset "free.DH_SC_Vesting_Key" (read-keyset "KEY_SC_Vesting"))
+(define-keyset "free.DH_SC_Carrier_Key" (read-keyset "KEY_SC_Carrier"))
 
 (define-keyset "free.User000_Keyset" (read-keyset "KEY_US_AHD"))
+(define-keyset "free.User008_Keyset" (read-keyset "KEY_US_FLR"))
+
 (define-keyset "free.User001_Keyset" (read-keyset "KEY_US_001"))
 (define-keyset "free.User002_Keyset" (read-keyset "KEY_US_002"))
 (define-keyset "free.User003_Keyset" (read-keyset "KEY_US_003"))
@@ -112,6 +120,18 @@
 ;; PART 02 - Load pact Modules
 (print "==========================TX02=========================================")
 (print "==========================Load-Pact-files==============================")
+
+;(begin-tx "Load Kadena Smart-Contract")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/KadenaCoin.pact")
+;(use free.coin)
+
+;(env-gas)
+;(commit-tx)
+
+
 
 (begin-tx "Load Demiourgos Pact Token Standard DPTS")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -151,6 +171,33 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "Fuel Ancient Hodler with Kadena")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs   [{  "key": "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca", 
+                "caps": [
+                (coin.TRANSFER "sender00" "AncientHodler" 1000.0)
+                        ]}
+             {  "key": "PrivateKey_AncientHodler", 
+                "caps": [
+                (coin.TRANSFER "AncientHodler" "ChiefTechnologyOfficer" 10.0)
+                (coin.TRANSFER "AncientHodler" "HeadOfVision" 10.0)
+                (coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
+                        ]}])
+
+;;Transfer KDA to AncientHodler Account
+;(test-capability (coin.TRANSFER "sender00" "AncientHodler" 1000.0))
+;(coin.TRANSFER "AncientHodler" "Florean" 10.0)
+;(coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
+
+(coin.transfer-create "sender00" "AncientHodler" (describe-keyset "free.User000_Keyset") 1000.0)
+
+(coin.transfer-create "AncientHodler" "ChiefTechnologyOfficer" (describe-keyset "free.User000_Keyset") 1.0)
+(coin.transfer-create "AncientHodler" "HeadOfVision" (describe-keyset "free.User008_Keyset") 1.0)
+(coin.transfer-create "AncientHodler" "Gas-Tanker" (describe-keyset "free.DH-GAS-Keyset") 1.0)
+
+(env-gas)
+(commit-tx)
+
 ;;==============================================================================
 ;;
 ;;
@@ -178,18 +225,23 @@
         true    ;;can-upgrade
         true    ;;can-add-special-role
         true    ;;can-freeze
-        true   ;;can-wipe
+        true    ;;can-wipe
         true    ;;can-pause
     )
 
-    (free.OUROBOROS.C_MintOrigin
+    (free.OUROBOROS.C_Mint
         "AncientHodler"
         "OURO-98c486052a51"
         "AncientHodler"
         50000.0
+        true
     )
 
     (free.OUROBOROS.A_InitialiseGAS "AncientHodler" "OURO-98c486052a51")
+
+    ;;debit DPTF gas not working
+
+    
     (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
     (free.OUROBOROS.A_TurnGasOn)
     
@@ -230,8 +282,8 @@
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.OUROBOROS.C_SetTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting")              ;;Autostake Pool Key
-(free.OUROBOROS.C_SetTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting")         ;;Autostake Pool Key
+(free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)              ;;Autostake Pool Key
+(free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)         ;;Autostake Pool Key
 (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
 
 (env-gas)

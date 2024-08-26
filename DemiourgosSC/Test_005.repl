@@ -27,17 +27,20 @@
 
 (print "===========================MAKE GAS======================================")
 (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
+(free.OUROBOROS.C_CompressGAS "AncientHodler" 100.0)
+
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Emma" (describe-keyset "free.User003_Keyset"))
 
 
 (print "After transfer ROLE +++++++++++++++++++++++++++++++++++++++++++++++++++")
-(free.OUROBOROS.C_TransferTrueFungibleAnew "AncientHodler" "GAS-98c486052a51" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 1000.0)
-(free.OUROBOROS.C_TransferTrueFungibleAnew "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 2.0)
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "GAS-98c486052a51" "AncientHodler" "Emma" 1000.0)
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
 
 ;(free.OUROBOROS.C_SetTransferRole "OURO-98c486052a51" "Emma")
-(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
 ;(print "A MERSSSSSSSSSSSSSS AH to Emma ca Emma e receiver")
 
-(free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 1.0)
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 1.0)
 (print "After transfer ROLE TXes +++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -149,34 +152,34 @@
 ;;Vesting Tests
 (print "==============================================FIRST 3================================================")
 ;ouro to ouro
-(free.DH_SC_Vesting.A_VestOuroVOuro "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 500.0 86400 86400 2)     ;;Emma key
+(free.DH_SC_Vesting.A_VestOuroVOuro "AncientHodler" "AncientHodler" "Emma" 500.0 86400 86400 2)     ;;Emma key
 ;(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Lumy"))])
 
 ;auryn to auryn
-(free.DH_SC_Vesting.A_VestAurynVAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 100.0 86400 86400 3)     ;;AH key
+(free.DH_SC_Vesting.A_VestAurynVAuryn "AncientHodler" "AncientHodler" "Emma" 100.0 86400 86400 3)     ;;AH key
 ;(format "Lumy are {} Vested-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
 
 ;elite-auryn to elite-auryn
-(free.DH_SC_Vesting.A_VestEAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 50.0 86400 86400 4)     ;;AH key
+(free.DH_SC_Vesting.A_VestEAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" 50.0 86400 86400 4)     ;;AH key
 ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
 (print "==============================================LAST 3================================================")
 ;;
 ;ouro to auryn
-(free.DH_SC_Vesting.A_VestOuroVAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 105.0 86400 86400 5)
+(free.DH_SC_Vesting.A_VestOuroVAuryn "AncientHodler" "AncientHodler" "Emma" 105.0 86400 86400 5)
 ;(format "Lumy are {} Vested-Auryn" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
 ;(print "Lumy has this total of Vested Auryn")
 ;(free.DPMF.UR_AccountMetaFungibleSupply "VAURYN-98c486052a51" "Lumy")
 
 ;ouro to elite auryn
-(free.DH_SC_Vesting.A_VestOuroVEAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 210.0 86400 86400 6)
+(free.DH_SC_Vesting.A_VestOuroVEAuryn "AncientHodler" "AncientHodler" "Emma" 210.0 86400 86400 6)
 ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
 ;(print "Lumy has this total of Vested Elite Auryn")
 ;(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
 
 ;auryn to elite auryn
-(free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 300.0 86400 86400 7)
+(free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" 300.0 86400 86400 7)
 ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
 ;(print "Lumy has this total of Vested Elite Auryn in the end")
@@ -283,7 +286,7 @@
 ;(format "Snake Vesting Add NFT Quantity for Vested-Auryn is set to {}" [(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VAURYN-98c486052a51" "Snake_Vesting")])
 ;(format "Snake Vesting Add NFT Quantity for Vested-Elite-Auryn is set to {}" [(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VEAURYN-98c486052a51" "Snake_Vesting")])
             
-(free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 300.0 86400 86400 7)
+(free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" 300.0 86400 86400 7)
 
 (print "Check Gas Holding===============================")
 
@@ -310,7 +313,7 @@
 ;;
 ;;
 ;;==============================================================================
-(begin-tx "TESTING")
+(begin-tx "TESTING MultiSend")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
 (env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
@@ -318,76 +321,107 @@
             { "key": "PrivateKey_Autostake-Pool", "caps": [] }
             { "key": "PrivateKey_Vesting", "caps": [] }])
 
-(print "BEFORE SET")
-(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
 
-(free.DPMF.C_SetAddQuantityRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-(free.DPMF.C_SetBurnRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-(free.DPMF.C_SetTransferRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-
-(print "AFTER SET")
-
-(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
-
-
-(print "BEFORE UNSET")
-(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
-
-(free.DPMF.C_UnsetAddQuantityRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-(free.DPMF.C_UnsetBurnRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-(free.DPMF.C_UnsetTransferRole "AncientHodler" "VOURO-98c486052a51" "Emma")
-
-(print "AFTER UNSET")
-
-(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleBurn "VOURO-98c486052a51" "Emma")
-(free.DPMF.UR_AccountMetaFungibleRoleTransfer "VOURO-98c486052a51" "Emma")
-
-(print "AT THE END")
-(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
-(format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
-(format "Snake_Vesting has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Vesting")])
-(format "Gas-Tanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
-
-(format "Total Gas Spent is {}" [(free.OUROBOROS.UR_GasSpent)])
-
-
-(print "BEFORE Compression")
-(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
-(free.OUROBOROS.C_CompressGAS "AncientHodler" 200.0)
-(print "AFTER Compression")
-(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
-
-(print "VALIDATION IS")
-
-
-
-
-(print "BEFORE MultiTransfer")
-(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
-(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
-(format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+;;(print "BEFORE MultiTransfer")
+;;(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+;;(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+;;(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+;;(format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
 
 
 ;;(free.OUROBOROS.UV_ID-Amount-Pair ["GAS-98c486052a51" "OURO-98c486052a51"] [23.00 12.25])
 ;;MULTISEND Function Below
 (free.OUROBOROS.C_MultiTransferTrueFungible "AncientHodler" ["GAS-98c486052a51" "OURO-98c486052a51"] "AncientHodler" "Emma" [23.00 12.25])
 
-(print "After MultiTransfer")
-(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
-(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+;;(print "After MultiTransfer")
+;;(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+;;(format "Ancient Hodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+;;(format "Emma has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+;;(format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Deploy DPTS Accounts")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+(print "BULK SEND")
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Byta" (describe-keyset "free.User001_Keyset"))
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Lumy" (describe-keyset "free.User002_Keyset"))
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Bula" (describe-keyset "free.User004_Keyset"))
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Kiss" (describe-keyset "free.User005_Keyset"))
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Plcs" (describe-keyset "free.User006_Keyset"))
+(free.OUROBOROS.C_DeployStandardDPTSAccount "Satanel" (describe-keyset "free.User007_Keyset"))
+(env-gas)
+(commit-tx)
+
+
+
+(begin-tx "TESTING-BULK SEND")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "======================================================================")
+(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
+            { "key": "PrivateKey_Emma", "caps": [] }
+            { "key": "PrivateKey_Vesting", "caps": [] }])
+
+;;{ "key": "PrivateKey_Autostake-Pool", "caps": [] }
+
+;;(print "BEFORE Bulk Send")
+(print "BEFOREEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+;;(free.DH_SC_Vesting.A_VestOuroVOuro "AncientHodler" "AncientHodler" "Emma" (describe-keyset "free.User003_Keyset") 1500.0 86400 86400 2)     
+;;(format "Vesting SC has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Snake_Vesting")])
+;;(format "Vesting SC has {} AURYN" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Snake_Vesting")])
 (format "Emma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+(print "AFTERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+
+
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1500.0)
+(format "Emma has after transfer {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
+(free.DH_SC_Autostake.C_CoilOuroboros "AncientHodler" "Emma" 200.0)
+(format "Emma has after coil {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+;;(format "Lumy has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Lumy")])
+;;(format "Bula has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Bula")])
+;;(format "Kiss has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Kiss")])
+;;(format "Plcs has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Plcs")])
+;;(format "Satanel has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Satanel")])
+
+(free.OUROBOROS.C_BulkTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" ["Byta" "Lumy" "Bula" "Kiss" "Plcs" "Satanel"] [5.0 15.0 25.0 33.1 22.1 31.7])
+
+;;(print "AFTER Bulk Send")
+;;(format "Byta has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Byta")])
+;;(format "Lumy has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Lumy")])
+;;(format "Bula has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Bula")])
+;;(format "Kiss has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Kiss")])
+;;(format "Plcs has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Plcs")])
+;;(format "Satanel has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Satanel")])
+
+(print "Unallowable mint test")
+(format "Emma has after before wipe {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
+(free.OUROBOROS.C_ToggleFreezeAccount "AncientHodler" "OURO-98c486052a51" "Emma" true)
+(free.OUROBOROS.C_Wipe "AncientHodler" "OURO-98c486052a51" "Emma")
+(free.OUROBOROS.C_ToggleFreezeAccount "AncientHodler" "OURO-98c486052a51" "Emma" false)
+
+(format "Emma has after before wipe {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
+(free.OUROBOROS.C_TogglePause "AncientHodler" "OURO-98c486052a51" true)
+
+(expect-failure "Ouro is Pause, transfer should fail" (free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0))
+
+(free.OUROBOROS.C_TogglePause "AncientHodler" "OURO-98c486052a51" false)
+
+(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
+
+(format "Emma has after after wipe and pause {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+
+(print "Control Test")
+(free.OUROBOROS.C_Control "AncientHodler" "OURO-98c486052a51" true true true true true true)
+(print "Change Ownership Test")
+(format "Ouro Owner is {}" [(free.OUROBOROS.UR_TrueFungibleKonto "OURO-98c486052a51")])
+(free.OUROBOROS.C_ChangeOwnership "AncientHodler" "OURO-98c486052a51" "Emma")
+(format "After ownership change Ouro Owner is {}" [(free.OUROBOROS.UR_TrueFungibleKonto "OURO-98c486052a51")])
+
+(free.OUROBOROS.C_ControlSmartAccount "AncientHodler" "Snake_Vesting" true true)
 
 (env-gas)
 (commit-tx)
