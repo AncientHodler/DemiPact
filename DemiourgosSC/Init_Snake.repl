@@ -217,7 +217,6 @@
     (free.OUROBOROS.C_IssueTrueFungible
         "AncientHodler"
         "AncientHodler"
-        (describe-keyset "free.User000_Keyset")
         "Ouroboros"
         "OURO"
         24

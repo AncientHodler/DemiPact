@@ -33,14 +33,14 @@
 
 
 (print "After transfer ROLE +++++++++++++++++++++++++++++++++++++++++++++++++++")
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "GAS-98c486052a51" "AncientHodler" "Emma" 1000.0)
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "GAS-98c486052a51" "AncientHodler" "Emma" 1000.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
 
 ;(free.OUROBOROS.C_SetTransferRole "OURO-98c486052a51" "Emma")
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
 ;(print "A MERSSSSSSSSSSSSSS AH to Emma ca Emma e receiver")
 
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 1.0)
+(free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 1.0)
 (print "After transfer ROLE TXes +++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -374,7 +374,7 @@
 (print "AFTERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
 
 
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1500.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1500.0)
 (format "Emma has after transfer {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
 
 (free.DH_SC_Autostake.C_CoilOuroboros "AncientHodler" "Emma" 200.0)
@@ -406,11 +406,11 @@
 
 (free.OUROBOROS.C_TogglePause "AncientHodler" "OURO-98c486052a51" true)
 
-(expect-failure "Ouro is Pause, transfer should fail" (free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0))
+(expect-failure "Ouro is Pause, transfer should fail" (free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0))
 
 (free.OUROBOROS.C_TogglePause "AncientHodler" "OURO-98c486052a51" false)
 
-(free.OUROBOROS.C_AbsoluteTransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 1.0)
 
 (format "Emma has after after wipe and pause {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
 

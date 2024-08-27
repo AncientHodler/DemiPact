@@ -285,10 +285,10 @@
                 (enforce-one
                     (format "No Snake Token Accounts found defined on {} Account" [account])
                     [
-                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXIST (UR_OuroborosID) account))
-                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXIST (UR_AurynID) account))
-                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXIST (UR_EliteAurynID) account))
-                        (compose-capability (DPMF.DPMF_ACCOUNT_EXIST (UR_VEliteAurynID) account))
+                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXISTANCE (UR_OuroborosID) account true))
+                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXISTANCE (UR_AurynID) account true))
+                        (compose-capability (OUROBOROS.DPTF_ACCOUNT_EXISTANCE (UR_EliteAurynID) account true))
+                        (compose-capability (DPMF.DPMF_ACCOUNT_EXISTANCE (UR_VEliteAurynID) account true))
                     ]
                 )
             )
@@ -1440,7 +1440,6 @@
                         (OUROBOROS.C_IssueTrueFungible
                             initiator
                             SC_NAME
-                            (keyset-ref-guard SC_KEY)
                             "Auryn"
                             "AURYN"
                             24
@@ -1456,7 +1455,6 @@
                         (OUROBOROS.C_IssueTrueFungible
                             initiator
                             SC_NAME
-                            (keyset-ref-guard SC_KEY)
                             "EliteAuryn"
                             "ELITEAURYN"
                             24
@@ -1472,7 +1470,6 @@
                         (OUROBOROS.C_IssueTrueFungible
                             initiator
                             SC_NAME
-                            (keyset-ref-guard SC_KEY)
                             "Ignis"
                             "IGNIS"
                             24
@@ -1502,7 +1499,7 @@
                 )
                 ;;Snake-Autostake MANAGEMENT
                 ;;Issue OURO DPTF Account for the <Snake_Autostake> aka AutostakePool
-                (OUROBOROS.C_DeployTrueFungibleAccount ouro-id SC_NAME (keyset-ref-guard SC_KEY))
+                (OUROBOROS.C_DeployTrueFungibleAccount ouro-id SC_NAME)
                 ;;SetTokenRoles
                 ;;BURN Roles
                 (OUROBOROS.C_ToggleBurnRole initiator ouro-id SC_NAME true)
@@ -1520,8 +1517,8 @@
                 ;;Issue the Snake_Carrier Smart DPTS Account
                 (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME_CARRIER (keyset-ref-guard SC_KEY_CARRIER))
                 ;;Issue Auryn and Elite-Auryn Account for the <Snake_Carrier> aka Auryn|Elite-Auryn Transporter
-                (OUROBOROS.C_DeployTrueFungibleAccount AurynID SC_NAME_CARRIER (keyset-ref-guard SC_KEY_CARRIER))
-                (OUROBOROS.C_DeployTrueFungibleAccount EliteAurynID SC_NAME_CARRIER (keyset-ref-guard SC_KEY_CARRIER))
+                (OUROBOROS.C_DeployTrueFungibleAccount AurynID SC_NAME_CARRIER)
+                (OUROBOROS.C_DeployTrueFungibleAccount EliteAurynID SC_NAME_CARRIER)
                 ;;Add Transfer Roles for the Snake Carrier
                 (OUROBOROS.C_ToggleTransferRole initiator AurynID SC_NAME_CARRIER true)
                 (OUROBOROS.C_ToggleTransferRole initiator EliteAurynID SC_NAME_CARRIER true)
@@ -1613,13 +1610,13 @@
                 (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
             )
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
-            (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
+            (OUROBOROS.CX_TransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
             (X_UpdateResidentOuro ouro-input-amount true)
     ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
             (X_MintAuryn initiator auryn-output-amount)
     ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account  
-            (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator auryn-id SC_NAME coiler auryn-output-amount)
+            (OUROBOROS.CX_TransferTrueFungible initiator auryn-id SC_NAME coiler auryn-output-amount)
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
             (C_UpdateAurynzData initiator coiler)
     ;;6]<auryn-output-amount> is returned
@@ -1636,7 +1633,7 @@
             ;;0]Any Client can perform <C_FuelOuroboros>; Smart DPTS Accounts arent required to provide their guards
         (with-capability (FUEL_OUROBOROS initiator fueler ouro-input-amount)
         ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
-            (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator ouro-id fueler SC_NAME ouro-input-amount)
+            (OUROBOROS.CX_TransferTrueFungible initiator ouro-id fueler SC_NAME ouro-input-amount)
         ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
             (X_UpdateResidentOuro ouro-input-amount true)
             )
@@ -1654,13 +1651,13 @@
                     (eauryn-id:string (UR_EliteAurynID))
                 )
     ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator auryn-id coiler SC_NAME auryn-input-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id coiler SC_NAME auryn-input-amount)
     ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
         (X_UpdateResidentAuryn auryn-input-amount true)
     ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
         (X_MintEliteAuryn initiator auryn-input-amount)
     ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-input-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-input-amount)
     ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
         (C_UpdateAurynzData initiator coiler) 
             )
@@ -1678,7 +1675,7 @@
                     (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
                 )  
     ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
     ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
         (X_MintAuryn initiator auryn-output-amount)
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
@@ -1687,7 +1684,7 @@
     ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
         (X_MintEliteAuryn initiator auryn-output-amount)
     ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-output-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-output-amount)
     ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
         (C_UpdateAurynzData initiator coiler)  
                 auryn-output-amount 
@@ -1720,7 +1717,7 @@
     ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
         (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
     ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator auryn-id uncoiler SC_NAME auryn-input-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id uncoiler SC_NAME auryn-input-amount)
     ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
         (X_BurnAuryn initiator auryn-input-amount)
     ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
@@ -1747,7 +1744,7 @@
     ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
         (with-capability (CULL_OUROBOROS initiator culler culled-amount)
     ;;2]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator ouro-id SC_NAME culler culled-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator ouro-id SC_NAME culler culled-amount)
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
         (X_UpdateUnbondingOuro culled-amount false)
                 )
@@ -1779,7 +1776,7 @@
             (enforce (>= uncoil-position 0) "No more Elite-Auryn Uncoil Positions")
         )
     ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator eauryn-id uncoiler SC_NAME elite-auryn-input-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id uncoiler SC_NAME elite-auryn-input-amount)
     ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
         (X_BurnEliteAuryn initiator elite-auryn-input-amount)
     ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
@@ -1806,7 +1803,7 @@
     ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
         (with-capability (CULL_AURYN initiator culler culled-amount)
     ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
-        (OUROBOROS.CX_AbsoluteTransferTrueFungible initiator auryn-id SC_NAME culler culled-amount)
+        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id SC_NAME culler culled-amount)
     ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
         (X_UpdateUnbondingAuryn culled-amount false)
                 )

@@ -229,9 +229,25 @@
     ;;                                            ;;
     ;;==============================================
     ;;
-    ;;      DPTS_ACCOUNT_OWNER|IZ_DPTS_ACOUNT_SMART
+    ;;      DPTS_ACCOUNT_EXIST|DPTS_ACCOUNT_OWNER|IZ_DPTS_ACOUNT_SMART
     ;;      SC_TRANSFERABILITY|DPTS_INCREASE-NONCE
     ;;
+    (defcap DPTS_ACCOUNT_EXIST (account:string)
+        @doc "Enforces that a DPTS Account exists"
+        (UV_DPTS-Account account)
+        (let
+            (
+                (dpts-account-type:bool (UR_DPTS-AccountType account))
+            )
+            (enforce-one
+                (format "DPTS Account {} does not exist !" [account])
+                [
+                    (enforce (= dpts-account-type true) (format "Account {} is a Normal DPTS Account - Crediting will execute" [account]))
+                    (enforce (= dpts-account-type false) (format "Account {} is a Smart DPTS Account - Crediting will execute" [account]))
+                ]
+            )
+        )
+    )
     (defcap DPTS_ACCOUNT_OWNER (account:string)
         @doc "Enforces DPTS Account Ownership"
         (UV_DPTS-Account account)
@@ -853,26 +869,18 @@
             \ a Standard or Smart DPTS Account must be deployed \
             \ Equivalent to creting a new ERD Address \
             \ \
-            \ By Default a Standard DPTS Account is created automatically \
-            \ when a new DPTF|DPMF|DPFS|DPNF Token Account is created or Token issued, \
-            \ so there shouldnt be any need to use this function directly \
-            \ \
-            \ If a DPTS Account already exists, this function does no modifications"
+            \ If a DPTS Account already exists, function will fail, due to usage of insert"
         (UV_DPTS-Account account)
         (UV_EnforceReserved account guard)
 
-        (with-default-read DPTS-AccountTable account
-            { "guard" : guard, "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false, "nonce" : 0}
-            { "guard" := g, "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc, "nonce" := n}
-            (write DPTS-AccountTable account
-                { "guard"                       : g
-                , "smart-contract"              : sc
-                , "payable-as-smart-contract"   : pasc
-                , "payable-by-smart-contract"   : pbsc
-                , "nonce"                       : n
-                }  
-            )
-        )
+        (insert DPTS-AccountTable account
+            { "guard"                       : guard
+            , "smart-contract"              : false
+            , "payable-as-smart-contract"   : false
+            , "payable-by-smart-contract"   : false
+            , "nonce"                       : 0
+            }  
+        ) 
     )
     (defun C_DeploySmartDPTSAccount (account:string guard:guard)
         @doc "Deploys a Smart DPTS Account. \
@@ -887,9 +895,6 @@
             \ (Pause, Freeze, Wipe, SetAndUnset of Transfer Roles) \
             \ As opossed to MVX SmartAccount ERDs, where token management cannot be managed directly, \
             \ but only indirectly through WritePoints that need to be created. \
-            \ \
-            \ SmartDPTS Accounts cannot Burn and Mint tokens directly, but only indirectly through Functions created in their own modules, \
-            \ with these functions providing the required capabilities \
             \ \
             \ Client Functions of Modules of Smart DPTS Account must use for Token Transfers the Methodic Transfer DPTF/DPMF/DPSF/DPNF Functions, \
             \ while providing the required capabilities for this action \
@@ -970,7 +975,6 @@
         @doc "Schema for DPTF Token (True Fungibles) Properties \
             \ Key for Table is DPTF Token Identifier. This ensure a unique entry per Token Identifier"
 
-        owner:guard                                 ;;Guard of the Token Owner, Account that created the DPTF Token
         owner-konto:string                          ;;Account of the Token Owner, Account that created the DPTF Token
         name:string                                 ;;Token Name (Alpha-Numeric 3-50 Characters Long)
         ticker:string                               ;;Token Ticker (Capital Alpha-Numeric 3-20 Characters Long)
@@ -996,8 +1000,7 @@
             \ <DPTF Identifier> + BAR + <account> \
             \ This ensure a single entry per DPTF Identifier per account."
 
-        balance:decimal                             ;;Stores DPFS balance for Account
-        guard:guard                                 ;;Stores Guard for DPFS Account
+        balance:decimal                             ;;Stores DPTF balance for Account
         ;;Special Roles
         role-burn:bool                              ;;when true, Account can burn DPTF Tokens locally
         role-mint:bool                              ;;when true, Account can mint DPTF Tokens locally
@@ -1123,7 +1126,14 @@
         @doc "Enforces DPTF Token Ownership"
         (UV_TrueFungibleIdentifier identifier)
 
-        (enforce-guard (UR_TrueFungibleOwner identifier))
+        (let*
+            (
+                (owner-konto:string (UR_TrueFungibleKonto identifier))
+                (dpts-guard:guard (UR_DPTS-AccountGuard owner-konto))
+            )
+            (enforce-guard dpts-guard)
+        )
+        
     )
     (defcap DPTF_CAN-CHANGE-OWNER_ON (identifier:string)
         @doc "Enforces DPTF Token ownership is changeble"
@@ -1249,40 +1259,25 @@
     ;;                                            ;;
     ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
     ;;
-    ;;      DPTF_ACCOUNT_EXIST|DPTF_ACCOUNT_OWNER
+    ;;      DPTF_ACCOUNT_EXISTANCE|DPTF_ACCOUNT_OWNER
     ;;      DPTF_ACCOUNT_BURN_ON|DPTF_ACCOUNT_BURN_OFF
     ;;      DPTF_ACCOUNT_MINT_ON|DPTF_ACCOUNT_MINT_OFF
     ;;      DPTF_ACCOUNT_TRANSFER_ON|DPTF_ACCOUNT_TRANSFER_OFF
     ;;      DPTF_ACCOUNT_FREEZE_ON|DPTF_ACCOUNT_FREEZE_OFF
     ;;
-    (defcap DPTF_ACCOUNT_EXIST (identifier:string account:string)
-        @doc "Enforces that the DPTF Account <account> exists for Token <idnetifier>"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
-        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
-            { "balance" : -1.0}
-            { "balance" := b}
-            (enforce (>= b 0.0) (format "The DPTF Account {} for the Token {} doesnt exist" [account identifier]))
-        )
-    )
-    (defcap DPTF_ACCOUNT_NOT-EXIST (identifier:string account:string)
-        @doc "Enforces that the DPTF Account <account> does not exist for Token <identifier>"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
-        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
-            { "balance" : -1.0}
-            { "balance" := b}
-            (enforce (= b -1.0) (format "The DPTF Account {} for the Token {} already exists" [account identifier]))
+    (defcap DPTF_ACCOUNT_EXISTANCE (identifier:string account:string existance:bool)
+        @doc"Enforces <existance> Existance for the DPMF Token Account <identifier>|<account>"
+        (let
+            (
+                (existance-check:bool (UR_AccountTrueFungibleExist identifier account))
+            )
+            (enforce (= existance-check existance) (format "{} Existance isnt verified for the DPTF Token Account <{}>|<{}}>" [existance identifier account]))
         )
     )
     (defcap DPTF_ACCOUNT_OWNER (identifier:string account:string)
         @doc "Enforces DPTF Account Ownership"
         (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
-        (enforce-guard (UR_AccountTrueFungibleGuard identifier account))
+        (compose-capability (DPTS_ACCOUNT_OWNER account))
     )
     (defcap DPTF_ACCOUNT_BURN_ON (identifier:string account:string)
         @doc "Enforces DPTF Account has burn role on"
@@ -1585,14 +1580,16 @@
     ;;      DPTF_ISSUE
     ;;      DPTF_MINT_ORIGIN|DPTF_MINT
     ;;
-    (defcap DPTF_ISSUE (patron:string account:string)
+    (defcap DPTF_ISSUE (patron:string client:string)
         @doc "Capability required to issue a DPTF Token"
+        (UV_DPTS-Account patron)
+        (UV_DPTS-Account client)
         (let
             (
                 (gas-id:string (UR_GasID))
             )
             (if (!= gas-id "GAS")
-                (compose-capability (GAS_COLLECTION patron account GAS_ISSUE))
+                (compose-capability (GAS_COLLECTION patron client GAS_ISSUE))
                 true
             )
             (compose-capability (DPTS_INCREASE-NONCE))
@@ -1753,6 +1750,7 @@
         @doc "Capability to perform crediting operations with DPTF Tokens"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
+        (compose-capability (DPTS_ACCOUNT_EXIST account))
     )
     (defcap DEBIT_DPTF (identifier:string account:string)
         @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
@@ -1768,13 +1766,11 @@
     ;;      UR_AccountTrueFungibleExist             Checks if DPTF Account <account> exists for DPTF Token id <identifier>                              ;;
     ;;      UR_AccountTrueFungibles                 Returns a List of Truefungible Identifiers held by DPTF Accounts <account>                          ;;
     ;;      UR_AccountTrueFungibleSupply            Returns Account <account> True Fungible <identifier> Supply                                         ;;
-    ;;      UR_AccountTrueFungibleGuard             Returns Account <account> True Fungible <identifier> Guard                                          ;;
     ;;      UR_AccountTrueFungibleRoleBurn          Returns Account <account> True Fungible <identifier> Burn Role                                      ;;
     ;;      UR_AccountTrueFungibleRoleMint          Returns Account <account> True Fungible <identifier> Mint Role                                      ;;
     ;;      UR_AccountTrueFungibleRoleTransfer      Returns Account <account> True Fungible <identifier> Transfer Role                                  ;;
     ;;      UR_AccountTrueFungibleFrozenState       Returns Account <account> True Fungible <identifier> Frozen State                                   ;;
     ;;==================TRUE-FUNGIBLE-INFO==========                                                                                                    ;;
-    ;;      UR_TrueFungibleOwner                    Returns True Fungible <identifier> Owner Guard                                                      ;;
     ;;      UR_TrueFungibleKonto                    Returns True Fungible <identifier> Owner Account                                                    ;;
     ;;      UR_TrueFungibleName                     Returns True Fungible <identifier> Name                                                             ;;
     ;;      UR_TrueFungibleTicker                   Returns True Fungible <identifier> Ticker                                                           ;;
@@ -1827,10 +1823,8 @@
     ;;2     CX_Burn                                 Methodic, similar to |C_Burn| for Smart-DPTS Account type operation                                 ;;
     ;;5     C_Wipe                                  Wipes the whole supply of <identifier> TrueFungible of a frozen DPTF Account <account>              ;;
     ;;==================TRANSFER====================                                                                                                    ;;
-    ;;1     C_AbsoluteTransferTrueFungible          Executes an absolute (automatic) True Fungible Transfer, assuming a DPTS <receiver> Account exists  ;;
     ;;1     C_TransferTrueFungible                  Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account                        ;;
     ;;------------------METHODIC-TRANSFER---------------------------------------------------------------------------------------------------------------;;
-    ;;1     CX_AbsoluteTransferTrueFungible         Methodic, similar to |C_AbsoluteTransferTrueFungible| for Smart-DPTS Account type operation         ;;
     ;;1     CX_TransferTrueFungible                 Methodic, Similar to |C_TransferTrueFungible| for Smart-DPTS Account type operation                 ;;
     ;;==================MULTI-TRANSFER==============                                                                                                    ;;
     ;;      C_MultiTransferTrueFungible             Executes a Multi DPTF transfer using 2 separate lists of multiple IDs|Transfer-amounts              ;;
@@ -1871,7 +1865,7 @@
     ;;==================ACCOUNT-INFO================
     ;;
     ;;      UR_AccountTrueFungibleExist|UR_AccountTrueFungibles
-    ;;      UR_AccountTrueFungibleSupply|UR_AccountTrueFungibleGuard
+    ;;      UR_AccountTrueFungibleSupply
     ;;      UR_AccountTrueFungibleRoleBurn|UR_AccountTrueFungibleRoleMint
     ;;      UR_AccountTrueFungibleRoleTransfer|UR_AccountTrueFungibleFrozenState
     ;;
@@ -1912,13 +1906,6 @@
             { "balance" := b}
             b
         )
-    )
-    (defun UR_AccountTrueFungibleGuard:guard (identifier:string account:string)
-        @doc "Returns Account <account> True Fungible <identifier> Guard"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
-        (at "guard" (read DPTF-BalancesTable (concat [identifier BAR account]) ["guard"]))
     )
     (defun UR_AccountTrueFungibleRoleBurn:bool (identifier:string account:string)
         @doc "Returns Account <account> True Fungible <identifier> Burn Role"
@@ -1966,16 +1953,11 @@
     ;;                                            ;;
     ;;==================TRUE-FUNGIBLE-INFO==========
     ;;
-    ;;      UR_TrueFungibleOwner|UR_TrueFungibleKonto|UR_TrueFungibleName|UR_TrueFungibleTicker|UR_TrueFungibleDecimals
+    ;;      UR_TrueFungibleKonto|UR_TrueFungibleName|UR_TrueFungibleTicker|UR_TrueFungibleDecimals
     ;;      UR_TrueFungibleCanChangeOwner|UR_TrueFungibleCanUpgrade|UR_TrueFungibleCanAddSpecialRole
     ;;      UR_TrueFungibleCanFreeze|UR_TrueFungibleCanWipe|UR_TrueFungibleCanPause|UR_TrueFungibleIsPaused
     ;;      UR_TrueFungibleSupply|UR_TrueFungibleOriginMint|UR_TrueFungibleOriginAmount|UR_TrueFungibleTransferRoleAmount
     ;;
-    (defun UR_TrueFungibleOwner:guard (identifier:string)
-        @doc "Returns True Fungible <identifier> Owner"
-        (UV_TrueFungibleIdentifier identifier)
-        (at "owner" (read DPTF-PropertiesTable identifier ["owner"]))
-    )
     (defun UR_TrueFungibleKonto:string (identifier:string)
         @doc "Returns True Fungible <identifier> Account"
         (UV_TrueFungibleIdentifier identifier)
@@ -2373,7 +2355,6 @@
         (
             patron:string 
             account:string 
-            owner:guard 
             name:string 
             ticker:string 
             decimals:integer 
@@ -2404,7 +2385,7 @@
             (with-capability (DPTF_ISSUE patron account)
                 (let
                     (
-                        (spawn-id:string (X_IssueTrueFungible patron account owner name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
+                        (spawn-id:string (X_IssueTrueFungible patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
                     )
                     (if (= ZG true)
                         (X_CollectGAS patron account GAS_ISSUE)
@@ -2417,7 +2398,7 @@
             )
         )
     )
-    (defun C_DeployTrueFungibleAccount (identifier:string account:string guard:guard)
+    (defun C_DeployTrueFungibleAccount (identifier:string account:string)
         @doc "Creates a new DPTF Account for TrueFungible <identifier> and Account <account> \
             \ If a DPTF Account already exists for <identifier> and <account>, it remains as is \
             \ \
@@ -2425,30 +2406,22 @@
             \ If a DPTS Account exists, its type remains unchanged"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
-        (UV_EnforceReserved account guard)
-
-        ;;Automatically creates a Standard DPTS Account for <account> if one doesnt exists
-        ;;If a DPTS Account exists for <account>, it remains as is
-        (C_DeployStandardDPTSAccount account guard)
 
         ;;Creates new Entry in the DPTF-BalancesTable for <identifier>|<account>
         ;;If Entry exists, no changes are being done
         (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
             { "balance" : 0.0
-            , "guard" : guard
             , "role-burn" : false
             , "role-mint" : false
             , "role-transfer" : false
             , "frozen" : false}
             { "balance" := b
-            , "guard" := g
             , "role-burn" := rb
             , "role-mint" := rm
             , "role-transfer" := rt
             , "frozen" := f }
             (write DPTF-BalancesTable (concat [identifier BAR account])
                 { "balance"                     : b
-                , "guard"                       : g
                 , "role-burn"                   : rb
                 , "role-mint"                   : rm
                 , "role-transfer"               : rt
@@ -2513,7 +2486,6 @@
     ;;
     (defun C_Burn (patron:string identifier:string account:string amount:decimal)
         @doc "Burns <amount> <identifier> TrueFungible on DPTF Account <account>"
-        
         (let
             (
                 (ZG:bool (UC_ZeroGAS identifier account))
@@ -2566,29 +2538,9 @@
     ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
-    ;;      C_AbsoluteTransferTrueFungible|C_TransferTrueFungible|C_TransferTrueFungibleAnew
+    ;;      C_TransferTrueFungible
     ;;
-    (defun C_AbsoluteTransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
-        @doc "Executes an absolute (automatic) True Fungible Transfer, assuming a DPTS <receiver> Account exists \
-            \ \
-            \ The transfer is automatic, as in: \
-            \ either the <C_TransferTrueFungible(anew=true)> or the <C_TransferTrueFungible(anew=false)> is used \
-            \ Depending on wheter or not the <receiver> DPTF Account exists for Token id <identifier> \
-            \ If receiver doesnt exist for given Token ID <identifier>, one will be created using the Guard stored in the DPTS account \
-            \ which is why a DPTS Account must exist for Account for this function to work"
-
-        (let
-            (
-                (receiver-existance:bool (UR_AccountTrueFungibleExist identifier receiver))
-                (receiver-guard:guard (UR_DPTS-AccountGuard receiver))
-            )
-            (if (= receiver-existance false)
-                (C_TransferTrueFungible patron identifier sender receiver transfer-amount true)
-                (C_TransferTrueFungible patron identifier sender receiver transfer-amount false)
-            )
-        )
-    )
-    (defun C_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal anew:bool)
+    (defun C_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account, using boolean <anew> as input \
             \ If target DPTF account doesnt exist, boolean <anew> must be set to true"
 
@@ -2601,7 +2553,7 @@
                     (X_CollectGAS patron sender GAS_SMALLEST)
                     true
                 )
-                (X_TransferTrueFungible identifier sender receiver transfer-amount anew)
+                (X_TransferTrueFungible identifier sender receiver transfer-amount)
                 (X_IncrementNonce sender)
             )
         )
@@ -2612,22 +2564,9 @@
     ;;                                            ;;
     ;;==================METHODIC-TRANSFER===========
     ;;
-    ;;      CX_AbsoluteTransferTrueFungible|CX_TransferTrueFungible
+    ;;      CX_TransferTrueFungible
     ;;
-    (defun CX_AbsoluteTransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
-        @doc "Methodic, Similar to |C_AbsoluteTransferTrueFungible| for Smart-DPTS Account type operation"
-        (let
-            (
-                (receiver-existance:bool (UR_AccountTrueFungibleExist identifier receiver))
-                (receiver-guard:guard (UR_DPTS-AccountGuard receiver))
-            )
-            (if (= receiver-existance false)
-                (CX_TransferTrueFungible patron identifier sender receiver transfer-amount true)
-                (CX_TransferTrueFungible patron identifier sender receiver transfer-amount false)
-            )
-        )
-    )
-    (defun CX_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal anew:bool)
+    (defun CX_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Methodic, Similar to |C_TransferTrueFungible| for Smart-DPTS Account type operation"
         (require-capability (TRANSFER_DPTF patron identifier sender receiver transfer-amount true))
         (let
@@ -2638,7 +2577,7 @@
                 (X_CollectGAS patron sender GAS_SMALLEST)
                 true
             )
-            (X_TransferTrueFungible identifier sender receiver transfer-amount anew)
+            (X_TransferTrueFungible identifier sender receiver transfer-amount)
             (X_IncrementNonce sender)
         )
     )
@@ -2690,7 +2629,7 @@
     ;;
     ;;      X_TransferTrueFungible
     ;;
-    (defun X_TransferTrueFungible (identifier:string sender:string receiver:string transfer-amount:decimal anew:bool)
+    (defun X_TransferTrueFungible (identifier:string sender:string receiver:string transfer-amount:decimal)
         (enforce-one
             (format "Transfer Capabilities not satisfied from Account {} to Account {}" [sender receiver])
             [
@@ -2711,21 +2650,8 @@
             ]
         )
         (require-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
-        (let
-            (
-                (receiver-guard-anew:guard (UR_DPTS-AccountGuard receiver))
-            )
-            (X_Debit identifier sender transfer-amount false)
-            (if (= anew true)
-                (X_Credit identifier receiver receiver-guard-anew transfer-amount)
-                (let
-                    (
-                        (receiver-guard:guard (UR_AccountTrueFungibleGuard identifier receiver))
-                    )
-                    (X_Credit identifier receiver receiver-guard transfer-amount)
-                )
-            )
-        )
+        (X_Debit identifier sender transfer-amount false)
+        (X_Credit identifier receiver transfer-amount)
     )
     ;;==============================================
     ;;                                            ;;
@@ -2743,7 +2669,7 @@
                 (id:string (at "id" id-amount-pair))
                 (amount:decimal (at "amount" id-amount-pair))
             )
-            (C_AbsoluteTransferTrueFungible patron id sender receiver amount)
+            (C_TransferTrueFungible patron id sender receiver amount)
         )
     )
     (defun X_BulkTransferTrueFungiblePaired (patron:string identifier:string sender:string receiver-amount-pair:object{Receiver-Amount_Schema})
@@ -2754,7 +2680,7 @@
                 (receiver:string (at "receiver" receiver-amount-pair))
                 (amount:decimal (at "amount" receiver-amount-pair))
             )
-            (C_AbsoluteTransferTrueFungible patron identifier sender receiver amount)
+            (C_TransferTrueFungible patron identifier sender receiver amount)
         )
     )
     ;;==============================================
@@ -2765,36 +2691,45 @@
     ;;
     ;;      X_Credit|X_Debit
     ;;
-    (defun X_Credit (identifier:string account:string guard:guard amount:decimal)
-        @doc "Auxiliary Function that credits a TrueFungible to a DPTF Account"
+    (defun X_Credit (identifier:string account:string amount:decimal)
+        @doc "Auxiliary Function that credits a TrueFungible to a DPTF Account \
+        \ If a DPTF Account for the Token ID <identifier> doesnt exist, it will be created \
+        \ However if a DPTS Account (Standard or Smart) doesnt exit for <account>, function will fail, \
+        \ since a DPTS Account is mandatory for a DPTF Account creation"
 
         ;;Capability Required for Credit
         (require-capability (CREDIT_DPTF identifier account))
 
-        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
-            { "balance" : -1.0, "guard" : guard, "role-burn" : false, "role-mint" : false, "role-transfer" : false, "frozen" : false}
-            { "balance" := balance, "guard" := retg, "role-burn" := rb, "role-mint" := rm, "role-transfer" := rt, "frozen" := fr }
-            ; we don't want to overwrite an existing guard with the user-supplied one
-            (enforce (= retg guard) "Account guards do not match !")
-            ;; OLD is-new variable:
-            ;; (is-new:bool (if (= balance -1.0) (UV_EnforceReserved account guard) false))
-            (let
-                (
-                    (is-new:bool (if (= balance -1.0) true false))
+        ;;Checks if a DPTF Account Exists, if it doesnt a new one is created with the credited amount
+        ;;If it exists, a write operation is executed, writing an updated amount
+        (let
+            (
+                (dptf-account-exist:bool (UR_AccountTrueFungibleExist identifier account))
+            )
+            (enforce (> amount 0.0) "Crediting amount must be greater than zero")
+            (if (= dptf-account-exist false)
+                (insert DPTF-BalancesTable (concat [identifier BAR account])
+                    { "balance"                     : amount
+                    , "role-burn"                   : false
+                    , "role-mint"                   : false
+                    , "role-transfer"               : false
+                    , "frozen"                      : false
+                    }
                 )
-                ;; First, a new DPTS Account is created for Account <account>. 
-                ;; If DPTS Account exists for <account>, nothing is modified
-                (C_DeployStandardDPTSAccount account guard)
-                ;; if is-new=true, this actually creates a new DPTF Account and credits it the amount
-                ;; if is-new=false, this updates the balance by increasing it with <amount>
-                ;; this is posible because (write) works regardless of row exists for key or not in a table
-                (write DPTF-BalancesTable (concat [identifier BAR account])
-                    {"balance"          : (if is-new amount (+ balance amount))
-                    ,"guard"            : retg
-                    , "role-burn"       : rb
-                    , "role-mint"       : rm
-                    , "role-transfer"   : rt
-                    , "frozen"          : fr}
+                (with-read DPTF-BalancesTable (concat [identifier BAR account])
+                    { "balance" := b
+                    , "role-burn" := rb
+                    , "role-mint" := rm
+                    , "role-transfer" := rt
+                    , "frozen" := f }
+                    (write DPTF-BalancesTable (concat [identifier BAR account])
+                        { "balance"                     : (+ b amount)
+                        , "role-burn"                   : rb
+                        , "role-mint"                   : rm
+                        , "role-transfer"               : rt
+                        , "frozen"                      : f
+                        } 
+                    )
                 )
             )
         )
@@ -2813,7 +2748,6 @@
 
         (with-read DPTF-BalancesTable (concat [identifier BAR account])
             { "balance" := balance }
-            ; we don't want to overwrite an existing guard with the user-supplied one
             (enforce (<= amount balance) "Insufficient Funds for debiting")
             (update DPTF-BalancesTable (concat [identifier BAR account])
                 {"balance" : (- balance amount)}    
@@ -2874,15 +2808,9 @@
     ;;      X_UpdateSupply|X_UpdateRoleTransferAmount
     ;;
     (defun X_ChangeOwnership (patron:string identifier:string new-owner:string)
-        (let
-            (
-                (new-owner-guard:guard (UR_DPTS-AccountGuard new-owner))
-            )
-            (require-capability (DPTF_OWNERSHIP-CHANGE_CORE identifier new-owner))
-            (update DPTF-PropertiesTable identifier
-                {"owner"                            : new-owner-guard
-                ,"owner-konto"                      : new-owner}
-            )
+        (require-capability (DPTF_OWNERSHIP-CHANGE_CORE identifier new-owner))
+        (update DPTF-PropertiesTable identifier
+            {"owner-konto"                      : new-owner}
         )
     )
     (defun X_Control
@@ -2955,8 +2883,7 @@
     (defun X_IssueTrueFungible:string
         (
             patron:string 
-            account:string 
-            owner:guard 
+            account:string
             name:string 
             ticker:string 
             decimals:integer 
@@ -2970,7 +2897,7 @@
         (require-capability (DPTF_ISSUE patron account))
         (let
             (
-                (identifier (UC_MakeIdentifier ticker))
+                (identifier:string (UC_MakeIdentifier ticker))
             )
             ;; Add New Entries in the DPTF-PropertyTable
             ;; Since the Entry uses insert command, the KEY uniquness is ensured, since it will fail if key already exists.
@@ -2980,8 +2907,7 @@
             ;; Entry is initialised with an <origin-mint-amount> of 0.0, meaning origin mint hasnt been executed
             ;; Entry is initiated with 0 to <role-transfer-amount>, since no Account has transfer role upon creation.
             (insert DPTF-PropertiesTable identifier
-                {"owner"                : owner
-                ,"owner-konto"          : account
+                {"owner-konto"          : account
                 ,"name"                 : name
                 ,"ticker"               : ticker
                 ,"decimals"             : decimals
@@ -2998,7 +2924,7 @@
                 ,"role-transfer-amount" : 0}
             )
             ;;Makes a new DPTF Account for the Token Issuer and returns identifier
-            (C_DeployTrueFungibleAccount identifier account owner)
+            (C_DeployTrueFungibleAccount identifier account)
             identifier
         )
     )
@@ -3017,11 +2943,7 @@
             (require-capability (DPTF_MINT-ORIGIN_CORE identifier account amount))
             (require-capability (DPTF_MINT-STANDARD_CORE identifier account amount))
         )
-        (let
-            (
-                (g:guard (UR_AccountTrueFungibleGuard identifier account))
-            )
-            (X_Credit identifier account g amount)
+        (X_Credit identifier account amount)
             (X_UpdateSupply identifier amount true)
             (if (= origin true)
                 (update DPTF-PropertiesTable identifier
@@ -3030,7 +2952,6 @@
                 )
                 true
             )
-        )
     )
     (defun X_Burn (identifier:string account:string amount:decimal)
         (enforce-one
@@ -3217,7 +3138,6 @@
             (
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-id:string (UR_GasID))
-                (client-guard:guard (UR_AccountTrueFungibleGuard gas-source-id client))
                 (gas-amount:decimal (UC_GasMake gas-source-amount))
             )
         ;;01]Any client that is a Normal DPTS Account can perform GAS creation. Gas creation is always GAS free.
@@ -3241,7 +3161,6 @@
             (
                 (gas-id:string (UR_GasID))
                 (gas-source-id:string (UR_GasSourceID))
-                (client-guard:guard (UR_AccountTrueFungibleGuard gas-id client))
                 (gas-source-amount:decimal (UC_GasCompress gas-amount))
             )
             ;;01]Any client that is a Normal DPTS Account can perform GAS compression. Gas compression is always GAS free.
@@ -3501,7 +3420,6 @@
                         (C_IssueTrueFungible
                             patron
                             SC_NAME_GAS
-                            (keyset-ref-guard SC_KEY_GAS)
                             "Gas"
                             "GAS"
                             2
@@ -3525,7 +3443,7 @@
                     ,"gasspent"         : 0.0}
                 )
                 ;;Issue OURO DPTF Account for the GAS-Tanker
-                (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS (keyset-ref-guard SC_KEY_GAS))
+                (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS)
                 ;;Set Token Roles
                 (with-capability (GAS_INIT_SET-ROLES patron GasID gas-source-id SC_NAME_GAS)
                     ;;BURN Roles
@@ -3599,22 +3517,21 @@
             (
                 (gas-id:string (UR_GasID))
                 (gas-source-id:string (UR_GasSourceID))
-                (client-guard:guard (UR_DPTS-AccountGuard client))
             )
-            (C_DeployTrueFungibleAccount gas-id client client-guard)
+            (C_DeployTrueFungibleAccount gas-id client)
             (with-capability (MAKE_GAS client gas-source-amount)
             (let
                 (
                     (gas-amount:decimal (UC_GasMake gas-source-amount))
                 )
         ;;03]Client sends Gas-Source-id to the GAS Smart Contract; <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-                (CX_AbsoluteTransferTrueFungible client gas-source-id client SC_NAME_GAS gas-source-amount)
+                (CX_TransferTrueFungible client gas-source-id client SC_NAME_GAS gas-source-amount)
         ;;04]Smart Contract burns GAS-Source-ID without generating IGNIS, without needing GAS
                 (CX_Burn client gas-source-id SC_NAME_GAS gas-source-amount)
         ;;05]GAS Smart Contract mints GAS, without needing GAS (already built in within the C_Mint function)
                 (CX_Mint client gas-id SC_NAME_GAS gas-amount false)
         ;;06]GAS Smart Contract transfers GAS to client
-                (CX_AbsoluteTransferTrueFungible client gas-id SC_NAME_GAS client gas-amount)
+                (CX_TransferTrueFungible client gas-id SC_NAME_GAS client gas-amount)
                 gas-amount
                 )
             )
@@ -3632,22 +3549,21 @@
             (
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-id:string (UR_GasID))
-                (client-guard:guard (UR_DPTS-AccountGuard client))
             )
-            (C_DeployTrueFungibleAccount gas-source-id client client-guard)
+            (C_DeployTrueFungibleAccount gas-source-id client)
             (with-capability (COMPRESS_GAS client gas-amount)
                 (let
                     (
                         (gas-source-amount:decimal (UC_GasCompress gas-amount))
                     )
         ;;03]Client sends GAS to the GAS Smart Contract: <CX_TransferTrueFungible> can be used since no GAS costs is uncurred when transferring GAS tokens
-                    (CX_AbsoluteTransferTrueFungible client gas-id client SC_NAME_GAS gas-amount)
+                    (CX_TransferTrueFungible client gas-id client SC_NAME_GAS gas-amount)
         ;;04]GAS Smart Contract burns GAS: <C_Burn> can be used since burning GAS costs no GAS
                     (CX_Burn client gas-id SC_NAME_GAS gas-amount)
         ;;05]GAS Smart Contract mints Gas-Source Token: <X_Mint> must be used to mint without GAS costs
                     (CX_Mint client gas-source-id SC_NAME_GAS gas-source-amount false)
         ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-                    (CX_AbsoluteTransferTrueFungible client gas-source-id SC_NAME_GAS client gas-source-amount)
+                    (CX_TransferTrueFungible client gas-source-id SC_NAME_GAS client gas-source-amount)
                 )
             )
         )
@@ -3755,11 +3671,10 @@
         (let
             (
                 (gas-id:string (UR_GasID))
-                (rg:guard (UR_DPTS-AccountGuard gas-receiver))
             )
-            (C_DeployTrueFungibleAccount gas-id gas-receiver rg)
+            (C_DeployTrueFungibleAccount gas-id gas-receiver)
             (X_Debit gas-id gas-sender gas-amount false)
-            (X_Credit gas-id gas-receiver rg gas-amount)
+            (X_Credit gas-id gas-receiver gas-amount)
         )            
     )
 )
