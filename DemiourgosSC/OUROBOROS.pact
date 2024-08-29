@@ -296,14 +296,15 @@
     ;;      CONTROL-SMART-ACCOUNT|CONTROL-SMART-ACCOUNT_CORE
     ;;
     (defcap CONTROL-SMART-ACCOUNT (patron:string account:string)
-        @doc "Capability needed for the <C_ControlSmartAccount> to execute"
+        @doc "Capability required to Control a Smart-Account"
 
         (compose-capability (CONTROL-SMART-ACCOUNT_CORE account))
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap CONTROL-SMART-ACCOUNT_CORE (account:string)
-        @doc "Core Capability to Control a Smart-Account"
+        @doc "Core Capability required to Control a Smart-Account"
+        (UV_DPTS-Account account)
         (compose-capability (DPTS_ACCOUNT_OWNER account))     
         (compose-capability (IZ_DPTS_ACCOUNT_SMART account true))
         
@@ -554,7 +555,7 @@
     ;;==================VALIDATIONS=================
     ;;
     ;;      UV_SenderWithReceive|UV_DPTS-Account|UV_DPTS-Decimals
-    ;;      UV_DPTS-Name|UV_DPTS-Ticker|UV_Object
+    ;;      UV_DPTS-Name|UV_DPTS-Ticker
     ;;
     (defun UV_SenderWithReceiver (sender:string receiver:string)
         @doc "Validates Account <sender> with Account <receiver> for Transfer"
@@ -654,27 +655,6 @@
                 (UC_IzStringANC ticker true)
                 "Token Ticker is not Alphanumeric with Capitals Only!"
             )
-        )
-    )
-    (defun UV_Object:bool (obj:object obj-size:integer obj-keys:[string])
-        @doc "Validates that an Object has the required size and keys"
-
-        (let
-            (
-                (keys-number:integer (length obj-keys))
-                (contains-keys:bool 
-                    (fold
-                        (lambda 
-                            (acc:bool key:string)
-                            (and acc (contains key obj))
-                        )
-                        true
-                        obj-keys
-                    )
-                )
-            )
-            (enforce (= obj-size keys-number) "Object Keys are not of the required amount")
-            (enforce (= contains-keys true) "Not all Keys appear in the Object")
         )
     )
     ;;==============================================
@@ -1070,34 +1050,34 @@
     ;;      DPTF_FREEZE-ACCOUNT_CORE                Core Capability required to freeze a DPTF account                                                   ;;
     ;;      DPTF_UNFREEZE-ACCOUNT                   Capability required to unfreeze a DPTF account                                                      ;;
     ;;      DPTF_UNFREEZE-ACCOUNT_CORE              Core Capability required to unfreeze a DPTF account                                                 ;;
-    ;;==================SET|UNSET===================                                                                                                    ;;
+    ;;==================TOKEN-ROLES=================                                                                                                    ;;
     ;;      DPTF_TOGGLE_BURN-ROLE                   Capability required to EXECUTE <C_ToggleBurnRole> Function                                          ;;
-    ;;      DPTF_SET_BURN-ROLE                      Capability required to set Burn-Role to a DPTF account for a DPTF Token                             ;;
-    ;;      DPTF_SET_BURN-ROLE_CORE                 Core Capability required to set Burn-Role to a DPTF account for a DPTF Token                        ;;
-    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to unset Burn-Role to a DPTF account for a DPTF Token                           ;;
-    ;;      DPTF_UNSET_BURN-ROLE_CORE               Core Capability required to unset Burn-Role to a DPTF account for a DPTF Token                      ;;
+    ;;      DPTF_SET_BURN-ROLE                      Capability required to set <role-burn> to a DPTF account for a DPTF Token                           ;;
+    ;;      DPTF_SET_BURN-ROLE_CORE                 Core Capability required to set <role-burn> to a DPTF account for a DPTF Token                      ;;
+    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to unset <role-burn> to a DPTF account for a DPTF Token                         ;;
+    ;;      DPTF_UNSET_BURN-ROLE_CORE               Core Capability required to unset <role-burn> to a DPTF account for a DPTF Token                    ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_TOGGLE_MINT-ROLE                   Capability required to EXECUTE <C_ToggleMintRole> Function                                          ;;
-    ;;      DPTF_SET_MINT-ROLE                      Capability required to set Mint-Role to a DPTF account for a DPTF Token                             ;;
-    ;;      DPTF_SET_MINT-ROLE_CORE                 Core Capability required to set Mint-Role to a DPTF account for a DPTF Token                        ;;
-    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to unset Mint-Role to a DPTF account for a DPTF Token                           ;;
-    ;;      DPTF_UNSET_MINT-ROLE_CORE               Core Capability required to unset Mint-Role to a DPTF account for a DPTF Token                      ;;
+    ;;      DPTF_SET_MINT-ROLE                      Capability required to set <role-mint> to a DPTF account for a DPTF Token                           ;;
+    ;;      DPTF_SET_MINT-ROLE_CORE                 Core Capability required to set <role-mint> to a DPTF account for a DPTF Token                      ;;
+    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to unset <role-mint> to a DPTF account for a DPTF Token                         ;;
+    ;;      DPTF_UNSET_MINT-ROLE_CORE               Core Capability required to unset <role-mint> to a DPTF account for a DPTF Token                    ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_TOGGLE_TRANSFER-ROLE               Capability required to EXECUTE <C_ToggleTransferRole> Function                                      ;;
-    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to set Transfer-Role to a DPTF account for a DPTF Token                         ;;
-    ;;      DPTF_SET_TRANSFER-ROLE_CORE             Core Capability required to set Transfer-Role to a DPTF account for a DPTF Token                    ;;
-    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to unset Transfer-Role to a DPTF account for a DPTF Token                       ;;
-    ;;      DPTF_UNSET_TRANSFER-ROLE_CORE           Core Capability required to unset Transfer-Role to a DPTF account for a DPTF Token                  ;;
+    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to set <role-transfer> to a DPTF account for a DPTF Token                       ;;
+    ;;      DPTF_SET_TRANSFER-ROLE_CORE             Core Capability required to set <role-transfer> to a DPTF account for a DPTF Token                  ;;
+    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to unset <role-transfer> to a DPTF account for a DPTF Token                     ;;
+    ;;      DPTF_UNSET_TRANSFER-ROLE_CORE           Core Capability required to unset <role-transfer> to a DPTF account for a DPTF Token                ;;
     ;;==================CREATE======================                                                                                                    ;;
     ;;      DPTF_ISSUE                              Capability required to EXECUTE a <C_IssueTrueFungible> Function                                     ;;
     ;;----------------------------------------------                                                                                                    ;;
-    ;;      DPTF_MINT                               Capability required to EXECUTE <C_Mint> Function                                                    ;;
+    ;;      DPTF_MINT                               Capability required to EXECUTE <C|CX_Mint> Function                                                 ;;
     ;;      DPTF_MINT-ORIGIN                        Capability required to mint the premine for a DPTF Token                                            ;;
     ;;      DPTF_MINT-ORIGIN_CORE                   Core Capability required to mint the premine for a DPTF Token                                       ;;
     ;;      DPTF_MINT-STANDARD                      Capability required to mint a DPTF Token in a standard manner                                       ;;
     ;;      DPTF_MINT-STANDARD_CORE                 Core Capability required to mint a DPTF Token in a standard manner                                  ;;
     ;;==================DESTROY=====================                                                                                                    ;;
-    ;;      DPTF_BURN                               Capability required to EXECUTE <C_Burn> Function                                                    ;;
+    ;;      DPTF_BURN                               Capability required to EXECUTE <C|CX_Burn> Function                                                 ;;
     ;;      DPTF_BURN_CORE                          Core Capability required to burn a DPTF Token in a standard manner                                  ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_WIPE                               Capability required to EXECUTE <C_Wipe> Function                                                    ;;
@@ -1249,7 +1229,7 @@
         @doc "Capability required to update DPTF Supply"
         true
     )
-    (defcap UPDATE-ROLE_TRANSFER-AMOUNT ()
+    (defcap DPTF_UPDATE-ROLE_TRANSFER-AMOUNT ()
         @doc "Capability required to update DPTF Transfer-Role-Amount"
         true
     )
@@ -1394,6 +1374,7 @@
     ;;      DPTF_TOGGLE_FREEZE-ACCOUNT|DPTF_FREEZE-ACCOUNT|DPTF_FREEZE-ACCOUNT_CORE|DPTF_UNFREEZE-ACCOUNT|DPTF_UNFREEZE-ACCOUNT_CORE
     ;;
     (defcap DPTF_OWNERSHIP-CHANGE (patron:string identifier:string new-owner:string)
+        @doc "Capability required to change the ownership of a DPTF Token"
         (let
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
@@ -1404,6 +1385,8 @@
         )
     )
     (defcap DPTF_OWNERSHIP-CHANGE_CORE (identifier:string new-owner:string)
+        @doc "Core Capability required to change the ownership of a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
         (let
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
@@ -1414,6 +1397,7 @@
         )
     )
     (defcap DPTF_CONTROL (patron:string identifier:string)
+        @doc "Capability required to control a DPTF Token"
         (let
             (
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
@@ -1422,63 +1406,80 @@
             (compose-capability (GAS_COLLECTION patron current-owner-account GAS_SMALL))
             (compose-capability (DPTS_INCREASE-NONCE)) 
         )
-        
     )
     (defcap DPTF_CONTROL_CORE (identifier:string)
+        @doc "Core Capability required to control a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
     )
     (defcap DPTF_TOGGLE_PAUSE (patron:string identifier:string toggle:bool)
+        @doc "Capability required to toggle the pause state of a DPTF Token"
         (if (= toggle true)
             (compose-capability (DPTF_PAUSE patron identifier))
             (compose-capability (DPTF_UNPAUSE patron identifier))
         )
     )
     (defcap DPTF_PAUSE (patron:string identifier:string)
+        @doc "Capability required to pause a DPTF Token"
         (compose-capability (DPTF_PAUSE_CORE identifier))
         (compose-capability (GAS_COLLECTION patron patron GAS_MEDIUM))
         (compose-capability (DPTS_INCREASE-NONCE)) 
     )
 
     (defcap DPTF_PAUSE_CORE (identifier:string)
+        @doc "Core Capability required to pause a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_OFF identifier))
     )
     (defcap DPTF_UNPAUSE (patron:string identifier:string)
+        @doc "Capability required to unpause a DPTF Token"
         (compose-capability (DPTF_UNPAUSE_CORE identifier))
         (compose-capability (GAS_COLLECTION patron patron GAS_MEDIUM))
         (compose-capability (DPTS_INCREASE-NONCE)) 
     )
 
     (defcap DPTF_UNPAUSE_CORE (identifier:string)
+        @doc "Core Capability required to unpause a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-PAUSE_ON identifier))
         (compose-capability (DPTF_IS-PAUSED_ON identifier))
     )
     (defcap DPTF_TOGGLE_FREEZE-ACCOUNT (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the frozen state of DPTF Account"
         (if (= toggle true)
             (compose-capability (DPTF_FREEZE-ACCOUNT patron identifier account))
             (compose-capability (DPTF_UNFREEZE-ACCOUNT patron identifier account))
         )
     )
     (defcap DPTF_FREEZE-ACCOUNT (patron:string identifier:string account:string)
+        @doc "Capability required to freeze a DPTF Account"
         (compose-capability (DPTF_FREEZE-ACCOUNT_CORE identifier account))
         (compose-capability (GAS_COLLECTION patron account GAS_BIG))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_FREEZE-ACCOUNT_CORE (identifier:string account:string)
+        @doc "Core Capability required to freeze DPTF Account"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
 
     )
     (defcap DPTF_UNFREEZE-ACCOUNT (patron:string identifier:string account:string)
+        @doc "Capability required to unfreeze a DPTF Account"
         (compose-capability (DPTF_UNFREEZE-ACCOUNT_CORE identifier account))
         (compose-capability (GAS_COLLECTION patron account GAS_BIG))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNFREEZE-ACCOUNT_CORE (identifier:string account:string)
+        @doc "Core Capability required to unfreeze a DPTF Account"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
@@ -1488,86 +1489,113 @@
     ;;                                            ;;
     ;;      DPTF: COMPOSED CAPABILITIES           ;;
     ;;                                            ;;
-    ;;==================UNSET=======================
+    ;;==================TOKEN-ROLES=================
     ;;
     ;;      DPTF_TOGGLE_BURN-ROLE|DPTF_SET_BURN-ROLE|DPTF_SET_BURN-ROLE_CORE|DPTF_UNSET_BURN-ROLE|DPTF_UNSET_BURN-ROLE_CORE
     ;;      DPTF_TOGGLE_MINT-ROLE|DPTF_SET_MINT-ROLE|DPTF_SET_MINT-ROLE_CORE|DPTF_UNSET_MINT-ROLE|DPTF_UNSET_MINT-ROLE_CORE
     ;;      DPTF_TOGGLE_TRANSFER-ROLE|DPTF_SET_TRANSFER-ROLE|DPTF_SET_TRANSFER-ROLE_CORE|DPTF_UNSET_TRANSFER-ROLE|DPTF_UNSET_TRANSFER-ROLE_CORE
     ;;
     (defcap DPTF_TOGGLE_BURN-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-burn> Role"
         (if (= toggle true)
             (compose-capability (DPTF_SET_BURN-ROLE patron identifier account))
             (compose-capability (DPTF_UNSET_BURN-ROLE patron identifier account))
         )
     )
     (defcap DPTF_SET_BURN-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-burn> Role"
         (compose-capability (DPTF_SET_BURN-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_BURN-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-burn> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
     )
     (defcap DPTF_UNSET_BURN-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-burn> Role"
         (compose-capability (DPTF_UNSET_BURN-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNSET_BURN-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-burn> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
     )
     (defcap DPTF_TOGGLE_MINT-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-mint> Role"
         (if (= toggle true)
             (compose-capability (DPTF_SET_MINT-ROLE patron identifier account))
             (compose-capability (DPTF_UNSET_MINT-ROLE patron identifier account))
         )
     )
     (defcap DPTF_SET_MINT-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-mint> Role"
         (compose-capability (DPTF_SET_MINT-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_MINT-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-mint> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
     )   
     (defcap DPTF_UNSET_MINT-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-mint> Role"
         (compose-capability (DPTF_UNSET_MINT-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNSET_MINT-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-mint> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
     )
     (defcap DPTF_TOGGLE_TRANSFER-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-transfer> Role"
         (if (= toggle true)
             (compose-capability (DPTF_SET_TRANSFER-ROLE patron identifier account))
             (compose-capability (DPTF_UNSET_TRANSFER-ROLE patron identifier account))
         )
     )
     (defcap DPTF_SET_TRANSFER-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-transfer> Role"
         (compose-capability (DPTF_SET_TRANSFER-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (UPDATE-ROLE_TRANSFER-AMOUNT))
+        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_TRANSFER-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-transfer> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
     )
     (defcap DPTF_UNSET_TRANSFER-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-transfer> Role"
         (compose-capability (DPTF_UNSET_TRANSFER-ROLE_CORE identifier account))    
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (UPDATE-ROLE_TRANSFER-AMOUNT))
+        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_UNSET_TRANSFER-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-transfer> Role"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
     )
@@ -1578,7 +1606,7 @@
     ;;==================CREATE======================
     ;;
     ;;      DPTF_ISSUE
-    ;;      DPTF_MINT_ORIGIN|DPTF_MINT
+    ;;      DPTF_MINT_ORIGIN|DPTF_MINT_ORIGIN|DPTF_MINT_STANDARD|DPTF_MINT_STANDARD_CORE
     ;;
     (defcap DPTF_ISSUE (patron:string client:string)
         @doc "Capability required to issue a DPTF Token"
@@ -1609,7 +1637,6 @@
         (compose-capability (DPTF_MINT-ORIGIN_CORE identifier client amount))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
-
     (defcap DPTF_MINT-ORIGIN_CORE (identifier:string account:string amount:decimal)
         @doc "Core Capability required to mint the Origin DPTF Mint Supply"
         (UV_TrueFungibleAmount identifier amount)
@@ -1618,7 +1645,6 @@
         (compose-capability (CREDIT_DPTF identifier account))
         (compose-capability (DPTF_UPDATE_SUPPLY))
     )
-
     (defcap DPTF_MINT-STANDARD (patron:string identifier:string client:string amount:decimal method:bool)
         @doc "Capability required to mint a DPTF Token"                
         (compose-capability (DPTS_METHODIC client method))
@@ -1649,7 +1675,6 @@
         (compose-capability (DPTF_BURN_CORE identifier client amount))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
-
     (defcap DPTF_BURN_CORE (identifier:string client:string amount:decimal)
         @doc "Core Capability required to burn a DPTF Token"
         (UV_TrueFungibleAmount identifier amount)
@@ -1657,7 +1682,6 @@
         (compose-capability (DEBIT_DPTF identifier client))
         (compose-capability (DPTF_UPDATE_SUPPLY))
     )
-    
     (defcap DPTF_WIPE (patron:string identifier:string account-to-be-wiped:string)
         @doc "Core Capability required to Wipe a DPTF Token Balance from a DPTF account"
         (compose-capability (GAS_PATRON patron identifier account-to-be-wiped GAS_BIGGEST))
@@ -1737,7 +1761,6 @@
         (compose-capability (DEBIT_DPTF identifier sender))  
         (compose-capability (CREDIT_DPTF identifier receiver))
     )
-    
     ;;==============================================
     ;;                                            ;;
     ;;      DPTF: COMPOSED CAPABILITIES           ;;
@@ -1809,7 +1832,7 @@
     ;;2     C_Control                               Controls TrueFungible <identifier> Properties using 7 boolean control triggers                      ;;
     ;;3     C_TogglePause                           Pause/Unpause TrueFungible <identifier> via the boolean <toggle>                                    ;;
     ;;4     C_ToggleFreezeAccount                   Freeze/Unfreeze via boolean <toggle> TrueFungile <identifier> on DPTF Account <account>             ;;
-    ;;==================SET=========================                                                                                                    ;;
+    ;;==================ROLES=======================                                                                                                    ;;
     ;;2     C_ToggleBurnRole                        Sets |role-burn| to <toggle> boolean for TrueFungible <identifier> and DPTF Account <account>       ;;
     ;;2     C_ToggleMintRole                        Sets |role-mint| to <toggle> boolean for TrueFungible <identifier> and DPTF Account <account>       ;;
     ;;2     C_ToggleTransferRole                    Sets |role-transfer| to <toggle> boolean for TrueFungible <identifier> and DPTF Account <account>   ;;
@@ -1824,7 +1847,6 @@
     ;;5     C_Wipe                                  Wipes the whole supply of <identifier> TrueFungible of a frozen DPTF Account <account>              ;;
     ;;==================TRANSFER====================                                                                                                    ;;
     ;;1     C_TransferTrueFungible                  Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account                        ;;
-    ;;------------------METHODIC-TRANSFER---------------------------------------------------------------------------------------------------------------;;
     ;;1     CX_TransferTrueFungible                 Methodic, Similar to |C_TransferTrueFungible| for Smart-DPTS Account type operation                 ;;
     ;;==================MULTI-TRANSFER==============                                                                                                    ;;
     ;;      C_MultiTransferTrueFungible             Executes a Multi DPTF transfer using 2 separate lists of multiple IDs|Transfer-amounts              ;;
@@ -2281,7 +2303,7 @@
     ;;                                            ;;
     ;;      DPTF: CLIENT FUNCTIONS                ;;
     ;;                                            ;;
-    ;;==================UNSET=======================
+    ;;==================ROLES======================= 
     ;;
     ;;      C_ToggleBurnRole|C_ToggleMintRole|C_ToggleTransferRole
     ;;
@@ -2349,7 +2371,7 @@
     ;;==================CREATE====================== 
     ;;
     ;;      C_IssueTrueFungible|C_DeployTrueFungibleAccount
-    ;;      C_Mint
+    ;;      C_Mint|CX_Mint
     ;;
     (defun C_IssueTrueFungible:string 
         (
@@ -2482,7 +2504,7 @@
     ;;                                            ;;
     ;;==================DESTROY=====================
     ;;
-    ;;      C_Burn|C_Wipe
+    ;;      C_Burn|CX_Burn|C_Wipe
     ;;
     (defun C_Burn (patron:string identifier:string account:string amount:decimal)
         @doc "Burns <amount> <identifier> TrueFungible on DPTF Account <account>"
@@ -2538,7 +2560,7 @@
     ;;                                            ;;
     ;;==================TRANSFER====================
     ;;
-    ;;      C_TransferTrueFungible
+    ;;      C_TransferTrueFungible|CX_TransferTrueFungible
     ;;
     (defun C_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Transfers <identifier> TrueFungible from <sender> to <receiver> DPTF Account, using boolean <anew> as input \
@@ -2558,14 +2580,6 @@
             )
         )
     )
-    ;;==============================================
-    ;;                                            ;;
-    ;;      DPTF: CLIENT FUNCTIONS                ;;
-    ;;                                            ;;
-    ;;==================METHODIC-TRANSFER===========
-    ;;
-    ;;      CX_TransferTrueFungible
-    ;;
     (defun CX_TransferTrueFungible (patron:string identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Methodic, Similar to |C_TransferTrueFungible| for Smart-DPTS Account type operation"
         (require-capability (TRANSFER_DPTF patron identifier sender receiver transfer-amount true))
@@ -2783,7 +2797,7 @@
     (defun X_UpdateRoleTransferAmount (identifier:string direction:bool)
         @doc "Updates <role-transfer-amount> for Token <identifier>"
 
-        (require-capability (UPDATE-ROLE_TRANSFER-AMOUNT))
+        (require-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
         (if (= direction true)
             (with-read DPTF-PropertiesTable identifier
                 { "role-transfer-amount" := rta }

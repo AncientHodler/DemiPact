@@ -686,17 +686,17 @@
                     ,"v-elite-auryn-id"               : vested-elite-auryn-id}
                 )
                 ;;SetTokenRoles
-                (DPMF.C_SetAddQuantityRole patron vested-ouro-id SC_NAME)
-                (DPMF.C_SetAddQuantityRole patron vested-auryn-id SC_NAME)
-                (DPMF.C_SetAddQuantityRole patron vested-elite-auryn-id SC_NAME)
+                (DPMF.C_ToggleAddQuantityRole patron vested-ouro-id SC_NAME true)
+                (DPMF.C_ToggleAddQuantityRole patron vested-auryn-id SC_NAME true)
+                (DPMF.C_ToggleAddQuantityRole patron vested-elite-auryn-id SC_NAME true)
 
-                (DPMF.C_SetBurnRole patron vested-ouro-id SC_NAME)
-                (DPMF.C_SetBurnRole patron vested-auryn-id SC_NAME)
-                (DPMF.C_SetBurnRole patron vested-elite-auryn-id SC_NAME)
+                (DPMF.C_ToggleBurnRole patron vested-ouro-id SC_NAME true)
+                (DPMF.C_ToggleBurnRole patron vested-auryn-id SC_NAME true)
+                (DPMF.C_ToggleBurnRole patron vested-elite-auryn-id SC_NAME true)
 
-                (DPMF.C_SetTransferRole patron vested-ouro-id SC_NAME)
-                (DPMF.C_SetTransferRole patron vested-auryn-id SC_NAME)
-                (DPMF.C_SetTransferRole patron vested-elite-auryn-id SC_NAME)
+                (DPMF.C_ToggleTransferRole patron vested-ouro-id SC_NAME true)
+                (DPMF.C_ToggleTransferRole patron vested-auryn-id SC_NAME true)
+                (DPMF.C_ToggleTransferRole patron vested-elite-auryn-id SC_NAME true)
             )
         )
     )

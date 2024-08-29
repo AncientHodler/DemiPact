@@ -140,7 +140,7 @@
     ;;      DPMF_IS-PAUSED_OF                       Enforces that the DPMF Token is not paused                                                          ;;
     ;;      DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON    Enforces DPMF Token Property as true                                                                ;;
     ;;      DPMF_UPDATE_SUPPLY                      Capability required to update DPMF Supply                                                           ;;
-    ;;      DPMF_UPDATE-ROLE-TRANSFER-AMOUNT        Capability required to update |transfer-role-amount| for Identifier <identifier>                    ;;
+    ;;      DPMF_UPDATE_ROLE-TRANSFER-AMOUNT        Capability required to update |transfer-role-amount| for Identifier <identifier>                    ;;
     ;;      DPMF_INCREASE_NONCE                     Capability required to update |nonce| in the DPMF-PropertiesTable                                   ;;
     ;;======DPMF-BALANCES-TABLE-MANAGEMENT==========                                                                                                    ;;
     ;;      DPMF_ACCOUNT_EXIST                      Enforces that the DPMF Account <account> exists for Token <identifier>                              ;;
@@ -160,54 +160,63 @@
     ;;                                                                                                                                                  ;;
     ;;      COMPOSED                                                                                                                                    ;;
     ;;                                                                                                                                                  ;;
-    ;;==================WITH-GAS====================                                                                                                    ;;
-    ;;      DPMF-GAS_OWNERSHIP-CHANGE               GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_CONTROL                        GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_PAUSE                          GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_UNPAUSE                        GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_FREEZE_ACCOUNT                 GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_UNFREEZE_ACCOUNT               GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_SET_ADD-QUANTITY-ROLE          GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_SET_BURN-ROLE                  GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_SET_TRANSFER-ROLE              GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_MOVE_CREATE-ROLE               GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_UNSET_ADD-QUANTITY-ROLE        GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_UNSET_BURN-ROLE                GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_UNSET_TRANSFER-ROLE            GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_ISSUE                          GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_MINT                           GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_CREATE                         GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_ADD-QUANTITY                   GAS Collection Variant of Capability                                                                ;;
-    ;;      DPMF-GAS_BURN                           GAS Collection Variant of Capability                                                                ;;
     ;;      DPMF-GAS_WIPE                           GAS Collection Variant of Capability                                                                ;;
     ;;==================CONTROL=====================                                                                                                    ;;
-    ;;      DPMF_OWNERSHIP-CHANGE                   Capability required for changing DPMF Token Ownership                                               ;;
-    ;;      DPMF_CONTROL                            Capability required for managing DPMF Properties                                                    ;;
-    ;;      DPMF_PAUSE                              Capability required to Pause a DPMF                                                                 ;;
-    ;;      DPMF_UNPAUSE                            Capability required to Unpause a DPMF                                                               ;;
-    ;;      DPMF_FREEZE_ACCOUNT                     Capability required to Freeze a DPMF Account                                                        ;;
-    ;;      DPMF_UNFREEZE_ACCOUNT                   Capability required to Unfreeze a DPMF Account                                                      ;;
-    ;;==================SET=========================                                                                                                    ;;
-    ;;      DPMF_SET_ADD-QUANTITY-ROLE              Capability required to Set Add-Quantity Role for DPMF Account                                       ;;
-    ;;      DPMF_SET_BURN-ROLE                      Capability required to Set Burn Role for DPMF Account                                               ;;
-    ;;      DPMF_SET_TRANSFER-ROLE                  Capability required to Set Transfer Role for DPMF Account                                           ;;
-    ;;      DPMF_MOVE_CREATE-ROLE                   Capability required to Change Create Role to another DPMF Account                                   ;;
-    ;;==================UNSET=======================                                                                                                    ;;
-    ;;      DPMF_UNSET_ADD-QUANTITY-ROLE            Capability required to Unset Add-Quantity Role for DPMF Account                                     ;;
-    ;;      DPMF_UNSET_BURN-ROLE                    Capability required to Unset Burn Role for a DPMF Account                                           ;;
-    ;;      DPMF_UNSET_TRANSFER-ROLE                Capability required to Unset Transfer Role for a DPMF Account                                       ;;
+    ;;      DPMF_OWNERSHIP-CHANGE                   Capability required to EXECUTE <C_ChangeOwnership> Function                                         ;;
+    ;;      DPMF_OWNERSHIP-CHANGE_CORE              Core Capability required for for changing DPMF Ownership                                            ;;
+    ;;      DPMF_CONTROL                            Capability required to EXECUTE <C_Control> Function                                                 ;;
+    ;;      DPMF_CONTROL_CORE                       Core Capability required for managing DPMF Properties                                               ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_TOGGLE_PAUSE                       Capability required to EXECUTE <C_TogglePause> Function                                             ;;
+    ;;      DPMF_PAUSE                              Capability required to pause a DPMF account                                                         ;;
+    ;;      DPMF_PAUSE_CORE                         Core Capability required to pause a DPMF account                                                    ;;
+    ;;      DPMF_UNPAUSE                            Capability required to unpause a DPMF account                                                       ;;
+    ;;      DPMF_UNPAUSE_CORE                       Core Capability required to unpause a DPMF account                                                  ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_TOGGLE_FREEZE-ACCOUNT              Capability required to EXECUTE <C_ToggleFreezeAccount> Function                                     ;;
+    ;;      DPMF_FREEZE-ACCOUNT                     Capability required to freeze a DPMF account                                                        ;;
+    ;;      DPMF_FREEZE-ACCOUNT_CORE                Core Capability required to freeze a DPMF account                                                   ;;
+    ;;      DPMF_UNFREEZE-ACCOUNT                   Capability required to unfreeze a DPMF account                                                      ;;
+    ;;      DPMF_UNFREEZE-ACCOUNT_CORE              Core Capability required to unfreeze a DPMF account                                                 ;;
+    ;;==================TOKEN-ROLES=================                                                                                                    ;;
+    ;;      DPMF_MOVE_CREATE-ROLE                   Capability required to EXECUTE <C_MoveCreateRole> Function                                          ;;
+    ;;      DPMF_MOVE_CREATE-ROLE_CORE              Core Capability required to set <role-nft-create> for a DPMF Account of a DPMF Token                ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_TOGGLE_ADD-QUANTITY-ROLE           Capability required to EXECUTE <C_ToggleAddQuantityRole> Function                                   ;;
+    ;;      DPMF_SET_ADD-QUANTITY-ROLE              Capability required to set <role-nft-add-quantity> to a DPTF account for a DPMF Token               ;;
+    ;;      DPMF_SET_BURN-ROLE_CORE                 Core Capability required to set <role-nft-add-quantity> to a DPTF account for a DPMF Token          ;;
+    ;;      DPMF_UNSET_ADD-QUANTITY-ROLE            Capability required to unset <role-nft-add-quantity> to a DPTF account for a DPMF Token             ;;
+    ;;      DPMF_UNSET_ADD-QUANTITY-ROLE_CORE       Core Capability required to unset <role-nft-add-quantity> to a DPTF account for a DPMF Token        ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_TOGGLE_BURN-ROLE                   Capability required to EXECUTE <C_ToggleBurnRole> Function                                          ;;
+    ;;      DPMF_SET_BURN-ROLE                      Capability required to set <role-nft-burn> to a DPMF account for a DPMF Token                       ;;
+    ;;      DPMF_SET_BURN-ROLE_CORE                 Core Capability required to set <role-nft-burn> to a DPMF account for a DPMF Token                  ;;
+    ;;      DPMF_UNSET_BURN-ROLE                    Capability required to unset <role-nft-burn> to a DPMF account for a DPMF Token                     ;;
+    ;;      DPMF_UNSET_BURN-ROLE_CORE               Core Capability required to unset <role-nft-burn> to a DPMF account for a DPMF Token                ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_TOGGLE_TRANSFER-ROLE               Capability required to EXECUTE <C_ToggleTransferRole> Function                                      ;;
+    ;;      DPMF_SET_TRANSFER-ROLE                  Capability required to set <role-transfer> to a DPMF account for a DPMF Token                       ;;
+    ;;      DPMF_SET_TRANSFER-ROLE_CORE             Core Capability required to set <role-transfer> to a DPMF account for a DPMF Token                  ;;
+    ;;      DPMF_UNSET_TRANSFER-ROLE                Capability required to unset <role-transfer> to a DPMF account for a DPMF Token                     ;;
+    ;;      DPMF_UNSET_TRANSFER-ROLE_CORE           Core Capability required to unset <role-transfer> to a DPMF account for a DPMF Token                ;;
     ;;==================CREATE======================                                                                                                    ;;
-    ;;      DPMF_MINT                               Capability required to mint a DPMF Token                                                            ;;
-    ;;      DPMF_CREATE                             Capability that allows creation of a new MetaFungilbe nonce                                         ;;
-    ;;      DPMF_ADD-QUANTITY                       Capability required to add-quantity for a DPMF Token                                                ;;
+    ;;      DPMF_ISSUE                              Capability required to EXECUTE a <C_IssueMetaFungible> Function                                     ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_MINT                               Capability required to EXECUTE <C|CX_Mint> Function                                                 ;;
+    ;;      DPMF_MINT_CORE                          Core Capability required to mint a DPMF Token                                                       ;;
+    ;;      DPMF_CREATE                             Capability required to EXECUTE <C|CX_Create> Function                                               ;;
+    ;;      DPMF_CREATE_CORE                        Core Capability required to create a DPTF Token                                                     ;;
+    ;;      DPMF_ADD-QUANTITY                       Capability required to EXECUTE <C|CX_AddQuantity> Function                                          ;;
+    ;;      DPMF_ADD-QUANTITY_CORE                  Core Capability required to add quantity for a DPMF Token                                           ;;
     ;;==================DESTROY=====================                                                                                                    ;;
-    ;;      DPMF_BURN                               Capability required to burn a DPMF Token                                                            ;;
-    ;;      DPMF_WIPE                               Capability required to Wipe all DPMF Tokens from a DPMF account                                     ;;
+    ;;      DPMF_BURN                               Capability required to EXECUTE <C|CX_Burn> Function                                                 ;;
+    ;;      DPMF_BURN_CORE                          Core Capability required to burn a DPMF Token                                                       ;;
+    ;;----------------------------------------------                                                                                                    ;;
+    ;;      DPMF_WIPE                               Capability required to EXECUTE <C_Wipe> Function                                                    ;;
+    ;;      DPMF_WIPE_CORE                          Core Capability required to Wipe all DPMF Tokens (balance) from a DPMF account                      ;;
     ;;==================TRANSFER====================                                                                                                    ;;
-    ;;      ABSOLUTE_METHODIC_TRANSFER              Capability for methodic DPMF transfer                                                               ;;
-    ;;      TRANSFER_DPMF_GAS-PATRON                Capability for methodic DPMF transfer with no Gas Collection                                        ;;
-    ;;      TRANSFER_DPMF_GAS                       Capability for methodic DPMF transfer with Gas Collection                                           ;;
-    ;;      TRANSFER_DPMF                           Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier                ;;
+    ;;      TRANSFER_DPMF                           Main DPMF Transfer Capability                                                                       ;;
+    ;;      TRANSFER_DPMF_CORE                      Core Capability for transfer between 2 DPTS accounts for a specific DPMF Token identifier           ;;
     ;;=================CORE=========================                                                                                                    ;;
     ;;      CREDIT_DPMF                             Capability to perform crediting operations with DPMF Tokens                                         ;;
     ;;      DEBIT_DPMF                              Capability to perform debiting operations on Normal DPTS Account types with DPMF Tokens             ;;
@@ -227,7 +236,6 @@
     ;;      DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON
     ;;      DPMF_UPDATE_SUPPLY|DPMF_UPDATE_TRANSFER-ROLE-AMOUNT||DPMF_INCREASE_NONCE
     ;;
-
     (defcap DPMF_OWNER (identifier:string)
         @doc "Enforces DPMF Token Ownership"
         (UV_MetaFungibleIdentifier identifier)
@@ -333,7 +341,7 @@
         @doc "Capability required to update DPMF Supply"
         true
     )
-    (defcap DPMF_UPDATE-ROLE-TRANSFER-AMOUNT ()
+    (defcap DPMF_UPDATE_ROLE-TRANSFER-AMOUNT ()
         @doc "Capability required to update |role-transfer-amount| for Identifier <identifier>"
         true
     )
@@ -466,173 +474,28 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      DPTF: COMPOSED CAPABILITIES           ;;
+    ;;      DPMF: COMPOSED CAPABILITIES           ;;
     ;;                                            ;;
-    ;;==================WITH-GAS==================== 
-    ;;
-    ;;      DPMF-GAS_OWNERSHIP-CHANGE|DPMF-GAS_CONTROL|DPMF-GAS_PAUSE|DPMF-GAS_UNPAUSE|DPMF-GAS_FREEZE_ACCOUNT|DPMF-GAS_UNFREEZE_ACCOUNT
-    ;;      DPMF-GAS_MOVE_CREATE-ROLE|DPMF-GAS_SET_ADD-QUANTITY-ROLE|DPMF-GAS_SET_BURN-ROLE|DPMF-GAS_SET_TRANSFER-ROLE
-    ;;      DPMF-GAS_UNSET_ADD-QUANTITY-ROLE|DPMF-GAS_UNSET_BURN-ROLE|DPMF-GAS_UNSET_TRANSFER-ROLE
-    ;;      DPMF-GAS_ISSUE|DPMF-GAS_MINT|DPMF-GAS_CREATE|DPMF-GAS_ADD-QUANTITY
-    ;;      DPMF-GAS_BURN|DPMF-GAS_WIPE
-    ;;
-    (defcap DPMF-GAS_OWNERSHIP-CHANGE (patron:string identifier:string new-owner:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_OWNERSHIP-CHANGE identifier new-owner))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIGGEST))
-        )
-    )
-    (defcap DPMF-GAS_CONTROL (patron:string identifier:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_CONTROL identifier))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_PAUSE (patron:string identifier:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_PAUSE identifier))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_MEDIUM))
-        )
-    )
-    (defcap DPMF-GAS_UNPAUSE (patron:string identifier:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_UNPAUSE identifier))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_MEDIUM))
-        )
-    )
-    (defcap DPMF-GAS_FREEZE-ACCOUNT (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_FREEZE-ACCOUNT identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIG))
-        )
-    )
-    (defcap DPMF-GAS_UNFREEZE-ACCOUNT (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            (compose-capability (DPMF_UNFREEZE-ACCOUNT identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIG))
-        )
-    )
-    (defcap DPMF-GAS_MOVE_CREATE-ROLE (patron:string identifier:string receiver:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_MOVE_CREATE-ROLE identifier receiver))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIGGEST))
-        )
-    )
-    (defcap DPMF-GAS_SET_ADD-QUANTITY-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_SET_ADD-QUANTITY-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_SET_BURN-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_SET_BURN-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_SET_TRANSFER-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_SET_TRANSFER-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_UNSET_ADD-QUANTITY-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_UNSET_ADD-QUANTITY-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_UNSET_BURN-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_UNSET_BURN-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_UNSET_TRANSFER-ROLE (patron:string identifier:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                
-            )
-            (compose-capability (DPMF_UNSET_TRANSFER-ROLE identifier account))
-            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
-        )
-    )
-    (defcap DPMF-GAS_ISSUE (patron:string account:string)
-        (OUROBOROS.UV_DPTS-Account patron)
-        (compose-capability (DPMF_ISSUE patron account))
-        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_ISSUE))
-    )
-    ;;---------------------------------------------;;
-    ;;                                             ;;
-    ;;      COMPOSED                               ;;
-    ;;                                             ;;
     ;;==================CONTROL======================
     ;;
-    ;;      DPMF_OWNERSHIP-CHANGE|DPMF_CONTROL
-    ;;      DPMF_PAUSE|DPMF_UNPAUSE|
-    ;;      DPMF_FREEZE_ACCOUNT|DPMF_UNFREEZE_ACCOUNT
+    ;;      DPMF_OWNERSHIP-CHANGE|DPMF_OWNERSHIP-CHANGE_CORE|DPMF_CONTROL|DPMF_CONTROL_CORE
+    ;;      DPMF_TOGGLE_PAUSE|DPMF_PAUSE|DPMF_PAUSE_CORE|DPMF_UNPAUSE|DPMF_UNPAUSE_CORE
+    ;;      DPMF_TOGGLE_FREEZE-ACCOUNT|DPMF_FREEZE-ACCOUNT|DPMF_FREEZE-ACCOUNT_CORE|DPMF_UNFREEZE-ACCOUNT|DPMF_UNFREEZE-ACCOUNT_CORE
     ;;
-    
-    (defcap DPMF_OWNERSHIP-CHANGE (identifier:string new-owner:string)
-        @doc "Capability required for changing DPMF Token Ownership"
+    (defcap DPMF_OWNERSHIP-CHANGE (patron:string identifier:string new-owner:string)
+        @doc "Capability required to change the ownership of a DPMF Token"
+        (let
+            (
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (compose-capability (DPMF_OWNERSHIP-CHANGE_CORE identifier new-owner))
+            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIGGEST))
+            (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
+        )
+    )
+    (defcap DPMF_OWNERSHIP-CHANGE_CORE (identifier:string new-owner:string)
+        @doc "Core Capability required to change the ownership of a DPMF Token"
         (UV_MetaFungibleIdentifier identifier)
-        (OUROBOROS.UV_DPTS-Account new-owner)
         (let
             (
                 (current-owner-account:string (UR_MetaFungibleKonto identifier))
@@ -640,60 +503,114 @@
             (OUROBOROS.UV_SenderWithReceiver current-owner-account new-owner)
             (compose-capability (DPMF_OWNER identifier))
             (compose-capability (DPMF_CAN-CHANGE-OWNER_ON identifier))
-            (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
         )
     )
-    (defcap DPMF_CONTROL (identifier:string)
-        @doc "Capability required for managing DPMF Properties"
+    (defcap DPMF_CONTROL (patron:string identifier:string)
+        @doc "Capability required to control a DPMF Token"
+        (let
+            (
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (compose-capability (DPMF_CONTROL_CORE identifier))
+            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_SMALL))
+            (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE)) 
+        )
+    )
+    (defcap DPMF_CONTROL_CORE (identifier:string)
+        @doc "Core Capability required to control a DPMF Token"
         (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
-        (compose-capability (DPMF_CAN-UPGRADE_ON identifier))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
+        (compose-capability (DPMF_CAN-UPGRADE_ON identifier))    
     )
-    
-    (defcap DPMF_PAUSE (identifier:string)
-        @doc "Capability required to Pause a DPMF Token"
+    (defcap DPMF_TOGGLE_PAUSE (patron:string identifier:string toggle:bool)
+        @doc "Capability required to toggle the pause state of a DPMF Token"
+        (if (= toggle true)
+            (compose-capability (DPMF_PAUSE patron identifier))
+            (compose-capability (DPMF_UNPAUSE patron identifier))
+        )
+    )
+    (defcap DPMF_PAUSE (patron:string identifier:string)  
+        @doc "Core Capability required to pause a DPTF Token"
+        (compose-capability (DPMF_PAUSE_CORE identifier))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron patron OUROBOROS.GAS_MEDIUM))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE)) 
+    )
+    (defcap DPMF_PAUSE_CORE (identifier:string)
+        @doc "Core Capability required to pause a DPTF Token"
         (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-PAUSE_ON identifier))
         (compose-capability (DPMF_IS-PAUSED_OFF identifier))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    (defcap DPMF_UNPAUSE (identifier:string)
-        @doc "Capability required to Unpause a DPMF Token"
+    (defcap DPMF_UNPAUSE (patron:string identifier:string)  
+        @doc "Core Capability required to unpause a DPTF Token"
+        (compose-capability (DPMF_UNPAUSE_CORE identifier))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron patron OUROBOROS.GAS_MEDIUM))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE)) 
+    )
+    (defcap DPMF_UNPAUSE_CORE (identifier:string)
+        @doc "Core Capability required to unpause a DPTF Token"
         (UV_MetaFungibleIdentifier identifier)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-PAUSE_ON identifier))
         (compose-capability (DPMF_IS-PAUSED_ON identifier))
+    )
+    (defcap DPMF_TOGGLE_FREEZE-ACCOUNT (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the frozen state of DPMF Account"
+        (if (= toggle true)
+            (compose-capability (DPMF_FREEZE-ACCOUNT patron identifier account))
+            (compose-capability (DPMF_UNFREEZE-ACCOUNT patron identifier account))
+        )
+    )
+    (defcap DPMF_FREEZE-ACCOUNT (patron:string identifier:string account:string)
+        @doc "Capability required to freeze a DPMF Account"
+        (compose-capability (DPMF_FREEZE-ACCOUNT_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_BIG))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    (defcap DPMF_FREEZE-ACCOUNT (identifier:string account:string)
-        @doc "Capability required to Freeze a DPMF Account"
+    (defcap DPMF_FREEZE-ACCOUNT_CORE (identifier:string account:string)
+        @doc "Core Capability required to freeze a DPMF Account"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-FREEZE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_FREEZE_OFF identifier account))
+    )
+    (defcap DPMF_UNFREEZE-ACCOUNT (patron:string identifier:string account:string)
+        @doc "Capability required to unfreeze a DPMF Account"
+        (compose-capability (DPMF_UNFREEZE-ACCOUNT_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_BIG))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    (defcap DPMF_UNFREEZE-ACCOUNT (identifier:string account:string)
-        @doc "Capability required to Unfreeze a DPMF Account"
+    (defcap DPMF_UNFREEZE-ACCOUNT_CORE (identifier:string account:string)
+        @doc "Core Capability required to unfreeze a DPMF Account"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-FREEZE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_FREEZE_ON identifier account))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    ;;==================SET=========================
+    ;;==================TOKEN-ROLES=================
     ;;
-    ;;      DPMF_MOVE_CREATE-ROLE|DPMF_SET_ADD-QUANTITY-ROLE|
-    ;;      DPMF_SET_BURN-ROLE|DPMF_SET_TRANSFER-ROLE
+    ;;      DPMF_MOVE_CREATE-ROLE|DPMF_MOVE_CREATE-ROLE_CORE
+    ;;      DPMF_TOGGLE_ADD-QUANTITY-ROLE|DPMF_SET_ADD-QUANTITY-ROLE|DPMF_SET_ADD-QUANTITY-ROLE_CORE|DPMF_UNSET_ADD-QUANTITY-ROLE|DPMF_UNSET_ADD-QUANTITY-ROLE_CORE
+    ;;      DPMF_TOGGLE_BURN-ROLE|DPMF_SET_BURN-ROLE|DPMF_SET_BURN-ROLE_CORE|DPMF_UNSET_BURN-ROLE|DPMF_UNSET_BURN-ROLE_CORE
+    ;;      DPMF_TOGGLE_TRANSFER-ROLE|DPMF_SET_TRANSFER-ROLE|DPMF_SET_TRANSFER-ROLE_CORE|DPMF_UNSET_TRANSFER-ROLE|DPMF_UNSET_TRANSFER-ROLE_CORE
     ;;
-    (defcap DPMF_MOVE_CREATE-ROLE (identifier:string receiver:string)
-        @doc "Capability required to Change Create Role to another DPMF Account"
+    (defcap DPMF_MOVE_CREATE-ROLE (patron:string identifier:string receiver:string)
+        @doc "Capability required to move the <role-nft-create> Role"
+        (let
+            (
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (compose-capability (DPMF_MOVE_CREATE-ROLE_CORE identifier receiver))
+            (compose-capability (OUROBOROS.GAS_COLLECTION patron current-owner-account OUROBOROS.GAS_BIGGEST))
+            (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
+        ) 
+    )
+    (defcap DPMF_MOVE_CREATE-ROLE_CORE (identifier:string receiver:string)
+        @doc "Core Capability required to move the <role-nft-create> Role"
         (UV_MetaFungibleIdentifier identifier)
-
         (let
             (
                 (current-owner-account:string (UR_MetaFungibleKonto identifier))
@@ -703,69 +620,117 @@
             (compose-capability (DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON identifier))
             (compose-capability (DPMF_ACCOUNT_CREATE_ON identifier current-owner-account))
             (compose-capability (DPMF_ACCOUNT_CREATE_OFF identifier receiver))
-            (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
         )
     )
-    (defcap DPMF_SET_ADD-QUANTITY-ROLE (identifier:string account:string)
-        @doc "Capability required to Set Add-Quantity Role for DPMF Account"
+    (defcap DPMF_TOGGLE_ADD-QUANTITY-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-nft-add-quantity> Role"
+        (if (= toggle true)
+            (compose-capability (DPMF_SET_ADD-QUANTITY-ROLE patron identifier account))
+            (compose-capability (DPMF_UNSET_ADD-QUANTITY-ROLE patron identifier account))
+        )
+    )
+    (defcap DPMF_SET_ADD-QUANTITY-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-nft-add-quantity> Role"
+        (compose-capability (DPMF_SET_ADD-QUANTITY-ROLE_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))  
+    )
+    (defcap DPMF_SET_ADD-QUANTITY-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-nft-add-quantity> Role"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_OFF identifier account))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    (defcap DPMF_SET_BURN-ROLE (identifier:string account:string)
-        @doc "Capability required to Set Burn Role for DPMF Account"
+    (defcap DPMF_UNSET_ADD-QUANTITY-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-nft-add-quantity> Role"
+        (compose-capability (DPMF_UNSET_ADD-QUANTITY-ROLE_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))  
+    )
+    (defcap DPMF_UNSET_ADD-QUANTITY-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-nft-add-quantity> Role"
+        (UV_MetaFungibleIdentifier identifier)
+        (OUROBOROS.UV_DPTS-Account account)
+        (compose-capability (DPMF_OWNER identifier))
+        (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
+    )
+    (defcap DPMF_TOGGLE_BURN-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-nft-burn> Role"
+        (if (= toggle true)
+            (compose-capability (DPMF_SET_BURN-ROLE patron identifier account))
+            (compose-capability (DPMF_UNSET_BURN-ROLE patron identifier account))
+        )
+    )
+    (defcap DPMF_SET_BURN-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-nft-burn> Role"
+        (compose-capability (DPMF_SET_BURN-ROLE_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))  
+    )
+    (defcap DPMF_SET_BURN-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-nft-burn> Role"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_BURN_OFF identifier account))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    (defcap DPMF_SET_TRANSFER-ROLE (identifier:string account:string)
-        @doc "Capability required to Set Transfer Role for DPMF Account"
+    (defcap DPMF_UNSET_BURN-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-nft-burn> Role"
+        (compose-capability (DPMF_UNSET_BURN-ROLE_CORE identifier account))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))  
+    )
+    (defcap DPMF_UNSET_BURN-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-nft-burn> Role"
+        (UV_MetaFungibleIdentifier identifier)
+        (OUROBOROS.UV_DPTS-Account account)
+        (compose-capability (DPMF_OWNER identifier))
+        (compose-capability (DPMF_ACCOUNT_BURN_ON identifier account))
+    )
+    (defcap DPMF_TOGGLE_TRANSFER-ROLE (patron:string identifier:string account:string toggle:bool)
+        @doc "Capability required to toggle the <role-transfer> Role"
+        (if (= toggle true)
+            (compose-capability (DPMF_SET_TRANSFER-ROLE patron identifier account))
+            (compose-capability (DPMF_UNSET_TRANSFER-ROLE patron identifier account))
+        )
+    )
+    (defcap DPMF_SET_TRANSFER-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to set the <role-transfer> Role"
+        (compose-capability (DPMF_SET_TRANSFER-ROLE_CORE identifier account))    
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (DPMF_UPDATE_ROLE-TRANSFER-AMOUNT))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))    
+    )
+    (defcap DPMF_SET_TRANSFER-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to set the <role-transfer> Role"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
         (compose-capability (DPMF_ACCOUNT_TRANSFER_OFF identifier account))
-        (compose-capability (DPMF_UPDATE-ROLE-TRANSFER-AMOUNT))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
-    ;;==================UNSET========================
-    ;;
-    ;;      DPMF_UNSET_ADD-QUANTITY-ROLE|DPMF_UNSET_BURN-ROLE|DPMF_UNSET_TRANSFER-ROLE
-    ;;
-    (defcap DPMF_UNSET_ADD-QUANTITY-ROLE (identifier:string account:string)
-        @doc "Capability required to Unset Add-Quantity Role for DPMF Account"
-        (UV_MetaFungibleIdentifier identifier)
-        (OUROBOROS.UV_DPTS-Account account)
-        (compose-capability (DPMF_OWNER identifier))
-        (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
+    (defcap DPMF_UNSET_TRANSFER-ROLE (patron:string identifier:string account:string)
+        @doc "Capability required to unset the <role-transfer> Role"
+        (compose-capability (DPMF_UNSET_TRANSFER-ROLE_CORE identifier account))    
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account OUROBOROS.GAS_SMALL))
+        (compose-capability (DPMF_UPDATE_ROLE-TRANSFER-AMOUNT))
+        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))    
     )
-    (defcap DPMF_UNSET_BURN-ROLE (identifier:string account:string)
-        @doc "Capability required to Unset Burn Role for DPMF Account"
-        (UV_MetaFungibleIdentifier identifier)
-        (OUROBOROS.UV_DPTS-Account account)
-        (compose-capability (DPMF_OWNER identifier))
-        (compose-capability (DPMF_ACCOUNT_BURN_ON identifier account))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
-    )
-    (defcap DPMF_UNSET_TRANSFER-ROLE (identifier:string account:string)
-        @doc "Capability required to Unset Transfer Role for DPMF Account"
+    (defcap DPMF_UNSET_TRANSFER-ROLE_CORE (identifier:string account:string)
+        @doc "Core Capability required to unset the <role-transfer> Role"
         (UV_MetaFungibleIdentifier identifier)
         (OUROBOROS.UV_DPTS-Account account)
         (compose-capability (DPMF_OWNER identifier))
         (compose-capability (DPMF_ACCOUNT_TRANSFER_ON identifier account))
-        (compose-capability (DPMF_UPDATE-ROLE-TRANSFER-AMOUNT))
-        (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
     ;;==================CREATE=======================
     ;;
-    ;;      DPMF_MINT|DPMF_CREATE|DPMF_ADD-QUANTITY
+    ;;      DPMF_MINT|DPMF_MINT_CORE
+    ;;      DPMF_CREATE|DPMF_CREATE_CORE
+    ;;      DPMF_ADD-QUANTITY|DPMF_ADD-QUANTITY_CORE
     ;;
     (defcap DPMF_ISSUE (patron:string client:string)
         @doc "Capability required to issue a DPMF Token"
@@ -774,7 +739,7 @@
     (defcap DPMF_MINT (patron:string identifier:string client:string amount:decimal method:bool)
         @doc "Capability required to mint a DPMF Token"
         (compose-capability (OUROBOROS.DPTS_METHODIC client method))
-        (compose-capability (OUROBOROS.GAS_PATRON patron identifier client OUROBOROS.GAS_MEDIUM))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_MEDIUM))
         (compose-capability (DPMF_MINT_CORE identifier client amount))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
@@ -788,7 +753,7 @@
     (defcap DPMF_CREATE (patron:string identifier:string client:string method:bool)
         @doc "Capability that allows creation of a new MetaFungilbe nonce"
         (compose-capability (OUROBOROS.DPTS_METHODIC client method))
-        (compose-capability (OUROBOROS.GAS_PATRON patron identifier client OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_SMALL))
         (compose-capability (DPMF_CREATE_CORE identifier client))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
@@ -804,7 +769,7 @@
         (UV_MetaFungibleAmount identifier amount)
         (OUROBOROS.UV_DPTS-Account client)
         (compose-capability (OUROBOROS.DPTS_METHODIC client method))
-        (compose-capability (OUROBOROS.GAS_PATRON patron identifier client OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_SMALL))
         (compose-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier client))
         (compose-capability (DPMF_UPDATE_SUPPLY))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
@@ -819,13 +784,13 @@
     )
     ;;==================DESTROY======================
     ;;
-    ;;      DPMF_BURN|DPMF_WIPE
+    ;;      DPMF_BURN|DPMF_BURN_CORE
+    ;;      DPMF_WIPE|DPMF_WIPE_CORE
     ;;
-
     (defcap DPMF_BURN (patron:string identifier:string client:string amount:decimal method:bool)
         @doc "Capability required to burn a DPMF Token"
         (compose-capability (OUROBOROS.DPTS_METHODIC client method))
-        (compose-capability (OUROBOROS.GAS_PATRON patron identifier client OUROBOROS.GAS_SMALL))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_SMALL))
         (compose-capability (DPMF_BURN_CORE identifier client amount))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
@@ -836,10 +801,9 @@
         (compose-capability (DEBIT_DPMF identifier client))
         (compose-capability (DPMF_UPDATE_SUPPLY))
     )
-
     (defcap DPMF_WIPE (patron:string identifier:string account-to-be-wiped:string)
         @doc "Core Capability required to Wipe a DPMF Token Balance from a DPMF account"
-        (compose-capability (OUROBOROS.GAS_PATRON patron identifier account-to-be-wiped OUROBOROS.GAS_BIGGEST))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron account-to-be-wiped OUROBOROS.GAS_BIGGEST))
         (compose-capability (DPMF_WIPE_CORE identifier account-to-be-wiped))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )
@@ -852,13 +816,9 @@
         (compose-capability (DPMF_ACCOUNT_FREEZE_ON identifier account-to-be-wiped))
         (compose-capability (DPMF_UPDATE_SUPPLY))
     )
-    ;;==============================================
-    ;;                                            ;;
-    ;;      DPTF: COMPOSED CAPABILITIES           ;;
-    ;;                                            ;;
     ;;==================TRANSFER==================== 
     ;;
-    ;;      TRANSFER_DPMFTRANSFER_DPMF_CORE|
+    ;;      TRANSFER_DPMF|TRANSFER_DPMF_CORE|
     ;;
     (defcap TRANSFER_DPMF (patron:string identifier:string sender:string receiver:string transfer-amount:decimal method:bool)
         @doc "Main DPMF Transfer Capability"
@@ -869,7 +829,7 @@
                 (compose-capability (OUROBOROS.DPTS_METHODIC receiver method))
             ]
         )
-        (compose-capability (OUROBOROS.GAZ_PATRON patron identifier sender receiver OUROBOROS.GAS_SMALLEST))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron sender OUROBOROS.GAS_SMALLEST))
         (compose-capability (TRANSFER_DPMF_CORE identifier sender receiver transfer-amount))
         (compose-capability (OUROBOROS.SC_TRANSFERABILITY sender receiver method))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
@@ -906,6 +866,9 @@
         (compose-capability (CREDIT_DPMF identifier receiver))
     )
     ;;=================CORE==========================
+    ;;
+    ;;      CREDIT_DPMF|DEBIT_DPMF
+    ;;
     (defcap CREDIT_DPMF (identifier:string account:string)
         @doc "Capability to perform crediting operations with DPMF Tokens"
         (UV_MetaFungibleIdentifier identifier)
@@ -1004,31 +967,29 @@
     ;;==================CONTROL=====================                                                                                                    ;;
     ;;5     C_ChangeOwnership                       Moves DPMF <identifier> Token Ownership to <new-owner> DPMF Account                                 ;;
     ;;2     C_Control                               Controls MetaFungible <identifier> Properties using 7 boolean control triggers                      ;;
-    ;;3     C_Pause                                 Pause MetaFungible <identifier>                                                                     ;;
-    ;;3     C_Unpause                               Unpause MetaFungible <identifier>                                                                   ;;
-    ;;4     C_FreezeAccount                         Freeze MetaFungile <identifier> on DPMF Account <account>                                           ;;
-    ;;4     C_UnfreezeAccount                       Unfreeze MetaFungile <identifier> on DPMF Account <account>                                         ;;
-    ;;==================SET=========================                                                                                                    ;;
+    ;;3     C_TogglePause                           Pause/Unpause MetaFungible <identifier> via the boolean <toggle>                                    ;;
+    ;;4     C_ToggleFreezeAccount                   Freeze/Unfreeze via boolean <toggle> MetaFungile <identifier> on DPMF Account <account>             ;;
+    ;;==================ROLES=======================                                                                                                    ;;
     ;;5     C_MoveCreateRole                        Moves |role-nft-create| from <sender> to <receiver> DPMF Account for MetaFungible <identifier>      ;;
-    ;;2     C_SetAddQuantityRole                    Sets |role-nft-add-quantity| to true for MetaFungible <identifier> and DPMF Account <account>       ;;
-    ;;2     C_SetBurnRole                           Sets |role-nft-burn| to true for MetaFungible <identifier> and DPMF Account <account>               ;;
-    ;;2     C_SetTransferRole                       Sets |role-transfer| to true for MetaFungible <identifier> and DPMF Account <account>               ;;
-    ;;==================UNSET=======================                                                                                                    ;;
-    ;;2     C_UnsetAddQuantityRole                  Sets |role-nft-add-quantity| to false for MetaFungible <identifier> and DPMF Account <account>      ;;
-    ;;2     C_UnsetBurnRole                         Sets |role-nft-burn| to false for MetaFungible <identifier> and DPMF Account <account>              ;;
-    ;;2     C_UnsetTransferRole                     Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account>              ;;
+    ;;2     C_ToggleAddQuantityRole                 Sets |role-nft-add-quantity| to <toggle> boolean for MF <identifier> and DPMF Account <account>     ;;
+    ;;2     C_ToggleBurnRole                        Sets |role-nft-burn| to <toggle> boolean for MetaFungible <identifier> and DPMF Account <account>   ;;
+    ;;2     C_ToggleTransferRole                    Sets |role-transfer| to <toggle> boolean for MetaFungible <identifier> and DPMF Account <account>   ;;
     ;;==================CREATE======================                                                                                                    ;;
     ;;15    C_IssueMetaFungible                     Issues a new MetaFungible                                                                           ;;
     ;;      C_DeployMetaFungibleAccount             Creates a new DPMF Account for MetaFungible <identifier> and Account <account>                      ;;
     ;;3     C_Mint                                  Mints <amount> <identifier> MetaFungibles with <meta-data> meta-data for DPMF Account <account>     ;;
+    ;;3     CX_Mint                                 Methodic, similar to |C_Mint| for Smart-DPTS Account type operation                                 ;;
     ;;2     C_Create                                Creates a 0 balance <identifier> MetaFungible with <meta-data> meta-data for DPMF Account <account> ;;
+    ;;2     CX_Create                               Methodic, similar to |C_Create| for Smart-DPTS Account type operation                               ;;
     ;;2     C_AddQuantity                           Adds <amount> quantity to existing MetaFungible <identifer> and <nonce> for DPMF Account <account>  ;;
+    ;;2     CX_AddQuantity                          Methodic, similar to |C_AddQuantity| for Smart-DPTS Account type operation                          ;;
     ;;==================DESTROY=====================                                                                                                    ;;
     ;;2     C_Burn                                  Burns <amount> <identifier>-<nonce> MetaFungible on DPMF Account <account>                          ;;
+    ;;2     CX_Burn                                 Methodic, similar to |C_Burn| for Smart-DPTS Account type operation                                 ;;
     ;;5     C_Wipe                                  Wipes the whole supply of <identifier> MetaFungible of a frozen DPMF Account <account>              ;;
     ;;==================TRANSFER====================                                                                                                    ;;
     ;;1     C_TransferMetaFungible                  Transfers <identifier>-<nonce> MetaFungible from <sender> to <receiver> DPMF Account                ;;
-    ;;1     C_TransferMetaFungibleAnew              Same as |C_TransferMetaFungible| but with DPMF Account creation                                     ;;
+    ;;1     CX_TransferMetaFungible                 Methodic, similar to |C_TransferMetaFungible| for Smart-DPTS Account type operation                 ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -1036,17 +997,7 @@
     ;;                                                                                                                                                  ;;
     ;;==================TRANSFER====================                                                                                                    ;;
     ;;      X_TransferMetaFungible                  Transfers <identifier>|<nonce> MetaFungible from <sender> to <receiver> DPMF Account without GAS    ;;
-    ;;      X_TransferMetaFungibleAnew              Similar to |X_TransferMetaFungible| but with DPMF Account creation                                  ;;
-    ;:=================METHODIC-TRANSFER===========                                                                                                     ;;
-    ;;      XC_MethodicTransferMetaFungible         Similar to |C_TransferMetaFungible| but methodic for Smart-DPTS Account type operation              ;;
-    ;;      XC_MethodicTransferMetaFungibleAnew     Similar to |C_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
-    ;;      X_MethodicTransferMetaFungibleWithGAS   Similar to |X_MethodicTransferMetaFungible| but with GAS                                            ;;
-    ;;      X_MethodicTransferMetaFungible          Similar to |X_TransferMetaFungible| but methodic for Smart-DPTS Account type operation              ;;
-    ;;      X_MethodicTransferMetaFungibleAnewWithGAS Similar to |X_MethodicTransferMetaFungibleAnew| but with GAS                                      ;;
-    ;;      X_MethodicTransferMetaFungibleAnew      Similar to |X_TransferMetaFungibleAnew| but methodic for Smart-DPTS Account type operation          ;;
     ;;==================CREDIT|DEBIT================                                                                                                    ;;
-    ;;      X_CreateCore                            Auxiliary Core Function that creates a MetaFungible                                                 ;;
-    ;;      X_AddQuantityCore                       Auxiliary Core Function that adds quantity for an existing Metafungible                             ;;                                 ;;
     ;;      X_Credit                                Auxiliary Function that credits a MetaFungible to a DPMF Account                                    ;;
     ;;      X_Debit                                 Auxiliary Function that debits a MetaFungible from a DPMF Account                                   ;;
     ;;      X_DebitMultiple                         Auxiliary Function needed for Wiping                                                                ;;
@@ -1058,17 +1009,12 @@
     ;;==================AUXILIARY===================                                                                                                    ;;
     ;;      X_ChangeOwnership                       Auxiliary function required in the main function                                                    ;;
     ;;      X_Control                               Auxiliary function required in the main function                                                    ;;
-    ;;      X_Pause                                 Auxiliary function required in the main function                                                    ;;
-    ;;      X_Unpause                               Auxiliary function required in the main function                                                    ;;
-    ;;      X_FreezeAccount                         Auxiliary function required in the main function                                                    ;;
-    ;;      X_UnfreezeAccount                       Auxiliary function required in the main function                                                    ;;
+    ;;      X_TogglePause                           Auxiliary function required in the main function                                                    ;;
+    ;;      X_ToggleFreezeAccount                   Auxiliary function required in the main function                                                    ;;
     ;;      X_MoveCreateRole                        Auxiliary function required in the main function                                                    ;;
-    ;;      X_SetAddQuantityRole                    Auxiliary function required in the main function                                                    ;;
-    ;;      X_SetBurnRole                           Auxiliary function required in the main function                                                    ;;
-    ;;      X_SetTransferRole                       Auxiliary function required in the main function                                                    ;;
-    ;;      X_UnsetAddQuantityRole                  Auxiliary function required in the main function                                                    ;;
-    ;;      X_UnsetBurnRole                         Auxiliary function required in the main function                                                    ;;
-    ;;      X_UnsetTransferRole                     Auxiliary function required in the main function                                                    ;;
+    ;;      X_ToggleAddQuantityRole                 Auxiliary function required in the main function                                                    ;;
+    ;;      X_ToggleBurnRole                        Auxiliary function required in the main function                                                    ;;
+    ;;      X_ToggleTransferRole                    Auxiliary function required in the main function                                                    ;;
     ;;      X_IssueMetaFungible                     Auxiliary function required in the main function                                                    ;;
     ;;      X_Mint                                  Auxiliary function required in the main function                                                    ;;
     ;;      X_Create                                Auxiliary function required in the main function                                                    ;;
@@ -1463,7 +1409,6 @@
             (zip (lambda (x:integer y:decimal) { "nonce": x, "balance": y }) nonce-lst balance-lst)
         )
     )
-
     ;;--------------------------------------------;;
     ;;                                            ;;
     ;;      ADMINISTRATION FUNCTIONS              ;;
@@ -1478,27 +1423,22 @@
     ;;==================CONTROL=====================
     ;;
     ;;      C_ChangeOwnership|C_Control
-    ;;      C_Pause|C_Unpause|C_FreezeAccount|C_UnfreezeAccount
+    ;;      C_TogglePause|C_ToggleFreezeAccount
     ;;
     (defun C_ChangeOwnership (patron:string identifier:string new-owner:string)
         @doc "Moves DPMF <identifier> Token Ownership to <new-owner> DPMF Account"
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (with-capability (DPMF_OWNERSHIP-CHANGE patron identifier new-owner)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIGGEST)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_OWNERSHIP-CHANGE identifier new-owner)
-                        (X_ChangeOwnership patron identifier new-owner)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_OWNERSHIP-CHANGE patron identifier new-owner)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIGGEST)
-                        (X_ChangeOwnership patron identifier new-owner)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_ChangeOwnership patron identifier new-owner)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
@@ -1517,119 +1457,57 @@
         @doc "Controls MetaFungible <identifier> Properties using 7 boolean control triggers \
             \ Setting the <can-upgrade> property to false disables all future Control of Properties"
 
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (with-capability (DPMF_CONTROL patron identifier)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_CONTROL patron identifier)
-                        (X_Control patron identifier can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_CONTROL patron identifier)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_Control patron identifier can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_Control patron identifier can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_Pause (patron:string identifier:string)
-        @doc "Pause MetaFungible <identifier>"
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+    (defun C_TogglePause (patron:string identifier:string toggle:bool)
+        @doc "Pause/Unpause MetaFungible <identifier> via the boolean <toggle>"
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+            )
+            (with-capability (DPMF_TOGGLE_PAUSE patron identifier toggle)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron patron OUROBOROS.GAS_MEDIUM)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_PAUSE identifier)
-                        (X_Pause patron identifier)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_PAUSE patron identifier)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_MEDIUM)
-                        (X_Pause patron identifier)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_TogglePause identifier toggle)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_Unpause (patron:string identifier:string)
-        @doc "Unpause MetaFungible <identifier>"
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_UNPAUSE identifier)
-                        (X_Unpause patron identifier)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_UNPAUSE patron identifier)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_MEDIUM)
-                        (X_Unpause patron identifier)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+    (defun C_ToggleFreezeAccount (patron:string identifier:string account:string toggle:bool)
+        @doc "Freeze/Unfreeze via boolean <toggle> MetaFungile <identifier> on DPMF Account <account>"
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
             )
-        )  
-    )
-    (defun C_FreezeAccount (patron:string identifier:string account:string)
-        @doc "Freeze MetaFungile <identifier> on DPMF Account <account>"
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            (with-capability (DPMF_TOGGLE_FREEZE-ACCOUNT patron identifier account toggle)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron account OUROBOROS.GAS_BIG)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_FREEZE-ACCOUNT identifier account)
-                        (X_FreezeAccount patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_FREEZE-ACCOUNT patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIG)
-                        (X_FreezeAccount patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_ToggleFreezeAccount identifier account toggle)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_UnfreezeAccount (patron:string identifier:string account:string)
-        @doc "Unfreeze MetaFungile <identifier> on DPMF Account <account>"
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_UNFREEZE-ACCOUNT identifier account)
-                        (X_UnfreezeAccount patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_UNFREEZE-ACCOUNT patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIG)
-                        (X_UnfreezeAccount patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
-            )
-        )
-    )
+    ;;==================ROLES======================= 
     ;;
-    ;;==================SET========================= 
-    ;;
-    ;;      C_MoveCreateRole|C_SetAddQuantityRole
-    ;;      C_SetBurnRole|C_SetTransferRole
+    ;;      C_MoveCreateRole|C_ToggleAddQuantityRole
+    ;;      C_ToggleBurnRole|C_ToggleTransferRole
     ;;
     (defun C_MoveCreateRole (patron:string identifier:string receiver:string)
         @doc "Moves |role-nft-create| from <sender> to <receiver> DPMF Account for MetaFungible <identifier> \
@@ -1637,188 +1515,82 @@
             \ Afterwards the receiver DPMF Account can crete new Meta Fungibles \ 
             \ Fails if the target DPMF Account doesnt exist"
 
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+                (current-owner-account:string (UR_MetaFungibleKonto identifier))
+            )
+            (with-capability (DPMF_MOVE_CREATE-ROLE patron identifier receiver)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIGGEST)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_MOVE_CREATE-ROLE identifier receiver)
-                        (X_MoveCreateRole patron identifier receiver)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_MOVE_CREATE-ROLE patron identifier receiver)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_BIGGEST)
-                        (X_MoveCreateRole patron identifier receiver)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_MoveCreateRole identifier receiver)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_SetAddQuantityRole (patron:string identifier:string account:string)
-        @doc "Sets |role-nft-add-quantity| to true for MetaFungible <identifier> and DPMF Account <account> \
-            \ Afterwards Account <account> can increase quantity for existing MetaFungibles"
+    (defun C_ToggleAddQuantityRole (patron:string identifier:string account:string toggle:bool)
+        @doc "Sets |role-nft-add-quantity| to <toggle> boolean for MetaFungible <identifier> and DPMF Account <account> \
+            \ Afterwards Account <account> can either add quantity or no longer add quantity to existing MetaFungible"
 
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+            )
+            (with-capability (DPMF_TOGGLE_ADD-QUANTITY-ROLE patron identifier account toggle)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron account OUROBOROS.GAS_SMALL)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_SET_ADD-QUANTITY-ROLE identifier account)
-                        (X_SetAddQuantityRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_SET_ADD-QUANTITY-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_SetAddQuantityRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_ToggleAddQuantityRole identifier account toggle)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_SetBurnRole (patron:string identifier:string account:string)
-        @doc "Sets |role-nft-burn| to true for MetaFungible <identifier> and DPMF Account <account> \
-            \ Afterwards Account <account> can burn existing MetaFungibles"
+    (defun C_ToggleBurnRole (patron:string identifier:string account:string toggle:bool)
+        @doc "Sets |role-nft-burn| to <toggle> boolean for MetaFungible <identifier> and DPMF Account <account> \
+            \ Afterwards Account <account> can either burn or no longer burn existing MetaFungible"
 
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+            )
+            (with-capability (DPMF_TOGGLE_BURN-ROLE patron identifier account toggle)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron account OUROBOROS.GAS_SMALL)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_SET_BURN-ROLE identifier account)
-                        (X_SetBurnRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_SET_BURN-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_SetBurnRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_ToggleBurnRole identifier account toggle)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    (defun C_SetTransferRole (patron:string identifier:string account:string)
-        @doc "Sets |role-transfer| to true for MetaFungible <identifier> and DPMF Account <account> \
+    (defun C_ToggleTransferRole (patron:string identifier:string account:string toggle:bool)
+        @doc "Sets |role-transfer| to <toggle> boolean for MetaFungible <identifier> and DPMF Account <account> \
             \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
             \ Transfer will only work towards DPMF Accounts with |role-trasnfer| true, \
-            \ while these DPMF Accounts can transfer MetaFungibles unrestricted to any other DPMF Account"
+            \ while these DPMF Accounts can transfer the MetaFungible unrestricted to any other DPMF Account"
 
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
+        (let
+            (
+                (ZG:bool (OUROBOROS.UR_GasToggle))
+            )
+            (with-capability (DPMF_TOGGLE_TRANSFER-ROLE patron identifier account toggle)
+                (if (= ZG false)
+                    (OUROBOROS.X_CollectGAS patron account OUROBOROS.GAS_SMALL)
+                    true
                 )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_SET_TRANSFER-ROLE identifier account)
-                        (X_SetTransferRole patron identifier account)
-                        (X_UpdateRoleTransferAmount identifier true)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_SET_TRANSFER-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_SetTransferRole patron identifier account)
-                        (X_UpdateRoleTransferAmount identifier true)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
+                (X_ToggleTransferRole identifier account toggle)
+                (X_UpdateRoleTransferAmount identifier toggle)
+                (OUROBOROS.X_IncrementNonce patron)
             )
         )
     )
-    ;;
-    ;;==================UNSET=======================
-    ;;
-    ;;      C_UnsetAddQuantityRole|C_UnsetBurnRole|C_UnsetTransferRole
-    ;;
-    (defun C_UnsetAddQuantityRole (patron:string identifier:string account:string)
-        @doc "Sets |role-nft-add-quantity| to false for MetaFungible <identifier> and DPMF Account <account> \
-            \ Afterwards Account <account> can no longer increase quantity for existing MetaFungibles"
-
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_UNSET_ADD-QUANTITY-ROLE identifier account)
-                        (X_UnsetAddQuantityRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_UNSET_ADD-QUANTITY-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_UnsetAddQuantityRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
-            )
-        )
-    )
-    (defun C_UnsetBurnRole (patron:string identifier:string account:string)
-        @doc "Sets |role-nft-burn| to false for MetaFungible <identifier> and DPMF Account <account> \
-            \ Afterwards Account <account> can no longer burn existing MetaFungibles"
-
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_UNSET_BURN-ROLE identifier account)
-                        (X_UnsetBurnRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_UNSET_BURN-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_UnsetBurnRole patron identifier account)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
-            )
-        )
-    )
-    (defun C_UnsetTransferRole (patron:string identifier:string account:string)
-        @doc "Sets |role-transfer| to false for MetaFungible <identifier> and DPMF Account <account> \
-            \ If at least one DPMF Account has the |role-transfer|set to true, then all normal transfer are restricted \
-            \ Transfer will only work towards DPMF Accounts with |role-trasnfer| true, \
-            \ while these DPMF Accounts can transfer MetaFungibles unrestricted to any other DPMF Account"
-
-        (with-capability (OUROBOROS.PATRON patron)
-            (let
-                (
-                    (gas-toggle:bool (OUROBOROS.UR_GasToggle))
-                    (current-owner-account:string (UR_MetaFungibleKonto identifier))
-                )
-                (if (= gas-toggle false)
-                    (with-capability (DPMF_UNSET_TRANSFER-ROLE identifier account)
-                        (X_UnsetTransferRole patron identifier account)
-                        (X_UpdateRoleTransferAmount identifier false)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                    (with-capability (DPMF-GAS_UNSET_TRANSFER-ROLE patron identifier account)
-                        (OUROBOROS.X_CollectGAS patron current-owner-account OUROBOROS.GAS_SMALL)
-                        (X_UnsetTransferRole patron identifier account)
-                        (X_UpdateRoleTransferAmount identifier false)
-                        (OUROBOROS.X_IncrementNonce patron)
-                    )
-                )
-            )
-        )
-    )
-    ;;
     ;;==================CREATE====================== 
     ;;
     ;;      C_IssueMetaFungible|C_DeployMetaFungibleAccount
-    ;;      C_Mint|C_Create|C_AddQuantity
+    ;;      C_Mint|CX_Mint|C_Create|CX_Create|C_AddQuantity|CX_AddQuantity
     ;;
     (defun C_IssueMetaFungible:string 
         (
@@ -2027,10 +1799,9 @@
             (OUROBOROS.X_IncrementNonce account)
         )
     )
-    ;;
     ;;==================DESTROY=====================
     ;;
-    ;;      C_Burn|C_Wipe
+    ;;      C_Burn|CX_Burn|C_Wipe
     ;;
     (defun C_Burn (patron:string identifier:string nonce:integer account:string amount:decimal)
         @doc "Burns <amount> <identifier>-<nonce> MetaFungible on DPMF Account <account>"
@@ -2080,10 +1851,9 @@
             )
         )
     )
-    ;;
     ;;==================TRANSFER====================
     ;;
-    ;;     C_TransferMetaFungible
+    ;;     C_TransferMetaFungible|CX_TransferMetaFungible
     ;;
     (defun C_TransferMetaFungible (patron:string identifier:string nonce:integer sender:string receiver:string transfer-amount:decimal)
         @doc "Transfers <identifier> MetaFungible with Nonce <nonce> from <sender> to <receiver> DPTF Account, using boolean <anew> as input \
@@ -2103,10 +1873,6 @@
             )
         )
     )
-    ;;==================METHODIC-TRANSFER===========
-    ;;
-    ;;      CX_TransferMetaFungible
-    ;;
     (defun CX_TransferMetaFungible (patron:string identifier:string nonce:integer sender:string receiver:string transfer-amount:decimal)
         @doc "Methodic, Similar to |C_TransferMetaFungible| for Smart-DPTS Account type operation"
         (require-capability (TRANSFER_DPMF patron identifier sender receiver transfer-amount true))
@@ -2159,7 +1925,6 @@
             (X_Credit identifier nonce current-nonce-meta-data receiver transfer-amount)
         )
     )
-    ;;
     ;;==================CREDIT|DEBIT================ 
     ;;
     ;;      X_Credit|X_Debit
@@ -2293,7 +2058,6 @@
             (map (lambda (x:object{NonceBalance_Schema}) (X_DebitPaired identifier account x)) nonce-balance-obj-lst)
         )
     )
-
     (defun X_DebitPaired (identifier:string account:string nonce-balance-obj:object{NonceBalance_Schema})
         @doc "Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping \
             \ Same a |X_Debit| but the nonce and balance are composed into a singular <nonce-balance-obj> object \
@@ -2342,7 +2106,7 @@
     )
     (defun X_UpdateRoleTransferAmount (identifier:string direction:bool)
         @doc "Updates |role-transfer-amount| for Token <identifier>"
-        (require-capability (DPMF_UPDATE-ROLE-TRANSFER-AMOUNT))
+        (require-capability (DPMF_UPDATE_ROLE-TRANSFER-AMOUNT))
         (if (= direction true)
             (with-read DPMF-PropertiesTable identifier
                 { "role-transfer-amount" := rta }
@@ -2360,16 +2124,13 @@
     )
     ;;==================AUXILIARY=================== 
     ;;
-    ;;      X_ChangeOwnership|X_Control|X_Pause|X_Unpause|X_FreezeAccount|X_UnfreezeAccount
-    ;;      X_MoveCreateRole|X_SetAddQuantityRole|X_SetBurnRole|X_SetTransferRole
-    ;;      X_UnsetAddQuantityRole|X_UnsetBurnRole|X_UnsetTransferRole
-    ;;      X_IssueMetaFungible|X_Mint|X_Create|X_AddQuantit
+    ;;      X_ChangeOwnership|X_Control|X_TogglePause|X_ToggleFreezeAccount
+    ;;      X_MoveCreateRole|X_ToggleAddQuantityRole|X_ToggleBurnRole|X_ToggleTransferRole
+    ;;      X_IssueMetaFungible|X_Mint|X_Create|X_AddQuantity
     ;;      X_Burn|X_Wipe
     ;;
     (defun X_ChangeOwnership (patron:string identifier:string new-owner:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-CHANGE-OWNER_ON identifier))
+        (require-capability (DPMF_OWNERSHIP-CHANGE_CORE identifier new-owner))
         (update DPMF-PropertiesTable identifier
             {"owner-konto"                      : new-owner}
         )
@@ -2386,9 +2147,7 @@
             can-pause:bool
             can-transfer-nft-create-role:bool
         )
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-UPGRADE_ON identifier))
+        (require-capability (DPMF_CONTROL_CORE identifier))
         (update DPMF-PropertiesTable identifier
             {"can-change-owner"                 : can-change-owner
             ,"can-upgrade"                      : can-upgrade
@@ -2399,123 +2158,62 @@
             ,"can-transfer-nft-create-role"     : can-transfer-nft-create-role}
         )
     )
-    (defun X_Pause (patron:string identifier:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-PAUSE_ON identifier))
-        (require-capability (DPMF_IS-PAUSED_OFF identifier))
+    (defun X_TogglePause (identifier:string toggle:bool)
+        (if (= toggle true)
+            (require-capability (DPMF_PAUSE_CORE identifier))
+            (require-capability (DPMF_UNPAUSE_CORE identifier))
+        )
         (update DPMF-PropertiesTable identifier
-            { "is-paused" : true}
+            { "is-paused" : toggle}
         )
     )
-    (defun X_Unpause (patron:string identifier:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-PAUSE_ON identifier))
-        (require-capability (DPMF_IS-PAUSED_ON identifier))
+    (defun X_ToggleFreezeAccount (identifier:string account:string toggle:bool)
+        (if (= toggle true)
+            (require-capability (DPMF_FREEZE-ACCOUNT_CORE identifier account))
+            (require-capability (DPMF_UNFREEZE-ACCOUNT_CORE identifier account))
+        )
+        (update DPMF-BalancesTable (concat [identifier BAR account])
+            { "frozen" : toggle}
+        )
+    )
+    (defun X_MoveCreateRole (identifier:string receiver:string)
+        @doc "Assumes a DPMF Account exists for the <receiver>"
+        (require-capability (DPMF_MOVE_CREATE-ROLE_CORE identifier receiver))
+        (update DPMF-BalancesTable (concat [identifier BAR (UR_MetaFungibleKonto identifier)])
+            {"role-nft-create" : false}
+        )
+        (update DPMF-BalancesTable (concat [identifier BAR receiver])
+            {"role-nft-create" : true}
+        )
         (update DPMF-PropertiesTable identifier
-            { "is-paused" : false}
+            {"create-role-account" : receiver}
         )
     )
-    (defun X_FreezeAccount (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-FREEZE_ON identifier))
-        (require-capability (DPMF_ACCOUNT_FREEZE_OFF identifier account))
+    (defun X_ToggleAddQuantityRole (identifier:string account:string toggle:bool)
+        (if (= toggle true)
+            (require-capability (DPMF_SET_ADD-QUANTITY-ROLE_CORE identifier account))
+            (require-capability (DPMF_UNSET_ADD-QUANTITY-ROLE_CORE identifier account))
+        )
         (update DPMF-BalancesTable (concat [identifier BAR account])
-            { "frozen" : true}
+            {"role-nft-add-quantity" : toggle}
         )
     )
-    (defun X_UnfreezeAccount (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-FREEZE_ON identifier))
-        (require-capability (DPMF_ACCOUNT_FREEZE_ON identifier account))
+    (defun X_ToggleBurnRole (identifier:string account:string toggle:bool)
+        (if (= toggle true)
+            (require-capability (DPMF_SET_BURN-ROLE_CORE identifier account))
+            (require-capability (DPMF_UNSET_BURN-ROLE_CORE identifier account))
+        )
         (update DPMF-BalancesTable (concat [identifier BAR account])
-            { "frozen" : false}
+            {"role-nft-burn" : toggle}
         )
     )
-    (defun X_MoveCreateRole (patron:string identifier:string receiver:string)
-        (let
-            (
-                (current-owner-account:string (UR_MetaFungibleKonto identifier))
-            )
-            ;;Capability Requirements
-            (require-capability (OUROBOROS.PATRON patron))
-            (require-capability (DPMF_OWNER identifier))
-            (require-capability (DPMF_CAN-TRANSFER-NFT-CREATE-ROLE_ON identifier))
-            (require-capability (DPMF_ACCOUNT_CREATE_ON identifier current-owner-account))
-            (require-capability (DPMF_ACCOUNT_CREATE_OFF identifier receiver))
-            ;;Enforce <current-owner-account> Account and <receiver> Account are different
-            (OUROBOROS.UV_SenderWithReceiver current-owner-account receiver)
-            ;;Set <role-nft-create> for curent MetaFungibleOwner Account to false
-            (update DPMF-BalancesTable (concat [identifier BAR current-owner-account])
-                {"role-nft-create" : false}
-            )
-            ;;Set <create-role-account> from DPMF Token properties to the receiver
-            (update DPMF-PropertiesTable identifier
-                {"create-role-account" : receiver}
-            )
-            ;;Since the DPMF-Properties Table is already updated with the receiver as create-role-account
-            ;;When the receiver doesnt have a DPMF Account, attempting to deploy the DPMF Account for the receiver
-            ;;Will executed the deployment with role-nft-create automatically set to true
-            (C_DeployMetaFungibleAccount identifier receiver)
-            ;;However, if the receiver already has a DPMF Account, a simple update is required.
-            ;;This doesnt change anything if the DPMF account was freshly deployed anew from above.
-            (update DPMF-BalancesTable (concat [identifier BAR receiver])
-                {"role-nft-create" : true}
-            )
+    (defun X_ToggleTransferRole (identifier:string account:string toggle:bool)
+        (if (= toggle true)
+            (require-capability (DPMF_SET_TRANSFER-ROLE_CORE identifier account))
+            (require-capability (DPMF_UNSET_TRANSFER-ROLE_CORE identifier account))
         )
-    )
-    (defun X_SetAddQuantityRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (require-capability (DPMF_ACCOUNT_ADD-QUANTITY_OFF identifier account))
         (update DPMF-BalancesTable (concat [identifier BAR account])
-                {"role-nft-add-quantity" : true}
-        )
-    )
-    (defun X_SetBurnRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (require-capability (DPMF_ACCOUNT_BURN_OFF identifier account))
-        (update DPMF-BalancesTable (concat [identifier BAR account])
-            {"role-nft-burn" : true}
-        )
-    )
-    (defun X_SetTransferRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (require-capability (DPMF_ACCOUNT_TRANSFER_OFF identifier account))
-        (update DPMF-BalancesTable (concat [identifier BAR account])
-            {"role-transfer" : true}
-        )
-    )
-    (defun X_UnsetAddQuantityRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_ACCOUNT_ADD-QUANTITY_ON identifier account))
-        (update DPMF-BalancesTable (concat [identifier BAR account])
-            {"role-nft-add-quantity" : false}
-        )
-    )
-    (defun X_UnsetBurnRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_ACCOUNT_BURN_ON identifier account))
-        (update DPMF-BalancesTable (concat [identifier BAR account])
-            {"role-nft-burn" : false}
-        )
-    )
-    (defun X_UnsetTransferRole (patron:string identifier:string account:string)
-        (require-capability (OUROBOROS.PATRON patron))
-        (require-capability (DPMF_OWNER identifier))
-        (require-capability (DPMF_ACCOUNT_TRANSFER_ON identifier account))
-        (update DPMF-BalancesTable (concat [identifier BAR account])
-            {"role-transfer" : false}
+            {"role-transfer" : toggle}
         )
     )
     (defun X_IssueMetaFungible:string
