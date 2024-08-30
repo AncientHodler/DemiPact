@@ -739,7 +739,7 @@
     (defcap DPMF_MINT (patron:string identifier:string client:string amount:decimal method:bool)
         @doc "Capability required to mint a DPMF Token"
         (compose-capability (OUROBOROS.DPTS_METHODIC client method))
-        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_MEDIUM))
+        (compose-capability (OUROBOROS.GAS_COLLECTION patron client OUROBOROS.GAS_SMALL))
         (compose-capability (DPMF_MINT_CORE identifier client amount))
         (compose-capability (OUROBOROS.DPTS_INCREASE-NONCE))
     )

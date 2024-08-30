@@ -425,3 +425,34 @@
 
 (env-gas)
 (commit-tx)
+
+
+(begin-tx "TESTING-BULK SEND")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "======================================================================")
+(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
+            { "key": "PrivateKey_Emma", "caps": [] }
+            { "key": "PrivateKey_Vesting", "caps": [] }])
+
+
+(format "AH has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+(format "Emmma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+(format "Ouroboros has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Ouroboros")])
+(free.OUROBOROS.C_SetFee "AncientHodler" "OURO-98c486052a51" -1.0)
+(free.OUROBOROS.C_ToggleFee "AncientHodler" "OURO-98c486052a51" true)
+(free.OUROBOROS.UR_TrueFungibleFeePromile "OURO-98c486052a51")
+(free.OUROBOROS.UR_TrueFungibleFeeTarget "OURO-98c486052a51")
+(free.OUROBOROS.UR_TrueFungibleFeeToggle "OURO-98c486052a51")
+
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 100.0)
+(print "AFTER fee transfer")
+(format "AH has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
+(format "Emmma has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma")])
+(format "Ouroboros has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Ouroboros")])
+(free.OUROBOROS.C_SetFeeTarget "AncientHodler" "OURO-98c486052a51" "Emma")
+(free.OUROBOROS.C_SetFeeTarget "AncientHodler" "OURO-98c486052a51" "Ouroboros")
+
+(free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "OURO-98c486052a51" true)
+(free.OUROBOROS.C_SetFeeTarget "AncientHodler" "OURO-98c486052a51" "Emma")
+(env-gas)
+(commit-tx)

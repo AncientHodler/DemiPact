@@ -43,13 +43,14 @@
         @doc "Capability enforcing the OUROBOROS Administrator"
 
         (enforce-guard (keyset-ref-guard SC_KEY))
+        (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap GAS_INIT_SET-ROLES (patron:string gas-id:string gas-source-id account:string)
         @doc "Capability needed when setting Roles within the GAS Initialisation Function"
-        (compose-capability (DPTF_SET_BURN-ROLE_CORE gas-id account))
-        (compose-capability (DPTF_SET_MINT-ROLE_CORE gas-id account))
-        (compose-capability (DPTF_SET_BURN-ROLE_CORE gas-source-id account))
-        (compose-capability (DPTF_SET_MINT-ROLE_CORE gas-source-id account))
+        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-id account true))
+        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-id account true))
+        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-source-id account true))
+        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-source-id account true))
         (compose-capability (DPTS_INCREASE-NONCE))
         (compose-capability (PATRON patron))
     )
@@ -153,11 +154,13 @@
     ;;      Functions Names are prefixed, so that they may be better visualised and understood.                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;      UTILITY-COMPUTE                         UC_FunctionName                                                                                     ;;
+    ;;      UTILITY-COMPUTE_AUXILIARY               UCX_FunctionName                                                                                    ;;
     ;;      UTILITY-PRINT                           UP_FunctionName                                                                                     ;;
     ;;      UTILITY-READ                            UR_FunctionName                                                                                     ;;
     ;;      UTILITY-VALIDATE                        UV_FunctionName                                                                                     ;;
     ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
     ;;      CLIENT                                  C_FunctionName                                                                                      ;;
+    ;;      CLIENT-AUXILIARY                        CX_FunctionName                                                                                      ;;
     ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
@@ -204,13 +207,16 @@
     )
     ;;3]TABLES Definitions
     (deftable DPTS-AccountTable:{DPTS-AccountSchema})
+
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
     ;;      DPTS: BASIC CAPABILITIES                Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;==============================================                                                                                                    ;;
+    ;;==================DPTS-ACCOUNT================                                                                                                    ;;
+    ;;      DPTS_ACCOUNT_EXIST                      Enforces that a DPTS Account exists                                                                 ;;
     ;;      DPTS_ACCOUNT_OWNER                      Enforces DPTS Account Ownership                                                                     ;;
     ;;      IZ_DPTS_ACOUNT_SMART                    Enforces That a DPTS Account is of a Smart DPTS Account                                             ;;
+    ;;----------------------------------------------                                                                                                    ;;
     ;;      SC_TRANSFERABILITY                      Enforce correct transferability between DPTS Accounts                                               ;;
     ;;      DPTS_INCREASE-NONCE                     Capability required to increment the DPTS nonce                                                     ;;
     ;;                                                                                                                                                  ;;
@@ -218,16 +224,17 @@
     ;;                                                                                                                                                  ;;
     ;;      DPTS: COMPOSED CAPABILITIES             Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
-    ;;==============================================                                                                                                    ;;
-    ;;      CONTROL-SMART-ACCOUNT                  Capability needed for the <C_ControlSmartAccount> to execute                                         ;;                                                   ;;
-    ;;      CONTROL-SMART-ACCOUNT_CORE             Core Capability to Control a Smart-Account                                                           ;;                                            ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      CONTROL-SMART-ACCOUNT                   Capability needed for the <C_ControlSmartAccount> to execute                                        ;;                                                   ;;
+    ;;      CONTROL-SMART-ACCOUNT_CORE              Core Capability to Control a Smart-Account                                                          ;;                                            ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
+
     ;;==============================================
     ;;                                            ;;
     ;;      DPTS: BASIC CAPABILITIES              ;;
     ;;                                            ;;
-    ;;==============================================
+    ;;==================DPTS-ACCOUNT================
     ;;
     ;;      DPTS_ACCOUNT_EXIST|DPTS_ACCOUNT_OWNER|IZ_DPTS_ACOUNT_SMART
     ;;      SC_TRANSFERABILITY|DPTS_INCREASE-NONCE
@@ -268,6 +275,7 @@
             )
         )
     )
+
     (defcap SC_TRANSFERABILITY (sender:string receiver:string method:bool)
         @doc "Enforce correct transferability when dealing with Smart(Contract) DPTS Account types \
             \ When Method is set to true, transferability is always ensured"
@@ -285,6 +293,10 @@
     )
     (defcap DPTS_INCREASE-NONCE ()
         @doc "Capability required to increment the DPTS nonce"
+        true
+    )
+    (defcap COMPOSE ()
+        @doc "Capability used to compose multiple functions in an IF statement"
         true
     )
     ;;==============================================
@@ -334,8 +346,8 @@
     ;;      UV_DPTS-Ticker                          Enforces the DPTS Token Ticker conform as per DPTS standards                                        ;;
     ;;      UV_Object                               Validates that an Object has the required size and keys                                             ;;
     ;;==================MULTI-VALIDATIONS===========                                                                                                    ;;
-    ;;      UV_DPTS-Account_Two                     Validates 2 DPTS Accounts
-    ;;      UV_DPTS-Account_Three                   Validates 3 DPTS Accounts
+    ;;      UV_DPTS-Account_Two                     Validates 2 DPTS Accounts                                                                           ;;
+    ;;      UV_DPTS-Account_Three                   Validates 3 DPTS Accounts                                                                           ;;
     ;;==================STRINGS-CHECKS==============                                                                                                    ;;
     ;;      UC_IzStringANC                          Checks if a string is alphanumeric with or without Uppercase Only                                   ;;
     ;;      UC_IzCharacterANC                       Checks if a character is alphanumeric with or without Uppercase Only                                ;;
@@ -661,7 +673,7 @@
     ;;                                            ;;
     ;;      DPTS: UTILITY FUNCTIONS               ;;
     ;;                                            ;;
-    ;;==================VALIDATIONS=================
+    ;;==================MULTI-VALIDATIONS===========
     ;;
     ;;      UV_DPTS-Account_Two|UV_DPTS-Account_Three
     ;;
@@ -756,8 +768,6 @@
     ;;      UC_FirstListElement|UC_SecondListElement|UC_LastListElement
     ;;      UC_InsertFirst|UC_AppendLast
     ;;      UV_EnforceNotEmpty|UV_IsNotEmpty
-    ;;
-    ;;      NO special VALIDATION needed
     ;;
     (defun UC_SplitString:[string] (splitter:string splitee:string)
         @doc "Splits a string unsing a single string as splitter"
@@ -971,8 +981,30 @@
         supply:decimal                              ;;Stores the Token Total Supply
         origin-mint:bool                            ;;If true, Origin Supply has already been minted
         origin-mint-amount:decimal                  ;;Store the Token's Origin Mint Amount
-        ;;Transfer-Role-Amount
+        ;;Roles
         role-transfer-amount:integer                ;;Stores how many accounts have Transfer Roles for the Token.
+        ;;DPTF Fee Management
+        fee-toggle:bool                             ;;Toggles built in fee management for the DPTF Token. Set to False to disable
+        fee-promile:decimal                         ;;Amount either -1.0 or 0.0<fee-promile<1000.0 representing the amount of Fee retained
+                                                    ;;Negative Amount triggers a special Volumetric Fee Computation for the Fee. Uses <decimals> for precision.
+        fee-target:string                           ;;DPTF Account (either Smart or Normal DPTS Account) receiving the retained Fee
+                                                    ;;Empty String can be used, in this case the Fee Carrier itself retains the Fee
+        fee-lock:bool                               ;;TM can choose to lock the fee parameters. Once locked, they cannot be changed unless fee-lock is set to <true> again
+                                                    ;;Setting fee-lock to <true> can only be done with increasing KDA Costs. Since a DPTF Token is designed
+                                                    ;;to be created with a specific Fee, and then locked into place.
+
+                                                    ;;Unlock LIMITATIONS and COSTS:
+                                                    ;;LIMITATIONS: At most 7 fee-unlocks may be executed for a DPTF token.
+                                                    ;;COST: (10000 GAS + 100 KDA )*(0 + fee-unlocks)
+                                                    ;;Each fee-unlock adds that many times of automatic Volumetric Fees for the Token.
+                                                    ;;These Volumetric-Fees are collected to the "Gas-Tanker" and are distributed to the Blockchain Validators,
+                                                    ;;as if they were cumulated Blockchain GAS.
+                                                    ;;Ideally, a DPTF Token shouldnt need any fee-unlocks, this is a feature that should be carefully considered if and when to use
+
+        fee-unlocks:integer                         ;;Stores how many fee unlocks have been executed for the DPTF Token. The fewer unlocks, the stabler the Token System
+        primary-fee-volume:decimal                  ;;Stores how much standard-fee has been circulated by the token. (This is the amount set up by the Token Manager)
+        secondary-fee-volume:decimal                ;;Stores how much penalty-fee has been circulated by the Token. Penalty fee is generated by the fee-unlocks
+
     )
     (defschema DPTF-BalanceSchema
         @doc "Schema that Stores Account Balances for DPTF Tokens (True Fungibles)\
@@ -1012,22 +1044,17 @@
     ;;      DPTF_CAN-FREEZE_ON                      Enforces Token Property as true                                                                     ;;
     ;;      DPTF_CAN-WIPE_ON                        Enforces Token Property as true                                                                     ;;
     ;;      DPTF_CAN-PAUSE_ON                       Enforces Token Property as true                                                                     ;;
-    ;;      DPTF_IS-PAUSED_ON                       Enforces that the DPTF Token is paused                                                              ;;
-    ;;      DPTF_IS-PAUSED_OF                       Enforces that the DPTF Token is not paused                                                          ;;
+    ;;      DPTF_PAUSE_STATE                        Enforces DPTF Token <is-paused> to <state>                                                          ;;
     ;;      DPTF_ORGIN_VIRGIN                       Enforces Origin Mint hasn't been executed                                                           ;;
     ;;      DPTF_UPDATE_SUPPLY                      Capability required to update DPTF Supply                                                           ;;
     ;;      UPDATE-ROLE-TRANSFER-AMOUNT             Capability required to update DPTF Transfer-Role-Amount                                             ;;
     ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========                                                                                                    ;;
-    ;;      DPTF_ACCOUNT_EXIST                      Enforces that the DPTF Account <account> exists for Token <identifier>                              ;;
+    ;;      DPTF_ACCOUNT_EXISTANCE                  Enforces that the DPTF Account <account> exists for Token <identifier>                              ;;
     ;;      DPTF_ACCOUNT_OWNER                      Enforces DPTF Account Ownership                                                                     ;;
-    ;;      DPTF_ACCOUNT_BURN_ON                    Enforces DPTF Account has burn role on                                                              ;;
-    ;;      DPTF_ACCOUNT_BURN_OFF                   Enforces DPTF Account has burn role off                                                             ;;
-    ;;      DPTF_ACCOUNT_MINT_ON                    Enforces DPTF Account has mint role on                                                              ;;
-    ;;      DPTF_ACCOUNT_MINT_OFF                   Enforces DPTF Account has mint role off                                                             ;;
-    ;;      DPTF_ACCOUNT_TRANSFER_ON                Enforces DPTF Account has transfer role on                                                          ;;
-    ;;      DPTF_ACCOUNT_TRANSFER_OFF               Enforces DPTF Account has transfer role off                                                         ;;
-    ;;      DPTF_ACCOUNT_FREEZE_ON                  Enforces DPTF Account is frozen                                                                     ;;
-    ;;      DPTF_ACCOUNT_FREEZE_OFF                 Enforces DPTF Account is not frozen                                                                 ;;
+    ;;      DPTF_ACCOUNT_BURN_STATE                 Enforces DPTF Account <role-burn> to <state>                                                        ;;
+    ;;      DPTF_ACCOUNT_MINT_STATE                 Enforces DPTF Account <role-mint> to <state>                                                        ;;
+    ;;      DPTF_ACCOUNT_TRANSFER_STATE             Enforces DPTF Account <role-transfer> to <state>                                                    ;;
+    ;;      DPTF_ACCOUNT_FREEZE_STATE               Enforces DPTF Account <frozen> to <state>                                                           ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -1040,34 +1067,19 @@
     ;;      DPTF_CONTROL_CORE                       Core Capability required for managing DPTF Properties                                               ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_TOGGLE_PAUSE                       Capability required to EXECUTE <C_TogglePause> Function                                             ;;
-    ;;      DPTF_PAUSE                              Capability required to pause a DPTF account                                                         ;;
-    ;;      DPTF_PAUSE_CORE                         Core Capability required to pause a DPTF account                                                    ;;
-    ;;      DPTF_UNPAUSE                            Capability required to unpause a DPTF account                                                       ;;
-    ;;      DPTF_UNPAUSE_CORE                       Core Capability required to unpause a DPTF account                                                  ;;
+    ;;      DPTF_TOGGLE_PAUSE_CORE                  Capability required to toggle pause for a DPTF Token                                                ;;
     ;;----------------------------------------------                                                                                                    ;;
-    ;;      DPTF_TOGGLE_FREEZE-ACCOUNT              Capability required to EXECUTE <C_ToggleFreezeAccount> Function                                     ;;
-    ;;      DPTF_FREEZE-ACCOUNT                     Capability required to freeze a DPTF account                                                        ;;
-    ;;      DPTF_FREEZE-ACCOUNT_CORE                Core Capability required to freeze a DPTF account                                                   ;;
-    ;;      DPTF_UNFREEZE-ACCOUNT                   Capability required to unfreeze a DPTF account                                                      ;;
-    ;;      DPTF_UNFREEZE-ACCOUNT_CORE              Core Capability required to unfreeze a DPTF account                                                 ;;
+    ;;      DPTF_FROZEN-ACCOUNT                     Capability required to EXECUTE <C_ToggleFreezeAccount> Function                                     ;;
+    ;;      DPTF_FROZEN-ACCOUNT_CORE                Core Capability required to toggle freeze for a DPTF Account                                        ;;
     ;;==================TOKEN-ROLES=================                                                                                                    ;;
     ;;      DPTF_TOGGLE_BURN-ROLE                   Capability required to EXECUTE <C_ToggleBurnRole> Function                                          ;;
-    ;;      DPTF_SET_BURN-ROLE                      Capability required to set <role-burn> to a DPTF account for a DPTF Token                           ;;
-    ;;      DPTF_SET_BURN-ROLE_CORE                 Core Capability required to set <role-burn> to a DPTF account for a DPTF Token                      ;;
-    ;;      DPTF_UNSET_BURN-ROLE                    Capability required to unset <role-burn> to a DPTF account for a DPTF Token                         ;;
-    ;;      DPTF_UNSET_BURN-ROLE_CORE               Core Capability required to unset <role-burn> to a DPTF account for a DPTF Token                    ;;
+    ;;      DPTF_TOGGLE_BURN-ROLE_CORE              Core Capability required to toggle <role-burn> to a DPTF Account for a DPTF Token                   ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_TOGGLE_MINT-ROLE                   Capability required to EXECUTE <C_ToggleMintRole> Function                                          ;;
-    ;;      DPTF_SET_MINT-ROLE                      Capability required to set <role-mint> to a DPTF account for a DPTF Token                           ;;
-    ;;      DPTF_SET_MINT-ROLE_CORE                 Core Capability required to set <role-mint> to a DPTF account for a DPTF Token                      ;;
-    ;;      DPTF_UNSET_MINT-ROLE                    Capability required to unset <role-mint> to a DPTF account for a DPTF Token                         ;;
-    ;;      DPTF_UNSET_MINT-ROLE_CORE               Core Capability required to unset <role-mint> to a DPTF account for a DPTF Token                    ;;
+    ;;      DPTF_TOGGLE_MINT-ROLE_CORE              Core Capability required to toggle <role-mint> to a DPTF Account for a DPTF Token                   ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      DPTF_TOGGLE_TRANSFER-ROLE               Capability required to EXECUTE <C_ToggleTransferRole> Function                                      ;;
-    ;;      DPTF_SET_TRANSFER-ROLE                  Capability required to set <role-transfer> to a DPTF account for a DPTF Token                       ;;
-    ;;      DPTF_SET_TRANSFER-ROLE_CORE             Core Capability required to set <role-transfer> to a DPTF account for a DPTF Token                  ;;
-    ;;      DPTF_UNSET_TRANSFER-ROLE                Capability required to unset <role-transfer> to a DPTF account for a DPTF Token                     ;;
-    ;;      DPTF_UNSET_TRANSFER-ROLE_CORE           Core Capability required to unset <role-transfer> to a DPTF account for a DPTF Token                ;;
+    ;;      DPTF_TOGGLE_TRANSFER-ROLE_CORE          Core Capability required to toggle <role-transfer> to a DPTF Account for a DPTF Token               ;;
     ;;==================CREATE======================                                                                                                    ;;
     ;;      DPTF_ISSUE                              Capability required to EXECUTE a <C_IssueTrueFungible> Function                                     ;;
     ;;----------------------------------------------                                                                                                    ;;
@@ -1099,7 +1111,7 @@
     ;;
     ;;      DPTF_OWNER
     ;;      DPTF_CAN-CHANGE-OWNER_ON|DPTF_CAN-UPGRADE_ON|DPTF_CAN-ADD-SPECIAL-ROLE_ON
-    ;;      DPTF_CAN-FREEZE_ON|DPTF_CAN-WIPE_ON|DPTF_CAN-PAUSE_ON|DPTF_IS-PAUSED_ON|DPTF_IS-PAUSED_OF
+    ;;      DPTF_CAN-FREEZE_ON|DPTF_CAN-WIPE_ON|DPTF_CAN-PAUSE_ON|DPTF_PAUSE_STATE
     ;;      DPTF_UPDATE_SUPPLY|UPDATE-ROLE-TRANSFER-AMOUNT
     ;;
     (defcap DPTF_OWNER (identifier:string)
@@ -1186,27 +1198,16 @@
             )
         )
     )
-    (defcap DPTF_IS-PAUSED_ON (identifier:string)
-        @doc "Enforces that the DPTF Token is paused"
+    (defcap DPTF_PAUSE_STATE (identifier:string state:bool)
+        @doc "Enforces DPTF Token <is-paused> to <state>"
         (UV_TrueFungibleIdentifier identifier)
-        
         (let
             (
                 (x:bool (UR_TrueFungibleIsPaused identifier))
             )
-            (enforce (= x true) (format "DPTF Token {} is already unpaused" [identifier])
-            )
-        )
-    )
-    (defcap DPTF_IS-PAUSED_OFF (identifier:string)
-        @doc "Enforces that the DPTF Token is not paused"
-        (UV_TrueFungibleIdentifier identifier)
-
-        (let
-            (
-                (x:bool (UR_TrueFungibleIsPaused identifier))
-            )
-            (enforce (= x false) (format "DPTF Token {} is already paused" [identifier])
+            (if (= state true)
+                (enforce (= x true) (format "DPTF Token {} is already unpaused" [identifier]))
+                (enforce (= x false) (format "DPTF Token {} is already paused" [identifier]))
             )
         )
     )
@@ -1233,6 +1234,10 @@
         @doc "Capability required to update DPTF Transfer-Role-Amount"
         true
     )
+    (defcap DPTF_UPDATE_FEES ()
+        @doc "Capability required to update Fee Volumes in the DPTF Properties Schema"
+        true
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      DPTF: BASIC CAPABILITIES              ;;
@@ -1240,13 +1245,11 @@
     ;;======DPTF-BALANCES-TABLE-MANAGEMENT==========
     ;;
     ;;      DPTF_ACCOUNT_EXISTANCE|DPTF_ACCOUNT_OWNER
-    ;;      DPTF_ACCOUNT_BURN_ON|DPTF_ACCOUNT_BURN_OFF
-    ;;      DPTF_ACCOUNT_MINT_ON|DPTF_ACCOUNT_MINT_OFF
-    ;;      DPTF_ACCOUNT_TRANSFER_ON|DPTF_ACCOUNT_TRANSFER_OFF
-    ;;      DPTF_ACCOUNT_FREEZE_ON|DPTF_ACCOUNT_FREEZE_OFF
+    ;;      DPTF_ACCOUNT_BURN_STATE|DPTF_ACCOUNT_MINT_STATE
+    ;;      DPTF_ACCOUNT_TRANSFER_STATE|DPTF_ACCOUNT_FREEZE_STATE
     ;;
     (defcap DPTF_ACCOUNT_EXISTANCE (identifier:string account:string existance:bool)
-        @doc"Enforces <existance> Existance for the DPMF Token Account <identifier>|<account>"
+        @doc"Enforces <existance> Existance for the DPTF Token Account <identifier>|<account>"
         (let
             (
                 (existance-check:bool (UR_AccountTrueFungibleExist identifier account))
@@ -1259,107 +1262,59 @@
         (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTS_ACCOUNT_OWNER account))
     )
-    (defcap DPTF_ACCOUNT_BURN_ON (identifier:string account:string)
-        @doc "Enforces DPTF Account has burn role on"
+    (defcap DPTF_ACCOUNT_BURN_STATE (identifier:string account:string state:bool)
+        @doc "Enforces DPTF Account <role-burn> to <state>"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
-        
         (let
             (
                 (x:bool (UR_AccountTrueFungibleRoleBurn identifier account))
             )
-            (enforce (= x true) (format "Account {} isnt allowed to burn DPTF {} Token" [account identifier])
+            (if (= state true)
+                (enforce (= x true) (format "Account {} isnt allowed to burn DPTF {} Token" [account identifier]))
+                (enforce (= x false) (format "Account {} is allowed to burn DPTF {} Token" [account identifier]))
             )
         )
     )
-    (defcap DPTF_ACCOUNT_BURN_OFF (identifier:string account:string)
-        @doc "Enforces DPTF Account has burn role off"
+    (defcap DPTF_ACCOUNT_MINT_STATE (identifier:string account:string state:bool)
+        @doc "Enforces DPTF Account <role-mint> to <state>"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
-        
-        (let
-            (
-                (x:bool (UR_AccountTrueFungibleRoleBurn identifier account))
-            )
-            (enforce (= x false) (format "Account {} is allowed to burn DPTF {} Token" [account identifier])
-            )
-        )
-    )
-    (defcap DPTF_ACCOUNT_MINT_ON (identifier:string account:string)
-        @doc "Enforces DPTF Account has mintrole on"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        
         (let
             (
                 (x:bool (UR_AccountTrueFungibleRoleMint identifier account))
             )
-            (enforce (= x true) (format "Account {} isnt allowed to mintDPTF {} Token" [account identifier])
+            (if (= state true)
+                (enforce (= x true) (format "Account {} isnt allowed to mint DPTF {} Token" [account identifier]))
+                (enforce (= x false) (format "Account {} is allowed to mint DPTF {} Token" [account identifier]))
             )
         )
     )
-    (defcap DPTF_ACCOUNT_MINT_OFF (identifier:string account:string)
-        @doc "Enforces DPTF Account has mint role off"
+    (defcap DPTF_ACCOUNT_TRANSFER_STATE (identifier:string account:string state:bool)
+        @doc "Enforces DPTF Account <role-transfer> to <state>"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
-        
-        (let
-            (
-                (x:bool (UR_AccountTrueFungibleRoleMint identifier account))
-            )
-            (enforce (= x false) (format "Account {} is allowed to mint DPTF {} Token" [account identifier])
-            )
-        )
-    )
-    (defcap DPTF_ACCOUNT_TRANSFER_ON (identifier:string account:string)
-        @doc "Enforces DPTF Account has transfer role on"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        
         (let
             (
                 (x:bool (UR_AccountTrueFungibleRoleTransfer identifier account))
             )
-            (enforce (= x true) (format "Account {} doesnt have a valid transfer role for DPTF {} Token" [account identifier])
+            (if (= state true)
+                (enforce (= x true) (format "Account {} doesnt have a valid transfer role for DPTF {} Token" [account identifier]))
+                (enforce (= x false) (format "Account {} has a valid transfer role for DPTF {} Token" [account identifier]))
             )
         )
     )
-    (defcap DPTF_ACCOUNT_TRANSFER_OFF (identifier:string account:string)
-        @doc "Enforces DPTF Account has transfer role off"
+    (defcap DPTF_ACCOUNT_FREEZE_STATE (identifier:string account:string state:bool)
+        @doc "Enforces DPTF Account <frozen> to <state>"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
-
-        (let
-            (
-                (x:bool (UR_AccountTrueFungibleRoleTransfer identifier account))
-            )
-            (enforce (= x false) (format "Account {} has a valid transfer role for DPTF {} Token" [account identifier])
-            )
-        )
-    )
-    (defcap DPTF_ACCOUNT_FREEZE_ON (identifier:string account:string)
-        @doc "Enforces DPTF Account is frozen"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
         (let
             (
                 (x:bool (UR_AccountTrueFungibleFrozenState identifier account))
             )
-            (enforce (= x true) (format "Account {} isnt frozen for DPTF {} Token" [account identifier])
-            )
-        )
-    )
-    (defcap DPTF_ACCOUNT_FREEZE_OFF (identifier:string account:string)
-        @doc "Enforces DPTF Account is not frozen"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-
-        (let
-            (
-                (x:bool (UR_AccountTrueFungibleFrozenState identifier account))
-            )
-            (enforce (= x false) (format "Account {} is frozen for DPTF {} Token" [account identifier])
+            (if (= state true)
+                (enforce (= x true) (format "Account {} isnt frozen for DPTF {} Token" [account identifier]))
+                (enforce (= x false) (format "Account {} is frozen for DPTF {} Token" [account identifier]))
             )
         )
     )
@@ -1370,8 +1325,8 @@
     ;;==================CONTROL=====================
     ;;
     ;;      DPTF_OWNERSHIP-CHANGE|DPTF_OWNERSHIP-CHANGE_CORE|DPTF_CONTROL|DPTF_CONTROL_CORE
-    ;;      DPTF_TOGGLE_PAUSE|DPTF_PAUSE|DPTF_PAUSE_CORE|DPTF_UNPAUSE|DPTF_UNPAUSE_CORE
-    ;;      DPTF_TOGGLE_FREEZE-ACCOUNT|DPTF_FREEZE-ACCOUNT|DPTF_FREEZE-ACCOUNT_CORE|DPTF_UNFREEZE-ACCOUNT|DPTF_UNFREEZE-ACCOUNT_CORE
+    ;;      DPTF_TOGGLE_PAUSE|DPTF_TOGGLE_PAUSE_CORE
+    ;;      DPTF_FROZEN-ACCOUNT|DPTF_FROZEN-ACCOUNT_CORE
     ;;
     (defcap DPTF_OWNERSHIP-CHANGE (patron:string identifier:string new-owner:string)
         @doc "Capability required to change the ownership of a DPTF Token"
@@ -1413,77 +1368,28 @@
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-UPGRADE_ON identifier))
     )
-    (defcap DPTF_TOGGLE_PAUSE (patron:string identifier:string toggle:bool)
-        @doc "Capability required to toggle the pause state of a DPTF Token"
-        (if (= toggle true)
-            (compose-capability (DPTF_PAUSE patron identifier))
-            (compose-capability (DPTF_UNPAUSE patron identifier))
-        )
-    )
-    (defcap DPTF_PAUSE (patron:string identifier:string)
-        @doc "Capability required to pause a DPTF Token"
-        (compose-capability (DPTF_PAUSE_CORE identifier))
+
+    (defcap DPTF_TOGGLE_PAUSE (patron:string identifier:string pause:bool)
+        (compose-capability (DPTF_TOGGLE_PAUSE_CORE identifier pause))
         (compose-capability (GAS_COLLECTION patron patron GAS_MEDIUM))
         (compose-capability (DPTS_INCREASE-NONCE)) 
-    )
-
-    (defcap DPTF_PAUSE_CORE (identifier:string)
-        @doc "Core Capability required to pause a DPTF Token"
-        (UV_TrueFungibleIdentifier identifier)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-PAUSE_ON identifier))
-        (compose-capability (DPTF_IS-PAUSED_OFF identifier))
-    )
-    (defcap DPTF_UNPAUSE (patron:string identifier:string)
-        @doc "Capability required to unpause a DPTF Token"
-        (compose-capability (DPTF_UNPAUSE_CORE identifier))
-        (compose-capability (GAS_COLLECTION patron patron GAS_MEDIUM))
-        (compose-capability (DPTS_INCREASE-NONCE)) 
-    )
-
-    (defcap DPTF_UNPAUSE_CORE (identifier:string)
-        @doc "Core Capability required to unpause a DPTF Token"
-        (UV_TrueFungibleIdentifier identifier)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-PAUSE_ON identifier))
-        (compose-capability (DPTF_IS-PAUSED_ON identifier))
-    )
-    (defcap DPTF_TOGGLE_FREEZE-ACCOUNT (patron:string identifier:string account:string toggle:bool)
-        @doc "Capability required to toggle the frozen state of DPTF Account"
-        (if (= toggle true)
-            (compose-capability (DPTF_FREEZE-ACCOUNT patron identifier account))
-            (compose-capability (DPTF_UNFREEZE-ACCOUNT patron identifier account))
         )
+
+    (defcap DPTF_TOGGLE_PAUSE_CORE (identifier:string pause:bool)
+        (compose-capability (DPTF_OWNER identifier))
+        (compose-capability (DPTF_CAN-PAUSE_ON identifier))
+        (compose-capability (DPTF_PAUSE_STATE identifier (not pause)))
     )
-    (defcap DPTF_FREEZE-ACCOUNT (patron:string identifier:string account:string)
-        @doc "Capability required to freeze a DPTF Account"
-        (compose-capability (DPTF_FREEZE-ACCOUNT_CORE identifier account))
+
+    (defcap DPTF_FROZEN-ACCOUNT (patron:string identifier:string account:string frozen:bool)
+        (compose-capability (DPTF_FROZEN-ACCOUNT_CORE identifier account frozen))
         (compose-capability (GAS_COLLECTION patron account GAS_BIG))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
-    (defcap DPTF_FREEZE-ACCOUNT_CORE (identifier:string account:string)
-        @doc "Core Capability required to freeze DPTF Account"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
+    (defcap DPTF_FROZEN-ACCOUNT_CORE (identifier:string account:string frozen:bool)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-FREEZE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier account))
-
-    )
-    (defcap DPTF_UNFREEZE-ACCOUNT (patron:string identifier:string account:string)
-        @doc "Capability required to unfreeze a DPTF Account"
-        (compose-capability (DPTF_UNFREEZE-ACCOUNT_CORE identifier account))
-        (compose-capability (GAS_COLLECTION patron account GAS_BIG))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_UNFREEZE-ACCOUNT_CORE (identifier:string account:string)
-        @doc "Core Capability required to unfreeze a DPTF Account"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-FREEZE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account))
-
+        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier account (not frozen)))
     )
     ;;==============================================
     ;;                                            ;;
@@ -1491,113 +1397,57 @@
     ;;                                            ;;
     ;;==================TOKEN-ROLES=================
     ;;
-    ;;      DPTF_TOGGLE_BURN-ROLE|DPTF_SET_BURN-ROLE|DPTF_SET_BURN-ROLE_CORE|DPTF_UNSET_BURN-ROLE|DPTF_UNSET_BURN-ROLE_CORE
-    ;;      DPTF_TOGGLE_MINT-ROLE|DPTF_SET_MINT-ROLE|DPTF_SET_MINT-ROLE_CORE|DPTF_UNSET_MINT-ROLE|DPTF_UNSET_MINT-ROLE_CORE
-    ;;      DPTF_TOGGLE_TRANSFER-ROLE|DPTF_SET_TRANSFER-ROLE|DPTF_SET_TRANSFER-ROLE_CORE|DPTF_UNSET_TRANSFER-ROLE|DPTF_UNSET_TRANSFER-ROLE_CORE
+    ;;      DPTF_TOGGLE_BURN-ROLE|DPTF_TOGGLE_BURN-ROLE_CORE
+    ;;      DPTF_TOGGLE_MINT-ROLE|DPTF_TOGGLE_MINT-ROLE
+    ;;      DPTF_TOGGLE_TRANSFER-ROLE|DPTF_TOGGLE_TRANSFER-ROLE_CORE
     ;;
     (defcap DPTF_TOGGLE_BURN-ROLE (patron:string identifier:string account:string toggle:bool)
         @doc "Capability required to toggle the <role-burn> Role"
+        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE identifier account toggle))    
+        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_TOGGLE_BURN-ROLE_CORE (identifier:string account:string toggle:bool)
+        @doc "Core Capability required to toggle the <role-burn> Role"
+        (compose-capability (DPTF_OWNER identifier))
         (if (= toggle true)
-            (compose-capability (DPTF_SET_BURN-ROLE patron identifier account))
-            (compose-capability (DPTF_UNSET_BURN-ROLE patron identifier account))
+            (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
+            true
         )
+        (compose-capability (DPTF_ACCOUNT_BURN_STATE identifier account (not toggle)))
     )
-    (defcap DPTF_SET_BURN-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to set the <role-burn> Role"
-        (compose-capability (DPTF_SET_BURN-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_SET_BURN-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to set the <role-burn> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_BURN_OFF identifier account))
-    )
-    (defcap DPTF_UNSET_BURN-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to unset the <role-burn> Role"
-        (compose-capability (DPTF_UNSET_BURN-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_UNSET_BURN-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to unset the <role-burn> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier account))
-    )
+
     (defcap DPTF_TOGGLE_MINT-ROLE (patron:string identifier:string account:string toggle:bool)
         @doc "Capability required to toggle the <role-mint> Role"
+        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE identifier account toggle))    
+        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_TOGGLE_MINT-ROLE_CORE (identifier:string account:string toggle:bool)
+        @doc "Core Capability required to toggle the <role-mint> Role"
+        (compose-capability (DPTF_OWNER identifier))
         (if (= toggle true)
-            (compose-capability (DPTF_SET_MINT-ROLE patron identifier account))
-            (compose-capability (DPTF_UNSET_MINT-ROLE patron identifier account))
+            (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
+            true
         )
+        (compose-capability (DPTF_ACCOUNT_MINT_STATE identifier account (not toggle)))
     )
-    (defcap DPTF_SET_MINT-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to set the <role-mint> Role"
-        (compose-capability (DPTF_SET_MINT-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_SET_MINT-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to set the <role-mint> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_MINT_OFF identifier account))
-    )   
-    (defcap DPTF_UNSET_MINT-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to unset the <role-mint> Role"
-        (compose-capability (DPTF_UNSET_MINT-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_UNSET_MINT-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to unset the <role-mint> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier account))
-    )
+
     (defcap DPTF_TOGGLE_TRANSFER-ROLE (patron:string identifier:string account:string toggle:bool)
         @doc "Capability required to toggle the <role-transfer> Role"
+        (compose-capability (DPTF_TOGGLE_TRANSFER-ROLE_CORE identifier account toggle))
+        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
+        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_TOGGLE_TRANSFER-ROLE_CORE (identifier:string account:string toggle:bool)
+        @doc "Core Capability required to toggle the <role-transfer> Role"
+        (compose-capability (DPTF_OWNER identifier))
         (if (= toggle true)
-            (compose-capability (DPTF_SET_TRANSFER-ROLE patron identifier account))
-            (compose-capability (DPTF_UNSET_TRANSFER-ROLE patron identifier account))
+            (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
+            true
         )
-    )
-    (defcap DPTF_SET_TRANSFER-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to set the <role-transfer> Role"
-        (compose-capability (DPTF_SET_TRANSFER-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_SET_TRANSFER-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to set the <role-transfer> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_TRANSFER_OFF identifier account))
-    )
-    (defcap DPTF_UNSET_TRANSFER-ROLE (patron:string identifier:string account:string)
-        @doc "Capability required to unset the <role-transfer> Role"
-        (compose-capability (DPTF_UNSET_TRANSFER-ROLE_CORE identifier account))    
-        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
-        (compose-capability (DPTS_INCREASE-NONCE))
-    )
-    (defcap DPTF_UNSET_TRANSFER-ROLE_CORE (identifier:string account:string)
-        @doc "Core Capability required to unset the <role-transfer> Role"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier account))
+        (compose-capability (DPTF_ACCOUNT_TRANSFER_STATE identifier account (not toggle)))
     )
     ;;==============================================
     ;;                                            ;;
@@ -1623,6 +1473,7 @@
             (compose-capability (DPTS_INCREASE-NONCE))
         )
     )
+
     (defcap DPTF_MINT (patron:string identifier:string client:string amount:decimal origin:bool method:bool)
         @doc "Master Mint capability, required to mint DPTF Tokens, both as Origin and as Standard Mint"
         (if (= origin true)
@@ -1655,7 +1506,7 @@
     (defcap DPTF_MINT-STANDARD_CORE (identifier:string client:string amount:decimal)
         @doc "Core Capability required to mint a DPTF Token"
         (UV_TrueFungibleAmount identifier amount)
-        (compose-capability (DPTF_ACCOUNT_MINT_ON identifier client))
+        (compose-capability (DPTF_ACCOUNT_MINT_STATE identifier client true))
         (compose-capability (CREDIT_DPTF identifier client))
         (compose-capability (DPTF_UPDATE_SUPPLY))
     )
@@ -1678,10 +1529,11 @@
     (defcap DPTF_BURN_CORE (identifier:string client:string amount:decimal)
         @doc "Core Capability required to burn a DPTF Token"
         (UV_TrueFungibleAmount identifier amount)
-        (compose-capability (DPTF_ACCOUNT_BURN_ON identifier client))
+        (compose-capability (DPTF_ACCOUNT_BURN_STATE identifier client true))
         (compose-capability (DEBIT_DPTF identifier client))
         (compose-capability (DPTF_UPDATE_SUPPLY))
     )
+
     (defcap DPTF_WIPE (patron:string identifier:string account-to-be-wiped:string)
         @doc "Core Capability required to Wipe a DPTF Token Balance from a DPTF account"
         (compose-capability (GAS_PATRON patron identifier account-to-be-wiped GAS_BIGGEST))
@@ -1694,7 +1546,7 @@
         (UV_DPTS-Account account-to-be-wiped)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_CAN-WIPE_ON identifier))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_ON identifier account-to-be-wiped))
+        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier account-to-be-wiped true))
         (compose-capability (DPTF_UPDATE_SUPPLY))
     )
     ;;==============================================
@@ -1736,9 +1588,9 @@
         (UV_SenderWithReceiver sender receiver)
 
         ;;Checks pause and freeze statuses
-        (compose-capability (DPTF_IS-PAUSED_OFF identifier))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier sender))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_OFF identifier receiver))
+        (compose-capability (DPTF_PAUSE_STATE identifier false))
+        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier sender false))
+        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier receiver false))
 
         ;;Checks transfer roles of sender and receiver
         (with-read DPTF-PropertiesTable identifier
@@ -1748,8 +1600,8 @@
                 (enforce-one
                     (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
                     [
-                        (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier sender))
-                        (compose-capability (DPTF_ACCOUNT_TRANSFER_ON identifier receiver))
+                        (compose-capability (DPTF_ACCOUNT_TRANSFER_STATE identifier sender true))
+                        (compose-capability (DPTF_ACCOUNT_TRANSFER_STATE identifier receiver true))
                     ]
                 )
                 ;;if false
@@ -1760,6 +1612,9 @@
         ;;Add Debit and Credit capabilities
         (compose-capability (DEBIT_DPTF identifier sender))  
         (compose-capability (CREDIT_DPTF identifier receiver))
+        (compose-capability (CREDIT_DPTF identifier SC_NAME))
+        (compose-capability (CREDIT_DPTF identifier SC_NAME_GAS))
+        (compose-capability (DPTF_UPDATE_FEES))
     )
     ;;==============================================
     ;;                                            ;;
@@ -2051,9 +1906,45 @@
         (at "origin-mint-amount" (read DPTF-PropertiesTable identifier ["origin-mint-amount"]))
     )
     (defun UR_TrueFungibleTransferRoleAmount:integer (identifier:string)
-        @doc "Returns True Fungible <identifier> Transfer Role Amount "
+        @doc "Returns True Fungible <identifier> Transfer Role Amount"
         (UV_TrueFungibleIdentifier identifier)
         (at "role-transfer-amount" (read DPTF-PropertiesTable identifier ["role-transfer-amount"]))
+    )
+    ;;Fee Information
+    (defun UR_TrueFungibleFeeToggle:bool (identifier:string)
+        @doc "Returns True Fungible <identifier> Fee Toggle"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "fee-toggle" (read DPTF-PropertiesTable identifier ["fee-toggle"]))
+    )
+    (defun UR_TrueFungibleFeePromile:decimal (identifier:string)
+        @doc "Returns True Fungible <identifier> Fee Promile"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "fee-promile" (read DPTF-PropertiesTable identifier ["fee-promile"]))
+    )
+    (defun UR_TrueFungibleFeeTarget:string (identifier:string)
+        @doc "Returns True Fungible <identifier> FeeTarget"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "fee-target" (read DPTF-PropertiesTable identifier ["fee-target"]))
+    )
+    (defun UR_TrueFungibleFeeLock:bool (identifier:string)
+        @doc "Returns True Fungible <identifier> FeeL ock"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "fee-lock" (read DPTF-PropertiesTable identifier ["fee-lock"]))
+    )
+    (defun UR_TrueFungibleFeeUnlocks:integer (identifier:string)
+        @doc "Returns True Fungible <identifier> Fee Unlocks"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "fee-unlocks" (read DPTF-PropertiesTable identifier ["fee-unlocks"]))
+    )
+    (defun UR_TrueFungiblePrimaryFeeVolume:decimal (identifier:string)
+        @doc "Returns True Fungible <identifier> Primary Fee Volume"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "primary-fee-volume" (read DPTF-PropertiesTable identifier ["primary-fee-volume"]))
+    )
+    (defun UR_TrueFungibleSecondaryFeeVolume:decimal (identifier:string)
+        @doc "Returns True Fungible <identifier> Secondary Fee Volume"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "secondary-fee-volume" (read DPTF-PropertiesTable identifier ["secondary-fee-volume"]))
     )
     ;;==============================================
     ;;                                            ;;
@@ -2068,10 +1959,12 @@
         \ and ensure the amount is greater than zero"
         (UV_TrueFungibleIdentifier identifier)
 
-        (with-read DPTF-PropertiesTable identifier
-            { "decimals" := d }
+        (let
+            (
+                (decimals:integer (UR_TrueFungibleDecimals identifier))
+            )
             (enforce
-                (= (floor amount d) amount)
+                (= (floor amount decimals) amount)
                 (format "The amount of {} does not conform with the {} decimals number" [amount identifier])
             )
             (enforce
@@ -2210,7 +2103,37 @@
     ;;                                            ;;
     ;;      DPTF: ADMINISTRATION FUNCTIONS        ;;
     ;;                                            ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS            ;;
+    ;;
+    (defun A_InitialiseOuroboros:[string] (patron:string)
+        @doc "Initialises the OUROBOROS Virtual Blockchain"
+
+        ;;Initialise the Ourobors Smart DPTS Account
+        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+
+        (with-capability (OUROBOROS_ADMIN)
+            (let*
+                (
+                    (OuroborosID:string
+                        (C_IssueTrueFungible
+                            patron
+                            SC_NAME
+                            "Ouroboros"
+                            "OURO"
+                            24
+                            true    ;;can-change-owner
+                            true    ;;can-upgrade
+                            true    ;;can-add-special-role
+                            true    ;;can-freeze
+                            true    ;;can-wipe
+                            true    ;;can-pause
+                        )
+                    )
+                    (GasID:string (A_InitialiseGAS patron OuroborosID))
+                )
+                [OuroborosID GasID]
+            )
+        )
+    )
     ;;                                            ;;
     ;;==============================================
     ;;                                            ;;
@@ -2289,7 +2212,7 @@
             (
                 (ZG:bool (UR_GasToggle))
             )
-            (with-capability (DPTF_TOGGLE_FREEZE-ACCOUNT patron identifier account toggle)
+            (with-capability (DPTF_FROZEN-ACCOUNT patron identifier account toggle)
                 (if (= ZG false)
                     (X_CollectGAS patron account GAS_BIG)
                     true
@@ -2665,8 +2588,41 @@
         )
         (require-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
         (X_Debit identifier sender transfer-amount false)
-        (X_Credit identifier receiver transfer-amount)
+        (let
+            (
+                (fee-toggle:bool (UR_TrueFungibleFeeToggle identifier))
+            )
+            (if (= fee-toggle false)
+                (with-capability (COMPOSE)
+                    (X_Credit identifier receiver transfer-amount)
+                )
+                (let*
+                    (
+                        (fees:[decimal] (UC_Fee identifier transfer-amount))
+                        (primary-fee:decimal (at 0 fees))
+                        (secondary-fee:decimal (at 1 fees))
+                        (remainder:decimal (at 2 fees))
+                        (fee-target:string (UR_TrueFungibleFeeTarget identifier))
+                    )
+                    (if (= secondary-fee 0.0)
+                        (with-capability (COMPOSE)
+                            (X_Credit identifier fee-target primary-fee)
+                            (X_UpdatePrimaryFeeVolume identifier primary-fee)
+                            (X_Credit identifier receiver remainder)
+                        )
+                        (with-capability (COMPOSE)
+                            (X_Credit identifier fee-target primary-fee)
+                            (X_Credit identifier SC_NAME_GAS secondary-fee)
+                            (X_UpdatePrimaryFeeVolume identifier primary-fee)
+                            (X_UpdateSecondaryFeeVolume identifier secondary-fee)
+                            (X_Credit identifier receiver remainder)
+                        )
+                    )
+                )
+            )
+        )
     )
+    
     ;;==============================================
     ;;                                            ;;
     ;;      DPTF: AUXILIARY FUNCTIONS             ;;
@@ -2813,6 +2769,26 @@
             )
         )
     )
+    (defun X_UpdatePrimaryFeeVolume (identifier:string amount:decimal)
+        (UV_TrueFungibleAmount identifier amount)
+        (require-capability (DPTF_UPDATE_FEES))
+        (with-read DPTF-PropertiesTable identifier
+            { "primary-fee-volume" := pfv }
+            (update DPTF-PropertiesTable identifier
+                {"primary-fee-volume" : (+ pfv amount)}
+            )
+        )
+    )
+    (defun X_UpdateSecondaryFeeVolume (identifier:string amount:decimal)
+        (UV_TrueFungibleAmount identifier amount)
+        (require-capability (DPTF_UPDATE_FEES))
+        (with-read DPTF-PropertiesTable identifier
+            { "secondary-fee-volume" := sfv }
+            (update DPTF-PropertiesTable identifier
+                {"secondary-fee-volume" : (+ sfv amount)}
+            )
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      DPTF: AUXILIARY FUNCTIONS             ;;
@@ -2850,46 +2826,31 @@
     )
 
     (defun X_TogglePause (identifier:string toggle:bool)
-        (if (= toggle true)
-            (require-capability (DPTF_PAUSE_CORE identifier))
-            (require-capability (DPTF_UNPAUSE_CORE identifier))
-        )
+        (require-capability (DPTF_TOGGLE_PAUSE_CORE identifier toggle))
         (update DPTF-PropertiesTable identifier
             { "is-paused" : toggle}
         )
     )
     (defun X_ToggleFreezeAccount (identifier:string account:string toggle:bool)
-        (if (= toggle true)
-            (require-capability (DPTF_FREEZE-ACCOUNT_CORE identifier account))
-            (require-capability (DPTF_UNFREEZE-ACCOUNT_CORE identifier account))
-        )
+        (require-capability (DPTF_FROZEN-ACCOUNT_CORE identifier account toggle))
         (update DPTF-BalancesTable (concat [identifier BAR account])
             { "frozen" : toggle}
         )
     )
     (defun X_ToggleBurnRole (identifier:string account:string toggle:bool)
-        (if (= toggle true)
-            (require-capability (DPTF_SET_BURN-ROLE_CORE identifier account))
-            (require-capability (DPTF_UNSET_BURN-ROLE_CORE identifier account))
-        )
+        (require-capability (DPTF_TOGGLE_BURN-ROLE_CORE identifier account toggle))
         (update DPTF-BalancesTable (concat [identifier BAR account])
             {"role-burn" : toggle}
         )
     )
     (defun X_ToggleMintRole (identifier:string account:string toggle:bool)
-        (if (= toggle true)
-            (require-capability (DPTF_SET_MINT-ROLE_CORE identifier account))
-            (require-capability (DPTF_UNSET_MINT-ROLE_CORE identifier account))
-        )
+        (require-capability (DPTF_TOGGLE_MINT-ROLE_CORE identifier account toggle))
         (update DPTF-BalancesTable (concat [identifier BAR account])
             {"role-mint" : toggle}
         )
     )
     (defun X_ToggleTransferRole (identifier:string account:string toggle:bool)
-        (if (= toggle true)
-            (require-capability (DPTF_SET_TRANSFER-ROLE_CORE identifier account))
-            (require-capability (DPTF_UNSET_TRANSFER-ROLE_CORE identifier account))
-        )
+        (require-capability (DPTF_TOGGLE_TRANSFER-ROLE_CORE identifier account toggle))
         (update DPTF-BalancesTable (concat [identifier BAR account])
             {"role-transfer" : toggle}
         )
@@ -2935,7 +2896,16 @@
                 ,"supply"               : 0.0
                 ,"origin-mint"          : false
                 ,"origin-mint-amount"   : 0.0
-                ,"role-transfer-amount" : 0}
+                ,"role-transfer-amount" : 0
+                ;;Fee Parameters
+                ,"fee-toggle"           : false
+                ,"fee-promile"          : 0.0
+                ,"fee-target"           : SC_NAME
+                ,"fee-lock"             : false
+                ,"fee-unlocks"          : 0
+                ,"primary-fee-volume"   : 0.0
+                ,"secondary-fee-volume" : 0.0
+            }
             )
             ;;Makes a new DPTF Account for the Token Issuer and returns identifier
             (C_DeployTrueFungibleAccount identifier account)
@@ -2990,11 +2960,14 @@
         )
         
     )
+    
+    
+    
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
-;;                                                           DPTF_PATRON-CALLER      VGAS - Virtual Gas                                                                       ;;
+;;                                                           DPTF_PATRON-CALLER      VGAS - Virtual Gas                                                     ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
@@ -3400,12 +3373,13 @@
         )
     )
     (defun UC_Zero:bool (sender:string)
-        (let
+        (let*
             (
                 (gas-toggle:bool (UR_GasToggle))
+                (t0:bool (if (= gas-toggle false) true false))
                 (t1:bool (if (= sender SC_NAME_GAS) true false))
             )
-            (or gas-toggle t1)
+            (or t0 t1)
         )
     )
     ;;==============================================
@@ -3691,6 +3665,356 @@
             (X_Credit gas-id gas-receiver gas-amount)
         )            
     )
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;                                                           Fee-Management                                                                                 ;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: BASIC CAPABILITIES                Description                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================FEE-STATES==================                                                                                                    ;;
+    ;;      DPTF_FEE-LOCK_STATE
+    ;;      DPTF_FEE-TOGGLE_STATE
+    ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: COMPOSED CAPABILITIES             Description                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      DPTF_SET_FEE
+    ;;      DPTF_SET_FEE_CORE
+    ;;      DPTF_TOGGLE_FEE
+    ;;      DPTF_TOGGLE_FEE_CORE
+    ;;
+    ;;==================================================================================================================================================;;
+
+    ;;==================FEE-STATES================== 
+    ;;
+    ;;      DPTF_FEE-LOCK_STATE|DPTF_FEE-TOGGLE_STATE
+    ;;
+
+    (defcap DPTF_FEE-LOCK_STATE (identifier:string state:bool)
+        @doc "Enforces DPTF Token <fee-lock> to <state>"
+        (UV_TrueFungibleIdentifier identifier)
+        (let
+            (
+                (x:bool (UR_TrueFungibleFeeLock identifier))
+            )
+            (if (= state true)
+                (enforce (= x true) (format "Fee Management is unlocked for the DPTF Token {}" [identifier]))
+                (enforce (= x false) (format "Fee Management is locked for the DPTF Token {}" [identifier]))
+            )
+        )
+    )
+    (defcap DPTF_FEE-TOGGLE_STATE (identifier:string toggle:bool)
+        @doc "Enforces DPTF Token <fee-toggle> to <state>"
+        (UV_TrueFungibleIdentifier identifier)
+        (let
+            (
+                (x:bool (UR_TrueFungibleFeeToggle identifier))
+            )
+            (if (= toggle true)
+                (enforce (= x true) (format "Fee Collection is already off for the DPTF Token {}" [identifier]))
+                (enforce (= x false) (format "Fee Management is already on for the DPTF Token {}" [identifier]))
+            )
+        )
+    )
+    ;;==================FEE-STATES================== 
+    ;;
+    ;;      DPTF_SET_FEE|DPTF_SET_FEE_CORE
+    ;;      DPTF_TOGGLE_FEE|DPTF_TOGGLE_FEE_CORE
+    ;;      DPTF_SET_FEE-TARGET|DPTF_SET_FEE-TARGET_CORE
+    ;;
+    (defcap DPTF_SET_FEE (patron:string identifier:string fee:decimal)
+        (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
+        (compose-capability (DPTF_SET_FEE_CORE identifier fee))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_SET_FEE_CORE (identifier:string fee:decimal)
+        (UV_TrueFungibleIdentifier identifier)
+        (let
+            (
+                (decimals:integer (UR_TrueFungibleDecimals identifier))
+            )
+            (enforce
+                (= (floor fee decimals) fee)
+                (format "The Fee amount of {} does not conform with the {} DPTF Token decimals number" [fee identifier])
+            )
+            (enforce (or (= fee -1.0) (and (>= fee 0.0) (<= fee 1000.0))) "Fee Amount is not Valid")
+            (compose-capability (DPTF_OWNER identifier))
+            (compose-capability (DPTF_FEE-LOCK_STATE identifier false))
+        )
+    )
+    (defcap DPTF_TOGGLE_FEE (patron:string identifier:string toggle:bool)
+        (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
+        (compose-capability (DPTF_TOGGLE_FEE_CORE identifier toggle))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_TOGGLE_FEE_CORE (identifier:string toggle:bool)
+        (UV_TrueFungibleIdentifier identifier)
+        (let
+            (
+                (fee-promile:decimal (UR_TrueFungibleFeePromile identifier))
+                (fee-target:string (UR_TrueFungibleFeeTarget identifier))
+            )
+            (enforce (or (= fee-promile -1.0) (and (>= fee-promile 0.0) (<= fee-promile 1000.0))) "Please Set up Fee Promile before Turning Fee Collection on !")
+            (UV_DPTS-Account fee-target)
+            (compose-capability (DPTF_OWNER identifier))
+            (compose-capability (DPTS_ACCOUNT_EXIST fee-target))
+            (compose-capability (DPTF_FEE-LOCK_STATE identifier false))
+            (compose-capability (DPTF_FEE-TOGGLE_STATE identifier (not toggle)))
+        )
+    )
+    (defcap DPTF_SET_FEE-TARGET (patron:string identifier:string target:string)
+        (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
+        (compose-capability (DPTF_SET_FEE-TARGET_CORE identifier target))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_SET_FEE-TARGET_CORE (identifier:string target:string)
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account target)
+        (compose-capability (DPTS_ACCOUNT_EXIST target))
+        (compose-capability (DPTF_OWNER identifier))
+        (compose-capability (DPTF_FEE-LOCK_STATE identifier false))    
+    )
+    (defcap DPTF_TOGGLE_FEE-LOCK (patron:string identifier:string toggle:bool)
+        (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
+        (compose-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_TOGGLE_FEE-LOCK_CORE (identifier:string toggle:bool)
+        (UV_TrueFungibleIdentifier identifier)
+        (compose-capability (DPTF_OWNER identifier))
+        (compose-capability (DPTF_FEE-LOCK_STATE identifier (not toggle)))
+    )
+    ;;==================================================================================================================================================;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: UTILITY FUNCTIONS                 Description                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================COMPUTATIONS================                                                                                                    ;;
+    ;;      UC_ComputeVolumetricTax
+    ;;      UCX_VolumetricPermile
+    ;;      UC_Fee
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: ADMINISTRATION FUNCTIONS                                                                                                              ;;
+    ;;                                                                                                                                                  ;;
+    ;;      NO ADMINISTRATOR FUNCTIONS                                                                                                                  ;;
+    ;;                                                                                                                                                  ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: CLIENT FUNCTIONS                  Description                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      C_ToggleFee
+    ;;      C_SetFee
+    ;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    ;;                                                                                                                                                  ;;
+    ;;      FEES: AUXILIARY FUNCTIONS               Description                                                                                         ;;
+    ;;                                                                                                                                                  ;;
+    ;;==================CONTROL=====================                                                                                                    ;;
+    ;;      X_ToggleFee
+    ;;      X_SetFee
+    ;;==================================================================================================================================================;;
+    ;;==============================================
+    ;;                                            ;;
+    ;;      FEES: UTILITY FUNCTIONS               ;;
+    ;;                                            ;;
+    ;;==================ACCOUNT-INFO================
+    ;;
+    ;;      UC_ComputeVolumetricTax|UCX_VolumetricPermile|UC_Fee
+    ;;      
+    (defun UC_ComputeVolumetricTax (identifier:string amount:decimal)
+        @doc "Computes the Volumetric Fee, given an identifier and amount"
+        (UV_TrueFungibleAmount identifier amount)
+        (let*
+            (
+                (precision:integer (UR_TrueFungibleDecimals identifier))
+                (amount-int:integer (floor amount))
+                (amount-str:string (int-to-str 10 amount-int))
+                (amount-str-rev-lst:[string] (reverse (str-to-list amount-str)))
+                (amount-dec-rev-lst:[decimal] (map (lambda (x:string) (dec (str-to-int 10 x))) amount-str-rev-lst))
+                (integer-lst:[integer] (enumerate 0 (- (length amount-dec-rev-lst) 1)))
+                (logarithm-lst:[decimal] (map (lambda (u:integer) (UCX_VolumetricPermile precision u)) integer-lst))
+                (multiply-lst:[decimal] (zip (lambda (x:decimal y:decimal) (* x y)) amount-dec-rev-lst logarithm-lst))
+                (volumetric-fee:decimal (floor (fold (+) 0.0 multiply-lst) precision))
+            )
+            volumetric-fee
+        )
+    )
+    (defun UCX_VolumetricPermile:decimal (precision:integer unit:integer)
+        (let*
+            (
+                (logarithm-base:decimal (if (= unit 0) 0.0 (dec (str-to-int 10 (concat (make-list unit "7"))))))
+                (logarithm-number:decimal (dec (^ 10 unit)))
+                (logarithm:decimal (floor (log logarithm-base logarithm-number) precision))
+                (volumetric-permile:decimal (floor (* logarithm-number (/ logarithm 1000.0)) precision))
+            )
+            volumetric-permile
+        )
+    )
+    (defun UC_Fee:[decimal] (identifier:string amount:decimal)
+        @doc "Computes fee values based on Fee Data available for the DPTF Token <identifier> for the given Amount <amount> \
+        \ and outputs them into a list of strings; The list is as follows: \
+        \ \
+        \ 1st element, is the Primary Fee, which is the standard Fee set up for the Token \
+        \ 2nd element, is the Secondary Fee, which exists if the number of <fee-unlocks> becomes greater than zero \
+        \ 3rd element, is the Remainder, which is the actual amount that reaches the receiver \
+        \ \
+        \ If the <fee-toggle> is set to false, no fee is deducted \
+        \ All 3 amounts, when summed, must equal exactlz the input amount to the last decimal"
+        (let
+            (
+                (fee-toggle:bool (UR_TrueFungibleFeeToggle identifier))
+            )
+            (if (= fee-toggle false)
+                [0.0 0.0 amount]
+                (let*
+                    (
+                        (precision:integer (UR_TrueFungibleDecimals identifier))
+                        (fee-promile:decimal (UR_TrueFungibleFeePromile identifier))
+                        (fee-target:string (UR_TrueFungibleFeeTarget identifier))
+                        (fee-unlocks:integer (UR_TrueFungibleFeeUnlocks identifier))
+                        (volumetric-fee:decimal (UC_ComputeVolumetricTax identifier amount))
+                        (primary-fee-value:decimal 
+                            (if (= fee-promile -1.0)
+                                volumetric-fee
+                                (floor (* (/ fee-promile 1000.0) amount) precision)
+                            ) 
+                        )
+                        (secondary-fee-value:decimal 
+                            (if (= fee-unlocks 0)
+                                0.0
+                                (* (dec fee-unlocks) volumetric-fee)
+                            )
+                        )
+                        (remainder:decimal (- amount (+ primary-fee-value secondary-fee-value)))
+                    )
+                    [primary-fee-value secondary-fee-value remainder]
+                )
+            )
+        )
+    )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      FEES: ADMINISTRATION FUNCTIONS        ;;
+    ;;                                            ;;
+    ;;      NO_ADMINISTRATOR FUNCTIONS            ;;
+    ;;                                            ;;
+    ;;--------------------------------------------;;
+    ;;                                            ;;
+    ;;      FEES: CLIENT FUNCTIONS                ;;
+    ;;                                            ;;
+    ;;==================CONTROL=====================
+    ;;
+    ;;      C_ToggleFee|C_SetFee|C_SetFeeTarget
+    ;;
+    (defun C_ToggleFee (patron:string identifier:string toggle:bool)
+        (let
+            (
+                (ZG:bool (UR_GasToggle))
+                (current-owner-account:string (UR_TrueFungibleKonto identifier))
+            )
+            (with-capability (DPTF_TOGGLE_FEE patron identifier toggle)
+                (if (= ZG false)
+                    (X_CollectGAS patron current-owner-account GAS_SMALL)
+                    true
+                )
+                (X_ToggleFee identifier toggle)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
+    (defun C_SetFee (patron:string identifier:string fee:decimal)
+        (let
+            (
+                (ZG:bool (UR_GasToggle))
+                (current-owner-account:string (UR_TrueFungibleKonto identifier))
+            )
+            (with-capability (DPTF_SET_FEE patron identifier fee)
+                (if (= ZG false)
+                    (X_CollectGAS patron current-owner-account GAS_SMALL)
+                    true
+                )
+                (X_SetFee identifier fee)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
+    (defun C_SetFeeTarget (patron:string identifier:string target:string)
+        (let
+            (
+                (ZG:bool (UR_GasToggle))
+                (current-owner-account:string (UR_TrueFungibleKonto identifier))
+            )
+            (with-capability (DPTF_SET_FEE-TARGET patron identifier target)
+                (if (= ZG false)
+                    (X_CollectGAS patron current-owner-account GAS_SMALL)
+                    true
+                )
+                (X_SetFeeTarget identifier target)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
+    (defun C_ToggleFeeLock (patron:string identifier:string toggle:bool)
+        (let
+            (
+                (ZG:bool (UR_GasToggle))
+                (current-owner-account:string (UR_TrueFungibleKonto identifier))
+            )
+            (with-capability (DPTF_TOGGLE_FEE-LOCK patron identifier toggle)
+                (if (= ZG false)
+                    (X_CollectGAS patron current-owner-account GAS_SMALL)
+                    true
+                )
+                (X_ToggleFeeLock identifier toggle)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
+    ;;============================================;;
+    ;;                                            ;;
+    ;;      FEES: AUXILIARY FUNCTIONS             ;;
+    ;;                                            ;;
+    ;;==================CONTROL=====================
+    ;;
+    ;;      X_ToggleFee|X_SetFee|X_SetFeeTarget|X_SetFeeTarget|X_ToggleFeeLock
+    ;;      
+    (defun X_ToggleFee (identifier:string toggle:bool)
+        (require-capability (DPTF_TOGGLE_FEE_CORE identifier toggle))
+        (update DPTF-PropertiesTable identifier
+            { "fee-toggle" : toggle}
+        )
+    )
+    (defun X_SetFee (identifier:string fee:decimal)
+        (require-capability (DPTF_SET_FEE_CORE identifier fee))
+        (update DPTF-PropertiesTable identifier
+            { "fee-promile" : fee}
+        )
+    )
+    (defun X_SetFeeTarget (identifier:string target:string)
+        (require-capability (DPTF_SET_FEE-TARGET_CORE identifier target))
+        (update DPTF-PropertiesTable identifier
+            { "fee-target" : target}
+        )
+    )
+    (defun X_ToggleFeeLock (identifier:string toggle:bool)
+        (require-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
+        (update DPTF-PropertiesTable identifier
+            { "fee-lock" : toggle}
+        )
+    )
+
 )
  
 (create-table DPTS-AccountTable)

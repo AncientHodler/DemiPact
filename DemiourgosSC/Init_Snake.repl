@@ -27,7 +27,7 @@
     ;;SmartContract Names
     (defconst SCN001 "Snake_Autostake")
     (defconst SCN002 "Snake_Vesting")
-    (defconst SCN003 "Snake_Carrier")
+    (defconst SCN003 "TrueFungibleCarrier")
     (defconst SCN004 "Gas-Tanker")
 
     ;;Private Keys
@@ -214,19 +214,7 @@
 
     (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.User000_Keyset"))
 
-    (free.OUROBOROS.C_IssueTrueFungible
-        "AncientHodler"
-        "AncientHodler"
-        "Ouroboros"
-        "OURO"
-        24
-        true    ;;can-change-owner
-        true    ;;can-upgrade
-        true    ;;can-add-special-role
-        true    ;;can-freeze
-        true    ;;can-wipe
-        true    ;;can-pause
-    )
+    (free.OUROBOROS.A_InitialiseOuroboros "AncientHodler")
 
     (free.OUROBOROS.C_Mint
         "AncientHodler"
@@ -236,11 +224,8 @@
         true
     )
 
-    (free.OUROBOROS.A_InitialiseGAS "AncientHodler" "OURO-98c486052a51")
-
     ;;debit DPTF gas not working
 
-    
     (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
     (free.OUROBOROS.A_TurnGasOn)
     
