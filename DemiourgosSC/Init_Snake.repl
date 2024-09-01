@@ -8,6 +8,10 @@
 ;; PART 01 - KeySets Definitions
 (print "==========================TX01-KEY Definitions=========================")
 (print "==========================Define==================free.DH-Master-Keyset")
+
+
+
+
 (begin-tx)
 (module KC GOVERNANCE
     (defcap GOVERNANCE () true)
@@ -110,6 +114,8 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-gas)
 (commit-tx)
+
+
 ;;==============================================================================
 ;;
 ;;
@@ -168,8 +174,12 @@
 (use free.DPMF)
 (use free.DH_SC_Autostake)
 (use free.DH_SC_Vesting)
+
 (env-gas)
 (commit-tx)
+
+
+
 
 (begin-tx "Fuel Ancient Hodler with Kadena")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -195,6 +205,7 @@
 (coin.transfer-create "AncientHodler" "HeadOfVision" (describe-keyset "free.User008_Keyset") 1.0)
 (coin.transfer-create "AncientHodler" "Gas-Tanker" (describe-keyset "free.DH-GAS-Keyset") 1.0)
 
+(env-sigs [])
 (env-gas)
 (commit-tx)
 
@@ -206,32 +217,31 @@
 ;;
 ;;==============================================================================
 ;; PART 03 - Initialise Demiourgos Ecosystem
-
 ;;01]Issue Ouro with initial mint amount and set up the vGas
 (begin-tx "Issue OURO Transactions")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }])
-
+(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
+            { "key": "PrivateKey_Emma", "caps": [] }])
+            
     (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.User000_Keyset"))
-
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Emma" (describe-keyset "free.User003_Keyset"))
     (free.OUROBOROS.A_InitialiseOuroboros "AncientHodler")
-
     (free.OUROBOROS.C_Mint
         "AncientHodler"
         "OURO-98c486052a51"
-        "AncientHodler"
+        "Emma"
         50000.0
         true
     )
 
-    ;;debit DPTF gas not working
-
-    (free.OUROBOROS.C_MakeGAS "AncientHodler" 100.0)
+    (free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
+    (free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
     (free.OUROBOROS.A_TurnGasOn)
     
-
+(env-sigs [])
 (env-gas)
 (commit-tx)
+
 
 ;;02]Initialise Autostake
 (begin-tx "Initialise Snake_Autostake TX")
@@ -239,15 +249,12 @@
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")                ;;Autostake-Pool Key
+    (free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")                ;;Autostake-Pool Key
 
-
-;;03]Set OURO BurnRole to Autostake and Gas-Tanker for OURO
-;;set in the Autostake initialisation function
-
-
+(env-sigs [])
 (env-gas)
 (commit-tx)
+
 
 ;;04]Initialise Vesting
 (begin-tx "Initialise Vesting TX")
@@ -255,9 +262,12 @@
 (env-sigs [ { "key": "PrivateKey_Vesting", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.DH_SC_Vesting.A_InitialiseVesting "AncientHodler")                                        ;;Either Vesting Key or AH Key
+    (free.DH_SC_Vesting.A_InitialiseVesting "AncientHodler")                                        ;;Either Vesting Key or AH Key
+
+(env-sigs [])
 (env-gas)
 (commit-tx)
+
 
 ;;05]Set transfer role for Auryns to Vesting SC and
 ;;06]Set Vested Elite-Auryn Id in the Autostake-Pool Trinity Table
@@ -266,9 +276,10 @@
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-(free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)              ;;Autostake Pool Key
-(free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)         ;;Autostake Pool Key
-(free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)              ;;Autostake Pool Key
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)         ;;Autostake Pool Key
+    (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
 
+(env-sigs [])
 (env-gas)
 (commit-tx)

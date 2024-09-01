@@ -534,7 +534,7 @@
         )
     )
     (defun UC_MakeIdentifier:string (ticker:string)
-        @doc "Creates a DPTS Idendifier \ 
+        @doc "Creates a DPTF Idendifier \ 
             \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
         (UV_DPTS-Ticker ticker)
 
@@ -908,7 +908,7 @@
         @doc "Manages Smart DPTS Account Type via boolean triggers"
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (CONTROL-SMART-ACCOUNT patron account)
                 (if (= ZG false)
@@ -919,7 +919,6 @@
                 (X_IncrementNonce patron)
             )
         )
-        
     )
     ;;==============================================
     ;;                                            ;;
@@ -985,6 +984,9 @@
         role-transfer-amount:integer                ;;Stores how many accounts have Transfer Roles for the Token.
         ;;DPTF Fee Management
         fee-toggle:bool                             ;;Toggles built in fee management for the DPTF Token. Set to False to disable
+        min-move:decimal                            ;;TM can set the minimum Token amount that is transferable suing client Functions
+                                                    ;;By default set to -1.0 which means the smalles amount transferable is an Atomic Unic
+                                                    ;;An atomic Unit represents the samllest token denomination.
         fee-promile:decimal                         ;;Amount either -1.0 or 0.0<fee-promile<1000.0 representing the amount of Fee retained
                                                     ;;Negative Amount triggers a special Volumetric Fee Computation for the Fee. Uses <decimals> for precision.
         fee-target:string                           ;;DPTF Account (either Smart or Normal DPTS Account) receiving the retained Fee
@@ -1377,7 +1379,10 @@
 
     (defcap DPTF_TOGGLE_PAUSE_CORE (identifier:string pause:bool)
         (compose-capability (DPTF_OWNER identifier))
-        (compose-capability (DPTF_CAN-PAUSE_ON identifier))
+        (if (= pause true)
+            (compose-capability (DPTF_CAN-PAUSE_ON identifier))
+            true
+        )
         (compose-capability (DPTF_PAUSE_STATE identifier (not pause)))
     )
 
@@ -1569,34 +1574,55 @@
     )
     (defcap TRANSFER_DPTF (patron:string identifier:string sender:string receiver:string transfer-amount:decimal method:bool)
         @doc "Main DPTF Transfer Capability"
-        (enforce-one
-            (format "No permission available to transfer from Account {}" [sender])
-            [
-                (compose-capability (DPTS_METHODIC sender method))
-                (compose-capability (DPTS_METHODIC receiver method))
-            ]
+        (let*
+            (
+                (iz-exception:bool (UC_TransferFeeAndMinException identifier sender receiver))
+            )
+            ;;If the TokenId is the Gas Token Id, and the transfer is towards or from "Ouroboros" or "Gas Tanker"
+            ;;then minimum transfer amount does not apply.
+            (if (not iz-exception)
+                (compose-capability (TRANSFER_DPTF_MIN identifier transfer-amount))
+                true
+            )
+            
+
+            (if (= method false)
+                (compose-capability (DPTS_ACCOUNT_OWNER sender))
+                (enforce-one
+                    (format "No permission available to transfer from Account {}" [sender])
+                    [
+                        (compose-capability (DPTS_METHODIC sender method))
+                        (compose-capability (DPTS_METHODIC receiver method))
+                    ]
+                )
+            )
+
+
+
+
+            (compose-capability (GAZ_PATRON patron identifier sender receiver GAS_SMALLEST))
+            (compose-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
+            (compose-capability (SC_TRANSFERABILITY sender receiver method))
+            (compose-capability (DPTS_INCREASE-NONCE))
         )
-        (compose-capability (GAZ_PATRON patron identifier sender receiver GAS_SMALLEST))
-        (compose-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
-        (compose-capability (SC_TRANSFERABILITY sender receiver method))
-        (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap TRANSFER_DPTF_CORE (identifier:string sender:string receiver:string transfer-amount:decimal)
         @doc "Core Capability for transfer between 2 DPTS accounts for a specific DPTF Token identifier"
 
         (UV_TrueFungibleAmount identifier transfer-amount)
         (UV_SenderWithReceiver sender receiver)
+        (let
+            (
+                (transfer-role-amount:integer (UR_TrueFungibleTransferRoleAmount identifier))
+            )
 
-        ;;Checks pause and freeze statuses
-        (compose-capability (DPTF_PAUSE_STATE identifier false))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier sender false))
-        (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier receiver false))
+            ;;Checks pause and freeze statuses
+            (compose-capability (DPTF_PAUSE_STATE identifier false))
+            (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier sender false))
+            (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier receiver false))
 
-        ;;Checks transfer roles of sender and receiver
-        (with-read DPTF-PropertiesTable identifier
-            { "role-transfer-amount" := rta }
-            (if (!= rta 0)
-                ;;if true
+            ;;Checks transfer roles of sender and receiver
+            (if (and (!= transfer-role-amount 0) (or (!= sender SC_NAME)(!= sender SC_NAME_GAS)))
                 (enforce-one
                     (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
                     [
@@ -1604,17 +1630,32 @@
                         (compose-capability (DPTF_ACCOUNT_TRANSFER_STATE identifier receiver true))
                     ]
                 )
-                ;;if false
-                (format "No transfer Role restrictions exist for Token {}" [identifier])
+                (format "No trasnfer restrictions exist when transfering {} from {} to {}" [identifier sender receiver])
             )
-        )
 
-        ;;Add Debit and Credit capabilities
-        (compose-capability (DEBIT_DPTF identifier sender))  
-        (compose-capability (CREDIT_DPTF identifier receiver))
-        (compose-capability (CREDIT_DPTF identifier SC_NAME))
-        (compose-capability (CREDIT_DPTF identifier SC_NAME_GAS))
-        (compose-capability (DPTF_UPDATE_FEES))
+            ;;Add Debit and Credit capabilities
+            (compose-capability (DEBIT_DPTF identifier sender))  
+            (compose-capability (CREDIT_DPTF identifier receiver))
+            (compose-capability (CREDIT_DPTF identifier SC_NAME))
+            (compose-capability (CREDIT_DPTF identifier SC_NAME_GAS))
+            (compose-capability (DPTF_UPDATE_FEES))
+        )
+    )
+    (defcap TRANSFER_DPTF_MIN (identifier:string transfer-amount:decimal)
+        @doc "Enforces the minimum transfer amount for the DPTF Token"
+        (let*
+            (
+                (min-move-read:decimal (UR_TrueFungibleMinMove identifier))
+                (precision:integer (UR_TrueFungibleDecimals identifier))
+                (min-move:decimal 
+                    (if (= min-move-read -1.0)
+                        (floor (/ 1.0 (^ 10.0 (dec precision))) precision)
+                        min-move-read
+                    )
+                )
+            )
+            (enforce (>= transfer-amount min-move) (format "The transfer-amount of {} is not a valid {} transfer amount" [transfer-amount identifier]))
+        )
     )
     ;;==============================================
     ;;                                            ;;
@@ -1622,19 +1663,19 @@
     ;;                                            ;;
     ;;=================CORE=========================
     ;;
-    ;;      CREDIT_DPTF|DEBIT_DPTF
+    ;;      DEBIT_DPTF|CREDIT_DPTF
     ;;
+    (defcap DEBIT_DPTF (identifier:string account:string)
+        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
+        ;(compose-capability (DPTF_CLIENT identifier account))
+    )
     (defcap CREDIT_DPTF (identifier:string account:string)
         @doc "Capability to perform crediting operations with DPTF Tokens"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
         (compose-capability (DPTS_ACCOUNT_EXIST account))
-    )
-    (defcap DEBIT_DPTF (identifier:string account:string)
-        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        (compose-capability (DPTF_CLIENT identifier account))
     )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
@@ -1916,6 +1957,11 @@
         (UV_TrueFungibleIdentifier identifier)
         (at "fee-toggle" (read DPTF-PropertiesTable identifier ["fee-toggle"]))
     )
+    (defun UR_TrueFungibleMinMove:decimal (identifier:string)
+        @doc "Returns True Fungible <identifier> Fee Toggle"
+        (UV_TrueFungibleIdentifier identifier)
+        (at "min-move" (read DPTF-PropertiesTable identifier ["min-move"]))
+    )
     (defun UR_TrueFungibleFeePromile:decimal (identifier:string)
         @doc "Returns True Fungible <identifier> Fee Promile"
         (UV_TrueFungibleIdentifier identifier)
@@ -2148,7 +2194,7 @@
         @doc "Moves DPTF <identifier> Token Ownership to <new-owner> DPTF Account"
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_OWNERSHIP-CHANGE patron identifier new-owner)
@@ -2177,7 +2223,7 @@
 
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_CONTROL patron identifier)
@@ -2194,7 +2240,7 @@
         @doc "Pause/Unpause TrueFungible <identifier> via the boolean <toggle>"
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_TOGGLE_PAUSE patron identifier toggle)
                 (if (= ZG false)
@@ -2210,7 +2256,7 @@
         @doc "Freeze/Unfreeze via boolean <toggle> TrueFungile <identifier> on DPTF Account <account>"
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_FROZEN-ACCOUNT patron identifier account toggle)
                 (if (= ZG false)
@@ -2236,7 +2282,7 @@
 
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_TOGGLE_BURN-ROLE patron identifier account toggle)
                 (if (= ZG false)
@@ -2254,7 +2300,7 @@
 
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_TOGGLE_MINT-ROLE patron identifier account toggle)
                 (if (= ZG false)
@@ -2274,7 +2320,7 @@
 
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_TOGGLE_TRANSFER-ROLE patron identifier account toggle)
                 (if (= ZG false)
@@ -2325,14 +2371,14 @@
 
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
             )
             (with-capability (DPTF_ISSUE patron account)
                 (let
                     (
                         (spawn-id:string (X_IssueTrueFungible patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
                     )
-                    (if (= ZG true)
+                    (if (= ZG false)
                         (X_CollectGAS patron account GAS_ISSUE)
                         true
                     )
@@ -2567,62 +2613,51 @@
     ;;      X_TransferTrueFungible
     ;;
     (defun X_TransferTrueFungible (identifier:string sender:string receiver:string transfer-amount:decimal)
-        (enforce-one
-            (format "Transfer Capabilities not satisfied from Account {} to Account {}" [sender receiver])
-            [
-                (enforce-one
-                    (format "No permission available to transfer from Account {}" [sender])
-                    [
-                        (require-capability (IZ_DPTS_ACCOUNT_SMART sender true))
-                        (require-capability (DPTS_ACCOUNT_OWNER sender))
-                    ]
-                )
-                (enforce-one
-                    (format "No permission available to transfer from Account {}" [receiver])
-                    [
-                        (require-capability (IZ_DPTS_ACCOUNT_SMART receiver true))
-                        (require-capability (DPTS_ACCOUNT_OWNER receiver))
-                    ]
-                )
-            ]
-        )
         (require-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
         (X_Debit identifier sender transfer-amount false)
-        (let
+        (let*
             (
                 (fee-toggle:bool (UR_TrueFungibleFeeToggle identifier))
+                (iz-exception:bool (UC_TransferFeeAndMinException identifier sender receiver))
+                (fees:[decimal] (UC_Fee identifier transfer-amount))
+                (primary-fee:decimal (at 0 fees))
+                (secondary-fee:decimal (at 1 fees))
+                (remainder:decimal (at 2 fees))
+                (fee-target:string (UR_TrueFungibleFeeTarget identifier))
+                (iz-full-credit:bool (or (or (= fee-toggle false) (= iz-exception true)) (= primary-fee 0.0)))
             )
-            (if (= fee-toggle false)
-                (with-capability (COMPOSE)
-                    (X_Credit identifier receiver transfer-amount)
-                )
-                (let*
-                    (
-                        (fees:[decimal] (UC_Fee identifier transfer-amount))
-                        (primary-fee:decimal (at 0 fees))
-                        (secondary-fee:decimal (at 1 fees))
-                        (remainder:decimal (at 2 fees))
-                        (fee-target:string (UR_TrueFungibleFeeTarget identifier))
+            (if (= iz-full-credit true)
+                (X_Credit identifier receiver transfer-amount)
+                (if (= secondary-fee 0.0)
+                    (with-capability (COMPOSE)
+                        (X_Credit identifier fee-target primary-fee)
+                        (X_UpdatePrimaryFeeVolume identifier primary-fee)
+                        (X_Credit identifier receiver remainder)
                     )
-                    (if (= secondary-fee 0.0)
-                        (with-capability (COMPOSE)
-                            (X_Credit identifier fee-target primary-fee)
-                            (X_UpdatePrimaryFeeVolume identifier primary-fee)
-                            (X_Credit identifier receiver remainder)
-                        )
-                        (with-capability (COMPOSE)
-                            (X_Credit identifier fee-target primary-fee)
-                            (X_Credit identifier SC_NAME_GAS secondary-fee)
-                            (X_UpdatePrimaryFeeVolume identifier primary-fee)
-                            (X_UpdateSecondaryFeeVolume identifier secondary-fee)
-                            (X_Credit identifier receiver remainder)
-                        )
+                    (with-capability (COMPOSE)
+                        (X_Credit identifier fee-target primary-fee)
+                        (X_Credit identifier SC_NAME_GAS secondary-fee)
+                        (X_UpdatePrimaryFeeVolume identifier primary-fee)
+                        (X_UpdateSecondaryFeeVolume identifier secondary-fee)
+                        (X_Credit identifier receiver remainder)
                     )
                 )
             )
         )
     )
-    
+    (defun UC_TransferFeeAndMinException:bool (identifier:string sender:string receiver:string)
+        (let*
+            (
+                (gas-id (UR_GasID))
+                (iz-sender-exception:bool (or (= sender SC_NAME) (= sender SC_NAME_GAS)))
+                (iz-receiver-exception:bool (or (= receiver SC_NAME) (= receiver SC_NAME_GAS)))
+                (are-members-exception (or iz-sender-exception iz-receiver-exception))
+                (is-id-gas:bool (= identifier gas-id))
+                (iz-exception:bool (and is-id-gas are-members-exception ))
+            )
+            iz-exception
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      DPTF: AUXILIARY FUNCTIONS             ;;
@@ -2899,6 +2934,7 @@
                 ,"role-transfer-amount" : 0
                 ;;Fee Parameters
                 ,"fee-toggle"           : false
+                ,"min-move"             : -1.0
                 ,"fee-promile"          : 0.0
                 ,"fee-target"           : SC_NAME
                 ,"fee-lock"             : false
@@ -2913,16 +2949,20 @@
         )
     )
     (defun X_Mint (identifier:string account:string amount:decimal origin:bool)
-        (enforce-one
-            (if (= origin true)
-                (format "No permission valid to mint premine(origin) for DPTF Token {} on Account {}" [identifier account])
-                (format "No permission available to mint with Account {}" [account])
+        (if (= origin false)
+            (enforce-one
+                (if (= origin true)
+                    (format "No permission valid to mint premine(origin) for DPTF Token {} on Account {}" [identifier account])
+                    (format "No permission available to mint with Account {}" [account])
+                )
+                [
+                    (require-capability (IZ_DPTS_ACCOUNT_SMART account true))
+                    (require-capability (DPTS_ACCOUNT_OWNER account))
+                ]
             )
-            [
-                (require-capability (IZ_DPTS_ACCOUNT_SMART account true))
-                (require-capability (DPTS_ACCOUNT_OWNER account))
-            ]
+            true
         )
+        
         (if (= origin true)
             (require-capability (DPTF_MINT-ORIGIN_CORE identifier account amount))
             (require-capability (DPTF_MINT-STANDARD_CORE identifier account amount))
@@ -2994,8 +3034,7 @@
         vgasid:string                               ;;GAS Token ID, Example GAS
         vgastg:bool                                 ;;Collection Toggle
         gaspot:string                               ;;Smart DPTS Account that is a <vgasid> DPTF Account that collects GAS
-        gastpr:decimal                              ;;GAS Token Price in cents
-        gasspent:decimal                            ;;Stores amount og Gas Spent on the blockchain
+        gasspent:decimal                            ;;Stores amount of Gas Spent on the blockchain
     )
     ;;3]TABLES Definitions
     (deftable VGASTable:{DPTS-vGAS})
@@ -3120,28 +3159,30 @@
             (compose-capability (IZ_DPTS_ACCOUNT_SMART patron false))
             (compose-capability (DPTS_ACCOUNT_OWNER patron))
     )
-    (defcap MAKE_GAS (client:string gas-source-amount:decimal)
+    (defcap MAKE_GAS (patron:string client:string target:string gas-source-amount:decimal)
         (let*
             (
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-id:string (UR_GasID))
                 (gas-amount:decimal (UC_GasMake gas-source-amount))
             )
-        ;;01]Any client that is a Normal DPTS Account can perform GAS creation. Gas creation is always GAS free.
-        (compose-capability (IZ_DPTS_ACCOUNT_SMART client false))
+        ;;01]Any client that is a Standard DPTS Account can perform GAS creation. Gas creation is always GAS free.
+        ;;   The target account must be a Standard DPTS Account
+        (compose-capability (IZ_DPTS_ACCOUNT_SMART patron false))
+        (compose-capability (IZ_DPTS_ACCOUNT_SMART target false))
         ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
         (compose-capability (DPTF_CLIENT gas-source-id client))
         ;;03]Client sends Gas-Source-id to the GAS Smart Contract
-        (compose-capability (TRANSFER_DPTF client gas-source-id client SC_NAME_GAS gas-source-amount true))
+        (compose-capability (TRANSFER_DPTF patron gas-source-id client SC_NAME_GAS gas-source-amount true))
         ;;04]Smart Contract burns GAS-Source-ID without generating IGNIS
-        (compose-capability (DPTF_BURN client gas-source-id SC_NAME_GAS gas-source-amount true))
+        (compose-capability (DPTF_BURN patron gas-source-id SC_NAME_GAS gas-source-amount true))
         ;;05]GAS Smart Contract mints GAS
-        (compose-capability (DPTF_MINT client gas-id SC_NAME_GAS gas-amount false true))
+        (compose-capability (DPTF_MINT patron gas-id SC_NAME_GAS gas-amount false true))
         ;;06]GAS Smart Contract transfers GAS to client
-        (compose-capability (TRANSFER_DPTF client gas-id SC_NAME_GAS client gas-amount true))
+        (compose-capability (TRANSFER_DPTF patron gas-id SC_NAME_GAS target gas-amount true))
         )
     )
-    (defcap COMPRESS_GAS (client:string gas-amount:decimal)
+    (defcap COMPRESS_GAS (patron:string client:string gas-amount:decimal)
         ;;Enforce only whole amounts of GAS are used for compression
         (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
         (let*
@@ -3150,18 +3191,20 @@
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-source-amount:decimal (UC_GasCompress gas-amount))
             )
-            ;;01]Any client that is a Normal DPTS Account can perform GAS compression. Gas compression is always GAS free.
+            ;;01]Any client that is a Standard DPTS Account can perform GAS compression. Gas compression is always GAS free.
+            ;;   Only IGNIS(gas) held by a Standard DPTS Account can be compressed to OURO
+            (compose-capability (IZ_DPTS_ACCOUNT_SMART patron false))
             (compose-capability (IZ_DPTS_ACCOUNT_SMART client false))
             ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
             (compose-capability (DPTF_CLIENT gas-id client))
             ;;03]Client sends GAS to the GAS Smart Contract: <XC_MethodicTransferTrueFungible> can be used since no GAS costs is uncurred when transferring GAS tokens
-            (compose-capability (TRANSFER_DPTF client gas-id client SC_NAME_GAS gas-amount true))
+            (compose-capability (TRANSFER_DPTF patron gas-id client SC_NAME_GAS gas-amount true))
             ;;04]GAS Smart Contract burns GAS: no GAS costs are involved when burning GAS Token
-            (compose-capability (DPTF_BURN client gas-id SC_NAME_GAS gas-amount true))
+            (compose-capability (DPTF_BURN patron gas-id SC_NAME_GAS gas-amount true))
             ;;05]GAS Smart Contract mints Gas-Source Token: <X_Mint> must be used to mint without GAS costs
-            (compose-capability (DPTF_MINT client gas-source-id SC_NAME_GAS gas-source-amount false true))
+            (compose-capability (DPTF_MINT patron gas-source-id SC_NAME_GAS gas-source-amount false true))
             ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-            (compose-capability (TRANSFER_DPTF client gas-source-id SC_NAME_GAS client gas-source-amount true))
+            (compose-capability (TRANSFER_DPTF patron gas-source-id SC_NAME_GAS client gas-source-amount true))
         )
     )
     (defcap GAS_COLLECTION (patron:string sender:string amount:decimal)
@@ -3307,46 +3350,59 @@
         @doc "Returns as string the Gas Pot Account"
         (at "gaspot" (read VGASTable VGD ["gaspot"]))
     )
-    (defun UR_GasPrice:decimal ()
-        @doc "Returns as decimal the Gas Price in Cents"
-        (at "gastpr" (read VGASTable VGD ["gastpr"]))
-    )
     (defun UR_GasSpent:decimal ()
         @doc "Returns as decimal the amount of Gas Spent"
         (at "gasspent" (read VGASTable VGD ["gasspent"]))
     )
     (defun UC_GasMake (gas-source-amount:decimal)
         @doc "Computes amount of GAS that can be made from the input <gas-source-amount>"
-        (let*
+        (enforce (>= gas-source-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
+        (let
             (
                 (gas-source-id:string (UR_GasSourceID))
-                (gas-source-decimals:integer (UR_TrueFungibleDecimals gas-source-id))
-                (gas-source-price:decimal (UR_GasSourcePrice))
-                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                (gas-price-in-cents:decimal (UR_GasPrice))
-                (gas-units-in-a-dollar:decimal (floor (/ 100.0 gas-price-in-cents) 3))
-                (gas-amount:decimal (floor (* (* gas-source-price-used gas-units-in-a-dollar) gas-source-amount) 0))
+                
             )
             (UV_TrueFungibleAmount gas-source-id gas-source-amount)
-            gas-amount
+            (let*
+                (
+                    (gas-source-price:decimal (UR_GasSourcePrice))
+                    (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
+                    (gas-id:string (UR_GasID))
+                )
+                (enforce (!= gas-id "GAS") "Gas Token isnt properly set")
+                (let*
+                    (
+                        (gas-decimal:integer (UR_TrueFungibleDecimals gas-id))
+                        (raw-gas-amount-per-unit (floor (* gas-source-price-used 100.0) gas-decimal))
+                        (raw-gas-amount:decimal (floor (* raw-gas-amount-per-unit gas-source-amount) gas-decimal))
+                        (gas-amount:decimal (floor (* raw-gas-amount 0.99) 0))
+                    )
+                    gas-amount
+                )
+            )
         )
     )
     (defun UC_GasCompress (gas-amount:decimal)
         @doc "Computes amount of Gas Source that can be created from an input amount <gas-amount> of GAS"
         ;;Enforce only whole amounts of GAS are used for compression
         (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
+        (enforce (>= gas-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
         (let*
             (
                 (gas-source-id:string (UR_GasSourceID))
                 (gas-source-price:decimal (UR_GasSourcePrice))
-                (gas-price-in-cents:decimal (UR_GasPrice))
                 (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                (gas-cents:decimal (floor (* gas-amount gas-price-in-cents) 3))
-                (cents-in-one-gas-source:decimal (floor (* gas-source-price-used 100.0) 3))
-                (gas-source-decimals:integer (UR_TrueFungibleDecimals gas-source-id))
-                (gas-source-mint-amount:decimal (floor (/ gas-cents cents-in-one-gas-source) gas-source-decimals))
+                (gas-id:string (UR_GasID))
             )
-            gas-source-mint-amount
+            (UV_TrueFungibleAmount gas-id gas-amount)
+            (let*
+                (
+                    (gas-source-decimal:integer (UR_TrueFungibleDecimals gas-source-id))
+                    (raw-gas-source-amount:decimal (floor (/ gas-amount (* gas-source-price-used 100.0)) gas-source-decimal))
+                    (gas-source-amount:decimal (floor (* raw-gas-source-amount 0.985) gas-source-decimal))
+                )
+                gas-source-amount
+            )
         )
     )
     (defun UC_ZeroGAZ:bool (identifier:string sender:string receiver:string)
@@ -3375,11 +3431,19 @@
     (defun UC_Zero:bool (sender:string)
         (let*
             (
-                (gas-toggle:bool (UR_GasToggle))
-                (t0:bool (if (= gas-toggle false) true false))
+                (t0:bool (UC_SubZero))
                 (t1:bool (if (= sender SC_NAME_GAS) true false))
             )
             (or t0 t1)
+        )
+    )
+    (defun UC_SubZero:bool ()
+        (let*
+            (
+                (gas-toggle:bool (UR_GasToggle))
+                (ZG:bool (if (= gas-toggle false) true false))
+            )
+            ZG
         )
     )
     ;;==============================================
@@ -3427,9 +3491,15 @@
                     ,"vgasid"           : GasID
                     ,"vgastg"           : false
                     ,"gaspot"           : SC_NAME_GAS
-                    ,"gastpr"           : 1.0
                     ,"gasspent"         : 0.0}
                 )
+                ;;Seting DPTF Gas Token Special Parameters
+                (C_SetMinMoveValue patron GasID 1000.0)
+                (C_SetFee patron GasID -1.0)
+                (C_SetFeeTarget patron GasID SC_NAME_GAS)
+                (C_ToggleFee patron GasID true)
+                (C_ToggleFeeLock patron GasID true)
+
                 ;;Issue OURO DPTF Account for the GAS-Tanker
                 (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS)
                 ;;Set Token Roles
@@ -3493,7 +3563,7 @@
     ;;
     ;;      C_MakeGAS|C_CompressGAS
     ;;
-    (defun C_MakeGAS:decimal (client:string gas-source-amount:decimal)
+    (defun C_MakeGAS:decimal (patron:string client:string target:string gas-source-amount:decimal)
         @doc "Generates GAS from GAS Source Token via GAS Making|Creation\
         \ GAS generation is GAS free. \
         \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
@@ -3507,25 +3577,25 @@
                 (gas-source-id:string (UR_GasSourceID))
             )
             (C_DeployTrueFungibleAccount gas-id client)
-            (with-capability (MAKE_GAS client gas-source-amount)
+            (with-capability (MAKE_GAS patron client target gas-source-amount)
             (let
                 (
                     (gas-amount:decimal (UC_GasMake gas-source-amount))
                 )
         ;;03]Client sends Gas-Source-id to the GAS Smart Contract; <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-                (CX_TransferTrueFungible client gas-source-id client SC_NAME_GAS gas-source-amount)
+                (CX_TransferTrueFungible patron gas-source-id client SC_NAME_GAS gas-source-amount)
         ;;04]Smart Contract burns GAS-Source-ID without generating IGNIS, without needing GAS
-                (CX_Burn client gas-source-id SC_NAME_GAS gas-source-amount)
+                (CX_Burn patron gas-source-id SC_NAME_GAS gas-source-amount)
         ;;05]GAS Smart Contract mints GAS, without needing GAS (already built in within the C_Mint function)
-                (CX_Mint client gas-id SC_NAME_GAS gas-amount false)
+                (CX_Mint patron gas-id SC_NAME_GAS gas-amount false)
         ;;06]GAS Smart Contract transfers GAS to client
-                (CX_TransferTrueFungible client gas-id SC_NAME_GAS client gas-amount)
+                (CX_TransferTrueFungible patron gas-id SC_NAME_GAS target gas-amount)
                 gas-amount
                 )
             )
         )
     )
-    (defun C_CompressGAS (client:string gas-amount:decimal)
+    (defun C_CompressGAS (patron:string client:string gas-amount:decimal)
         @doc "Generates Gas-Source from GAS Token via GAS Compression \
             \ GAS compression is GAS free. \
             \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
@@ -3539,19 +3609,19 @@
                 (gas-id:string (UR_GasID))
             )
             (C_DeployTrueFungibleAccount gas-source-id client)
-            (with-capability (COMPRESS_GAS client gas-amount)
+            (with-capability (COMPRESS_GAS patron client gas-amount)
                 (let
                     (
                         (gas-source-amount:decimal (UC_GasCompress gas-amount))
                     )
         ;;03]Client sends GAS to the GAS Smart Contract: <CX_TransferTrueFungible> can be used since no GAS costs is uncurred when transferring GAS tokens
-                    (CX_TransferTrueFungible client gas-id client SC_NAME_GAS gas-amount)
+                    (CX_TransferTrueFungible patron gas-id client SC_NAME_GAS gas-amount)
         ;;04]GAS Smart Contract burns GAS: <C_Burn> can be used since burning GAS costs no GAS
-                    (CX_Burn client gas-id SC_NAME_GAS gas-amount)
+                    (CX_Burn patron gas-id SC_NAME_GAS gas-amount)
         ;;05]GAS Smart Contract mints Gas-Source Token: <X_Mint> must be used to mint without GAS costs
-                    (CX_Mint client gas-source-id SC_NAME_GAS gas-source-amount false)
+                    (CX_Mint patron gas-source-id SC_NAME_GAS gas-source-amount false)
         ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-                    (CX_TransferTrueFungible client gas-source-id SC_NAME_GAS client gas-source-amount)
+                    (CX_TransferTrueFungible patron gas-source-id SC_NAME_GAS client gas-source-amount)
                 )
             )
         )
@@ -3729,9 +3799,12 @@
     ;;==================FEE-STATES================== 
     ;;
     ;;      DPTF_SET_FEE|DPTF_SET_FEE_CORE
+    ;;      DPTF_SET_MIN-MOVE|DPTF_SET_MIN-MOVE_CORE
     ;;      DPTF_TOGGLE_FEE|DPTF_TOGGLE_FEE_CORE
     ;;      DPTF_SET_FEE-TARGET|DPTF_SET_FEE-TARGET_CORE
     ;;
+
+    
     (defcap DPTF_SET_FEE (patron:string identifier:string fee:decimal)
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_SET_FEE_CORE identifier fee))
@@ -3752,6 +3825,27 @@
             (compose-capability (DPTF_FEE-LOCK_STATE identifier false))
         )
     )
+    (defcap DPTF_SET_MIN-MOVE (patron:string identifier:string min-move-value:decimal)
+        (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
+        (compose-capability (DPTF_SET_MIN-MOVE_CORE identifier min-move-value))
+        (compose-capability (DPTS_INCREASE-NONCE))
+    )
+    (defcap DPTF_SET_MIN-MOVE_CORE (identifier:string min-move-value:decimal)
+        (UV_TrueFungibleIdentifier identifier)
+        (let
+            (
+                (decimals:integer (UR_TrueFungibleDecimals identifier))
+            )
+            (enforce
+                (= (floor min-move-value decimals) min-move-value)
+                (format "The Minimum Transfer amount of {} does not conform with the {} DPTF Token decimals number" [min-move-value identifier])
+            )
+            (enforce (or (= min-move-value -1.0) (> min-move-value 0.0)) "Min-Move Value does not compute")
+            (compose-capability (DPTF_OWNER identifier))
+            (compose-capability (DPTF_FEE-LOCK_STATE identifier false))  
+        )
+    )
+
     (defcap DPTF_TOGGLE_FEE (patron:string identifier:string toggle:bool)
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_TOGGLE_FEE_CORE identifier toggle))
@@ -3921,7 +4015,7 @@
     (defun C_ToggleFee (patron:string identifier:string toggle:bool)
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_TOGGLE_FEE patron identifier toggle)
@@ -3934,10 +4028,26 @@
             )
         )
     )
+    (defun C_SetMinMoveValue (patron:string identifier:string min-move-value:decimal)
+        (let
+            (
+                (ZG:bool (UC_SubZero))
+                (current-owner-account:string (UR_TrueFungibleKonto identifier))
+            )
+            (with-capability (DPTF_SET_MIN-MOVE patron identifier min-move-value)
+                (if (= ZG false)
+                    (X_CollectGAS patron current-owner-account GAS_SMALL)
+                    true
+                )
+                (X_SetMinMove identifier min-move-value)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
     (defun C_SetFee (patron:string identifier:string fee:decimal)
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_SET_FEE patron identifier fee)
@@ -3953,7 +4063,7 @@
     (defun C_SetFeeTarget (patron:string identifier:string target:string)
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_SET_FEE-TARGET patron identifier target)
@@ -3969,7 +4079,7 @@
     (defun C_ToggleFeeLock (patron:string identifier:string toggle:bool)
         (let
             (
-                (ZG:bool (UR_GasToggle))
+                (ZG:bool (UC_SubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_TOGGLE_FEE-LOCK patron identifier toggle)
@@ -3996,6 +4106,12 @@
             { "fee-toggle" : toggle}
         )
     )
+    (defun X_SetMinMove (identifier:string min-move-value:decimal)
+        (require-capability (DPTF_SET_MIN-MOVE_CORE identifier min-move-value))
+        (update DPTF-PropertiesTable identifier
+            { "min-move" : min-move-value}
+        )
+    )
     (defun X_SetFee (identifier:string fee:decimal)
         (require-capability (DPTF_SET_FEE_CORE identifier fee))
         (update DPTF-PropertiesTable identifier
@@ -4008,6 +4124,7 @@
             { "fee-target" : target}
         )
     )
+    ;;needs to be modified for unlock
     (defun X_ToggleFeeLock (identifier:string toggle:bool)
         (require-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
         (update DPTF-PropertiesTable identifier

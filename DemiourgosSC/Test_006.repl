@@ -1,0 +1,43 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(load "Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+(begin-tx "TESTING")
+
+
+(format "AH3 has {} OURO and {} GAS" [
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler") 
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "GT3 has {} OURO and {} GAS" [
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Gas-Tanker")
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+
+
+
+(free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" 1.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
+;(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "Emma" "AncientHodler" 0.5)
+;(free.OUROBOROS.C_MakeGAS "Emma" "Emma" 1.0)
+;(free.OUROBOROS.C_CompressGAS "AncientHodler" "AncientHodler" 1.0)
+
+
+(format "AH4 has {} OURO and {} GAS" [
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "GT4 has {} OURO and {} GAS" [
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Gas-Tanker")
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+(format "Emma has {} OURO and {} GAS" [
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma") 
+    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+(env-gas)
+(commit-tx)
