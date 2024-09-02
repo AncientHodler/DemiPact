@@ -743,7 +743,7 @@
         ;;3]Vesting Account creates <VAURYN|Vested-Auryn>; knowing the auryn-amount
                 (let*
                     (
-                        (auryn-amount:decimal (DH_SC_Autostake.XC_CoilOuroboros patron SC_NAME amount))
+                        (auryn-amount:decimal (DH_SC_Autostake.CX_CoilOuroboros patron SC_NAME amount))
                         (vesting-meta-data:[object{VestingMetaDataSchema}] (UC_ComposeVestingMetaData auryn-id auryn-amount offset duration milestone))
                         (new-nonce:integer (DPMF.CX_Mint patron v-auryn-id SC_NAME auryn-amount vesting-meta-data))
                     )
@@ -771,7 +771,7 @@
         ;;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>; knowing the elite-auryn-amount
                 (let*
                     (
-                        (elite-auryn-amount:decimal (DH_SC_Autostake.C_CurlOuroboros patron SC_NAME amount))
+                        (elite-auryn-amount:decimal (DH_SC_Autostake.CX_CurlOuroboros patron SC_NAME amount))
                         (vesting-meta-data:[object{VestingMetaDataSchema}] (UC_ComposeVestingMetaData auryn-id elite-auryn-amount offset duration milestone))
                         (new-nonce:integer (DPMF.CX_Mint patron v-eauryn-id SC_NAME elite-auryn-amount vesting-meta-data))
                     )
@@ -822,7 +822,7 @@
         ;;1]Client transfers <AURYN|Auryn> to the <Snake_Vesting> Account
                 (OUROBOROS.CX_TransferTrueFungible patron auryn-id vester SC_NAME amount)
         ;;2]Vesting Account coils <AURYN|Auryn>, generating EAURYN|Elite-Auryn
-                (DH_SC_Autostake.C_CoilAuryn patron SC_NAME amount)
+                (DH_SC_Autostake.CX_CoilAuryn patron SC_NAME amount)
         ;3]Vesting Account creates <VEAURYN|Vested-Elite-Auryn>
                 (let*
                     (

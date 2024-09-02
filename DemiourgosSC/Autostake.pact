@@ -269,8 +269,8 @@
     ;;      UNCOIL-LEDGER_BALANCE|UNCOIL-LEDGER_MANAGING-POSITION|UNCOIL-LEDGER_MANAGING-TIER
     ;;      CULL_EXECUTOR|CULLABLE
     ;;
-    (defcap UPDATE_AURYNZ (initiator:string account:string)
-        (compose-capability (OUROBOROS.DPTS_CLIENT initiator))
+    (defcap UPDATE_AURYNZ (patron:string account:string)
+        (compose-capability (OUROBOROS.DPTS_CLIENT patron))
         (compose-capability (SNAKE_TOKEN_ACCOUNT_EXISTANCE account))
         (compose-capability (UPDATE_UNCOIL_LEDGER))
         (compose-capability (UPDATE_ELITE_TRACKER))
@@ -357,113 +357,111 @@
     ;;      BURN_OUROBOROS|BURN_AURYN|BURN_ELITE-AURYN
     ;;      MINT_AURYN|MINT_ELITE-AURYN
     ;;
-    (defcap BURN_OUROBOROS (initiator:string ouro-burn-amount:decimal)
-        (compose-capability (OUROBOROS.DPTF_BURN initiator (UR_OuroborosID) SC_NAME ouro-burn-amount true))
-        (compose-capability (OUROBOROS.DPTF_MINT initiator (UR_IgnisID ) SC_NAME (UC_IgnisMintAmount ouro-burn-amount) false true))
+    (defcap BURN_OUROBOROS (patron:string ouro-burn-amount:decimal)
+        (compose-capability (OUROBOROS.DPTF_BURN patron (UR_OuroborosID) SC_NAME ouro-burn-amount true))
+        (compose-capability (OUROBOROS.DPTF_MINT patron (UR_IgnisID ) SC_NAME (UC_IgnisMintAmount ouro-burn-amount) false true))
     )
-    (defcap BURN_AURYN (initiator:string auryn-amount:decimal)
-        (compose-capability (OUROBOROS.DPTF_BURN initiator (UR_AurynID) SC_NAME auryn-amount true))
+    (defcap BURN_AURYN (patron:string auryn-amount:decimal)
+        (compose-capability (OUROBOROS.DPTF_BURN patron (UR_AurynID) SC_NAME auryn-amount true))
     )
-    (defcap BURN_ELITE-AURYN (initiator:string elite-auryn-amount:decimal)
-        (compose-capability (OUROBOROS.DPTF_BURN initiator (UR_EliteAurynID) SC_NAME elite-auryn-amount true))
+    (defcap BURN_ELITE-AURYN (patron:string elite-auryn-amount:decimal)
+        (compose-capability (OUROBOROS.DPTF_BURN patron (UR_EliteAurynID) SC_NAME elite-auryn-amount true))
     )
-    (defcap MINT_AURYN (initiator:string auryn-amount:decimal)
-        (compose-capability (OUROBOROS.DPTF_MINT initiator (UR_AurynID) SC_NAME auryn-amount false true))
+    (defcap MINT_AURYN (patron:string auryn-amount:decimal)
+        (compose-capability (OUROBOROS.DPTF_MINT patron (UR_AurynID) SC_NAME auryn-amount false true))
     )
-    (defcap MINT_ELITE-AURYN (initiator:string elite-auryn-amount:decimal)
-        (compose-capability (OUROBOROS.DPTF_MINT initiator (UR_EliteAurynID) SC_NAME elite-auryn-amount false true))
+    (defcap MINT_ELITE-AURYN (patron:string elite-auryn-amount:decimal)
+        (compose-capability (OUROBOROS.DPTF_MINT patron (UR_EliteAurynID) SC_NAME elite-auryn-amount false true))
     )
     ;;
     ;;      COIL_OUROBOROS|FUEL_OUROBOROS|COIL-AURYN
     ;;      CURL-OUROBOROS|UNCOIL-AURYN|CULL_OUROBOROS
     ;;
-    (defcap COIL_OUROBOROS(initiator:string coiler:string ouro-input-amount:decimal)
-    (let 
-        (
-            (ouro-id:string (UR_OuroborosID))
-            (auryn-id:string (UR_AurynID))
-            (auryn-computed-amount:decimal (UC_OuroCoil ouro-input-amount))
+    (defcap COIL_OUROBOROS(patron:string coiler:string ouro-input-amount:decimal)
+        (let 
+            (
+                (ouro-id:string (UR_OuroborosID))
+                (auryn-id:string (UR_AurynID))
+                (auryn-computed-amount:decimal (UC_OuroCoil ouro-input-amount))
+            )
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+        ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id client SC_NAME ouro-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron ouro-id coiler SC_NAME ouro-input-amount true))
+        ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
+            (compose-capability (MINT_AURYN patron auryn-computed-amount))
+        ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF (UR_AurynID) SC_NAME client auryn-computed-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron auryn-id SC_NAME coiler auryn-computed-amount true))
+        ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (compose-capability (UPDATE_AURYNZ patron coiler))
         )
-    ;;0]Core-Permissions of the Capability
-        (compose-capability (AUTOSTAKE_EXECUTOR))
-    ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id client SC_NAME ouro-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator ouro-id coiler SC_NAME ouro-input-amount true))
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
-    ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN initiator auryn-computed-amount))
-    ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF (UR_AurynID) SC_NAME client auryn-computed-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator auryn-id SC_NAME coiler auryn-computed-amount true))
-    ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
-        (compose-capability (UPDATE_AURYNZ initiator coiler))
     )
-    )
-    (defcap FUEL_OUROBOROS(initiator:string fueler:string ouro-input-amount:decimal)
-    (let
-        (
-            (ouro-id:string (UR_OuroborosID))
+    (defcap FUEL_OUROBOROS(patron:string fueler:string ouro-input-amount:decimal)
+        (let
+            (
+                (ouro-id:string (UR_OuroborosID))
+            )
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+        ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron ouro-id fueler SC_NAME ouro-input-amount true))
+        ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))  
         )
-    ;;0]Any Fueler can perform <C_FuelOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (OUROBOROS.DPTF_CLIENT ouro-id initiator))
-    ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF (UR_OuroborosID) client SC_NAME ouro-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator ouro-id fueler SC_NAME ouro-input-amount true))
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))  
     )
-    
-    )
-    (defcap COIL_AURYN(initiator:string coiler:string auryn-input-amount:decimal)
-    (let
-        (
-            (auryn-id:string (UR_AurynID))
-            (eauryn-id:string (UR_EliteAurynID))
+    (defcap COIL_AURYN(patron:string coiler:string auryn-input-amount:decimal)
+        (let
+            (
+                (auryn-id:string (UR_AurynID))
+                (eauryn-id:string (UR_EliteAurynID))
+            )
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+        ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron auryn-id coiler SC_NAME auryn-input-amount true))
+        ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
+            (compose-capability (MINT_ELITE-AURYN patron auryn-input-amount))
+        ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <coiler> Account
+            ;;odl: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client auryn-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron eauryn-id SC_NAME coiler auryn-input-amount true))
+        ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (compose-capability (UPDATE_AURYNZ patron coiler))
         )
-    ;;0]Any Coiler can perform <C_CoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-    (compose-capability (OUROBOROS.DPTF_CLIENT auryn-id initiator))
-    ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator auryn-id coiler SC_NAME auryn-input-amount true))
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
-    ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN initiator auryn-input-amount))
-    ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <coiler> Account
-        ;;odl: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client auryn-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator eauryn-id SC_NAME coiler auryn-input-amount true))
-    ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
-        (compose-capability (UPDATE_AURYNZ initiator coiler))
     )
-   
-    )
-    (defcap CURL_OUROBOROS(initiator:string coiler:string ouro-input-amount:decimal)
+    (defcap CURL_OUROBOROS(patron:string coiler:string ouro-input-amount:decimal)
         (let 
             (
                 (ouro-id:string (UR_OuroborosID))
                 (eauryn-id:string (UR_EliteAurynID))
                 (auryn-computed-amount:decimal (UC_OuroCoil ouro-input-amount))
             )
-    ;;0]Any Coiler can perform <C_CurlOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (OUROBOROS.DPTF_CLIENT ouro-id initiator))
-    ;;1]<coiler> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id coiler SC_NAME ouro-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator ouro-id coiler SC_NAME ouro-input-amount true))
-    ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (compose-capability (MINT_AURYN initiator auryn-computed-amount))
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
-    ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (compose-capability (MINT_ELITE-AURYN initiator auryn-computed-amount))
-    ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <coiler> Account
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client auryn-computed-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator eauryn-id SC_NAME coiler auryn-computed-amount true))
-    ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
-        (compose-capability (UPDATE_AURYNZ initiator coiler))
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+        ;;1]<coiler> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id coiler SC_NAME ouro-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron ouro-id coiler SC_NAME ouro-input-amount true))
+        ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
+            (compose-capability (MINT_AURYN patron auryn-computed-amount))
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
+            (compose-capability (MINT_ELITE-AURYN patron auryn-computed-amount))
+        ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <coiler> Account
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client auryn-computed-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron eauryn-id SC_NAME coiler auryn-computed-amount true))
+        ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (compose-capability (UPDATE_AURYNZ patron coiler))
         )
     )
-    (defcap UNCOIL_AURYN(initiator:string uncoiler:string auryn-input-amount:decimal)
+    (defcap UNCOIL_AURYN(patron:string uncoiler:string auryn-input-amount:decimal)
         (let*
             (
                 (auryn-id:string (UR_AurynID))
@@ -471,73 +469,65 @@
                 (uncoil-data:[decimal] (UC_AurynUncoil auryn-input-amount uncoil-position))
                 (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
             )
-    ;;0]Any Uncoiler can perform <C_UncoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (compose-capability (OUROBOROS.DPTF_CLIENT auryn-id initiator))
-    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
-        (compose-capability (UPDATE_AURYNZ initiator uncoiler))
-    ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
-        ;;old (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator auryn-id uncoiler SC_NAME auryn-input-amount true))
-    ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
-        (compose-capability (BURN_AURYN initiator auryn-input-amount))
-    ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
-        (compose-capability (BURN_OUROBOROS initiator ouro-burn-fee-amount))
-    ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
-    ;;6*]<Snake_Autostake> Account updates <UncoilLedger>
-        (compose-capability (UPDATE_UNCOIL_LEDGER)) ;;Capability already granted by (UPDATE_AURYNZ)
+        ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+            (compose-capability (UPDATE_AURYNZ patron uncoiler))
+        ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
+            ;;old (compose-capability (OUROBOROS.TRANSFER_DPTF auryn-id client SC_NAME auryn-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron auryn-id uncoiler SC_NAME auryn-input-amount true))
+        ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
+            (compose-capability (BURN_AURYN patron auryn-input-amount))
+        ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
+            (compose-capability (BURN_OUROBOROS patron ouro-burn-fee-amount))
+        ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;6*]<Snake_Autostake> Account updates <UncoilLedger>
+            (compose-capability (UPDATE_UNCOIL_LEDGER)) ;;Capability already granted by (UPDATE_AURYNZ)
         )        
     )
-    (defcap CULL_OUROBOROS(initiator:string culler:string culled-amount:decimal)
+    (defcap CULL_OUROBOROS(patron:string culler:string culled-amount:decimal)
         (let
             (
                 (ouro-id:string (UR_OuroborosID))
             )
-    ;;0]Any Culler can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
-    (compose-capability (OUROBOROS.DPTF_CLIENT ouro-id initiator))
-    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
-        (enforce (> culled-amount 0.0) "No Auryn Uncoil Positions are cullable yet")
-    ;;2]Snake_Autostake> Account transfers as method culled <OURO|Ouroboros> to <culler> Account
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id SC_NAME client culled-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator ouro-id SC_NAME culler culled-amount true))
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+            (enforce (> culled-amount 0.0) "No Auryn Uncoil Positions are cullable yet")
+        ;;2]Snake_Autostake> Account transfers as method culled <OURO|Ouroboros> to <culler> Account
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF ouro-id SC_NAME client culled-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron ouro-id SC_NAME culler culled-amount true))
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
         )
     )
-    (defcap UNCOIL_ELITE-AURYN(initiator:string uncoiler:string elite-auryn-input-amount:decimal)
+    (defcap UNCOIL_ELITE-AURYN(patron:string uncoiler:string elite-auryn-input-amount:decimal)
         (let
             (
                 (eauryn-id:string (UR_EliteAurynID))
             )
-    ;;0]Any Uncoiler can perform <C_UncoilEliteAuryn>; Smart DPTS Accounts arent required to provide their guards
-    (compose-capability (OUROBOROS.DPTF_CLIENT eauryn-id initiator))
-    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
-        (compose-capability (UPDATE_AURYNZ initiator uncoiler))
-    ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id client SC_NAME elite-auryn-input-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator eauryn-id uncoiler SC_NAME elite-auryn-input-amount true))
-    ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
-        (compose-capability (BURN_ELITE-AURYN initiator elite-auryn-input-amount))
-    ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
-    ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
-        (compose-capability (UPDATE_UNCOIL_LEDGER)) ;;Capability already granted by (UPDATE_AURYNZ)
+        ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+            (compose-capability (UPDATE_AURYNZ patron uncoiler))
+        ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id client SC_NAME elite-auryn-input-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron eauryn-id uncoiler SC_NAME elite-auryn-input-amount true))
+        ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
+            (compose-capability (BURN_ELITE-AURYN patron elite-auryn-input-amount))
+        ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
+            (compose-capability (UPDATE_UNCOIL_LEDGER)) ;;Capability already granted by (UPDATE_AURYNZ)
         )
     )
-    (defcap CULL_AURYN(initiator:string culler:string culled-amount:decimal)
+    (defcap CULL_AURYN(patron:string culler:string culled-amount:decimal)
         (let
             (
                 (auryn-id:string (UR_AurynID))
             )
-    ;;0]Any Culler can perform <C_CullAuryn>; Smart DPTS Accounts arent required to provide their guards
-    (compose-capability (OUROBOROS.DPTF_CLIENT auryn-id initiator))
-    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
-        (enforce (> culled-amount 0.0) "No Elite-Auryn Uncoil Positions are cullable yet")
-    ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
-        ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client culled-amount true))
-        (compose-capability (OUROBOROS.TRANSFER_DPTF initiator auryn-id SC_NAME culler culled-amount true))
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
-        (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+            (enforce (> culled-amount 0.0) "No Elite-Auryn Uncoil Positions are cullable yet")
+        ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
+            ;;old: (compose-capability (OUROBOROS.TRANSFER_DPTF eauryn-id SC_NAME client culled-amount true))
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron auryn-id SC_NAME culler culled-amount true))
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
         )
     )
     ;;==================================================================================================================================================;;
@@ -1421,7 +1411,7 @@
     ;;
     ;;      A_InitialiseAutostake 
     ;;
-    (defun A_InitialiseAutostake:[string] (initiator:string ouro-id:string)
+    (defun A_InitialiseAutostake:[string] (patron:string ouro-id:string)
         @doc "Initialises the Autostake Smart-Contract \
         \ Returns the ids of Auryn, Elite-Auryn, Ignis in a list of strings"
         (OUROBOROS.UV_TrueFungibleIdentifier ouro-id)
@@ -1436,7 +1426,7 @@
                 (
                     (AurynID:string 
                         (OUROBOROS.C_IssueTrueFungible
-                            initiator
+                            patron
                             SC_NAME
                             "Auryn"
                             "AURYN"
@@ -1451,7 +1441,7 @@
                     )
                     (EliteAurynID:string 
                         (OUROBOROS.C_IssueTrueFungible
-                            initiator
+                            patron
                             SC_NAME
                             "EliteAuryn"
                             "ELITEAURYN"
@@ -1466,7 +1456,7 @@
                     )
                     (IgnisID:string 
                         (OUROBOROS.C_IssueTrueFungible
-                            initiator
+                            patron
                             SC_NAME
                             "Ignis"
                             "IGNIS"
@@ -1500,16 +1490,16 @@
                 (OUROBOROS.C_DeployTrueFungibleAccount ouro-id SC_NAME)
                 ;;SetTokenRoles
                 ;;BURN Roles
-                (OUROBOROS.C_ToggleBurnRole initiator ouro-id SC_NAME true)
-                (OUROBOROS.C_ToggleBurnRole initiator AurynID SC_NAME true)
-                (OUROBOROS.C_ToggleBurnRole initiator EliteAurynID SC_NAME true)
+                (OUROBOROS.C_ToggleBurnRole patron ouro-id SC_NAME true)
+                (OUROBOROS.C_ToggleBurnRole patron AurynID SC_NAME true)
+                (OUROBOROS.C_ToggleBurnRole patron EliteAurynID SC_NAME true)
                 ;;MINT Roles
-                (OUROBOROS.C_ToggleMintRole initiator AurynID SC_NAME true)
-                (OUROBOROS.C_ToggleMintRole initiator EliteAurynID SC_NAME true)
-                (OUROBOROS.C_ToggleMintRole initiator IgnisID SC_NAME true)
+                (OUROBOROS.C_ToggleMintRole patron AurynID SC_NAME true)
+                (OUROBOROS.C_ToggleMintRole patron EliteAurynID SC_NAME true)
+                (OUROBOROS.C_ToggleMintRole patron IgnisID SC_NAME true)
                 ;;TRANSFER Roles
-                (OUROBOROS.C_ToggleTransferRole initiator AurynID SC_NAME true)
-                (OUROBOROS.C_ToggleTransferRole initiator EliteAurynID SC_NAME true)
+                (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME true)
+                (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME true)
 
                 ;;Snake-Carrier MANAGEMENT
                 ;;Issue the Snake_Carrier Smart DPTS Account
@@ -1518,8 +1508,8 @@
                 (OUROBOROS.C_DeployTrueFungibleAccount AurynID SC_NAME_CARRIER)
                 (OUROBOROS.C_DeployTrueFungibleAccount EliteAurynID SC_NAME_CARRIER)
                 ;;Add Transfer Roles for the Snake Carrier
-                (OUROBOROS.C_ToggleTransferRole initiator AurynID SC_NAME_CARRIER true)
-                (OUROBOROS.C_ToggleTransferRole initiator EliteAurynID SC_NAME_CARRIER true)
+                (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME_CARRIER true)
+                (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME_CARRIER true)
 
                 ;;Finalise initialisation, returning the IDs of the created tokens.
                 [AurynID EliteAurynID IgnisID]
@@ -1553,7 +1543,7 @@
     ;;
     ;;      C_CarryAuryn|C_CarryElite-Auryn|C_UpdateAurynzData
     ;;
-    (defun C_CarryAuryn (initiator:string sender:string receiver:string carry-amount:decimal)
+    (defun C_CarryAuryn (patron:string sender:string receiver:string carry-amount:decimal)
         @doc "Uses the Snake_Carrier Smart DPTS Account to move Auryn from <sender> to <receiver> \
         \ Keeps 5% as Carry Fee, which is the price for transfering Auryn \
         \ Assumes a DPTS account exists for the receiver"
@@ -1561,13 +1551,13 @@
         ;;0]Any Client can perform <C_CarryAuryn>; Smart DPTS Accounts arent required to provide their guards.
         ;;1]<Sender> Account transfers as method Auryn to the <Snake_Carrier>
         ;;2]<Snake-Carrier> transfers as method 95% of the amount to the <Receiver> Account, witholding 5% itself
-        initiator
+        patron
     )
-    (defun C_UpdateAurynzData (initiator:string account:string)
+    (defun C_UpdateAurynzData (patron:string account:string)
         @doc "DPTS Account <client> updates Elite Account Status for Snake Account <account>"
 
         ;;0]Any Snake Token Account Owner can update his Demiourgos Elite Account
-        (with-capability (UPDATE_AURYNZ initiator account)
+        (with-capability (UPDATE_AURYNZ patron account)
             (let
                 (
                     (major:integer (UC_MajorEliteTier account))
@@ -1583,23 +1573,24 @@
     ;;      C_CoilOuroboros|C_FuelOuroboros
     ;;      C_CoilAuryn|C_CurlOuroboros
     ;;
-    (defun C_CoilOuroboros:decimal (initiator:string coiler:string ouro-input-amount:decimal)
+    (defun C_CoilOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
         @doc "Standard Coil Ouroboros function, for when <coiler> is a Normal DPTS Account \
         \ Does not work if the <coiler> is a Smart DPTS account"
-        (with-capability (COIL_OUROBOROS initiator coiler ouro-input-amount)
-            (X_CoilOuroboros initiator coiler ouro-input-amount)
+        (with-capability (COIL_OUROBOROS patron coiler ouro-input-amount)
+            (X_CoilOuroboros patron coiler ouro-input-amount)
         )
     )
-    (defun XC_CoilOuroboros:decimal (initiator:string coiler:string ouro-input-amount:decimal)
+    (defun CX_CoilOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
         @doc "Methodic Coil Ouroboros function, for when <coiler> is a Smart DPTS Account \
         \ Required Capability must be composed for the function using it."
-        (require-capability (COIL_OUROBOROS initiator coiler ouro-input-amount))
-        (X_CoilOuroboros initiator coiler ouro-input-amount)
+        (require-capability (COIL_OUROBOROS patron coiler ouro-input-amount))
+        (X_CoilOuroboros patron coiler ouro-input-amount)
     )
-    (defun X_CoilOuroboros:decimal (initiator:string coiler:string ouro-input-amount:decimal)
+    (defun X_CoilOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
         @doc "Coils Ouroboros, staking it into the Autostake Pool, generating Auryn \
             \ Returns as decimal amount of generated Auryn \
             \ This is the Core Function"
+
         (require-capability (AUTOSTAKE_EXECUTOR))
         (let
             (
@@ -1607,101 +1598,136 @@
                 (auryn-id:string (UR_AurynID))
                 (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
             )
-    ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
-            (OUROBOROS.CX_TransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
+        ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for coiling(autostaking)
+            (OUROBOROS.CX_TransferTrueFungible patron ouro-id coiler SC_NAME ouro-input-amount)
+        ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
             (X_UpdateResidentOuro ouro-input-amount true)
-    ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
-            (X_MintAuryn initiator auryn-output-amount)
-    ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account  
-            (OUROBOROS.CX_TransferTrueFungible initiator auryn-id SC_NAME coiler auryn-output-amount)
-    ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
-            (C_UpdateAurynzData initiator coiler)
-    ;;6]<auryn-output-amount> is returned
+        ;;3]<Snake_Autostake> Account mints <AURYN|Auryn>
+            (X_MintAuryn patron auryn-output-amount)
+        ;;4]<Snake_Autostake> Account transfers as method <AURYN|Auryn> to <client> Account  
+            (OUROBOROS.CX_TransferTrueFungible patron auryn-id SC_NAME coiler auryn-output-amount)
+        ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (C_UpdateAurynzData patron coiler)
+        ;;6]<auryn-output-amount> is returned
             auryn-output-amount
         )
     )
-    (defun C_FuelOuroboros (initiator:string fueler:string ouro-input-amount:decimal)
+    (defun C_FuelOuroboros (patron:string fueler:string ouro-input-amount:decimal)
+        @doc "Standard FuelOuroboros function, for when <fueler> is a Normal DPTS Account \
+        \ Does not work if the <fueler> is a Smart DPTS account"
+        (with-capability (FUEL_OUROBOROS patron fueler ouro-input-amount)
+            (X_FuelOuroboros patron fueler ouro-input-amount)
+        )
+    )
+    (defun CX_FuelOuroboros (patron:string fueler:string ouro-input-amount:decimal)
+        @doc "Methodic FuelOuroboros function, for when <fueler> is a Smart DPTS Account \
+        \ Required Capability must be composed for the function using it."
+        (require-capability (FUEL_OUROBOROS patron fueler ouro-input-amount))
+        (X_FuelOuroboros patron fueler ouro-input-amount)
+    )
+    (defun X_FuelOuroboros (patron:string fueler:string ouro-input-amount:decimal)
         @doc "Fuels Ouroboros to the Autostake Pool, increasing Auryndex"
 
+        (require-capability (AUTOSTAKE_EXECUTOR))
         (let
             (
                 (ouro-id:string (UR_OuroborosID))
             )
-            ;;0]Any Client can perform <C_FuelOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (with-capability (FUEL_OUROBOROS initiator fueler ouro-input-amount)
         ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account, for fueling (fueling does not generate <AURYN|Auryn>)
-            (OUROBOROS.CX_TransferTrueFungible initiator ouro-id fueler SC_NAME ouro-input-amount)
+            (OUROBOROS.CX_TransferTrueFungible patron ouro-id fueler SC_NAME ouro-input-amount)
         ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)
             (X_UpdateResidentOuro ouro-input-amount true)
-            )
         )
-    
     )
-    (defun C_CoilAuryn (initiator:string coiler:string auryn-input-amount:decimal)
+
+    (defun C_CoilAuryn (patron:string coiler:string auryn-input-amount:decimal)
+        @doc "Standard CoilAuryn function, for when <coiler> is a Normal DPTS Account \
+        \ Does not work if the <fueler> is a Smart DPTS account"
+        (with-capability (COIL_AURYN patron coiler auryn-input-amount)
+            (X_CoilAuryn patron coiler auryn-input-amount)
+        )
+    )
+    (defun CX_CoilAuryn (patron:string coiler:string auryn-input-amount:decimal)
+        @doc "Methodic CoilAuryn function, for when <coiler> is a Smart DPTS Account \
+        \ Required Capability must be composed for the function using it."
+        (require-capability (COIL_AURYN patron coiler auryn-input-amount))
+        (X_CoilAuryn patron coiler auryn-input-amount)
+    )
+    (defun X_CoilAuryn (patron:string coiler:string auryn-input-amount:decimal)
         @doc "Coils Auryn, securing it into the Autostake Pool, generating Elite-Auryn"
 
-    ;;0]Any Client can perform <C_CoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (with-capability (COIL_AURYN initiator coiler auryn-input-amount)
-            (let
-                (
-                    (auryn-id:string (UR_AurynID))
-                    (eauryn-id:string (UR_EliteAurynID))
-                )
-    ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
-        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id coiler SC_NAME auryn-input-amount)
-    ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
-        (X_UpdateResidentAuryn auryn-input-amount true)
-    ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (X_MintEliteAuryn initiator auryn-input-amount)
-    ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-input-amount)
-    ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
-        (C_UpdateAurynzData initiator coiler) 
+        (require-capability (AUTOSTAKE_EXECUTOR))
+        (let
+            (
+                (auryn-id:string (UR_AurynID))
+                (eauryn-id:string (UR_EliteAurynID))
             )
+        ;;1]<client> Account transfers as method <AURYN|Auryn> to the <Snake_Autostake> Account for coiling(autostkaing)
+            (OUROBOROS.CX_TransferTrueFungible patron auryn-id coiler SC_NAME auryn-input-amount)
+        ;;2]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (+)
+            (X_UpdateResidentAuryn auryn-input-amount true)
+        ;;3]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
+            (X_MintEliteAuryn patron auryn-input-amount)
+        ;;4]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
+            (OUROBOROS.CX_TransferTrueFungible patron eauryn-id SC_NAME coiler auryn-input-amount)
+        ;;5]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (C_UpdateAurynzData patron coiler) 
         )
     )
-    (defun C_CurlOuroboros:decimal (initiator:string coiler:string ouro-input-amount:decimal)
-        @doc "Curls Ouroboros, then Curls Auryn in a single Function"
 
-    ;;0]Any Client can perform <C_CurlOuroboros>; Smart DPTS Accounts arent required to provide their guards
-        (with-capability (CURL_OUROBOROS initiator coiler ouro-input-amount)
-            (let
-                (
-                    (ouro-id:string (UR_OuroborosID))
-                    (eauryn-id:string (UR_EliteAurynID))
-                    (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
-                )  
-    ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
-        (OUROBOROS.CX_TransferTrueFungible initiator ouro-id coiler SC_NAME ouro-input-amount)
-    ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
-        (X_MintAuryn initiator auryn-output-amount)
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
-        (X_UpdateResidentOuro ouro-input-amount true)
-        (X_UpdateResidentAuryn auryn-output-amount true)
-    ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
-        (X_MintEliteAuryn initiator auryn-output-amount)
-    ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
-        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id SC_NAME coiler auryn-output-amount)
-    ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
-        (C_UpdateAurynzData initiator coiler)  
-                auryn-output-amount 
-            )
+    (defun C_CurlOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
+        @doc "Standard CurlOuroboros function, for when <coiler> is a Normal DPTS Account \
+            \ Does not work if the <fueler> is a Smart DPTS account"
+        (with-capability (CURL_OUROBOROS patron coiler ouro-input-amount)
+            (X_CurlOuroboros patron coiler ouro-input-amount)
+        )
+    )
+    (defun CX_CurlOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
+        @doc "Methodic CurlOuroboros function, for when <coiler> is a Smart DPTS Account \
+            \ Required Capability must be composed for the function using it."
+        (require-capability (CURL_OUROBOROS patron coiler ouro-input-amount))
+        (X_CurlOuroboros patron coiler ouro-input-amount)
+    )
+    (defun X_CurlOuroboros:decimal (patron:string coiler:string ouro-input-amount:decimal)
+        @doc "Curls Ouroboros, then Curls Auryn in a single Function \
+            \ Outputs the Amount of Elite-Auryn resulted"
+
+        (require-capability (AUTOSTAKE_EXECUTOR))
+        (let
+            (
+                (ouro-id:string (UR_OuroborosID))
+                (eauryn-id:string (UR_EliteAurynID))
+                (auryn-output-amount:decimal (UC_OuroCoil ouro-input-amount))
+            )  
+        ;;1]<client> Account transfers as method <OURO|Ouroboros> to the <Snake_Autostake> Account for curling (double-coiling) 
+            (OUROBOROS.CX_TransferTrueFungible patron ouro-id coiler SC_NAME ouro-input-amount)
+        ;;2]<Snake_Autostake> Account mints <AURYN|Auryn>
+            (X_MintAuryn patron auryn-output-amount)
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (+)|<resident-auryn> (+)
+            (X_UpdateResidentOuro ouro-input-amount true)
+            (X_UpdateResidentAuryn auryn-output-amount true)
+        ;;4]<Snake_Autostake> Account mints <EAURYN|Elite-Auryn>
+            (X_MintEliteAuryn patron auryn-output-amount)
+        ;;5]<Snake_Autostake> Account transfers as method <EAURYN|Elite-Auryn> to <client> Account
+            (OUROBOROS.CX_TransferTrueFungible patron eauryn-id SC_NAME coiler auryn-output-amount)
+        ;;6]<UncoilLedger> and <EliteTracker> are updated with the operation
+            (C_UpdateAurynzData patron coiler)  
+            auryn-output-amount 
         )
     )
     ;;
     ;;==================AURYN-UNCOIL================
     ;;      C_UncoilAuryn|C_CullOuroboros
     ;;
-    (defun C_UncoilAuryn (initiator:string uncoiler:string auryn-input-amount:decimal)
+    (defun C_UncoilAuryn (patron:string uncoiler:string auryn-input-amount:decimal)
         @doc "Uncoils Auryn, generating Ouroboros for client and IGNIS for Autostake \
-        \ Uses the best(cheapest) uncoil Position. This is determined automatically \
-        \ and must not be entered as a parameter. When no position is available, function fails."
+            \ Uses the best(cheapest) uncoil Position. This is determined automatically \
+            \ and must not be entered as a parameter. When no position is available, function fails."
         
-    ;;0]Any Client can perform <C_UncoilAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (with-capability (UNCOIL_AURYN initiator uncoiler auryn-input-amount)
-    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
-        (C_UpdateAurynzData initiator uncoiler)
+        ;;0]Any Client can perform <C_UncoilAuryn>; Smart DPTS Accounts arent required to provide their guards
+        (with-capability (UNCOIL_AURYN patron uncoiler auryn-input-amount)
+        ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+        (C_UpdateAurynzData patron uncoiler)
             (let*
                 (
                     (auryn-id:string (UR_AurynID))
@@ -1712,23 +1738,23 @@
                     (ouro-burn-fee-amount:decimal (at 2 uncoil-data))
                     (cull-time:time (UC_CullTime uncoiler))
                 )
-    ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
-        (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
-    ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
-        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id uncoiler SC_NAME auryn-input-amount)
-    ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
-        (X_BurnAuryn initiator auryn-input-amount)
-    ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
-        (X_BurnOuroboros initiator ouro-burn-fee-amount)
-    ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
-        (X_UpdateResidentOuro ouro-redeem-amount false)
-        (X_UpdateUnbondingOuro ouro-output-amount true)
-    ;;6]<Snake_Autostake> Account updates <UncoilLedger>
-        (X_UpdateUncoilLedger uncoiler uncoil-position ouro-output-amount cull-time false)
+        ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
+                (enforce (!= uncoil-position -1) "No more Auryn Uncoil Positions")
+        ;;2]<client> Account transfers as method <AURYN|Auryn> to <Snake_Autostake> Account for burning
+                (OUROBOROS.CX_TransferTrueFungible patron auryn-id uncoiler SC_NAME auryn-input-amount)
+        ;;3]<Snake_Autostake> Account burns the whole <AURYN|Auryn> transferred
+                (X_BurnAuryn patron auryn-input-amount)
+        ;;4)<Snake_Autostake> Account burns <OURO|Ouroboros> as uncoil fee (burning <OURO|Ouroboros automatically mints <IGNIS|Ignis>)
+                (X_BurnOuroboros patron ouro-burn-fee-amount)
+        ;;5]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-ouro> (-)|<unbonding-ouro> (+)
+                (X_UpdateResidentOuro ouro-redeem-amount false)
+                (X_UpdateUnbondingOuro ouro-output-amount true)
+        ;;6]<Snake_Autostake> Account updates <UncoilLedger>
+                (X_UpdateUncoilLedger uncoiler uncoil-position ouro-output-amount cull-time false)
             )
         )
     )
-    (defun C_CullOuroboros (initiator:string culler:string)
+    (defun C_CullOuroboros (patron:string culler:string)
         @doc "Culls all cullable Auryn Uncoil Positions, collecting Ouroboros \
             \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
 
@@ -1738,13 +1764,13 @@
                     (ouro-id:string (UR_OuroborosID))
                     (culled-amount:decimal (X_CullUncoilAll culler false))
                 )
-    ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
-    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
-        (with-capability (CULL_OUROBOROS initiator culler culled-amount)
-    ;;2]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
-        (OUROBOROS.CX_TransferTrueFungible initiator ouro-id SC_NAME culler culled-amount)
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
-        (X_UpdateUnbondingOuro culled-amount false)
+        ;;0]Any Client can perform <C_CullOuroboros>; Smart DPTS Accounts arent required to provide their guards
+        ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+                (with-capability (CULL_OUROBOROS patron culler culled-amount)
+        ;;2]Snake_Autostake> Account transfers as method culled  <OURO|Ouroboros> to <client> Account
+                    (OUROBOROS.CX_TransferTrueFungible patron ouro-id SC_NAME culler culled-amount)
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-ouro> (-)
+                    (X_UpdateUnbondingOuro culled-amount false)
                 )
             )
         )
@@ -1753,41 +1779,41 @@
     ;;==================ELITE-AURYN-UNCOIL==========
     ;;      C_UncoilEliteAuryn|C_CullAuryn
     ;;
-    (defun C_UncoilEliteAuryn (initiator:string uncoiler:string elite-auryn-input-amount:decimal)
+    (defun C_UncoilEliteAuryn (patron:string uncoiler:string elite-auryn-input-amount:decimal)
         @doc "Uncoils EliteAuryn, generating Auryn for client \
             \ Uses the best(cheapest) uncoil Position. This is determined automatically \
             \ and must not be entered as a parameter. When no position is available, function fails."
         
-    ;;0]Any Client can perform <C_UncoilEliteAuryn>; Smart DPTS Accounts arent required to provide their guards
-        (with-capability (UNCOIL_ELITE-AURYN initiator uncoiler elite-auryn-input-amount)
-    ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
-        (C_UpdateAurynzData initiator uncoiler)
+        ;;0]Any Client can perform <C_UncoilEliteAuryn>; Smart DPTS Accounts arent required to provide their guards
+        (with-capability (UNCOIL_ELITE-AURYN patron uncoiler elite-auryn-input-amount)
+        ;;1]<UncoilLedger> and <EliteTracker> are updated with the operation; <UncoilLedger> must exist for operation
+            (C_UpdateAurynzData patron uncoiler)
             (let
                 (
                     (eauryn-id:string (UR_EliteAurynID))
                     (uncoil-position:integer (UR_UncoilPositionElite uncoiler elite-auryn-input-amount))
                     (cull-time:time (UC_CullTimeElite uncoiler elite-auryn-input-amount))
                 )
-    ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
-        (if (= uncoil-position -2)
-            (enforce (>= uncoil-position 0) (format "Uncoiling {} Elite-Auryn surpasses the Uncoiling Position Capabilities offered by the resulted Major Elite Tier" [elite-auryn-input-amount]))
-            (enforce (>= uncoil-position 0) "No more Elite-Auryn Uncoil Positions")
-        )
-    ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
-        (OUROBOROS.CX_TransferTrueFungible initiator eauryn-id uncoiler SC_NAME elite-auryn-input-amount)
-    ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
-        (X_BurnEliteAuryn initiator elite-auryn-input-amount)
-    ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
-        (X_UpdateResidentAuryn elite-auryn-input-amount false)
-        (X_UpdateUnbondingAuryn elite-auryn-input-amount true)
-    ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
-        (X_UpdateUncoilLedger uncoiler uncoil-position elite-auryn-input-amount cull-time true)
-    ;;6]<UncoilLedger> and <EliteTracker> are updated once again with the operation since Elite-Auryn amounts will change with operation
-        (C_UpdateAurynzData initiator uncoiler)
+        ;;Enforces a position is free for update, otherwise uncoil cannot execute. If no positions is free, position is returned as -1
+                (if (= uncoil-position -2)
+                    (enforce (>= uncoil-position 0) (format "Uncoiling {} Elite-Auryn surpasses the Uncoiling Position Capabilities offered by the resulted Major Elite Tier" [elite-auryn-input-amount]))
+                    (enforce (>= uncoil-position 0) "No more Elite-Auryn Uncoil Positions")
+                )
+        ;;2]<client> Account transfers as method <ELITEAURYN|EliteAuryn> to <Snake_Autostake> Account for burning
+                (OUROBOROS.CX_TransferTrueFungible patron eauryn-id uncoiler SC_NAME elite-auryn-input-amount)
+        ;;3]<Snake_Autostake> Account burns the whole <ELITEAURYN|EliteAuryn> transferred
+                (X_BurnEliteAuryn patron elite-auryn-input-amount)
+        ;;4]<Snake_Autostake> Account updates <AutostakeLedger>|<resident-auryn> (-)|<unbonding-auryn> (+)
+                (X_UpdateResidentAuryn elite-auryn-input-amount false)
+                (X_UpdateUnbondingAuryn elite-auryn-input-amount true)
+        ;;5*]<Snake_Autostake> Account updates <UncoilLedger>
+                (X_UpdateUncoilLedger uncoiler uncoil-position elite-auryn-input-amount cull-time true)
+        ;;6]<UncoilLedger> and <EliteTracker> are updated once again with the operation since Elite-Auryn amounts will change with operation
+                (C_UpdateAurynzData patron uncoiler)
             )
         )
     )
-    (defun C_CullAuryn (initiator:string culler:string)
+    (defun C_CullAuryn (patron:string culler:string)
         @doc "Culls all cullable Elite-Auryn Uncoil Positions, collecting Auryn \
             \ Fails if no cullable positions exist, or if no entry for account in UncoilLedger exist"
         
@@ -1797,13 +1823,13 @@
                     (auryn-id:string (UR_AurynID))
                     (culled-amount:decimal (X_CullUncoilAll culler true))
                 )
-    ;;0]Any Client can perform <C_CullAuryn>; Smart DPTS Accounts arent required to provide their guards
-    ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
-        (with-capability (CULL_AURYN initiator culler culled-amount)
-    ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
-        (OUROBOROS.CX_TransferTrueFungible initiator auryn-id SC_NAME culler culled-amount)
-    ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
-        (X_UpdateUnbondingAuryn culled-amount false)
+        ;;0]Any Client can perform <C_CullAuryn>; Smart DPTS Accounts arent required to provide their guards
+        ;;1]Enforces that the culled amount is greater than 0.0, that is, that there are cullable positions.
+                (with-capability (CULL_AURYN patron culler culled-amount)
+        ;;2]Snake_Autostake> Account transfers as method culled <AURYN|Auryn> to <client> Account
+                    (OUROBOROS.CX_TransferTrueFungible patron auryn-id SC_NAME culler culled-amount)
+        ;;3]<Snake_Autostake> Account updates <AutostakeLedger>|<unbonding-auryn> (-)
+                    (X_UpdateUnbondingAuryn culled-amount false)
                 )
             )
         )
@@ -1817,26 +1843,26 @@
     ;;      X_BurnOuroboros|X_BurnAuryn|X_BurnEliteAuryn
     ;;      X_MintAuryn|X_MintEliteAuryn
     ;;
-    (defun X_BurnOuroboros (initiator:string amount:decimal)
+    (defun X_BurnOuroboros (patron:string amount:decimal)
         @doc "Burns Ouroboros and generates Ignis at 100x capacity"
-        (OUROBOROS.CX_Burn initiator (UR_OuroborosID) SC_NAME amount)
-        (OUROBOROS.CX_Mint initiator (UR_IgnisID) SC_NAME (UC_IgnisMintAmount amount) false)
+        (OUROBOROS.CX_Burn patron (UR_OuroborosID) SC_NAME amount)
+        (OUROBOROS.CX_Mint patron (UR_IgnisID) SC_NAME (UC_IgnisMintAmount amount) false)
     )
-    (defun X_BurnAuryn (initiator:string amount:decimal)
+    (defun X_BurnAuryn (patron:string amount:decimal)
         @doc "Burns Auryn"
-        (OUROBOROS.CX_Burn initiator (UR_AurynID) SC_NAME amount)
+        (OUROBOROS.CX_Burn patron (UR_AurynID) SC_NAME amount)
     )
-    (defun X_BurnEliteAuryn (initiator:string amount:decimal)
+    (defun X_BurnEliteAuryn (patron:string amount:decimal)
         @doc "Burns Elite-Auryn"
-        (OUROBOROS.CX_Burn initiator (UR_EliteAurynID) SC_NAME amount)
+        (OUROBOROS.CX_Burn patron (UR_EliteAurynID) SC_NAME amount)
     )
-    (defun X_MintAuryn (initiator:string amount:decimal)
+    (defun X_MintAuryn (patron:string amount:decimal)
         @doc "Mints Auryn"
-        (OUROBOROS.CX_Mint initiator (UR_AurynID) SC_NAME amount false)
+        (OUROBOROS.CX_Mint patron (UR_AurynID) SC_NAME amount false)
     )
-    (defun X_MintEliteAuryn (initiator:string amount:decimal)
+    (defun X_MintEliteAuryn (patron:string amount:decimal)
         @doc "Mints Elite-Auryn"
-        (OUROBOROS.CX_Mint initiator (UR_EliteAurynID) SC_NAME amount false)
+        (OUROBOROS.CX_Mint patron (UR_EliteAurynID) SC_NAME amount false)
     )
     ;;
     ;;==================UPDATE-AUTOSTAKE-LEDGER=====
@@ -1845,7 +1871,7 @@
     ;;
     (defun X_UpdateResidentOuro (amount:decimal direction:bool)
         @doc "Updates the Resident Ouro in the Autostake Ledger \
-        \ Direction true increases amount, false decreases amount"
+            \ Direction true increases amount, false decreases amount"
 
         (require-capability (UPDATE_AUTOSTAKE_LEDGER))
         (with-read AutostakeLedger AUTOSTAKEHOLDINGS
@@ -1865,7 +1891,7 @@
     )
     (defun X_UpdateResidentAuryn (amount:decimal direction:bool)
         @doc "Updates the Resident Auryn in the Autostake Ledger \
-        \ Direction true increases amount, false decreases amount"
+            \ Direction true increases amount, false decreases amount"
 
         (require-capability (UPDATE_AUTOSTAKE_LEDGER))
         (with-read AutostakeLedger AUTOSTAKEHOLDINGS
@@ -1885,7 +1911,7 @@
     )
     (defun X_UpdateUnbondingOuro (amount:decimal direction:bool)
         @doc "Updates the Unbonding Ouro in the Autostake Ledger \
-        \ Direction true increases amount, false decreases amount"
+            \ Direction true increases amount, false decreases amount"
 
         (require-capability (UPDATE_AUTOSTAKE_LEDGER))
         (with-read AutostakeLedger AUTOSTAKEHOLDINGS
@@ -1905,7 +1931,7 @@
     )
     (defun X_UpdateUnbondingAuryn (amount:decimal direction:bool)
         @doc "Updates the Unbonding Auryn in the Autostake Ledger \
-        \ Direction true increases amount, false decreases amount"
+            \ Direction true increases amount, false decreases amount"
 
         (require-capability (UPDATE_AUTOSTAKE_LEDGER))
         (with-read AutostakeLedger AUTOSTAKEHOLDINGS
@@ -1929,7 +1955,7 @@
     ;;
     (defun X_CullUncoilAll:decimal (account:string elite:bool)
         @doc "Processes all Uncoils positions for culling purposes for Account \
-        \ Returns the sum of all culled positions"
+            \ Returns the sum of all culled positions"
         (let*
             (
                 (cull-boolean-slice:[bool] (UR_CanCullUncoil account elite))
@@ -1947,10 +1973,10 @@
     )
     (defun X_ExecuteCull:decimal (cullable:bool account:string position:integer elite:bool)
         @doc "Processes an Uncoil Position for culling purposes for Account \
-        \ Can be used for either Auryn or Elite-Auryn (via boolean <elite>) \
-        \ Boolean cullable informs the function if the position is cullable \
-        \ If the position is cullable, it will be culled. \
-        \ If the position is not cullable, decimal zero is returned"
+            \ Can be used for either Auryn or Elite-Auryn (via boolean <elite>) \
+            \ Boolean cullable informs the function if the position is cullable \
+            \ If the position is cullable, it will be culled. \
+            \ If the position is not cullable, decimal zero is returned"
 
         (require-capability (CULL_EXECUTOR))
         (if (= cullable true)
@@ -1962,7 +1988,7 @@
     )
     (defun X_CullUncoilSingle:decimal (account:string position:integer elite:bool)
         @doc "Culls Uncoil position for Auryn-Uncoil or Elite-Auryn-Uncoil\
-        \ Culling Position means clearing the Uncoil Ledger and outputting culled amount as decimal"
+            \ Culling Position means clearing the Uncoil Ledger and outputting culled amount as decimal"
 
         (require-capability (CULLABLE account position elite))
         (with-read UncoilLedger account
@@ -2053,9 +2079,9 @@
     ;;
     (defun X_UpdateUncoilLedger (account:string position:integer balance:decimal epoch:time elite:bool)
         @doc "Updates Uncoil Ledgers which tracks uncoil Data \
-        \ Assumes Uncoil Ledger has been initialised and exists for account"
+            \ Assumes Uncoil Ledger has been initialised and exists for account"
+
         (require-capability (UPDATE_UNCOIL_LEDGER))
-        
         (with-read UncoilLedger account
             { "P1" := o1, "P2" := o2, "P3" := o3, "P4" := o4, "P5" := o5, "P6" := o6, "P7" := o7 }
             (let*
@@ -2230,7 +2256,6 @@
     (defun X_UpdateEliteTracker (account:string)
         @doc "Updates Elite-Account Information which tracks Elite-Auryn Ammounts"
         (require-capability (UPDATE_ELITE_TRACKER))
-
         (let*
             (
                 (iz-sc:bool (OUROBOROS.UR_DPTS-AccountType account))
