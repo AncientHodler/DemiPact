@@ -1232,7 +1232,7 @@
         @doc "Capability required to update DPTF Supply"
         true
     )
-    (defcap DPTF_UPDATE-ROLE_TRANSFER-AMOUNT ()
+    (defcap DPTF_UPDATE_ROLE-TRANSFER-AMOUNT ()
         @doc "Capability required to update DPTF Transfer-Role-Amount"
         true
     )
@@ -1442,7 +1442,7 @@
         @doc "Capability required to toggle the <role-transfer> Role"
         (compose-capability (DPTF_TOGGLE_TRANSFER-ROLE_CORE identifier account toggle))
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
-        (compose-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
+        (compose-capability (DPTF_UPDATE_ROLE-TRANSFER-AMOUNT))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_TOGGLE_TRANSFER-ROLE_CORE (identifier:string account:string toggle:bool)
@@ -1584,8 +1584,6 @@
                 (compose-capability (TRANSFER_DPTF_MIN identifier transfer-amount))
                 true
             )
-            
-
             (if (= method false)
                 (compose-capability (DPTS_ACCOUNT_OWNER sender))
                 (enforce-one
@@ -1596,10 +1594,6 @@
                     ]
                 )
             )
-
-
-
-
             (compose-capability (GAZ_PATRON patron identifier sender receiver GAS_SMALLEST))
             (compose-capability (TRANSFER_DPTF_CORE identifier sender receiver transfer-amount))
             (compose-capability (SC_TRANSFERABILITY sender receiver method))
@@ -1663,19 +1657,18 @@
     ;;                                            ;;
     ;;=================CORE=========================
     ;;
-    ;;      DEBIT_DPTF|CREDIT_DPTF
+    ;;      CREDIT_DPTF|DEBIT_DPTF
     ;;
-    (defcap DEBIT_DPTF (identifier:string account:string)
-        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
-        (UV_TrueFungibleIdentifier identifier)
-        (UV_DPTS-Account account)
-        ;(compose-capability (DPTF_CLIENT identifier account))
-    )
     (defcap CREDIT_DPTF (identifier:string account:string)
         @doc "Capability to perform crediting operations with DPTF Tokens"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account account)
         (compose-capability (DPTS_ACCOUNT_EXIST account))
+    )
+    (defcap DEBIT_DPTF (identifier:string account:string)
+        @doc "Capability to perform debiting operations on a Normal DPTS Account type for a DPTF Token"
+        (UV_TrueFungibleIdentifier identifier)
+        (UV_DPTS-Account account)
     )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
@@ -2788,7 +2781,7 @@
     (defun X_UpdateRoleTransferAmount (identifier:string direction:bool)
         @doc "Updates <role-transfer-amount> for Token <identifier>"
 
-        (require-capability (DPTF_UPDATE-ROLE_TRANSFER-AMOUNT))
+        (require-capability (DPTF_UPDATE_ROLE-TRANSFER-AMOUNT))
         (if (= direction true)
             (with-read DPTF-PropertiesTable identifier
                 { "role-transfer-amount" := rta }
@@ -2951,10 +2944,7 @@
     (defun X_Mint (identifier:string account:string amount:decimal origin:bool)
         (if (= origin false)
             (enforce-one
-                (if (= origin true)
-                    (format "No permission valid to mint premine(origin) for DPTF Token {} on Account {}" [identifier account])
-                    (format "No permission available to mint with Account {}" [account])
-                )
+                (format "No permission available to mint with Account {}" [account])
                 [
                     (require-capability (IZ_DPTS_ACCOUNT_SMART account true))
                     (require-capability (DPTS_ACCOUNT_OWNER account))
@@ -3000,9 +2990,6 @@
         )
         
     )
-    
-    
-    
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
 ;;                                                                                                                                                          ;;
