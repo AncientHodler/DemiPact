@@ -96,26 +96,11 @@
     (defconst SC_KEY_GAS "free.DH-GAS-Keyset")
     (defconst SC_NAME_GAS "Gas-Tanker")
 
-    (defconst CTO "ChiefTechnologyOfficer")
-    (defconst HOV "HeadOfVision")
-
-    (defun CollectBlockchainFuel (patron:string amount:decimal)
-        @doc "Collects Blockchain Fuel in KDA"
-        (UV_DPTS-Account patron)
-
-        (let*
-            (
-                (precision:integer coin.MINIMUM_PRECISION)
-                (five:decimal (floor (* amount 0.05) precision))
-                (ten:decimal (* five 2.0))
-                (rest:decimal (- amount ten))
-            )
-            (coin.transfer patron CTO five)
-            (coin.transfer patron HOV five)
-            (coin.transfer patron SC_NAME_GAS rest)
-        )
-    )
-
+                                                ;;KDA Account must be created beforehand
+    (defconst CTO "ChiefTechnologyOfficer")     ;;CTO Kadena k:xxx
+    (defconst HOV "HeadOfVision")               ;;HOV Kadena k:xxx
+    (defconst LKP "LiquidKadenaProtocol")       ;;LKP Kadena k:xxx
+    (defconst GST "GasStation")                 ;;GST Kadena k:xxx
     ;; Capability Categories
     ;;
     ;;==================================================================================================================================================;;
@@ -1447,6 +1432,9 @@
     )
     (defcap DPTF_TOGGLE_TRANSFER-ROLE_CORE (identifier:string account:string toggle:bool)
         @doc "Core Capability required to toggle the <role-transfer> Role"
+        ;;Core Accounts Ouroboros and Gas-Tanker cannot receive Transfer roles
+        (enforce (!= account SC_NAME) (format "Capability excludes {} Account from having or removing transfer roles" [SC_NAME]))
+        (enforce (!= account SC_NAME_GAS) (format "Capability excludes {} Account from having or removing transfer roles" [SC_NAME_GAS]))
         (compose-capability (DPTF_OWNER identifier))
         (if (= toggle true)
             (compose-capability (DPTF_CAN-ADD-SPECIAL-ROLE_ON identifier))
@@ -1616,7 +1604,7 @@
             (compose-capability (DPTF_ACCOUNT_FREEZE_STATE identifier receiver false))
 
             ;;Checks transfer roles of sender and receiver
-            (if (and (!= transfer-role-amount 0) (or (!= sender SC_NAME)(!= sender SC_NAME_GAS)))
+            (if (and (> transfer-role-amount 0) (not (or (= sender SC_NAME)(= sender SC_NAME_GAS))))
                 (enforce-one
                     (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
                     [
@@ -2168,8 +2156,38 @@
                         )
                     )
                     (GasID:string (A_InitialiseGAS patron OuroborosID))
+                    (WrappedKadenaID:string
+                        (C_IssueTrueFungible
+                            patron
+                            SC_NAME
+                            "WrappedKadena"
+                            "WKDA"
+                            24
+                            false    ;;can-change-owner
+                            false    ;;can-upgrade
+                            true     ;;can-add-special-role
+                            false    ;;can-freeze
+                            false    ;;can-wipe
+                            false    ;;can-pause
+                        )
+                    )
+                    (StakedKadenaID:string
+                        (C_IssueTrueFungible
+                            patron
+                            SC_NAME
+                            "StakedKadena"
+                            "SKDA"
+                            24
+                            false    ;;can-change-owner
+                            false    ;;can-upgrade
+                            true     ;;can-add-special-role
+                            false    ;;can-freeze
+                            false    ;;can-wipe
+                            false    ;;can-pause
+                        )
+                    )
                 )
-                [OuroborosID GasID]
+                [OuroborosID GasID WrappedKadenaID StakedKadenaID]
             )
         )
     )
@@ -2642,11 +2660,12 @@
         (let*
             (
                 (gas-id (UR_GasID))
-                (iz-sender-exception:bool (or (= sender SC_NAME) (= sender SC_NAME_GAS)))
-                (iz-receiver-exception:bool (or (= receiver SC_NAME) (= receiver SC_NAME_GAS)))
+                (token-owner:string (UR_TrueFungibleKonto identifier))
+                (iz-sender-exception:bool (or (or (= sender SC_NAME) (= sender SC_NAME_GAS)) (= sender token-owner)))
+                (iz-receiver-exception:bool (or (or (= receiver SC_NAME) (= receiver SC_NAME_GAS)) (= receiver token-owner)))
                 (are-members-exception (or iz-sender-exception iz-receiver-exception))
                 (is-id-gas:bool (= identifier gas-id))
-                (iz-exception:bool (and is-id-gas are-members-exception ))
+                (iz-exception:bool (or is-id-gas are-members-exception ))
             )
             iz-exception
         )
@@ -3014,14 +3033,16 @@
     ;;2]SCHEMAS Definitions
     (defschema DPTS-vGAS
         @doc "Schema that stores DPTF Identifier for the Gas Token of the Virtual Blockchain \
-        \ The boolean <vgastg> toggles wheter or not the virtual gas is enabled or not"
+        \ The boolean <virtual-gas-toggle> toggles wheter or not the virtual gas is enabled or not"
 
-        gassid:string                               ;;GAS Source Token ID, Example OURO
-        gasspr:decimal                              ;;GAS Source Price in Dollars
-        vgasid:string                               ;;GAS Token ID, Example GAS
-        vgastg:bool                                 ;;Collection Toggle
-        gaspot:string                               ;;Smart DPTS Account that is a <vgasid> DPTF Account that collects GAS
-        gasspent:decimal                            ;;Stores amount of Gas Spent on the blockchain
+        gas-source-id:string                        ;;Virtual Gas Source Token ID, Example OURO-xxx
+        gas-source-price:decimal                    ;;Virtual Gas Source Price in $
+        virtual-gas-id:string                       ;;Virtual Gas ID, example IGNIS-xxx
+        virtual-gas-toggle:bool                     ;;Virtual Gas Collection on|off toggle; true = Virtual Gas collection is enabled
+        virtual-gas-tank:string                     ;;Smart DPTS Account name whos DPTF <virtual-gas-id> Account collects the Virtual Gas.
+        virtual-gas-spent:decimal                   ;;Stores the amount of Virtual Gas Spent on the blockchain
+        native-gas-toggle:bool                      ;;Native Gas Collection on|off toggle; true = Native Gas collection is enabled
+        native-gas-spent:decimal                    ;;Stores the amount of Native Gas Spent on the blockchain
     )
     ;;3]TABLES Definitions
     (deftable VGASTable:{DPTS-vGAS})
@@ -3061,30 +3082,38 @@
     ;;
     ;;      GAS_TOGGLE|GAS_ID_OFF|GAS_ID_ON
     ;;
-    (defcap GAS_IS_ON ()
-        @doc "Enforces Gas is turned ON"
-
+    (defcap VIRTUAL_GAS_STATE (state:bool)
+        @doc "Enforces <virtual-gas-toggle> to <state>"
         (let
             (
                 (t:bool (UR_GasToggle))
             )
-            (enforce (= t true) "Gas is not turned on !")
+            (if (= state true)
+                (enforce (= t true) "Virtual GAS Collection is not turned on !")
+                (let
+                    (
+                        (current-gas-source-id:string (UR_GasSourceID))
+                        (current-gas-id:string (UR_GasID))
+                    )
+                    (enforce (= t false) "Virtual GAS Collection is turned on !")
+                    (enforce (!= current-gas-source-id "") "Gas-Source-ID hasnt been set for the Virtual GAS collection to be turned ON")
+                    (enforce (!= current-gas-id "") "Gas-ID hasnt been set for the Virtual GAS collection to be turned ON")
+                    (enforce (!= current-gas-source-id current-gas-id) "Gas-Source-ID must be different from the Gas-ID for the Virtual GAS collection to be turned ON")
+                )
+            )
         )
     )
-    (defcap GAS_IS_OFF ()
-        @doc "Enforces Gas is turned OFF and Gas IDs are set so that turning ON can be executed"
-
+    (defcap NATIVE_GAS_STATE (state:bool)
+        @doc "Enforces <native-gas-toggle> to <state>"
         (let
             (
-                (t:bool (UR_GasToggle))
-                (current-gas-source-id:string (UR_GasSourceID))
-                (current-gas-id:string (UR_GasID))
+                (t:bool (UR_NGasToggle))
             )
-            (enforce (= t false) "Gas is not turned off !")
-            (enforce (!= current-gas-source-id "") "Gas-Source-ID hasnt been set for the Gas to be turned ON")
-            (enforce (!= current-gas-id "") "Gas-ID hasnt been set for the Gas to be turned ON")
-            (enforce (!= current-gas-source-id current-gas-id) "Gas-Source-ID must be different for the Gas-ID for the Gas to be turned ON")
-        )  
+            (if (= state true)
+                (enforce (= t true) "Native GAS Collection is not turned on !")
+                (enforce (= t false) "Native GAS Collection is turned on !")
+            )
+        )
     )
     (defcap INCREMENT_GAS-SPENT ()
         @doc "Capability Required to increment the GAS spent"
@@ -3103,13 +3132,13 @@
         (UV_TrueFungibleIdentifier identifier)
         (compose-capability (OUROBOROS_ADMIN))
     )
-    (defcap GAS_TURN_ON ()
+    (defcap TOGGLE_GAS (native:bool toggle:bool)
+        @doc "Capability required to toggle virtual or native GAS to either on or off"
         (compose-capability (OUROBOROS_ADMIN))
-        (compose-capability (GAS_IS_OFF))
-    )
-    (defcap GAS_TURN_OFF ()
-        (compose-capability (OUROBOROS_ADMIN))
-        (compose-capability (GAS_IS_ON))
+        (if (= native true)
+            (compose-capability (NATIVE_GAS_STATE (not toggle)))
+            (compose-capability (VIRTUAL_GAS_STATE (not toggle)))
+        )
     )
     ;;==================GAS-HANDLING================ 
     ;;
@@ -3311,36 +3340,49 @@
     ;;
     (defun UR_GasSourceID:string ()
         @doc "Returns as string the Gas-Source Identifier"
-        (at "gassid" (read VGASTable VGD ["gassid"]))
+        (at "gas-source-id" (read VGASTable VGD ["gas-source-id"]))
     )
     (defun UR_GasSourcePrice:decimal ()
         @doc "Returns as decimal the Gas-Source Price"
-        (at "gasspr" (read VGASTable VGD ["gasspr"]))
+        (at "gas-source-price" (read VGASTable VGD ["gas-source-price"]))
     )
     (defun UR_GasID:string ()
         @doc "Returns as string the Gas Identifier"
         (with-default-read VGASTable VGD
-            {"vgasid" : "GAS"}
-            {"vgasid" := gas-id}
+            {"virtual-gas-id" : "GAS"}
+            {"virtual-gas-id" := gas-id}
             gas-id
         )
     )
     (defun UR_GasToggle:bool ()
         @doc "Returns as boolean the Gas Toggle State"
         (with-default-read VGASTable VGD
-            {"vgastg" : false}
-            {"vgastg" := tg}
+            {"virtual-gas-toggle" : false}
+            {"virtual-gas-toggle" := tg}
             tg
         )
     )
     (defun UR_GasPot:string ()
         @doc "Returns as string the Gas Pot Account"
-        (at "gaspot" (read VGASTable VGD ["gaspot"]))
+        (at "virtual-gas-tank" (read VGASTable VGD ["virtual-gas-tank"]))
     )
     (defun UR_GasSpent:decimal ()
         @doc "Returns as decimal the amount of Gas Spent"
-        (at "gasspent" (read VGASTable VGD ["gasspent"]))
+        (at "virtual-gas-spent" (read VGASTable VGD ["virtual-gas-spent"]))
     )
+    (defun UR_NGasToggle:bool ()
+        @doc "Returns as boolean the Native Gas Toggle State"
+        (with-default-read VGASTable VGD
+            {"native-gas-toggle" : false}
+            {"native-gas-toggle" := tg}
+            tg
+        )
+    )
+    (defun UR_NGasSpent:decimal ()
+        @doc "Returns as decimal the amount of Native Gas Spent"
+        (at "native-gas-spent" (read VGASTable VGD ["native-gas-spent"]))
+    )
+
     (defun UC_GasMake (gas-source-amount:decimal)
         @doc "Computes amount of GAS that can be made from the input <gas-source-amount>"
         (enforce (>= gas-source-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
@@ -3433,6 +3475,15 @@
             ZG
         )
     )
+    (defun UC_NativeSubZero:bool ()
+        (let*
+            (
+                (gas-toggle:bool (UR_NGasToggle))
+                (NZG:bool (if (= gas-toggle false) true false))
+            )
+            NZG
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      VGAS: ADMINISTRATION FUNCTIONS        ;;
@@ -3473,12 +3524,14 @@
                 )
                 ;;Set VGASTable
                 (insert VGASTable VGD
-                    {"gassid"           : gas-source-id
-                    ,"gasspr"           : 0.0
-                    ,"vgasid"           : GasID
-                    ,"vgastg"           : false
-                    ,"gaspot"           : SC_NAME_GAS
-                    ,"gasspent"         : 0.0}
+                    {"gas-source-id"            : gas-source-id
+                    ,"gas-source-price"         : 0.0
+                    ,"virtual-gas-id"           : GasID
+                    ,"virtual-gas-toggle"       : false
+                    ,"virtual-gas-tank"         : SC_NAME_GAS
+                    ,"virtual-gas-spent"        : 0.0
+                    ,"native-gas-toggle"        : false
+                    ,"native-gas-spent"         : 0.0}
                 )
                 ;;Seting DPTF Gas Token Special Parameters
                 (C_SetMinMoveValue patron GasID 1000.0)
@@ -3524,22 +3577,10 @@
             (X_UpdateGasSourcePrice price)
         )
     )
-    (defun A_SetGasPrice (price:decimal)
-        @doc "Sets the Gas Price in cents(¢), which determines how much GAS can be created from Gas Source Token"
-        (with-capability (OUROBOROS_ADMIN)
-            (X_UpdateGasPrice price)
-        )
-    )
-    (defun A_TurnGasOn ()
-        @doc "Turns Gas collection ON"
-        (with-capability (GAS_TURN_ON)
-            (X_UpdateGasToggle true)
-        )
-    )
-    (defun A_TurnGasOff ()
-        @doc "Turns Gas collection OFF"
-        (with-capability (GAS_TURN_OFF)
-            (X_UpdateGasToggle false)
+    (defun A_ToggleGas (native:bool toggle:bool)
+        @doc "Turns Native or Virtual Gas collection to <toggle>"
+        (with-capability (TOGGLE_GAS native toggle)
+            (X_ToggleGas native toggle)
         )
     )
     ;;==============================================
@@ -3625,43 +3666,42 @@
         @doc "Updates Gas Source ID"
         (require-capability (UPDATE_GAS-ID identifier))
         (update VGASTable VGD
-            {"gassid" : identifier}
+            {"gas-source-id" : identifier}
         )
     )
     (defun X_UpdateGasSourcePrice (price:decimal)
         (require-capability (OUROBOROS_ADMIN))
         (update VGASTable VGD
-            {"gasspr" : price}
+            {"gas-source-price" : price}
         )
     )
     (defun X_UpdateGasID (identifier:string)
         @doc "Updates Gas ID"
         (require-capability (UPDATE_GAS-ID identifier))
         (update VGASTable VGD
-            {"vgasid" : identifier}
+            {"virtual-gas-id" : identifier}
         )
     )
-    (defun X_UpdateGasToggle (toggle:bool)
-        @doc "Updates Gas Collection State"
+    (defun X_ToggleGas (native:bool toggle:bool)
+        @doc "Updates native or virtual Gas Collection state to <toggle>"
         (require-capability (OUROBOROS_ADMIN))
-        (update VGASTable VGD
-            {"vgastg" : toggle}
+        (if (= native true)
+            (update VGASTable VGD
+                {"native-gas-toggle" : toggle}
+            )
+            (update VGASTable VGD
+                {"virtual-gas-toggle" : toggle}
+            )
         )
     )
     (defun X_UpdateGasPot (account:string)
         @doc "Updates Gas Pot Account"
         (require-capability (OUROBOROS_ADMIN))
         (update VGASTable VGD
-            {"gaspot" : account}
+            {"virtual-gas-tank" : account}
         )
     )
-    (defun X_UpdateGasPrice (price:decimal)
-        @doc "Updates Gas Price in cents"
-        (require-capability (OUROBOROS_ADMIN))
-        (update VGASTable VGD
-            {"gastpr" : price}
-        )
-    )
+
     (defun X_IncrementGasSpent (increment:decimal)
         (require-capability (INCREMENT_GAS-SPENT))
         (let
@@ -3669,7 +3709,18 @@
                 (current-gas-spent:decimal (UR_GasSpent))
             )
             (update VGASTable VGD
-                {"gasspent" : (+ current-gas-spent increment)}
+                {"virtual-gas-spent" : (+ current-gas-spent increment)}
+            )
+        )
+    )
+    (defun X_IncrementNGasSpent (increment:decimal)
+        (require-capability (INCREMENT_GAS-SPENT))
+        (let
+            (
+                (current-ngas-spent:decimal (UR_NGasSpent))
+            )
+            (update VGASTable VGD
+                {"native-gas-spent" : (+ current-ngas-spent increment)}
             )
         )
     )
@@ -3869,6 +3920,18 @@
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
         (compose-capability (DPTS_INCREASE-NONCE))
+        (let*
+            (
+                (toggle-costs:[decimal] (X_ToggleFeeLock identifier toggle))
+                (gas-costs:decimal (at 0 toggle-costs))
+                (kda-costs:decimal (at 1 toggle-costs))
+            )
+            (if (and (> gas-costs 0.0)(> kda-costs 0.0))
+                (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) gas-costs))
+                true
+            )
+            (compose-capability (COLLECT_KDA))
+        )
     )
     (defcap DPTF_TOGGLE_FEE-LOCK_CORE (identifier:string toggle:bool)
         (UV_TrueFungibleIdentifier identifier)
@@ -3985,6 +4048,17 @@
             )
         )
     )
+    (defun UC_UnlockPrice:[decimal] (identifier:string)
+        (let*
+            (
+                (fee-unlocks:integer (UR_TrueFungibleFeeUnlocks identifier))
+                (multiplier:decimal (dec (+ fee-unlocks 1)))
+                (gas-cost:decimal (* 10000.0 multiplier))
+                (gaz-cost:decimal (/ gas-cost 100.0))
+            )
+            [gas-cost gaz-cost]
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      FEES: ADMINISTRATION FUNCTIONS        ;;
@@ -4000,6 +4074,8 @@
     ;;      C_ToggleFee|C_SetFee|C_SetFeeTarget
     ;;
     (defun C_ToggleFee (patron:string identifier:string toggle:bool)
+        @doc "Toggles fees for the DPTS Token <identifier> to <toggle> \
+        \ <fee-toggle> must be set to true for fee collection to execute"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4016,6 +4092,7 @@
         )
     )
     (defun C_SetMinMoveValue (patron:string identifier:string min-move-value:decimal)
+        @doc "Sets the minimum amount that can be transferable for the DPTF Token"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4032,6 +4109,8 @@
         )
     )
     (defun C_SetFee (patron:string identifier:string fee:decimal)
+        @doc "Sets the fee promile value that is to be used for transfers for the DPTS Token <identifier> \
+        \ Setting the value to -1.0 activates the Volumetric_Transaction-Tax VTT Formula"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4048,6 +4127,16 @@
         )
     )
     (defun C_SetFeeTarget (patron:string identifier:string target:string)
+        @doc "Sets the target Account of the fee Collection \
+        \ By default, when issuing a DPTF Token, Account <Ouroboros> is used, also known as the Fee-Carrier Account \
+        \ Setting the fee Target to the <Gas-Tanker> Account, which collects the gas token on the network, \
+        \ makes the collected fee act like collected gas. \
+        \ \
+        \ Outgoing transfer of the DPTF Token from the <Ouroboros> and <Gas-Tanker> account, \
+        \ can be executed regardless of transfer-roles or transfer-fee values (since they are collected fees) \
+        \ and these fees can be retrieved from the <Ouroboros> Account by the Token owner, while they cannot \
+        \ be retrieved from the <Gas-Tanke> account, since from here the fees are distributed to DALOS Custodians \
+        \ as if they were gas fees."
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4064,9 +4153,11 @@
         )
     )
     (defun C_ToggleFeeLock (patron:string identifier:string toggle:bool)
+        @doc "Locks or unlocks the DPTF Token Fee Settings. Unlocking has specific restrictions."
         (let
             (
                 (ZG:bool (UC_SubZero))
+                (NZG:bool (UC_NativeSubZero))
                 (current-owner-account:string (UR_TrueFungibleKonto identifier))
             )
             (with-capability (DPTF_TOGGLE_FEE-LOCK patron identifier toggle)
@@ -4074,7 +4165,26 @@
                     (X_CollectGAS patron current-owner-account GAS_SMALL)
                     true
                 )
-                (X_ToggleFeeLock identifier toggle)
+                (let*
+                    (
+                        (toggle-costs:[decimal] (X_ToggleFeeLock identifier toggle))
+                        (gas-costs:decimal (at 0 toggle-costs))
+                        (kda-costs:decimal (at 1 toggle-costs))
+                    )
+                    (if (and (> gas-costs 0.0)(> kda-costs 0.0))
+                        (with-capability (COMPOSE)
+                            (if (= ZG false)
+                                (X_CollectGAS patron current-owner-account gas-costs)
+                                true
+                            )
+                            (if (= NZG false)
+                                (X_CollectBlockchainFuel patron kda-costs)
+                                true
+                            )
+                        )
+                        true
+                    )
+                )
                 (X_IncrementNonce patron)
             )
         )
@@ -4112,11 +4222,39 @@
         )
     )
     ;;needs to be modified for unlock
-    (defun X_ToggleFeeLock (identifier:string toggle:bool)
+    (defun X_ToggleFeeLock:[decimal] (identifier:string toggle:bool)
         (require-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
         (update DPTF-PropertiesTable identifier
             { "fee-lock" : toggle}
         )
+        (if (= toggle true)
+            [0.0 0.0]
+            (UC_UnlockPrice identifier)
+        )
+    )
+    (defun X_CollectBlockchainFuel (patron:string amount:decimal)
+        @doc "Collects Blockchain Fuel in KDA \
+        \ Team 10% | 15% Liquid KDA Protocol"
+
+        (UV_DPTS-Account patron)
+        (compose-capability (COLLECT_KDA))
+        (let*
+            (
+                (precision:integer coin.MINIMUM_PRECISION)
+                (five:decimal (floor (* amount 0.05) precision))
+                (fifteen:decimal (* five 3.0))
+                (total:decimal (* 5 five))
+                (rest:decimal (- amount total))
+            )
+            (coin.transfer patron CTO five)
+            (coin.transfer patron HOV five)
+            (coin.transfer patron LKP fifteen)
+            (coin.transfer patron GST rest)
+        )
+    )
+    (defcap COLLECT_KDA ()
+        @doc "Capability needed to Collect KDA"
+        true
     )
 
 )

@@ -587,6 +587,8 @@
     )
     (defcap DPMF_TOGGLE_TRANSFER-ROLE_CORE (identifier:string account:string toggle:bool)
         @doc "Core Capability required to toggle the <role-transfer> Role"
+        (enforce (!= account OUROBOROS.SC_NAME) (format "Capability excludes {} Account from having or removing transfer roles" [OUROBOROS.SC_NAME]))
+        (enforce (!= account OUROBOROS.SC_NAME_GAS) (format "Capability excludes {} Account from having or removing transfer roles" [OUROBOROS.SC_NAME_GAS]))
         (compose-capability (DPMF_OWNER identifier))
         (if (= toggle true)
             (compose-capability (DPMF_CAN-ADD-SPECIAL-ROLE_ON identifier))
@@ -723,7 +725,7 @@
             (compose-capability (DPMF_ACCOUNT_FREEZE_STATE identifier sender false))
             (compose-capability (DPMF_ACCOUNT_FREEZE_STATE identifier receiver false))
 
-            (if (!= transfer-role-amount 0)
+            (if (and (> transfer-role-amount 0) (not (or (= sender OUROBOROS.SC_NAME)(= sender OUROBOROS.SC_NAME_GAS))))
                 ;;if true
                 (enforce-one
                     (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])

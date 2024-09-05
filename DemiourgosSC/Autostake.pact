@@ -46,9 +46,6 @@
     (defconst SC_KEY "free.DH_SC_Autostake_Key")
     (defconst SC_NAME "Snake_Autostake")
 
-    (defconst SC_KEY_CARRIER "free.DH_SC_Carrier_Key")
-    (defconst SC_NAME_CARRIER "Snake_Carrier")
-
     (defconst ET        ;;Elite Thresholds
         [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
         105.0 110.0 125.0 150.0 200.0 350.0 600.0
@@ -88,6 +85,9 @@
         672 648 624 600 576 552 528
         504 480 456 432 408 384 360]
     )
+    (defconst AURYN_FEE 5.0)
+    (defconst ELITE-AURYN_FEE 10.0)
+
     (defconst BAR OUROBOROS.BAR)
     ;;Time Constants
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
@@ -1500,16 +1500,13 @@
                 ;;TRANSFER Roles
                 (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME true)
                 (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME true)
-
-                ;;Snake-Carrier MANAGEMENT
-                ;;Issue the Snake_Carrier Smart DPTS Account
-                (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME_CARRIER (keyset-ref-guard SC_KEY_CARRIER))
-                ;;Issue Auryn and Elite-Auryn Account for the <Snake_Carrier> aka Auryn|Elite-Auryn Transporter
-                (OUROBOROS.C_DeployTrueFungibleAccount AurynID SC_NAME_CARRIER)
-                (OUROBOROS.C_DeployTrueFungibleAccount EliteAurynID SC_NAME_CARRIER)
-                ;;Add Transfer Roles for the Snake Carrier
-                (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME_CARRIER true)
-                (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME_CARRIER true)
+                ;;Fee Settings
+                (OUROBOROS.C_SetFee patron AurynID AURYN_FEE)
+                (OUROBOROS.C_SetFee patron EliteAurynID ELITE-AURYN_FEE)
+                (OUROBOROS.C_ToggleFee patron AurynID true)
+                (OUROBOROS.C_ToggleFee patron EliteAurynID true)
+                (OUROBOROS.C_ToggleFeeLock patron AurynID true)
+                (OUROBOROS.C_ToggleFeeLock patron EliteAurynID true)
 
                 ;;Finalise initialisation, returning the IDs of the created tokens.
                 [AurynID EliteAurynID IgnisID]

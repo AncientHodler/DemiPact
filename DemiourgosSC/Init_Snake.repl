@@ -28,22 +28,24 @@
     (defconst NAME009 "Plcs")
     (defconst NAME010 "Satanel")
 
-    ;;SmartContract Names
-    (defconst SCN001 "Snake_Autostake")
-    (defconst SCN002 "Snake_Vesting")
-    (defconst SCN003 "TrueFungibleCarrier")
-    (defconst SCN004 "Gas-Tanker")
+    ;;SmartContract Names                               ;;KEYS
+    (defconst SCN000 "Ouroboros")                       ;;PrivateKey_AncientHodler + PrivateKey_Florean
+    (defconst SCN001 "Gas-Tanker")                      ;;PrivateKey_GasTanker
+    (defconst SCN002 "Snake_Autostake")                 ;;PrivateKey_Autostake-Pool
+    (defconst SCN003 "Snake_Vesting")                   ;;PrivateKey_Vesting
+    
 
     ;;Private Keys
+    ;;DEMI-USERS
     (defconst DHADMIN1 "PrivateKey_AncientHodler")
     (defconst DHADMIN2 "PrivateKey_Florean")
-    (defconst DHADMIN3 "PrivateKey_Pablo")
 
+    ;:DEMI-SC
+    (defconst DH_SC000 "PrivateKey_GasTanker")
     (defconst DH_SC001 "PrivateKey_Autostake-Pool")
     (defconst DH_SC002 "PrivateKey_Vesting")
-    (defconst DH_SC003 "PrivateKey_Carrier")
-    ;(defconst DH_SC004 "PrivateKey_GasTanker")
 
+    ;;USERS
     (defconst USER_001 "PrivateKey_Byta")
     (defconst USER_002 "PrivateKey_Lumy")
     (defconst USER_003 "PrivateKey_Emma")
@@ -51,6 +53,13 @@
     (defconst USER_005 "PrivateKey_Kiss")
     (defconst USER_006 "PrivateKey_Plcs")
     (defconst USER_007 "PrivateKey_Satanel")
+
+                                                ;;KDA Account must be created beforehand
+    (defconst CTO "ChiefTechnologyOfficer")     ;;CTO Kadena k:xxx
+    (defconst HOV "HeadOfVision")               ;;HOV Kadena k:xxx
+    (defconst CDS "CodingDivisionSplit")        ;;CDS Kadena k:xxx
+    (defconst LKP "LiquidKadenaProtocol")       ;;LKP Kadena k:xxx
+    (defconst GST "GasStation")                 ;;GST Kadena k:xxx
 )
 
 (module TV GOVERNANCE
@@ -66,16 +75,19 @@
 
 (env-data
     {
-        "DemiourgosTrinity": { "keys": [KC.DHADMIN1, KC.DHADMIN2, KC.DHADMIN3], "pred": "keys-any" },
+        ;;DEMI-MASTER-KEYS
         "DemiourgosSithMasters": { "keys": [KC.DHADMIN1, KC.DHADMIN2], "pred": "keys-any" },
+        "KEY_SC_Gas-Tanker": { "keys": [KC.DHADMIN1, KC.DH_SC000], "pred": "keys-any" },
 
+        ;;DEMI-SC-KEYS
         "KEY_SC_Autostake-Pool": { "keys": [KC.DH_SC001]},
         "KEY_SC_Vesting": { "keys": [KC.DH_SC002]},
-        "KEY_SC_Carrier": { "keys": [KC.DH_SC003]},
 
+        ;;DEMI-USER-KEYS
         "KEY_US_AHD": { "keys": [KC.DHADMIN1]},
         "KEY_US_FLR": { "keys": [KC.DHADMIN2]},
         
+        ;;USER-KEYS
         "KEY_US_001": { "keys": [KC.USER_001]},
         "KEY_US_002": { "keys": [KC.USER_002]},
         "KEY_US_003": { "keys": [KC.USER_003]},
@@ -87,23 +99,29 @@
 )
 ;;Entering Namespace Free
 (namespace "free")
-;; Define KeySets
-(define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosTrinity"))
-(define-keyset "free.DH-GAS-Keyset" (read-keyset "DemiourgosSithMasters"))
-(define-keyset "free.DH_SC_Autostake_Key" (read-keyset "KEY_SC_Autostake-Pool"))
-(define-keyset "free.DH_SC_Vesting_Key" (read-keyset "KEY_SC_Vesting"))
-(define-keyset "free.DH_SC_Carrier_Key" (read-keyset "KEY_SC_Carrier"))
 
-(define-keyset "free.User000_Keyset" (read-keyset "KEY_US_AHD"))
-(define-keyset "free.User008_Keyset" (read-keyset "KEY_US_FLR"))
+;; KEYSETTS DEFINITIONS
 
-(define-keyset "free.User001_Keyset" (read-keyset "KEY_US_001"))
-(define-keyset "free.User002_Keyset" (read-keyset "KEY_US_002"))
-(define-keyset "free.User003_Keyset" (read-keyset "KEY_US_003"))
-(define-keyset "free.User004_Keyset" (read-keyset "KEY_US_004"))
-(define-keyset "free.User005_Keyset" (read-keyset "KEY_US_005"))
-(define-keyset "free.User006_Keyset" (read-keyset "KEY_US_006"))
-(define-keyset "free.User007_Keyset" (read-keyset "KEY_US_007"))
+    ;;DEMI MASTER KEYSETS
+    (define-keyset "free.DH-Master-Keyset" (read-keyset "DemiourgosSithMasters"))
+    (define-keyset "free.DH-GAS-Keyset" (read-keyset "KEY_SC_Gas-Tanker"))
+
+    ;;DEMI SMART_CONTRACTS KEYSETS
+    (define-keyset "free.DH_SC_Autostake_Key" (read-keyset "KEY_SC_Autostake-Pool"))
+    (define-keyset "free.DH_SC_Vesting_Key" (read-keyset "KEY_SC_Vesting"))
+
+    ;;DEMI USER KEYSETS
+    (define-keyset "free.UserD00_Keyset" (read-keyset "KEY_US_AHD"))
+    (define-keyset "free.UserD01_Keyset" (read-keyset "KEY_US_FLR"))
+
+    ;;USER KEYSETS
+    (define-keyset "free.User001_Keyset" (read-keyset "KEY_US_001"))
+    (define-keyset "free.User002_Keyset" (read-keyset "KEY_US_002"))
+    (define-keyset "free.User003_Keyset" (read-keyset "KEY_US_003"))
+    (define-keyset "free.User004_Keyset" (read-keyset "KEY_US_004"))
+    (define-keyset "free.User005_Keyset" (read-keyset "KEY_US_005"))
+    (define-keyset "free.User006_Keyset" (read-keyset "KEY_US_006"))
+    (define-keyset "free.User007_Keyset" (read-keyset "KEY_US_007"))
 (commit-tx)
 
 (begin-tx) "Set Enviroment Data"
@@ -199,10 +217,10 @@
 ;(coin.TRANSFER "AncientHodler" "Florean" 10.0)
 ;(coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
 
-(coin.transfer-create "sender00" "AncientHodler" (describe-keyset "free.User000_Keyset") 1000.0)
+(coin.transfer-create "sender00" "AncientHodler" (describe-keyset "free.UserD00_Keyset") 1000.0)
 
-(coin.transfer-create "AncientHodler" "ChiefTechnologyOfficer" (describe-keyset "free.User000_Keyset") 1.0)
-(coin.transfer-create "AncientHodler" "HeadOfVision" (describe-keyset "free.User008_Keyset") 1.0)
+(coin.transfer-create "AncientHodler" "ChiefTechnologyOfficer" (describe-keyset "free.UserD00_Keyset") 1.0)
+(coin.transfer-create "AncientHodler" "HeadOfVision" (describe-keyset "free.UserD01_Keyset") 1.0)
 (coin.transfer-create "AncientHodler" "Gas-Tanker" (describe-keyset "free.DH-GAS-Keyset") 1.0)
 
 (env-sigs [])
@@ -223,7 +241,7 @@
 (env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
             { "key": "PrivateKey_Emma", "caps": [] }])
             
-    (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.User000_Keyset"))
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.UserD00_Keyset"))
     (free.OUROBOROS.C_DeployStandardDPTSAccount "Emma" (describe-keyset "free.User003_Keyset"))
     (free.OUROBOROS.A_InitialiseOuroboros "AncientHodler")
     (free.OUROBOROS.C_Mint
@@ -236,7 +254,7 @@
 
     (free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     (free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
-    (free.OUROBOROS.A_TurnGasOn)
+    (free.OUROBOROS.A_ToggleGas false true) ;;turn virtual gas collection to on
     
 (env-sigs [])
 (env-gas)
