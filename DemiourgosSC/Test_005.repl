@@ -81,40 +81,24 @@
     (print "==============================================FIRST 3================================================")
     ;ouro to ouro
     (free.DH_SC_Vesting.A_VestOuroVOuro "AncientHodler" "AncientHodler" "Emma" 500.0 86400 86400 2)     ;;Emma key
-    ;(format "Lumy are {} Vested-OURO" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VOURO-98c486052a51|Lumy"))])
 
     ;auryn to auryn
     (free.DH_SC_Vesting.A_VestAurynVAuryn "AncientHodler" "AncientHodler" "Emma" 100.0 86400 86400 3)     ;;AH key
-    ;(format "Lumy are {} Vested-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
 
     ;elite-auryn to elite-auryn
     (free.DH_SC_Vesting.A_VestEAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" 50.0 86400 86400 4)     ;;AH key
-    ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
     (print "==============================================LAST 3================================================")
-    ;;
-    ;ouro to auryn
+
+    ;;ouro to auryn
     (free.DH_SC_Vesting.A_VestOuroVAuryn "AncientHodler" "AncientHodler" "Emma" 105.0 86400 86400 5)
-    ;(format "Lumy are {} Vested-Auryn" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VAURYN-98c486052a51|Lumy"))])
-    ;(print "Lumy has this total of Vested Auryn")
-    ;(free.DPMF.UR_AccountMetaFungibleSupply "VAURYN-98c486052a51" "Lumy")
 
-    ;ouro to elite auryn
+    ;;ouro to elite auryn
     (free.DH_SC_Vesting.A_VestOuroVEAuryn "AncientHodler" "AncientHodler" "Emma" 210.0 86400 86400 6)
-    ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
 
-    ;(print "Lumy has this total of Vested Elite Auryn")
-    ;(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
-
-    ;auryn to elite auryn
+    ;;ouro to elite auryn
     (free.DH_SC_Vesting.A_VestAurynVEAuryn "AncientHodler" "AncientHodler" "Emma" 300.0 86400 86400 7)
-    ;(format "Lumy are {} Vested-ELITE-AURYN" [(at "unit" (read free.DPMF.DPMF-BalancesTable "VEAURYN-98c486052a51|Lumy"))])
-
-    ;(print "Lumy has this total of Vested Elite Auryn in the end")
-    ;(free.DPMF.UR_AccountMetaFungibleSupply "VEAURYN-98c486052a51" "Lumy")
-
-    ;(print "Mint autostake Auryn test")
-    ;(expect-failure "Should fail since no capability is granted" (free.OUROBOROS.C_Mint "AURYN-98c486052a51" "Snake_Autostake" 100.0))
+ 
 
     (print "After Vesting Balances for AncientHodler are")
     (format "AncientHodler has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
@@ -411,3 +395,59 @@
 
 ;;{ "key": "PrivateKey_Autostake-Pool", "caps": [] }
 ;;{ "key": "PrivateKey_Emma", "caps": [] }
+
+
+(begin-tx "Withdrawal Fees GAS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": []}
+            { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
+
+(print "BEFOREEEEEEEEEEEEEEEEE")
+(format "AncientHodler has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "AncientHodler")])
+(format "AncientHodler has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "AncientHodler")])
+(format "Emma has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Emma")])
+(format "Emma has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Emma")])
+(format "Ouroboros has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Ouroboros")])
+(format "Ouroboros has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Ouroboros")])
+
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "AURYN-98c486052a51" "AncientHodler" "Emma" 100.0)
+(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "ELITEAURYN-98c486052a51" "AncientHodler" "Emma" 100.0)
+
+(print "AFTERRRRRRRRRRRRRRRRRRRRRRR")
+(format "AncientHodler has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "AncientHodler")])
+(format "AncientHodler has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "AncientHodler")])
+(format "Emma has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Emma")])
+(format "Emma has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Emma")])
+(format "Ouroboros has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Ouroboros")])
+(format "Ouroboros has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Ouroboros")])
+
+(free.OUROBOROS.C_WithdrawFees "AncientHodler" "AURYN-98c486052a51" "Byta")
+(format "Byta has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Byta")])
+
+(format "Auryn has {} fee-unlocks" [(free.OUROBOROS.UR_TrueFungibleFeeUnlocks "AURYN-98c486052a51")])
+
+(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
+(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
+(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
+(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
+(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+
+(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+(free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "AURYN-98c486052a51" false)
+
+(print "After UNLOCK")
+(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+(format "GasTanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+(format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
+(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
+(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
+(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
+(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
+(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+
+(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+
+(env-sigs [])
+(env-gas)
+(commit-tx)

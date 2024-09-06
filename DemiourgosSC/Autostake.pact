@@ -85,8 +85,8 @@
         672 648 624 600 576 552 528
         504 480 456 432 408 384 360]
     )
-    (defconst AURYN_FEE 5.0)
-    (defconst ELITE-AURYN_FEE 10.0)
+    (defconst AURYN_FEE 50.0)
+    (defconst ELITE-AURYN_FEE 100.0)
 
     (defconst BAR OUROBOROS.BAR)
     ;;Time Constants
@@ -1497,14 +1497,13 @@
                 (OUROBOROS.C_ToggleMintRole patron AurynID SC_NAME true)
                 (OUROBOROS.C_ToggleMintRole patron EliteAurynID SC_NAME true)
                 (OUROBOROS.C_ToggleMintRole patron IgnisID SC_NAME true)
-                ;;TRANSFER Roles
-                (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME true)
-                (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME true)
+                
                 ;;Fee Settings
                 (OUROBOROS.C_SetFee patron AurynID AURYN_FEE)
                 (OUROBOROS.C_SetFee patron EliteAurynID ELITE-AURYN_FEE)
                 (OUROBOROS.C_ToggleFee patron AurynID true)
                 (OUROBOROS.C_ToggleFee patron EliteAurynID true)
+
                 (OUROBOROS.C_ToggleFeeLock patron AurynID true)
                 (OUROBOROS.C_ToggleFeeLock patron EliteAurynID true)
 

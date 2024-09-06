@@ -33,6 +33,7 @@
     (defconst SCN001 "Gas-Tanker")                      ;;PrivateKey_GasTanker
     (defconst SCN002 "Snake_Autostake")                 ;;PrivateKey_Autostake-Pool
     (defconst SCN003 "Snake_Vesting")                   ;;PrivateKey_Vesting
+    (defconst SCN004 "Liquid-Staking")                   ;;PrivateKey_Vesting
     
 
     ;;Private Keys
@@ -44,6 +45,7 @@
     (defconst DH_SC000 "PrivateKey_GasTanker")
     (defconst DH_SC001 "PrivateKey_Autostake-Pool")
     (defconst DH_SC002 "PrivateKey_Vesting")
+    (defconst DH_SC003 "PrivateKey_Liquid-Staking")
 
     ;;USERS
     (defconst USER_001 "PrivateKey_Byta")
@@ -57,9 +59,6 @@
                                                 ;;KDA Account must be created beforehand
     (defconst CTO "ChiefTechnologyOfficer")     ;;CTO Kadena k:xxx
     (defconst HOV "HeadOfVision")               ;;HOV Kadena k:xxx
-    (defconst CDS "CodingDivisionSplit")        ;;CDS Kadena k:xxx
-    (defconst LKP "LiquidKadenaProtocol")       ;;LKP Kadena k:xxx
-    (defconst GST "GasStation")                 ;;GST Kadena k:xxx
 )
 
 (module TV GOVERNANCE
@@ -82,6 +81,7 @@
         ;;DEMI-SC-KEYS
         "KEY_SC_Autostake-Pool": { "keys": [KC.DH_SC001]},
         "KEY_SC_Vesting": { "keys": [KC.DH_SC002]},
+        "KEY_SC_Liquid-Staking": { "keys": [KC.DH_SC003]},
 
         ;;DEMI-USER-KEYS
         "KEY_US_AHD": { "keys": [KC.DHADMIN1]},
@@ -109,6 +109,7 @@
     ;;DEMI SMART_CONTRACTS KEYSETS
     (define-keyset "free.DH_SC_Autostake_Key" (read-keyset "KEY_SC_Autostake-Pool"))
     (define-keyset "free.DH_SC_Vesting_Key" (read-keyset "KEY_SC_Vesting"))
+    (define-keyset "free.DH_SC_Liquid-Staking_Key" (read-keyset "KEY_SC_Liquid-Staking"))
 
     ;;DEMI USER KEYSETS
     (define-keyset "free.UserD00_Keyset" (read-keyset "KEY_US_AHD"))
@@ -210,6 +211,7 @@
                 (coin.TRANSFER "AncientHodler" "ChiefTechnologyOfficer" 10.0)
                 (coin.TRANSFER "AncientHodler" "HeadOfVision" 10.0)
                 (coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
+                (coin.TRANSFER "AncientHodler" "Liquid-Staking" 10.0)
                         ]}])
 
 ;;Transfer KDA to AncientHodler Account
@@ -221,7 +223,10 @@
 
 (coin.transfer-create "AncientHodler" "ChiefTechnologyOfficer" (describe-keyset "free.UserD00_Keyset") 1.0)
 (coin.transfer-create "AncientHodler" "HeadOfVision" (describe-keyset "free.UserD01_Keyset") 1.0)
+
+(coin.transfer-create "AncientHodler" "Liquid-Staking" (describe-keyset "free.DH_SC_Liquid-Staking_Key") 1.0)
 (coin.transfer-create "AncientHodler" "Gas-Tanker" (describe-keyset "free.DH-GAS-Keyset") 1.0)
+
 
 (env-sigs [])
 (env-gas)
@@ -254,7 +259,8 @@
 
     (free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     (free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
-    (free.OUROBOROS.A_ToggleGas false true) ;;turn virtual gas collection to on
+    (free.OUROBOROS.A_ToggleGas false true)             ;;turn virtual gas collection to on
+    (free.OUROBOROS.A_ToggleGas true true)             ;;turn virtual gas collection to on
     
 (env-sigs [])
 (env-gas)
@@ -287,16 +293,16 @@
 (commit-tx)
 
 
-;;05]Set transfer role for Auryns to Vesting SC and
+;;05]Set transfer-role and fee-exemption role for Auryns to Vesting SC and
 ;;06]Set Vested Elite-Auryn Id in the Autostake-Pool Trinity Table
 (begin-tx "Setting transfer Role for Auryns to Vesting Account")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PrivateKey_Autostake-Pool", "caps": [] },
             { "key": "PrivateKey_AncientHodler", "caps": [] }])
 
-    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)              ;;Autostake Pool Key
-    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)         ;;Autostake Pool Key
-    (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")          ;;Autostake Pool Key
+    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)          ;;Autostake Pool Key
+    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)     ;;Autostake Pool Key
+    (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")                                       ;;Autostake Pool Key
 
 (env-sigs [])
 (env-gas)
