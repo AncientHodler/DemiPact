@@ -3994,7 +3994,7 @@
                 (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) gas-costs))
                 true
             )
-            (compose-capability (COLLECT_KDA patron kda-costs))
+            (compose-capability (COLLECT_KDA))
         )
     )
     (defcap DPTF_TOGGLE_FEE-LOCK_CORE (identifier:string toggle:bool)
@@ -4338,7 +4338,7 @@
         \ Team 10% | 15% Liquid KDA Protocol"
 
         (UV_DPTS-Account patron)
-        (require-capability (COLLECT_KDA patron amount))
+        (require-capability (COLLECT_KDA))
         (let*
             (
                 (precision:integer coin.MINIMUM_PRECISION)
@@ -4353,7 +4353,11 @@
             (coin.transfer patron SC_NAME_GAS rest)
         )
     )
-    (defcap COLLECT_KDA (patron:string amount:decimal)
+    (defcap COLLECT_KDA ()
+        @doc "Capability needed to Collect KDA"
+        true
+    )
+    (defcap COLLECT_KDA2 (patron:string amount:decimal)
         @doc "Capability needed to Collect KDA"
         (let*
             (
