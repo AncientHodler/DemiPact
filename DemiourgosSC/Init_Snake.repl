@@ -162,26 +162,26 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/OUROBOROS.pact")
-;(env-gas)
-;(commit-tx)
+(env-gas)
+(commit-tx)
 
-;(begin-tx "Load Meta Fungible DPMF")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
+(begin-tx "Load Meta Fungible DPMF")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
-;(env-gas)
-;(commit-tx)
+(env-gas)
+(commit-tx)
 
-;(begin-tx "Load Autostake")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
+(begin-tx "Load Autostake")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
-;(env-gas)
-;(commit-tx)
+(env-gas)
+(commit-tx)
 
-;(begin-tx "Load Vesting")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
+(begin-tx "Load Vesting")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
 (env-gas)
 (commit-tx)
@@ -260,7 +260,7 @@
     (free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     (free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
     (free.OUROBOROS.A_ToggleGas false true)             ;;turn virtual gas collection to on
-    (free.OUROBOROS.A_ToggleGas true true)             ;;turn virtual gas collection to on
+    ;(free.OUROBOROS.A_ToggleGas true true)              ;;turn native gas collection to on
     
 (env-sigs [])
 (env-gas)
@@ -302,6 +302,8 @@
 
     (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)          ;;Autostake Pool Key
     (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)     ;;Autostake Pool Key
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)
     (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")                                       ;;Autostake Pool Key
 
 (env-sigs [])

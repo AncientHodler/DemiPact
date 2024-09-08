@@ -374,6 +374,49 @@
         (compose-capability (OUROBOROS.DPTF_MINT patron (UR_EliteAurynID) SC_NAME elite-auryn-amount false true))
     )
     ;;
+    ;;      TRANSFER_AURYN|TRANSFER_ELITE-AURYN
+    ;;
+    (defcap TRANSFER_AURYN (patron:string sender:string receiver:string auryn-input-amount:decimal)
+        (let*
+            (
+                (fees:[decimal] (OUROBOROS.UC_Fee (UR_AurynID) auryn-input-amount))
+                (total-fee:decimal (+ (at 0 fees)(at 1 fees)))
+                (remainder:decimal (at 2 fees))
+            )
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+            (OUROBOROS.UV_SenderWithReceiver sender receiver)
+        ;;01]<Sender> sends auryn to <AutostakePool>
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron (UR_AurynID) sender SC_NAME auryn-input-amount true))
+        ;;02]<AutostakePool> sends auryn to <receiver>, but 95% of it.
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron (UR_AurynID) SC_NAME receiver remainder true))
+        ;;03]<AutostakePool> retains Auryn Fee, and updates resident-auryn amount
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        )
+    )
+    (defcap TRANSFER_ELITE-AURYN (patron:string sender:string receiver:string elite-auryn-input-amount:decimal)
+        (let*
+            (
+                (fees:[decimal] (OUROBOROS.UC_Fee (UR_EliteAurynID) elite-auryn-input-amount))
+                (total-fee:decimal (+ (at 0 fees)(at 1 fees)))
+                (remainder:decimal (at 2 fees))
+            )
+        ;;0]Core-Permissions of the Capability
+            (compose-capability (AUTOSTAKE_EXECUTOR))
+            (OUROBOROS.UV_SenderWithReceiver sender receiver)
+        ;;01]<Sender> sends Elite-Auryn to <AutostakePool>
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron (UR_EliteAurynID) sender SC_NAME elite-auryn-input-amount true))
+        ;;02]<AutostakePool> sends Elite-Aauryn to <receiver>, but 90% of it.
+            (compose-capability (OUROBOROS.TRANSFER_DPTF patron (UR_EliteAurynID) SC_NAME receiver remainder true))
+        ;;03]<AutostakePool> burns 10% of Elite-Auryn
+            (compose-capability (BURN_ELITE-AURYN patron total-fee))
+        ;;04]<AutostakePool> mints 10% as Auryn
+            (compose-capability (MINT_AURYN patron total-fee))
+        ;;05]<AutostakePool> retains the minted Auryn and updates resident-auryn amount
+            (compose-capability (UPDATE_AUTOSTAKE_LEDGER))
+        )
+    )
+    ;;
     ;;      COIL_OUROBOROS|FUEL_OUROBOROS|COIL-AURYN
     ;;      CURL-OUROBOROS|UNCOIL-AURYN|CULL_OUROBOROS
     ;;
@@ -875,6 +918,20 @@
                 (= auryn-supply 0.0)
                 (floor 0.0 24)
                 (floor (/ r-ouro-supply auryn-supply) 24)
+            )
+        )
+    )
+    (defun UR_EliteAuryndex:decimal ()
+        @doc "Returns the value of Auryndex with 24 decimals"
+        (let
+            (
+                (elite-auryn-supply:decimal (OUROBOROS.UR_TrueFungibleSupply (UR_EliteAurynID)))
+                (r-auryn-supply:decimal (UR_ResidentAuryn))
+            )
+            (if
+                (= elite-auryn-supply 0.0)
+                (floor 0.0 24)
+                (floor (/ r-auryn-supply elite-auryn-supply) 24)
             )
         )
     )
@@ -1497,6 +1554,9 @@
                 (OUROBOROS.C_ToggleMintRole patron AurynID SC_NAME true)
                 (OUROBOROS.C_ToggleMintRole patron EliteAurynID SC_NAME true)
                 (OUROBOROS.C_ToggleMintRole patron IgnisID SC_NAME true)
+                ;;Transfer Roles
+                (OUROBOROS.C_ToggleTransferRole patron AurynID SC_NAME true)
+                (OUROBOROS.C_ToggleTransferRole patron EliteAurynID SC_NAME true)
                 
                 ;;Fee Settings
                 (OUROBOROS.C_SetFee patron AurynID AURYN_FEE)
@@ -1562,6 +1622,70 @@
                 (X_UpdateUncoilLedgerWithElite account major)   ;always updates elite
                 (X_UpdateEliteTracker account)                  ;works because Balance get is made with default read
             )
+        )
+    )
+    ;;
+    ;;==================Coil|Curl|Fuel==============
+    ;;      C_TransferAuryn|C_TransferEliteAuryn
+    ;;
+    (defun C_TransferAuryn (patron:string sender:string receiver:string auryn-input-amount:decimal)
+        @doc "Methodic TransferAuryn, for when <sender> is a Normal DPTS Account"
+        (with-capability (TRANSFER_AURYN patron sender receiver auryn-input-amount)
+            (X_TransferAuryn patron sender receiver auryn-input-amount)    
+        )
+    )
+    (defun CX_TransferAuryn (patron:string sender:string receiver:string auryn-input-amount:decimal)
+        @doc "Methodic TransferAuryn, for when <sender> is a Smart DPTS Account"
+        (require-capability (TRANSFER_AURYN patron sender receiver auryn-input-amount))
+        (X_TransferAuryn patron sender receiver auryn-input-amount)
+    )
+    (defun X_TransferAuryn (patron:string sender:string receiver:string auryn-input-amount:decimal)
+        @doc "Transfer Auryn from sender to receiver"
+        (require-capability (AUTOSTAKE_EXECUTOR))
+        (let*
+            (
+                (fees:[decimal] (OUROBOROS.UC_Fee (UR_AurynID) auryn-input-amount))
+                (total-fee:decimal (+ (at 0 fees)(at 1 fees)))
+                (remainder:decimal (at 2 fees))
+            )
+        ;;01]<Sender> sends auryn to <AutostakePool>
+            (OUROBOROS.CX_TransferTrueFungible patron (UR_AurynID) sender SC_NAME auryn-input-amount)
+        ;;02]<AutostakePool> sends auryn to <receiver>, but 95% of it.
+            (OUROBOROS.CX_TransferTrueFungible patron (UR_AurynID) SC_NAME receiver remainder)
+        ;;03]<AutostakePool> retains Auryn Fee, and updates resident-auryn amount
+            (X_UpdateResidentAuryn total-fee true)
+        )
+    )
+    (defun C_TransferEliteAuryn (patron:string sender:string receiver:string elite-auryn-input-amount:decimal)
+        @doc "Methodic TransferEliteAuryn, for when <sender> is a Normal DPTS Account"
+        (with-capability (TRANSFER_ELITE-AURYN patron sender receiver elite-auryn-input-amount)
+            (X_TransferEliteAuryn patron sender receiver elite-auryn-input-amount)    
+        )
+    )
+    (defun CX_TransferEliteAuryn (patron:string sender:string receiver:string elite-auryn-input-amount:decimal)
+        @doc "Methodic TransferEliteAuryn, for when <sender> is a Smart DPTS Account"
+        (require-capability (TRANSFER_ELITE-AURYN patron sender receiver elite-auryn-input-amount))
+        (X_TransferEliteAuryn patron sender receiver elite-auryn-input-amount)
+    )
+    (defun X_TransferEliteAuryn (patron:string sender:string receiver:string elite-auryn-input-amount:decimal)
+        @doc "Transfer EliteAuryn from sender to receiver"
+        (require-capability (AUTOSTAKE_EXECUTOR))
+        (let*
+            (
+                (fees:[decimal] (OUROBOROS.UC_Fee (UR_EliteAurynID) elite-auryn-input-amount))
+                (total-fee:decimal (+ (at 0 fees)(at 1 fees)))
+                (remainder:decimal (at 2 fees))
+            )
+        ;;01]<Sender> sends Elite-Auryn to <AutostakePool>
+            (OUROBOROS.CX_TransferTrueFungible patron (UR_EliteAurynID) sender SC_NAME elite-auryn-input-amount)
+        ;;02]<AutostakePool> sends Elite-Aauryn to <receiver>, but 90% of it.
+            (OUROBOROS.CX_TransferTrueFungible patron (UR_EliteAurynID) SC_NAME receiver remainder)
+        ;;03]<AutostakePool> burns 10% of Elite-Auryn
+            (X_BurnEliteAuryn patron total-fee)
+        ;;04]<AutostakePool> mints 10% as Auryn
+            (X_MintAuryn patron total-fee)
+        ;;05]<AutostakePool> retains the minted Auryn and updates resident-auryn amount
+            (X_UpdateResidentAuryn total-fee true)
         )
     )
     ;;

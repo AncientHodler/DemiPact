@@ -410,10 +410,11 @@
 (format "Ouroboros has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Ouroboros")])
 (format "Ouroboros has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Ouroboros")])
 
-(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "AURYN-98c486052a51" "AncientHodler" "Emma" 100.0)
-(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "ELITEAURYN-98c486052a51" "AncientHodler" "Emma" 100.0)
+(free.DH_SC_Autostake.C_TransferAuryn "AncientHodler" "AncientHodler" "Emma" 5000.0)
+(free.DH_SC_Autostake.C_TransferEliteAuryn "AncientHodler" "AncientHodler" "Emma" 15000.0)
 
 (print "AFTERRRRRRRRRRRRRRRRRRRRRRR")
+(format "Elite-Auryndex after transfer is {}" [(free.DH_SC_Autostake.UR_EliteAuryndex)])
 (format "AncientHodler has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "AncientHodler")])
 (format "AncientHodler has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "AncientHodler")])
 (format "Emma has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Emma")])
@@ -421,8 +422,8 @@
 (format "Ouroboros has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Ouroboros")])
 (format "Ouroboros has {} Elite-Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "ELITEAURYN-98c486052a51" "Ouroboros")])
 
-(free.OUROBOROS.C_WithdrawFees "AncientHodler" "AURYN-98c486052a51" "Byta")
-(format "Byta has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Byta")])
+;(free.OUROBOROS.C_WithdrawFees "AncientHodler" "AURYN-98c486052a51" "Byta")
+;(format "Byta has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "Byta")])
 
 
 
@@ -430,50 +431,41 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "Collecting KDA Test")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(begin-tx "Collecting KDA Test")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
     
 
-    (env-sigs 
-        [ 
-            { "key": "PrivateKey_AncientHodler", "caps": []}
-            { "key": "PrivateKey_Autostake-Pool", "caps": []}
-            { "key": "PrivateKey_AncientHodler"
-            , "caps": 
-                [
-                    (coin.TRANSFER "AncientHodler" "ChiefTechnologyOfficer" 5.0)
-                    (coin.TRANSFER "AncientHodler" "HeadOfVision" 5.0)
-                    (coin.TRANSFER "AncientHodler" "Gas-Tanker" 75.0)
-                    (coin.TRANSFER "AncientHodler" "Liquid-Staking" 15.0)
-                ]
-            }
-        ]
-    )
+;    (env-sigs 
+;        [ 
+;            { "key": "PrivateKey_AncientHodler", "caps": []}
+;            { "key": "PrivateKey_Autostake-Pool", "caps": []}
+;        ]
+;    )
 
-    (format "Auryn has {} fee-unlocks" [(free.OUROBOROS.UR_TrueFungibleFeeUnlocks "AURYN-98c486052a51")])
+;    (format "Auryn has {} fee-unlocks" [(free.OUROBOROS.UR_TrueFungibleFeeUnlocks "AURYN-98c486052a51")])
 
-    (format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-    (format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
-    (format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
-    (format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
-    (format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
-    (format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+    ;(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+    ;(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
+    ;(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
+    ;(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
+    ;(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
+    ;(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
 
-    (format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
-    (free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "AURYN-98c486052a51" false)
+    ;(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+    ;(free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "AURYN-98c486052a51" false)
 
-    (print "After UNLOCK")
-    (format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-    (format "GasTanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
-    (format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
-    (format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
-    (format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
-    (format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
-    (format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
-    (format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+    ;(print "After UNLOCK")
+    ;(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+    ;(format "GasTanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+    ;(format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
+    ;(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
+    ;(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
+    ;(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
+    ;(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
+    ;(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
 
-    (format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+    ;(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
 
-(env-sigs [])
-(env-gas)
-(commit-tx)
+;(env-sigs [])
+;(env-gas)
+;(commit-tx)

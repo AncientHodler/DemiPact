@@ -551,7 +551,7 @@
     ;;                                            ;;
     ;;==================VALIDATIONS=================
     ;;
-    ;;      UV_SenderWithReceive|UV_DPTS-Account|UV_DPTS-Decimals
+    ;;      UV_SenderWithReceiver|UV_DPTS-Account|UV_DPTS-Decimals
     ;;      UV_DPTS-Name|UV_DPTS-Ticker
     ;;
     (defun UV_SenderWithReceiver (sender:string receiver:string)
