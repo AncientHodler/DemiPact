@@ -31,8 +31,11 @@
 
     ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
-    (defconst SC_KEY "free.DH_SC_Vesting_Key")
-    (defconst SC_NAME "Snake_Vesting")
+        ;;Module Management - OUROBOROS.DEMIURGOI
+
+        (defconst SC_KEY "free.DH_SC_Vesting-Keyset")                   ;;DPTS Account 1 Management - SnakeVesting DPTS Account
+        (defconst SC_NAME "SnakeVesting")
+        (defconst SC_KDA-NAME "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
 
     (defconst BAR OUROBOROS.BAR)
 
@@ -613,7 +616,7 @@
         @doc "Initialises the Vesting Module"
         ;;Initialise the Vesting DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_KDA-NAME)
 
         (with-capability (VESTING_INIT)
             ;;Issue Vesting Tokens below

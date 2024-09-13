@@ -43,8 +43,11 @@
 
     ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
-    (defconst SC_KEY "free.DH_SC_Autostake_Key")
-    (defconst SC_NAME "Snake_Autostake")
+        ;;Module Management - OUROBOROS.DEMIURGOI
+
+        (defconst SC_KEY "free.DH_SC_Autostake-Keyset")                 ;;DPTS Account 1 Management - SnakeAutostake DPTS Account
+        (defconst SC_NAME "SnakeAutostake")
+        (defconst SC_KDA-NAME "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
 
     (defconst ET        ;;Elite Thresholds
         [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
@@ -1475,7 +1478,7 @@
 
         ;;Initialise the Autostake DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_KDA-NAME)
 
         (with-capability (AUTOSTAKE_INIT)
             ;;Issue Auryns Token

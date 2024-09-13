@@ -34,10 +34,16 @@
         \ Demiourgos Pact Semi Fungible Token Standard          DPSF Token Standard \
         \ Demiourgos Pact Non  Fungible Token Standard          DPNF Token Standard "
 
+    ;;0]GOVERNANCE-ADMIN
+    ;;
+    ;;      GOVERNANCE|OUROBOROS_ADMIN
+    ;;      GAS_INIT_SET-ROLES|DPTS_CLIENT|DPTS_METHODIC|DPTF_CLIENT
+    ;;
     (defcap GOVERNANCE ()
         @doc "Set to false for non-upgradeability; \
-            \ Set to DPTS_ADMIN so that only Module Key can enact an upgrade"
+            \ Remove Comment below so that only ADMIN (<free.DH_Master-Keyset>) can enact an upgrade"
         false
+        ;;(enforce-guard (keyset-ref-guard DEMIURGOI))
     )
     (defcap OUROBOROS_ADMIN ()
         @doc "Capability enforcing the OUROBOROS Administrator"
@@ -89,17 +95,25 @@
             )
         )
     )
+    ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
-    (defconst SC_KEY "free.DH-Master-Keyset")
-    (defconst SC_NAME "Ouroboros")
+        (defconst DEMIURGOI "free.DH_Master-Keyset")                    ;;Module Management
 
-    (defconst SC_KEY_GAS "free.DH-GAS-Keyset")
-    (defconst SC_NAME_GAS "Gas-Tanker")
+        (defconst SC_KEY "free.DH_SC_Ouroboros-Keyset")                 ;;DPTS Account 1 Management - Ouroboros DPTS Account
+        (defconst SC_NAME "Ouroboros")
+        (defconst SC_KDA-NAME "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
 
-                                                ;;KDA Account must be created beforehand
-    (defconst CTO "ChiefTechnologyOfficer")     ;;CTO Kadena k:xxx
-    (defconst HOV "HeadOfVision")               ;;HOV Kadena k:xxx
-    (defconst LSP "Liquid-Staking")             ;;LSP Kadena k:xxx
+        (defconst SC_KEY_GAS "free.DH_SC_GAS-Keyset")                   ;;DPTS Account 2 Management - GasTanker DPTS Account
+        (defconst SC_NAME_GAS "GasTanker")
+        (defconst SC_KDA-NAME_GAS "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9")
+
+        (defconst SC_KEY_LIQUID "free.DH_SC_KadenaLiquidStaking-Keyset");;DPTS Account 3 Management - KadenaLiquidStaking DPTS Account
+        (defconst SC_NAME_LIQUID "KadenaLiquidStaking")
+        (defconst SC_KDA-NAME_LIQUID "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98")
+
+                                            
+    (defconst CTO "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
+    (defconst HOV "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
     
     ;; Capability Categories
     ;;
@@ -189,6 +203,9 @@
         payable-as-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Normal DPTS Accounts
         payable-by-smart-contract:bool      ;;when true, the Smart-Contract Account is payable by Smart-Contract DPTS Accounts
         nonce:integer                       ;;store how many transactions the account executed
+        kadena-konto:string                 ;;stores the underlying kadena k:xxx account that was used to create the DDPTS Account
+                                            ;;this account is used for kda payments. The guard for this account is not stored in this module
+                                            ;;Rather the guard of the kadena account saved here, is stored in the table inside the coin module.
     )
     ;;3]TABLES Definitions
     (deftable DPTS-AccountTable:{DPTS-AccountSchema})
@@ -294,7 +311,6 @@
     ;;
     (defcap CONTROL-SMART-ACCOUNT (patron:string account:string)
         @doc "Capability required to Control a Smart-Account"
-
         (compose-capability (CONTROL-SMART-ACCOUNT_CORE account))
         (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
         (compose-capability (DPTS_INCREASE-NONCE))
@@ -304,7 +320,12 @@
         (UV_DPTS-Account account)
         (compose-capability (DPTS_ACCOUNT_OWNER account))     
         (compose-capability (IZ_DPTS_ACCOUNT_SMART account true))
-        
+    )
+    (defcap ROTATE_DPTS_ACCOUNT (patron:string account:string)
+        @doc "Capability required to rotate(update?change) DPTS Account information (Kadena-Konto and Guard)"
+        (compose-capability (DPTS_ACCOUNT_OWNER account))   
+        (compose-capability (GAS_COLLECTION patron account GAS_SMALL))
+        (compose-capability (DPTS_INCREASE-NONCE))
     )
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
@@ -388,13 +409,11 @@
     (defun UR_DPTS-AccountGuard:guard (account:string)
         @doc "Returns DPTS Account <account> Guard"
         (UV_DPTS-Account account)
-
         (at "guard" (read DPTS-AccountTable account ["guard"]))
     )
     (defun UR_DPTS-AccountProperties:[bool] (account:string)
         @doc "Returns a boolean list with DPTS Account Type properties"
         (UV_DPTS-Account account)
-
         (with-default-read DPTS-AccountTable account
             { "smart-contract" : false, "payable-as-smart-contract" : false, "payable-by-smart-contract" : false}
             { "smart-contract" := sc, "payable-as-smart-contract" := pasc, "payable-by-smart-contract" := pbsc }
@@ -422,6 +441,11 @@
             { "nonce" := n }
             n
         )
+    )
+    (defun UR_DPTS-AccountKadena:string (account:string)
+        @doc "Returns DPTS Account <kadena-konto> Account"
+        (UV_DPTS-Account account)
+        (at "kadena-konto" (read DPTS-AccountTable account ["kadena-konto"]))
     )
     (defun UP_DPTS-AccountProperties (account:string)
         @doc "Prints DPTS Account <account> Properties"
@@ -838,7 +862,7 @@
     ;;      C_DeployStandardDPTSAccount|C_DeploySmartDPTSAccount
     ;;      C_ControlSmartAccount
     ;;
-    (defun C_DeployStandardDPTSAccount (account:string guard:guard)
+    (defun C_DeployStandardDPTSAccount (account:string guard:guard kadena:string)
         @doc "Deploys a Standard DPTS Account. \
             \ Before any DPTF|DPMF|DPFS|DPNF Token can be created and used, \
             \ a Standard or Smart DPTS Account must be deployed \
@@ -854,10 +878,11 @@
             , "payable-as-smart-contract"   : false
             , "payable-by-smart-contract"   : false
             , "nonce"                       : 0
+            , "kadena-konto"                : kadena
             }  
         ) 
     )
-    (defun C_DeploySmartDPTSAccount (account:string guard:guard)
+    (defun C_DeploySmartDPTSAccount (account:string guard:guard kadena:string)
         @doc "Deploys a Smart DPTS Account. \
             \ Before any DPTF, DPMF, DPSF, DPNF Token can be created, \
             \ a Standard or Smart DPTS Account must be deployed \
@@ -886,8 +911,25 @@
             , "payable-as-smart-contract"   : false
             , "payable-by-smart-contract"   : true
             , "nonce"                       : 0
+            , "kadena-konto"                : kadena
             }  
         )  
+    )
+    (defun C_DPTS-RotateGuard (patron:string account:string guard:guard)
+        @doc "Updates the Guard stored in the DPTS-AccountTable"
+        (let
+            (
+                (ZG:bool (UC_SubZero))
+            )
+            (with-capability (ROTATE_DPTS_ACCOUNT patron account)
+                (if (= ZG false)
+                    (X_CollectGAS patron account GAS_SMALL)
+                    true
+                )
+                (X_DPTS-RotateGuard account guard)
+                (X_IncrementNonce patron)
+            )
+        )
     )
     (defun C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool)
         @doc "Manages Smart DPTS Account Type via boolean triggers"
@@ -905,6 +947,22 @@
             )
         )
     )
+    (defun C_DPTS-RotateKadena (patron:string account:string kadena:string)
+        @doc "Updates the Kadena Account stored in the DPTS-AccountTable"
+        (let
+            (
+                (ZG:bool (UC_SubZero))
+            )
+            (with-capability (ROTATE_DPTS_ACCOUNT patron account)
+                (if (= ZG false)
+                    (X_CollectGAS patron account GAS_SMALL)
+                    true
+                )
+                (X_DPTS-RotateKadena account kadena)
+                (X_IncrementNonce patron)
+            )
+        )
+    )
     ;;==============================================
     ;;                                            ;;
     ;;      DPTS: AUXILIARY FUNCTIONS             ;;
@@ -918,8 +976,15 @@
         (UV_DPTS-Account client)
         (require-capability (DPTS_INCREASE-NONCE))
         (with-read DPTS-AccountTable client
-            { "nonce" := n }
+            { "nonce"                       := n }
             (update DPTS-AccountTable client { "nonce" : (+ n 1)})
+        )
+    )
+    (defun X_DPTS-RotateGuard (account:string guard:guard)
+        @doc "Updates DPTS Account Parameters"
+        (require-capability (DPTS_ACCOUNT_OWNER account))
+        (update DPTS-AccountTable account
+            {"guard"                        : guard}
         )
     )
     (defun X_UpdateSmartAccountParameters (account:string payable-as-smart-contract:bool payable-by-smart-contract:bool)
@@ -930,7 +995,13 @@
             ,"payable-by-smart-contract"    : payable-by-smart-contract}
         )
     )
-    
+    (defun X_DPTS-RotateKadena (account:string kadena:string)
+        @doc "Updates DPTS Account Parameters"
+        (require-capability (DPTS_ACCOUNT_OWNER account))
+        (update DPTS-AccountTable account
+            {"kadena-konto"                  : kadena}
+        )
+    )
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
 ;;                                                                                                                                                          ;;
@@ -2165,7 +2236,7 @@
         @doc "Initialises the OUROBOROS Virtual Blockchain"
 
         ;;Initialise the Ourobors Smart DPTS Account
-        (OUROBOROS.C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY))
+        (C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_KDA-NAME)
 
         (with-capability (OUROBOROS_ADMIN)
             (let*
@@ -2459,32 +2530,35 @@
         (UV_DPTS-Account account)
 
         ;;Creates new Entry in the DPTF-BalancesTable for <identifier>|<account>
-        ;;If Entry exists, no changes are being done
-        (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
-            { "balance"                         : 0.0
-            , "role-burn"                       : false
-            , "role-mint"                       : false
-            , "role-transfer"                   : false
-            , "role-fee-exemption"              : false
-            , "frozen"                          : false
-            }
-            { "balance"                         := b
-            , "role-burn"                       := rb
-            , "role-mint"                       := rm
-            , "role-transfer"                   := rt
-            , "role-fee-exemption"              := rfe
-            , "frozen"                          := f
-            }
-            (write DPTF-BalancesTable (concat [identifier BAR account])
-                { "balance"                     : b
-                , "role-burn"                   : rb
-                , "role-mint"                   : rm
-                , "role-transfer"               : rt
-                , "role-fee-exemption"          : rfe
-                , "frozen"                      : f
-                } 
+        ;;A DPTF Account can only be created if the corresponding DPTS Account exists, and its guard is presented.
+        (with-capability (DPTS_ACCOUNT_EXIST account)
+            (with-default-read DPTF-BalancesTable (concat [identifier BAR account])
+                { "balance"                         : 0.0
+                , "role-burn"                       : false
+                , "role-mint"                       : false
+                , "role-transfer"                   : false
+                , "role-fee-exemption"              : false
+                , "frozen"                          : false
+                }
+                { "balance"                         := b
+                , "role-burn"                       := rb
+                , "role-mint"                       := rm
+                , "role-transfer"                   := rt
+                , "role-fee-exemption"              := rfe
+                , "frozen"                          := f
+                }
+                (write DPTF-BalancesTable (concat [identifier BAR account])
+                    { "balance"                     : b
+                    , "role-burn"                   : rb
+                    , "role-mint"                   : rm
+                    , "role-transfer"               : rt
+                    , "role-fee-exemption"          : rfe
+                    , "frozen"                      : f
+                    } 
+                )
             )
         )
+        
     )
     (defun C_Mint (patron:string identifier:string account:string amount:decimal origin:bool)
         @doc "Mints <amount> <identifier> TrueFungible for DPTF Account <account> \
@@ -3570,7 +3644,7 @@
 
         ;;Initialise the <Gas-Tanker> DPTS Account as a Smart Account
         ;;Necesary because it needs to operate as a MultiverX Smart Contract
-        (C_DeploySmartDPTSAccount SC_NAME_GAS (keyset-ref-guard SC_KEY_GAS))
+        (C_DeploySmartDPTSAccount SC_NAME_GAS (keyset-ref-guard SC_KEY_GAS) SC_KDA-NAME_GAS)
 
         (with-capability (OUROBOROS_ADMIN)
             ;;Issue GAS Token by the DPTS Account
@@ -3990,11 +4064,14 @@
                 (gas-costs:decimal (at 0 toggle-costs))
                 (kda-costs:decimal (at 1 toggle-costs))
             )
-            (if (and (> gas-costs 0.0)(> kda-costs 0.0))
+            (if (> gas-costs 0.0)
                 (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) gas-costs))
                 true
             )
-            (compose-capability (COLLECT_KDA))
+            (if (> kda-costs 0.0)
+                (compose-capability (COLLECT_KDA))
+                true
+            )
         )
     )
     (defcap DPTF_TOGGLE_FEE-LOCK_CORE (identifier:string toggle:bool)
@@ -4334,44 +4411,49 @@
         )
     )
     (defun X_CollectBlockchainFuel (patron:string amount:decimal)
-        @doc "Collects Blockchain Fuel in KDA \
-        \ Team 10% | 15% Liquid KDA Protocol"
+        @doc "Collects and distributes Blockchain Fuel in KDA \
+        \ Team 10% | 15% Liquid KDA Protocol | 75% GasTanker (DALOS GasStation)"
 
-        (UV_DPTS-Account patron)
         (require-capability (COLLECT_KDA))
+        (UV_DPTS-Account patron)
+        (let*
+            (
+                (kadena-split:[decimal] (UC_KadenaSplit amount))
+                (kadena-patron:string (UR_DPTS-AccountKadena patron))
+            )
+            (TransferKadena kadena-patron CTO (at 0 kadena-split))
+            (TransferKadena kadena-patron HOV (at 0 kadena-split))
+            (TransferKadena kadena-patron SC_KDA-NAME_LIQUID (at 1 kadena-split))
+            (TransferKadena kadena-patron SC_KDA-NAME_GAS (at 2 kadena-split))
+        )
+    )
+    (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal)
         (let*
             (
                 (precision:integer coin.MINIMUM_PRECISION)
-                (five:decimal (floor (* amount 0.05) precision))
+                (five:decimal (floor (* kadena-input-amount 0.05) precision))
                 (fifteen:decimal (* five 3.0))
                 (total:decimal (* 5 five))
-                (rest:decimal (- amount total))
+                (rest:decimal (- kadena-input-amount total))
             )
-            (coin.transfer patron CTO five)
-            (coin.transfer patron HOV five)
-            (coin.transfer patron LSP fifteen)
-            (coin.transfer patron SC_NAME_GAS rest)
+            [five fifteen rest]
         )
     )
     (defcap COLLECT_KDA ()
         @doc "Capability needed to Collect KDA"
         true
     )
-    (defcap COLLECT_KDA2 (patron:string amount:decimal)
-        @doc "Capability needed to Collect KDA"
-        (let*
-            (
-                (precision:integer coin.MINIMUM_PRECISION)
-                (five:decimal (floor (* amount 0.05) precision))
-                (fifteen:decimal (* five 3.0))
-                (total:decimal (* 5 five))
-                (rest:decimal (- amount total))
-            )
-            (compose-capability (coin.TRANSFER patron CTO five))
-            (compose-capability (coin.TRANSFER patron HOV five))
-            (compose-capability (coin.TRANSFER patron LSP fifteen))
-            (compose-capability (coin.TRANSFER patron SC_NAME_GAS rest))
-        )
+    (defun TransferKadena (sender:string receiver:string amount:decimal)
+        @doc "Transfers <amount> Kadena from <sender> to <receiver> \
+            \ <sender>|<receiver> are Kadena Accounts (that are saved in the Kadena Coin Table)"
+        (install-capability (coin.TRANSFER sender receiver amount))
+        (coin.transfer sender receiver amount)
+    )
+    (defun TransferKadenaAnew (sender:string receiver:string receiver-guard:guard amount:decimal)
+        @doc "Transfers <amount> Kadena from <sender> to <receiver> \
+            \ <sender>|<receiver>|<guard> are Kadena Accounts and Kadena Guards (that are saved in the Kadena Coin Table)"
+        (install-capability (coin.TRANSFER sender receiver amount))
+        (coin.transfer-create sender receiver receiver-guard amount)
     )
     (defun X_WithdrawFees (identifier:string output-target-account:string)
         (let
@@ -4381,7 +4463,6 @@
             (X_TransferTrueFungible identifier SC_NAME output-target-account withdraw-amount)
         )
     )
-
 )
  
 (create-table DPTS-AccountTable)

@@ -6,15 +6,13 @@
 
     ;;0]GOVERNANCE-ADMIN
     ;;
-    ;;      GOVERNANCE|DPMF_ADMIN|DPMF_CLIENT
+    ;;      GOVERNANCE|DPMF_CLIENT
     ;;
     (defcap GOVERNANCE ()
         @doc "Set to false for non-upgradeability; \
-        \ Set to DPMF_ADMIN so that only Module Key can enact an upgrade"
+            \ Remove Comment below so that only ADMIN (<free.DH_Master-Keyset>) can enact an upgrade"
         false
-    )
-    (defcap DPMF_ADMIN ()
-        (enforce-guard (keyset-ref-guard SC_KEY))
+        ;;(enforce-guard (keyset-ref-guard OUROBOROS.DEMIURGOI))
     )
     (defcap DPMF_CLIENT (identifier:string account:string)
         (let
@@ -30,8 +28,9 @@
 
     ;;1]CONSTANTS Definitions
     ;;Smart-Contract Key and Name Definitions
-    (defconst SC_KEY "free.DH-Master-Keyset")
-    (defconst SC_NAME "Demiourgos-Pact-Meta-Fungible")
+        ;;Module Management - OUROBOROS.DEMIURGOI
+        ;;DPTS Account Management for the Module: NONE
+
     (defconst BAR OUROBOROS.BAR)
 
     ;;2]SCHEMA Definitions

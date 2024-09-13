@@ -1,0 +1,7 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../pact-repl-utils/init.repl")
+(load "Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================

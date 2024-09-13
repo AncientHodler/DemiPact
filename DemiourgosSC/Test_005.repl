@@ -14,8 +14,8 @@
 (begin-tx "TESTING")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
-            { "key": "PrivateKey_Emma", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }])
 
     (print "===================1st TXes===============================")
 
@@ -191,8 +191,8 @@
 (begin-tx "VGAS TESTING1")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
-            { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_SnakeAutostake", "caps": [] }])
 
     ;(format "Snake Vesting Add NFT Quantity for Vested-OURO is set to {}" [(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VOURO-98c486052a51" "Snake_Vesting")])
     ;(format "Snake Vesting Add NFT Quantity for Vested-Auryn is set to {}" [(free.DPMF.UR_AccountMetaFungibleRoleNFTAQ "VAURYN-98c486052a51" "Snake_Vesting")])
@@ -222,10 +222,10 @@
 (begin-tx "TESTING MultiSend")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
-            { "key": "PrivateKey_Emma", "caps": [] }
-            { "key": "PrivateKey_Autostake-Pool", "caps": [] }
-            { "key": "PrivateKey_Vesting", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_SnakeAutostake", "caps": [] }
+            { "key": "PK_SnakeVesting", "caps": [] }])
 
     ;;(print "BEFORE MultiTransfer")
     ;;(format "Ancient Hodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
@@ -266,11 +266,11 @@
 (begin-tx "TESTING-BULK SEND")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
-            { "key": "PrivateKey_Emma", "caps": [] }
-            { "key": "PrivateKey_Vesting", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_SnakeVesting", "caps": [] }])
 
-    ;;{ "key": "PrivateKey_Autostake-Pool", "caps": [] }
+    ;;{ "key": "PK_Autostake-Pool", "caps": [] }
 
     ;;(print "BEFORE Bulk Send")
     (print "BEFOREEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
@@ -331,9 +331,9 @@
 (begin-tx "TESTING-BULK SEND")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (print "======================================================================")
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
-            { "key": "PrivateKey_Emma", "caps": [] }
-            { "key": "PrivateKey_Vesting", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_SnakeVesting", "caps": [] }])
 
 
     (format "AH has {} OURO" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")])
@@ -363,7 +363,7 @@
 
 (begin-tx "Checking Autostake Compress GAS")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": [] }
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
             ])
 (free.OUROBOROS.UC_Fee "OURO-98c486052a51" 2.0)
 (free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
@@ -393,14 +393,14 @@
 (env-gas)
 (commit-tx)
 
-;;{ "key": "PrivateKey_Autostake-Pool", "caps": [] }
-;;{ "key": "PrivateKey_Emma", "caps": [] }
+;;{ "key": "PK_Autostake-Pool", "caps": [] }
+;;{ "key": "PK_Emma", "caps": [] }
 
 
 (begin-tx "Withdrawal Fees GAS")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PrivateKey_AncientHodler", "caps": []}
-            { "key": "PrivateKey_Autostake-Pool", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": []}
+            { "key": "PK_SnakeAutostake", "caps": [] }])
 
 (print "BEFOREEEEEEEEEEEEEEEEE")
 (format "AncientHodler has {} Auryn" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "AURYN-98c486052a51" "AncientHodler")])
@@ -431,41 +431,50 @@
 (env-gas)
 (commit-tx)
 
-;(begin-tx "Collecting KDA Test")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(begin-tx "Collecting KDA Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
     
 
-;    (env-sigs 
-;        [ 
-;            { "key": "PrivateKey_AncientHodler", "caps": []}
-;            { "key": "PrivateKey_Autostake-Pool", "caps": []}
-;        ]
-;    )
+    (env-sigs 
+        [ 
+            { "key": "PK_AncientHodler", "caps": []}
+            { "key": "PK_SnakeAutostake", "caps": []}
+            { "key": (drop 2 (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler")), "caps": 
+            [
+                ;(coin.TRANSFER "AncientHodler" "Ouroboros" (at 1 (free.OUROBOROS.UC_UnlockPrice "AURYN-98c486052a51")))
+                (coin.TRANSFER (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler") (free.OUROBOROS.UR_DPTS-AccountKadena "Byta") (at 0 (free.OUROBOROS.UC_KadenaSplit (at 1 (free.OUROBOROS.UC_UnlockPrice "AURYN-98c486052a51")))))
+                (coin.TRANSFER (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler") (free.OUROBOROS.UR_DPTS-AccountKadena "Florian") (at 0 (free.OUROBOROS.UC_KadenaSplit (at 1 (free.OUROBOROS.UC_UnlockPrice "AURYN-98c486052a51")))))
+                (coin.TRANSFER (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler") (free.OUROBOROS.UR_DPTS-AccountKadena "KadenaLiquidStaking") (at 1 (free.OUROBOROS.UC_KadenaSplit (at 1 (free.OUROBOROS.UC_UnlockPrice "AURYN-98c486052a51")))))
+                (coin.TRANSFER (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler") (free.OUROBOROS.UR_DPTS-AccountKadena "GasTanker") (at 2 (free.OUROBOROS.UC_KadenaSplit (at 1 (free.OUROBOROS.UC_UnlockPrice "AURYN-98c486052a51")))))
+            ]}
+            
+        ]
+    )
 
-;    (format "Auryn has {} fee-unlocks" [(free.OUROBOROS.UR_TrueFungibleFeeUnlocks "AURYN-98c486052a51")])
+    (format "Auryn has {} fee-unlocks" [(free.OUROBOROS.UR_TrueFungibleFeeUnlocks "AURYN-98c486052a51")])
 
-    ;(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-    ;(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
-    ;(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
-    ;(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
-    ;(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
-    ;(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+    (format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+    (format "AncientHodler has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler"))])
+    (format "CTO has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "Byta"))])
+    (format "HOV has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "Florian"))])
+    (format "LSP has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "KadenaLiquidStaking"))])
+    (format "GST has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "GasTanker"))])
 
-    ;(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
-    ;(free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "AURYN-98c486052a51" false)
+    (format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+    (free.OUROBOROS.C_ToggleFeeLock "AncientHodler" "AURYN-98c486052a51" false)
 
-    ;(print "After UNLOCK")
-    ;(format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-    ;(format "GasTanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
-    ;(format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
-    ;(format "AncientHodler has {} KDA" [(coin.get-balance "AncientHodler")])
-    ;(format "CTO has {} KDA" [(coin.get-balance "ChiefTechnologyOfficer")])
-    ;(format "HOV has {} KDA" [(coin.get-balance "HeadOfVision")])
-    ;(format "LSP has {} KDA" [(coin.get-balance "Liquid-Staking")])
-    ;(format "GST has {} KDA" [(coin.get-balance "Gas-Tanker")])
+    (print "After UNLOCK")
+    (format "AncientHodler has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
+    (format "GasTanker has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+    (format "Snake_Autostake has {} GAS" [(free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Snake_Autostake")])
+    (format "AncientHodler has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "AncientHodler"))])
+    (format "CTO has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "Byta"))])
+    (format "HOV has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "Florian"))])
+    (format "LSP has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "KadenaLiquidStaking"))])
+    (format "GST has {} KDA" [(coin.get-balance (free.OUROBOROS.UR_DPTS-AccountKadena "GasTanker"))])
 
-    ;(format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
+    (format "Fee Lock pentru Auryn este {}" [(free.OUROBOROS.UR_TrueFungibleFeeLock "AURYN-98c486052a51")])
 
-;(env-sigs [])
-;(env-gas)
-;(commit-tx)
+(env-sigs [])
+(env-gas)
+(commit-tx)
