@@ -1,43 +1,127 @@
 ;MODULE LOADINGS
 ;;==============================================================================
 ;; PART 01 - Load all Mockup Enviroment Modules
-(load "../pact-repl-utils/init.repl")
-(load "Init_Snake.repl")
-(print "LOADED ALL ENV MODULES")
-;;==============================================================================
-;;
-;;
-;;
-;;
-;;
-;;==============================================================================
-(begin-tx "TESTING")
+(env-data {"disable-marmalade":true,
+           "disable-util-lib":true,
+           "disable-test-accounts":false})
+(load "../kadena_repl_sandbox-main/kda-env/init.repl")
 
 
-(format "AH3 has {} OURO and {} GAS" [
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler") 
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "GT3 has {} OURO and {} GAS" [
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Gas-Tanker")
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
+(begin-tx "Loading TrasnferKadena")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "======================================================================")
+
+    (namespace "free")
+    (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/TransferKadena.pact")
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(module KEYS GOV
+    (defcap GOV () true)
+
+    (defconst AH "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+    (defconst CTO "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
+    (defconst HOV "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
+    (defconst SC_KDA-NAME_LIQUID "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98")
+    (defconst SC_KDA-NAME_GAS "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9")
+
+    (defconst KEY1 (drop 2 AH))
+    (defconst KEY2 (drop 2 CTO))
+    (defconst KEY3 (drop 2 HOV))
+    (defconst KEY4 (drop 2 SC_KDA-NAME_LIQUID))
+    (defconst KEY5 (drop 2 SC_KDA-NAME_GAS))
+
+    ;;Ancient Public Key
+    (defconst ANCIENT "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+    (defconst SENDR00 "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca")
+
+    (defun QuadKeys:bool (k1:keyset k2:keyset k3:keyset k4:keyset)
+        (enforce-one
+            "The required 3 from 4 keys are not satisfied"
+            [
+                (enforce (and (enforce-guard k1) (and (enforce-guard k2)(enforce-guard k3))) "Variant 1 not satisfied")
+                (enforce (and (enforce-guard k1) (and (enforce-guard k2)(enforce-guard k4))) "Variant 2 not satisfied")
+                (enforce (and (enforce-guard k1) (and (enforce-guard k3)(enforce-guard k4))) "Variant 3 not satisfied")
+                (enforce (and (enforce-guard k2) (and (enforce-guard k3)(enforce-guard k4))) "Variant 4 not satisfied")
+            ]
+        )
+    )
+
+    (defcap COMPOSE ()
+        true
+    )
+
+    (defcap CLAIM () true)
+    (defconst CLAIM-GUARD (create-capability-guard (CLAIM)))
+    (defconst CLAIM-ACCOUNT (create-principal CLAIM-GUARD))
+)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+;;(define-keyset "free.AHKeyset" (read-keyset "Ancient-Keyset"))
+;;(create-principal (read-keyset "Ancient-Keyset"))
 
 
 
-(free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" 1.0)
-(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 2.0)
-;(free.OUROBOROS.C_TransferTrueFungible "AncientHodler" "OURO-98c486052a51" "Emma" "AncientHodler" 0.5)
-;(free.OUROBOROS.C_MakeGAS "Emma" "Emma" 1.0)
-;(free.OUROBOROS.C_CompressGAS "AncientHodler" "AncientHodler" 1.0)
+
+;(test-capability  (coin.TRANSFER "sender00" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 100.0))
+;(coin.transfer "sender00" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 100.0)
+;(coin.transfer-create "sender00" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" (read-keyset "Ancient-Keyset") 100.0)
 
 
-(format "AH4 has {} OURO and {} GAS" [
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "AncientHodler")
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "AncientHodler")])
-(format "GT4 has {} OURO and {} GAS" [
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Gas-Tanker")
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Gas-Tanker")])
-(format "Emma has {} OURO and {} GAS" [
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "OURO-98c486052a51" "Emma") 
-    (free.OUROBOROS.UR_AccountTrueFungibleSupply "GAS-98c486052a51" "Emma")])
+
+(begin-tx "Test TransferKadena")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(print "======================================================================")
+(env-data
+    {
+        "Ancient-Keyset" : { "keys": ["6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"] },
+        "SithMasters-Keyset" : { "keys": [KEYS.KEY2, KEYS.KEY3], "pred": "keys-any" },
+        "DemiRugos-Keyset" : { "keys": [KEYS.KEY2, KEYS.KEY3, KEYS.KEY4, KEYS.KEY5], "pred": "cacamaca" },
+        "CTO" : { "keys": [KEYS.KEY2] },
+        "HOV" : { "keys": [KEYS.KEY3] },
+        "LIQUID" : { "keys": [KEYS.KEY4] },
+        "GAS" : { "keys": [KEYS.KEY5] }
+    }
+)
+(env-sigs 
+    [
+        { "key": "alice-key"
+        , "caps": [(coin.TRANSFER "alice" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 150.0)]
+        }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+        , "caps": [(coin.TRANSFER "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" "u:KEYS.QuadKeys:gDHkmdx-U0B6aGT0c1TgQlPvNfHYVr1cK8pRQaZlBLc" 25.0)]
+        }
+    ]
+)
+(print "Create Principal")
+(create-principal (read-keyset "Ancient-Keyset"))
+(create-principal (read-keyset "SithMasters-Keyset"))
+(create-principal (create-user-guard (KEYS.QuadKeys (read-keyset "CTO")(read-keyset "HOV")(read-keyset "LIQUID")(read-keyset "GAS"))))
+(format "Claim account iz {}" [KEYS.CLAIM-ACCOUNT])
+(coin.create-account "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" (read-keyset "Ancient-Keyset"))
+;(test-capability  (coin.TRANSFER "alice" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 100.0))
+;(coin.transfer-create "alice" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" (read-keyset "Ancient-Keyset") 100.0)
+
+;(free.KadenaMover.TransferKadenaAnew "alice" KEYS.AH (read-keyset "Ancient-Keyset") 100.0)
+;(test-capability  (coin.TRANSFER "alice" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 50.0))
+(free.KadenaMover.TransferKadena "alice" KEYS.AH  150.0)
+;(format "AH are {} KDA" [(coin.get-balance KEYS.AH)])
+
+(let
+    (
+        (quad-guard:guard (create-user-guard (KEYS.QuadKeys (read-keyset "CTO")(read-keyset "HOV")(read-keyset "LIQUID")(read-keyset "GAS"))))
+    )
+    (free.KadenaMover.TransferKadenaAnew "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" "u:KEYS.QuadKeys:gDHkmdx-U0B6aGT0c1TgQlPvNfHYVr1cK8pRQaZlBLc" quad-guard 25.0)
+    (format "U Account Details are {}" [(coin.details "u:KEYS.QuadKeys:gDHkmdx-U0B6aGT0c1TgQlPvNfHYVr1cK8pRQaZlBLc")])
+)
+
+(env-sigs [])
 (env-gas)
 (commit-tx)

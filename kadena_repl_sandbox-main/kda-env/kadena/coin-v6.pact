@@ -1,9 +1,4 @@
-; This is a copy of the Kadena coin-v5 contract. At the time of writing, this is
-; the latest version deployed to Chainweb. We're going to be calling functions
-; from this contract in our tests, but without access to mainnet Chainweb, so we
-; copy the contents locally.
-;
-; https://github.com/kadena-io/chainweb-node/blob/master/pact/coin-contract/v5/coin-v5.pact
+
 (module coin GOVERNANCE
 
   @doc "'coin' represents the Kadena Coin Contract. This contract provides both the \
@@ -33,6 +28,9 @@
 
   ;; coin v4
   (bless "BjZW0T2ac6qE_I5X8GE4fal6tTqjhLTC7my0ytQSxLU")
+
+  ;; coin v5
+  (bless "rE7DU8jlQL9x_MPYuniZJf5ICBTAEHAIFQCB4blofP4")
 
   ; --------------------------------------------------------------------------
   ; Schemas and Tables
@@ -183,9 +181,7 @@
          \latin-1 character set."
 
     (enforce
-      ; We comment this out in our local copy of the coin-v5 contract because
-      ; we otherwise see "OutputWarning: Unsupported operation is-charset"
-      true ;(is-charset COIN_CHARSET account)
+      (is-charset COIN_CHARSET account)
       (format
         "Account does not conform to the coin contract charset: {}"
         [account]))
@@ -320,11 +316,16 @@
 
   (defun rotate:string (account:string new-guard:guard)
     (with-capability (ROTATE account)
+
+      ; Allow rotation only for vanity accounts, or
+      ; re-rotating a principal account back to its proper guard
+      (enforce (or (not (is-principal account))
+                  (validate-principal new-guard account))
+        "It is unsafe for principal accounts to rotate their guard")
+
       (with-read coin-table account
         { "guard" := old-guard }
-
         (enforce-guard old-guard)
-
         (update coin-table account
           { "guard" : new-guard }
           )))
@@ -515,10 +516,8 @@
 
   (defun enforce-reserved:bool (account:string guard:guard)
     @doc "Enforce reserved account name protocols."
-    ; We comment this out in our local copy of the coin-v5 contract because
-    ; we otherwise see "OutputWarning: Unsupported operation validate-principal"
-    ;  (if (validate-principal guard account)
-    ;    true
+    (if (validate-principal guard account)
+      true
       (let ((r (check-reserved account)))
         (if (= r "")
           true
@@ -526,7 +525,7 @@
             (enforce false "Single-key account protocol violation")
             (enforce false
               (format "Reserved protocol guard violation: {}" [r]))
-            ))))
+            )))))
 
 
   (defschema crosschain-schema

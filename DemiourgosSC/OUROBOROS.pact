@@ -6,7 +6,9 @@
         \ that appears when attepting to simulate GAS Functionality on this <Virtual Blockchain> \
         \ \
         \ \
+        \ \
         \ Sub-Module 1 - DPTS \
+        \ =================================================================== \
         \ \
         \ DPTS or Demiourgos-Pact-Token Standard is a Pact based Token Standard created by Demiourgos.Holdings \
         \ that mimics the token functionalities that exist on MultiversX (former Elrond) Blockchain. \
@@ -14,16 +16,32 @@
         \ above the 4 Token Types: True-Fungible (DPTF), Meta-Fungible(DPMF), Semi-Fungible(DPSF), and Non-Fungible(DPNF) \
         \ \
         \ \
-        \ Sub-Module 2 - DPTF \
+        \ Sub-Module 2 - DPTF (Ouroboros Smart DPTS Account)\
+        \ =================================================================== \
         \ \
         \ DPTF or Demiourgos-Pact-True-Fungible is the DPTS for True-Fungibles \
         \ DPTF Tokens mimic the functionality of the ESDT Tokens introduced by MultiversX (former Elrond) Blockchain \
         \ \
         \ \
-        \ Sub-Module 3 - VGAS \
+        \ Sub-Module 3 - GAS (GasTanker Smart DPTS Account) \
+        \ =================================================================== \
         \ \
-        \ The VGAS submodule is in charge of the GAS related data. Information stored through this submodule defines \
+        \ The GAS sub-module is in charge of the GAS related data. Information stored through this submodule defines \
         \ which DPTF Token acts as <Virtual-GAS> and wheter or not VirtualGas collection is toggled ON or OFF \
+        \ \
+        \ \
+        \ Sub-module 4 - FEE \
+        \ =================================================================== \
+        \ \
+        \ The FEE sub-module hosts the functions that govern the fee mechanics of DPTF Tokens \
+        \ This mechanic is unique to the DPTF Token. \
+        \ \
+        \ \
+        \ Sub-module 5 - KLS (KadenaLiquidStaking Smart DPTS Account) \
+        \ =================================================================== \
+        \ \
+        \ The KLS sub-module hosts all the function that compose the DALOS Kadena Liquid Staking Protocol \
+        \ The KDA (DalosWrappedKadena) and LKDA (LiquidKadena) DPTF Tokens are integral parts of the Dalos Kadena Liquid Staking Protocol \
         \ \
         \ \
         \ \
@@ -45,20 +63,40 @@
         false
         ;;(enforce-guard (keyset-ref-guard DEMIURGOI))
     )
-    (defcap OUROBOROS_ADMIN ()
+    (defcap DALOS_DEMIURGOI ()
+        @doc "Capability enforcing the DALOS Demiurgoi admins"
+        (enforce-guard (keyset-ref-guard DEMIURGOI))
+    )
+    (defcap OUROBOROS ()
         @doc "Capability enforcing the OUROBOROS Administrator"
-
-        (enforce-guard (keyset-ref-guard SC_KEY))
+        (enforce-one
+            "Keyset not valid for Ouroboros Smart DPTS Account Operations"
+            [
+                (enforce-guard (keyset-ref-guard DEMIURGOI))
+                (enforce-guard (keyset-ref-guard SC_KEY))
+            ]
+        )
         (compose-capability (DPTS_INCREASE-NONCE))
     )
-    (defcap GAS_INIT_SET-ROLES (patron:string gas-id:string gas-source-id account:string)
-        @doc "Capability needed when setting Roles within the GAS Initialisation Function"
-        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-id account true))
-        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-id account true))
-        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-source-id account true))
-        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-source-id account true))
-        (compose-capability (DPTS_INCREASE-NONCE))
-        (compose-capability (PATRON patron))
+    (defcap GAS-TANKER ()
+        @doc "Capability enforcing the GasTanker Administrator"
+        (enforce-one
+            "Keyset not valid for GasTanker Smart DPTS Account Operations"
+            [
+                (enforce-guard (keyset-ref-guard DEMIURGOI))
+                (enforce-guard (keyset-ref-guard SC_KEY_GAS))
+            ]
+        )
+    )
+    (defcap LIQUID-STAKING ()
+        @doc "Capability enforcing the KadenaLiquidStaking Administrator"
+        (enforce-one
+            "Keyset not valid for KadenaLiquidStaking Smart DPTS Account Operations"
+            [
+                (enforce-guard (keyset-ref-guard DEMIURGOI))
+                (enforce-guard (keyset-ref-guard SC_KEY_LIQUID))
+            ]
+        )
     )
     (defcap DPTS_CLIENT (account:string)
         @doc "Capability that enforces the ownership of a DPTS Account if it is a Standard DPTS Account"
@@ -114,7 +152,7 @@
                                             
     (defconst CTO "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
     (defconst HOV "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
-    
+    ;;
     ;; Capability Categories
     ;;
     ;;==================================================================================================================================================;;
@@ -126,8 +164,7 @@
     ;;      COMPOSED                                Composed Capabilities are made of one or multiple Basic Capabilities                                ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
-
-
+    ;;
     ;; Functions Categories
     ;;
     ;;==================================================================================================================================================;;
@@ -158,6 +195,7 @@
     ;;      UTILITY-READ                            UR_FunctionName                                                                                     ;;
     ;;      UTILITY-VALIDATE                        UV_FunctionName                                                                                     ;;
     ;;      ADMINISTRATION                          A_FunctionName                                                                                      ;;
+    ;;      ADMINISTRATION-AUXILIARY                AX_FunctionName                                                                                     ;;
     ;;      CLIENT                                  C_FunctionName                                                                                      ;;
     ;;      CLIENT-AUXILIARY                        CX_FunctionName                                                                                      ;;
     ;;      AUXILIARY                               X_FunctionName                                                                                      ;;
@@ -168,7 +206,7 @@
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                    Sub-Module 1                                                                          ;;
-;;                                                                        DPTS                                                                              ;;
+;;                                                       DPTS - Demiourgos Pact Token Standard                                                              ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
@@ -191,6 +229,8 @@
     (defconst NUMBERS ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
     (defconst CAPITAL_LETTERS ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"])
     (defconst NON_CAPITAL_LETTERS ["a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"])
+    ;;TABLE-KEYS
+    (defconst DALOS "DalosPrices")
     ;;2]SCHEMAS Definitions
     ;;Demiourgos Pact Token Standard - DPTS
     (defschema DPTS-AccountSchema
@@ -207,8 +247,19 @@
                                             ;;this account is used for kda payments. The guard for this account is not stored in this module
                                             ;;Rather the guard of the kadena account saved here, is stored in the table inside the coin module.
     )
+    (defschema DALOS-PricesSchema
+        @doc "Schema that stores DALOS KDA prices for specific operations"
+        standard:decimal
+        smart:decimal
+        dptf:decimal
+        dpmf:decimal
+        dpsf:decimal
+        dpnf:decimal
+        blue:decimal
+    )
     ;;3]TABLES Definitions
     (deftable DPTS-AccountTable:{DPTS-AccountSchema})
+    (deftable DALOS-Prices:{DALOS-PricesSchema})
 
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
@@ -217,7 +268,7 @@
     ;;==================DPTS-ACCOUNT================                                                                                                    ;;
     ;;      DPTS_ACCOUNT_EXIST                      Enforces that a DPTS Account exists                                                                 ;;
     ;;      DPTS_ACCOUNT_OWNER                      Enforces DPTS Account Ownership                                                                     ;;
-    ;;      IZ_DPTS_ACCOUNT_SMART                    Enforces That a DPTS Account is of a Smart DPTS Account                                             ;;
+    ;;      IZ_DPTS_ACCOUNT_SMART                   Enforces That a DPTS Account is of a Smart DPTS Account                                             ;;
     ;;----------------------------------------------                                                                                                    ;;
     ;;      SC_TRANSFERABILITY                      Enforce correct transferability between DPTS Accounts                                               ;;
     ;;      DPTS_INCREASE-NONCE                     Capability required to increment the DPTS nonce                                                     ;;
@@ -339,6 +390,14 @@
     ;;      UR_DPTS-AccountPayableBy                Returns DPTS Account <account> Boolean payables-by-smart-contract                                   ;;
     ;;      UR_DPTS-AccountNonce                    Returns DPTS Account <account> nonce value                                                          ;;
     ;;      UP_DPTS-AccountProperties               Prints DPTS Account <account> Properties                                                            ;;
+    ;;==================DALOS-PRICE-INFO============                                                                                                    ;;
+    ;;      UR_DalosStandard                        Returns the KDA price to deploy a Standard DPTS Account                                             ;;
+    ;;      UR_DalosSmart                           Returns the KDA price to deploy a Smart DPTS Account                                                ;;
+    ;;      UR_DalosTrue                            Returns the KDA price to issue a True Fungible Token                                                ;;
+    ;;      UR_DalosMeta                            Returns the KDA price to issue a Meta Fungible Token                                                ;;
+    ;;      UR_DalosSemi                            Returns the KDA price to issue a Semi Fungible Token                                                ;;
+    ;;      UR_DalosNon                             Returns the KDA price to issue a Non Fungible Token                                                 ;;
+    ;;      UR_DalosBlue                            Returns the KDA price for a Blue Check                                                              ;;
     ;;==================COMPUTING===================                                                                                                    ;;
     ;;      UC_DPTS-AccountsTransferability         Computes transferability between 2 DPTS Accounts, <sender> and <receiver>                           ;;
     ;;      UC_FilterIdentifier                     Helper Function needed for returning DPTS identifiers for Account <account>                         ;;
@@ -463,6 +522,40 @@
                 (format "Account {} is a Normal Account" [account])
             )
         )
+    )
+    ;;==================DALOS-PRICE-INFO============
+    ;;
+    ;;      UR_DalosStandard|UR_DalosSmart
+    ;;      UR_DalosTrue|UR_DalosMeta|UR_DalosSemi|UR_DalosNon
+    ;;      UR_DalosBlue
+    ;;
+    (defun UR_DalosStandard:decimal ()
+        @doc "Returns the KDA price to deploy a Standard DPTS Account"
+        (at "standard" (read DALOS-Prices DALOS ["standard"]))
+    )
+    (defun UR_DalosSmart:decimal ()
+        @doc "Returns the KDA price to deploy a Smart DPTS Account"
+        (at "smart" (read DALOS-Prices DALOS ["smart"]))
+    )
+    (defun UR_DalosTrue:decimal ()
+        @doc "Returns the KDA price to issue a True Fungible Token"
+        (at "dptf" (read DALOS-Prices DALOS ["dptf"]))
+    )
+    (defun UR_DalosMeta:decimal ()
+        @doc "Returns the KDA price to issue a Meta Fungible Token"
+        (at "dpmf" (read DALOS-Prices DALOS ["dpmf"]))
+    )
+    (defun UR_DalosSemi:decimal ()
+        @doc "Returns the KDA price to issue a Semi Fungible Token"
+        (at "dpsf" (read DALOS-Prices DALOS ["dpsf"]))
+    )
+    (defun UR_DalosNon:decimal ()
+        @doc "Returns the KDA price to issue a Non Fungible Token"
+        (at "dpnf" (read DALOS-Prices DALOS ["dpnf"]))
+    )
+    (defun UR_DalosBlue:decimal ()
+        @doc "Returns the KDA price for a Blue Check"
+        (at "blue" (read DALOS-Prices DALOS ["blue"]))
     )
     ;;==============================================
     ;;                                            ;;
@@ -851,8 +944,45 @@
     ;;                                            ;;
     ;;      DPTS: ADMINISTRATION FUNCTIONS        ;;
     ;;                                            ;;
-    ;;      NO ADMINISTRATOR FUNCTIONS            ;;
-    ;;                                            ;;
+    ;;==============================================
+    ;;
+    ;;      A_InitialiseDALOS
+    ;;
+    (defun A_InitialiseDALOS (patron:string)
+        @doc "Main administrative function that initialises the DALOS Virtual Blockchain"
+        (with-capability (DALOS_DEMIURGOI)
+            (let*
+                (
+                    (OuroborosID:string
+                        (with-capability (OUROBOROS)
+                            (AX_InitialiseOuroboros patron)
+                        )
+                    )
+                    (GasID:string
+                        (with-capability (GAS-TANKER)
+                            (AX_InitialiseGAS patron OuroborosID)
+                        )
+                    )
+                    (LiquidIDs:[string] 
+                        (with-capability (LIQUID-STAKING)
+                            (AX_InitialiseKadenaLiquidStaking patron)
+                        )
+                    )
+                )
+                (insert DALOS-Prices DALOS
+                    {"standard"                 : 10.0
+                    ,"smart"                    : 20.0
+                    ,"dptf"                     : 200.0
+                    ,"dpmf"                     : 300.0
+                    ,"dpsf"                     : 400.0
+                    ,"dpnf"                     : 500.0
+                    ,"blue"                     : 25.0}
+                )
+            )
+        )
+        
+    )
+    
     ;;==============================================
     ;;                                            ;;
     ;;      DPTS: CLIENT FUNCTIONS                ;;
@@ -880,7 +1010,10 @@
             , "nonce"                       : 0
             , "kadena-konto"                : kadena
             }  
-        ) 
+        )
+        ;(with-capability (COLLECT_KDA)
+        ;    (X_CollectBlockchainFuel account )
+        ;)
     )
     (defun C_DeploySmartDPTSAccount (account:string guard:guard kadena:string)
         @doc "Deploys a Smart DPTS Account. \
@@ -1012,7 +1145,7 @@
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
-    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;    
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;1]CONSTANTS Definitions - None
     ;;2]SCHEMAS Definitions
     ;;Demiourgos Pact TRUE Fungible Token Standard - DPTF
@@ -1040,8 +1173,8 @@
         role-transfer-amount:integer                ;;Stores how many accounts have Transfer Roles for the Token.
         ;;DPTF Fee Management
         fee-toggle:bool                             ;;Toggles built in fee management for the DPTF Token. Set to False to disable
-        min-move:decimal                            ;;TM can set the minimum Token amount that is transferable suing client Functions
-                                                    ;;By default set to -1.0 which means the smalles amount transferable is an Atomic Unic
+        min-move:decimal                            ;;TM can set the minimum Token amount that is transferable using client Functions
+                                                    ;;By default set to -1.0 which means the smallest amount transferable is an Atomic Unit
                                                     ;;An atomic Unit represents the samllest token denomination.
         fee-promile:decimal                         ;;Amount either -1.0 or 0.0<fee-promile<1000.0 representing the amount of Fee retained
                                                     ;;Negative Amount triggers a special Volumetric Fee Computation for the Fee. Uses <decimals> for precision.
@@ -2231,65 +2364,28 @@
     ;;                                            ;;
     ;;      DPTF: ADMINISTRATION FUNCTIONS        ;;
     ;;                                            ;;
+    ;;==============================================
     ;;
-    (defun A_InitialiseOuroboros:[string] (patron:string)
+    ;;      AX_InitialiseOuroboros
+    ;;
+    (defun AX_InitialiseOuroboros:string (patron:string)
         @doc "Initialises the OUROBOROS Virtual Blockchain"
 
-        ;;Initialise the Ourobors Smart DPTS Account
+        (require-capability (OUROBOROS))
+        ;;Deploy the <Ouroboros> DPTS Account as a Smart Account
         (C_DeploySmartDPTSAccount SC_NAME (keyset-ref-guard SC_KEY) SC_KDA-NAME)
-
-        (with-capability (OUROBOROS_ADMIN)
-            (let*
-                (
-                    (OuroborosID:string
-                        (C_IssueTrueFungible
-                            patron
-                            SC_NAME
-                            "Ouroboros"
-                            "OURO"
-                            24
-                            true    ;;can-change-owner
-                            true    ;;can-upgrade
-                            true    ;;can-add-special-role
-                            true    ;;can-freeze
-                            true    ;;can-wipe
-                            true    ;;can-pause
-                        )
-                    )
-                    (WrappedKadenaID:string
-                        (C_IssueTrueFungible
-                            patron
-                            SC_NAME
-                            "WrappedKadena"
-                            "WKDA"
-                            24
-                            false    ;;can-change-owner
-                            false    ;;can-upgrade
-                            true     ;;can-add-special-role
-                            false    ;;can-freeze
-                            false    ;;can-wipe
-                            false    ;;can-pause
-                        )
-                    )
-                    (StakedKadenaID:string
-                        (C_IssueTrueFungible
-                            patron
-                            SC_NAME
-                            "StakedKadena"
-                            "SKDA"
-                            24
-                            false    ;;can-change-owner
-                            false    ;;can-upgrade
-                            true     ;;can-add-special-role
-                            false    ;;can-freeze
-                            false    ;;can-wipe
-                            false    ;;can-pause
-                        )
-                    )
-                    (GasID:string (A_InitialiseGAS patron OuroborosID))
-                )
-                [OuroborosID GasID WrappedKadenaID StakedKadenaID]
-            )
+        (C_IssueTrueFungible
+            patron
+            SC_NAME
+            "Ouroboros"
+            "OURO"
+            24
+            true    ;;can-change-owner
+            true    ;;can-upgrade
+            true    ;;can-add-special-role
+            true    ;;can-freeze
+            true    ;;can-wipe
+            true    ;;can-pause
         )
     )
     ;;                                            ;;
@@ -3121,14 +3217,14 @@
             (require-capability (DPTF_MINT-STANDARD_CORE identifier account amount))
         )
         (X_Credit identifier account amount)
-            (X_UpdateSupply identifier amount true)
-            (if (= origin true)
-                (update DPTF-PropertiesTable identifier
-                    { "origin-mint" : false
-                    , "origin-mint-amount" : amount}
-                )
-                true
+        (X_UpdateSupply identifier amount true)
+        (if (= origin true)
+            (update DPTF-PropertiesTable identifier
+                { "origin-mint" : false
+                , "origin-mint-amount" : amount}
             )
+            true
+        )
     )
     (defun X_Burn (identifier:string account:string amount:decimal)
         (enforce-one
@@ -3157,13 +3253,14 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
-;;                                                           DPTF_PATRON-CALLER      VGAS - Virtual Gas                                                     ;;
+;;                                                                    Sub-Module 3                                                                          ;;
+;;                                                          GAS (GasTanker Smart DPTS Account)                                                              ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
-    ;;1]CONSTANTS Definitions - None
+    ;;1]CONSTANTS Definitions
     ;;GAS-COSTS
     (defconst GAS_QUARTER 0.25)                     ;;Percentual Amount earned by Smart DPTS Accounts via Gas Collection
     (defconst GAS_SMALLEST 1.00)
@@ -3175,7 +3272,7 @@
     ;;TABLE-KEYS
     (defconst VGD "VirtualGasData")
     ;;2]SCHEMAS Definitions
-    (defschema DPTS-vGAS
+    (defschema DPTS-GAS
         @doc "Schema that stores DPTF Identifier for the Gas Token of the Virtual Blockchain \
         \ The boolean <virtual-gas-toggle> toggles wheter or not the virtual gas is enabled or not"
 
@@ -3189,12 +3286,12 @@
         native-gas-spent:decimal                    ;;Stores the amount of Native Gas Spent on the blockchain
     )
     ;;3]TABLES Definitions
-    (deftable VGASTable:{DPTS-vGAS})
+    (deftable GASTable:{DPTS-GAS})
     
 
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: BASIC CAPABILITIES                Description                                                                                         ;;
+    ;;      GAS: BASIC CAPABILITIES                Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==============================================                                                                                                    ;;
     ;;      GAS_IS_ON                               Enforces Gas is turned ON                                                                           ;;
@@ -3203,7 +3300,7 @@
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: COMPOSED CAPABILITIES             Description                                                                                         ;;
+    ;;      GAS: COMPOSED CAPABILITIES             Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================GAS-CONTROL=================                                                                                                    ;;
     ;;      UPDATE_GAS-ID                           Capability Required to update GAS id                                                                ;;
@@ -3220,7 +3317,7 @@
     ;;==================================================================================================================================================;;
     ;;==============================================
     ;;                                            ;;
-    ;;      VGAS: BASIC CAPABILITIES              ;;
+    ;;      GAS: BASIC CAPABILITIES              ;;
     ;;                                            ;;
     ;;==============================================
     ;;
@@ -3265,20 +3362,28 @@
     )
     ;;==============================================
     ;;                                            ;;
-    ;;      VGAS: COMPOSED CAPABILITIES           ;;
+    ;;      GAS: COMPOSED CAPABILITIES           ;;
     ;;                                            ;;
     ;;==================GAS-CONTROL=================
     ;;
-    ;;      UPDATE_GAS-ID
-    ;;      GAS_TURN_ON|GAS_TURN_OFF
+    ;;      GAS_INIT_SET-ROLES|UPDATE_GAS-ID|TOGGLE_GAS
     ;;
+    (defcap GAS_INIT_SET-ROLES (patron:string gas-id:string gas-source-id account:string)
+        @doc "Capability needed when setting Roles within the GAS Initialisation Function"
+        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-id account true))
+        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-id account true))
+        (compose-capability (DPTF_TOGGLE_BURN-ROLE_CORE gas-source-id account true))
+        (compose-capability (DPTF_TOGGLE_MINT-ROLE_CORE gas-source-id account true))
+        (compose-capability (DPTS_INCREASE-NONCE))
+        (compose-capability (PATRON patron))
+    )
     (defcap UPDATE_GAS-ID (identifier:string)
         (UV_TrueFungibleIdentifier identifier)
-        (compose-capability (OUROBOROS_ADMIN))
+        (compose-capability (GAS-TANKER))
     )
     (defcap TOGGLE_GAS (native:bool toggle:bool)
         @doc "Capability required to toggle virtual or native GAS to either on or off"
-        (compose-capability (OUROBOROS_ADMIN))
+        (compose-capability (GAS-TANKER))
         (if (= native true)
             (compose-capability (NATIVE_GAS_STATE (not toggle)))
             (compose-capability (VIRTUAL_GAS_STATE (not toggle)))
@@ -3418,12 +3523,11 @@
             )
         )
     )
-    
     ;;==================================================================================================================================================;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: UTILITY FUNCTIONS                 Description                                                                                         ;;
+    ;;      GAS: UTILITY FUNCTIONS                 Description                                                                                          ;;
     ;;                                                                                                                                                  ;;
-    ;;==================VGAS-INFO===================                                                                                                    ;;
+    ;;==================Virtual-GAS-INFO============                                                                                                    ;;
     ;;      UR_GasSourceID                          Returns as string the Gas-Source Identifier                                                         ;;
     ;;      UR_GasSourcePrice                       Returns as decimal the Gas-Source Price                                                             ;;
     ;;      UR_GasID                                Returns as string the Gas Identifier                                                                ;;
@@ -3433,66 +3537,72 @@
     ;;      UR_GasSpent                             Returns the amount of Gas spent                                                                     ;;
     ;;      UC_GasMake                              Computes amount of GAS that can be made from the input <gas-source-amount>                          ;;
     ;;      UC_GasCompress                          Computes amount of Gas Source that can be created from an input amount <gas-amount> of GAS          ;;
-    ;;      UC_ZeroGAZ                              Expanded Capability verifying if GAS cost is zero                                                   ;;
-    ;;      UC_ZeroGAS                              Simple Capability verifying if GAS cost is zero                                                     ;;
+    ;;      UC_ZeroGAZ                              Returns true if Virtual GAS cost is Zero (not yet toggled), otherwise returns false (s + r)         ;;
+    ;;      UC_ZeroGAS                              Returns true if Virtual GAS cost is Zero (not yet toggled), otherwise returns false (s only)        ;;
+    ;;      UC_Zero                                 Function needed for <UC_ZeroGAS>                                                                    ;;
+    ;;      UC_SubZero                              Function needed for <UC_Zero>                                                                       ;;
+    ;;==================Native-GAS-INFO=============                                                                                                    ;;
+    ;;      UC_NativeSubZero                        Returns true if Native GAS cost is Zero (not yet toggled), otherwise returns false                  ;;
+    ;;      UC_KadenaSplit                          Computes the KDA Split required for Native Gas Collection                                           ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: ADMINISTRATION FUNCTIONS          Description                                                                                         ;;
+    ;;      GAS: ADMINISTRATION FUNCTIONS          Description                                                                                          ;;
     ;;                                                                                                                                                  ;;
     ;;==============================================                                                                                                    ;;
-    ;;      A_InitialiseGAS                         Initialises the VGAS Table                                                                          ;;
+    ;;      AX_InitialiseGAS                        Initialises the GAS Table                                                                           ;;
     ;;      A_SetGasIdentifier                      Sets the Gas-Source|Gas Identifier for the Virtual Blockchain                                       ;;
     ;;      A_SetGasSourcePrice                     Sets the Gas Source Price, which determines how much GAS can be created from Gas Source Token       ;;
-    ;;      A_SetGasPrice                           Sets the Gas Price in cents, which determines how much GAS can be created from Gas Source Token     ;;
-    ;;      A_TurnGasOn                             Turns Gas collection ON                                                                             ;;
-    ;;      A_TurnGasOff                            Turns Gas collection OFF                                                                            ;;
+    ;;      A_ToggleGas                             Turns Native or Virtual Gas collection to <toggle>                                                  ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: CLIENT FUNCTIONS                  Description                                                                                         ;;
+    ;;      GAS: CLIENT FUNCTIONS                  Description                                                                                          ;;
     ;;                                                                                                                                                  ;;
     ;;      C_MakeGAS                               Generates GAS from GAS Source Token via GAS Making|Creation                                         ;;
     ;;      C_CompressGAS                           Generates Gas-Source from GAS Token via GAS Compression                                             ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
-    ;;      VGAS: AUXILIARY FUNCTIONS               Description                                                                                         ;;
+    ;;      GAS: AUXILIARY FUNCTIONS               Description                                                                                          ;;
     ;;                                                                                                                                                  ;;
-    ;;==================VGAS-TABLE-UPDATES==========                                                                                                    ;;
+    ;;==================GAS-TABLE-UPDATES===========                                                                                                    ;;
     ;;      X_UpdateGasSourceID                     Updates Gas Source ID                                                                               ;;
     ;;      X_UpdateGasSourcePrice                  Updates Gas Source Price                                                                            ;;
     ;;      X_UpdateGasID                           Updates Gas ID                                                                                      ;;
     ;;      X_UpdateGasToggle                       Updates Gas Collection State                                                                        ;;
     ;;      X_UpdateGasPot                          Updates Gas Pot Account                                                                             ;;
     ;;      X_UpdateGasPrice                        Updates Gas Price in cents                                                                          ;;
-    ;;==================VGAS-COLLECTION=============                                                                                                    ;;
+    ;;==================Virtual-GAS-COLLECTION======                                                                                                    ;;
     ;;      X_CollectGAS                            Collects GAS                                                                                        ;;
     ;;      X_CollectGasNormal                      Collects GAS when a normal DPTS Account is involved                                                 ;;
     ;;      X_CollectGasSmart                       Collects GAS when a smart DPTS Account is involved                                                  ;;
     ;;      X_TransferGAS                           Transfers GAS from sender to receiver                                                               ;;
+    ;;==================Native-GAS-COLLECTION=======                                                                                                    ;;
+    ;;      X_CollectBlockchainFuel                 Collects Native Gas (Kadena)                                                                        ;;
+    ;;      XC_TransferKadena                       Auxiliary Client function required for the <X_CollectBlockchainFuel>                                ;;
     ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;==============================================
     ;;                                            ;;
-    ;;      VGAS: UTILITY FUNCTIONS               ;;
+    ;;      GAS: UTILITY FUNCTIONS                ;;
     ;;                                            ;;
-    ;;==================VGAS-INFO===================
+    ;;==================GAS-INFO===================
     ;;
     ;;      UR_GasSourceID|UR_GasSourcePrice|UR_GasID|UR_GasToggle|UR_GasPot|UR_GasPrice|UR_GasSpent
     ;;      UC_GasMake|UC_GasCompress|UC_ZeroGAZ|UC_ZeroGAS
     ;;
     (defun UR_GasSourceID:string ()
         @doc "Returns as string the Gas-Source Identifier"
-        (at "gas-source-id" (read VGASTable VGD ["gas-source-id"]))
+        (at "gas-source-id" (read GASTable VGD ["gas-source-id"]))
     )
     (defun UR_GasSourcePrice:decimal ()
         @doc "Returns as decimal the Gas-Source Price"
-        (at "gas-source-price" (read VGASTable VGD ["gas-source-price"]))
+        (at "gas-source-price" (read GASTable VGD ["gas-source-price"]))
     )
     (defun UR_GasID:string ()
         @doc "Returns as string the Gas Identifier"
-        (with-default-read VGASTable VGD
+        (with-default-read GASTable VGD
             {"virtual-gas-id" : "GAS"}
             {"virtual-gas-id" := gas-id}
             gas-id
@@ -3500,7 +3610,7 @@
     )
     (defun UR_GasToggle:bool ()
         @doc "Returns as boolean the Gas Toggle State"
-        (with-default-read VGASTable VGD
+        (with-default-read GASTable VGD
             {"virtual-gas-toggle" : false}
             {"virtual-gas-toggle" := tg}
             tg
@@ -3508,15 +3618,15 @@
     )
     (defun UR_GasPot:string ()
         @doc "Returns as string the Gas Pot Account"
-        (at "virtual-gas-tank" (read VGASTable VGD ["virtual-gas-tank"]))
+        (at "virtual-gas-tank" (read GASTable VGD ["virtual-gas-tank"]))
     )
     (defun UR_GasSpent:decimal ()
         @doc "Returns as decimal the amount of Gas Spent"
-        (at "virtual-gas-spent" (read VGASTable VGD ["virtual-gas-spent"]))
+        (at "virtual-gas-spent" (read GASTable VGD ["virtual-gas-spent"]))
     )
     (defun UR_NGasToggle:bool ()
         @doc "Returns as boolean the Native Gas Toggle State"
-        (with-default-read VGASTable VGD
+        (with-default-read GASTable VGD
             {"native-gas-toggle" : false}
             {"native-gas-toggle" := tg}
             tg
@@ -3524,7 +3634,7 @@
     )
     (defun UR_NGasSpent:decimal ()
         @doc "Returns as decimal the amount of Native Gas Spent"
-        (at "native-gas-spent" (read VGASTable VGD ["native-gas-spent"]))
+        (at "native-gas-spent" (read GASTable VGD ["native-gas-spent"]))
     )
 
     (defun UC_GasMake (gas-source-amount:decimal)
@@ -3579,7 +3689,7 @@
         )
     )
     (defun UC_ZeroGAZ:bool (identifier:string sender:string receiver:string)
-        @doc "Returns true if GAS cost is Zero, otherwise returns false"
+        @doc "Returns true if Virtual GAS cost is Zero (not yet toggled), otherwise returns false"
 
         (let*
             (
@@ -3602,6 +3712,7 @@
         )
     )
     (defun UC_Zero:bool (sender:string)
+        @doc "Function needed for <UC_ZeroGAS>"
         (let*
             (
                 (t0:bool (UC_SubZero))
@@ -3611,6 +3722,7 @@
         )
     )
     (defun UC_SubZero:bool ()
+        @doc "Function needed for <UC_Zero>"
         (let*
             (
                 (gas-toggle:bool (UR_GasToggle))
@@ -3619,7 +3731,16 @@
             ZG
         )
     )
+    ;;==============================================
+    ;;                                            ;;
+    ;;      GAS: UTILITY FUNCTIONS                ;;
+    ;;                                            ;;
+    ;;==================GAS-INFO====================
+    ;;
+    ;;      UC_NativeSubZero|UC_KadenaSplit
+    ;;
     (defun UC_NativeSubZero:bool ()
+        @doc "Returns true if Native GAS cost is Zero (not yet toggled), otherwise returns false"
         (let*
             (
                 (gas-toggle:bool (UR_NGasToggle))
@@ -3628,79 +3749,88 @@
             NZG
         )
     )
+    (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal)
+        @doc "Computes the KDA Split required for Native Gas Collection \
+        \ This is 5% 5% 15% and 75% outputed as 5% 15% 75% in a list"
+        (let*
+            (
+                (precision:integer coin.MINIMUM_PRECISION)
+                (five:decimal (floor (* kadena-input-amount 0.05) precision))
+                (fifteen:decimal (* five 3.0))
+                (total:decimal (* 5.0 five))
+                (rest:decimal (- kadena-input-amount total))
+            )
+            [five fifteen rest]
+        )
+    )
     ;;==============================================
     ;;                                            ;;
-    ;;      VGAS: ADMINISTRATION FUNCTIONS        ;;
+    ;;      GAS: ADMINISTRATION FUNCTIONS        ;;
     ;;                                            ;;
     ;;==============================================
     ;;
-    ;;      A_InitialiseGAS|A_SetVGasID|A_ChangeVGasID
-    ;;      A_TurnGasOn|A_TurnGasOff
+    ;;      AX_InitialiseGAS|A_SetGasIdentifier|A_SetGasSourcePrice|A_ToggleGas
     ;;
-    (defun A_InitialiseGAS:string (patron:string gas-source-id:string)
+    (defun AX_InitialiseGAS:string (patron:string gas-source-id:string)
         @doc "Initialises the Virtual Gas Smart-Contract \
         \ Returns the Gas ID as string"
         (UV_TrueFungibleIdentifier gas-source-id)
 
-        ;;Initialise the <Gas-Tanker> DPTS Account as a Smart Account
-        ;;Necesary because it needs to operate as a MultiverX Smart Contract
+        (require-capability (GAS-TANKER))
+        ;;Deploy the <GasTanker> DPTS Account as a Smart Account
         (C_DeploySmartDPTSAccount SC_NAME_GAS (keyset-ref-guard SC_KEY_GAS) SC_KDA-NAME_GAS)
-
-        (with-capability (OUROBOROS_ADMIN)
-            ;;Issue GAS Token by the DPTS Account
-            (let
-                (
-                    (GasID:string
-                        (C_IssueTrueFungible
-                            patron
-                            SC_NAME_GAS
-                            "Gas"
-                            "GAS"
-                            2
-                            true    ;;can-change-owner
-                            true    ;;can-upgrade
-                            true    ;;can-add-special-role
-                            true    ;;can-freeze
-                            false   ;;can-wipe
-                            true    ;;can-pause
-                        )
+        (let
+            (
+                (GasID:string
+                    (C_IssueTrueFungible
+                        patron
+                        SC_NAME_GAS
+                        "Gas"
+                        "GAS"
+                        2
+                        true    ;;can-change-owner
+                        true    ;;can-upgrade
+                        true    ;;can-add-special-role
+                        true    ;;can-freeze
+                        false   ;;can-wipe
+                        true    ;;can-pause
                     )
                 )
-                ;;Set VGASTable
-                (insert VGASTable VGD
-                    {"gas-source-id"            : gas-source-id
-                    ,"gas-source-price"         : 0.0
-                    ,"virtual-gas-id"           : GasID
-                    ,"virtual-gas-toggle"       : false
-                    ,"virtual-gas-tank"         : SC_NAME_GAS
-                    ,"virtual-gas-spent"        : 0.0
-                    ,"native-gas-toggle"        : false
-                    ,"native-gas-spent"         : 0.0}
-                )
-                ;;Seting DPTF Gas Token Special Parameters
-                (C_SetMinMoveValue patron GasID 1000.0)
-                (C_SetFee patron GasID -1.0)
-                (C_SetFeeTarget patron GasID SC_NAME_GAS)
-                (C_ToggleFee patron GasID true)
-                (C_ToggleFeeLock patron GasID true)
-
-                ;;Issue OURO DPTF Account for the GAS-Tanker
-                (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS)
-                ;;Set Token Roles
-                (with-capability (GAS_INIT_SET-ROLES patron GasID gas-source-id SC_NAME_GAS)
-                    ;;BURN Roles
-                    (X_ToggleBurnRole GasID SC_NAME_GAS true)
-                    (X_IncrementNonce patron)
-                    (X_ToggleBurnRole gas-source-id SC_NAME_GAS true)
-                    (X_IncrementNonce patron)
-                    ;;MINT Roles
-                    (X_ToggleMintRole GasID SC_NAME_GAS true)
-                    (X_IncrementNonce patron)
-                    (X_ToggleMintRole gas-source-id SC_NAME_GAS true)
-                    (X_IncrementNonce patron)
-                )
-                GasID
             )
+            ;;Set GASTable
+            (insert GASTable VGD
+                {"gas-source-id"            : gas-source-id
+                ,"gas-source-price"         : 0.0
+                ,"virtual-gas-id"           : GasID
+                ,"virtual-gas-toggle"       : false
+                ,"virtual-gas-tank"         : SC_NAME_GAS
+                ,"virtual-gas-spent"        : 0.0
+                ,"native-gas-toggle"        : false
+                ,"native-gas-spent"         : 0.0}
+            )
+            ;;Seting DPTF Gas Token Special Parameters
+            (C_SetMinMoveValue patron GasID 1000.0)
+            (C_SetFee patron GasID -1.0)
+            (C_SetFeeTarget patron GasID SC_NAME_GAS)
+            (C_ToggleFee patron GasID true)
+            (C_ToggleFeeLock patron GasID true)
+
+            ;;Issue OURO DPTF Account for the GAS-Tanker
+            (OUROBOROS.C_DeployTrueFungibleAccount gas-source-id SC_NAME_GAS)
+            ;;Set Token Roles
+            (with-capability (GAS_INIT_SET-ROLES patron GasID gas-source-id SC_NAME_GAS)
+                ;;BURN Roles
+                (X_ToggleBurnRole GasID SC_NAME_GAS true)
+                (X_IncrementNonce patron)
+                (X_ToggleBurnRole gas-source-id SC_NAME_GAS true)
+                (X_IncrementNonce patron)
+                ;;MINT Roles
+                (X_ToggleMintRole GasID SC_NAME_GAS true)
+                (X_IncrementNonce patron)
+                (X_ToggleMintRole gas-source-id SC_NAME_GAS true)
+                (X_IncrementNonce patron)
+            )
+            GasID
         )
     )
     (defun A_SetGasIdentifier (identifier:string source:bool)
@@ -3717,7 +3847,7 @@
     )
     (defun A_SetGasSourcePrice (price:decimal)
         @doc "Sets the Gas Source Price in (dollars)$, which determines how much GAS can be created from Gas Source Token"
-        (with-capability (OUROBOROS_ADMIN)
+        (with-capability (GAS-TANKER)
             (X_UpdateGasSourcePrice price)
         )
     )
@@ -3809,62 +3939,58 @@
     (defun X_UpdateGasSourceID (identifier:string)
         @doc "Updates Gas Source ID"
         (require-capability (UPDATE_GAS-ID identifier))
-        (update VGASTable VGD
+        (update GASTable VGD
             {"gas-source-id" : identifier}
         )
     )
     (defun X_UpdateGasSourcePrice (price:decimal)
-        (require-capability (OUROBOROS_ADMIN))
-        (update VGASTable VGD
+        (require-capability (GAS-TANKER))
+        (update GASTable VGD
             {"gas-source-price" : price}
         )
     )
     (defun X_UpdateGasID (identifier:string)
         @doc "Updates Gas ID"
         (require-capability (UPDATE_GAS-ID identifier))
-        (update VGASTable VGD
+        (update GASTable VGD
             {"virtual-gas-id" : identifier}
         )
     )
     (defun X_ToggleGas (native:bool toggle:bool)
         @doc "Updates native or virtual Gas Collection state to <toggle>"
-        (require-capability (OUROBOROS_ADMIN))
+        (require-capability (GAS-TANKER))
         (if (= native true)
-            (update VGASTable VGD
+            (update GASTable VGD
                 {"native-gas-toggle" : toggle}
             )
-            (update VGASTable VGD
+            (update GASTable VGD
                 {"virtual-gas-toggle" : toggle}
             )
         )
     )
     (defun X_UpdateGasPot (account:string)
         @doc "Updates Gas Pot Account"
-        (require-capability (OUROBOROS_ADMIN))
-        (update VGASTable VGD
+        (require-capability (GAS-TANKER))
+        (update GASTable VGD
             {"virtual-gas-tank" : account}
         )
     )
 
-    (defun X_IncrementGasSpent (increment:decimal)
+    (defun X_IncrementGasSpent (native:bool increment:decimal)
+        @doc "Updates native or virtual spent gas amount"
         (require-capability (INCREMENT_GAS-SPENT))
         (let
             (
                 (current-gas-spent:decimal (UR_GasSpent))
-            )
-            (update VGASTable VGD
-                {"virtual-gas-spent" : (+ current-gas-spent increment)}
-            )
-        )
-    )
-    (defun X_IncrementNGasSpent (increment:decimal)
-        (require-capability (INCREMENT_GAS-SPENT))
-        (let
-            (
                 (current-ngas-spent:decimal (UR_NGasSpent))
             )
-            (update VGASTable VGD
-                {"native-gas-spent" : (+ current-ngas-spent increment)}
+            (if (= native true)
+                (update GASTable VGD
+                    {"native-gas-spent" : (+ current-ngas-spent increment)}
+                )
+                (update GASTable VGD
+                    {"virtual-gas-spent" : (+ current-gas-spent increment)}
+                )
             )
         )
     )
@@ -3889,7 +4015,7 @@
         @doc "Collects GAS when a normal DPTS Account is involved"
         (require-capability (GAS_COLLECTER_NORMAL patron amount))
         (X_TransferGAS patron (UR_GasPot) amount)
-        (X_IncrementGasSpent amount)
+        (X_IncrementGasSpent false amount)
     )
     (defun X_CollectGasSmart (patron:string sender:string amount:decimal)
         @doc "Collects GAS when a smart DPTS Account is involved"
@@ -3902,7 +4028,7 @@
             )
             (X_TransferGAS patron gas-pot rest)
             (X_TransferGAS patron sender quarter)
-            (X_IncrementGasSpent amount)
+            (X_IncrementGasSpent false amount)
         )
     )
     (defun X_TransferGAS (gas-sender:string gas-receiver:string gas-amount:decimal)
@@ -3917,11 +4043,38 @@
             (X_Credit gas-id gas-receiver gas-amount)
         )            
     )
+    ;;==================Native-GAS-COLLECTION=======
+    ;;
+    ;;      X_CollectBlockchainFuel|XC_TransferKadena
+    ;;
+    (defun X_CollectBlockchainFuel (patron:string amount:decimal)
+        @doc "Collects and distributes Blockchain Fuel in KDA \
+        \ Team 10% | 15% Liquid KDA Protocol | 75% GasTanker (DALOS GasStation)"
+        (require-capability (COLLECT_KDA patron))
+        (let*
+            (
+                (kadena-split:[decimal] (UC_KadenaSplit amount))
+                (kadena-patron:string (UR_DPTS-AccountKadena patron))
+            )
+            (XC_TransferKadena kadena-patron CTO (at 0 kadena-split))
+            (XC_TransferKadena kadena-patron HOV (at 0 kadena-split))
+            (XC_TransferKadena kadena-patron SC_KDA-NAME_LIQUID (at 1 kadena-split))
+            (XC_TransferKadena kadena-patron SC_KDA-NAME_GAS (at 2 kadena-split))
+            (X_IncrementGasSpent true amount)
+        )
+    )
+    (defun XC_TransferKadena (sender:string receiver:string amount:decimal)
+        @doc "Transfers <amount> Kadena from <sender> to <receiver> \
+            \ <sender>|<receiver> are Kadena Accounts (that are saved in the Kadena Coin Table)"
+        (install-capability (coin.TRANSFER sender receiver amount))
+        (coin.transfer sender receiver amount)
+    )
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
-;;                                                           Fee-Management                                                                                 ;;
+;;                                                                    Sub-Module 4                                                                          ;;
+;;                                                               FEE - Fee Management                                                                       ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
 ;;                                                                                                                                                          ;;
@@ -3932,26 +4085,39 @@
     ;;      FEES: BASIC CAPABILITIES                Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================FEE-STATES==================                                                                                                    ;;
-    ;;      DPTF_FEE-LOCK_STATE
-    ;;      DPTF_FEE-TOGGLE_STATE
-    ;;
+    ;;      COLLECT_KDA                                                                                                                                 ;;
+    ;;      DPTF_FEE-LOCK_STATE                                                                                                                         ;;
+    ;;      DPTF_FEE-TOGGLE_STATE                                                                                                                       ;;
+    ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
     ;;      FEES: COMPOSED CAPABILITIES             Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================CONTROL=====================                                                                                                    ;;
-    ;;      DPTF_SET_FEE
-    ;;      DPTF_SET_FEE_CORE
-    ;;      DPTF_TOGGLE_FEE
-    ;;      DPTF_TOGGLE_FEE_CORE
-    ;;
+    ;;      DPTF_SET_FEE                            Capability required to set the <fee-promile> for a DPTF Token                                       ;;
+    ;;      DPTF_SET_FEE_CORE                       Core Capability required to set the <fee-promile> for a DPTF Token                                  ;;
+    ;;      DPTF_SET_MIN-MOVE                       Capability required to set the <min-move> value for a DPTF Token                                    ;;
+    ;;      DPTF_SET_MIN-MOVE_CORE                  Core Capability required to set the <min-move> value for a DPTF Token                               ;;
+    ;;      DPTF_TOGGLE_FEE                         Capability required to set to <toggle> the <fee-toggle> for a DPTF Token                            ;;        
+    ;;      DPTF_TOGGLE_FEE_CORE                    Core Capability required to set to <toggle> the <fee-toggle> for a DPTF Token                       ;;
+    ;;      DPTF_SET_FEE-TARGET                     Capability required to set <fee-target> for a DPTF Token                                            ;;
+    ;;      DPTF_SET_FEE-TARGET_CORE                Core Capability required to set <fee-target> for a DPTF Token                                       ;;
+    ;;      DPTF_TOGGLE_FEE-LOCK                    Capability required to set to <toggle> the <fee-lock> for a DPTF Token                              ;;
+    ;;      DPTF_TOGGLE_FEE-LOCK_CORE               Core Capability required to set to <toggle> the <fee-lock> for a DPTF Token                         ;;
+    ;;      DPTF_WITHDRAW-FEES                      Capability required to withdra cumulated DPTF Fees from their Standard cumulation Location          ;;
+    ;;      PTF_WITHDRAW-FEES_CORE                  Core Capability required to withdra cumulated DPTF Fees from their Standard cumulation Location     ;;
+    ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
 
     ;;==================FEE-STATES================== 
     ;;
-    ;;      DPTF_FEE-LOCK_STATE|DPTF_FEE-TOGGLE_STATE
+    ;;      COLLECT_KDA|DPTF_FEE-LOCK_STATE|DPTF_FEE-TOGGLE_STATE
     ;;
-
+    (defcap COLLECT_KDA (patron:string)
+        @doc "Capability needed to Collect KDA Fees"
+        (UV_DPTS-Account patron)
+        (compose-capability (INCREMENT_GAS-SPENT))
+    )
     (defcap DPTF_FEE-LOCK_STATE (identifier:string state:bool)
         @doc "Enforces DPTF Token <fee-lock> to <state>"
         (UV_TrueFungibleIdentifier identifier)
@@ -3979,14 +4145,14 @@
     ;;      DPTF_TOGGLE_FEE|DPTF_TOGGLE_FEE_CORE
     ;;      DPTF_SET_FEE-TARGET|DPTF_SET_FEE-TARGET_CORE
     ;;
-
-    
     (defcap DPTF_SET_FEE (patron:string identifier:string fee:decimal)
+        @doc "Capability required to set the <fee-promile> for a DPTF Token"
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_SET_FEE_CORE identifier fee))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_FEE_CORE (identifier:string fee:decimal)
+        @doc "Core Capability required to set the <fee-promile> for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
         (let
             (
@@ -4002,11 +4168,13 @@
         )
     )
     (defcap DPTF_SET_MIN-MOVE (patron:string identifier:string min-move-value:decimal)
+        @doc "Capability required to set the <min-move> value for a DPTF Token"
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_SET_MIN-MOVE_CORE identifier min-move-value))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_MIN-MOVE_CORE (identifier:string min-move-value:decimal)
+        @doc "Core Capability required to set the <min-move> value for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
         (let
             (
@@ -4021,13 +4189,14 @@
             (compose-capability (DPTF_FEE-LOCK_STATE identifier false))  
         )
     )
-
     (defcap DPTF_TOGGLE_FEE (patron:string identifier:string toggle:bool)
+        @doc "Capability required to set to <toggle> the <fee-toggle> for a DPTF Token"
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_TOGGLE_FEE_CORE identifier toggle))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_TOGGLE_FEE_CORE (identifier:string toggle:bool)
+        @doc "Core Capability required to set to <toggle> the <fee-toggle> for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
         (let
             (
@@ -4043,11 +4212,13 @@
         )
     )
     (defcap DPTF_SET_FEE-TARGET (patron:string identifier:string target:string)
+        @doc "Capability required to set <fee-target> for a DPTF Token"
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_SET_FEE-TARGET_CORE identifier target))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
     (defcap DPTF_SET_FEE-TARGET_CORE (identifier:string target:string)
+        @doc "Core Capability required to set <fee-target> for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account target)
         (compose-capability (DPTS_ACCOUNT_EXIST target))
@@ -4055,6 +4226,7 @@
         (compose-capability (DPTF_FEE-LOCK_STATE identifier false))    
     )
     (defcap DPTF_TOGGLE_FEE-LOCK (patron:string identifier:string toggle:bool)
+        @doc "Capability required to set to <toggle> the <fee-lock> for a DPTF Token"
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
         (compose-capability (DPTS_INCREASE-NONCE))
@@ -4069,24 +4241,28 @@
                 true
             )
             (if (> kda-costs 0.0)
-                (compose-capability (COLLECT_KDA))
+                (compose-capability (COLLECT_KDA patron))
                 true
             )
         )
     )
     (defcap DPTF_TOGGLE_FEE-LOCK_CORE (identifier:string toggle:bool)
+        @doc "Core Capability required to set to <toggle> the <fee-lock> for a DPTF Token"
         (UV_TrueFungibleIdentifier identifier)
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (DPTF_FEE-LOCK_STATE identifier (not toggle)))
     )
     (defcap DPTF_WITHDRAW-FEES (patron:string identifier:string output-target-account:string)
+        @doc "Capability required to withdra cumulated DPTF Fees from their Standard cumulation Location"
         (UV_TrueFungibleIdentifier identifier)
         (UV_DPTS-Account output-target-account)
         (compose-capability (GAS_COLLECTION patron (UR_TrueFungibleKonto identifier) GAS_SMALL))
         (compose-capability (DPTF_WITHDRAW-FEES_CORE identifier output-target-account))
         (compose-capability (DPTS_INCREASE-NONCE))
     )
-    (defcap DPTF_WITHDRAW-FEES_CORE (identifier:string output-target-account:string)        
+    (defcap DPTF_WITHDRAW-FEES_CORE (identifier:string output-target-account:string)
+        @doc "Core Capability required to withdra cumulated DPTF Fees from their Standard cumulation Location \
+            \ Their Standard Cumulation Location is the Ouroboros Smart DPTS Account"
         (compose-capability (DPTF_OWNER identifier))
         (compose-capability (IZ_DPTS_ACCOUNT_SMART output-target-account false))
         (let
@@ -4102,9 +4278,10 @@
     ;;      FEES: UTILITY FUNCTIONS                 Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================COMPUTATIONS================                                                                                                    ;;
-    ;;      UC_ComputeVolumetricTax
-    ;;      UCX_VolumetricPermile
-    ;;      UC_Fee
+    ;;      UC_ComputeVolumetricTax                 Computes the Volumetric Fee, given an DTPF <identifier> and <amount>                                ;;
+    ;;      UCX_VolumetricPermile                   Auxiliary computation function needed to compute the volumetric fee                                 ;;
+    ;;      UC_Fee                                  Computes fee values for a DPTF Token <identifier> and <amount>                                      ;;
+    ;;      UC_UnlockPrice                          Computes the fee unlock price for a DPTF <identifier>                                               ;;
     ;;                                                                                                                                                  ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
@@ -4117,16 +4294,26 @@
     ;;      FEES: CLIENT FUNCTIONS                  Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================CONTROL=====================                                                                                                    ;;
-    ;;      C_ToggleFee
-    ;;      C_SetFee
+    ;;      C_ToggleFee                             Toggles fees for the DPTS Token <identifier> to <toggle>                                            ;;
+    ;;      C_SetMinMoveValue                       Sets <identifier> DPTF <min-move> value to <min-move-value>                                         ;;
+    ;;      C_SetFee                                Sets <identifier> DPTF <fee-promile> value to <fee>                                                 ;;
+    ;;      C_SetFeeTarget                          Sets <identifier> DPTF <fee-target> value to <target>                                               ;;
+    ;;      C_ToggleFeeLock                         Sets <identifier> DPTF <fee-lock> value to <toggle>                                                 ;;
+    ;;      C_WithdrawFees                          Withdraws cumulated Primary Fees                                                                    ;;
     ;;
     ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
     ;;                                                                                                                                                  ;;
     ;;      FEES: AUXILIARY FUNCTIONS               Description                                                                                         ;;
     ;;                                                                                                                                                  ;;
     ;;==================CONTROL=====================                                                                                                    ;;
-    ;;      X_ToggleFee
-    ;;      X_SetFee
+    ;;      X_ToggleFee                             Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetMinMove                            Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetFee                                Auxiliary function required in the main function                                                    ;;
+    ;;      X_SetFeeTarget                          Auxiliary function required in the main function                                                    ;;
+    ;;      X_ToggleFeeLock                         Auxiliary function required in the main function                                                    ;;
+    ;;      X_CollectBlockchainFuel                 Auxiliary function required in the main function                                                    ;;
+    ;;      X_WithdrawFees                          Auxiliary function required in the main function                                                    ;;
+    ;;                                                                                                                                                  ;;
     ;;==================================================================================================================================================;;
     ;;==============================================
     ;;                                            ;;
@@ -4135,9 +4322,10 @@
     ;;==================ACCOUNT-INFO================
     ;;
     ;;      UC_ComputeVolumetricTax|UCX_VolumetricPermile|UC_Fee
+    ;;      UC_UnlockPrice|UC_KadenaSplit
     ;;      
     (defun UC_ComputeVolumetricTax (identifier:string amount:decimal)
-        @doc "Computes the Volumetric Fee, given an identifier and amount"
+        @doc "Computes the Volumetric Fee, given an DTPF <identifier> and <amount>"
         (UV_TrueFungibleAmount identifier amount)
         (let*
             (
@@ -4155,6 +4343,7 @@
         )
     )
     (defun UCX_VolumetricPermile:decimal (precision:integer unit:integer)
+        @doc "Auxiliary computation function needed to compute the volumetric fee"
         (let*
             (
                 (logarithm-base:decimal (if (= unit 0) 0.0 (dec (str-to-int 10 (concat (make-list unit "7"))))))
@@ -4166,7 +4355,7 @@
         )
     )
     (defun UC_Fee:[decimal] (identifier:string amount:decimal)
-        @doc "Computes fee values based on Fee Data available for the DPTF Token <identifier> for the given Amount <amount> \
+        @doc "Computes fee values for a DPTF Token <identifier> and <amount> \
         \ and outputs them into a list of strings; The list is as follows: \
         \ \
         \ 1st element, is the Primary Fee, which is the standard Fee set up for the Token \
@@ -4208,6 +4397,9 @@
         )
     )
     (defun UC_UnlockPrice:[decimal] (identifier:string)
+        @doc "Computes the fee unlock price for a DPTF <identifier> \
+            \ Outputs [virtual-gas-costs native-gas-cost] \
+            \ Virtual Gas Token = Ignis; Native Gas Token = Kadena"
         (let*
             (
                 (fee-unlocks:integer (UR_TrueFungibleFeeUnlocks identifier))
@@ -4230,7 +4422,7 @@
     ;;                                            ;;
     ;;==================CONTROL=====================
     ;;
-    ;;      C_ToggleFee|C_SetFee|C_SetFeeTarget
+    ;;      C_ToggleFee|C_SetMinMoveValue|C_SetFee|C_SetFeeTarget|C_ToggleFeeLock|C_WithdrawFees
     ;;
     (defun C_ToggleFee (patron:string identifier:string toggle:bool)
         @doc "Toggles fees for the DPTS Token <identifier> to <toggle> \
@@ -4251,7 +4443,7 @@
         )
     )
     (defun C_SetMinMoveValue (patron:string identifier:string min-move-value:decimal)
-        @doc "Sets the minimum amount that can be transferable for the DPTF Token"
+        @doc "Sets <identifier> DPTF <min-move> value to <min-move-value>"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4268,8 +4460,8 @@
         )
     )
     (defun C_SetFee (patron:string identifier:string fee:decimal)
-        @doc "Sets the fee promile value that is to be used for transfers for the DPTS Token <identifier> \
-        \ Setting the value to -1.0 activates the Volumetric_Transaction-Tax VTT Formula"
+        @doc "Sets <identifier> DPTF <fee-promile> value to <fee> \
+        \ Setting it to -1.0 activates the Volumetric_Transaction-Tax VTT fee mechanic"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4286,8 +4478,8 @@
         )
     )
     (defun C_SetFeeTarget (patron:string identifier:string target:string)
-        @doc "Sets the target Account of the fee Collection \
-            \ By default, when issuing a DPTF Token, Account <Ouroboros> is used, also known as the Fee-Carrier Account \
+        @doc "Sets <identifier> DPTF <fee-target> value to <target> \
+            \ When issuing a DPTF Token, Account <Ouroboros> is set as the default collector, aka the Fee-Carrier Account \
             \ Setting the fee Target to the <Gas-Tanker> Account, which collects the gas token on the network, \
             \ makes the collected fee act like collected gas. \
             \ \
@@ -4312,7 +4504,14 @@
         )
     )
     (defun C_ToggleFeeLock (patron:string identifier:string toggle:bool)
-        @doc "Locks or unlocks the DPTF Token Fee Settings. Unlocking has specific restrictions."
+        @doc "Sets <identifier> DPTF <fee-lock> value to <toggle> \
+            \ Unlocking <fee-toggle> (setting it to false) comes with specific restrictions: \
+            \       At most 7 unlocks can be executed for a DPTF Token \
+            \       The Cost for unlock is (10000 IGNIS + 100 KDA )*(0 + fee-unlocks) \
+            \       Each unlocking of the <fee-lock> after it has been locked adds an additional automatic fee - the secondary fee \
+            \           The Secondary Fee is collected to the <GasTanker> Smart DPTS Account to be distributed to DALOS Custodians \
+            \           The Secondary Fee is equal to the VTT multiplied by the number of <fee-unlocks> \
+            \           The VTT formula is computed with the <UC_ComputeVolumetricTax> function"
         (let
             (
                 (ZG:bool (UC_SubZero))
@@ -4349,8 +4548,11 @@
         )
     )
     (defun C_WithdrawFees (patron:string identifier:string output-target-account:string)
-        @doc "Withdraws cumulated fees for the Token <identifier> that have cumulated on the <Ouroboros> DPTF Account \
-            \ Only the Token owner can collect these fees, in case they exist, to the target Standard DPTS Account <target>"
+        @doc "Withdraws cumulated Primary Fees from the Fee Carrier Account (Ouroboros Smart DPTS Account) \
+            \   Limitations: \
+            \   Only works if the DPTF <identifier> <fee-target> is the Ouroboros Smart DPTS Account (the default <fee-target>) \
+            \   Only the Token Owner may Collect these Fees, if the exist on the Ouroboros Smart DPTS Account \
+            \   Thes Fees may only be collected to a Normal DPTS Account"
         
         (let
             (
@@ -4373,7 +4575,8 @@
     ;;                                            ;;
     ;;==================CONTROL=====================
     ;;
-    ;;      X_ToggleFee|X_SetFee|X_SetFeeTarget|X_SetFeeTarget|X_ToggleFeeLock
+    ;;      X_ToggleFee|X_SetMinMove|X_SetFee|X_SetFeeTarget|X_SetFeeTarget|X_ToggleFeeLock
+    ;;      X_CollectBlockchainFuel|
     ;;      
     (defun X_ToggleFee (identifier:string toggle:bool)
         (require-capability (DPTF_TOGGLE_FEE_CORE identifier toggle))
@@ -4399,7 +4602,6 @@
             { "fee-target" : target}
         )
     )
-    ;;needs to be modified for unlock
     (defun X_ToggleFeeLock:[decimal] (identifier:string toggle:bool)
         (require-capability (DPTF_TOGGLE_FEE-LOCK_CORE identifier toggle))
         (update DPTF-PropertiesTable identifier
@@ -4410,51 +4612,6 @@
             (UC_UnlockPrice identifier)
         )
     )
-    (defun X_CollectBlockchainFuel (patron:string amount:decimal)
-        @doc "Collects and distributes Blockchain Fuel in KDA \
-        \ Team 10% | 15% Liquid KDA Protocol | 75% GasTanker (DALOS GasStation)"
-
-        (require-capability (COLLECT_KDA))
-        (UV_DPTS-Account patron)
-        (let*
-            (
-                (kadena-split:[decimal] (UC_KadenaSplit amount))
-                (kadena-patron:string (UR_DPTS-AccountKadena patron))
-            )
-            (TransferKadena kadena-patron CTO (at 0 kadena-split))
-            (TransferKadena kadena-patron HOV (at 0 kadena-split))
-            (TransferKadena kadena-patron SC_KDA-NAME_LIQUID (at 1 kadena-split))
-            (TransferKadena kadena-patron SC_KDA-NAME_GAS (at 2 kadena-split))
-        )
-    )
-    (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal)
-        (let*
-            (
-                (precision:integer coin.MINIMUM_PRECISION)
-                (five:decimal (floor (* kadena-input-amount 0.05) precision))
-                (fifteen:decimal (* five 3.0))
-                (total:decimal (* 5 five))
-                (rest:decimal (- kadena-input-amount total))
-            )
-            [five fifteen rest]
-        )
-    )
-    (defcap COLLECT_KDA ()
-        @doc "Capability needed to Collect KDA"
-        true
-    )
-    (defun TransferKadena (sender:string receiver:string amount:decimal)
-        @doc "Transfers <amount> Kadena from <sender> to <receiver> \
-            \ <sender>|<receiver> are Kadena Accounts (that are saved in the Kadena Coin Table)"
-        (install-capability (coin.TRANSFER sender receiver amount))
-        (coin.transfer sender receiver amount)
-    )
-    (defun TransferKadenaAnew (sender:string receiver:string receiver-guard:guard amount:decimal)
-        @doc "Transfers <amount> Kadena from <sender> to <receiver> \
-            \ <sender>|<receiver>|<guard> are Kadena Accounts and Kadena Guards (that are saved in the Kadena Coin Table)"
-        (install-capability (coin.TRANSFER sender receiver amount))
-        (coin.transfer-create sender receiver receiver-guard amount)
-    )
     (defun X_WithdrawFees (identifier:string output-target-account:string)
         (let
             (
@@ -4463,9 +4620,63 @@
             (X_TransferTrueFungible identifier SC_NAME output-target-account withdraw-amount)
         )
     )
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;                                                                    Sub-Module 5                                                                          ;;
+;;                                                           KLS - Kadena Liquid Staking                                                                    ;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;                                                                                                                                                          ;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;;
+    ;;--------------------------------------------------------------------------------------------------------------------------------------------------;;
+    (defun AX_InitialiseKadenaLiquidStaking:[string] (patron:string)
+        @doc "Initialises the DALOS Kadena Liquid Staking"
+
+        (require-capability (LIQUID-STAKING))
+        ;:Deploy the <KadenaLiquidStaking> Smart DPTS Account
+        (C_DeploySmartDPTSAccount SC_NAME_LIQUID (keyset-ref-guard SC_KEY_LIQUID) SC_KDA-NAME_LIQUID)
+        (let
+            (
+                (WrappedKadenaID:string
+                    (C_IssueTrueFungible
+                        patron
+                        SC_NAME
+                        "DalosWrappedKadena"
+                        "KDA"
+                        24
+                        false    ;;can-change-owner
+                        false    ;;can-upgrade
+                        true     ;;can-add-special-role
+                        false    ;;can-freeze
+                        false    ;;can-wipe
+                        false    ;;can-pause
+                    )
+                )
+                (StakedKadenaID:string
+                    (C_IssueTrueFungible
+                        patron
+                        SC_NAME
+                        "LiquidKadena"
+                        "LKDA"
+                        24
+                        false    ;;can-change-owner
+                        false    ;;can-upgrade
+                        true     ;;can-add-special-role
+                        false    ;;can-freeze
+                        false    ;;can-wipe
+                        false    ;;can-pause
+                    )
+                )
+            )
+            [WrappedKadenaID StakedKadenaID]
+        )
+    )
 )
  
 (create-table DPTS-AccountTable)
+(create-table DALOS-Prices)
 (create-table DPTF-PropertiesTable)
 (create-table DPTF-BalancesTable)
-(create-table VGASTable)
+(create-table GASTable)

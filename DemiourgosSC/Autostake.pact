@@ -22,7 +22,7 @@
             "Either Demiourgos Trinity or Vesting Key can perform Vesting"
             [
                 (compose-capability (AUTOSTAKE_ADMIN))
-                (compose-capability (OUROBOROS.OUROBOROS_ADMIN))
+                (compose-capability (OUROBOROS.OUROBOROS))
             ]
         )
     )

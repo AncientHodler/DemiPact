@@ -5,20 +5,13 @@
 ;;
 ;;
 ;;==============================================================================
-;; PART 01 - KeySets Definitions
-(print "==========================TX01-KEY Definitions=========================")
-(print "==========================Define==================free.DH-Master-Keyset")
-
-
-
-
-(begin-tx)
+;; PART 01 - Demiourgos DPTS KeySets Definitions
+(print "==========================InitSnake_TX-01===============================")
+(begin-tx "InitSnake 01 - Demiourgos DPTS|KADENA Keyset Definitions")
 (module KC GOVERNANCE
     (defcap GOVERNANCE () true)
 
     ;;User Names
-    (defconst KADN_NAME_SNDER00 "k:368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca")
-
     (defconst KADN_NAME_0000 "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
     (defconst KADN_PBKY_0000 (drop 2 KADN_NAME_0000))
     (defconst DPTS_NAME_0000 "AncientHodler")
@@ -35,9 +28,34 @@
     (defconst DPTS_PBKY_000b "PK_Emma")
 
     (defconst KADN_NAME_000c "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
-    (defconst KADN_PBKY_000c (drop 2 KADN_NAME_000b))
+    (defconst KADN_PBKY_000c (drop 2 KADN_NAME_000c))
     (defconst DPTS_NAME_000c "Byta")
     (defconst DPTS_PBKY_000c "PK_Byta")
+
+    (defconst KADN_NAME_000d "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
+    (defconst KADN_PBKY_000d (drop 2 KADN_NAME_000d))
+    (defconst DPTS_NAME_000d "Lumy")
+    (defconst DPTS_PBKY_000d "PK_Lumy")
+
+    (defconst KADN_NAME_000e "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba")
+    (defconst KADN_PBKY_000e (drop 2 KADN_NAME_000e))
+    (defconst DPTS_NAME_000e "Coca")
+    (defconst DPTS_PBKY_000e "PK_Coca")
+
+    (defconst KADN_NAME_000f "k:134cabaa0e22cd86630773e6e6e4c9c6851715428a49162dcde661b3550ccff9")
+    (defconst KADN_PBKY_000f (drop 2 KADN_NAME_000f))
+    (defconst DPTS_NAME_000f "Kiss")
+    (defconst DPTS_PBKY_000f "PK_Kiss")
+
+    (defconst KADN_NAME_000g "k:fb67ba8ea6d3b4b9463a482c1cadade2efbeb7719ce26344094e9d58d8176748")
+    (defconst KADN_PBKY_000g (drop 2 KADN_NAME_000g))
+    (defconst DPTS_NAME_000g "Plcs")
+    (defconst DPTS_PBKY_000g "PK_Plcs")
+
+    (defconst KADN_NAME_000h "k:03c14c229fdcec2e5053b6a7b8a031fbbbfce198a845e94e7908668686706e43")
+    (defconst KADN_PBKY_000h (drop 2 KADN_NAME_000h))
+    (defconst DPTS_NAME_000h "Nani")
+    (defconst DPTS_PBKY_000h "PK_Nani")
 
     ;;Smart Contracts
     (defconst KADN_NAME_0001 "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
@@ -93,17 +111,11 @@
         "KEY_US_Florian": { "keys": [KC.DPTS_PBKY_000a]},
         "KEY_US_Emma": { "keys": [KC.DPTS_PBKY_000b]},
         "KEY_US_Byta": { "keys": [KC.DPTS_PBKY_000c]},
-
-        ;;KADENA KEYS
-        "KEY_KDA_AncientHodler": { "keys": [KC.KADN_PBKY_0000]},
-        "KEY_KDA_Florian": { "keys": [KC.KADN_PBKY_000a]},
-        "KEY_KDA_Emma": { "keys": [KC.KADN_PBKY_000b]},
-        "KEY_KDA_Byta": { "keys": [KC.KADN_PBKY_000c]},
-        "KEY_KDA_Ouroboros": { "keys": [KC.KADN_PBKY_0001]},
-        "KEY_KDA_GasTanker": { "keys": [KC.KADN_PBKY_0002]},
-        "KEY_KDA_KadenaLiquidStaking": { "keys": [KC.KADN_PBKY_0003]},
-        "KEY_KDA_SnakeAutostake": { "keys": [KC.KADN_PBKY_0004]},
-        "KEY_KDA_SnakeVesting": { "keys": [KC.KADN_PBKY_0004]}
+        "KEY_US_Lumy": { "keys": [KC.DPTS_PBKY_000d]},
+        "KEY_US_Coca": { "keys": [KC.DPTS_PBKY_000e]},
+        "KEY_US_Kiss": { "keys": [KC.DPTS_PBKY_000f]},
+        "KEY_US_Plcs": { "keys": [KC.DPTS_PBKY_000g]},
+        "KEY_US_Nani": { "keys": [KC.DPTS_PBKY_000h]}
     }
 )
 ;;Entering Namespace Free
@@ -126,23 +138,23 @@
     (define-keyset "free.User000a-Keyset" (read-keyset "KEY_US_Florian"))
     (define-keyset "free.User000b-Keyset" (read-keyset "KEY_US_Emma"))
     (define-keyset "free.User000c-Keyset" (read-keyset "KEY_US_Byta"))
-
-;;KADENA KEYSETTS DEFINITIONS
-
-    (define-keyset "free.KDA_Keyset-AncientHodler" (read-keyset "KEY_KDA_AncientHodler"))
-    (define-keyset "free.KDA_Keyset-Florian" (read-keyset "KEY_KDA_Florian"))
-    (define-keyset "free.KDA_Keyset-Emma" (read-keyset "KEY_KDA_Emma"))
-    (define-keyset "free.KDA_Keyset-Byta" (read-keyset "KEY_KDA_Byta"))
-    (define-keyset "free.KDA_Keyset-Ouroboros" (read-keyset "KEY_KDA_Ouroboros"))
-    (define-keyset "free.KDA_Keyset-GasTanker" (read-keyset "KEY_KDA_GasTanker"))
-    (define-keyset "free.KDA_Keyset-KadenaLiquidStaking" (read-keyset "KEY_KDA_KadenaLiquidStaking"))
-    (define-keyset "free.KDA_Keyset-SnakeAutostake" (read-keyset "KEY_KDA_SnakeAutostake"))
-    (define-keyset "free.KDA_Keyset-SnakeVesting" (read-keyset "KEY_KDA_SnakeVesting"))
+    (define-keyset "free.User000d-Keyset" (read-keyset "KEY_US_Lumy"))
+    (define-keyset "free.User000e-Keyset" (read-keyset "KEY_US_Coca"))
+    (define-keyset "free.User000f-Keyset" (read-keyset "KEY_US_Kiss"))
+    (define-keyset "free.User000g-Keyset" (read-keyset "KEY_US_Plcs"))
+    (define-keyset "free.User000h-Keyset" (read-keyset "KEY_US_Nani"))
 
 (commit-tx)
-
-
-(begin-tx) "Set Enviroment Data"
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Chain Data Time SetUp Definition
+(print "==========================InitSnake_TX-02===============================")
+(begin-tx "InitSnake 02 - Chain Data Time SetUp Definition")
 (env-chain-data
     {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
      "block-time": TV.TIME00}
@@ -150,8 +162,6 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-gas)
 (commit-tx)
-
-
 ;;==============================================================================
 ;;
 ;;
@@ -159,51 +169,38 @@
 ;;
 ;;
 ;;==============================================================================
-;; PART 02 - Load pact Modules
-(print "==========================TX02=========================================")
-(print "==========================Load-Pact-files==============================")
+;; PART 03 - Module Load Up
+(print "==========================InitSnake_TX-03..TX-07========================")
 
-;(begin-tx "Load Kadena Smart-Contract")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-
-;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/KadenaCoin.pact")
-;(use free.coin)
-
-;(env-gas)
-;(commit-tx)
-
-
-
-(begin-tx "Load Demiourgos Pact Token Standard DPTS")
+(begin-tx "InitSnake 03 - Load Demiourgos Pact Token Standard DPTS")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/OUROBOROS.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "Load Meta Fungible DPMF")
+(begin-tx "InitSnake 04 - Load Meta Fungible DPMF")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DPMF.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "Load Autostake")
+(begin-tx "InitSnake 05 - Load Autostake")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Autostake.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "Load Vesting")
+(begin-tx "InitSnake 06 - Load Vesting")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Vesting.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "Use Modules")
+(begin-tx "InitSnake 07 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (use free.OUROBOROS)
@@ -213,52 +210,6 @@
 
 (env-gas)
 (commit-tx)
-
-
-
-
-(begin-tx "Fuel Ancient Hodler with Kadena")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs   [{  "key": "368820f80c324bbc7c2b0610688a7da43e39f91d118732671cd9c7500ff43cca", 
-                "caps": [
-                (coin.TRANSFER "sender00" KC.KADN_NAME_0000 1000.0)
-                        ]}
-             {  "key": KC.KADN_PBKY_0000, 
-                "caps": [
-                (coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_000c 20.0)
-                (coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_000a 20.0)
-                (coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_000b 20.0)
-                (coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_0003 20.0)
-                (coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_0002 20.0)
-                        ]}])
-
-;;Transfer KDA to AncientHodler Account
-;(test-capability (coin.TRANSFER "sender00" "AncientHodler" 1000.0))
-;(coin.TRANSFER "AncientHodler" "Florean" 10.0)
-;(coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
-
-(free.OUROBOROS.TransferKadenaAnew "sender00" KC.KADN_NAME_0000 (describe-keyset "free.KDA_Keyset-AncientHodler") 1000.0)
-(free.OUROBOROS.TransferKadenaAnew KC.KADN_NAME_0000 KC.KADN_NAME_000c (describe-keyset "free.KDA_Keyset-Byta") 20.0)
-(free.OUROBOROS.TransferKadenaAnew KC.KADN_NAME_0000 KC.KADN_NAME_000a (describe-keyset "free.KDA_Keyset-Florian") 20.0)
-(free.OUROBOROS.TransferKadenaAnew KC.KADN_NAME_0000 KC.KADN_NAME_000b (describe-keyset "free.KDA_Keyset-Emma") 20.0)
-(free.OUROBOROS.TransferKadenaAnew KC.KADN_NAME_0000 KC.KADN_NAME_0003 (describe-keyset "free.KDA_Keyset-LiquidStaking") 20.0)
-(free.OUROBOROS.TransferKadenaAnew KC.KADN_NAME_0000 KC.KADN_NAME_0002 (describe-keyset "free.KDA_Keyset-GasTanker") 20.0)
-
-(env-sigs [])
-(env-gas)
-(commit-tx)
-
-
-(begin-tx "Kadena transfer Test")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": KC.KADN_PBKY_0000, "caps": [(coin.TRANSFER KC.KADN_NAME_0000 KC.KADN_NAME_0002 10.0)] }])
-
-(free.OUROBOROS.TransferKadena KC.KADN_NAME_0000 KC.KADN_NAME_0002 10.0)
-
-(env-sigs [])
-(env-gas)
-(commit-tx)
-;;(coin.TRANSFER "AncientHodler" "Gas-Tanker" 10.0)
 ;;==============================================================================
 ;;
 ;;
@@ -266,17 +217,106 @@
 ;;
 ;;
 ;;==============================================================================
-;; PART 03 - Initialise Demiourgos Ecosystem
-;;01]Issue Ouro with initial mint amount and set up the vGas
-(begin-tx "Issue OURO Transactions")
+;; PART 04 - Kadena Account Creation
+(print "==========================InitSnake_TX-08===============================")
+(begin-tx "InitSnake 08 - Kadena Account Creation and Fuel of 1st Account")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-data
+    {
+        "KEY_KDA_AncientHodler": { "keys": [KC.KADN_PBKY_0000]},
+        "KEY_KDA_Florian": { "keys": [KC.KADN_PBKY_000a]},
+        "KEY_KDA_Emma": { "keys": [KC.KADN_PBKY_000b]},
+        "KEY_KDA_Byta": { "keys": [KC.KADN_PBKY_000c]},
+
+        "KEY_KDA_Lumy": { "keys": [KC.KADN_PBKY_000d]},
+        "KEY_KDA_Coca": { "keys": [KC.KADN_PBKY_000e]},
+        "KEY_KDA_Kiss": { "keys": [KC.KADN_PBKY_000f]},
+        "KEY_KDA_Plcs": { "keys": [KC.KADN_PBKY_000g]},
+        "KEY_KDA_Nani": { "keys": [KC.KADN_PBKY_000h]},
+
+        "KEY_KDA_Ouroboros": { "keys": [KC.KADN_PBKY_0001]},
+        "KEY_KDA_GasTanker": { "keys": [KC.KADN_PBKY_0002]},
+        "KEY_KDA_KadenaLiquidStaking": { "keys": [KC.KADN_PBKY_0003]},
+        "KEY_KDA_SnakeAutostake": { "keys": [KC.KADN_PBKY_0004]},
+        "KEY_KDA_SnakeVesting": { "keys": [KC.KADN_PBKY_0005]}
+    }
+)
+(env-sigs   
+    [{  "key": "alice-key", 
+        "caps": 
+            [
+                (coin.TRANSFER "alice" KC.KADN_NAME_0000 990.0)
+            ]
+        }
+    ]
+)
+
+(coin.create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
+(free.OUROBOROS.XC_TransferKadena "alice" KC.KADN_NAME_0000 990.0)
+
+;;Users
+(coin.create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
+(coin.create-account KC.KADN_NAME_000b (read-keyset "KEY_KDA_Emma"))
+(coin.create-account KC.KADN_NAME_000c (read-keyset "KEY_KDA_Byta"))              ;;CTO
+(coin.create-account KC.KADN_NAME_000d (read-keyset "KEY_KDA_Lumy"))
+(coin.create-account KC.KADN_NAME_000e (read-keyset "KEY_KDA_Coca"))
+(coin.create-account KC.KADN_NAME_000f (read-keyset "KEY_KDA_Kiss"))
+(coin.create-account KC.KADN_NAME_000g (read-keyset "KEY_KDA_Plcs"))
+(coin.create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
+
+;;Kadena Accounts of demi Smart Contracts
+(coin.create-account KC.KADN_NAME_0001 (read-keyset "KEY_KDA_Ouroboros"))
+(coin.create-account KC.KADN_NAME_0002 (read-keyset "KEY_KDA_GasTanker"))
+(coin.create-account KC.KADN_NAME_0003 (read-keyset "KEY_KDA_KadenaLiquidStaking"))
+(coin.create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_SnakeAutostake"))
+(coin.create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_SnakeVesting"))
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Initialise Demiourgos DPTS Accounts
+(print "==========================InitSnake_TX-09===============================")
+(begin-tx "InitSnake 09 - DPTS User Account Creation")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Florian" (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Emma" (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Byta" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Lumy" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000d)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Coca" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000e)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Kiss" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000f)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Plcs" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000g)
+    (free.OUROBOROS.C_DeployStandardDPTSAccount "Nani" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000h)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; PART 06.01 - Main Initialisation with OURO Creation and Ouro Origin Mint
+(print "==========================InitSnake_TX-10===============================")
+(begin-tx "InitSnake 10 - Main Initialisation with OURO Creation and Ouro Origin Mint")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
             { "key": "PK_Emma", "caps": [] }])
             
-    (free.OUROBOROS.C_DeployStandardDPTSAccount "AncientHodler" (describe-keyset "free.User0000-Keyset") KC.KADN_NAME_0000)
-    (free.OUROBOROS.C_DeployStandardDPTSAccount "Emma" (describe-keyset "free.User000b-Keyset") KC.KADN_NAME_000b)
-    (free.OUROBOROS.C_DeployStandardDPTSAccount "Byta" (describe-keyset "free.User000c-Keyset") KC.KADN_NAME_000c)
-    (free.OUROBOROS.A_InitialiseOuroboros "AncientHodler")
+    (free.OUROBOROS.A_InitialiseDALOS "AncientHodler")
     (free.OUROBOROS.C_Mint
         "AncientHodler"
         "OURO-98c486052a51"
@@ -288,51 +328,56 @@
     (free.OUROBOROS.C_TransferTrueFungible "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     (free.OUROBOROS.C_MakeGAS "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
     (free.OUROBOROS.A_ToggleGas false true)             ;;turn virtual gas collection to on
-    ;(free.OUROBOROS.A_ToggleGas true true)              ;;turn native gas collection to on
+    (free.OUROBOROS.A_ToggleGas true true)              ;;turn native gas collection to on
     
 (env-sigs [])
 (env-gas)
 (commit-tx)
-
-
-;;02]Initialise Autostake
-(begin-tx "Initialise Snake_Autostake TX")
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; PART 06.02 - Autostake Initialisation
+(print "==========================InitSnake_TX-11===============================")
+(begin-tx "InitSnake 11 - Autostake Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_SnakeAutostake", "caps": [] },
-            { "key": "PK_AncientHodler", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
+            { "key": "PK_SnakeAutostake", "caps": [] }])
 
-    (free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")                ;;Autostake-Pool Key
+    (free.DH_SC_Autostake.A_InitialiseAutostake "AncientHodler" "OURO-98c486052a51")
 
 (env-sigs [])
 (env-gas)
 (commit-tx)
-
-
-;;04]Initialise Vesting
-(begin-tx "Initialise Vesting TX")
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; PART 06.03 - Vesting Initialisation
+(print "==========================InitSnake_TX-12===============================")
+(begin-tx "InitSnake 12 - Vestinge Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_SnakeVesting", "caps": [] },
-            { "key": "PK_AncientHodler", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
+            { "key": "PK_SnakeVesting", "caps": [] }])
 
-    (free.DH_SC_Vesting.A_InitialiseVesting "AncientHodler")                                        ;;Either Vesting Key or AH Key
+    (free.DH_SC_Vesting.A_InitialiseVesting "AncientHodler")
 
 (env-sigs [])
 (env-gas)
 (commit-tx)
-
-
-;;05]Set transfer-role and fee-exemption role for Auryns to Vesting SC and
-;;06]Set Vested Elite-Auryn Id in the Autostake-Pool Trinity Table
-(begin-tx "Setting transfer Role for Auryns to Vesting Account")
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; PART 06.04 - Setting Needed Transfer Roles
+(print "==========================InitSnake_TX-13===============================")
+(begin-tx "InitSnake 13 - Seting needed Transfer Roles")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_SnakeAutostake", "caps": [] },
-            { "key": "PK_AncientHodler", "caps": [] }])
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
+            { "key": "PK_SnakeAutostake", "caps": [] }])
 
-    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)          ;;Autostake Pool Key
-    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)     ;;Autostake Pool Key
-    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "Snake_Vesting" true)
-    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "Snake_Vesting" true)
-    (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")                                       ;;Autostake Pool Key
+    ;;06.04.01 - Fee Exeemption Role for Auryn|Elite-Auryn to the SnakeVesting Smart DPTS Account
+    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "AURYN-98c486052a51" "SnakeVesting" true)
+    (free.OUROBOROS.C_ToggleFeeExemptionRole "AncientHodler" "ELITEAURYN-98c486052a51" "SnakeVesting" true)
+    ;;06.04.02 - Transfer Role for Auryn|Elite-Auryn to the SnakeVesting Smart DPTS Account
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "SnakeVesting" true)
+    (free.OUROBOROS.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "SnakeVesting" true)
+    ;;06.04.03 - Saving the Vested Elite-Auryn DPTF ID in the SnakeAutostake (needed for complete Elite Account Computation)
+    (free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")
 
 (env-sigs [])
 (env-gas)
