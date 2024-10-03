@@ -193,14 +193,6 @@
 (env-gas)
 (commit-tx)
 
-
-(begin-tx "InitSnake 05 - Load Autostake")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ATS.pact")
-(env-gas)
-(commit-tx)
-
 ;(begin-tx "InitSnake 06 - Load Vesting")
 ;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 ;(namespace "free")
@@ -212,7 +204,6 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (use free.OUROBOROS)
-(use free.ATS)
 ;(use free.DH_SC_Autostake)
 ;(use free.DH_SC_Vesting)
 

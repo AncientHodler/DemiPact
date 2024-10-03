@@ -28,7 +28,7 @@
         \ \
         \ [M] [4]DPMF Submodule \
         \ or Demiourgos-Pact-Meta-Fungible is a Token Standard implemented by Demiourgos.Holdings on Pact \
-        \ DPMF Tokens, also known as DALOS Meta-Fungibles, are the 2nd of the 4 Token Types existing on DALOS Virtual Blockchain
+        \ DPMF Tokens, also known as DALOS Meta-Fungibles, are the 2nd of the 4 Token Types existing on DALOS Virtual Blockchain \
         \ \
         \ \
         \ [G] [5]GAS Submodule \
@@ -40,7 +40,7 @@
         \ \
         \ [A] [6]ATS Submodule \
         \ The ATS or Autostkae Module encompasses all the functions and capabilities needed to create \ 
-        \ the native Autostake Capability for DPTF Tokens existing on the DALOS Virtual Blockchain
+        \ the native Autostake Capability for DPTF Tokens existing on the DALOS Virtual Blockchain \
         \ \
         \ \
         \ [L] [7]LIQUID Submodule \
@@ -63,9 +63,8 @@
         \ This way, any DPTF Token Owner has vesting capabilities for their Tokens.\ 
         \ \
         \ The Vesting functionality can be even combined with the Autostake Functionality, \
-        \ with Token owners being able to coil their tokens and vest the output directly to a target account for more granular control of their tokens\
-        \ with everthing being supported natively, at the <protocol-level>;
-        " 
+        \ with Token owners being able to coil their tokens and vest the output directly to a target account for more granular control of their tokens \
+        \ with everthing being supported natively, at the <protocol-level> " 
 
     (use UTILITY)
 ;;  0]GOVERNANCE Capabilitis:
@@ -6145,7 +6144,7 @@
     )
     ;;6.2.3.5][A]           Revoke
     (defun ATS|C_RevokeMint (patron:string id:string)
-        @doc "Used when revoking <role-mint> from ATS|SC_NAME 
+        @doc "Used when revoking <role-mint> from ATS|SC_NAME \
         \ and <id> is a Cold-RBT for any ATS-Pair"
         (if (ATS|UC_IzRBT-Absolute id true)
             (ATS|C_MassTurnColdRecoveryOff patron id)  
@@ -6153,7 +6152,7 @@
         )
     )
     (defun ATS|C_RevokeFeeExemption (patron:string id:string)
-        @doc "Used when revoking <role-fee-exemption> from ATS|SC_NAME 
+        @doc "Used when revoking <role-fee-exemption> from ATS|SC_NAME \
         \ and <id> is a RT for any ATS-Pair"
         (if (ATS|UC_IzRT-Absolute id)
             (ATS|C_MassTurnColdRecoveryOff patron id)  
@@ -6161,7 +6160,7 @@
         )
     )
     (defun ATS|C_RevokeCreateOrAddQ (patron:string id:string)
-        @doc "Used when revoking either <role-nft-add-quantity> or <role-nft-create> from ATS|SC_NAME 
+        @doc "Used when revoking either <role-nft-add-quantity> or <role-nft-create> from ATS|SC_NAME \
         \ and <id> is a Hot-RBT for any ATS-Pair"
         (if (ATS|UC_IzRBT-Absolute id false)
             (ATS|C_TurnRecoveryOff patron (DPMF|UR_RewardBearingToken id) false)
