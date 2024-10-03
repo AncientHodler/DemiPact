@@ -645,8 +645,14 @@
     ;;++++++++
     ;;
     ;;========[V] CAPABILITIES=================================================;;
-    ;;8.1]    [A] VST Capabilities
-    ;;8.1.1]  [A]   VST Basic Capabilities
-    ;;8.1.2]  [A]   VST Composed Capabilities
+    ;;8.1]    [V] VST Capabilities
+    ;;8.1.1]  [V]   VST Basic Capabilities
+    ;;8.1.2]  [V]   VST Composed Capabilities
     ;;========[V] FUNCTIONS====================================================;;
+    ;;8.2]    [V] VST Functions
+    ;;8.2.1]  [V]   VST Utility Functions
+    ;;8.2.1.1][V]           Computing|Composing
+    ;;8.2.2]  [V]   Administration Functions
+    ;;8.2.3]  [V]   Client Functions
+    ;;8.2.4]  [V]   Auxiliary Functions
     ;;=========================================================================;;
