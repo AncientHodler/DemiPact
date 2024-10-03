@@ -6475,8 +6475,8 @@
     ;;
     ;;
     ;;========[V] CAPABILITIES=================================================;;
-    ;;8.1]    [A] VST Capabilities
-    ;;8.1.1]  [A]   VST Basic Capabilities
+    ;;8.1]    [V] VST Capabilities
+    ;;8.1.1]  [V]   VST Basic Capabilities
     (defcap VST|EXISTANCE (id:string token-type:bool existance:bool)
         @doc "Enforce that a DPTF|DPMF has a vesting counterpart or not"
         (let
@@ -6507,7 +6507,7 @@
         @doc "Capability needed to define a vesting pair"
         true
     )
-    ;;8.1.2]  [A]   VST Composed Capabilities
+    ;;8.1.2]  [V]   VST Composed Capabilities
     (defcap VST|VEST (patron:string vester:string target-account:string id:string amount:decimal)
         (compose-capability (VST|EXISTANCE id true true))
         (compose-capability (VST|ACTIVE id (DPTF-DPMF|UR_Vesting id true)))
@@ -6541,11 +6541,10 @@
             (compose-capability (DPTF-DPMF|BURN patron id VST|SC_NAME initial-amount true false))
         )
     )
-
-    
-
-
-
+    ;;========[V] FUNCTIONS====================================================;;
+    ;;8.2]    [V] VST Functions
+    ;;8.2.1]  [V]   VST Utility Functions
+    ;;8.2.1.1][V]           Computing|Composing
     (defun VST|UC_HasVesting:bool (id:string token-type:bool)
         @doc "Checks if a DPTF|DPMF Token has a vesting counterpart"
         (if (= (DPTF-DPMF|UR_Vesting id token-type) UTILITY.BAR)
@@ -6644,13 +6643,13 @@
             culled-object
         )
     )
-
+    ;;8.2.2]  [V]   Administration Functions
     (defun VST|AX_InitialiseVesting (patron:string)
         @doc "Initialises the DalosVesting Smart DALOS Account"
         (require-capability (VESTING))
         (DALOS|C_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME)
     )
-
+    ;;8.2.3]  [V]   Client Functions
     (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
         @doc "Vests <id> given input parameters to its DPMF Vesting Counterpart to <target-account>"
         (with-capability (VST|VEST  patron vester target-account id amount)
@@ -6659,8 +6658,6 @@
             (DPMF|CX_Transfer patron (DPTF-DPMF|UR_Vesting id true) (DPMF|UR_NoncesUsed (DPTF-DPMF|UR_Vesting id true)) VST|SC_NAME target-account amount)
         )
     )
-
-
     (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
         @doc "Client Function that culls a Vested Token"
         (with-capability (VST|CULL patron culler id nonce)
@@ -6687,12 +6684,6 @@
             )
         )
     )
-
-
-
-
-
-
     (defun VST|C_CreateVestingLink (patron:string dptf:string)
         @doc "Creates a Vesting Pair using the Input DPTF Token"
         (with-capability (VST|DEFINE)
@@ -6734,6 +6725,7 @@
             )
         )
     )
+    ;;8.2.4]  [V]   Auxiliary Functions
     (defun VST|X_DefineVestingPair (patron:string dptf:string dpmf:string)
         @doc "Defines an immutable vesting connection between a DPTF and a DPMF Token"
         (require-capability (VST|DEFINE))
@@ -6752,7 +6744,6 @@
             )
         )
     )
-    
 )
 
 (create-table DALOS|PropertiesTable)
