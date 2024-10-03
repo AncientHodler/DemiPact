@@ -721,7 +721,7 @@
     ;;      UC_DEB|UC_EliteTier|UC_EliteAurynzBalance
     ;;
     (defun UC_Elite:object{EliteAccountSchema} (x:decimal)
-    @doc "Computes Elite Tier Name based on x as Elite-Auryn amount"
+        @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (cond
             ;;Class Novice
             ((= x (at 0 ET)) { "class": C1, "name": N00, "tier": "0.0", "deb": (at 0 DEB)})
@@ -925,7 +925,7 @@
         )
     )
     (defun UR_EliteAuryndex:decimal ()
-        @doc "Returns the value of Auryndex with 24 decimals"
+        @doc "Returns the value of Elite-Auryndex with 24 decimals"
         (let
             (
                 (elite-auryn-supply:decimal (OUROBOROS.UR_TrueFungibleSupply (UR_EliteAurynID)))

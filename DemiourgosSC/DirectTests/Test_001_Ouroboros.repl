@@ -1,0 +1,221 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;001]Test Dalos Prices
+(expect "Dalos Standard price set to 10.0 Kadena" 10.0 (free.OUROBOROS.DALOS|UR_Standard))
+(expect "Dalos Smart price set to 25.0 Kadena" 25.0 (free.OUROBOROS.DALOS|UR_Smart))
+
+(expect "Dalos True price set to 200.0 Kadena" 200.0 (free.OUROBOROS.DALOS|UR_True))
+(expect "Dalos Meta price set to 300.0 Kadena" 300.0 (free.OUROBOROS.DALOS|UR_Meta))
+(expect "Dalos Semi price set to 400.0 Kadena" 400.0 (free.OUROBOROS.DALOS|UR_Semi))
+(expect "Dalos Non price set to 500.0 Kadena" 500.0 (free.OUROBOROS.DALOS|UR_Non))
+(expect "Dalos Blue price set to 20.0 Kadena" 20.0 (free.OUROBOROS.DALOS|UR_Blue))
+;;
+;;002]Test Dalos Price Updating
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(begin-tx "Test Dalos Price Updating")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] } ])
+
+(free.OUROBOROS.DALOS|A_UpdateStandard 50.0)
+(expect "Dalos Standard price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Standard))
+(free.OUROBOROS.DALOS|A_UpdateStandard 10.0)
+(expect "Dalos Standard price set to 10.0 Kadena" 10.0 (free.OUROBOROS.DALOS|UR_Standard))
+
+(free.OUROBOROS.DALOS|A_UpdateSmart 50.0)
+(expect "Dalos Smart price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Smart))
+(free.OUROBOROS.DALOS|A_UpdateSmart 25.0)
+(expect "Dalos Smart price set to 10.0 Kadena" 25.0 (free.OUROBOROS.DALOS|UR_Smart))
+
+(free.OUROBOROS.DALOS|A_UpdateTrue 50.0)
+(expect "Dalos Smart price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_True))
+(free.OUROBOROS.DALOS|A_UpdateTrue 200.0)
+(expect "Dalos DPTF price set to 200.0 Kadena" 200.0 (free.OUROBOROS.DALOS|UR_True))
+
+(free.OUROBOROS.DALOS|A_UpdateMeta 50.0)
+(expect "Dalos DPMF price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Meta))
+(free.OUROBOROS.DALOS|A_UpdateMeta 300.0)
+(expect "Dalos DPMF price set to 300.0 Kadena" 300.0 (free.OUROBOROS.DALOS|UR_Meta))
+
+(free.OUROBOROS.DALOS|A_UpdateSemi 50.0)
+(expect "Dalos DPSF price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Semi))
+(free.OUROBOROS.DALOS|A_UpdateSemi 400.0)
+(expect "Dalos DPSF price set to 400.0 Kadena" 400.0 (free.OUROBOROS.DALOS|UR_Semi))
+
+(free.OUROBOROS.DALOS|A_UpdateNon 50.0)
+(expect "Dalos DPNF price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Non))
+(free.OUROBOROS.DALOS|A_UpdateNon 500.0)
+(expect "Dalos DPNF price set to 500.0 Kadena" 500.0 (free.OUROBOROS.DALOS|UR_Non))
+
+(free.OUROBOROS.DALOS|A_UpdateBlue 50.0)
+(expect "Dalos Blue price set to 50.0 Kadena" 50.0 (free.OUROBOROS.DALOS|UR_Blue))
+(free.OUROBOROS.DALOS|A_UpdateBlue 25.0)
+(expect "Dalos Blue price set to 25.0 Kadena" 25.0 (free.OUROBOROS.DALOS|UR_Blue))
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+;;003]DPTS Capability testing
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;DPTS_ACCOUNT_EXIST
+(begin-tx "Test DPTS_ACCOUNT_EXIST")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+    (expect "Capability DPTS_ACCOUNT_EXIST tested succesfully" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|ACCOUNT_EXIST "AncientHodler")))
+    (expect-failure "DPTS Account Bubu doesnt exist" (test-capability (free.OUROBOROS.DALOS|ACCOUNT_EXIST "Bubu")))
+(env-gas)
+(commit-tx)
+
+;;DPTS_ACCOUNT_OWNER
+(begin-tx "Test DPTS_ACCOUNT_OWNER")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] } ])
+    (expect "AncientHodler guard could be enforced since it exists in the enviroment signatures" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|ACCOUNT_OWNER "AncientHodler")))
+    (expect-failure "Bubu guard cannot be enforced since Bubu DPTS account doesnt exist" (test-capability (free.OUROBOROS.DALOS|ACCOUNT_OWNER "Bubu")))
+    (expect-failure "Emma guard could not be enforced since it doesnt exist in the enviroment signatures" (test-capability (free.OUROBOROS.DALOS|ACCOUNT_OWNER "Emma")))
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+;;IZ_DPTS_ACCOUNT_SMART
+(begin-tx "Test IZ_DPTS_ACCOUNT_SMART")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+    (expect "AncientHolder passed the Capability tests as Standard DPTS Account" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|IZ_ACCOUNT_SMART "AncientHodler" false)))
+    (expect "SnakeAutostake passed the Capability tests as Smart DPTS Account" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|IZ_ACCOUNT_SMART "SnakeAutostake" true)))
+    (expect-failure "AncientHolder did not pass the tests as a Smart DPTS Account" (test-capability (free.OUROBOROS.DALOS|IZ_ACCOUNT_SMART true)))
+    (expect-failure "SnakeAutostake did not pass the tests as a Standard DPTS Account" (test-capability (free.OUROBOROS.DALOS|IZ_ACCOUNT_SMART false)))
+(env-gas)
+(commit-tx)
+
+;;SC_TRANSFERABILITY
+(begin-tx "Test SC_TRANSFERABILITY")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_SnakeAutostake", "caps": [] }
+        { "key": "PK_SnakeVesting", "caps": [] } 
+    ]
+)
+
+    ;(format "SnakeAutostake is a Smart DPTS Account with {} to <payable-as-smart-contract> and {} to <payable-by-smart-contract>" [(free.OUROBOROS.DALOS|UR_AccountPayableAs "SnakeAutostake")(free.OUROBOROS.DALOS|UR_AccountPayableBy "SnakeAutostake")])
+    ;(expect "Sender AncientHolder and Receiver SnakeAutostake pass transferability when method is set to TRUE" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" true)))
+    ;(expect-failure "Sender AncientHolder and Receiver SnakeAutostake DO NOT pass transferability when method is set to TRUE"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" false)))
+    (expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to FALSE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" false)))
+    (expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to TRUE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" true)))
+
+    ;(free.OUROBOROS.DALOS|C_ControlSmartAccount "AncientHodler" "SnakeAutostake" true true)
+    ;(expect "Sender AncientHolder and Receiver SnakeAutostake pass transferability when method is set to FALSE since SnakeAutostake changed its <payable-as-smart-contract> to TRUE" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" false)))
+    ;(free.OUROBOROS.DALOS|C_ControlSmartAccount "AncientHodler" "SnakeAutostake" false true)
+    ;(expect "Sender SnakeAutostake and Receiver SnakeVesting pass transferability regardless of method (now set to FALSE) because they are both Smart DPTS Accounts and have both the <payable-by-smart-contract> set to true" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "SnakeAutostake" "SnakeVesting" false)))
+    ;(expect "Sender SnakeAutostake and Receiver SnakeVesting pass transferability regardless of method (now set to TRUE) because they are both Smart DPTS Accounts and have both the <payable-by-smart-contract> set to true" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "SnakeAutostake" "SnakeVesting" true)))
+    ;;further testing all possible combinations is not necessary, since the <UC_DPTS-AccountsTransferability> is written perfectly
+
+    ;(free.OUROBOROS.DALOS|C_ControlSmartAccount "AncientHodler" "SnakeAutostake" false false)
+    ;(free.OUROBOROS.DALOS|C_ControlSmartAccount "AncientHodler" "SnakeVesting" false false);
+
+    ;(expect-failure "SUCCES"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "SnakeAutostake" "SnakeVesting" false)))
+
+
+(env-gas)
+(commit-tx)
+
+;;Autostake Testing
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        
+    ]
+)
+
+(format "Cold Recovery state pt Auryn este {}" [(free.OUROBOROS.ATS|UR_ToggleColdRecovery "Auryndex-98c486052a51")])
+(print "Coil Test")
+(format "RTs are {}" [(free.OUROBOROS.ATS|UR_RewardTokens "Auryndex-98c486052a51")])
+(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 400.0)
+(print "Fuel Test")
+(free.OUROBOROS.ATS|C_Fuel "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 600.0)
+(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+(print "Vesting Testing")
+(free.OUROBOROS.VST|C_Vest "AncientHodler" "AncientHodler" "Emma" "AURYN-98c486052a51" 10.0 1 2 5)
+(format "Emma has {} Vested Auryn" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply (free.OUROBOROS.DPTF-DPMF|UR_Vesting "AURYN-98c486052a51" true) "Emma" false)])
+(format "Emma has Vested Auryn as {}" [(free.OUROBOROS.DPMF|UR_AccountUnit "ZAURYN-98c486052a51" "Emma")])
+(print "")
+
+(print "BEFORE")
+(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+(format "Ancient[1] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
+(print "AFTER 1")
+(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+(format "Ancient[2] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
+(format "Ancient[3] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+(print "AFTER 2")
+
+
+(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+(print "+++<><><><>")
+(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
+(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+(print "+++<><><><>")
+(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
+(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+
+(format "AURYN held by OUROBOROS - where the gas goes, is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.DPTF|SC_NAME true)])
+;;(format "Ancient Elite Account is {}" [(free.OUROBOROS.DALOS|UR_Elite "AncientHodler")])
+(print "")
+;(free.OUROBOROS.ATS|UC_RBT-NFR "AURYN-98c486052a51" 20.0)
+;(free.OUROBOROS.VST|UC_SplitBalanceForVesting "AURYN-98c486052a51" 20.0 1)
+;(free.OUROBOROS.DPTF|UR_RewardBearingToken "AURYN-98c486052a51")
+
+(print "")
+(print "Transfer")
+(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 100.0)
+(print "Transfer")
+(print "")
+
+
+
+(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+(print "===")
+(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
+(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+(print "===")
+(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
+(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+(format "AURYN held by OUROBOROS - where the gas goes, is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.DPTF|SC_NAME true)])
+
+(print "===+++===")
+(format "ATS|CPF_RBT is {}" [(free.OUROBOROS.ATS|CPF_RBT "AURYN-98c486052a51" 10.0)])
+(test-capability (free.OUROBOROS.ATS|UPDATE_ROU))
+(format "ATS|CPF_RT is {}" [(free.OUROBOROS.ATS|CPF_RT "OURO-98c486052a51" 15.0)])
+(format "ATS|CPF_RT-RBT is {}" [(free.OUROBOROS.ATS|CPF_RT-RBT "AURYN-98c486052a51" 20.0)])
+
+
+
+(print "+++")
+(free.UTILITY.UC_SplitBalanceWithBooleans 24 10.0 3 [true false true false true])
+
+(env-gas)
+(commit-tx)
+
+
