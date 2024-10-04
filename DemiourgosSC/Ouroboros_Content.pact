@@ -638,8 +638,11 @@
     ;;++++++++
     ;;
     ;;========[L] CAPABILITIES=================================================;;
+    ;;7.1]    [L] LIQUID Capabilities
+    ;;7.1.1]  [L]   LIQUID Composed Capabilities
     ;;========[L] FUNCTIONS====================================================;;
-    ;;7.2.1]  [A]   ATS Administration Functions
+    ;;7.2.1]  [L]   LIQUID Administration Functions
+    ;;7.2.2]  [L]   LIQUID Client Functions
     ;;========[L] =============================================================;;
     ;;
     ;;++++++++

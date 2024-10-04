@@ -349,55 +349,6 @@
             { "key": "PK_AOZ", "caps": [] }])
             
 
-    ;;Make ATS-Pair OURO-Auryn
-    (free.OUROBOROS.ATS|C_Issue
-        "AncientHodler"
-        "AncientHodler"
-        "Auryndex"
-        24
-        "OURO-98c486052a51"
-        false
-        "AURYN-98c486052a51"
-        false
-    )
-    (free.OUROBOROS.ATS|C_SetColdFee "AncientHodler" "Auryndex-98c486052a51"
-        7
-        [50.0 100.0 200.0 350.0 550.0 800.0]
-        [
-            [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
-            [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
-            [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
-            [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
-            [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
-            [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
-            [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
-        ]
-    )
-    (free.OUROBOROS.ATS|C_TurnRecoveryOn "AncientHodler" "Auryndex-98c486052a51" true)
-
-    ;;Make ATS-Pair OURO-Auryn
-    (free.OUROBOROS.ATS|C_Issue
-        "AncientHodler"
-        "AncientHodler"
-        "EliteAuryndex"
-        24
-        "AURYN-98c486052a51"
-        true
-        "ELITEAURYN-98c486052a51"
-        true
-    )
-    (free.OUROBOROS.ATS|C_SetColdFee "AncientHodler" "EliteAuryndex-98c486052a51"
-        7
-        [0.0]
-        [[0.0]]
-    )
-    (free.OUROBOROS.ATS|C_SetCRD "AncientHodler" "EliteAuryndex-98c486052a51" false 360 24)
-    (free.OUROBOROS.ATS|C_ToggleElite "AncientHodler" "EliteAuryndex-98c486052a51" true)
-    (free.OUROBOROS.ATS|C_TurnRecoveryOn "AncientHodler" "EliteAuryndex-98c486052a51" true)
-
-
-
-
 (env-sigs [])
 (env-gas)
 (commit-tx)
@@ -410,9 +361,9 @@
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             { "key": "PK_DalosVesting", "caps": [] }])
 
-    (free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "OURO-98c486052a51")
-    (free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "AURYN-98c486052a51")
-    (free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "ELITEAURYN-98c486052a51")
+    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "OURO-98c486052a51")
+    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "AURYN-98c486052a51")
+    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "ELITEAURYN-98c486052a51")
 
 (env-sigs [])
 (env-gas)

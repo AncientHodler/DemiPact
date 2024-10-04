@@ -580,11 +580,11 @@
         (at "elite-ats-gas-source-id" (read DALOS|PropertiesTable DALOS|INFO ["elite-ats-gas-source-id"]))
     )
     (defun DALOS|UR_WrappedKadenaID:string ()
-        @doc "Returns the Elite-Auryn ID"
+        @doc "Returns the Wrapped KDA ID"
         (at "wrapped-kda-id" (read DALOS|PropertiesTable DALOS|INFO ["wrapped-kda-id"]))
     )
     (defun DALOS|UR_LiquidKadenaID:string ()
-        @doc "Returns the Elite-Auryn ID"
+        @doc "Returns the Liquid KDA ID"
         (at "liquid-kda-id" (read DALOS|PropertiesTable DALOS|INFO ["liquid-kda-id"]))
     )
     ;;1.2.1.1][D]           Account Info
@@ -786,6 +786,9 @@
         (with-capability (DEMIURGOI)
         ;;Deploy the <Ouroboros> Smart DALOS Account
             (DALOS|C_DeploySmartAccount DPTF|SC_NAME (keyset-ref-guard DPTF|SC_KEY) DPTF|SC_KDA-NAME)
+        ;;Deploy Autostake and Vesting Smart DALOS Accounts
+            (with-capability (AUTOSTAKE) (ATS|AX_InitialiseAutostake patron))
+            (with-capability (VESTING) (VST|AX_InitialiseVesting patron))
         ;;Insert Blank Info in The DALOS|PropertiesTable to be updated afterwards.
             (insert DALOS|PropertiesTable DALOS|INFO
                 {"unity-id"                 : UTILITY.BAR
@@ -814,26 +817,78 @@
                             true    ;;can-pause
                         )
                     )
-                    (GasID:string
-                        (with-capability (GAS-TANKER)
-                            (GAS|AX_InitialiseGasTanker patron OuroID)
+                    (GasID:string       (with-capability (GAS-TANKER) (GAS|AX_InitialiseGasTanker patron OuroID)))
+                    (SnakeIDs:[string]  (with-capability (OUROBOROS) (DPTF|AX_InitialiseOuroboros patron)))
+                    (LiquidIDs:[string] (with-capability (LIQUID-STAKING) (LIQUID|AX_InitialiseLiquidizer patron)))
+                    (Auryndex:string
+                        (ATS|C_Issue
+                            patron
+                            patron
+                            "Auryndex"
+                            24
+                            OuroID
+                            false
+                            (at 0 SnakeIDs)
+                            false
                         )
                     )
-                    (SnakeIDs:[string]
-                        (with-capability (OUROBOROS)
-                            (DPTF|AX_InitialiseOuroboros patron)
+                    (Elite-Auryndex:string
+                        (ATS|C_Issue
+                            patron
+                            patron
+                            "EliteAuryndex"
+                            24
+                            (at 0 SnakeIDs)
+                            true
+                            (at 1 SnakeIDs)
+                            true
                         )
                     )
-                    (LiquidIDs:[string] 
-                        (with-capability (LIQUID-STAKING)
-                            (LIQUID|AX_InitialiseLiquidizer patron)
+                    (Kadena-Liquid-Index:string
+                        (ATS|C_Issue
+                            patron
+                            patron
+                            "KdaLiqIndex"
+                            24
+                            (at 0 LiquidIDs)
+                            false
+                            (at 1 LiquidIDs)
+                            true
                         )
                     )
+                )   
+        ;;Set-up Auryndex Pair
+                (ATS|C_SetColdFee patron Auryndex
+                    7
+                    [50.0 100.0 200.0 350.0 550.0 800.0]
+                    [
+                        [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
+                        [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
+                        [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
+                        [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
+                        [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
+                        [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
+                        [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
+                    ]
                 )
-                ;;Burn and Mint Roles for Ouro To GAS-Tanker
+                (ATS|C_TurnRecoveryOn patron Auryndex true)
+        ;;Set Elite-Auryndex Pair
+                (ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
+                (ATS|C_SetCRD patron Elite-Auryndex false 360 24)
+                (ATS|C_ToggleElite patron Elite-Auryndex true)
+                (ATS|C_TurnRecoveryOn patron Elite-Auryndex true)
+        ;;Set KdaLiqIndex
+                (ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
+                (ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)
+                (ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)
+        ;;Make Vested Snake Tokens
+                (VST|C_CreateVestingLink patron OuroID)
+                (VST|C_CreateVestingLink patron (at 0 SnakeIDs))
+                (VST|C_CreateVestingLink patron (at 1 SnakeIDs))
+        ;;Burn and Mint Roles for Ouro To GAS-Tanker
                 (DPTF-DPMF|C_ToggleBurnRole patron OuroID GAS|SC_NAME true true)
                 (DPTF|C_ToggleMintRole patron OuroID GAS|SC_NAME true)
-                ;;Update DalosProperties Table with new info
+        ;;Update DalosProperties Table with new info
                 (update DALOS|PropertiesTable DALOS|INFO
                     { "gas-source-id"           : OuroID
                     , "ats-gas-source-id"       : (at 0 SnakeIDs)
@@ -842,7 +897,7 @@
                     , "liquid-kda-id"           : (at 1 LiquidIDs)
                     }
                 )
-                ;;Add Dalos Prices
+        ;;Add Dalos Prices
                 (insert DALOS|PricesTable DALOS|PRICES
                     {"standard"                 : 10.0
                     ,"smart"                    : 20.0
@@ -852,18 +907,11 @@
                     ,"dpnf"                     : 500.0
                     ,"blue"                     : 25.0}
                 )
-                ;;Initialise DalosAutostake
-                (with-capability (AUTOSTAKE)
-                    (ATS|AX_InitialiseAutostake patron)
-                )
-                ;;Initialise DalosVesting
-                (with-capability (VESTING)
-                    (VST|AX_InitialiseVesting patron)
-                )
+                
                 ;(OUROBOROS.DPTF|C_SetFee patron OuroID 150.0)
                 ;(OUROBOROS.DPTF|C_ToggleFee patron OuroID true)
                 ;(OUROBOROS.DPTF|C_ToggleFeeLock patron OuroID true)
-                (+ (+ [OuroID] [GasID]) (+ SnakeIDs LiquidIDs))
+                (+ (+ (+ [OuroID] [GasID]) (+ SnakeIDs LiquidIDs)) [Auryndex Elite-Auryndex Kadena-Liquid-Index])
             )
         )
     )
@@ -6423,8 +6471,32 @@
     ;;
     ;;
     ;;========[L] CAPABILITIES=================================================;;
+    ;;7.1]    [L] LIQUID Capabilities
+    ;;7.1.1]  [L]   LIQUID Composed Capabilities
+    (defcap LIQUID|WRAP (patron:string wrapper:string amount:decimal)
+        @doc "Capability required to wrap native KDA to DPTF Kadena"
+        (let
+            (
+                (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+            )
+            (enforce (!= wrapped-kda-id UTILITY.BAR) "Kadena Wrapping is not live yet")
+            (compose-capability (DPTF|MINT patron wrapped-kda-id LIQUID|SC_NAME amount false true))
+            (compose-capability (DPTF-DPMF|TRANSFER patron wrapped-kda-id LIQUID|SC_NAME wrapper amount true true))
+        )
+    )
+    (defcap LIQUID|UNWRAP (patron:string unwrapper:string amount:decimal)
+        @doc "Capability required to wrap native KDA to DPTF Kadena"
+        (let
+            (
+                (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+            )
+            (enforce (!= wrapped-kda-id UTILITY.BAR) "Kadena Unwrapping is not live yet")
+            (compose-capability (DPTF-DPMF|TRANSFER patron wrapped-kda-id unwrapper LIQUID|SC_NAME amount true true))
+            (compose-capability (DPTF-DPMF|BURN patron wrapped-kda-id LIQUID|SC_NAME amount true true))
+        )
+    )
     ;;========[L] FUNCTIONS====================================================;;
-    ;;7.2.1]  [L]   ATS Administration Functions
+    ;;7.2.1]  [L]   LIQUID Administration Functions
     (defun LIQUID|AX_InitialiseLiquidizer:[string] (patron:string)
         @doc "Initialises the DALOS Kadena Liquid Staking"
         (require-capability (LIQUID-STAKING))
@@ -6463,7 +6535,50 @@
                     )
                 )
             )
+            ;;Burn and Mint Roles for DWK To LIQUID|SC_NAME
+            (DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID|SC_NAME true true)
+            (DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID|SC_NAME true)
+            ;;Set DLK Volumetric Fee
+            (DPTF|C_SetFee patron StakedKadenaID -1.0)
+            (DPTF|C_ToggleFee patron StakedKadenaID true)
+            (DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+            ;;Return Kadena IDs
             [WrappedKadenaID StakedKadenaID]
+        )
+    )
+    ;;7.2.2]  [L]   LIQUID Client Functions
+    (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
+        @doc "Wraps native Kadena to DPTF Kadena"
+        (with-capability (LIQUID|WRAP patron wrapper amount)
+            (let
+                (
+                    (kadena-patron:string (DALOS|UR_AccountKadena wrapper))
+                    (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+                )
+            ;;Wrapper transfer KDA to LIQUID|SC_KDA-NAME
+                (GAS|XC_TransferDalosFuel kadena-patron LIQUID|SC_KDA-NAME amount)
+            ;;LIQUID|SC_NAME mints DWK
+                (DPTF|CX_Mint patron wrapped-kda-id LIQUID|SC_NAME amount false)
+            ;;LIQUID|SC_NAME transfer DWK to wrapper
+                (DPTF|CX_Transfer patron wrapped-kda-id LIQUID|SC_NAME wrapper amount)
+            )
+        )
+    )
+    (defun LIQUID|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)
+        @doc "Unwraps DPTF Kadena to native Kadena"
+        (with-capability (LIQUID|UNWRAP patron unwrapper amount)
+            (let
+                (
+                    (kadena-patron:string (DALOS|UR_AccountKadena unwrapper))
+                    (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+                )
+            ;;Unwrapper transfer DPTF KDA to LIQUID|SC_NAME
+                (DPTF|CX_Transfer patron wrapped-kda-id unwrapper LIQUID|SC_NAME amount)
+            ;;LIQUID|SC_NAME burns DWK
+                (DPTF|CX_Burn patron wrapped-kda-id LIQUID|SC_NAME amount)
+            ;;LIQUID|SC_KDA-NAME transfers native KDA to unwrapper
+                (GAS|XC_TransferDalosFuel LIQUID|SC_KDA-NAME kadena-patron amount)
+            )
         )
     )
     ;;

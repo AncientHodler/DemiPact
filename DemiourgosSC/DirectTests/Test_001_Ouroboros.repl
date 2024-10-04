@@ -218,4 +218,49 @@
 (env-gas)
 (commit-tx)
 
+;;LIQUID Staking Test
+(begin-tx "Test Wrap LIQUID")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": (drop 2 (free.OUROBOROS.DALOS|UR_AccountKadena "AncientHodler")), 
+          "caps": [
+                    (coin.TRANSFER 
+                        (free.OUROBOROS.DALOS|UR_AccountKadena "AncientHodler") 
+                        (free.OUROBOROS.DALOS|UR_AccountKadena "Liquidizer")
+                        100.0)
+                  ] 
+        }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
 
+(free.OUROBOROS.LIQUID|C_WrapKadena "AncientHodler" "AncientHodler" 100.0)
+(format "AncientHodler has {} DWK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" "AncientHodler" true)])
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test UnWrap LIQUID")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": (drop 2 (free.OUROBOROS.DALOS|UR_AccountKadena "Liquidizer")), 
+          "caps": [
+                    (coin.TRANSFER 
+                        (free.OUROBOROS.DALOS|UR_AccountKadena "Liquidizer") 
+                        (free.OUROBOROS.DALOS|UR_AccountKadena "AncientHodler")
+                        20.0)
+                  ] 
+        }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.OUROBOROS.LIQUID|C_UnwrapKadena "AncientHodler" "AncientHodler" 20.0)
+(format "AncientHodler has {} DWK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" "AncientHodler" true)])
+
+(env-gas)
+(commit-tx)
