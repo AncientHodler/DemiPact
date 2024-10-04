@@ -1,3 +1,5 @@
+(load "DirectTests/Test_001_Ouroboros.repl")
+(load "DirectTests/Test_001_Ouroboros.repl")
 (free.UTILITY.ATS|UC_MakeHardIntervals 12 6)
 (free.UTILITY.ATS|UC_MakeHardIntervals 120 12)
 (free.UTILITY.ATS|UC_MakeHardIntervals 360 24)
@@ -96,5 +98,3 @@
 (load "DirectTests/Test_001_Ouroboros.repl")
 (free.OUROBOROS.BoleanDecimalCombiner [true false true false] [2.0 3.0])
 (free.OUROBOROS.BoleanDecimalCombiner [true false false true] [2.0 3.0])
-(free.UTILITY.UC_InsertAt [2 77 3] 2 77)
-(load "DirectTests/Test_001_Ouroboros.repl")

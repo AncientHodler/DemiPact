@@ -993,6 +993,10 @@
             , "elite"                       : DALOS|PLEB
             }  
         )
+        (if (not (GAS|UC_NativeSubZero))
+            (GAS|X_CollectDalosFuel account (DALOS|UR_Standard))
+            true
+        )
     )
     (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string)
         @doc "Deploys a Smart DALOS Account. \
@@ -1012,7 +1016,11 @@
             , "kadena-konto"                : kadena
             , "elite"                       : DALOS|PLEB
             }  
-    )  
+        )
+        (if (not (GAS|UC_NativeSubZero))
+            (GAS|X_CollectDalosFuel account (DALOS|UR_Smart))
+            true
+        )
     )
     (defun DALOS|C_RotateGuard (patron:string account:string guard:guard)
         @doc "Updates the Guard stored in the DALOS|AccountTable"
@@ -2896,8 +2904,13 @@
                 (GAS|X_Collect patron account UTILITY.GAS_ISSUE)
                 true
             )
+            (if (not (GAS|UC_NativeSubZero))
+                (GAS|X_CollectDalosFuel account (DALOS|UR_True))
+                true
+            )
             (DALOS|X_IncrementNonce patron)
             (DPTF|X_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+
         )
     )
     (defun DPTF|CX_Mint (patron:string id:string account:string amount:decimal origin:bool)
@@ -3765,6 +3778,10 @@
                 (GAS|X_Collect patron account UTILITY.GAS_ISSUE)
                 true
             )
+            (if (not (GAS|UC_NativeSubZero))
+                (GAS|X_CollectDalosFuel account (DALOS|UR_Meta))
+                true
+            )
             (DALOS|X_IncrementNonce patron)
             (DPMF|X_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
         )
@@ -4493,7 +4510,7 @@
         (let*
             (
                 (t1:bool (GAS|UC_ZeroGAS id sender))
-                (t2:bool (if (= receiver GAS|SC_NAME) true false))
+                (t2:bool (if (or (= receiver GAS|SC_NAME)(= receiver LIQUID|SC_NAME)) true false))
             )
             (or t1 t2)
         )
@@ -4515,7 +4532,7 @@
         (let*
             (
                 (t0:bool (GAS|UC_SubZero))
-                (t1:bool (if (= sender GAS|SC_NAME) true false))
+                (t1:bool (if (or (= sender GAS|SC_NAME)(= sender LIQUID|SC_NAME)) true false))
             )
             (or t0 t1)
         )
@@ -4814,12 +4831,19 @@
         (let*
             (
                 (kadena-split:[decimal] (GAS|UC_KadenaSplit amount))
+                (am0:decimal (at 0 kadena-split))
+                (am1:decimal (at 1 kadena-split))
+                (am2:decimal (at 2 kadena-split))
                 (kadena-patron:string (DALOS|UR_AccountKadena patron))
+                (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+                (liquidpair:string (at 0 (DPTF|UR_RewardToken wrapped-kda-id)))
             )
-            (GAS|XC_TransferDalosFuel kadena-patron DALOS|CTO (at 0 kadena-split))
-            (GAS|XC_TransferDalosFuel kadena-patron DALOS|HOV (at 0 kadena-split))
-            (GAS|XC_TransferDalosFuel kadena-patron LIQUID|SC_KDA-NAME (at 1 kadena-split))
-            (GAS|XC_TransferDalosFuel kadena-patron GAS|SC_KDA-NAME (at 2 kadena-split))
+            (GAS|XC_TransferDalosFuel kadena-patron DALOS|CTO am0)
+            (GAS|XC_TransferDalosFuel kadena-patron DALOS|HOV am0)
+            (LIQUID|C_WrapKadena patron patron am1)
+            (DPTF|CX_Transfer patron wrapped-kda-id patron LIQUID|SC_NAME am1)
+            (ATS|C_Fuel patron LIQUID|SC_NAME liquidpair wrapped-kda-id am1)
+            (GAS|XC_TransferDalosFuel kadena-patron GAS|SC_KDA-NAME am2)
             (GAS|X_Increment true amount)
         )
     )
@@ -5882,11 +5906,11 @@
                     )
                     (if (> gas-costs 0.0)
                         (with-capability (COMPOSE)
-                            (if (= ZG false)
+                            (if (not ZG)
                                 (GAS|X_Collect patron current-owner-account gas-costs)
                                 true
                             )
-                            (if (= NZG false)
+                            (if (not NZG)
                                 (GAS|X_CollectDalosFuel patron kda-costs)
                                 true
                             )
