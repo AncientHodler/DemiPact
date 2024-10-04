@@ -897,6 +897,9 @@
                     , "liquid-kda-id"           : (at 1 LiquidIDs)
                     }
                 )
+        ;;Autostake 1 DWK so that fueling becomes possible.
+                (LIQUID|C_WrapKadena patron patron 1.0)
+                (ATS|C_Coil patron patron Kadena-Liquid-Index (at 0 LiquidIDs) 1.0)
         ;;Add Dalos Prices
                 (insert DALOS|PricesTable DALOS|PRICES
                     {"standard"                 : 10.0

@@ -261,6 +261,7 @@
 
 (free.OUROBOROS.LIQUID|C_UnwrapKadena "AncientHodler" "AncientHodler" 20.0)
 (format "AncientHodler has {} DWK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" "AncientHodler" true)])
+(format "AncientHodler has {} DLK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DLK-98c486052a51" "AncientHodler" true)])
 
 (env-gas)
 (commit-tx)

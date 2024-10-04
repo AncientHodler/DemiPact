@@ -313,12 +313,35 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;; PART 06.01 - Main Initialisation with OURO Creation and Ouro Origin Mint
 (print "==========================InitSnake_TX-10===============================")
-(begin-tx "InitSnake 10 - Main Initialisation with OURO Creation and Ouro Origin Mint")
+(begin-tx "InitSnake 10 - Main Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
-            { "key": "PK_Emma", "caps": [] }])
+(env-sigs 
+    [ 
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": [
+                    (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
+                    1.0)
+                  ] 
+        }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
             
     (free.OUROBOROS.DALOS|A_Initialise "AncientHodler")
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "InitSnake 11 - Secondary Initialisation with OURO Creation and Ouro Origin Mint")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+          ])
     ;;OriginMint Ouro
     (free.OUROBOROS.DPTF|C_Mint
         "AncientHodler"
@@ -341,7 +364,7 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;; PART 06.02 - Autostake Initialisation
 (print "==========================InitSnake_TX-11===============================")
-(begin-tx "InitSnake 11 - Autostake Initialisation")
+(begin-tx "InitSnake 12 - Autostake Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             { "key": "PK_DalosAutostake", "caps": [] }
@@ -356,7 +379,7 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;; PART 06.03 - Vesting Initialisation
 (print "==========================InitSnake_TX-12===============================")
-(begin-tx "InitSnake 12 - Vestinge Initialisation")
+(begin-tx "InitSnake 13 - Vestinge Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             { "key": "PK_DalosVesting", "caps": [] }])
@@ -372,7 +395,7 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;; PART 06.04 - Setting Needed Transfer Roles
 ;(print "==========================InitSnake_TX-13===============================")
-;(begin-tx "InitSnake 13 - Seting needed Transfer Roles")
+;(begin-tx "InitSnake 14 - Seting needed Transfer Roles")
 ;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 ;(env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             ;{ "key": "PK_DalosAutostake", "caps": [] }])
