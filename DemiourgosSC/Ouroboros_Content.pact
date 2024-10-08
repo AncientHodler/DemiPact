@@ -483,6 +483,7 @@
     ;;========[D] FUNCTIONS====================================================;;
     ;;1.2]    [D] DALOS Functions
     ;;1.2.1]  [D]   DALOS Utility Functions
+    ;;1.2.1.0][D]           Properties Info
     ;;1.2.1.1][D]           Account Info
     ;;1.2.1.2][D]           Dalos Price Info
     ;;1.2.1.3][D]           Computing
@@ -540,8 +541,8 @@
     ;;3.2.1.1][T]           Account Info
     ;;3.2.1.2][T]           True-Fungible Info
     ;;3.2.1.3][T]           Computing
-    ;;3.2.1.4][T]           Composition
-    ;;3.2.1.5][T]           Validations
+    ;;3.2.1.4][T]           Composing [OURO2]
+    ;;3.2.1.5][T]           Validations [OURO2]
     ;;3.2.2]  [T]   DPTF Administration Functions
     ;;3.2.3]  [T]   DPTF Client Functions
     ;;3.2.3.1][T]           Control
@@ -549,10 +550,12 @@
     ;;3.2.3.3][T]           Create
     ;;3.2.3.4][T]           Destroy
     ;;3.2.3.5][T]           Transfer
+    ;;3.2.3.6][T]           Multi-(Issue and Transfer) [OURO2]
     ;;3.2.4]  [T]   DPTF Auxiliary Functions
     ;;3.2.4.1][T]           Transfer
     ;;3.2.4.2][T]           Update
     ;;3.2.4.3][T]           Remainder-Aux
+    ;;3.2.4.4][T]           Remainder-Aux [OURO2]
     ;;========[T] =============================================================;;
     ;;
     ;;++++++++
@@ -572,13 +575,14 @@
     ;;4.2.1.2][M]           Account Nonce
     ;;4.2.1.3][M]           Meta-Fungible Info
     ;;4.2.1.4][M]           Composition
-    ;;4.2.2]  [M]   DPTM Client Functions
+    ;;4.2.2]  [M]   DPMF Client Functions
     ;;4.2.2.1][M]           Control
     ;;4.2.2.2][M]           Token Roles
     ;;4.2.2.3][M]           Create
     ;;4.2.2.4][M]           Destroy
     ;;4.2.2.5][M]           Transfer
-    ;;4.2.3]  [M]   DPTM Auxiliary Functions
+    ;;4.2.2.6][T]           Multi-(Issue) [OURO2]
+    ;;4.2.3]  [M]   DPMF Auxiliary Functions
     ;;4.2.3.1][M]           Transfer
     ;;4.2.3.2][M]           Update
     ;;4.2.3.3][M]           Remainder-Aux
@@ -592,13 +596,15 @@
     ;;5.1.2]  [G]   GAS Composed Capabilities
     ;;5.1.2.1][G]           GAS Control
     ;;5.1.2.2][G]           GAS Handling
+    ;;5.1.2.3][G]           Client Capabilities [OURO2]
     ;;========[G] FUNCTIONS====================================================;;
     ;;5.2]    [G] GAS Functions
     ;;5.2.1]  [G]   GAS Utility Functions
     ;;5.2.1.1][G]           Gas Info
     ;;5.2.1.2][G]           Computing
+    ;;5.2.1.3][G]           Computing [OURO2]
     ;;5.2.2]  [G]   GAS Administration Functions
-    ;;5.2.3]  [G]   GAS Client Functions
+    ;;5.2.3]  [G]   GAS Client Functions [OURO2]
     ;;5.2.4]  [G]   GAS Auxiliary Functions
     ;;5.2.4.1][G]           GAS|PropertiesTable Update
     ;;5.2.4.2][G]           Virtual Gas Collection
@@ -610,8 +616,8 @@
     ;;========[A] CAPABILITIES=================================================;;
     ;;6.1]    [A] ATS Capabilities
     ;;6.1.1]  [A]   ATS Basic Capabilities
-    ;;6.1.1.1][A]           ATS|Pairs> Table Management
-    ;;6.1.1.2][A]           ATS|Ledger> Table Management
+    ;;6.1.1.1][A]           <ATS|Pairs> Table Management
+    ;;6.1.1.1][A]           <ATS|Ledger> Table Management [OURO2]
     ;;6.1.2]  [A]   ATS Composed Capabilities
     ;;6.1.2.1][A]           Control
     ;;6.1.2.2][A]           Create
@@ -621,18 +627,21 @@
     ;;6.2]    [A] ATS Functions
     ;;6.2.1]  [A]   ATS Utility Functions
     ;;6.2.1.1][A]           ATS|Pairs Info
-    ;;6.2.1.2][A]           ATS|Ledger Info
-    ;;6.2.1.3][A]           Computing|Composing
-    ;;6.2.1.4][A]           CPF Computers
-    ;;6.2.1.5][A]           Validations
+    ;;6.2.1.2][A]           Computing|Composing
+    ;;6.2.1.3][A]           CPF Computers
+    ;;6.2.1.4][A]           Validations
+    ;;6.2.1.5][A]           ATS|Ledger Info [OURO2]
+    ;;6.2.1.6][A]           ATS|Ledger Computing [OURO2]
+    ;;6.2.1.7][A]           ATS|Ledger Composing [OURO2]
     ;;6.2.2]  [A]   ATS Administration Functions
-    ;;6.2.3]  [A]   ATS Client Functions
+    ;;6.2.3]  [A]   ATS Client Functions [+OURO2]
     ;;6.2.3.1][A]           Control
     ;;6.2.3.2][A]           Create
     ;;6.2.3.3][A]           Destroy
     ;;6.2.3.4][A]           Use
     ;;6.2.3.5][A]           Revoke
-    ;;6.2.4]  [A]   ATS Utility Functions
+    ;;6.2.4]  [A]   ATS Aux Functions
+    ;;6.2.4.1][A]           ATS|Ledger Aux [OURO2]
     ;;========[A] =============================================================;;
     ;;
     ;;++++++++
@@ -650,12 +659,12 @@
     ;;========[V] CAPABILITIES=================================================;;
     ;;8.1]    [V] VST Capabilities
     ;;8.1.1]  [V]   VST Basic Capabilities
-    ;;8.1.2]  [V]   VST Composed Capabilities
+    ;;8.1.2]  [V]   VST Composed Capabilities [OURO2]
     ;;========[V] FUNCTIONS====================================================;;
     ;;8.2]    [V] VST Functions
     ;;8.2.1]  [V]   VST Utility Functions
-    ;;8.2.1.1][V]           Computing|Composing
-    ;;8.2.2]  [V]   Administration Functions
-    ;;8.2.3]  [V]   Client Functions
-    ;;8.2.4]  [V]   Auxiliary Functions
+    ;;8.2.1.1][V]           Computing|Composing [+OURO2]
+    ;;8.2.2]  [V]   VST Administration Functions
+    ;;8.2.3]  [V]   VST Client Functions [+OURO2]
+    ;;8.2.4]  [V]   VST Aux Functions
     ;;=========================================================================;;

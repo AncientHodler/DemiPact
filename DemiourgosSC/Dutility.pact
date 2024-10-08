@@ -56,7 +56,7 @@
     (defconst AFT       ;;Auryn Fee Thresholds
         [50.0 100.0 200.0 350.0 550.0 800.0]
     )
-    (defconst AUHD      ;;Auryn Uncoil Hour Duration
+    (defconst AUHD      ;;Auryn Uncoil Hour Duration - Default when generating ATS-Pair
         [504 480 478 476 472 468 464 460
         456 454 452 448 444 440 436
         432 430 428 424 420 416 412
@@ -65,7 +65,7 @@
         360 358 356 352 348 344 340
         336 330 324 318 312 306 300]
     )
-    (defconst EAUHD      ;;Elite-Auryn Uncoil Hour Duration
+    (defconst EAUHD      ;;Elite-Auryn Uncoil Hour Duration - 
         [1680 1512 1488 1464 1440 1416 1392 1368
         1344 1320 1296 1272 1248 1224 1200
         1176 1152 1128 1104 1080 1056 1032
@@ -73,10 +73,9 @@
         840 816 792 768 744 720 696
         672 648 624 600 576 552 528
         504 480 456 432 408 384 360]
-    )
+    );;generated with <(OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)>
     (defconst AURYN_FEE 50.0)
     (defconst ELITE-AURYN_FEE 100.0)
-
     ;;Time Constants
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))

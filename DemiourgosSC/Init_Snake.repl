@@ -341,7 +341,7 @@
     ]
 )
             
-    (free.OUROBOROS.DALOS|A_Initialise "AncientHodler")
+    (free.OURO2.DALOS|A_Initialise "AncientHodler")
 
 (env-sigs [])
 (env-gas)
@@ -472,7 +472,7 @@
 
     (print "Issuing ATS Pairs, Mint Genesis Kosons, and Kickstart ATS-Pairs")
     (free.AGEOFZALMOXIS.AOZ|A_MakeATSPairs "AgeOfZalmoxis")
-    
+
     ;(print "Test Values")
     ;(format "AOZ Account has {} PlebiumDenarius" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "AgeOfZalmoxis" true)])
     ;(format "AOZ Account has {} ComatusAureus" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "CAKOSON-98c486052a51" "AgeOfZalmoxis" true)])
