@@ -158,7 +158,7 @@
         @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (cond
             ;;Class Novice
-            ((= x (at 0 ET)) { "class": C1, "name": N00, "tier": "0.0", "deb": (at 0 DEB)})
+            ((<= x (at 0 ET)) { "class": C1, "name": N00, "tier": "0.0", "deb": (at 0 DEB)})
             ((and (> x (at 0 ET))(< x (at 1 ET))) { "class": C1, "name": N01, "tier": "0.1", "deb": (at 0 DEB)})
             ((and (>= x (at 1 ET))(< x (at 2 ET))) { "class": C1, "name": N11, "tier": "1.1", "deb": (at 1 DEB)})
             ((and (>= x (at 2 ET))(< x (at 3 ET))) { "class": C1, "name": N12, "tier": "1.2", "deb": (at 2 DEB)})
@@ -618,10 +618,23 @@
     )
 
     
-
-    
-    
     ;;UTILITY
+    (defun UV_EnforceUniformIntegerList (input:[integer])
+        @doc "Enforces that all elements in the integer list are the same."
+        (let 
+            (
+                (fe:integer (at 0 input))
+            )  ;; Get the first element in the list
+            (map
+                (lambda 
+                    (index:integer)
+                    (enforce (= fe (at index input)) "List elements are not the same")
+                    true
+                )
+                (enumerate 0 (- (length input) 1))
+            )
+        )
+    )
     (defun UC_SplitString:[string] (splitter:string splitee:string)
         @doc "Splits a string using a single string as splitter"
         (if (= 0 (length splitee))
@@ -728,6 +741,93 @@
                 (+ in (make-list missing-items value))
             )
         )
-  )
-    
+    )
+
+    (defun UC_MaxInteger:integer (lst:[integer])
+        (fold
+            (lambda
+                (acc:integer element:integer)
+                (if (> element acc) element acc)
+            )
+            (at 0 lst)
+            (drop 1 lst)
+        )
+    )
+
+    (defun UC_SplitByIndexedRBT:[decimal] 
+        (
+            rbt-amount:decimal
+            pair-rbt-supply:decimal 
+            index:decimal
+            resident-amounts:[decimal] 
+            rt-precisions:[integer] 
+        )
+        @doc "Splits a RBT value using an index and an input resident amount list, in equivalenet resident amounts"
+        (if (= rbt-amount pair-rbt-supply)
+            resident-amounts
+            (let*
+                (
+                    (max-precision:integer (UC_MaxInteger rt-precisions))
+                    (max-pp:integer (at 0 (UC_Search rt-precisions max-precision)))
+                    (indexed-rbt:decimal (floor (* rbt-amount index) max-precision))
+                    (resident-sum:decimal (fold (+) 0.0 resident-amounts))
+                    (preliminary-output:[decimal] 
+                        (fold
+                            (lambda
+                                (acc:[decimal] index:integer)
+                                (UC_AppendLast acc (floor (* (/ (at index resident-amounts) resident-sum) indexed-rbt) (at index rt-precisions)))
+                            )
+                            []
+                            (enumerate 0 (- (length resident-amounts) 1))
+                        )
+                    )
+                    (po-sum:decimal (fold (+) 0.0 preliminary-output))
+                    (black-sheep:decimal (at max-pp preliminary-output))
+                    (white-sheep:decimal (- indexed-rbt (- po-sum black-sheep)))
+                    (output:[decimal] (UC_ReplaceAt preliminary-output max-pp white-sheep))
+                )
+                output
+            )
+        )
+    )
+
+    (defun UC_PromilleSplit:[decimal] (promile:decimal input:decimal input-precision:integer)
+        (let*
+            (
+                (fee:decimal (floor (* (/ promile 1000.0) input) input-precision))
+                (remainder:decimal (- input fee))
+            )
+            [remainder fee]
+        )
+    )
+
+    (defun UC_ListPromileSplit:[[decimal]] (promile:decimal input-lst:[decimal] input-precision-lst:[integer])
+        [
+            (fold
+                (lambda
+                    (acc:[decimal] index:integer)
+                    (UC_AppendLast acc (at 0 (UC_PromilleSplit promile (at index input-lst) (at index input-precision-lst))))
+                )
+                []
+                (enumerate 0 (- (length input-lst) 1))
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] index:integer)
+                    (UC_AppendLast acc (at 1 (UC_PromilleSplit promile (at index input-lst) (at index input-precision-lst))))
+                )
+                []
+                (enumerate 0 (- (length input-lst) 1))
+            )
+        ]
+    )
+
+    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)
+        (enforce (and (> percent 0.0)(<= percent 100.0)) "P is not a valid percent amount")
+        (floor (/ (* x percent) 100.0) precision)
+    )
+    ;(UTILITY.UC_Percent kadena-input-amount 5.0 UTILITY.KDA_PRECISION)
+    ;(UTILITY.UC_Percent kadena-input-amount 15.0 UTILITY.KDA_PRECISION)
+    ;(UTILITY.UC_Percent kadena-input-amount 25.0 UTILITY.KDA_PRECISION)
+    ;(kadena-split:[decimal] (GAS|UC_KadenaSplit amount))
 )

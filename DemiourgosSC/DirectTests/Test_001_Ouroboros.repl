@@ -106,8 +106,8 @@
     ;(format "SnakeAutostake is a Smart DPTS Account with {} to <payable-as-smart-contract> and {} to <payable-by-smart-contract>" [(free.OUROBOROS.DALOS|UR_AccountPayableAs "SnakeAutostake")(free.OUROBOROS.DALOS|UR_AccountPayableBy "SnakeAutostake")])
     ;(expect "Sender AncientHolder and Receiver SnakeAutostake pass transferability when method is set to TRUE" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" true)))
     ;(expect-failure "Sender AncientHolder and Receiver SnakeAutostake DO NOT pass transferability when method is set to TRUE"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" false)))
-    (expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to FALSE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" false)))
-    (expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to TRUE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" true)))
+    ;(expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to FALSE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" false)))
+    ;(expect-failure "Sender AncientHolder and Receiver AncientHodler DO NOT pass transferability regardless of Method (now set to TRUE) because their are one and the same"  (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "AncientHodler" true)))
 
     ;(free.OUROBOROS.DALOS|C_ControlSmartAccount "AncientHodler" "SnakeAutostake" true true)
     ;(expect "Sender AncientHolder and Receiver SnakeAutostake pass transferability when method is set to FALSE since SnakeAutostake changed its <payable-as-smart-contract> to TRUE" "Capability acquired" (test-capability (free.OUROBOROS.DALOS|TRANSFERABILITY "AncientHodler" "SnakeAutostake" false)))
@@ -137,45 +137,45 @@
     ]
 )
 
-(format "Cold Recovery state pt Auryn este {}" [(free.OUROBOROS.ATS|UR_ToggleColdRecovery "Auryndex-98c486052a51")])
+;(format "Cold Recovery state pt Auryn este {}" [(free.OUROBOROS.ATS|UR_ToggleColdRecovery "Auryndex-98c486052a51")])
 (print "Coil Test")
-(format "RTs are {}" [(free.OUROBOROS.ATS|UR_RewardTokens "Auryndex-98c486052a51")])
-(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
-(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 400.0)
+;(format "RTs are {}" [(free.OUROBOROS.ATS|UR_RewardTokens "Auryndex-98c486052a51")])
+;(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+;(free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 400.0)
 (print "Fuel Test")
-(free.OUROBOROS.ATS|C_Fuel "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 600.0)
-(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
-(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+;(free.OUROBOROS.ATS|C_Fuel "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 600.0)
+;(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+;(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
 (print "Vesting Testing")
-(free.OUROBOROS.VST|C_Vest "AncientHodler" "AncientHodler" "Emma" "AURYN-98c486052a51" 10.0 1 2 5)
-(format "Emma has {} Vested Auryn" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply (free.OUROBOROS.DPTF-DPMF|UR_Vesting "AURYN-98c486052a51" true) "Emma" false)])
-(format "Emma has Vested Auryn as {}" [(free.OUROBOROS.DPMF|UR_AccountUnit "ZAURYN-98c486052a51" "Emma")])
+;(free.OUROBOROS.VST|C_Vest "AncientHodler" "AncientHodler" "Emma" "AURYN-98c486052a51" 10.0 1 2 5)
+;(format "Emma has {} Vested Auryn" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply (free.OUROBOROS.DPTF-DPMF|UR_Vesting "AURYN-98c486052a51" true) "Emma" false)])
+;(format "Emma has Vested Auryn as {}" [(free.OUROBOROS.DPMF|UR_AccountUnit "ZAURYN-98c486052a51" "Emma")])
 (print "")
 
 (print "BEFORE")
-(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
-(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
-(format "Ancient[1] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
-(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
+;(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+;(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+;(format "Ancient[1] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+;(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
 (print "AFTER 1")
-(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
-(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
-(format "Ancient[2] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
-(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
-(format "Ancient[3] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+;(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+;(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+;(format "Ancient[2] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
+;(free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 125.0)
+;(format "Ancient[3] has EliteAuryn as {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)])
 (print "AFTER 2")
 
 
-(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
-(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+;(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+;(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
 (print "+++<><><><>")
-(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
-(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
-(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+;(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
+;(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+;(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
 (print "+++<><><><>")
-(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
-(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
-(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+;(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
+;(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+;(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
 
 (format "AURYN held by OUROBOROS - where the gas goes, is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.DPTF|SC_NAME true)])
 ;;(format "Ancient Elite Account is {}" [(free.OUROBOROS.DALOS|UR_Elite "AncientHodler")])
@@ -186,34 +186,34 @@
 
 (print "")
 (print "Transfer")
-(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 100.0)
+;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "Emma" 100.0)
 (print "Transfer")
 (print "")
 
 
 
-(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
-(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+;(format "Auryndex is {}" [(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")])
+;(format "EliteAuryndex is {}" [(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
 (print "===")
-(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
-(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
-(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+;(format "Resident OURO is {}" [(free.OUROBOROS.ATS|UR_RT-Data "Auryndex-98c486052a51" "OURO-98c486052a51" 2)])
+;(format "OURO held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+;(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
 (print "===")
-(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
-(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
-(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
-(format "AURYN held by OUROBOROS - where the gas goes, is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.DPTF|SC_NAME true)])
+;(format "Resident AURYN is {}" [(free.OUROBOROS.ATS|UR_RT-Data "EliteAuryndex-98c486052a51" "AURYN-98c486052a51" 2)])
+;(format "AURYN held by Autostake is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.ATS|SC_NAME true)])
+;(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+;(format "AURYN held by OUROBOROS - where the gas goes, is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" free.OUROBOROS.DPTF|SC_NAME true)])
 
 (print "===+++===")
-(format "ATS|CPF_RBT is {}" [(free.OUROBOROS.ATS|CPF_RBT "AURYN-98c486052a51" 10.0)])
-(test-capability (free.OUROBOROS.ATS|UPDATE_ROU))
-(format "ATS|CPF_RT is {}" [(free.OUROBOROS.ATS|CPF_RT "OURO-98c486052a51" 15.0)])
-(format "ATS|CPF_RT-RBT is {}" [(free.OUROBOROS.ATS|CPF_RT-RBT "AURYN-98c486052a51" 20.0)])
+;(format "ATS|CPF_RBT is {}" [(free.OUROBOROS.ATS|CPF_RBT "AURYN-98c486052a51" 10.0)])
+;(test-capability (free.OUROBOROS.ATS|UPDATE_ROU))
+;(format "ATS|CPF_RT is {}" [(free.OUROBOROS.ATS|CPF_RT "OURO-98c486052a51" 15.0)])
+;(format "ATS|CPF_RT-RBT is {}" [(free.OUROBOROS.ATS|CPF_RT-RBT "AURYN-98c486052a51" 20.0)])
 
 
 
 (print "+++")
-(free.UTILITY.UC_SplitBalanceWithBooleans 24 10.0 3 [true false true false true])
+;(free.UTILITY.UC_SplitBalanceWithBooleans 24 10.0 3 [true false true false true])
 
 (env-gas)
 (commit-tx)
@@ -262,6 +262,51 @@
 (free.OUROBOROS.LIQUID|C_UnwrapKadena "AncientHodler" "AncientHodler" 20.0)
 (format "AncientHodler has {} DWK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" "AncientHodler" true)])
 (format "AncientHodler has {} DLK" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "DLK-98c486052a51" "AncientHodler" true)])
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test DPTF Issue 1")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    10.0
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    10.0
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
+                    30.0
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
+                    150.0
+                )
+            ] 
+        }
+    ]
+)
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test DPTF Issue 1")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(print "Enforce")
+(free.UTILITY.UV_EnforceUniformIntegerList [7 7 7 7 7 7 7 7])
 
 (env-gas)
 (commit-tx)

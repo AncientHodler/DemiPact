@@ -7,7 +7,7 @@
 
 (begin-tx)
 (use repl-coin-tools)
-(fund-accounts ["alice", "bob", "carol", "dave"] 1000.0)
+(fund-accounts ["alice", "bob", "carol", "dave"] 100000.0)
 (commit-tx)
 
 (env-enable-repl-natives false)

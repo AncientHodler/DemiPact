@@ -271,16 +271,7 @@
         ;;States
         frozen:bool
     )
-    (defschema DPTF|ID-Amount
-        @doc "Schema for ID-Amount Pair, used in Multi DPTF Transfers"
-        id:string
-        amount:decimal
-    )
-    (defschema DPTF|Receiver-Amount
-        @doc "Schema for Receiver-Amount Pair, used in Bulk DPTF Transfers"
-        receiver:string
-        amount:decimal
-    )
+
     ;;[M] DPMF Schemas
     (defschema DPMF|PropertiesSchema
         @doc "Schema for DPMF Token (MEta Fungibles) Properties \
@@ -391,29 +382,8 @@
         resident:decimal
         unbonding:decimal
     )
-    (defschema ATS|BalanceSchema
-        @doc "Schema that Stores ATS Unstake Information for ATS Pairs (True Fungibles)\
-            \ Key for the Table is a string composed of: <ATS-Pair> + UTILITY.BAR + <account> \
-            \ This ensure a single entry per ATS Pair per account."
-        P0:[object{ATS|Unstake}]
-        P1:object{ATS|Unstake}
-        P2:object{ATS|Unstake}
-        P3:object{ATS|Unstake}
-        P4:object{ATS|Unstake}
-        P5:object{ATS|Unstake}
-        P6:object{ATS|Unstake}
-        P7:object{ATS|Unstake}
-    )
-    (defschema ATS|Unstake
-        reward-tokens:[decimal]
-        cull-time:time
-    )
     ;;[L] LIQUID Schemas - NONE
-    ;;[V] VST Schemas
-    (defschema VST|MetaDataSchema
-        release-amount:decimal
-        release-date:time
-    )
+    ;;[V] VST Schemas - NONE
     ;;
     ;;
 ;;  3]TABLES Definitions
@@ -431,7 +401,6 @@
     (deftable GAS|PropertiesTable:{GAS|PropertiesSchema})
     ;;[A] ATS Tables
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
-    (deftable ATS|Ledger:{ATS|BalanceSchema})
     ;;[L] LIQUID Tables - NONE
     ;;[V] VST Tables - NONE
     ;;
@@ -649,11 +618,11 @@
     (defun DALOS|UR_Elite-Tier (account:string)
         (at "tier" (DALOS|UR_Elite account))
     )
-    (defun DALOS|UR_Elite-Tier-Major (account:string)
-        (take 1 (DALOS|UR_Elite-Tier account))
+    (defun DALOS|UR_Elite-Tier-Major:integer (account:string)
+        (str-to-int (take 1 (DALOS|UR_Elite-Tier account)))
     )
-    (defun DALOS|UR_Elite-Tier-Minor (account:string)
-        (take -1 (DALOS|UR_Elite-Tier account))
+    (defun DALOS|UR_Elite-Tier-Minor:integer (account:string)
+        (str-to-int (take -1 (DALOS|UR_Elite-Tier account)))
     )
     (defun DALOS|UR_Elite-DEB (account:string)
         (at "deb" (DALOS|UR_Elite account))
@@ -737,11 +706,6 @@
         @doc "Computes transferability between 2 DALOS Accounts, <sender> and <receiver> "
         (DALOS|UC_MethodicTransferability sender receiver false)
     )
-    (defun DALOS|UC_Filterid:[string] (listoflists:[[string]] account:string)
-        @doc "Helper Function needed for returning DALOS ids for Account <account>"
-        (UTILITY.DALOS|UV_Account account)
-        (UTILITY.DALOS|UC_Filterid listoflists account)
-    )
     (defun DALOS|UC_Makeid:string (ticker:string)
         @doc "Creates a DPTF id \ 
             \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
@@ -799,6 +763,16 @@
                 ,"elite-ats-gas-source-id"  : UTILITY.BAR
                 ,"wrapped-kda-id"           : UTILITY.BAR
                 ,"liquid-kda-id"            : UTILITY.BAR}
+            )
+        ;;Add Dalos Prices
+            (insert DALOS|PricesTable DALOS|PRICES
+                {"standard"                 : 10.0
+                ,"smart"                    : 20.0
+                ,"dptf"                     : 200.0
+                ,"dpmf"                     : 300.0
+                ,"dpsf"                     : 400.0
+                ,"dpnf"                     : 500.0
+                ,"blue"                     : 25.0}
             )
             (let*
                 (
@@ -900,16 +874,7 @@
         ;;Autostake 1 DWK so that fueling becomes possible.
                 (LIQUID|C_WrapKadena patron patron 1.0)
                 (ATS|C_Coil patron patron Kadena-Liquid-Index (at 0 LiquidIDs) 1.0)
-        ;;Add Dalos Prices
-                (insert DALOS|PricesTable DALOS|PRICES
-                    {"standard"                 : 10.0
-                    ,"smart"                    : 20.0
-                    ,"dptf"                     : 200.0
-                    ,"dpmf"                     : 300.0
-                    ,"dpsf"                     : 400.0
-                    ,"dpnf"                     : 500.0
-                    ,"blue"                     : 25.0}
-                )
+        
                 
                 ;(OUROBOROS.DPTF|C_SetFee patron OuroID 150.0)
                 ;(OUROBOROS.DPTF|C_ToggleFee patron OuroID true)
@@ -997,7 +962,9 @@
             }  
         )
         (if (not (GAS|UC_NativeSubZero))
-            (GAS|X_CollectDalosFuel account (DALOS|UR_Standard))
+            (with-capability (GAS|COLLECT_KDA account (DALOS|UR_Standard))
+                (GAS|X_CollectDalosFuel account (DALOS|UR_Standard))
+            )
             true
         )
     )
@@ -1021,7 +988,9 @@
             }  
         )
         (if (not (GAS|UC_NativeSubZero))
-            (GAS|X_CollectDalosFuel account (DALOS|UR_Smart))
+            (with-capability (GAS|COLLECT_KDA account (DALOS|UR_Smart))
+                (GAS|X_CollectDalosFuel account (DALOS|UR_Smart))
+            )
             true
         )
     )
@@ -1109,24 +1078,24 @@
     (defun DALOS|X_UpdateElite (account:string)
         @doc "Updates Elite Account Information"
         (require-capability (DALOS|UPDATE_ELITE))
+        (if (= (DALOS|UR_AccountType account) false)
+            (update DALOS|AccountTable account
+                { "elite" : (UTILITY.ATS|UC_Elite (DALOS|UR_EliteAurynzSupply account))}
+            )
+            true
+        )
+    )
+    (defun DALOS|UR_EliteAurynzSupply (account:string)
+        @doc "Returns Total Elite Auryn (norrmal and vested) Supply of Account"
         (if (!= (DALOS|UR_EliteAurynID) UTILITY.BAR)
-            (let*
+            (let
                 (
                     (ea-supply:decimal (DPTF-DPMF|UR_AccountSupply (DALOS|UR_EliteAurynID) account true))
                     (vea:string (DPTF-DPMF|UR_Vesting (DALOS|UR_EliteAurynID) true))
-                    (total-supply:decimal
-                        (if (!= vea UTILITY.BAR)
-                            (+ ea-supply (DPTF-DPMF|UR_AccountSupply vea account false))
-                            ea-supply
-                        )
-                    )
-                    (elite-obj:object{DALOS|EliteSchema} (UTILITY.ATS|UC_Elite total-supply))
                 )
-                (if (= (DALOS|UR_AccountType account) false)
-                    (update DALOS|AccountTable account
-                        { "elite" : elite-obj}
-                    )
-                    true
+                (if (!= vea UTILITY.BAR)
+                    (+ ea-supply (DPTF-DPMF|UR_AccountSupply vea account false))
+                    ea-supply
                 )
             )
             true
@@ -1382,15 +1351,32 @@
         )
     )
     ;;2.1.2.3][TM]          Create
-    (defcap DPTF-DPMF|ISSUE (patron:string client:string)
+    (defcap DPTF-DPMF|ISSUE (patron:string client:string token-type:bool issue-size:integer)
         @doc "Capability required to EXECUTE a <DPTF-DPMF|C_Issue> Function"
         (UTILITY.DALOS|UV_Account patron)
         (UTILITY.DALOS|UV_Account client)
-        (if (!= (DALOS|UR_IgnisID) UTILITY.BAR)
-            (compose-capability (GAS|COLLECTION patron client UTILITY.GAS_ISSUE))
-            true
+        (let*
+            (
+                (issue:decimal UTILITY.GAS_ISSUE)
+                (tf:decimal (DALOS|UR_True))
+                (mf:decimal (DALOS|UR_Meta))
+                (t0:decimal (* (dec issue-size) issue))
+                (t1:decimal (* (dec issue-size) tf))
+                (t2:decimal (* (dec issue-size) mf))
+            )
+            (compose-capability (DALOS|INCREASE-NONCE))
+            (if (!= (DALOS|UR_IgnisID) UTILITY.BAR)
+                (compose-capability (GAS|COLLECTION patron client t0))
+                true
+            )
+            (if (not (GAS|UC_NativeSubZero))
+                (if token-type
+                    (compose-capability (GAS|COLLECT_KDA patron t1))
+                    (compose-capability (GAS|COLLECT_KDA patron t2))
+                )
+                true
+            )
         )
-        (compose-capability (DALOS|INCREASE-NONCE))
     )
     ;;2.1.2.4][TM]          Destroy
     (defcap DPTF-DPMF|BURN (patron:string id:string client:string amount:decimal method:bool token-type:bool)
@@ -1545,47 +1531,6 @@
                     true
                 )
             )
-        )
-    )
-    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
-        @doc "Returns a List of either: \
-            \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
-            \                               Returns True-Fungible, Meta-Fungible IDs or ATS-Pairs held by an Accounts <account> OR \
-            \       Inverse-Mode(false):    <account-or-token-id> is DPTF|DPMF|ATS-Pair Designation Name \
-            \                               Returns Accounts that exists for a specific True-Fungible, Meta-Fungible or ATS-Pair \
-            \       MODE Boolean is only used for proper validation, to accees the needed table, use the proper integer: \
-            \ Table-to-query: \
-            \ 1 (DPTF|BalanceTable), 2(DPMF|BalanceTable), 3(ATS|Ledger) "
-
-        ;;Enforces that only integer 1 2 3 can be used as input for the <table-to-query> variable.
-        (enforce (= (contains table-to-query (enumerate 1 3)) true) (format "Input variable <table-to-query> must be either 1, 2 or 3: it cant be {}" [table-to-query]))
-        (if (= mode true)
-            (UTILITY.DALOS|UV_Account account-or-token-id)
-            (with-capability (COMPOSE)
-                (if (= table-to-query 1)
-                    (DPTF-DPMF|UV_id account-or-token-id true)
-                    (if (= table-to-query 2)
-                        (DPTF-DPMF|UV_id account-or-token-id false)
-                        (UTILITY.DALOS|UV_Account account-or-token-id) 
-                    )
-                )
-            )
-        )
-        (let*
-            (
-                (keyz:[string]
-                    (if (= table-to-query 1)
-                        (keys DPTF|BalanceTable)
-                        (if (= table-to-query 2)
-                            (keys DPMF|BalanceTable)
-                            (keys ATS|Ledger)
-                        )
-                    )
-                )
-                (listoflists:[[string]] (map (lambda (x:string) (UTILITY.UC_SplitString UTILITY.BAR x)) keyz))
-                (output:[string] (DALOS|UC_Filterid listoflists account-or-token-id))
-            )
-            output
         )
     )
     (defun DPTF-DPMF|UR_AccountSupply:decimal (id:string account:string token-type:bool)
@@ -1788,20 +1733,7 @@
             )
         )
     )
-    (defun DPTF-DPMF|UC_AmountCheck:bool (id:string amount:decimal token-type:bool)
-        @doc "Checks if the supplied amount is valid with the decimal denomination of the id \
-        \ and if the amount is greater than zero. \
-        \ Does not use enforcements, If everything checks out, returns true, if not false"
-        (let*
-            (
-                (decimals:integer (DPTF-DPMF|UR_Decimals id token-type))
-                (decimal-check:bool (if (= (floor amount decimals) amount) true false))
-                (positivity-check:bool (if (> amount 0.0) true false))
-                (result:bool (and decimal-check positivity-check))
-            )
-            result
-        )
-    )
+    
     (defun DPTF-DPMF|UV_id (id:string token-type:bool)
         @doc "Enforces the True or MetaFungible <id> exists"
         (if (= token-type true)
@@ -2063,23 +1995,30 @@
     )
     (defun DPTF-DPMF|X_UpdateElite (id:string sender:string receiver:string)
         @doc "Updates Elite Account in a transfer context"
-        (if (= id (DALOS|UR_EliteAurynID))
-            (with-capability (COMPOSE)
-                (DALOS|X_UpdateElite sender)
-                (DALOS|X_UpdateElite receiver)
+        (let
+            (
+                (ea-id:string (DALOS|UR_EliteAurynID))
             )
-            (if (!= (DALOS|UR_EliteAurynID) UTILITY.BAR)
-                (if (!= (DPTF-DPMF|UR_Vesting (DALOS|UR_EliteAurynID) true) UTILITY.BAR)
-                    (if (= id (DPTF-DPMF|UR_Vesting (DALOS|UR_EliteAurynID) true))
-                        (with-capability (COMPOSE)
-                            (DALOS|X_UpdateElite sender)
-                            (DALOS|X_UpdateElite receiver)
-                        )
-                        true
+            (if (!= ea-id UTILITY.BAR)
+                (if (= id ea-id)
+                    (with-capability (COMPOSE)
+                        (DALOS|X_UpdateElite sender)
+                        (DALOS|X_UpdateElite receiver)
                     )
-                true
+                    (let
+                        (
+                            (v-ea-id:string (DPTF-DPMF|UR_Vesting ea-id true))
+                        )
+                        (if (and (!= v-ea-id UTILITY.BAR)(= id v-ea-id))
+                            (with-capability (COMPOSE)
+                                (DALOS|X_UpdateElite sender)
+                                (DALOS|X_UpdateElite receiver)
+                            )
+                            true
+                        )
+                    )
                 )
-            true
+                true
             )
         )
     )
@@ -2300,20 +2239,22 @@
         (compose-capability (GAS|COLLECTION patron (DPTF-DPMF|UR_Konto id true) UTILITY.GAS_SMALL))
         (compose-capability (DPTF|TOGGLE_FEE-LOCK_CORE id toggle))
         (compose-capability (DALOS|INCREASE-NONCE))
-        (if (= toggle false)
-            (compose-capability 
-                (GAS|DUAL-COLLECTER 
-                    patron 
-                    (DPTF-DPMF|UR_Konto id true)
-                    (at 0 (UTILITY.DPTF|UC_UnlockPrice (DPTF|UR_FeeUnlocks id)))
+        (if (not toggle)
+            (let*
+                (
+                    (token-owner:string (DPTF-DPMF|UR_Konto id true))
+                    (toggle-costs:[decimal] (UTILITY.DPTF|UC_UnlockPrice (DPTF|UR_FeeUnlocks id)))
+                    (gas-costs:decimal (at 0 toggle-costs))
+                    (kda-costs:decimal (at 1 toggle-costs))
                 )
+                (compose-capability (GAS|DUAL-COLLECTER patron token-owner gas-costs kda-costs))
             )
             true
         )
     )
-    (defcap GAS|DUAL-COLLECTER (patron:string client:string gas-costs:decimal)
+    (defcap GAS|DUAL-COLLECTER (patron:string client:string gas-costs:decimal kda-costs:decimal)
         (compose-capability (GAS|COLLECTION patron client gas-costs))
-        (compose-capability (GAS|COLLECT_KDA patron))
+        (compose-capability (GAS|COLLECT_KDA patron kda-costs))
         (compose-capability (DPTF-ATS|INCREMENT-LOCKS))
     )
     (defcap DPTF|TOGGLE_FEE-LOCK_CORE (id:string toggle:bool)
@@ -2619,75 +2560,6 @@
             iz-exception
         )
     )
-    ;;3.2.1.4][T]           Composition
-    (defun DPTF|UC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Creates an ID-Amount Pair (used in Multi DPTF Transfer)"
-        (let
-            (
-                (id-length:integer (length id-lst))
-                (amount-length:integer (length transfer-amount-lst))
-            )
-            (enforce (= id-length amount-length) "ID and Transfer-Amount Lists are not of equal length")
-            (zip (lambda (x:string y:decimal) { "id": x, "amount": y }) id-lst transfer-amount-lst)
-        )
-    )
-    (defun DPTF|UC_Pair_Receiver-Amount:[object{DPTF|Receiver-Amount}] (receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Create a Receiver-Amount Pair (used in Bulk DPTF Transfer)"
-        (let
-            (
-                (receiver-length:integer (length receiver-lst))
-                (amount-length:integer (length transfer-amount-lst))
-            )
-            (enforce (= receiver-length amount-length) "Receiver and Transfer-Amount Lists are not of equal length")
-            (zip (lambda (x:string y:decimal) { "receiver": x, "amount": y }) receiver-lst transfer-amount-lst)
-        )
-    )
-    ;;3.2.1.5][T]           Validations
-    (defun DPTF|UV_Pair_ID-Amount:bool (id-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Checks an ID-Amount Pair to be conform so that a Multi DPTF Transfer can properly take place"
-        (fold
-            (lambda
-                (acc:bool item:object{DPTF|ID-Amount})
-                (and acc (DPTF-DPMF|UC_AmountCheck (at "id" item) (at "amount" item) true))
-            )
-            true
-            (DPTF|UC_Pair_ID-Amount id-lst transfer-amount-lst)
-        )
-    )
-    (defun DPTF|UV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Checks an Receiver-Amount pair to be conform with a token id for Bulk Transfer purposes"
-        (DPTF-DPMF|UV_id id true)
-        (and
-            (fold
-                (lambda
-                    (acc:bool item:object{DPTF|Receiver-Amount})
-                    (let*
-                        (
-                            (receiver-account:string (at "receiver" item))
-                            (receiver-check:bool (UTILITY.DALOS|UC_AccountCheck receiver-account))
-                        )
-                        (and acc receiver-check)
-                    )
-                )
-                true
-                (DPTF|UC_Pair_Receiver-Amount receiver-lst transfer-amount-lst)
-            )
-            (fold
-                (lambda
-                    (acc:bool item:object{DPTF|Receiver-Amount})
-                    (let*
-                        (
-                            (transfer-amount:decimal (at "amount" item))
-                            (check:bool (DPTF-DPMF|UC_AmountCheck id transfer-amount true))
-                        )
-                        (and acc check)
-                    )
-                )
-                true
-                (DPTF|UC_Pair_Receiver-Amount receiver-lst transfer-amount-lst)
-            )
-        )
-    )
     ;;5.3.2]  [T]   DPTF Administration Functions
     (defun DPTF|AX_InitialiseOuroboros:[string] (patron:string)
         @doc "Initialises the OUROBOROS Smart DALOS Account"
@@ -2816,33 +2688,47 @@
             \ - Unlock cost: (10000 IGNIS + 100 KDA) * (fee-unlocks + 1) \
             \ - Each unlock adds a Secondary Fee collected by the <GasTanker> Smart DALOS Account \
             \ equal to the VTT * fee-unlocks, calculated by <UTILITY.DPTF|UC_VolumetricTax>"
-        (with-capability (DPTF|TOGGLE_FEE-LOCK patron id toggle)
-            (if (not (GAS|UC_SubZero))
-                (GAS|X_Collect patron (DPTF-DPMF|UR_Konto id true) UTILITY.GAS_SMALL)
-                true
+        (let
+            (
+                (ZG:bool (GAS|UC_SubZero))
+                (NZG:bool (GAS|UC_NativeSubZero))
+                (token-owner:string (DPTF-DPMF|UR_Konto id true))
             )
-            (if (> (at 0 (DPTF|X_ToggleFeeLock id toggle)) 0.0)
-                (with-capability (COMPOSE)
-                    (if (not (GAS|UC_SubZero))
-                        (GAS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (at 0 (DPTF|X_ToggleFeeLock id toggle)))
-                        true
-                    )
-                    (if (not (GAS|UC_NativeSubZero))
-                        (GAS|X_CollectDalosFuel patron (at 1 (DPTF|X_ToggleFeeLock id toggle)))
-                        true
-                    )
-                    (DPTF|X_IncrementFeeUnlocks id)
+            (with-capability (DPTF|TOGGLE_FEE-LOCK patron id toggle)
+                (if (not ZG)
+                    (GAS|X_Collect patron token-owner UTILITY.GAS_SMALL)
+                    true
                 )
-                true
+                (let*
+                    (
+                        (toggle-costs:[decimal] (DPTF|X_ToggleFeeLock id toggle))
+                        (gas-costs:decimal (at 0 toggle-costs))
+                        (kda-costs:decimal (at 1 toggle-costs))
+                    )
+                    (if (> gas-costs 0.0)
+                        (with-capability (COMPOSE)
+                            (if (not ZG)
+                                (GAS|X_Collect patron token-owner gas-costs)
+                                true
+                            )
+                            (if (not NZG)
+                                (GAS|X_CollectDalosFuel patron kda-costs)
+                                true
+                            )
+                            (DPTF|X_IncrementFeeUnlocks id)
+                        )
+                        true
+                    )
+                )
+                (DALOS|X_IncrementNonce patron)
             )
-            (DALOS|X_IncrementNonce patron)
         )
     )
     (defun DPTF|C_WithdrawFees (patron:string id:string output-target-account:string)
-    @doc "Withdraws Primary Fees from the Ouroboros Smart DALOS Account \
-    \ Limitations: \
-    \ Works only if DPTF <id> <fee-target> is left default (Ouroboros Smart DALOS Account) \
-    \ Only the Token Owner can collect these fees to a Normal DALOS Account"
+        @doc "Withdraws Primary Fees from the Ouroboros Smart DALOS Account \
+            \ Limitations: \
+            \ Works only if DPTF <id> <fee-target> is left default (Ouroboros Smart DALOS Account) \
+            \ Only the Token Owner can collect these fees to a Normal DALOS Account"
         (with-capability (DPTF|WITHDRAW-FEES patron id output-target-account)
             (if (not (GAS|UC_SubZero))
                 (GAS|X_Collect patron (DPTF-DPMF|UR_Konto id true) UTILITY.GAS_SMALL)
@@ -2902,18 +2788,17 @@
         @doc "Issues a new DALOS TrueFungible Token, creating an entry in DPTF|PropertiesTable \
             \ Outputs the unique Token-id (ticker + first 12 characters of previous block hash) \
             \ Also creates the issuer's DPTF Account as the first account for this token."
-        (with-capability (DPTF-DPMF|ISSUE patron account)
+        (with-capability (DPTF-DPMF|ISSUE patron account true 1)
             (if (not (GAS|UC_SubZero))
                 (GAS|X_Collect patron account UTILITY.GAS_ISSUE)
                 true
             )
             (if (not (GAS|UC_NativeSubZero))
-                (GAS|X_CollectDalosFuel account (DALOS|UR_True))
+                (GAS|X_CollectDalosFuel patron (DALOS|UR_True))
                 true
             )
             (DALOS|X_IncrementNonce patron)
-            (DPTF|X_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
-
+            (DPTF|X_Issue 1 patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
         )
     )
     (defun DPTF|CX_Mint (patron:string id:string account:string amount:decimal origin:bool)
@@ -2987,36 +2872,7 @@
         (DPTF|X_Transfer id sender receiver a)
         (DALOS|X_IncrementNonce sender)
     )
-    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
-        @doc "Executes a Multi DPTF transfer using 2 lists of multiple IDs and multiple transfer amounts"
-        (let
-            (
-                (pair-validation:bool (DPTF|UV_Pair_ID-Amount id-lst transfer-amount-lst))
-            )
-            (enforce (= pair-validation true) "Input Lists <id-lst>|<transfer-amount-lst> cannot make a valid pair list for Multi Transfer Processing")
-            (let
-                (
-                    (pair:[object{DPTF|ID-Amount}] (DPTF|UC_Pair_ID-Amount id-lst transfer-amount-lst))
-                )
-                (map (lambda (x:object{DPTF|ID-Amount}) (DPTF|X_MultiTransferPaired patron sender receiver x)) pair)
-            )
-        )
-    )
-    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Executes a Bulk DPTF transfer using 2 lists of multiple Receivers and multiple transfer amounts"
-        (let
-            (
-                (pair-validation:bool (DPTF|UV_Pair_Receiver-Amount id receiver-lst transfer-amount-lst))
-            )
-            (enforce (= pair-validation true) "Input Lists <receiver-lst>|<transfer-amount-lst> cannot make a valid pair list with the <id> for Bulk Transfer Processing")
-            (let
-                (
-                    (pair:[object{DPTF|Receiver-Amount}] (DPTF|UC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
-                )
-                (map (lambda (x:object{DPTF|Receiver-Amount}) (DPTF|X_BulkTransferPaired patron id sender x)) pair)
-            )
-        )
-    )
+
     ;;3.2.4]  [T]   DPTF Auxiliary Functions
     ;;3.2.4.1][T]           Transfer
     (defun DPTF|X_Transfer (id:string sender:string receiver:string transfer-amount:decimal)
@@ -3097,28 +2953,6 @@
         (if (!= credit-fee 0.0)
             (DPTF|X_Credit id ATS|SC_NAME credit-fee)
             true
-        )
-    )
-
-    (defun DPTF|X_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount})
-        @doc "Helper Function needed for making a Multi DPTF Transfer possible"
-        (let
-            (
-                (id:string (at "id" id-amount-pair))
-                (amount:decimal (at "amount" id-amount-pair))
-            )
-            (DPTF|C_Transfer patron id sender receiver amount)
-        )
-    )
-    (defun DPTF|X_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount})
-        @doc "Helper Function needed for making a Bulk DPTF Transfer possible"
-
-        (let
-            (
-                (receiver:string (at "receiver" receiver-amount-pair))
-                (amount:decimal (at "amount" receiver-amount-pair))
-            )
-            (DPTF|C_Transfer patron id sender receiver amount)
         )
     )
     (defun DPTF|X_Credit (id:string account:string amount:decimal)
@@ -3312,6 +3146,7 @@
     )
     (defun DPTF|X_Issue:string
         (
+            issue-size:integer
             patron:string 
             account:string
             name:string 
@@ -3327,7 +3162,7 @@
         (UTILITY.DALOS|UV_Decimals decimals)
         (UTILITY.DALOS|UV_Name name)
         (UTILITY.DALOS|UV_Ticker ticker)
-        (require-capability (DPTF-DPMF|ISSUE patron account))
+        (require-capability (DPTF-DPMF|ISSUE patron account true issue-size))
         (insert DPTF|PropertiesTable (DALOS|UC_Makeid ticker)
                 {"owner-konto"          : account
                 ,"name"                 : name
@@ -3734,7 +3569,7 @@
             )
             (DPMF|X_MoveCreateRole id receiver)
             (DALOS|X_IncrementNonce patron)
-            (if (= (DPMF|UR_CreateRoleAccount id) ATS|SC_NAME)
+            (if (!= (DPMF|UR_CreateRoleAccount id) ATS|SC_NAME)
                 (ATS|C_RevokeCreateOrAddQ patron id)
                 true
             )
@@ -3776,17 +3611,17 @@
             \ Outputs the unique Token-id (ticker + first 12 characters of previous block hash) \
             \ Also creates the issuer's DPMF Account as the first account for this token."
 
-        (with-capability (DPTF-DPMF|ISSUE patron account)
+        (with-capability (DPTF-DPMF|ISSUE patron account false 1)
             (if (not (GAS|UC_SubZero))
                 (GAS|X_Collect patron account UTILITY.GAS_ISSUE)
                 true
             )
             (if (not (GAS|UC_NativeSubZero))
-                (GAS|X_CollectDalosFuel account (DALOS|UR_Meta))
+                (GAS|X_CollectDalosFuel patron (DALOS|UR_Meta))
                 true
             )
             (DALOS|X_IncrementNonce patron)
-            (DPMF|X_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+            (DPMF|X_Issue 1 patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
         )
     )
     (defun DPMF|CX_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
@@ -4105,6 +3940,7 @@
     )
     (defun DPMF|X_Issue:string
         (
+            issue-size:integer
             patron:string
             account:string 
             name:string 
@@ -4121,7 +3957,7 @@
         (UTILITY.DALOS|UV_Decimals decimals)
         (UTILITY.DALOS|UV_Name name)
         (UTILITY.DALOS|UV_Ticker ticker)
-        (require-capability (DPTF-DPMF|ISSUE patron account))
+        (require-capability (DPTF-DPMF|ISSUE patron account false issue-size))
         (insert DPMF|PropertiesTable (DALOS|UC_Makeid ticker)
             {"owner-konto"          : account
             ,"name"                 : name
@@ -4271,10 +4107,18 @@
             )
         )
     )
-    (defcap GAS|COLLECT_KDA (patron:string)
+    (defcap GAS|COLLECT_KDA (patron:string kda-amount:decimal)
         @doc "Capability needed to Collect KDA Fees"
         (UTILITY.DALOS|UV_Account patron)
         (compose-capability (GAS|INCREMENT))
+        (let*
+            (
+                (kadena-split:[decimal] (GAS|UC_KadenaSplit kda-amount))
+                (am1:decimal (at 1 kadena-split))
+                (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
+            )
+            (compose-capability (DPTF-DPMF|TRANSFER patron wrapped-kda-id patron LIQUID|SC_NAME am1 true true))
+        )
     )
     (defcap GAS|INCREMENT ()
         @doc "Capability Required to increment the GAS spent"
@@ -4325,57 +4169,7 @@
             (compose-capability (DALOS|IZ_ACCOUNT_SMART patron false))
             (compose-capability (DALOS|ACCOUNT_OWNER patron))
     )
-    (defcap GAS|MAKE (patron:string client:string target:string gas-source-amount:decimal)
-        @doc "Capability required to produce GAS"
-        (let*
-            (
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                (gas-id:string (DALOS|UR_IgnisID))
-                (gas-amount:decimal (GAS|UC_Make gas-source-amount))
-            )
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) creation. IGNIS(gas) creation is gas-free.
-        ;;   The target account must be a Standard DALOS Account
-        (compose-capability (DALOS|IZ_ACCOUNT_SMART patron false))
-        (compose-capability (DALOS|IZ_ACCOUNT_SMART client false))
-        (compose-capability (DALOS|IZ_ACCOUNT_SMART target false))
-        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
-        (compose-capability (DALOS|ACCOUNT_OWNER client))
-        ;;03]Client sends Gas-Source-id to the GasTanker
-        (compose-capability (DPTF-DPMF|TRANSFER patron gas-source-id client GAS|SC_NAME gas-source-amount true true))
-        ;;04]GasTanker burns GAS-Source-ID
-        (compose-capability (DPTF-DPMF|BURN patron gas-source-id GAS|SC_NAME gas-source-amount true true))
-        ;;05]GasTanker mints GAS-ID
-        (compose-capability (DPTF|MINT patron gas-id GAS|SC_NAME gas-amount false true))
-        ;;06]GasTanker transfers GAS to target
-        (compose-capability (DPTF-DPMF|TRANSFER patron gas-id GAS|SC_NAME target gas-amount true true))
-        )
-    )
-    (defcap GAS|COMPRESS (patron:string client:string gas-amount:decimal)
-        @doc "Capability required to produce GAS"
-        ;;Enforce only whole amounts of GAS are used for compression
-        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
-        (let*
-            (
-                (gas-id:string (DALOS|UR_IgnisID))
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                (gas-source-amount:decimal (GAS|UC_Compress gas-amount))
-            )
-            ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) compression. IGNIS(gas) compression is gas-free.
-            ;;   Only IGNIS(gas) held by a Standard DALOS Account can be compressed to OURO(gas-source)
-            (compose-capability (DALOS|IZ_ACCOUNT_SMART patron false))
-            (compose-capability (DALOS|IZ_ACCOUNT_SMART client false))
-            ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
-            (compose-capability (DALOS|ACCOUNT_OWNER client))
-            ;;03]Client sends Gas-id to the GasTanker
-            (compose-capability (DPTF-DPMF|TRANSFER patron gas-id client GAS|SC_NAME gas-amount true true))
-            ;;04]GasTanker burns GAS-ID
-            (compose-capability (DPTF-DPMF|BURN patron gas-id GAS|SC_NAME gas-amount true true))
-            ;;05]GasTanker mints GAS-Source-ID
-            (compose-capability (DPTF|MINT patron gas-source-id GAS|SC_NAME gas-source-amount false true))
-            ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-            (compose-capability (DPTF-DPMF|TRANSFER patron gas-source-id GAS|SC_NAME client gas-source-amount true true))
-        )
-    )
+
     (defcap GAS|COLLECTION (patron:string sender:string amount:decimal)
         @doc "Capability required to collect GAS"
         (UTILITY.DALOS|UV_Account sender)
@@ -4456,57 +4250,6 @@
         (at "native-gas-spent" (read GAS|PropertiesTable GAS|VGD ["native-gas-spent"]))
     )
     ;;5.2.1.2][G]           Computing
-    (defun GAS|UC_Make (gas-source-amount:decimal)
-        @doc "Computes amount of GAS that can be made from the input <gas-source-amount>"
-        (enforce (>= gas-source-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
-        (let
-            (
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                
-            )
-            (DPTF-DPMF|UV_Amount gas-source-id gas-source-amount true)
-            (let*
-                (
-                    (gas-source-price:decimal (DALOS|UR_OuroborosPrice))
-                    (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                    (gas-id:string (DALOS|UR_IgnisID))
-                )
-                (enforce (!= gas-id UTILITY.BAR) "Gas Token isnt properly set")
-                (let*
-                    (
-                        (gas-decimal:integer (DPTF-DPMF|UR_Decimals gas-id true))
-                        (raw-gas-amount-per-unit (floor (* gas-source-price-used 100.0) gas-decimal))
-                        (raw-gas-amount:decimal (floor (* raw-gas-amount-per-unit gas-source-amount) gas-decimal))
-                        (gas-amount:decimal (floor (* raw-gas-amount 0.99) 0))
-                    )
-                    gas-amount
-                )
-            )
-        )
-    )
-    (defun GAS|UC_Compress (gas-amount:decimal)
-        @doc "Computes amount of Gas-Source that can be created from an input amount <gas-amount> of GAS"
-        ;;Enforce only whole amounts of GAS are used for compression
-        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
-        (enforce (>= gas-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
-        (let*
-            (
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                (gas-source-price:decimal (DALOS|UR_OuroborosPrice))
-                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                (gas-id:string (DALOS|UR_IgnisID))
-            )
-            (DPTF-DPMF|UV_Amount gas-id gas-amount true)
-            (let*
-                (
-                    (gas-source-decimal:integer (DPTF-DPMF|UR_Decimals gas-source-id true))
-                    (raw-gas-source-amount:decimal (floor (/ gas-amount (* gas-source-price-used 100.0)) gas-source-decimal))
-                    (gas-source-amount:decimal (floor (* raw-gas-source-amount 0.985) gas-source-decimal))
-                )
-                gas-source-amount
-            )
-        )
-    )
     (defun GAS|UC_ZeroGAZ:bool (id:string sender:string receiver:string)
         @doc "Returns true if Virtual GAS cost is Zero (not yet toggled), otherwise returns false (s + r)"
 
@@ -4565,9 +4308,9 @@
         \ This is 5% 5% 15% and 75% outputed as 5% 15% 75% in a list"
         (let*
             (
-                (five:decimal (floor (* kadena-input-amount 0.05) UTILITY.KDA_PRECISION))
-                (fifteen:decimal (* five 3.0))
-                (total:decimal (* 5.0 five))
+                (five:decimal (UTILITY.UC_Percent kadena-input-amount 5.0 UTILITY.KDA_PRECISION))
+                (fifteen:decimal (UTILITY.UC_Percent kadena-input-amount 15.0 UTILITY.KDA_PRECISION))
+                (total:decimal (UTILITY.UC_Percent kadena-input-amount 25.0 UTILITY.KDA_PRECISION))
                 (rest:decimal (- kadena-input-amount total))
             )
             [five fifteen rest]
@@ -4649,77 +4392,7 @@
         )
     )
     ;;5.2.3]  [G]   GAS Client Functions
-    (defun GAS|C_Make:decimal (patron:string client:string target:string gas-source-amount:decimal)
-        @doc "Generates GAS from GAS Source Token via Making\
-            \ GAS generation is GAS free. \
-            \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
-            \ Gas Amount generated is alway integer (even though itself is of decimal type)"
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) creation. IGNIS(gas) creation is gas-free.
-        ;;   The target account must be a Standard DALOS Account
-        (let*
-            (
-                (gas-id:string (DALOS|UR_IgnisID))
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                (gas-client-exist:bool (DPTF-DPMF|UR_AccountExist gas-id client true))
-            )
-            (if (= gas-client-exist false)
-        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
-                (DPTF-DPMF|C_DeployAccount gas-id client true)
-                true
-            )
-            (with-capability (GAS|MAKE patron client target gas-source-amount)
-            (let
-                (
-                    (gas-amount:decimal (GAS|UC_Make gas-source-amount))
-                )
-        ;;03]Client sends Gas-Source-id to the GasTanker
-                (DPTF|CX_Transfer patron gas-source-id client GAS|SC_NAME gas-source-amount)
-        ;;04]GasTanker burns GAS-Source-ID
-                (DPTF|CX_Burn patron gas-source-id GAS|SC_NAME gas-source-amount)
-        ;;05]GasTanker mints GAS-ID
-                (DPTF|CX_Mint patron gas-id GAS|SC_NAME gas-amount false)
-        ;;06]GasTanker transfers GAS to target
-                (DPTF|CX_Transfer patron gas-id GAS|SC_NAME target gas-amount)
-                gas-amount
-                )
-            )
-        )
-    )
-    (defun GAS|C_Compress (patron:string client:string gas-amount:decimal)
-        @doc "Generates Gas-Source(OURO) from Gas(IGNIS) via Compression \
-            \ GAS compression is GAS free. \
-            \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
-            \ Input GAS amount must always be integer/whole (even though itself is of decimal type)"
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) compression. IGNIS(gas) compression is gas-free.
-            ;;   Only IGNIS(gas) held by a Standard DALOS Account can be compressed to OURO(gas-source)
-        (let*
-            (
-                (gas-source-id:string (DALOS|UR_OuroborosID))
-                (gas-id:string (DALOS|UR_IgnisID))
-                (gas-source-client-exist:bool (DPTF-DPMF|UR_AccountExist gas-source-id client true))
-            )
-            (if (= gas-source-client-exist false)
-        ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
-                (DPTF-DPMF|C_DeployAccount gas-source-id client true)
-                true
-            )
-            (with-capability (GAS|COMPRESS patron client gas-amount)
-                (let
-                    (
-                        (gas-source-amount:decimal (GAS|UC_Compress gas-amount))
-                    )
-        ;;03]Client sends Gas-id to the GasTanker
-                    (DPTF|CX_Transfer patron gas-id client GAS|SC_NAME gas-amount)
-        ;;04]GasTanker burns GAS-ID
-                    (DPTF|CX_Burn patron gas-id GAS|SC_NAME gas-amount)
-        ;;05]GasTanker mints GAS-Source-ID
-                    (DPTF|CX_Mint patron gas-source-id GAS|SC_NAME gas-source-amount false)
-        ;;06]GasTanker transfers GAS to client
-                    (DPTF|CX_Transfer patron gas-source-id GAS|SC_NAME client gas-source-amount)
-                )
-            )
-        )
-    )
+
     ;;5.2.4]  [G]   GAS Auxiliary Functions
     ;;5.2.4.1][G]           GAS|PropertiesTable Update
     (defun GAS|X_UpdateSourceID (id:string)
@@ -4830,7 +4503,7 @@
     (defun GAS|X_CollectDalosFuel (patron:string amount:decimal)
         @doc "Collects and distributes Blockchain Fuel in KDA \
         \ Team 10% | 15% Liquid KDA Protocol | 75% GasTanker (DALOS GasStation)"
-        (require-capability (GAS|COLLECT_KDA patron))
+        (require-capability (GAS|COLLECT_KDA patron amount))
         (let*
             (
                 (kadena-split:[decimal] (GAS|UC_KadenaSplit amount))
@@ -4997,13 +4670,15 @@
         (compose-capability (ATS|TOGGLE_PARAMETER-LOCK_CORE atspair toggle))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
-        (if (= toggle false)
-            (compose-capability 
-                (GAS|DUAL-COLLECTER 
-                    patron 
-                    (ATS|UR_OwnerKonto atspair) 
-                    (at 0 (UTILITY.ATS|UC_UnlockPrice (ATS|UR_Unlocks atspair)))
+        (if (not toggle)
+            (let*
+                (
+                    (atspair-owner:string (ATS|UR_OwnerKonto atspair))
+                    (toggle-costs:[decimal] (UTILITY.ATS|UC_UnlockPrice (ATS|UR_Unlocks atspair)))
+                    (gas-costs:decimal (at 0 toggle-costs))
+                    (kda-costs:decimal (at 1 toggle-costs))
                 )
+                (compose-capability (GAS|DUAL-COLLECTER patron atspair-owner gas-costs kda-costs))
             )
             true
         )
@@ -5185,8 +4860,8 @@
         (DALOS|UV_Fee promile)
         (enforce 
             (and
-                (>= (length decay) 1)
-                (<= (length decay) 9125)
+                (>= decay 1)
+                (<= decay 9125)
             )
             "No More than 25 years (9125 days) can be set for Decay Period"
         )
@@ -5261,7 +4936,6 @@
     (defcap ATS|ADD_SECONDARY_CORE (atspair:string reward-token:string token-type:bool)
         @doc "Core Capability required to add either a: Secondary Reward Token or a Hot-Reward-Bearing-Token \
         \ Token-type toggles variation: true is for DPTF, meaning Reward Token, False for DPMF meaning hot-rbt"
-        (ATS|UV_IzTokenUnique atspair reward-token)
         (compose-capability (DPTF-DPMF|OWNER reward-token token-type))
         (compose-capability (ATS|OWNER atspair))
         (compose-capability (ATS|UPDATE atspair))
@@ -5272,6 +4946,7 @@
     )
     (defcap ATS|ADD_SECONDARY_RT (atspair:string reward-token:string)
         @doc "Cap req for subsequent adding as secondary as RT"
+        (ATS|UV_IzTokenUnique atspair reward-token)
         (compose-capability (ATS|RT_EXISTANCE atspair reward-token false))
         (compose-capability (ATS|UPDATE_RT))
     )
@@ -5323,10 +4998,10 @@
                 (index:decimal (ATS|UC_Index atspair))
             )
             (enforce (>= index 1.0) "Fueling cannot take place on a negative Index")
+            (compose-capability (ATS|RT_EXISTANCE atspair reward-token true))
+            (compose-capability (DPTF-DPMF|TRANSFER patron reward-token fueler ATS|SC_NAME amount true true))
+            (compose-capability (ATS|UPDATE_ROU))
         )
-        (compose-capability (ATS|RT_EXISTANCE atspair reward-token true))
-        (compose-capability (DPTF-DPMF|TRANSFER patron reward-token fueler ATS|SC_NAME amount true true))
-        (compose-capability (ATS|UPDATE_ROU))
     )
     (defcap ATS|COIL (patron:string coiler:string atspair:string coil-token:string amount:decimal)
         @doc "Full Coil Capability"
@@ -5463,13 +5138,23 @@
         (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "hot-recovery" (read ATS|Pairs atspair ["hot-recovery"]))
     )
-
     (defun ATS|UR_RewardTokenList:[string] (atspair:string)
         @doc "Returns the list of Reward Tokens for an ATS Pair."
         (fold
             (lambda
                 (acc:[string] item:object{ATS|RewardTokenSchema})
                 (UTILITY.UC_AppendLast acc (at "token" item))
+            )
+            []
+            (ATS|UR_RewardTokens atspair)
+        )
+    )
+    (defun ATS|UR_ResidentAmountList:[decimal] (atspair:string)
+        @doc "Returns the list of Reward Tokens Resident Amounts for an ATS Pair."
+        (fold
+            (lambda
+                (acc:[decimal] item:object{ATS|RewardTokenSchema})
+                (UTILITY.UC_AppendLast acc (at "resident" item))
             )
             []
             (ATS|UR_RewardTokens atspair)
@@ -5494,90 +5179,36 @@
         )
     )
     ;;6.2.1.2][A]           ATS|Ledger Info
-    (defun ATS|UR_P0:[object{ATS|Unstake}] (atspair:string account:string)
-        @doc "Returns the <P0> of an ATS Account"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
-        (UTILITY.DALOS|UV_Account account)
-        (at "P0" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P0"]))
-    )
-    (defun ATS|UR_P1-7:object{ATS|Unstake} (atspair:string account:string position:integer)
-        @doc "Returns the <P1> through <P7> of an ATS Account"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
-        (UTILITY.DALOS|UV_Account account)
-        (UTILITY.DALOS|UV_PositionalVariable position 7 "Invalid Position Number")
-        (cond
-            ((= position 1) (at "P1" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P1"])))
-            ((= position 2) (at "P2" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P2"])))
-            ((= position 3) (at "P3" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P3"])))
-            ((= position 4) (at "P4" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P4"])))
-            ((= position 5) (at "P5" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P5"])))
-            ((= position 6) (at "P6" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P6"])))
-            ((= position 7) (at "P7" (read ATS|BalanceSchema (concat [atspair UTILITY.BAR account]) ["P7"])))
-            true
-        )
-    )
-    (defun ATS|UR_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{ATS|Unstake})
-        @doc "Returns the unbonding Value of an input object, considering a RT and an ATS Pair"
-        (let*
-            (
-                (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
-                (rt:[decimal] (at "reward-tokens" io))
-                (rb:decimal (at rtp rt))
-            )
-            (if (= rb -1.0)
-                0.0
-                rb
-            )
-        )
-    )
-    (defun ATS|UR_AccountUnbondingBalance (atspair:string account:string reward-token:string)
-        @doc "Returns the Account Unbonding Balance for an <atspair> and a given <reward-token>"
-        (+
-            (fold
-                (lambda
-                    (acc:decimal item:object{ATS|Unstake})
-                    (+ acc (ATS|UR_UnstakeObjectUnbondingValue atspair reward-token item))
-                )
-                0.0
-                (ATS|UR_P0 atspair account)
-            )
-            (fold
-                (lambda
-                    (acc:decimal item:integer)
-                    (+ acc (ATS|UR_UnstakeObjectUnbondingValue atspair reward-token (ATS|UR_P1-7 atspair account item)))
-                )
-                0.0
-                (enumerate 1 7)
-            )
-        )
-    )
     ;;6.2.1.3][A]           Computing|Composing
     (defun ATS|UC_Index (atspair:string)
         @doc "Returns the ATS-Pair Index Value"
-        (let*
+        (let
             (
                 (p:integer (ATS|UR_IndexDecimals atspair))
                 (rs:decimal (ATS|UC_ResidentSum atspair))
+                (rbt-supply:decimal (ATS|UC_PairRBTSupply atspair))
+            )
+            (if
+                (= rbt-supply 0.0)
+                -1.0
+                (floor (/ rs rbt-supply) p)
+            )
+        )
+    )
+    (defun ATS|UC_PairRBTSupply:decimal (atspair:string)
+        (let*
+            (
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                 (c-rbt-supply:decimal (DPTF-DPMF|UR_Supply c-rbt true))
             )
             (if (= (ATS|UC_IzPresentHotRBT atspair) false)
-                (if
-                    (= c-rbt-supply 0.0)
-                    -1.0
-                    (floor (/ rs c-rbt-supply) p)
-                )
+                c-rbt-supply
                 (let*
                     (
                         (h-rbt:string (ATS|UR_HotRewardBearingToken atspair))
                         (h-rbt-supply:decimal (DPTF-DPMF|UR_Supply h-rbt false))
-                        (rbt-supply:decimal (+ c-rbt-supply h-rbt-supply))
                     )
-                    (if
-                        (= rbt-supply 0.0)
-                        -1.0
-                        (floor (/ rs rbt-supply) p)
-                    )
+                    (+ c-rbt-supply h-rbt-supply)
                 )
             )
         )
@@ -5600,30 +5231,9 @@
     )
     (defun ATS|UC_ResidentSum:decimal (atspair:string)
         @doc "Returns the sum of all Resident Reward-Token Amounts for the ATS-Pair"
-        (fold
-            (lambda
-                (acc:decimal rt:string)
-                (+ acc (ATS|UR_RT-Data atspair rt 2))
-            )
-            0.0
-            (ATS|UR_RewardTokenList atspair)
-        )
+        (fold (+) 0.0 (ATS|UR_ResidentAmountList atspair)) 
     )
-    (defun ATS|UC_RT-Unbonding (atspair:string reward-token:string)
-        @doc "Computes the Total Unbonding amount for a given <rewart-token> of a given <atspair> \
-        \ Technically identical to reading it via <ATS|UR_RT-Data> option 3"
-        (with-capability (ATS|RT_EXISTANCE atspair reward-token true)
-            (fold
-                (lambda
-                    (acc:decimal account:string)
-                    (+ acc (ATS|UR_AccountUnbondingBalance atspair account reward-token))
-                )
-                0.0
-                (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false)
-            )
-
-        )
-    )
+    
     (defun ATS|UC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
         @doc "Composes a brand-new Reward Token object from input parameters"
         (ATS|UC_RT token nfr 0.0 0.0)
@@ -5671,7 +5281,7 @@
         )
     )
     (defun ATS|UC_IzRBT:bool (atspair:string reward-bearing-token:string cold-or-hot:bool)
-        @doc "Checks if a DPTF|DPMF Tokens is registered as Reward-Bearing-Token in a given ATS Pair"
+        @doc "Checks if a DPTF|DPMF Token is registered as Reward-Bearing-Token in a given ATS Pair"
         (DPTF-DPMF|UV_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
             (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILITY.BAR])
@@ -5854,6 +5464,17 @@
         (UTILITY.UC_SplitBalanceWithBooleans (DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
     )
     ;;6.2.1.5][A]           Validations
+    (defun ATS|UV_id (id:string)
+        @doc "Enforces ATS Pair <id> exists"
+        (with-default-read ATS|Pairs id
+            { "unlocks" : -1 }
+            { "unlocks" := u }
+            (enforce
+                (>= u 0)
+                (format "ATS-Pair {} does not exist." [id])
+            )
+        )
+    )
     (defun ATS|UV_IzTokenUnique (atspair:string reward-token:string)
         @doc "Enforces that the <reward-token> doesnt exist as reward token for the ATS Pair <atspair>"
         (DPTF-DPMF|UV_id reward-token true)
@@ -5894,11 +5515,11 @@
             (
                 (ZG:bool (GAS|UC_SubZero))
                 (NZG:bool (GAS|UC_NativeSubZero))
-                (current-owner-account:string (ATS|UR_OwnerKonto atspair))
+                (atspair-owner:string (ATS|UR_OwnerKonto atspair))
             )
             (with-capability (ATS|TOGGLE_PARAMETER-LOCK patron atspair toggle)
-                (if (= ZG false)
-                    (GAS|X_Collect patron current-owner-account UTILITY.GAS_SMALL)
+                (if (not ZG)
+                    (GAS|X_Collect patron atspair-owner UTILITY.GAS_SMALL)
                     true
                 )
                 (let*
@@ -5910,7 +5531,7 @@
                     (if (> gas-costs 0.0)
                         (with-capability (COMPOSE)
                             (if (not ZG)
-                                (GAS|X_Collect patron current-owner-account gas-costs)
+                                (GAS|X_Collect patron atspair-owner gas-costs)
                                 true
                             )
                             (if (not NZG)
@@ -6117,11 +5738,12 @@
                 (GAS|X_Collect patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE)
                 true
             )
+            (DPTF-DPMF|C_DeployAccount reward-token ATS|SC_NAME true)
             (ATS|X_AddSecondary atspair reward-token rt-nfr)
             (DALOS|X_IncrementNonce patron)
             (DPTF|X_UpdateRewardToken atspair reward-token true)
             (ATS|C_EnsureActivationRoles patron atspair true)
-            (if (= (ATS|UC_IzPresentHotRBT) true)
+            (if (= (ATS|UC_IzPresentHotRBT atspair) true)
                 (ATS|C_EnsureActivationRoles patron atspair false)
                 true
             )
@@ -6134,6 +5756,7 @@
                 (GAS|X_Collect patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE)
                 true
             )
+            (DPTF-DPMF|C_DeployAccount hot-rbt ATS|SC_NAME false)
             (ATS|X_AddHotRBT atspair hot-rbt)
             (DALOS|X_IncrementNonce patron)
             (DPTF-DPMF|X_UpdateRewardBearingToken hot-rbt atspair false)
@@ -6164,22 +5787,7 @@
             (ATS|X_UpdateRoU atspair reward-token true true amount)
         )
     )
-    (defun ATS|C_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
-        @doc "Autostakes <coil-token> and outputs its vested counterpart when it exists, to the <target-account>"
-        (with-capability (ATS|COIL_NO-RETURN patron coiler-vester atspair coil-token amount)
-            (let
-                (
-                    (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                    (c-rbt-amount:decimal (ATS|UC_RBT atspair coil-token amount))
-                )
-                (DPTF|CX_Transfer patron coil-token coiler-vester ATS|SC_NAME amount)
-                (ATS|X_UpdateRoU atspair coil-token true true amount)
-                (DPTF|CX_Mint patron c-rbt ATS|SC_NAME c-rbt-amount false)
-                (VST|C_Vest patron ATS|SC_NAME target-account c-rbt c-rbt-amount offset duration milestones)
-                c-rbt-amount
-            )
-        )
-    )
+    
     (defun ATS|C_Coil:decimal (patron:string coiler:string atspair:string coil-token:string amount:decimal)
         @doc "Autostakes <coil-token> to the <atspair> ATS-Pair, receiving RBT"
         (with-capability (ATS|COIL patron coiler atspair coil-token amount)
@@ -6489,6 +6097,7 @@
                 )
             )
         )
+    
     )
     ;;
     ;;
@@ -6617,7 +6226,6 @@
     ;;
     ;;========[V] CAPABILITIES=================================================;;
     ;;8.1]    [V] VST Capabilities
-    ;;8.1.1]  [V]   VST Basic Capabilities
     (defcap VST|EXISTANCE (id:string token-type:bool existance:bool)
         @doc "Enforce that a DPTF|DPMF has a vesting counterpart or not"
         (let
@@ -6648,140 +6256,13 @@
         @doc "Capability needed to define a vesting pair"
         true
     )
-    ;;8.1.2]  [V]   VST Composed Capabilities
-    (defcap VST|VEST (patron:string vester:string target-account:string id:string amount:decimal)
-        (compose-capability (VST|EXISTANCE id true true))
-        (compose-capability (VST|ACTIVE id (DPTF-DPMF|UR_Vesting id true)))
-        (compose-capability (DPTF-DPMF|TRANSFER patron id vester VST|SC_NAME amount true true))
-        (compose-capability (DPMF|MINT patron (DPTF-DPMF|UR_Vesting id true) VST|SC_NAME amount true))
-        (compose-capability (DPTF-DPMF|TRANSFER patron (DPTF-DPMF|UR_Vesting id true) VST|SC_NAME target-account amount true false))
-    )
-    (defcap VST|CULL (patron:string culler:string id:string nonce:integer)
-        (compose-capability (VST|EXISTANCE id false true))
-        (compose-capability (VST|ACTIVE (DPTF-DPMF|UR_Vesting id false) id))
-        (let*
-            (
-                (dptf-id:string (DPTF-DPMF|UR_Vesting id false))
-                (initial-amount:decimal (DPMF|UR_AccountBatchSupply id nonce culler))
-                (culled-amount:decimal (VST|UC_CullMetaDataAmount culler id nonce))
-                (return-amount:decimal (- initial-amount culled-amount))
-            )
-            (if (= return-amount 0.0)
-                (compose-capability (DPTF-DPMF|TRANSFER patron dptf-id VST|SC_NAME culler initial-amount true true))
-                (compose-capability (DPMF|MINT patron id VST|SC_NAME return-amount true))
-            )
-            (if (!= return-amount 0.0)
-                (compose-capability (DPTF-DPMF|TRANSFER patron dptf-id VST|SC_NAME culler culled-amount true true))
-                true
-            )
-            (if (!= return-amount 0.0)
-                (compose-capability (DPTF-DPMF|TRANSFER patron id VST|SC_NAME culler return-amount true false))
-                true
-            )
-            (compose-capability (DPTF-DPMF|TRANSFER patron id culler VST|SC_NAME initial-amount true false))
-            (compose-capability (DPTF-DPMF|BURN patron id VST|SC_NAME initial-amount true false))
-        )
-    )
     ;;========[V] FUNCTIONS====================================================;;
     ;;8.2]    [V] VST Functions
-    ;;8.2.1]  [V]   VST Utility Functions
-    ;;8.2.1.1][V]           Computing|Composing
     (defun VST|UC_HasVesting:bool (id:string token-type:bool)
         @doc "Checks if a DPTF|DPMF Token has a vesting counterpart"
         (if (= (DPTF-DPMF|UR_Vesting id token-type) UTILITY.BAR)
             false
             true
-        )
-    )
-    (defun VST|UV_HasVesting (id:string token-type:bool)
-        @doc "Validates <id> as bein part of a vested token pair"
-        (let
-            (
-                (has-vesting:bool (VST|UC_HasVesting id token-type))
-            )
-            (enforce (= has-vesting true) (format "Token {} is not part of a vesting-pair"[id]))
-        )
-    )
-    (defun VST|UC_SplitBalanceForVesting:[decimal] (id:string amount:decimal milestones:integer)
-        @doc "Splits an Amount according to vesting parameters"
-        (UTILITY.VST|UC_SplitBalanceForVesting (DPTF-DPMF|UR_Decimals id true) amount milestones)
-    )
-    (defun VST|UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
-        @doc "Makes a Times list with unvesting milestones according to vesting parameters"
-        (UTILITY.VST|UC_MakeVestingDateList offset duration milestones)
-    )
-    (defun VST|UC_ComposeVestingMetaData:[object{VST|MetaDataSchema}] (id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Creates Vesting MetaData"
-        (DPTF-DPMF|UV_Amount id amount true)
-        (UTILITY.VST|UV_MilestoneWithTime offset duration milestones)
-        (let*
-            (
-                (amount-lst:[decimal] (VST|UC_SplitBalanceForVesting id amount milestones))
-                (date-lst:[time] (VST|UC_MakeVestingDateList offset duration milestones))
-                (meta-data:[object{VST|MetaDataSchema}] (zip (lambda (x:decimal y:time) { "release-amount": x, "release-date": y }) amount-lst date-lst))
-            )
-            meta-data
-        )
-    )
-    (defun VST|UC_CullMetaDataAmount:decimal (client:string id:string nonce:integer)
-        @doc "Returns the amount that a cull on a Vested Token would produce"
-        (VST|UV_HasVesting id false)
-        (let*
-            (
-                (meta-data:[object{VST|MetaDataSchema}] (DPMF|UR_AccountBatchMetaData id nonce client))
-                (culled-amount:decimal
-                    (fold
-                        (lambda
-                            (acc:decimal item:object{VST|MetaDataSchema})
-                            (let*
-                                (
-                                    (balance:decimal (at "release-amount" item))
-                                    (date:time (at "release-date" item))
-                                    (present-time:time (at "block-time" (chain-data)))
-                                    (t:decimal (diff-time present-time date))
-                                )
-                                (if (>= t 0.0)
-                                    (+ acc balance)
-                                    acc
-                                )
-                            )
-                        )
-                        0.0
-                        meta-data
-                    )
-                )
-            )
-            culled-amount
-        )
-    )
-    (defun VST|UC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer)
-        @doc "Returns the meta-data that a cull on a Vested Token would produce"
-        (VST|UV_HasVesting id false)
-        (let*
-            (
-                (meta-data:[object{VST|MetaDataSchema}] (DPMF|UR_AccountBatchMetaData id nonce client))
-                (culled-object:[object{VST|MetaDataSchema}]
-                    (fold
-                        (lambda
-                            (acc:[object{VST|MetaDataSchema}] item:object{VST|MetaDataSchema})
-                            (let*
-                                (
-                                    (date:time (at "release-date" item))
-                                    (present-time:time (at "block-time" (chain-data)))
-                                    (t:decimal (diff-time present-time date))
-                                )
-                                (if (< t 0.0)
-                                    (UTILITY.UC_AppendLast acc item)
-                                    acc
-                                )
-                            )
-                        )
-                        []
-                        meta-data
-                    )
-                )
-            )
-            culled-object
         )
     )
     ;;8.2.2]  [V]   Administration Functions
@@ -6791,40 +6272,6 @@
         (DALOS|C_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME)
     )
     ;;8.2.3]  [V]   Client Functions
-    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Vests <id> given input parameters to its DPMF Vesting Counterpart to <target-account>"
-        (with-capability (VST|VEST  patron vester target-account id amount)
-            (DPTF|CX_Transfer patron id vester VST|SC_NAME amount)
-            (DPMF|CX_Mint patron (DPTF-DPMF|UR_Vesting id true) VST|SC_NAME amount (VST|UC_ComposeVestingMetaData id amount offset duration milestones))
-            (DPMF|CX_Transfer patron (DPTF-DPMF|UR_Vesting id true) (DPMF|UR_NoncesUsed (DPTF-DPMF|UR_Vesting id true)) VST|SC_NAME target-account amount)
-        )
-    )
-    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
-        @doc "Client Function that culls a Vested Token"
-        (with-capability (VST|CULL patron culler id nonce)
-            (let*
-                (
-                    (dptf-id:string (DPTF-DPMF|UR_Vesting id false))
-                    (initial-amount:decimal (DPMF|UR_AccountBatchSupply id nonce culler))
-                    (culled-amount:decimal (VST|UC_CullMetaDataAmount culler id nonce))
-                    (return-amount:decimal (- initial-amount culled-amount))
-                )
-                (if (= return-amount 0.0)
-                    (DPTF|CX_Transfer patron dptf-id VST|SC_NAME culler initial-amount)
-                    (let
-                        (
-                            (remaining-vesting-meta-data:[object{VST|MetaDataSchema}] (VST|UC_CullMetaDataObject culler id nonce))
-                        )
-                        (DPTF|CX_Transfer patron dptf-id VST|SC_NAME culler culled-amount)
-                        (DPMF|CX_Mint patron id VST|SC_NAME return-amount remaining-vesting-meta-data)
-                        (DPMF|CX_Transfer patron id (DPMF|UR_NoncesUsed id) VST|SC_NAME culler return-amount)
-                    )
-                )
-                (DPMF|CX_Transfer patron id nonce culler VST|SC_NAME initial-amount)
-                (DPMF|CX_Burn patron id nonce VST|SC_NAME initial-amount)
-            )
-        )
-    )
     (defun VST|C_CreateVestingLink (patron:string dptf:string)
         @doc "Creates a Vesting Pair using the Input DPTF Token"
         (with-capability (VST|DEFINE)
@@ -6896,4 +6343,3 @@
 (create-table DPMF|PropertiesTable)
 (create-table DPMF|BalanceTable)
 (create-table ATS|Pairs)
-(create-table ATS|Ledger)
