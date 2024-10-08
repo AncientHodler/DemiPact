@@ -2401,7 +2401,7 @@
         @doc "Computes if there is a DPTF Fee or Min Transfer Amount Exception"
         (let*
             (
-                (gas-id (DALOS|UR_IgnisID))
+                (gas-id:string (DALOS|UR_IgnisID))
                 (sender-fee-exemption:bool (DPTF|UR_AccountRoleFeeExemption id sender))
                 (receiver-fee-exemption:bool (DPTF|UR_AccountRoleFeeExemption id receiver))
                 (token-owner:string (DPTF-DPMF|UR_Konto id true))
@@ -2743,7 +2743,15 @@
                 (primary-fee:decimal (at 0 fees))
                 (secondary-fee:decimal (at 1 fees))
                 (remainder:decimal (at 2 fees))
-                (iz-full-credit:bool (or (or (= fee-toggle false) (= iz-exception true)) (= primary-fee 0.0)))
+                (iz-full-credit:bool 
+                    (or 
+                        (or 
+                            (= fee-toggle false) 
+                            (= iz-exception true)
+                        ) 
+                        (= primary-fee 0.0)
+                    )
+                )
             )
             (if (= iz-full-credit true)
                 (DPTF|X_Credit id receiver transfer-amount)
@@ -5010,12 +5018,15 @@
             (ATS|UR_RewardTokens atspair)
         )
     )
-    (defun ATS|UR_ResidentAmountList:[decimal] (atspair:string)
+    (defun ATS|UR_RoUAmountList:[decimal] (atspair:string rou:bool)
         @doc "Returns the list of Reward Tokens Resident Amounts for an ATS Pair."
         (fold
             (lambda
                 (acc:[decimal] item:object{ATS|RewardTokenSchema})
-                (UTILITY.UC_AppendLast acc (at "resident" item))
+                (if rou
+                    (UTILITY.UC_AppendLast acc (at "resident" item))
+                    (UTILITY.UC_AppendLast acc (at "unbonding" item))
+                )
             )
             []
             (ATS|UR_RewardTokens atspair)
@@ -5091,7 +5102,7 @@
     )
     (defun ATS|UC_ResidentSum:decimal (atspair:string)
         @doc "Returns the sum of all Resident Reward-Token Amounts for the ATS-Pair"
-        (fold (+) 0.0 (ATS|UR_ResidentAmountList atspair)) 
+        (fold (+) 0.0 (ATS|UR_RoUAmountList atspair true)) 
     )
     
     (defun ATS|UC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
@@ -5495,12 +5506,18 @@
             (
                 (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
+                (c-rbt-fer:bool (DPTF|UR_AccountRoleFeeExemption c-rbt ATS|SC_NAME))
                 (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
                 (burn-role:bool (DPTF-DPMF|UR_AccountRoleBurn c-rbt ATS|SC_NAME true))
                 (mint-role:bool (DPTF|UR_AccountRoleMint c-rbt ATS|SC_NAME))
             )
             ;;Exemption Roles for all defined Reward Tokens
             (ATS|C_SetMassRole patron atspair false)
+            ;;Exemption Role for the c-rbt, if it is <false>
+            (if (not c-rbt-fer)
+                (DPTF|C_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
+                true
+            )
             (if (= cold-or-hot true)
                 (if (= c-fr false)
                     ;;Burn Roles for all  defined Reward-Tokens if c-fr is set to false

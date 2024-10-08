@@ -426,21 +426,21 @@
                     patron
                     PrimordialKosonID
                     patron
-                    1000.0
+                    10000.0
                     true
                 )
                 (OUROBOROS.DPTF|C_Mint
                     patron
                     EsothericKosonID
                     patron
-                    500.0
+                    5000.0
                     true
                 )
                 (OUROBOROS.DPTF|C_Mint
                     patron
                     AncientKosonID
                     patron
-                    500.0
+                    5000.0
                     true
                 )
                 ;;Stake 150 75 75 PKOSON, EKOSON, AKOSON in each ATS Pool to kickstart the pools.

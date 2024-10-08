@@ -1,0 +1,202 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;001]Test Autostake
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+(print "===============================Start Auryn=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+
+(format "DalosAutostake[0] has {} OURO" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Reward Tokens for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RewardTokenList "Auryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "C-RBT for Auryndex is {}" [(free.OUROBOROS.ATS|UR_ColdRewardBearingToken "Auryndex-98c486052a51")])
+
+        ;;Tests
+        (free.OUROBOROS.ATS|C_Coil "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51""OURO-98c486052a51" 1000.0)
+        (free.OUROBOROS.ATS|C_Fuel "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "OURO-98c486052a51" 200.0)
+
+(format "Fee Exemption role for DalosAutostake for Auryn is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleFeeExemption "AURYN-98c486052a51" "DalosAutostake")])
+(format "Fee Exemption role for DalosAutostake for EliteAuryn is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleFeeExemption "ELITEAURYN-98c486052a51" "DalosAutostake")])
+
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis" 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+
+
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 110.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 10.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 15.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 25.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 75.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 175.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 205.0)
+(format "Auryndex is {} ; EliteAuryndex is {}"[(free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")(free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")])
+        (free.OURO2.ATS|UP_P0 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P1 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P2 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P3 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P4 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P5 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P6 "Auryndex-98c486052a51" "AncientHodler")
+        (free.OURO2.ATS|UP_P7 "Auryndex-98c486052a51" "AncientHodler")
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+(format "Auryndex RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "Auryndex-98c486052a51")])
+(format "Ouro in Autostake Pool is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(print "===============================END Auryn=============================")
+(env-gas)
+(commit-tx)
+
+;;001]Test AOZ Autostake
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(print "===============================Start AOZ=============================")
+(format "AOZ has {} PKOSON, {} EKOSON, {} AKOSON, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AgeOfZalmoxis" true)
+    ]
+)
+(format "DalosAutostake has {} PKOSON, {} EKOSON, {} AKOSON." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "DalosAutostake" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "DalosAutostake" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "DalosAutostake" true)
+    ]
+)
+(format "Reward Tokens for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RewardTokenList "PlebeicStrength-98c486052a51")])
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebeicStrength is {};"
+    [
+        (free.OUROBOROS.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "C-RBT for PlebeicStrength is {}" [(free.OUROBOROS.ATS|UR_ColdRewardBearingToken "PlebeicStrength-98c486052a51")])
+(format "PlebiumDenarius Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+
+        (free.OUROBOROS.ATS|C_Coil "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
+        (free.OUROBOROS.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
+        (free.OUROBOROS.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 40.0)
+        (free.OUROBOROS.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 80.0)
+
+(format "PlebeicStrength is {};"
+    [
+        (free.OUROBOROS.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(print "====================Before COLD Recovery================")
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebiumDenarius Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+(format "PlebeicStrength is {};"
+    [
+        (free.OUROBOROS.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+        (free.OUROBOROS.DPTF|C_Transfer "AgeOfZalmoxis" "PDKOSON-98c486052a51" "AgeOfZalmoxis" "AncientHodler" 100.0)
+        (free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "PDKOSON-98c486052a51" "AncientHodler" "Emma" 100.0)
+        (free.OURO2.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 40.0)
+        (free.OURO2.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 10.0)
+        (free.OURO2.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 12.0)
+        (free.OURO2.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 17.0)
+
+(print "====================After COLD Recovery================")
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebiumDenarius Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+(format "PlebeicStrength is {};"
+    [
+        (free.OUROBOROS.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "Emma has {} PDKOSON" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "Emma" true)])
+(format "Ouroboros has {} PDKOSON" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "Ouroboros" true)])
+
+(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "PDKOSON-98c486052a51" "Emma" "AncientHodler"  99.0)
+(format "PlebeicStrength is {};"
+    [
+        (free.OUROBOROS.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "PlebiumDenarius Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+
+        (free.OURO2.ATS|UP_P0 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P1 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P2 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P3 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P4 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P5 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P6 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.OURO2.ATS|UP_P7 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+(print "===============================END AOZ=============================")
+(env-gas)
+(commit-tx)
