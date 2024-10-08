@@ -637,7 +637,7 @@
     ;;6.2.3]  [A]   ATS Client Functions [+OURO2]
     ;;6.2.3.1][A]           Control
     ;;6.2.3.2][A]           Create
-    ;;6.2.3.3][A]           Destroy
+    ;;6.2.3.3][A]           Destroy [OURO2]
     ;;6.2.3.4][A]           Use
     ;;6.2.3.5][A]           Revoke
     ;;6.2.4]  [A]   ATS Aux Functions

@@ -5623,22 +5623,6 @@
             (ATS|C_EnsureActivationRoles patron atspair false)
         )
     )
-    ;;6.2.3.3][A]           Destroy
-    ;;NEEDS FINALISATION
-    (defun ATS|C_RemoveSecondary (patron:string atspair:string reward-token:string)
-        @doc "Removes a secondary Reward from its ATS Pair"
-        (with-capability (ATS|REMOVE_SECONDARY patron atspair reward-token)
-            (if (not (GAS|UC_SubZero))
-                (GAS|X_Collect patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE)
-                true
-            )
-            (ATS|X_RemoveSecondary atspair reward-token)
-            (DALOS|X_IncrementNonce patron)
-            (DPTF|X_UpdateRewardToken atspair reward-token false)
-            ;;Unbonding if it exists for pair, must be returned to users
-            ;;Resident, if it exists, must be replaced with primary.
-        )
-    )
     ;;6.2.3.4][A]           Use
     (defun ATS|C_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal)
         @doc "Client Function for fueling an ATS Pair"

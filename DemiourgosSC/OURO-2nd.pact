@@ -1250,6 +1250,22 @@
             )
         )
     )
+    ;;6.2.3.3][A]           Destroy
+    ;;NEEDS FINALISATION
+    (defun ATS|C_RemoveSecondary (patron:string atspair:string reward-token:string)
+        @doc "Removes a secondary Reward from its ATS Pair"
+        (with-capability (OUROBOROS.ATS|REMOVE_SECONDARY patron atspair reward-token)
+            (if (not (OUROBOROS.GAS|UC_SubZero))
+                (OUROBOROS.GAS|X_Collect patron (OUROBOROS.ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE)
+                true
+            )
+            (OUROBOROS.ATS|X_RemoveSecondary atspair reward-token)
+            (OUROBOROS.DALOS|X_IncrementNonce patron)
+            (OUROBOROS.DPTF|X_UpdateRewardToken atspair reward-token false)
+            ;;Unbonding if it exists for pair, must be returned to users
+            ;;Resident, if it exists, must be replaced with primary.
+        )
+    )
     ;;6.2.4]  [A]   ATS Aux Functions
     ;;6.2.4.1][A]           ATS|Ledger Aux
     (defun ATS|X_StoreUnstakeObject (atspair:string account:string position:integer obj:object{ATS|Unstake})
