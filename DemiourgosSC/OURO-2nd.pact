@@ -246,7 +246,7 @@
                     (OUROBOROS.DPTF-DPMF|UV_id account-or-token-id true)
                     (if (= table-to-query 2)
                         (OUROBOROS.DPTF-DPMF|UV_id account-or-token-id false)
-                        (UTILITY.DALOS|UV_Account account-or-token-id) 
+                        (OUROBOROS.ATS|UV_id account-or-token-id) 
                     )
                 )
             )
@@ -796,6 +796,8 @@
             (
                 (c-rbt:string (OUROBOROS.ATS|UR_ColdRewardBearingToken atspair))
             )
+            (OUROBOROS.ATS|UV_id atspair)
+            (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER recoverer))
             (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron c-rbt recoverer ATS|SC_NAME ra true true))
             (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron c-rbt ATS|SC_NAME ra true true))
             (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
@@ -835,6 +837,34 @@
         (UTILITY.DALOS|UV_UniqueAccount atspair)
         (UTILITY.DALOS|UV_Account account)
         (at "P0" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P0"]))
+    )
+    (defun ATS|UC_IzCullable:bool (input:object{ATS|Unstake})
+        @doc "Computes if Unstake Object is cullable"
+        (let*
+            (
+                (present-time:time (at "block-time" (chain-data)))
+                (stored-time:time (at "cull-time" input))
+                (diff:decimal (diff-time present-time stored-time))
+            )
+            (if (>= diff 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun ATS|UC_CullValue:[decimal] (input:object{ATS|Unstake})
+        @doc "Returns the value of a cull object."
+        (let*
+            (
+                (rt-amounts:[decimal] (at "reward-tokens" input))
+                (l:integer (length rt-amounts))
+                (iz:bool (ATS|UC_IzCullable input))
+            )
+            (if iz
+                rt-amounts
+                (make-list l 0.0)
+            )
+        )
     )
     (defun ATS|UR_P1-7:object{ATS|Unstake} (atspair:string account:string position:integer)
         @doc "Returns the <P1> through <P7> of an ATS-UnstakingAccount"
@@ -1277,6 +1307,55 @@
             )
         )
     )
+    (defun ATS|C_Cull:[decimal] (patron:string culler:string atspair:string)
+        @doc "Culls <atspair> for <culler>. Culling returns all elapsed past Cold-Recoveries executed by <culler> \
+        \ Returns culled values. If no cullable values exists, returns a list o zeros, since nothing has been culled"
+        (with-capability (ATS|CULL culler atspair)
+            (let*
+                (
+                    (rt-lst:[string] (OUROBOROS.ATS|UR_RewardTokenList atspair))
+                    (c0:[decimal] (ATS|X_MultiCull atspair culler))
+                    (c1:[decimal] (ATS|X_SingleCull atspair culler 1))
+                    (c2:[decimal] (ATS|X_SingleCull atspair culler 2))
+                    (c3:[decimal] (ATS|X_SingleCull atspair culler 3))
+                    (c4:[decimal] (ATS|X_SingleCull atspair culler 4))
+                    (c5:[decimal] (ATS|X_SingleCull atspair culler 5))
+                    (c6:[decimal] (ATS|X_SingleCull atspair culler 6))
+                    (c7:[decimal] (ATS|X_SingleCull atspair culler 7))
+                    (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
+                    (cw:[decimal] (UTILITY.UC_AddArray ca))
+                )
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (!= (at idx cw) 0.0)
+                            (with-capability (COMPOSE)
+                                (OUROBOROS.ATS|X_UpdateRoU atspair (at idx rt-lst) false false (at idx cw))
+                                (with-capability (DPTF-DPMF|TRANSFER patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw) true true)
+                                    (DPTF|CX_Transfer patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw))
+                                )
+                            )
+                            true
+                        )
+                    )
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
+                (ATS|X_Normalize atspair culler)
+                cw
+            )
+        )
+    )
+    (defcap ATS|CULL (culler:string atspair:string)
+        (OUROBOROS.ATS|UV_id atspair)
+        (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER culler))
+        (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
+        (compose-capability (ATS|NORMALIZE_LEDGER atspair culler))
+        (compose-capability (ATS|CULL-ME))
+    )
+    (defcap ATS|CULL-ME ()
+        @doc "Capability needed for culling ATS-Unstake Account positions"
+        (compose-capability (ATS|UPDATE_LEDGER))
+    )
     ;;6.2.3.3][A]           Destroy
     ;;NEEDS FINALISATION
     (defun ATS|C_RemoveSecondary (patron:string atspair:string reward-token:string)
@@ -1295,9 +1374,19 @@
     )
     ;;6.2.4]  [A]   ATS Aux Functions
     ;;6.2.4.1][A]           ATS|Ledger Aux
+    (defun ATS|X_StoreUnstakeObjectList (atspair:string account:string obj:[object{ATS|Unstake}])
+        @doc "Stores a new Unstake Object on Position -1 for <atspair> and <account> \
+        \ Always assumes ATS-Unstake Account defined by <atspair>|<account> exists "
+        (require-capability (ATS|UPDATE_LEDGER))
+        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+            { "P0" : obj}
+        )
+    )
     (defun ATS|X_StoreUnstakeObject (atspair:string account:string position:integer obj:object{ATS|Unstake})
-        @doc "Updates entry in the ATS|Ledger with <obj> on <position> \
-        \ Assumes input <position> is free, therefore this function is always called with a free input <position> value"
+        @doc "Updates entry in the ATS|Ledger with <obj> on <position> for <atspair> and <account> \
+        \ Always assumes ATS-Unstake Account defined by <atspair>|<account> exists \
+        \ For Position -1 it appends the object. \
+        \ For Position 1 to 7, it simply replaces the object"
         (require-capability (ATS|UPDATE_LEDGER))
         (with-read ATS|Ledger (concat [atspair UTILITY.BAR account])
             { "P0"  := p0 , "P1"  := p1 , "P2"  := p2 , "P3"  := p3, "P4"  := p4, "P5"  := p5, "P6"  := p6, "P7"  := p7 }
@@ -1482,6 +1571,94 @@
                     )
                 )
             ) 
+        )
+    )
+    (defun ATS|X_SingleCull:[decimal] (atspair:string account:string position:integer)
+        @doc "Culls a single ATS Position, returning the culled amounts"
+        (require-capability (ATS|CULL-ME))
+        (let*
+            (
+                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
+                (unstake-obj:object{ATS|Unstake} (ATS|UR_P1-7 atspair account position))
+                (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
+                (l:integer (length rt-amounts))
+                (empty:[decimal] (make-list l 0.0))
+                (cull-output:[decimal] (ATS|UC_CullValue unstake-obj))
+            )
+            (if (!= cull-output empty)
+                (ATS|X_StoreUnstakeObject atspair account position zero)
+                true
+            )
+            cull-output
+        )
+    )
+    (defun ATS|X_MultiCull:[decimal] (atspair:string account:string)
+        @doc "Culls the -1 ATS Position for <atspair> and <account>"
+        (require-capability (ATS|CULL-ME))
+        (let*
+            (
+                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
+                (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+                (p0:[object{ATS|Unstake}] (ATS|UR_P0 atspair account))
+                (p0l:integer (length p0))
+                (bl:[bool]
+                    (fold
+                        (lambda
+                            (acc:[bool] item:object{ATS|Unstake})
+                            (UTILITY.UC_AppendLast acc (ATS|UC_IzCullable item))
+                        )
+                        []
+                        p0
+                    )
+                )
+                (zero-output:[decimal] (make-list (length (OUROBOROS.ATS|UR_RewardTokenList atspair)) 0.0))
+                (cullables:[integer] (UTILITY.UC_Search bl true))
+                (immutables:[integer] (UTILITY.UC_Search bl false))
+                (how-many-cullables:integer (length cullables))
+            )
+            (if (= how-many-cullables 0)
+                zero-output
+                (let*
+                    (
+                        (after-cull:[object{ATS|Unstake}]
+                            (if (< how-many-cullables p0l)
+                                (fold
+                                    (lambda
+                                        (acc:[object{ATS|Unstake}] idx:integer)
+                                        (UTILITY.UC_AppendLast acc (at (at idx immutables) p0))
+                                    )
+                                    []
+                                    (enumerate 0 (- (length immutables) 1))
+                                )
+                                [zero]
+                            )
+                        )
+                        (to-be-culled:[object{ATS|Unstake}]
+                            (fold
+                                (lambda
+                                    (acc:[object{ATS|Unstake}] idx:integer)
+                                    (UTILITY.UC_AppendLast acc (at (at idx cullables) p0))
+                                )
+                                []
+                                (enumerate 0 (- (length cullables) 1))
+                            )
+                        )
+                        (culled-values:[[decimal]]
+                            (fold
+                                (lambda
+                                    (acc:[[decimal]] idx:integer)
+                                    (UTILITY.UC_AppendLast acc (ATS|UC_CullValue (at idx to-be-culled)))
+                                )
+                                []
+                                (enumerate 0 (- (length to-be-culled) 1))
+                            )
+                        )
+                        (summed-culled-values:[decimal] (UTILITY.UC_AddArray culled-values))
+                    )
+                    (ATS|X_StoreUnstakeObjectList atspair account after-cull)
+                    summed-culled-values
+                )
+            )
         )
     )
     ;;

@@ -4670,29 +4670,7 @@
             true
         )
         ;;<fee-array> validation; inner lists - equal length
-        (enforce
-            (=
-                true
-                (fold
-                    (lambda
-                        (acc:bool inner-lst:[decimal])
-                        (and
-                            acc
-                            (if (= 
-                                    (length inner-lst) 
-                                    (length (at 0 fee-array))
-                                )
-                                true
-                                false
-                            )
-                        )
-                    )
-                    true
-                    fee-array
-                )
-            )
-            "All Fee-Array Lists must be of equal length !"
-        )
+        (UTILITY.UV_DecimalArray fee-array)
         ;;<fee-array> validation: inner lists = (length <fee-threshold> +1)
         (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
             (enforce

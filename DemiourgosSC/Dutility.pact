@@ -282,8 +282,8 @@
                     (fold
                         (lambda 
                             (acc:[string] item:[string])
-                            (if (= (UC_LastListElement item) account)
-                                (UC_AppendLast acc (UC_FirstListElement item))
+                            (if (= (UC_FirstListElement item) account)
+                                (UC_AppendLast acc (UC_LastListElement item))
                                 acc
                             )
                         )
@@ -634,6 +634,44 @@
             )
         )
     )
+    (defun UV_DecimalArray (array:[[decimal]])
+        @doc "Enforces all inner list inside an array are of equal size"
+        (enforce
+            (=
+                true
+                (fold
+                    (lambda
+                        (acc:bool inner-lst:[decimal])
+                        (and
+                            acc
+                            (if (= 
+                                    (length inner-lst) 
+                                    (length (at 0 array))
+                                )
+                                true
+                                false
+                            )
+                        )
+                    )
+                    true
+                    array
+                )
+            )
+            "All Fee-Array Lists must be of equal length !"
+        )
+    )
+    (defun UC_AddArray:[decimal] (array:[[decimal]])
+        @doc "Adds all column elements in an array, while ensuring all rows are of equal length"
+        (UV_DecimalArray array)
+        (fold
+            (lambda
+                (acc:[decimal] item:[decimal])
+                (zip (+) acc item)
+            )
+            (make-list (length (at 0 array)) 0.0)
+            array
+        )
+    )
     (defun UC_SplitString:[string] (splitter:string splitee:string)
         @doc "Splits a string using a single string as splitter"
         (if (= 0 (length splitee))
@@ -715,7 +753,11 @@
                 [item],
                 (drop idx in)])
     )
-
+    (defun UC_RemoveAt:list (in:list idx:integer)
+        @doc "Remove element at position idx"
+        (UV_EnforceListBounds in idx)
+        (+ (take idx in) (drop (+ 1 idx) in))
+    )
     (defun UC_ReplaceAt:list (in:list idx:integer item)
         @doc "Replace the item at position idx"
         (enforce (and? (<= 0) (> (length in)) idx) "Index out of bounds")
@@ -723,12 +765,14 @@
                 [item],
                 (drop (+ 1 idx) in)])
     )
-
     (defun UC_Chain:list (in:list)
         @doc "Chain list of lists"
         (fold (+) [] in)
     )
-
+    (defun UV_EnforceListBounds:bool (x:list idx:integer)
+        @doc "Verify and ENFORCES that idx is in list bounds"
+        (enforce (and? (<= 0) (> (length x)) idx) "Index out of bounds")
+    )
     (defun UC_Extend:list (in:list new-length:integer value)
         @doc "Extends a list to new-length by repeating value"
         (let 
@@ -741,7 +785,6 @@
             )
         )
     )
-
     (defun UC_MaxInteger:integer (lst:[integer])
         (fold
             (lambda
@@ -752,7 +795,6 @@
             (drop 1 lst)
         )
     )
-
     (defun UC_SplitByIndexedRBT:[decimal] 
         (
             rbt-amount:decimal
@@ -820,11 +862,11 @@
             )
         ]
     )
-
     (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)
         (enforce (and (> percent 0.0)(<= percent 100.0)) "P is not a valid percent amount")
         (floor (/ (* x percent) 100.0) precision)
     )
+
     ;(UTILITY.UC_Percent kadena-input-amount 5.0 UTILITY.KDA_PRECISION)
     ;(UTILITY.UC_Percent kadena-input-amount 15.0 UTILITY.KDA_PRECISION)
     ;(UTILITY.UC_Percent kadena-input-amount 25.0 UTILITY.KDA_PRECISION)
