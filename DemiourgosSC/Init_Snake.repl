@@ -365,8 +365,8 @@
     (free.OUROBOROS.DPTF|C_Transfer "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     ;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "AgeOfZalmoxis" 1000.0)
     (format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
-    (free.OURO2.GAS|C_Make "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
-    (free.OURO2.GAS|C_Make "AncientHodler" "AncientHodler" "AgeOfZalmoxis" 500.0)
+    (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
+    (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "AgeOfZalmoxis" 500.0)
     (free.OUROBOROS.GAS|A_Toggle false true)             ;;turn virtual gas collection to on
     (free.OUROBOROS.GAS|A_Toggle true true)              ;;turn native gas collection to on
     

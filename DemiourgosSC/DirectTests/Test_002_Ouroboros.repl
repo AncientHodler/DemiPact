@@ -65,34 +65,21 @@
 (format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
 
 
+        
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 110.0)
-        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 500.0)
-
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 10.0)
-        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 700.0)
-
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 15.0)
-        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
-
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 25.0)
-        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1500.0)
-
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 75.0)
-        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1540.0)
-
         (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 175.0)
+        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 205.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 500.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 700.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1500.0)
+        (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1540.0)
         (free.OUROBOROS.ATS|C_Curl "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 2540.0)
 
-        (free.OURO2.ATS|C_ColdRecovery "AncientHodler" "AncientHodler" "Auryndex-98c486052a51" 205.0)
-
-        (free.OURO2.ATS|UP_P0 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P1 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P2 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P3 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P4 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P5 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P6 "Auryndex-98c486052a51" "AncientHodler")
-        (free.OURO2.ATS|UP_P7 "Auryndex-98c486052a51" "AncientHodler")
 (format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
 (format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
 (format "Auryndex is {} ; EliteAuryndex is {}"
@@ -101,11 +88,6 @@
         (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
     ]
 )
-
-
-
-
-
 
 (format "Auryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
 (format "Auryndex RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "Auryndex-98c486052a51")])
@@ -126,7 +108,7 @@
 )
 (env-chain-data
     {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
-     "block-time": (time "2024-10-26T21:00:00Z")}
+     "block-time": (time "2024-10-29T21:00:00Z")}
 )
 
 
@@ -318,5 +300,116 @@
 (free.OURO2.ATS|UP_P0 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
 
 (print "===============================END AOZ=============================")
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+(format "DalosAutostake[0] has {} AURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "DalosAutostake" true)])
+(format "Emma has {} ELITEAURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Emma" true)])
+(format "Emma has {} AURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Emma" true)])
+(format "Reward Tokens for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RewardTokenList "EliteAuryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+(format "EliteAuryndex RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "EliteAuryndex-98c486052a51")])
+;;
+(print "VALUES are for still credit burn")
+;(test-capability (free.OUROBOROS.ATS|UPDATE_ROU))
+;(free.OUROBOROS.ATS|CPF_RT-RBT "AURYN-98c486052a51" 15.0)
+(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "AURYN-98c486052a51" "AncientHodler" "Emma" 300.0)
+;;
+(print "=================================AFTER TRANSFER=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+(format "DalosAutostake[0] has {} AURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "DalosAutostake" true)])
+(format "Emma has {} ELITEAURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Emma" true)])
+(format "Emma has {} AURYN" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Emma" true)])
+(format "Reward Tokens for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RewardTokenList "EliteAuryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for EliteAuryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "EliteAuryn Supply is {}" [(free.OUROBOROS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+(format "EliteAuryndex RBT-Supply is {}" [(free.OUROBOROS.ATS|UC_PairRBTSupply "EliteAuryndex-98c486052a51")])
+
+
+
+
+
+
+(print "===============================GAS TESTS=============================")
+(print "===============================Before Making GAS=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+(format "Ouroboros has {} OURO" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Ouroboros" true)])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "DalosAutostake has {} OURO" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+;(free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "AncientHodler" 1000.0)
+(free.OURO2.GAS|C_Compress "AncientHodler" "AncientHodler" 5000.0)
+
+(print "===============================After Making GAS=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "AncientHodler" true)
+        (free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AncientHodler" true)
+    ]
+)
+(format "Ouroboros has {} OURO" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Ouroboros" true)])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.OUROBOROS.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "DalosAutostake has {} OURO" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.OUROBOROS.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.OUROBOROS.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
 (env-gas)
 (commit-tx)

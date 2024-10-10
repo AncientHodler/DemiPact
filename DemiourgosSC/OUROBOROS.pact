@@ -1312,7 +1312,7 @@
                     (compose-capability (DPTF-DPMF|ACCOUNT_TRANSFER_STATE id receiver true token-type))
                 ]
             )
-            (format "No trasnfer restrictions exist when transfering {} from {} to {}" [id sender receiver])
+            (format "No transfer restrictions exist when transfering {} from {} to {}" [id sender receiver])
         )
         (compose-capability (DPTF-DPMF|DEBIT id sender token-type))
         (compose-capability (DPTF-DPMF|CREDIT id receiver token-type))
@@ -1324,10 +1324,14 @@
     )
     (defcap DPTF|TRANSFER_CORE-TF (id:string)
         @doc "Transfer Capabilities needed when id is true-fungible"
-        (compose-capability (DPTF-DPMF|CREDIT id DPTF|SC_NAME true))
         (compose-capability (DPTF-DPMF|CREDIT id GAS|SC_NAME true))
         (compose-capability (DPTF|UPDATE_FEES))
         (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
+        (compose-capability (DPTF|TRANSMUTE_CORE id))
+    )
+    (defcap DPTF|TRANSMUTE_CORE (id:string)
+        @doc "Core Capabity needed for transmuting a DPTF Token"
+        (compose-capability (DPTF-DPMF|CREDIT id (DPTF|UR_FeeTarget id) true))
         (if (or
                 (ATS|UC_IzRBT-Absolute id true)
                 (ATS|UC_IzRT-Absolute id)
@@ -1335,7 +1339,6 @@
             (compose-capability (DPTF-DPMF|CREDIT id ATS|SC_NAME true))
             true
         )
-
     )
     (defcap DPTF-DPMF|CREDIT (id:string account:string token-type:bool)
         @doc "Capability to perform crediting operations with DPTF|DPMF Tokens"
@@ -1347,6 +1350,12 @@
         @doc "Capability to perform debiting operations on a Normal DALOS Account type for a DPTF|DPMF Token"
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UV_id id token-type)
+    )
+    (defcap DPTF|TRANSMUTE (id:string transmuter:string)
+        @doc "Capability required to transmute a DPTF Token"
+        (compose-capability (DPTF-DPMF|DEBIT id transmuter true))
+        (compose-capability (DPTF|TRANSMUTE_CORE id))
+        (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
     )
     (defcap DPTF|CREDIT_PRIMARY-FEE ()
         @doc "Capability needed to Credit Primary Fees"
@@ -2757,11 +2766,11 @@
                 (DPTF|X_Credit id receiver transfer-amount)
                 (if (= secondary-fee 0.0)
                     (with-capability (COMPOSE)
-                        (DPTF|X_CreditPrimaryFee id primary-fee)
+                        (DPTF|X_CreditPrimaryFee id primary-fee true)
                         (DPTF|X_Credit id receiver remainder)
                     )
                     (with-capability (COMPOSE)
-                        (DPTF|X_CreditPrimaryFee id primary-fee)
+                        (DPTF|X_CreditPrimaryFee id primary-fee true)
                         (DPTF|X_Credit id GAS|SC_NAME secondary-fee)
                         (DPTF|X_UpdateFeeVolume id secondary-fee false)
                         (DPTF|X_Credit id receiver remainder)
@@ -2771,30 +2780,55 @@
             (DPTF-DPMF|X_UpdateElite id sender receiver)
         )
     )
-    (defun DPTF|X_CreditPrimaryFee (id:string pf:decimal)
+    (defun DPTF|X_CreditPrimaryFee (id:string pf:decimal native:bool)
         @doc "Function used within <DPTF|X_Transfer> to credit Primary Fee; \
         \ Depends on specific ATS Parameters if id is part of an ATS-Pair"
-        (if (and (ATS|UC_IzRT-Absolute id) (ATS|UC_IzRBT-Absolute id true))
-            (with-capability (COMPOSE)
-                (DPTF|X_CPF_StillFee id (DPTF|UR_FeeTarget id) (at 0 (ATS|CPF_RT-RBT id pf)))
-                (DPTF|X_CPF_BurnFee id (DPTF|UR_FeeTarget id) (at 1 (ATS|CPF_RT-RBT id pf)))
-                (DPTF|X_CPF_CreditFee id (DPTF|UR_FeeTarget id) (at 2 (ATS|CPF_RT-RBT id pf)))
+        (let
+            (
+                (rt:bool (ATS|UC_IzRT-Absolute id))
+                (rbt:bool (ATS|UC_IzRBT-Absolute id true))
+                (target:string (DPTF|UR_FeeTarget id))
             )
-            (if (ATS|UC_IzRT-Absolute id)
-                (with-capability (COMPOSE)
-                    (DPTF|X_CPF_StillFee id (DPTF|UR_FeeTarget id) (ATS|CPF_RT id pf))
-                    (DPTF|X_CPF_CreditFee id (DPTF|UR_FeeTarget id) (- pf (ATS|CPF_RT id pf)))
-                )
-                (if (ATS|UC_IzRBT-Absolute id true)
-                    (with-capability (COMPOSE)
-                        (DPTF|X_CPF_StillFee id (DPTF|UR_FeeTarget id) (ATS|CPF_RBT id pf))
-                        (DPTF|X_CPF_BurnFee id (DPTF|UR_FeeTarget id) (- pf (ATS|CPF_RBT id pf)))
+            (if (and rt rbt)
+                (let*
+                    (
+                        (v:[decimal] (ATS|CPF_RT-RBT id pf))
+                        (v1:decimal (at 0 v))
+                        (v2:decimal (at 1 v))
+                        (v3:decimal (at 2 v))
                     )
-                    (DPTF|X_Credit id (DPTF|UR_FeeTarget id) pf)
+                    (DPTF|X_CPF_StillFee id target v1)
+                    (DPTF|X_CPF_CreditFee id target v2)
+                    (DPTF|X_CPF_BurnFee id target v3)
+                )
+                (if rt
+                    (let*
+                        (
+                            (v1:decimal (ATS|CPF_RT id pf))
+                            (v2:decimal (- pf v1))
+                        )
+                        (DPTF|X_CPF_StillFee id target v1)
+                        (DPTF|X_CPF_CreditFee id target v2)
+                    )
+                    (if rbt
+                        (let*
+                            (
+                                (v1:decimal (ATS|CPF_RBT id pf))
+                                (v2:decimal (- pf v1))
+                            )
+                            (DPTF|X_CPF_StillFee id target v1)
+                            (DPTF|X_CPF_BurnFee id target v2)
+                        )
+                        (DPTF|X_Credit id target pf)
+                    )
                 )
             )
         )
-        (DPTF|X_UpdateFeeVolume id pf true)
+        (if native
+            (DPTF|X_UpdateFeeVolume id pf true)
+            true
+        )
+        
     )
     (defun DPTF|X_CPF_StillFee (id:string target:string still-fee:decimal)
         @doc "Helper Function needed for <DPTF|X_CreditPrimaryFee>"
@@ -2822,6 +2856,16 @@
             (DPTF|X_Credit id ATS|SC_NAME credit-fee)
             true
         )
+    )
+    (defun DPTF|X_Transmute (id:string transmuter:string transmute-amount:decimal)
+        @doc "Transmutes a DPTF Token; only specific functions can use transmutation\
+        \ Transmutation behaves as a DPTF Fee (without actually counting towards Native DPTF Fee Volume), \
+        \ when the DPTF Token is not part of any ATS-Pair; \
+        \ If the Token is part one or multiple ATS Pairs, \
+        \ the input amount will be used to strengthen those ATS-Pairs Indices"
+        (require-capability (DPTF|TRANSMUTE id transmuter))
+        (DPTF|X_Debit id transmuter transmute-amount false)
+        (DPTF|X_CreditPrimaryFee id transmute-amount false)
     )
     (defun DPTF|X_Credit (id:string account:string amount:decimal)
         @doc "Auxiliary Function that credits a TrueFungible to a DPTF Account \

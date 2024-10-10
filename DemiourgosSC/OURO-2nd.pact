@@ -146,7 +146,7 @@
                             "Auryndex"
                             24
                             OuroID
-                            false
+                            true
                             (at 0 SnakeIDs)
                             false
                         )
@@ -582,179 +582,205 @@
     ;;5.1]    [G] GAS Capabilities
     ;;5.1.2]  [G]   GAS Composed Capabilities
     ;;5.1.2.3][G]           Client Capabilities
-    (defcap GAS|MAKE (patron:string client:string target:string gas-source-amount:decimal)
+    (defcap GAS|SUBLIMATE (patron:string client:string target:string ouro-amount:decimal)
         @doc "Capability required to produce GAS"
         (let*
             (
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
-                (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
-                (gas-amount:decimal (GAS|UC_Make gas-source-amount))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                (ouro-precision:integer (OUROBOROS.DPTF-DPMF|UR_Decimals ouro-id true))
+                (ouro-split:[decimal] (UTILITY.UC_PromilleSplit 10.0 ouro-amount ouro-precision))
+                (ouro-remainder-amount:decimal (at 0 ouro-split))
+                (ouro-fee-amount:decimal (at 1 ouro-split))
+                (ignis-amount:decimal (GAS|UC_Sublimate ouro-remainder-amount))
             )
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) creation. IGNIS(gas) creation is gas-free.
-        ;;   The target account must be a Standard DALOS Account
+        ;;01]<patron>, <client> and <target> must be Standard DALOS Accounts
             (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART patron false))
             (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART client false))
             (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART target false))
-        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
+        ;;02]Deploys DPTF GAS(Ignis) Account for client
             (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER client))
-        ;;03]Client sends Gas-Source-id to the GasTanker
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron gas-source-id client GAS|SC_NAME gas-source-amount true true))
-        ;;04]GasTanker burns GAS-Source-ID
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron gas-source-id GAS|SC_NAME gas-source-amount true true))
-        ;;05]GasTanker mints GAS-ID
-            (compose-capability (OUROBOROS.DPTF|MINT patron gas-id GAS|SC_NAME gas-amount false true))
-        ;;06]GasTanker transfers GAS to target
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron gas-id GAS|SC_NAME target gas-amount true true))
+        ;;03]Client sends Ouroboros <ouro-amount> to the GasTanker
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id client GAS|SC_NAME ouro-amount true true))
+        ;;04]GasTanker burns Ouroboros <ouro-remainder-amount>
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ouro-id GAS|SC_NAME ouro-remainder-amount true true))
+        ;;05]GasTanker mints GAS(Ignis) <ignis-amount>
+            (compose-capability (OUROBOROS.DPTF|MINT patron ignis-id GAS|SC_NAME ignis-amount false true))
+        ;;06]GasTanker transfers GAS(Ignis) <ignis-amount> to <target>
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id GAS|SC_NAME target ignis-amount true true))
+        ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
+            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id GAS|SC_NAME))
         )
     )
-    (defcap GAS|COMPRESS (patron:string client:string gas-amount:decimal)
-        @doc "Capability required to produce GAS"
+    (defcap GAS|COMPRESS (patron:string client:string ignis-amount:decimal)
+        @doc "Capability required to compress GAS"
         ;;Enforce only whole amounts of GAS are used for compression
-        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
+        (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of Gas can be compressed")
         (let*
             (
-                (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
-                (gas-source-amount:decimal (GAS|UC_Compress gas-amount))
+                (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ignis-to-ouro:[decimal] (GAS|UC_Compress ignis-amount))
+                (ouro-remainder-amount:decimal (at 0 ignis-to-ouro))
+                (ouro-fee-amount:decimal (at 1 ignis-to-ouro))
+                (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
             )
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) compression. IGNIS(gas) compression is gas-free.
-        ;;   Only IGNIS(gas) held by a Standard DALOS Account can be compressed to OURO(gas-source)
+        ;;01]<patron> and <client> must be Standard DALOS Accounts
             (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART patron false))
             (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART client false))
-        ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
+        ;;02]Deploys DPTF Ouroboros Account for client
             (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER client))
-        ;;03]Client sends Gas-id to the GasTanker
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron gas-id client GAS|SC_NAME gas-amount true true))
-        ;;04]GasTanker burns GAS-ID
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron gas-id GAS|SC_NAME gas-amount true true))
-        ;;05]GasTanker mints GAS-Source-ID
-            (compose-capability (OUROBOROS.DPTF|MINT patron gas-source-id GAS|SC_NAME gas-source-amount false true))
-        ;;06]GAS Smart Contract transfers Gas-Source to client: <X_MethodicTransferTrueFungible> must be used so as to not incurr GAS fees for this transfer
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron gas-source-id GAS|SC_NAME client gas-source-amount true true))
+        ;;03]Client sends GAS(Ignis) <ignis-amount> to the GasTanker
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id client GAS|SC_NAME ignis-amount true true))
+        ;;04]GasTanker burns GAS(Ignis) <ignis-amount>
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ignis-id GAS|SC_NAME ignis-amount true true))
+        ;;05]GasTanker mints Ouroboros <total-ouro>
+            (compose-capability (OUROBOROS.DPTF|MINT patron ouro-id GAS|SC_NAME total-ouro false true))
+        ;;06]GAS Smart Contract transfers Ouroboros <ouro-remainder-amount> to <client>
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id GAS|SC_NAME client ouro-remainder-amount true true))
+        ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
+            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id GAS|SC_NAME))
         )
     )
     ;;5.2]    [G] GAS Functions
     ;;5.2.1]  [G]   GAS Utility Functions
     ;;5.2.1.3][G]           Computing
-    (defun GAS|UC_Make (gas-source-amount:decimal)
-        @doc "Computes amount of GAS that can be made from the input <gas-source-amount>"
-        (enforce (>= gas-source-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
+    (defun GAS|UC_Sublimate:decimal (ouro-amount:decimal)
+        @doc "Computes how much GAS(Ignis) can be generated from <ouro-amount> Ouroboros"
+        (enforce (>= ouro-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
         (let
             (
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
                 
             )
-            (OUROBOROS.DPTF-DPMF|UV_Amount gas-source-id gas-source-amount true)
+            (OUROBOROS.DPTF-DPMF|UV_Amount ouro-id ouro-amount true)
             (let*
                 (
-                    (gas-source-price:decimal (OUROBOROS.DALOS|UR_OuroborosPrice))
-                    (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                    (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                    (ouro-price:decimal (OUROBOROS.DALOS|UR_OuroborosPrice))
+                    (ouro-price-used:decimal (if (<= ouro-price 1.00) 1.00 ouro-price))
+                    (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
                 )
-                (enforce (!= gas-id UTILITY.BAR) "Gas Token isnt properly set")
+                (enforce (!= ignis-id UTILITY.BAR) "Gas Token isnt properly set")
                 (let*
                     (
-                        (gas-decimal:integer (OUROBOROS.DPTF-DPMF|UR_Decimals gas-id true))
-                        (raw-gas-amount-per-unit (floor (* gas-source-price-used 100.0) gas-decimal))
-                        (raw-gas-amount:decimal (floor (* raw-gas-amount-per-unit gas-source-amount) gas-decimal))
-                        (gas-amount:decimal (floor (* raw-gas-amount 0.99) 0))
+                        (ignis-precision:integer (OUROBOROS.DPTF-DPMF|UR_Decimals ignis-id true))
+                        (raw-ignis-amount-per-unit:decimal (floor (* ouro-price-used 100.0) ignis-precision))
+                        (raw-ignis-amount:decimal (floor (* raw-ignis-amount-per-unit ouro-amount) ignis-precision))
+                        (output-ignis-amount:decimal (floor raw-ignis-amount 0))
                     )
-                    gas-amount
+                    output-ignis-amount
                 )
             )
         )
     )
-    (defun GAS|UC_Compress (gas-amount:decimal)
-        @doc "Computes amount of Gas-Source that can be created from an input amount <gas-amount> of GAS"
-        ;;Enforce only whole amounts of GAS are used for compression
-        (enforce (= (floor gas-amount 0) gas-amount) "Only whole Units of Gas can be compressed")
-        (enforce (>= gas-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
+    (defun GAS|UC_Compress (ignis-amount:decimal)
+        @doc "Computes how much Ouroboros can be generated from <ignis-amount> GAS(Ignis)"
+        ;;Enforce only whole amounts of GAS(Ignis) are used for compression
+        (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
+        (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
         (let*
             (
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
-                (gas-source-price:decimal (OUROBOROS.DALOS|UR_OuroborosPrice))
-                (gas-source-price-used:decimal (if (<= gas-source-price 1.00) 1.00 gas-source-price))
-                (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ouro-price:decimal (OUROBOROS.DALOS|UR_OuroborosPrice))
+                (ouro-price-used:decimal (if (<= ouro-price 1.00) 1.00 ouro-price))
+                (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
             )
-            (OUROBOROS.DPTF-DPMF|UV_Amount gas-id gas-amount true)
+            (OUROBOROS.DPTF-DPMF|UV_Amount ignis-id ignis-amount true)
             (let*
                 (
-                    (gas-source-decimal:integer (OUROBOROS.DPTF-DPMF|UR_Decimals gas-source-id true))
-                    (raw-gas-source-amount:decimal (floor (/ gas-amount (* gas-source-price-used 100.0)) gas-source-decimal))
-                    (gas-source-amount:decimal (floor (* raw-gas-source-amount 0.985) gas-source-decimal))
+                    (ouro-precision:integer (OUROBOROS.DPTF-DPMF|UR_Decimals ouro-id true))
+                    (raw-ouro-amount:decimal (floor (/ ignis-amount (* ouro-price-used 100.0)) ouro-precision))
+                    (promile-split:[decimal] (UTILITY.UC_PromilleSplit 15.0 raw-ouro-amount ouro-precision))
+                    (ouro-remainder-amount:decimal (floor (at 0 promile-split) 0))
+                    (ouro-fee-amount:decimal (at 1 promile-split))
                 )
-                gas-source-amount
+                [ouro-remainder-amount ouro-fee-amount]
             )
         )
     )
     ;;5.2.3]  [G]   GAS Client Functions
-    (defun GAS|C_Make:decimal (patron:string client:string target:string gas-source-amount:decimal)
-        @doc "Generates GAS from GAS Source Token via Making\
-            \ GAS generation is GAS free. \
-            \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
-            \ Gas Amount generated is alway integer (even though itself is of decimal type)"
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) creation. IGNIS(gas) creation is gas-free.
-        ;;   The target account must be a Standard DALOS Account
+    (defun GAS|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
+        @doc "Generates GAS(Ignis) from Ouroboros via Sublimation by <client> to <target> \
+            \ This means ANY Standard DALOS Account can generate GAS(Ignis) for any other Standard DALOS Account \
+            \ Smart DALOS Accounts cannot be used as <client> or <target> \
+            \ Ouroboros sublimation costs no GAS(Ignis) \
+            \ Ouroboros Price is set at a minimum 1$ \
+            \ GAS(Ignis) is generated always in whole amounts (ex 1.0 2.0 etc) (even though itself is of decimal type) \
+            \ Returns the amount of GAS(Ignis) generated"
+        ;;01]<patron>, <client> and <target> must be Standard DALOS Accounts
         (let*
             (
-                (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
-                (gas-client-exist:bool (OUROBOROS.DPTF-DPMF|UR_AccountExist gas-id client true))
+                (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ignis-target-exist:bool (OUROBOROS.DPTF-DPMF|UR_AccountExist ignis-id target true))
             )
-            (if (= gas-client-exist false)
-        ;;02]Deploy DPTF GAS Account for client (in case no DPTF GAS account exists for client)
-                (OUROBOROS.DPTF-DPMF|C_DeployAccount gas-id client true)
+            (if (= ignis-target-exist false)
+        ;;02]Deploys DPTF GAS(Ignis) Account for client
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount ignis-id target true)
                 true
             )
-            (with-capability (GAS|MAKE patron client target gas-source-amount)
-            (let
+            (with-capability (GAS|SUBLIMATE patron client target ouro-amount)
+            (let*
                 (
-                    (gas-amount:decimal (GAS|UC_Make gas-source-amount))
+                    (ouro-precision:integer (OUROBOROS.DPTF-DPMF|UR_Decimals ouro-id true))
+                    (ouro-split:[decimal] (UTILITY.UC_PromilleSplit 10.0 ouro-amount ouro-precision))
+                    (ouro-remainder-amount:decimal (at 0 ouro-split))
+                    (ouro-fee-amount:decimal (at 1 ouro-split))
+                    (ignis-amount:decimal (GAS|UC_Sublimate ouro-remainder-amount))
                 )
-        ;;03]Client sends Gas-Source-id to the GasTanker
-                (OUROBOROS.DPTF|CX_Transfer patron gas-source-id client GAS|SC_NAME gas-source-amount)
-        ;;04]GasTanker burns GAS-Source-ID
-                (OUROBOROS.DPTF|CX_Burn patron gas-source-id GAS|SC_NAME gas-source-amount)
-        ;;05]GasTanker mints GAS-ID
-                (OUROBOROS.DPTF|CX_Mint patron gas-id GAS|SC_NAME gas-amount false)
-        ;;06]GasTanker transfers GAS to target
-                (OUROBOROS.DPTF|CX_Transfer patron gas-id GAS|SC_NAME target gas-amount)
-                gas-amount
+        ;;03]Client sends Ouroboros <ouro-amount> to the GasTanker
+                (OUROBOROS.DPTF|CX_Transfer patron ouro-id client GAS|SC_NAME ouro-amount)
+        ;;04]GasTanker burns Ouroboros <ouro-remainder-amount>
+                (OUROBOROS.DPTF|CX_Burn patron ouro-id GAS|SC_NAME ouro-remainder-amount)
+        ;;05]GasTanker mints GAS(Ignis) <ignis-amount>
+                (OUROBOROS.DPTF|CX_Mint patron ignis-id GAS|SC_NAME ignis-amount false)
+        ;;06]GasTanker transfers GAS(Ignis) <ignis-amount> to <target>
+                (OUROBOROS.DPTF|CX_Transfer patron ignis-id GAS|SC_NAME target ignis-amount)
+        ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
+                (OUROBOROS.DPTF|X_Transmute ouro-id GAS|SC_NAME ouro-fee-amount)
+                ignis-amount
                 )
             )
         )
     )
-    (defun GAS|C_Compress (patron:string client:string gas-amount:decimal)
-        @doc "Generates Gas-Source(OURO) from Gas(IGNIS) via Compression \
-            \ GAS compression is GAS free. \
-            \ Gas Source Price is set at a minimum 1$. Uses Gas Price \
-            \ Input GAS amount must always be integer/whole (even though itself is of decimal type)"
-        ;;01]Any client that is a Standard DALOS Account can perform IGNIS(gas) compression. IGNIS(gas) compression is gas-free.
-            ;;   Only IGNIS(gas) held by a Standard DALOS Account can be compressed to OURO(gas-source)
+    (defun GAS|C_Compress:decimal (patron:string client:string ignis-amount:decimal)
+        @doc "Generates Ouroboros from GAS(Ignis) via Compression by <client> for itself \
+            \ Any Standard DALOS Accounts can compress GAS(Ignis) \
+            \ GAS(Ignis) compression costs no GAS(Ignis) \
+            \ Ouroboros Price is set at a minimum 1$ \
+            \ Can only compress whole amounts of GAS(Ignis) \
+            \ Returns the amount of Ouroboros generated"
+        ;;01]<patron> and <client> must be Standard DALOS Accounts
         (let*
             (
-                (gas-source-id:string (OUROBOROS.DALOS|UR_OuroborosID))
-                (gas-id:string (OUROBOROS.DALOS|UR_IgnisID))
-                (gas-source-client-exist:bool (OUROBOROS.DPTF-DPMF|UR_AccountExist gas-source-id client true))
+                (ouro-id:string (OUROBOROS.DALOS|UR_OuroborosID))
+                (ignis-id:string (OUROBOROS.DALOS|UR_IgnisID))
+                (ouro-client-exist:bool (OUROBOROS.DPTF-DPMF|UR_AccountExist ouro-id client true))
             )
-            (if (= gas-source-client-exist false)
-        ;;02]Deploy DPTF GAS-Source Account for client (in case no DPTF Gas-Source account exists for client)
-                (OUROBOROS.DPTF-DPMF|C_DeployAccount gas-source-id client true)
+            (if (= ouro-client-exist false)
+        ;;02]Deploys DPTF Ouroboros Account for client
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount ouro-id client true)
                 true
             )
-            (with-capability (GAS|COMPRESS patron client gas-amount)
-                (let
+            (with-capability (GAS|COMPRESS patron client ignis-amount)
+                (let*
                     (
-                        (gas-source-amount:decimal (GAS|UC_Compress gas-amount))
+                        (ignis-to-ouro:[decimal] (GAS|UC_Compress ignis-amount))
+                        (ouro-remainder-amount:decimal (at 0 ignis-to-ouro))
+                        (ouro-fee-amount:decimal (at 1 ignis-to-ouro))
+                        (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
                     )
-        ;;03]Client sends Gas-id to the GasTanker
-                    (OUROBOROS.DPTF|CX_Transfer patron gas-id client GAS|SC_NAME gas-amount)
-        ;;04]GasTanker burns GAS-ID
-                    (OUROBOROS.DPTF|CX_Burn patron gas-id GAS|SC_NAME gas-amount)
-        ;;05]GasTanker mints GAS-Source-ID
-                    (OUROBOROS.DPTF|CX_Mint patron gas-source-id GAS|SC_NAME gas-source-amount false)
-        ;;06]GasTanker transfers GAS to client
-                    (OUROBOROS.DPTF|CX_Transfer patron gas-source-id GAS|SC_NAME client gas-source-amount)
+        ;;03]Client sends GAS(Ignis) <ignis-amount> to the GasTanker
+                    (OUROBOROS.DPTF|CX_Transfer patron ignis-id client GAS|SC_NAME ignis-amount)
+        ;;04]GasTanker burns GAS(Ignis) <ignis-amount>
+                    (OUROBOROS.DPTF|CX_Burn patron ignis-id GAS|SC_NAME ignis-amount)
+        ;;05]GasTanker mints Ouroboros <total-ouro>
+                    (OUROBOROS.DPTF|CX_Mint patron ouro-id GAS|SC_NAME total-ouro false)
+        ;;06]GAS Smart Contract transfers Ouroboros <ouro-remainder-amount> to <client>
+                    (OUROBOROS.DPTF|CX_Transfer patron ouro-id GAS|SC_NAME client ouro-remainder-amount)
+        ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
+                    (OUROBOROS.DPTF|X_Transmute ouro-id GAS|SC_NAME ouro-fee-amount)
+                    ouro-remainder-amount
                 )
             )
         )
@@ -769,28 +795,9 @@
     ;;6.1]    [A] ATS Capabilities
     ;;6.1.1]  [A]   ATS Basic Capabilities
     ;;6.1.1.1][A]           <ATS|Ledger> Table Management
-    (defcap ATS|DEPLOY-IN-LEDGER (atspair:string account:string)
-        @doc "Capability that allows ATS|Ledger Deployment"
-        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
-        (compose-capability (OUROBOROS.DALOS|ACCOUNT_EXIST account))
-    )
-    (defcap ATS|NORMALIZE_LEDGER (atspair:string account:string)
-        @doc "Capability needed to normalize an ATS|Ledger Account \
-        \ Normalizing an ATS|Ledger Account updates it it according to the <atspair> <c-positions> and <c-elite-mode> parameters \
-        \ Existing entries are left as they are"
-        (enforce-one
-            "Keyset not valid for KadenaLiquidStaking Smart DALOS Account Operations"
-            [
-                (enforce-guard (keyset-ref-guard OUROBOROS.DALOS|DEMIURGOI))
-                (enforce-guard (OUROBOROS.DALOS|UR_AccountGuard account))
-            ]
-        )
-        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
-    )
-    (defcap ATS|UPDATE_LEDGER ()
-        @doc "Cap required to update entries in the ATS|Ledger"
-        true
-    )
+    
+    
+    
     (defcap ATS|COLD_RECOVERY (patron:string recoverer:string atspair:string ra:decimal)
         (let
             (
@@ -802,8 +809,37 @@
             (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron c-rbt ATS|SC_NAME ra true true))
             (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
             (compose-capability (ATS|UPDATE_LEDGER))
-            (compose-capability (ATS|NORMALIZE_LEDGER atspair recoverer))
+            (compose-capability (ATS|DEPLOY atspair recoverer))
         )
+    )
+    (defcap ATS|DEPLOY (atspair:string account:string)
+        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
+        (compose-capability (OUROBOROS.DALOS|ACCOUNT_EXIST account))
+        (compose-capability (ATS|NORMALIZE_LEDGER atspair account))
+    )
+    (defcap ATS|NORMALIZE_LEDGER (atspair:string account:string)
+        @doc "Capability needed to normalize an ATS|Ledger Account \
+        \ Normalizing an ATS|Ledger Account updates it it according to the <atspair> <c-positions> and <c-elite-mode> parameters \
+        \ Existing entries are left as they are"
+        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
+        (enforce-one
+            "Keyset not valid for KadenaLiquidStaking Smart DALOS Account Operations"
+            [
+                (enforce-guard (keyset-ref-guard OUROBOROS.DALOS|DEMIURGOI))
+                (enforce-guard (OUROBOROS.DALOS|UR_AccountGuard account))
+            ]
+        )
+    )
+    (defcap ATS|CULL (culler:string atspair:string)
+        (OUROBOROS.ATS|UV_id atspair)
+        (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER culler))
+        (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
+        (compose-capability (ATS|NORMALIZE_LEDGER atspair culler))
+        (compose-capability (ATS|UPDATE_LEDGER))
+    )
+    (defcap ATS|UPDATE_LEDGER ()
+        @doc "Cap required to update entries in the ATS|Ledger"
+        true
     )
     ;;6.2]    [A] ATS Functions
     ;;6.2.1]  [A]   ATS Utility Functions
@@ -1191,54 +1227,10 @@
             )
         )
     )
-    (defun ATS|C_DeployUnstakeAccount (atspair:string account:string)
-        @doc "Deploys an ATS|Ledger (Unstaking) Account for <atspair> and <account>"
-        (with-capability (ATS|DEPLOY-IN-LEDGER atspair account)
-            (let
-                (
-                    (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
-                    (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
-                )
-                (with-default-read ATS|Ledger (concat [atspair UTILITY.BAR account])
-                    { "P0"  : [zero]
-                    , "P1"  : negative
-                    , "P2"  : negative
-                    , "P3"  : negative
-                    , "P4"  : negative
-                    , "P5"  : negative
-                    , "P6"  : negative
-                    , "P7"  : negative
-                    }
-                    { "P0"  := p0
-                    , "P1"  := p1
-                    , "P2"  := p2
-                    , "P3"  := p3
-                    , "P4"  := p4
-                    , "P5"  := p5
-                    , "P6"  := p6
-                    , "P7"  := p7
-                    }
-                    (write ATS|Ledger (concat [atspair UTILITY.BAR account])
-                        { "P0"  : p0
-                        , "P1"  : p1
-                        , "P2"  : p2
-                        , "P3"  : p3
-                        , "P4"  : p4
-                        , "P5"  : p5
-                        , "P6"  : p6
-                        , "P7"  : p7
-                        }
-                    )
-                )
-            )
-        )
-    )
     (defun ATS|C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal)
         @doc "Executes Cold Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
-        ;;Deploy ATS|Ledger Account for recoverer and normalize it
-        (ATS|C_DeployUnstakeAccount atspair recoverer)
         (with-capability (ATS|COLD_RECOVERY patron recoverer atspair ra)
-            (ATS|X_Normalize atspair recoverer)
+            (ATS|X_DeployAccount atspair recoverer)
             (let*
                 (
                     (rt-lst:[string] (OUROBOROS.ATS|UR_RewardTokenList atspair))
@@ -1305,6 +1297,7 @@
                     )
                 )
             )
+            (ATS|X_Normalize atspair recoverer)
         )
     )
     (defun ATS|C_Cull:[decimal] (patron:string culler:string atspair:string)
@@ -1344,17 +1337,6 @@
                 cw
             )
         )
-    )
-    (defcap ATS|CULL (culler:string atspair:string)
-        (OUROBOROS.ATS|UV_id atspair)
-        (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER culler))
-        (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
-        (compose-capability (ATS|NORMALIZE_LEDGER atspair culler))
-        (compose-capability (ATS|CULL-ME))
-    )
-    (defcap ATS|CULL-ME ()
-        @doc "Capability needed for culling ATS-Unstake Account positions"
-        (compose-capability (ATS|UPDATE_LEDGER))
     )
     ;;6.2.3.3][A]           Destroy
     ;;NEEDS FINALISATION
@@ -1440,6 +1422,48 @@
                 )
             )
         )
+    )
+    (defun ATS|X_DeployAccount (atspair:string account:string)
+        @doc "Deploys an ATS|Ledger (Unstaking) Account for <atspair> and <account> and normalizes it"
+        (require-capability (ATS|DEPLOY atspair account))
+        (let
+            (
+                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
+                (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+            )
+            (with-default-read ATS|Ledger (concat [atspair UTILITY.BAR account])
+                { "P0"  : [zero]
+                , "P1"  : negative
+                , "P2"  : negative
+                , "P3"  : negative
+                , "P4"  : negative
+                , "P5"  : negative
+                , "P6"  : negative
+                , "P7"  : negative
+                }
+                { "P0"  := p0
+                , "P1"  := p1
+                , "P2"  := p2
+                , "P3"  := p3
+                , "P4"  := p4
+                , "P5"  := p5
+                , "P6"  := p6
+                , "P7"  := p7
+                }
+                (write ATS|Ledger (concat [atspair UTILITY.BAR account])
+                    { "P0"  : p0
+                    , "P1"  : p1
+                    , "P2"  : p2
+                    , "P3"  : p3
+                    , "P4"  : p4
+                    , "P5"  : p5
+                    , "P6"  : p6
+                    , "P7"  : p7
+                    }
+                )
+            )
+        )
+        (ATS|X_Normalize atspair account)
     )
     (defun ATS|X_Normalize (atspair:string account:string)
         @doc "Normalize an existing ATS-UnstakeAccount \
@@ -1575,7 +1599,6 @@
     )
     (defun ATS|X_SingleCull:[decimal] (atspair:string account:string position:integer)
         @doc "Culls a single ATS Position, returning the culled amounts"
-        (require-capability (ATS|CULL-ME))
         (let*
             (
                 (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
@@ -1594,7 +1617,6 @@
     )
     (defun ATS|X_MultiCull:[decimal] (atspair:string account:string)
         @doc "Culls the -1 ATS Position for <atspair> and <account>"
-        (require-capability (ATS|CULL-ME))
         (let*
             (
                 (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
