@@ -72,7 +72,7 @@
         @doc "Set to false for non-upgradeability; \
             \ Remove Comment below so that only ADMIN (<free.DH_Master-Keyset>) can enact an upgrade"
         true
-        ;;(compose-capability (DEMIURGOI))
+        ;(compose-capability (DEMIURGOI))
     )
     ;;[D] DALOS Governance
     (defcap DEMIURGOI ()
@@ -218,6 +218,12 @@
     (defconst DALOS|PLEB
         { "class" : "NOVICE"
         , "name"  : "Infidel"
+        , "tier"  : "0.0"
+        , "deb"   : 1.0 }
+    )
+    (defconst DALOS|VOID
+        { "class" : "VOID"
+        , "name"  : "Undead"
         , "tier"  : "0.0"
         , "deb"   : 0.0 }
     )
@@ -413,34 +419,17 @@
     ;;========[D] CAPABILITIES=================================================;;
     ;;1.1]    [D] DALOS Capabilities
     ;;1.1.1]  [D]   DALOS Basic Capabilities
-    (defcap DALOS|ACCOUNT_EXIST (account:string)
+    (defcap DALOS|EXIST (account:string)
         @doc "Enforces that a DALOS Account exists"
-        (UTILITY.DALOS|UV_Account account)
-        (let
-            (
-                (dalos-account-type:bool 
-                    (with-read DALOS|AccountTable account
-                        { "smart-contract" := sc}
-                        sc
-                    )
-                )
-            )
-            (enforce-one
-                (format "DALOS Account {} does not exist !" [account])
-                [
-                    (enforce (= dalos-account-type true) (format "Account {} is a Normal DALOS Account - Crediting will execute" [account]))
-                    (enforce (= dalos-account-type false) (format "Account {} is a Smart DALOS Account - Crediting will execute" [account]))
-                ]
-            )
-        )
+        (DALOS|UVE_id account)
     )
     (defcap DALOS|ACCOUNT_OWNER (account:string)
         @doc "Enforces DALOS Account Ownership"
-        (UTILITY.DALOS|UV_Account account)
         (enforce-guard (DALOS|UR_AccountGuard account))
     )
     (defcap DALOS|IZ_ACCOUNT_SMART (account:string smart:bool)
-        @doc "Enforces that a DALOS Account is either Normal (<smart-contract> boolean false) or Smart (<smart-contract> boolean true)"
+        @doc "Enforces that a DALOS Account is either Normal (<smart-contract> boolean false) or Smart (<smart-contract> boolean true) \
+            \ If the input DALOS Account doesnt exist, it is considered Normal"
         (UTILITY.DALOS|UV_Account account)
         (let
             (
@@ -479,8 +468,8 @@
     )
     ;;1.1.2]  [D]   DALOS Composed Capabilities
     (defcap DALOS|CLIENT (account:string)
-        @doc "Enforces DALO Account ownership if its a Standard DALOC Account"
-        (UTILITY.DALOS|UV_Account account)
+        @doc "Enforces DALOS Account ownership if its a Standard DALOS Account \
+            \ Fails if account doesnt exist via the last capability"
         (let
             (
                 (iz-sc:bool (DALOS|UR_AccountType account))
@@ -505,7 +494,6 @@
     )
     (defcap DALOS|CONTROL_SMART-ACCOUNT_CORE (account:string pasc:bool pbsc:bool pbm:bool)
         @doc "Core Capability required to Control a Smart DALOS Account"
-        (UTILITY.DALOS|UV_Account account)
         (compose-capability (DALOS|ACCOUNT_OWNER account))     
         (compose-capability (DALOS|IZ_ACCOUNT_SMART account true))
         (enforce (= (or (or pasc pbsc) pbm) true) "At least one Smart DALOS Account parameter must be true")
@@ -559,7 +547,6 @@
     ;;1.2.1.1][D]           Account Info
     (defun DALOS|UR_AccountGuard:guard (account:string)
         @doc "Returns DALOS Account <account> Guard"
-        (UTILITY.DALOS|UV_Account account)
         (at "guard" (read DALOS|AccountTable account ["guard"]))
     )
     (defun DALOS|UR_AccountProperties:[bool] (account:string)
@@ -598,7 +585,6 @@
     )
     (defun DALOS|UR_AccountKadena:string (account:string)
         @doc "Returns DALOS Account <kadena-konto> Account"
-        (UTILITY.DALOS|UV_Account account)
         (at "kadena-konto" (read DALOS|AccountTable account ["kadena-konto"]))
     )
     (defun DALOS|UR_Elite (account:string)
@@ -629,7 +615,7 @@
     )
     (defun DALOS|UP_AccountProperties (account:string)
         @doc "Prints DALOS Account <account> Properties"
-        (UTILITY.DALOS|UV_Account account)
+        (DALOS|UVE_id account)
         (let* 
             (
                 (p:[bool] (DALOS|UR_AccountProperties account))
@@ -707,28 +693,37 @@
         (DALOS|UC_MethodicTransferability sender receiver false)
     )
     (defun DALOS|UC_Makeid:string (ticker:string)
-        @doc "Creates a DPTF id \ 
+        @doc "Creates a DPTF|DPMF id \ 
             \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
         (UTILITY.DALOS|UV_Ticker ticker)
         (UTILITY.DALOS|UC_Makeid ticker)
     )
     ;;1.2.1.4][D]           Validations
+    (defun DALOS|UVE_id (dalos-account:string)
+        @doc "Validates the existance of the DALOS Account <dalos-account>"
+        ;;First, the name must conform to the naming requirement
+        (UTILITY.DALOS|UV_Account dalos-account)
+        ;;If it passes the naming requirement, its existance is checked, by reading its DEB
+        ;;If the DEB is smaller than 1, which it cant happen, then account doesnt exist
+        (with-default-read DALOS|AccountTable dalos-account
+            { "elite" : DALOS|VOID }
+            { "elite" := e }
+            (let
+                (
+                    (deb:decimal (at "deb" e))
+                )
+                (enforce 
+                    (>= deb 1.0)
+                    (format "The {} DALOS Account doesnt exist" [dalos-account])
+                )
+            )
+        )
+    )
     (defun DALOS|UV_SenderWithReceiver (sender:string receiver:string)
         @doc "Validates Account <sender> with Account <receiver> for Transfer"
-        (UTILITY.DALOS|UV_Account sender)
-        (UTILITY.DALOS|UV_Account receiver)
+        (DALOS|UVE_id sender)
+        (DALOS|UVE_id receiver)
         (enforce (!= sender receiver) "Sender and Receiver must be different")
-    )
-    (defun DALOS|UV_Account_Two (account-one:string account-two:string)
-        @doc "Validates 2 DALOS Accounts"
-        (UTILITY.DALOS|UV_Account account-one)
-        (UTILITY.DALOS|UV_Account account-two)
-    )
-    (defun DALOS|UV_Account_Three (account-one:string account-two:string account-three:string)
-        @doc "Validates 2 DALOS Accounts"
-        (UTILITY.DALOS|UV_Account account-one)
-        (UTILITY.DALOS|UV_Account account-two)
-        (UTILITY.DALOS|UV_Account account-three)
     )
     (defun DALOS|UV_Fee (fee:decimal)
         @doc "Validate input decimal as a fee value"
@@ -811,7 +806,7 @@
             \ \
             \ If a DALOS Account already exists, function will fail, due to usage of insert"
         (UTILITY.DALOS|UV_Account account)
-        (UTILITY.DALOS|UV_EnforceReserved account guard)
+        ;(UTILITY.DALOS|UV_EnforceReserved account guard)
         (insert DALOS|AccountTable account
             { "guard"                       : guard
             , "smart-contract"              : false
@@ -836,7 +831,7 @@
             \ a Standard or Smart DALOS Account must be deployed \
             \ Equivalent to creating a new ERD Smart-Contract Address"
         (UTILITY.DALOS|UV_Account account)
-        (UTILITY.DALOS|UV_EnforceReserved account guard)
+        ;(UTILITY.DALOS|UV_EnforceReserved account guard)
         ;;Since it uses insert, the function only works if the DALOS account doesnt exist yet.
         (insert DALOS|AccountTable account
             { "guard"                       : guard
@@ -856,18 +851,18 @@
             true
         )
     )
-    (defun DALOS|C_RotateGuard (patron:string account:string guard:guard)
+    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
         @doc "Updates the Guard stored in the DALOS|AccountTable"
         (let
             (
                 (ZG:bool (GAS|UC_SubZero))
             )
-            (with-capability (DALOS|ROTATE_ACCOUNT patron account)
+            (with-capability (DALOS|ROTATE_ACCOUNT patron account new-guard)
                 (if (= ZG false)
                     (GAS|X_Collect patron account UTILITY.GAS_SMALL)
                     true
                 )
-                (DALOS|X_RotateGuard account guard)
+                (DALOS|X_RotateGuard account new-guard safe)
                 (DALOS|X_IncrementNonce patron)
             )
         )
@@ -907,18 +902,21 @@
     ;;1.2.4]  [D]   DALOS Auxiliary Functions
     (defun DALOS|X_IncrementNonce (client:string)
         @doc "Increments DALOS Account nonce, which store how many txs the DALOS Account executed"
-        (UTILITY.DALOS|UV_Account client)
         (require-capability (DALOS|INCREASE-NONCE))
         (with-read DALOS|AccountTable client
             { "nonce"                       := n }
             (update DALOS|AccountTable client { "nonce" : (+ n 1)})
         )
     )
-    (defun DALOS|X_RotateGuard (account:string guard:guard)
+    (defun DALOS|X_RotateGuard (account:string new-guard:guard safe:bool)
         @doc "Updates DALOS Account Parameters"
         (require-capability (DALOS|ACCOUNT_OWNER account))
+        (if safe
+            (enforce-guard new-guard)
+            true
+        )
         (update DALOS|AccountTable account
-            {"guard"                        : guard}
+            {"guard"                        : new-guard}
         )
     )
     (defun DALOS|X_UpdateSmartAccountParameters (account:string pasc:bool pbsc:bool pbm:bool)
@@ -948,7 +946,7 @@
         )
     )
     (defun DALOS|UR_EliteAurynzSupply (account:string)
-        @doc "Returns Total Elite Auryn (norrmal and vested) Supply of Account"
+        @doc "Returns Total Elite Auryn (normal and vested) Supply of Account"
         (if (!= (DALOS|UR_EliteAurynID) UTILITY.BAR)
             (let
                 (
@@ -974,14 +972,18 @@
     ;;2.1]    [TM]DPTF-DPMF Capabilities
     ;;2.1.1]  [TM]  DPTF-DPMF Basic Capabilities
     ;;2.1.1.1][TM]          DPTF-DPMF <DPTF|PropertiesTable>|<DPMF|PropertiesTable> Table Management
+    (defcap DPTF-DPMF|EXIST (id:string token-type:bool)
+        @doc "Enforces that a DPTF or DPMF Token exists"
+        (DPTF-DPMF|UVE_id id token-type)
+    )
     (defcap DPTF-DPMF|OWNER (id:string token-type:bool)
         @doc "Enforces DPTF|DPMF Token Ownership"
         (let*
             (
                 (owner-konto:string (DPTF-DPMF|UR_Konto id token-type))
-                (dalos-guard:guard (DALOS|UR_AccountGuard owner-konto))
+                (owner-dalos-guard:guard (DALOS|UR_AccountGuard owner-konto))
             )
-            (enforce-guard dalos-guard)
+            (enforce-guard owner-dalos-guard)
         )
     )
     (defcap DPTF-DPMF|CAN-CHANGE-OWNER_ON (id:string token-type:bool)
@@ -1117,6 +1119,7 @@
         (DALOS|UV_SenderWithReceiver (DPTF-DPMF|UR_Konto id token-type) new-owner)
         (compose-capability (DPTF-DPMF|OWNER id token-type))
         (compose-capability (DPTF-DPMF|CAN-CHANGE-OWNER_ON id token-type))
+        (compose-capability (DALOS|EXIST new-owner))
     )
     (defcap DPTF-DPMF|CONTROL (patron:string id:string token-type:bool)
         @doc "Capability required to EXECUTE <DPTF|C_Control>|<DPMF|C_Control> Function"
@@ -1196,8 +1199,10 @@
         (compose-capability (DALOS|INCREASE-NONCE))
     )
     (defcap DPTF-DPMF|UPDATE_VESTING_CORE (dptf:string dpmf:string)
-        (DPTF-DPMF|UV_id dptf true)
-        (DPTF-DPMF|UV_id dpmf false)
+        (DPTF-DPMF|UVE_id dptf true)
+        (DPTF-DPMF|UVE_id dpmf false)
+        (compose-capability (DPTF-DPMF|OWNER dptf true))
+        (compose-capability (DPTF-DPMF|OWNER dpmf false))
         (compose-capability (VST|ACTIVE dptf dpmf))
         (let
             (
@@ -1207,7 +1212,7 @@
             )
             (enforce 
                 (and (= tf-vesting-id UTILITY.BAR) (= mf-vesting-id UTILITY.BAR) )
-                "Vesting Property is immutable !"
+                "Vesting Pairs are immutable !"
             )
             (enforce (= iz-hot-rbt false) "A DPMF defined as a hot-rbt cannot be used as Vesting Token in Vesting pair")
         )
@@ -1215,8 +1220,6 @@
     ;;2.1.2.3][TM]          Create
     (defcap DPTF-DPMF|ISSUE (patron:string client:string token-type:bool issue-size:integer)
         @doc "Capability required to EXECUTE a <DPTF-DPMF|C_Issue> Function"
-        (UTILITY.DALOS|UV_Account patron)
-        (UTILITY.DALOS|UV_Account client)
         (let*
             (
                 (issue:decimal UTILITY.GAS_ISSUE)
@@ -1342,14 +1345,16 @@
     )
     (defcap DPTF-DPMF|CREDIT (id:string account:string token-type:bool)
         @doc "Capability to perform crediting operations with DPTF|DPMF Tokens"
-        (compose-capability (DALOS|ACCOUNT_EXIST account))
-        (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (compose-capability (DPTF-DPMF|CREDIT-DEBIT id account token-type))
     )
     (defcap DPTF-DPMF|DEBIT (id:string account:string token-type:bool)
         @doc "Capability to perform debiting operations on a Normal DALOS Account type for a DPTF|DPMF Token"
-        (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (compose-capability (DPTF-DPMF|CREDIT-DEBIT id account token-type))
+    )
+    (defcap DPTF-DPMF|CREDIT-DEBIT (id:string account:string token-type:bool)
+        @doc "Credit|Debit Core Capability"
+        (compose-capability (DPTF-DPMF|EXIST id token-type))
+        (compose-capability (DALOS|EXIST account))
     )
     (defcap DPTF|TRANSMUTE (id:string transmuter:string)
         @doc "Capability required to transmute a DPTF Token"
@@ -1383,7 +1388,7 @@
     (defun DPTF-DPMF|UR_AccountExist:bool (id:string account:string token-type:bool)
         @doc "Checks if DPTF|DPMF Account <account> exists for DPTF|DPMF Token id <id>"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
             (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                 { "balance" : -1.0 }
@@ -1407,7 +1412,7 @@
         @doc "Returns Account <account> True or Meta Fungible <id> Supply \
             \ If DPTF|DPMF Account doesnt exist, 0.0 balance is returned"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
             (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                 { "balance" : 0.0 }
@@ -1439,7 +1444,7 @@
         @doc "Returns Account <account> True or Meta Fungible <id> Burn Role \
             \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
             (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                 { "role-burn" : false}
@@ -1457,7 +1462,7 @@
         @doc "Returns Account <account> True or Meta Fungible <id> Transfer Role \
             \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
             (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                 { "role-transfer" : false}
@@ -1474,7 +1479,6 @@
     ;;2.2.1.2][TM]          True|Meta-Fungible Info
     (defun DPTF-DPMF|UR_Konto:string (id:string token-type:bool)
         @doc "Returns <owner-konto> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "owner-konto" (read DPTF|PropertiesTable id ["owner-konto"]))
             (at "owner-konto" (read DPMF|PropertiesTable id ["owner-konto"]))
@@ -1482,7 +1486,6 @@
     )
     (defun DPTF-DPMF|UR_Name:string (id:string token-type:bool)
         @doc "Returns <name> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "name" (read DPTF|PropertiesTable id ["name"]))
             (at "name" (read DPMF|PropertiesTable id ["name"]))
@@ -1490,7 +1493,6 @@
     )
     (defun DPTF-DPMF|UR_Ticker:string (id:string token-type:bool)
         @doc "Returns <ticker> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "ticker" (read DPTF|PropertiesTable id ["ticker"]))
             (at "ticker" (read DPMF|PropertiesTable id ["ticker"]))   
@@ -1498,7 +1500,6 @@
     )
     (defun DPTF-DPMF|UR_Decimals:integer (id:string token-type:bool)
         @doc "Returns <decimals> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "decimals" (read DPTF|PropertiesTable id ["decimals"]))
             (at "decimals" (read DPMF|PropertiesTable id ["decimals"]))
@@ -1506,7 +1507,6 @@
     )
     (defun DPTF-DPMF|UR_CanChangeOwner:bool (id:string token-type:bool)
         @doc "Returns <can-change-owner> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-change-owner" (read DPTF|PropertiesTable id ["can-change-owner"]))
             (at "can-change-owner" (read DPMF|PropertiesTable id ["can-change-owner"]))
@@ -1514,7 +1514,6 @@
     )
     (defun DPTF-DPMF|UR_CanUpgrade:bool (id:string token-type:bool)
         @doc "Returns <can-upgrade> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-upgrade" (read DPTF|PropertiesTable id ["can-upgrade"]))
             (at "can-upgrade" (read DPMF|PropertiesTable id ["can-upgrade"]))
@@ -1522,7 +1521,6 @@
     )
     (defun DPTF-DPMF|UR_CanAddSpecialRole:bool (id:string token-type:bool)
         @doc "Returns <can-add-special-role> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-add-special-role" (read DPTF|PropertiesTable id ["can-add-special-role"]))
             (at "can-add-special-role" (read DPMF|PropertiesTable id ["can-add-special-role"]))
@@ -1530,7 +1528,6 @@
     )
     (defun DPTF-DPMF|UR_CanFreeze:bool (id:string token-type:bool)
         @doc "Returns <can-freeze> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-freeze" (read DPTF|PropertiesTable id ["can-freeze"]))
             (at "can-freeze" (read DPMF|PropertiesTable id ["can-freeze"]))
@@ -1538,7 +1535,6 @@
     )
     (defun DPTF-DPMF|UR_CanWipe:bool (id:string token-type:bool)
         @doc "Returns <can-wipe> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-wipe" (read DPTF|PropertiesTable id ["can-wipe"]))
             (at "can-wipe" (read DPMF|PropertiesTable id ["can-wipe"]))
@@ -1546,7 +1542,6 @@
     )
     (defun DPTF-DPMF|UR_CanPause:bool (id:string token-type:bool)
         @doc "Returns <can-pause> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "can-pause" (read DPTF|PropertiesTable id ["can-pause"]))
             (at "can-pause" (read DPMF|PropertiesTable id ["can-pause"]))
@@ -1554,7 +1549,6 @@
     )
     (defun DPTF-DPMF|UR_Paused:bool (id:string token-type:bool)
         @doc "Returns <is-paused> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "is-paused" (read DPTF|PropertiesTable id ["is-paused"]))
             (at "is-paused" (read DPMF|PropertiesTable id ["is-paused"]))
@@ -1562,7 +1556,6 @@
     )
     (defun DPTF-DPMF|UR_Supply:decimal (id:string token-type:bool)
         @doc "Returns <supply> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "supply" (read DPTF|PropertiesTable id ["supply"]))
             (at "supply" (read DPMF|PropertiesTable id ["supply"]))
@@ -1570,7 +1563,6 @@
     )
     (defun DPTF-DPMF|UR_TransferRoleAmount:integer (id:string token-type:bool)
         @doc "Returns <role-transfer-amount> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "role-transfer-amount" (read DPTF|PropertiesTable id ["role-transfer-amount"]))
             (at "role-transfer-amount" (read DPMF|PropertiesTable id ["role-transfer-amount"]))
@@ -1578,7 +1570,6 @@
     )
     (defun DPTF-DPMF|UR_Vesting:string (id:string token-type:bool)
         @doc "Returns <vesting> for the DPTF|DPMF <id>"
-        (DPTF-DPMF|UV_id id token-type)
         (if (= token-type true)
             (at "vesting" (read DPTF|PropertiesTable id ["vesting"]))
             (at "vesting" (read DPMF|PropertiesTable id ["vesting"]))
@@ -1588,7 +1579,7 @@
     (defun DPTF-DPMF|UV_Amount (id:string amount:decimal token-type:bool)
         @doc "Enforce the minimum denomination for a specific DPTF|DPMF id \
         \ and ensure the amount is greater than zero"
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (let
             (
                 (decimals:integer (DPTF-DPMF|UR_Decimals id token-type))
@@ -1603,7 +1594,7 @@
             )
         )
     )
-    (defun DPTF-DPMF|UV_id (id:string token-type:bool)
+    (defun DPTF-DPMF|UVE_id (id:string token-type:bool)
         @doc "Enforces the True or MetaFungible <id> exists"
         (if (= token-type true)
             (with-default-read DPTF|PropertiesTable id
@@ -1611,7 +1602,7 @@
                 { "supply" := s }
                 (enforce
                     (>= s 0.0)
-                    (format "id {} does not exist." [id])
+                    (format "DPTF Token with id {} does not exist." [id])
                 )
             )
             (with-default-read DPMF|PropertiesTable id
@@ -1619,7 +1610,7 @@
                 { "supply" := s }
                 (enforce
                     (>= s 0.0)
-                    (format "id {} does not exist." [id])
+                    (format "DPMF Token with id {} does not exist." [id])
                 )
             )
         )
@@ -1697,9 +1688,8 @@
             \ If a DPTF|DPMF Account already exists for <id> and <account>, it remains as is \
             \ \
             \ A DPTF Account can only be created if a coresponding DALOS Account exists, and its guard is presented."
-        (DPTF-DPMF|UV_id id token-type)
-        (UTILITY.DALOS|UV_Account account)
-        (with-capability (DALOS|ACCOUNT_EXIST account)
+        (DPTF-DPMF|UVE_id id token-type)
+        (with-capability (DALOS|EXIST account)
             (if (= token-type true)
                 (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                     { "balance"                             : 0.0
@@ -2050,7 +2040,7 @@
             (enforce (or (= fee-promile -1.0) (and (>= fee-promile 0.0) (<= fee-promile 1000.0))) "Please Set up Fee Promile before Turning Fee Collection on !")
             (UTILITY.DALOS|UV_Account (DPTF|UR_FeeTarget id))
             (compose-capability (DPTF-DPMF|OWNER id true))
-            (compose-capability (DALOS|ACCOUNT_EXIST (DPTF|UR_FeeTarget id)))
+            (compose-capability (DALOS|EXIST (DPTF|UR_FeeTarget id)))
             (compose-capability (DPTF|FEE-LOCK_STATE id false))
             (compose-capability (DPTF|FEE-TOGGLE_STATE id (not toggle)))
         )
@@ -2097,7 +2087,7 @@
     (defcap DPTF|SET_FEE-TARGET_CORE (id:string target:string)
         @doc "Core Capability required to set <fee-target> for a DPTF Token"
         (UTILITY.DALOS|UV_Account target)
-        (compose-capability (DALOS|ACCOUNT_EXIST target))
+        (compose-capability (DALOS|EXIST target))
         (compose-capability (DPTF-DPMF|OWNER id true))
         (compose-capability (DPTF|FEE-LOCK_STATE id false))    
     )
@@ -2255,7 +2245,7 @@
         @doc "Returns Account <account> True Fungible <id> Mint Role \
             \ Assumed as false if DPTF Account doesnt exit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id true)
+        (DPTF-DPMF|UVE_id id true)
         (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
             { "role-mint" : false}
             { "role-mint" := rm }
@@ -2266,7 +2256,7 @@
         @doc "Returns Account <account> True Fungible <id> Fee Exemption Role \
             \ Assumed as false if DPTF Account doesnt exit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id true)
+        (DPTF-DPMF|UVE_id id true)
         (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
             { "role-fee-exemption" : false}
             { "role-fee-exemption" := rfe }
@@ -2277,7 +2267,7 @@
         @doc "Returns Account <account> True or Meta Fungible <id> Frozen State \
             \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id token-type)
+        (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
             (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
                 { "frozen" : false}
@@ -2294,62 +2284,50 @@
     ;;3.2.1.2][T]           True-Fungible Info
     (defun DPTF|UR_OriginMint:bool (id:string)
         @doc "Returns <origin-mint> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "origin-mint" (read DPTF|PropertiesTable id ["origin-mint"]))
     )
     (defun DPTF|UR_OriginAmount:decimal (id:string)
         @doc "Returns <origin-mint-amount> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "origin-mint-amount" (read DPTF|PropertiesTable id ["origin-mint-amount"]))
     )
     (defun DPTF|UR_FeeToggle:bool (id:string)
         @doc "Returns <fee-toggle> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "fee-toggle" (read DPTF|PropertiesTable id ["fee-toggle"]))
     )
     (defun DPTF|UR_MinMove:decimal (id:string)
         @doc "Returns <min-move> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "min-move" (read DPTF|PropertiesTable id ["min-move"]))
     )
     (defun DPTF|UR_FeePromile:decimal (id:string)
         @doc "Returns <fee-promile> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "fee-promile" (read DPTF|PropertiesTable id ["fee-promile"]))
     )
     (defun DPTF|UR_FeeTarget:string (id:string)
         @doc "Returns <fee-target> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "fee-target" (read DPTF|PropertiesTable id ["fee-target"]))
     )
     (defun DPTF|UR_FeeLock:bool (id:string)
         @doc "Returns <fee-lock> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "fee-lock" (read DPTF|PropertiesTable id ["fee-lock"]))
     )
     (defun DPTF|UR_FeeUnlocks:integer (id:string)
         @doc "Returns <fee-unlocks> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "fee-unlocks" (read DPTF|PropertiesTable id ["fee-unlocks"]))
     )
     (defun DPTF|UR_PrimaryFeeVolume:decimal (id:string)
         @doc "Returns <primary-fee-volume> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "primary-fee-volume" (read DPTF|PropertiesTable id ["primary-fee-volume"]))
     )
     (defun DPTF|UR_SecondaryFeeVolume:decimal (id:string)
         @doc "Returns <secondary-fee-volume> for the DPTF <id>"
-        (DPTF-DPMF|UV_id id true)
         (at "secondary-fee-volume" (read DPTF|PropertiesTable id ["secondary-fee-volume"]))
     )
     (defun DPTF|UR_RewardToken:[string] (id:string)
         @doc "Returns a list of ATS Pairs the id is part of as a Reward Token"
-        (DPTF-DPMF|UV_id id true)
         (at "reward-token" (read DPTF|PropertiesTable id ["reward-token"]))
     )
     (defun DPTF|UR_RewardBearingToken:[string] (id:string)
         @doc "Returns a list of ATS Pairs the id is part of as a cold Reward Bearing Token"
-        (DPTF-DPMF|UV_id id true)
         (at "reward-bearing-token" (read DPTF|PropertiesTable id ["reward-bearing-token"]))
     )
     ;;3.2.1.3][T]           Computing
@@ -2428,51 +2406,7 @@
         )
     )
     ;;5.3.2]  [T]   DPTF Administration Functions
-    (defun DPTF|AX_InitialiseOuroboros:[string] (patron:string)
-        @doc "Initialises the OUROBOROS Smart DALOS Account"
-        (require-capability (OUROBOROS))
-        (let
-            (
-                (AurynID:string
-                    (free.OUROBOROS.DPTF|C_Issue
-                        "AncientHodler"
-                        DPTF|SC_NAME
-                        "Auryn"
-                        "AURYN"
-                        24
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        false   ;;can-freeze
-                        false   ;;can-wipe
-                        false   ;;can-pause
-                    )
-                )
-                (EliteAurynID:string
-                    (free.OUROBOROS.DPTF|C_Issue
-                        "AncientHodler"
-                        DPTF|SC_NAME
-                        "EliteAuryn"
-                        "ELITEAURYN"
-                        24
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        false   ;;can-freeze
-                        false   ;;can-wipe
-                        false   ;;can-pause
-                    )
-                )
-            )
-            (OUROBOROS.DPTF|C_SetFee patron AurynID UTILITY.AURYN_FEE)
-            (OUROBOROS.DPTF|C_SetFee patron EliteAurynID UTILITY.ELITE-AURYN_FEE)
-            (OUROBOROS.DPTF|C_ToggleFee patron AurynID true)
-            (OUROBOROS.DPTF|C_ToggleFee patron EliteAurynID true)
-            (OUROBOROS.DPTF|C_ToggleFeeLock patron AurynID true)
-            (OUROBOROS.DPTF|C_ToggleFeeLock patron EliteAurynID true)
-            [AurynID EliteAurynID]
-        )
-    )
+        ;;NONE
     ;;3.2.3]  [T]   DPTF Client Functions
     ;;3.2.3.1][T]           Control
     (defun DPTF|C_Control 
@@ -2653,6 +2587,7 @@
         @doc "Issues a new DALOS TrueFungible Token, creating an entry in DPTF|PropertiesTable \
             \ Outputs the unique Token-id (ticker + first 12 characters of previous block hash) \
             \ Also creates the issuer's DPTF Account as the first account for this token."
+        
         (with-capability (DPTF-DPMF|ISSUE patron account true 1)
             (if (not (GAS|UC_SubZero))
                 (GAS|X_Collect patron account UTILITY.GAS_ISSUE)
@@ -2730,10 +2665,13 @@
     (defun DPTF|K_Transfer (patron:string id:string sender:string receiver:string a:decimal)
         @doc "Kore DPTF Transfer Function"
         (require-capability (DALOS|EXECUTOR))
-        (if (not (GAS|UC_ZeroGAZ id sender receiver))
-            (GAS|X_Collect patron sender UTILITY.GAS_SMALLEST)
+        (if (not (and (= id (DALOS|UR_UnityID))(>= a 10)))
+            (if (not (GAS|UC_ZeroGAZ id sender receiver))
+                (GAS|X_Collect patron sender UTILITY.GAS_SMALLEST)
+                true
+            )
             true
-        )
+        )    
         (DPTF|X_Transfer id sender receiver a)
         (DALOS|X_IncrementNonce sender)
     )
@@ -2828,7 +2766,6 @@
             (DPTF|X_UpdateFeeVolume id pf true)
             true
         )
-        
     )
     (defun DPTF|X_CPF_StillFee (id:string target:string still-fee:decimal)
         @doc "Helper Function needed for <DPTF|X_CreditPrimaryFee>"
@@ -3258,7 +3195,7 @@
     (defun DPMF|UR_AccountUnit:[object] (id:string account:string)
         @doc "Returns Account <account> Meta Fungible <id> Unit"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
             { "unit" : DPMF|NEGATIVE}
             { "unit" := u }
@@ -3268,7 +3205,7 @@
     (defun DPMF|UR_AccountRoleNFTAQ:bool (id:string account:string)
         @doc "Returns Account <account> Meta Fungible <id> NFT Add Quantity Role"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
             { "role-nft-add-quantity" : false}
             { "role-nft-add-quantity" := rnaq }
@@ -3278,7 +3215,7 @@
     (defun DPMF|UR_AccountRoleCreate:bool (id:string account:string)
         @doc "Returns Account <account> Meta Fungible <id> Create Role"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
             { "role-nft-create" : false}
             { "role-nft-create" := rnc }
@@ -3290,7 +3227,7 @@
         @doc "Returns a list of Balances that exist for MetaFungible <id> on DPMF Account <account>\
         \ Needed for Mass Debiting"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
@@ -3317,7 +3254,7 @@
     (defun DPMF|UR_AccountNonces:[integer] (id:string account:string)
         @doc "Returns a list of Nonces that exist for MetaFungible <id> held by DPMF Account <account>"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
@@ -3344,7 +3281,7 @@
     (defun DPMF|UR_AccountBatchSupply:decimal (id:string nonce:integer account:string)
         @doc "Returns the supply of a MetaFungible Batch (<id> & <nonce>) held by DPMF Account <account>"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
@@ -3377,7 +3314,7 @@
     (defun DPMF|UR_AccountBatchMetaData (id:string nonce:integer account:string)
         @doc "Returns the Meta-Data of a MetaFungible Batch (<id> & <nonce>) held by DPMF Account <account>"
         (UTILITY.DALOS|UV_Account account)
-        (DPTF-DPMF|UV_id id false)
+        (DPTF-DPMF|UVE_id id false)
         (with-default-read DPMF|BalanceTable (concat [id BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
@@ -3410,21 +3347,17 @@
     ;;4.2.1.3][M]           Meta-Fungible Info
     (defun DPMF|UR_CanTransferNFTCreateRole:bool (id:string)
         @doc "Returns <can-transfer-nft-create-role> for the DPMF <id>"
-        (DPTF-DPMF|UV_id id false)
         (at "can-transfer-nft-create-role" (read DPMF|PropertiesTable id ["can-transfer-nft-create-role"]))
     )
     (defun DPMF|UR_CreateRoleAccount:string (id:string)
         @doc "Returns <create-role-account> for the DPMF <id>"
-        (DPTF-DPMF|UV_id id false)
         (at "create-role-account" (read DPMF|PropertiesTable id ["create-role-account"]))
     )
     (defun DPMF|UR_NoncesUsed:integer (id:string)
         @doc "Returns <nonces-used> for the DPMF <id>"
-        (DPTF-DPMF|UV_id id false)
         (at "nonces-used" (read DPMF|PropertiesTable id ["nonces-used"]))
     )
     (defun DPMF|UR_RewardBearingToken:string (id:string)
-        (DPTF-DPMF|UV_id id false)
         (at "reward-bearing-token" (read DPMF|PropertiesTable id ["reward-bearing-token"]))
     )
     ;;4.2.1.4][M]           Composition
@@ -4036,7 +3969,7 @@
     ;;5.1.2]  [G]   GAS Composed Capabilities
     ;;5.1.2.1][G]           GAS Control
     (defcap GAS|UPDATE_IDS (id:string)
-        (DPTF-DPMF|UV_id id true)
+        (DPTF-DPMF|UVE_id id true)
         (compose-capability (GAS-TANKER))
     )
     (defcap GAS|TOGGLE (native:bool toggle:bool)
@@ -4074,13 +4007,11 @@
     )
     (defcap GAS|PATRON (patron:string)
         @doc "Capability that ensures a DALOS account can act as gas payer, also enforcing its Guard"
-            (UTILITY.DALOS|UV_Account patron)
             (compose-capability (DALOS|IZ_ACCOUNT_SMART patron false))
             (compose-capability (DALOS|ACCOUNT_OWNER patron))
     )
     (defcap GAS|COLLECTION (patron:string sender:string amount:decimal)
         @doc "Capability required to collect GAS"
-        (UTILITY.DALOS|UV_Account sender)
         (compose-capability (GAS|PATRON patron))
         (let
             (
@@ -4094,7 +4025,6 @@
     )
     (defcap GAS|COLLECTER_STANDARD (patron:string amount:decimal)
         @doc "Capability required to collect GAS when Normal DALOS accounts are involved as clients"
-        (UTILITY.DALOS|UV_Account patron)
         (let
             (
                 (gas-id:string (DALOS|UR_IgnisID))
@@ -4106,8 +4036,6 @@
     )
     (defcap GAS|COLLECTER_SMART (patron:string sender:string amount:decimal)
         @doc "Capability required to collect GAS when Smart DALOS accounts are involved as clients"
-        (UTILITY.DALOS|UV_Account patron)
-        (UTILITY.DALOS|UV_Account sender)
         ;;03]Validate <amount> as a GAS amount
         (let
             (
@@ -4226,61 +4154,10 @@
         )
     )
     ;;5.2.2]  [G]   GAS Administration Functions
-    (defun GAS|AX_InitialiseGasTanker:string (patron:string gas-source-id:string)
-        @doc "Initialises the Virtual Gas Smart-Contract \
-        \ Returns the Gas ID as string"
-        (DPTF-DPMF|UV_id gas-source-id true)
-        (require-capability (GAS-TANKER))
-        ;;Deploy the <GasTanker> DALOS Account as a Smart Account
-        (DALOS|C_DeploySmartAccount GAS|SC_NAME (keyset-ref-guard GAS|SC_KEY) GAS|SC_KDA-NAME)
-        (let
-            (
-                (GasID:string
-                    (DPTF|C_Issue
-                        patron
-                        GAS|SC_NAME
-                        "Ignis"
-                        "GAS"
-                        2
-                        true    ;;can-change-owner
-                        true    ;;can-upgrade
-                        true    ;;can-add-special-role
-                        true    ;;can-freeze
-                        false   ;;can-wipe
-                        true    ;;can-pause
-                    )
-                )
-            )
-            ;;Update Gas ID
-            (update DALOS|PropertiesTable DALOS|INFO
-                { "gas-id" : GasID }
-            )
-            ;;Set GAS|PropertiesTable
-            (insert GAS|PropertiesTable GAS|VGD
-                {"virtual-gas-tank"         : GAS|SC_NAME
-                ,"virtual-gas-toggle"       : false
-                ,"virtual-gas-spent"        : 0.0
-                ,"native-gas-toggle"        : false
-                ,"native-gas-spent"         : 0.0}
-            )
-            ;;Seting DPTF Gas Token Special Parameters
-            (DPTF|C_SetMinMove patron GasID 1000.0)
-            (DPTF|C_SetFee patron GasID -1.0)
-            (DPTF|C_SetFeeTarget patron GasID GAS|SC_NAME)
-            (DPTF|C_ToggleFee patron GasID true)
-            (DPTF|C_ToggleFeeLock patron GasID true)
-            ;;Issue OURO DPTF Account for the GAS-Tanker
-            (DPTF-DPMF|C_DeployAccount gas-source-id GAS|SC_NAME true)
-            ;;Set Token Roles
-            (DPTF-DPMF|C_ToggleBurnRole patron GasID GAS|SC_NAME true true)
-            (DPTF|C_ToggleMintRole patron GasID GAS|SC_NAME true)
-            GasID
-        )
-    )
     (defun GAS|A_SetIDs (id:string source:bool)
         @doc "Sets the Gas-Source|Gas id for the Virtual Blockchain \
             \ Boolean <source> determines wheter Gas-Source ID or GAS Id is set"
-        (DPTF-DPMF|UV_id id true)
+        (DPTF-DPMF|UVE_id id true)
         (with-capability (GAS|UPDATE_IDS id)
             (if (= source true)
                 (GAS|X_UpdateSourceID id)
@@ -4447,21 +4324,17 @@
     ;;6.1]    [A] ATS Capabilities
     ;;6.1.1]  [A]   ATS Basic Capabilities
     ;;6.1.1.1][A]           <ATS|Pairs> Table Management
+    (defcap ATS|EXIST (atspair:string)
+        @doc "Enforces that an ATS Pair exists"
+        (ATS|UVE_id atspair)
+    )
     (defcap ATS|OWNER (atspair:string)
         @doc "Enforces ATS Pair Ownership"
         (enforce-guard (DALOS|UR_AccountGuard (ATS|UR_OwnerKonto atspair)))
     )
-    (defcap ATS|PAIR_EXIST (atspair:string)
-        @doc "Enforces ATS Pair exists. Fails if it doesnt."
-        (let
-            (
-                (pair-owner-account:string (ATS|UR_OwnerKonto atspair))
-            )
-            (compose-capability (DALOS|ACCOUNT_EXIST pair-owner-account))
-        )
-    )
     (defcap ATS|CAN-CHANGE-OWNER_ON (atspair:string)
         @doc "Enforces ATS Pair ownership is changeble"
+        (compose-capability (ATS|EXIST atspair))
         (let
             (
                 (x:bool (ATS|UR_CanChangeOwner atspair))
@@ -4543,8 +4416,8 @@
                 (y:bool (ATS|UR_ToggleHotRecovery atspair))
             )
             (if (= cold-or-hot true)
-                (enforce (= x state) (format "cold-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
-                (enforce (= x state) (format "hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
+                (enforce (= x state) (format "Cold-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
+                (enforce (= x state) (format "Hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
             )
         )
     )
@@ -4577,6 +4450,7 @@
         (OUROBOROS.DALOS|UV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
         (compose-capability (ATS|OWNER atspair))
         (compose-capability (ATS|CAN-CHANGE-OWNER_ON atspair))
+        (compose-capability (DALOS|EXIST new-owner))
     )
     (defcap ATS|TOGGLE_PARAMETER-LOCK (patron:string atspair:string toggle:bool)
         @doc "Capability required to EXECUTE <ATS|C_ToggleParameterLock> Function"
@@ -4926,107 +4800,86 @@
     ;;6.2.1.1][A]           ATS|Pairs Info
     (defun ATS|UR_OwnerKonto:string (atspair:string)
         @doc "Gets <owner-konto>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "owner-konto" (read ATS|Pairs atspair ["owner-konto"]))
     )
     (defun ATS|UR_CanChangeOwner:bool (atspair:string)
         @doc "Gets <can-change-owner-lock>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "can-change-owner" (read ATS|Pairs atspair ["can-change-owner"]))
     )
     (defun ATS|UR_Lock:bool (atspair:string)
         @doc "Gets <parameter-lock>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "parameter-lock" (read ATS|Pairs atspair ["parameter-lock"]))
     )
     (defun ATS|UR_Unlocks:integer (atspair:string)
         @doc "Gets <unlocks>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "unlocks" (read ATS|Pairs atspair ["unlocks"]))
     )
     (defun ATS|UR_IndexName:string (atspair:string)
         @doc "Gets <pair-index-name>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "pair-index-name" (read ATS|Pairs atspair ["pair-index-name"]))
     )
     (defun ATS|UR_IndexDecimals:integer (atspair:string)
         @doc "Gets <index-decimals>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "index-decimals" (read ATS|Pairs atspair ["index-decimals"]))
     )
     (defun ATS|UR_RewardTokens:[object{ATS|RewardTokenSchema}] (atspair:string)
         @doc "Gets <reward-tokens>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "reward-tokens" (read ATS|Pairs atspair ["reward-tokens"]))
     )
     (defun ATS|UR_ColdRewardBearingToken:string (atspair:string)
         @doc "Gets <c-rbt>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-rbt" (read ATS|Pairs atspair ["c-rbt"]))
     )
     (defun ATS|UR_ColdNativeFeeRedirection:bool (atspair:string)
         @doc "Gets <c-nfr>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-nfr" (read ATS|Pairs atspair ["c-nfr"]))
     )
     (defun ATS|UR_ColdRecoveryPositions:integer (atspair:string)
         @doc "Gets <c-positions>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-positions" (read ATS|Pairs atspair ["c-positions"]))
     )
     (defun ATS|UR_ColdRecoveryFeeThresholds:[decimal] (atspair:string)
         @doc "Gets <c-limits>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-limits" (read ATS|Pairs atspair ["c-limits"]))
     )
     (defun ATS|UR_ColdRecoveryFeeTable:[[decimal]] (atspair:string)
         @doc "Gets <c-array>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-array" (read ATS|Pairs atspair ["c-array"]))
     )
     (defun ATS|UR_ColdRecoveryFeeRedirection:bool (atspair:string)
         @doc "Gets <c-fr>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-fr" (read ATS|Pairs atspair ["c-fr"]))
     )
     (defun ATS|UR_ColdRecoveryDuration:[integer] (atspair:string)
         @doc "Gets <c-duration>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-duration" (read ATS|Pairs atspair ["c-duration"]))
     )
     (defun ATS|UR_EliteMode:bool (atspair:string)
         @doc "Gets <c-elite-mode>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "c-elite-mode" (read ATS|Pairs atspair ["c-elite-mode"]))
     )
     (defun ATS|UR_HotRewardBearingToken:string (atspair:string)
         @doc "Gets <h-rbt>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "h-rbt" (read ATS|Pairs atspair ["h-rbt"]))
     )
     (defun ATS|UR_HotRecoveryStartingFeePromile:integer (atspair:string)
         @doc "Gets <h-promile>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "h-promile" (read ATS|Pairs atspair ["h-promile"]))
     )
     (defun ATS|UR_HotRecoveryDecayPeriod:integer (atspair:string)
         @doc "Gets <h-decay>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "h-decay" (read ATS|Pairs atspair ["h-decay"]))
     )
     (defun ATS|UR_HotRecoveryFeeRedirection:bool (atspair:string)
         @doc "Gets <h-fr>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "h-fr" (read ATS|Pairs atspair ["h-fr"]))
     )
     (defun ATS|UR_ToggleColdRecovery:bool (atspair:string)
         @doc "Gets <cold-recovery>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "cold-recovery" (read ATS|Pairs atspair ["cold-recovery"]))
     )
     (defun ATS|UR_ToggleHotRecovery:bool (atspair:string)
         @doc "Gets <hot-recovery>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
         (at "hot-recovery" (read ATS|Pairs atspair ["hot-recovery"]))
     )
     (defun ATS|UR_RewardTokenList:[string] (atspair:string)
@@ -5056,7 +4909,7 @@
     )
     (defun ATS|UR_RT-Data (atspair:string reward-token:string data:integer)
         @doc "Returns RT Data for a given <reward-token> of a given <atspair>"
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
+        (OUROBOROS.ATS|UVE_id atspair)
         (UTILITY.DALOS|UV_PositionalVariable data 3 "Invalid Data Integer")
         (let*
             (
@@ -5142,7 +4995,7 @@
     )
     (defun ATS|UC_IzRT-Absolute:bool (reward-token:string)
         @doc "Checks if a DPTF Token is specified as Reward Token in any ATS Pair"
-        (DPTF-DPMF|UV_id reward-token true)
+        (DPTF-DPMF|UVE_id reward-token true)
         (if (= (DPTF|UR_RewardToken reward-token) [UTILITY.BAR])
             false
             true
@@ -5150,7 +5003,7 @@
     )
     (defun ATS|UC_IzRT:bool (atspair:string reward-token:string)
         @doc "Checks if a DPTF Token is specified as Reward-Token in a given ATS Pair"
-        (DPTF-DPMF|UV_id reward-token true)
+        (DPTF-DPMF|UVE_id reward-token true)
         (if (= (DPTF|UR_RewardToken reward-token) [UTILITY.BAR])
             false
             (if (= (contains atspair (DPTF|UR_RewardToken reward-token)) true)
@@ -5161,7 +5014,7 @@
     )
     (defun ATS|UC_IzRBT-Absolute:bool (reward-bearing-token:string cold-or-hot:bool)
         @doc "Checks if a DPTF|DPMF Tokens is registered as Reward-Bearing-Token in any ATS Pair"
-        (DPTF-DPMF|UV_id reward-bearing-token cold-or-hot)
+        (DPTF-DPMF|UVE_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
             (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILITY.BAR])
                 false
@@ -5175,7 +5028,7 @@
     )
     (defun ATS|UC_IzRBT:bool (atspair:string reward-bearing-token:string cold-or-hot:bool)
         @doc "Checks if a DPTF|DPMF Token is registered as Reward-Bearing-Token in a given ATS Pair"
-        (DPTF-DPMF|UV_id reward-bearing-token cold-or-hot)
+        (DPTF-DPMF|UVE_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
             (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILITY.BAR])
                 false
@@ -5357,20 +5210,24 @@
         (UTILITY.UC_SplitBalanceWithBooleans (DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
     )
     ;;6.2.1.4][A]           Validations
-    (defun ATS|UV_id (id:string)
-        @doc "Enforces ATS Pair <id> exists"
-        (with-default-read ATS|Pairs id
+    (defun ATS|UVE_id (atspair:string)
+        @doc "Enforces ATS Pair <atspair> exists"
+        ;;First, the name must conform to the naming requirement
+        (UTILITY.DALOS|UV_UniqueAccount atspair)
+        ;;If it passes the naming requirement, its existance is checked, by reading it unlock values
+        ;;If they are smaller than 0, which it cant happen, then atspair doesnt exist
+        (with-default-read ATS|Pairs atspair
             { "unlocks" : -1 }
             { "unlocks" := u }
             (enforce
                 (>= u 0)
-                (format "ATS-Pair {} does not exist." [id])
+                (format "ATS-Pair {} does not exist." [atspair])
             )
         )
     )
     (defun ATS|UV_IzTokenUnique (atspair:string reward-token:string)
         @doc "Enforces that the <reward-token> doesnt exist as reward token for the ATS Pair <atspair>"
-        (DPTF-DPMF|UV_id reward-token true)
+        (DPTF-DPMF|UVE_id reward-token true)
         (let
             (
                 (rtl:[string] (ATS|UR_RewardTokenList atspair))
@@ -5381,11 +5238,7 @@
         )
     )
     ;;6.2.2]  [A]   ATS Administration Functions
-    (defun ATS|AX_InitialiseAutostake (patron:string)
-        @doc "Initialises the DalosAutostake Smart DALOS Account"
-        (require-capability (AUTOSTAKE))
-        (DALOS|C_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME)
-    )
+        ;;NONE
     ;;6.2.3]  [A]   ATS Client Functions
     ;;6.2.3.1][A]           Control
     (defun ATS|C_ChangeOwnership (patron:string atspair:string new-owner:string)
@@ -5888,8 +5741,8 @@
         )
         (UTILITY.DALOS|UV_Decimals index-decimals)
         (UTILITY.DALOS|UV_Name atspair)
-        (DPTF-DPMF|UV_id reward-token true)
-        (DPTF-DPMF|UV_id reward-bearing-token true)
+        (DPTF-DPMF|UVE_id reward-token true)
+        (DPTF-DPMF|UVE_id reward-bearing-token true)
         (require-capability (ATS|ISSUE_CORE (UTILITY.DALOS|UC_Makeid atspair) account reward-token reward-bearing-token))
         (insert ATS|Pairs (UTILITY.DALOS|UC_Makeid atspair)
             {"owner-konto"                          : account
@@ -6014,55 +5867,7 @@
     )
     ;;========[L] FUNCTIONS====================================================;;
     ;;7.2.1]  [L]   LIQUID Administration Functions
-    (defun LIQUID|AX_InitialiseLiquidizer:[string] (patron:string)
-        @doc "Initialises the DALOS Kadena Liquid Staking"
-        (require-capability (LIQUID-STAKING))
-        ;:Deploy the <Liquidizer> Smart DALOS Account
-        (DALOS|C_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME)
-        (let
-            (
-                (WrappedKadenaID:string
-                    (DPTF|C_Issue
-                        patron
-                        LIQUID|SC_NAME
-                        "DalosWrappedKadena"
-                        "DWK"
-                        UTILITY.KDA_PRECISION
-                        true     ;;can-change-owner
-                        true     ;;can-upgrade
-                        true     ;;can-add-special-role
-                        false    ;;can-freeze
-                        false    ;;can-wipe
-                        false    ;;can-pause
-                    )
-                )
-                (StakedKadenaID:string
-                    (DPTF|C_Issue
-                        patron
-                        LIQUID|SC_NAME
-                        "DalosLiquidKadena"
-                        "DLK"
-                        UTILITY.KDA_PRECISION
-                        true     ;;can-change-owner
-                        true     ;;can-upgrade
-                        true     ;;can-add-special-role
-                        false    ;;can-freeze
-                        false    ;;can-wipe
-                        false    ;;can-pause
-                    )
-                )
-            )
-            ;;Burn and Mint Roles for DWK To LIQUID|SC_NAME
-            (DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID|SC_NAME true true)
-            (DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID|SC_NAME true)
-            ;;Set DLK Volumetric Fee
-            (DPTF|C_SetFee patron StakedKadenaID -1.0)
-            (DPTF|C_ToggleFee patron StakedKadenaID true)
-            (DPTF|C_ToggleFeeLock patron StakedKadenaID true)
-            ;;Return Kadena IDs
-            [WrappedKadenaID StakedKadenaID]
-        )
-    )
+        ;;NONE
     ;;7.2.2]  [L]   LIQUID Client Functions
     (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
         @doc "Wraps native Kadena to DPTF Kadena"
@@ -6150,11 +5955,7 @@
         )
     )
     ;;8.2.2]  [V]   VST Administration Functions
-    (defun VST|AX_InitialiseVesting (patron:string)
-        @doc "Initialises the DalosVesting Smart DALOS Account"
-        (require-capability (VESTING))
-        (DALOS|C_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME)
-    )
+        ;;NONE
     ;;8.2.3]  [V]   VST Client Functions
     (defun VST|C_CreateVestingLink (patron:string dptf:string)
         @doc "Creates a Vesting Pair using the Input DPTF Token"

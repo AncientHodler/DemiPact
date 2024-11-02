@@ -1,0 +1,132 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load AOZ Module
+(begin-tx "AOZ01 - InitAOZ - Load Age of Zalmoxis")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/AOZ.pact")
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "AOZ02 - Use Modules")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(use free.AGEOFZALMOXIS)
+
+(env-gas)
+(commit-tx)
+
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; PART 02 - Age of Zalmoxis Initialisation
+(print "==========================InitSnake_TX-11===============================")
+(begin-tx "AOZ03 - AOZ Initialisation Part 1 - Issuing Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    90.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    90.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
+                    270.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
+                    1350.0
+                )
+            ] 
+        }
+    ]
+)
+    (print "Initialise Asset Table")
+    (free.AGEOFZALMOXIS.AOZ|A_InitialiseAssets)
+    (print "Issuing Primal True Fungibles")
+    (free.AGEOFZALMOXIS.AOZ|A_IssueTrueFungibles "AgeOfZalmoxis")
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+(begin-tx "AOZ04 - AOZ Initialisation Part 2 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AOZ", "caps": [] }])
+
+    (print "Setting up Primal True Fungibles")
+    (free.AGEOFZALMOXIS.AOZ|A_SetupTrueFungibles "AgeOfZalmoxis")
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+(begin-tx "AOZ05 - AOZ Initialisation Part 3 - Issuing Primal Meta Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    90.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    90.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
+                    270.0
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
+                    1350.0
+                )
+            ] 
+        }
+    ]
+)
+
+    (print "Issuing Primal Meta Fungibles")
+    (free.AGEOFZALMOXIS.AOZ|A_IssueMetaFungibles "AgeOfZalmoxis")
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+(begin-tx "AOZ06 - AOZ Initialisation Part 4 - Issuing ATS Pairs")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AOZ", "caps": [] }])
+
+    (print "Issuing ATS Pairs, Mint Genesis Kosons, and Kickstart ATS-Pairs")
+    (free.AGEOFZALMOXIS.AOZ|A_MakeATSPairs "AgeOfZalmoxis")
+
+    ;(print "Test Values")
+    ;(format "AOZ Account has {} PlebiumDenarius" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(format "AOZ Account has {} ComatusAureus" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "CAKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(format "AOZ Account has {} PileatusSolidus" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PSKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(format "AOZ Account has {} TarabostesStater" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "TSKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(format "AOZ Account has {} StrategonDrachma" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "SDKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(format "AOZ Account has {} BasileonAs" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "BAKOSON-98c486052a51" "AgeOfZalmoxis" true)])
+    ;(free.OUROBOROS.ATS|UR_ResidentAmountList "PlebeicStrength-98c486052a51")
+
+(env-gas)
+(commit-tx)
+
+;;

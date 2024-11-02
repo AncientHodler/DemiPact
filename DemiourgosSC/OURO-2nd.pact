@@ -30,10 +30,8 @@
         @doc "Set to false for non-upgradeability; \
             \ Remove Comment below so that only ADMIN (<free.DH_Master-Keyset>) can enact an upgrade"
         true
-        ;;(compose-capability (OUROBOROS.DEMIURGOI))
+        ;(compose-capability (OUROBOROS.DEMIURGOI))
     )
-
-    (use OUROBOROS)
     (defcap COMPOSE ()
         @doc "Capability used to compose multiple functions in an IF statement"
         true
@@ -71,6 +69,9 @@
         reward-tokens:[decimal]
         cull-time:time
     )
+    (defschema ATS|Hot
+        mint-time:time
+    )
     ;;[V] VST Schemas
     (defschema VST|MetaDataSchema
         release-amount:decimal
@@ -93,12 +94,20 @@
     (defun DALOS|A_Initialise (patron:string)
         @doc "Main administrative function that initialises the DALOS Virtual Blockchain"
         (with-capability (OUROBOROS.DEMIURGOI)
-        ;;Deploy the <Ouroboros> Smart DALOS Account
-            (OUROBOROS.DALOS|C_DeploySmartAccount DPTF|SC_NAME (keyset-ref-guard DPTF|SC_KEY) DPTF|SC_KDA-NAME)
-        ;;Deploy Autostake and Vesting Smart DALOS Accounts
-            (with-capability (OUROBOROS.AUTOSTAKE) (OUROBOROS.ATS|AX_InitialiseAutostake patron))
-            (with-capability (OUROBOROS.VESTING) (OUROBOROS.VST|AX_InitialiseVesting patron))
-        ;;Insert Blank Info in The DALOS|PropertiesTable to be updated afterwards.
+            ;;Smart DALOS Account Deployment
+            ;;Deploy the <Ouroboros> Smart DALOS Account
+            ;;Deploy the <DalosAutostake> Smart DALOS Account
+            ;;Deploy the <DalosVesting> Smart DALOS Account
+            ;;Deploy the <GasTanker> Smart DALOS Account
+            ;:Deploy the <Liquidizer> Smart DALOS Account
+            (OUROBOROS.DALOS|C_DeploySmartAccount OUROBOROS.DPTF|SC_NAME (keyset-ref-guard OUROBOROS.DPTF|SC_KEY) OUROBOROS.DPTF|SC_KDA-NAME)
+            (OUROBOROS.DALOS|C_DeploySmartAccount OUROBOROS.ATS|SC_NAME (keyset-ref-guard OUROBOROS.ATS|SC_KEY) OUROBOROS.ATS|SC_KDA-NAME)            
+            (OUROBOROS.DALOS|C_DeploySmartAccount OUROBOROS.VST|SC_NAME (keyset-ref-guard OUROBOROS.VST|SC_KEY) OUROBOROS.VST|SC_KDA-NAME)            
+            (OUROBOROS.DALOS|C_DeploySmartAccount OUROBOROS.GAS|SC_NAME (keyset-ref-guard OUROBOROS.GAS|SC_KEY) OUROBOROS.GAS|SC_KDA-NAME)            
+            (OUROBOROS.DALOS|C_DeploySmartAccount OUROBOROS.LIQUID|SC_NAME (keyset-ref-guard OUROBOROS.LIQUID|SC_KEY) OUROBOROS.LIQUID|SC_KDA-NAME)
+
+            ;;Insert Functions for populating needed Tables with Data:
+            ;;Insert Blank Info in The DALOS|PropertiesTable to be updated afterwards.
             (insert OUROBOROS.DALOS|PropertiesTable OUROBOROS.DALOS|INFO
                 {"unity-id"                 : UTILITY.BAR
                 ,"gas-source-id"            : UTILITY.BAR
@@ -109,7 +118,7 @@
                 ,"wrapped-kda-id"           : UTILITY.BAR
                 ,"liquid-kda-id"            : UTILITY.BAR}
             )
-        ;;Add Dalos Prices
+             ;;Add Dalos Prices
             (insert OUROBOROS.DALOS|PricesTable OUROBOROS.DALOS|PRICES
                 {"standard"                 : 10.0
                 ,"smart"                    : 20.0
@@ -119,114 +128,176 @@
                 ,"dpnf"                     : 500.0
                 ,"blue"                     : 25.0}
             )
+            ;;Set GAS|PropertiesTable
+            (insert OUROBOROS.GAS|PropertiesTable OUROBOROS.GAS|VGD
+                {"virtual-gas-tank"         : OUROBOROS.GAS|SC_NAME
+                ,"virtual-gas-toggle"       : false
+                ,"virtual-gas-spent"        : 0.0
+                ,"native-gas-toggle"        : false
+                ,"native-gas-spent"         : 0.0}
+            )
+
+            ;;Main LET Function that Issues Tokens and Sets them up in the proper manner.
+            ;;Returns a string list made of two parts:
+            ;;  1st part is a list with the Core-True-Fungible-IDs
+            ;;  2nd part is a list with the Index Names of the creted Autostake Pairs
+            (enforce-guard (OUROBOROS.DALOS|UR_AccountGuard patron))
             (let*
                 (
-                    (OuroID:string
-                        (OUROBOROS.DPTF|C_Issue
+                    (core-tf:[string]
+                        (DPTF|CM_Issue
                             patron
                             OUROBOROS.DPTF|SC_NAME
-                            "Ouroboros"
-                            "OURO"
-                            24
-                            true    ;;can-change-owner
-                            true    ;;can-upgrade
-                            true    ;;can-add-special-role
-                            true    ;;can-freeze
-                            true    ;;can-wipe
-                            true    ;;can-pause
+                            ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
+                            ["OURO" "AURYN" "ELITEAURYN" "GAS" "DWK" "DLK"]
+                            [24 24 24 24 24 24]
+                            [true true true true true true]         ;;can change owner
+                            [true true true true true true]         ;;can upgrade
+                            [true true true true true true]         ;;can can-add-special-role
+                            [true false false true false false]     ;;can-freeze
+                            [true false false false false false]    ;;can-wipe
+                            [true false false true false false]     ;;can pause
                         )
                     )
-                    (GasID:string       (with-capability (OUROBOROS.GAS-TANKER) (OUROBOROS.GAS|AX_InitialiseGasTanker patron OuroID)))
-                    (SnakeIDs:[string]  (with-capability (OUROBOROS.OUROBOROS) (OUROBOROS.DPTF|AX_InitialiseOuroboros patron)))
-                    (LiquidIDs:[string] (with-capability (OUROBOROS.LIQUID-STAKING) (OUROBOROS.LIQUID|AX_InitialiseLiquidizer patron)))
-                    (Auryndex:string
-                        (OUROBOROS.ATS|C_Issue
-                            patron
-                            patron
-                            "Auryndex"
-                            24
-                            OuroID
-                            true
-                            (at 0 SnakeIDs)
-                            false
-                        )
-                    )
-                    (Elite-Auryndex:string
-                        (OUROBOROS.ATS|C_Issue
-                            patron
-                            patron
-                            "EliteAuryndex"
-                            24
-                            (at 0 SnakeIDs)
-                            true
-                            (at 1 SnakeIDs)
-                            true
-                        )
-                    )
-                    (Kadena-Liquid-Index:string
-                        (OUROBOROS.ATS|C_Issue
-                            patron
-                            patron
-                            "KdaLiqIndex"
-                            24
-                            (at 0 LiquidIDs)
-                            false
-                            (at 1 LiquidIDs)
-                            true
-                        )
-                    )
-                )   
-        ;;Set-up Auryndex Pair
-                (OUROBOROS.ATS|C_SetColdFee patron Auryndex
-                    7
-                    [50.0 100.0 200.0 350.0 550.0 800.0]
-                    [
-                        [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
-                        [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
-                        [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
-                        [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
-                        [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
-                        [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
-                        [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
-                    ]
+                    (OuroID:string (at 0 core-tf))
+                    (AurynID:string (at 1 core-tf))
+                    (EliteAurynID:string (at 2 core-tf))
+                    (GasID:string (at 3 core-tf))
+                    (WrappedKadenaID:string (at 4 core-tf))
+                    (StakedKadenaID:string (at 5 core-tf))
                 )
-                (OUROBOROS.ATS|C_TurnRecoveryOn patron Auryndex true)
-        ;;Set Elite-Auryndex Pair
-                (OUROBOROS.ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
-                (OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)
-                (OUROBOROS.ATS|C_ToggleElite patron Elite-Auryndex true)
-                (OUROBOROS.ATS|C_TurnRecoveryOn patron Elite-Auryndex true)
-        ;;Set KdaLiqIndex
-                (OUROBOROS.ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
-                (OUROBOROS.ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)
-                (OUROBOROS.ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)
-        ;;Make Vested Snake Tokens
-                (OUROBOROS.VST|C_CreateVestingLink patron OuroID)
-                (OUROBOROS.VST|C_CreateVestingLink patron (at 0 SnakeIDs))
-                (OUROBOROS.VST|C_CreateVestingLink patron (at 1 SnakeIDs))
-        ;;Burn and Mint Roles for Ouro To GAS-Tanker
-                (OUROBOROS.DPTF-DPMF|C_ToggleBurnRole patron OuroID GAS|SC_NAME true true)
-                (OUROBOROS.DPTF|C_ToggleMintRole patron OuroID GAS|SC_NAME true)
-        ;;Update DalosProperties Table with new info
+        ;;Update created Tables with new Data
+                ;;Update DalosProperties Table with new info
                 (update OUROBOROS.DALOS|PropertiesTable OUROBOROS.DALOS|INFO
                     { "gas-source-id"           : OuroID
-                    , "ats-gas-source-id"       : (at 0 SnakeIDs)
-                    , "elite-ats-gas-source-id" : (at 1 SnakeIDs)
-                    , "wrapped-kda-id"          : (at 0 LiquidIDs)
-                    , "liquid-kda-id"           : (at 1 LiquidIDs)
+                    , "ats-gas-source-id"       : AurynID
+                    , "elite-ats-gas-source-id" : EliteAurynID
+                    , "wrapped-kda-id"          : WrappedKadenaID
+                    , "liquid-kda-id"           : StakedKadenaID
                     }
                 )
-        ;;Autostake 1 DWK so that fueling becomes possible.
-                (OUROBOROS.LIQUID|C_WrapKadena patron patron 1.0)
-                (OUROBOROS.ATS|C_Coil patron patron Kadena-Liquid-Index (at 0 LiquidIDs) 1.0)
-                ;;How to set Fee for a DPTF
-                ;(OUROBOROS.DPTF|C_SetFee patron OuroID 150.0)
-                ;(OUROBOROS.DPTF|C_ToggleFee patron OuroID true)
-                ;(OUROBOROS.DPTF|C_ToggleFeeLock patron OuroID true)
-                (+ (+ (+ [OuroID] [GasID]) (+ SnakeIDs LiquidIDs)) [Auryndex Elite-Auryndex Kadena-Liquid-Index])
+            ;;Update Gas ID
+                (update OUROBOROS.DALOS|PropertiesTable OUROBOROS.DALOS|INFO
+                    { "gas-id" : GasID }
+                )
+        ;;Issue needed DPTF Accounts OURO and GAS DPTF Account for the GAS-Tanker
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount OuroID OUROBOROS.GAS|SC_NAME true)
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount GasID OUROBOROS.GAS|SC_NAME true)
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount WrappedKadenaID OUROBOROS.LIQUID|SC_NAME true)
+                (OUROBOROS.DPTF-DPMF|C_DeployAccount StakedKadenaID OUROBOROS.LIQUID|SC_NAME true)
+        ;;Set-up Auryn and Elite-Auryn
+                (enforce-guard (OUROBOROS.DALOS|UR_AccountGuard patron))
+                (OUROBOROS.DPTF|C_SetFee patron AurynID UTILITY.AURYN_FEE)
+                (OUROBOROS.DPTF|C_SetFee patron EliteAurynID UTILITY.ELITE-AURYN_FEE)
+                (OUROBOROS.DPTF|C_ToggleFee patron AurynID true)
+                (OUROBOROS.DPTF|C_ToggleFee patron EliteAurynID true)
+                (OUROBOROS.DPTF|C_ToggleFeeLock patron AurynID true)
+                (OUROBOROS.DPTF|C_ToggleFeeLock patron EliteAurynID true)
+        ;;Set-up GAS Initialisation Parameters:
+            ;;Setting DPTF Gas Token Special Parameters
+                (OUROBOROS.DPTF|C_SetMinMove patron GasID 1000.0)
+                (OUROBOROS.DPTF|C_SetFee patron GasID -1.0)
+                (OUROBOROS.DPTF|C_SetFeeTarget patron GasID OUROBOROS.GAS|SC_NAME)
+                (OUROBOROS.DPTF|C_ToggleFee patron GasID true)
+                (OUROBOROS.DPTF|C_ToggleFeeLock patron GasID true)    
+            ;;Set Token Roles
+                (OUROBOROS.DPTF-DPMF|C_ToggleBurnRole patron GasID OUROBOROS.GAS|SC_NAME true true)
+                (OUROBOROS.DPTF|C_ToggleMintRole patron GasID OUROBOROS.GAS|SC_NAME true)
+                (OUROBOROS.DPTF-DPMF|C_ToggleBurnRole patron OuroID OUROBOROS.GAS|SC_NAME true true)
+                (OUROBOROS.DPTF|C_ToggleMintRole patron OuroID OUROBOROS.GAS|SC_NAME true)
+        ;;Set-up Kadena Liquid Staking Initialisation Parameters
+            ;;Set Volumetric Fees
+                (OUROBOROS.DPTF|C_SetFee patron StakedKadenaID -1.0)
+                (OUROBOROS.DPTF|C_ToggleFee patron StakedKadenaID true)
+                (OUROBOROS.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+            ;;Set Token Roles
+                (OUROBOROS.DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID OUROBOROS.LIQUID|SC_NAME true true)
+                (OUROBOROS.DPTF|C_ToggleMintRole patron WrappedKadenaID OUROBOROS.LIQUID|SC_NAME true)
+        ;;Created Vested Snake Tokens
+                (OUROBOROS.VST|C_CreateVestingLink patron OuroID)
+                (OUROBOROS.VST|C_CreateVestingLink patron AurynID)
+                (OUROBOROS.VST|C_CreateVestingLink patron EliteAurynID)
+        ;;2nd Let Function that creates the ATS-Pairs
+                (let*
+                    (
+                        (Auryndex:string
+                            (OUROBOROS.ATS|C_Issue
+                                patron
+                                patron
+                                "Auryndex"
+                                24
+                                OuroID
+                                true
+                                AurynID
+                                false
+                            )
+                        )
+                        (Elite-Auryndex:string
+                            (OUROBOROS.ATS|C_Issue
+                                patron
+                                patron
+                                "EliteAuryndex"
+                                24
+                                AurynID
+                                true
+                                EliteAurynID
+                                true
+                            )
+                        )
+                        (Kadena-Liquid-Index:string
+                            (OUROBOROS.ATS|C_Issue
+                                patron
+                                patron
+                                "Kadindex"
+                                24
+                                WrappedKadenaID
+                                false
+                                StakedKadenaID
+                                true
+                            )
+                        )
+                        (core-idx:[string] [Auryndex Elite-Auryndex Kadena-Liquid-Index])
+                    )
+        ;;Setting Up Autostake Pairs
+            ;;Set-up <Auryndex> Autostake-Pair
+                    (OUROBOROS.ATS|C_SetColdFee patron Auryndex
+                        7
+                        [50.0 100.0 200.0 350.0 550.0 800.0]
+                        [
+                            [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
+                            [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
+                            [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
+                            [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
+                            [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
+                            [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
+                            [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
+                        ]
+                    )
+                    (OUROBOROS.ATS|C_TurnRecoveryOn patron Auryndex true)
+            ;;Set-up <Elite-Auryndex> Autostake-Pair
+                    (OUROBOROS.ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
+                    (OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)
+                    (OUROBOROS.ATS|C_ToggleElite patron Elite-Auryndex true)
+                    (OUROBOROS.ATS|C_TurnRecoveryOn patron Elite-Auryndex true)
+            ;;Set <Kadena-Liquid-Index> Autostake-Pair
+                    (OUROBOROS.ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
+                    (OUROBOROS.ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)
+                    (OUROBOROS.ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)
+
+            ;;Change TrueFungibles Ownership to their respective Smart DALOS Accounts
+                    (OUROBOROS.DPTF-DPMF|C_ChangeOwnership patron GasID OUROBOROS.GAS|SC_NAME true)
+                    (OUROBOROS.DPTF-DPMF|C_ChangeOwnership patron WrappedKadenaID OUROBOROS.LIQUID|SC_NAME true)
+                    (OUROBOROS.DPTF-DPMF|C_ChangeOwnership patron StakedKadenaID OUROBOROS.LIQUID|SC_NAME true)
+        ;;Returns a list composed of Token-IDs and ATS-Pair IDs that were created.
+                    (+ core-tf core-idx)
+                )
             )
         )
     )
+    ;;How to set Fee for a DPTF
+    ;(OUROBOROS.DPTF|C_SetFee patron OuroID 150.0)
+    ;(OUROBOROS.DPTF|C_ToggleFee patron OuroID true)
+    ;(OUROBOROS.DPTF|C_ToggleFeeLock patron OuroID true)
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
@@ -243,10 +314,10 @@
             (UTILITY.DALOS|UV_Account account-or-token-id)
             (with-capability (COMPOSE)
                 (if (= table-to-query 1)
-                    (OUROBOROS.DPTF-DPMF|UV_id account-or-token-id true)
+                    (OUROBOROS.DPTF-DPMF|UVE_id account-or-token-id true)
                     (if (= table-to-query 2)
-                        (OUROBOROS.DPTF-DPMF|UV_id account-or-token-id false)
-                        (OUROBOROS.ATS|UV_id account-or-token-id) 
+                        (OUROBOROS.DPTF-DPMF|UVE_id account-or-token-id false)
+                        (OUROBOROS.ATS|UVE_id account-or-token-id) 
                     )
                 )
             )
@@ -328,7 +399,7 @@
     )
     (defun DPTF|UV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal])
         @doc "Checks an Receiver-Amount pair to be conform with a token id for Bulk Transfer purposes"
-        (OUROBOROS.DPTF-DPMF|UV_id id true)
+        (OUROBOROS.DPTF-DPMF|UVE_id id true)
         (and
             (fold
                 (lambda
@@ -377,6 +448,7 @@
             can-pause:[bool]
         )
         @doc "Issues Multiple DPTF Tokens at once"
+        
         (let*
             (
                 (l1:integer (length name))
@@ -394,13 +466,14 @@
                 (kda-costs:decimal (* (dec l1) tf-cost))
             )
             (UTILITY.UV_EnforceUniformIntegerList lengths)
-            (with-capability (DPTF-DPMF|ISSUE patron account true l1)
-                (if (not (GAS|UC_SubZero))
-                    (GAS|X_Collect patron account gas-costs)
+            ;;(install-capability (OUROBOROS.DPTF-DPMF|ISSUE patron OUROBOROS.DPTF|SC_NAME true 6))
+            (with-capability (OUROBOROS.DPTF-DPMF|ISSUE patron account true l1)
+                (if (not (OUROBOROS.GAS|UC_SubZero))
+                    (OUROBOROS.GAS|X_Collect patron account gas-costs)
                     true
                 )
-                (if (not (GAS|UC_NativeSubZero))
-                    (GAS|X_CollectDalosFuel patron kda-costs)
+                (if (not (OUROBOROS.GAS|UC_NativeSubZero))
+                    (OUROBOROS.GAS|X_CollectDalosFuel patron kda-costs)
                     true
                 )
                 (fold
@@ -530,13 +603,13 @@
                 (kda-costs:decimal (* (dec l1) tf-cost))
             )
             (UTILITY.UV_EnforceUniformIntegerList lengths)
-            (with-capability (DPTF-DPMF|ISSUE patron account false l1)
-                (if (not (GAS|UC_SubZero))
-                    (GAS|X_Collect patron account gas-costs)
+            (with-capability (OUROBOROS.DPTF-DPMF|ISSUE patron account false l1)
+                (if (not (OUROBOROS.GAS|UC_SubZero))
+                    (OUROBOROS.GAS|X_Collect patron account gas-costs)
                     true
                 )
-                (if (not (GAS|UC_NativeSubZero))
-                    (GAS|X_CollectDalosFuel patron kda-costs)
+                (if (not (OUROBOROS.GAS|UC_NativeSubZero))
+                    (OUROBOROS.GAS|X_CollectDalosFuel patron kda-costs)
                     true
                 )
                 (fold
@@ -601,15 +674,15 @@
         ;;02]Deploys DPTF GAS(Ignis) Account for client
             (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER client))
         ;;03]Client sends Ouroboros <ouro-amount> to the GasTanker
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id client GAS|SC_NAME ouro-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id client OUROBOROS.GAS|SC_NAME ouro-amount true true))
         ;;04]GasTanker burns Ouroboros <ouro-remainder-amount>
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ouro-id GAS|SC_NAME ouro-remainder-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ouro-id OUROBOROS.GAS|SC_NAME ouro-remainder-amount true true))
         ;;05]GasTanker mints GAS(Ignis) <ignis-amount>
-            (compose-capability (OUROBOROS.DPTF|MINT patron ignis-id GAS|SC_NAME ignis-amount false true))
+            (compose-capability (OUROBOROS.DPTF|MINT patron ignis-id OUROBOROS.GAS|SC_NAME ignis-amount false true))
         ;;06]GasTanker transfers GAS(Ignis) <ignis-amount> to <target>
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id GAS|SC_NAME target ignis-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id OUROBOROS.GAS|SC_NAME target ignis-amount true true))
         ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
-            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id GAS|SC_NAME))
+            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id OUROBOROS.GAS|SC_NAME))
         )
     )
     (defcap GAS|COMPRESS (patron:string client:string ignis-amount:decimal)
@@ -631,15 +704,15 @@
         ;;02]Deploys DPTF Ouroboros Account for client
             (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER client))
         ;;03]Client sends GAS(Ignis) <ignis-amount> to the GasTanker
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id client GAS|SC_NAME ignis-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ignis-id client OUROBOROS.GAS|SC_NAME ignis-amount true true))
         ;;04]GasTanker burns GAS(Ignis) <ignis-amount>
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ignis-id GAS|SC_NAME ignis-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron ignis-id OUROBOROS.GAS|SC_NAME ignis-amount true true))
         ;;05]GasTanker mints Ouroboros <total-ouro>
-            (compose-capability (OUROBOROS.DPTF|MINT patron ouro-id GAS|SC_NAME total-ouro false true))
+            (compose-capability (OUROBOROS.DPTF|MINT patron ouro-id OUROBOROS.GAS|SC_NAME total-ouro false true))
         ;;06]GAS Smart Contract transfers Ouroboros <ouro-remainder-amount> to <client>
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id GAS|SC_NAME client ouro-remainder-amount true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron ouro-id OUROBOROS.GAS|SC_NAME client ouro-remainder-amount true true))
         ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
-            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id GAS|SC_NAME))
+            (compose-capability (OUROBOROS.DPTF|TRANSMUTE ouro-id OUROBOROS.GAS|SC_NAME))
         )
     )
     ;;5.2]    [G] GAS Functions
@@ -729,15 +802,15 @@
                     (ignis-amount:decimal (GAS|UC_Sublimate ouro-remainder-amount))
                 )
         ;;03]Client sends Ouroboros <ouro-amount> to the GasTanker
-                (OUROBOROS.DPTF|CX_Transfer patron ouro-id client GAS|SC_NAME ouro-amount)
+                (OUROBOROS.DPTF|CX_Transfer patron ouro-id client OUROBOROS.GAS|SC_NAME ouro-amount)
         ;;04]GasTanker burns Ouroboros <ouro-remainder-amount>
-                (OUROBOROS.DPTF|CX_Burn patron ouro-id GAS|SC_NAME ouro-remainder-amount)
+                (OUROBOROS.DPTF|CX_Burn patron ouro-id OUROBOROS.GAS|SC_NAME ouro-remainder-amount)
         ;;05]GasTanker mints GAS(Ignis) <ignis-amount>
-                (OUROBOROS.DPTF|CX_Mint patron ignis-id GAS|SC_NAME ignis-amount false)
+                (OUROBOROS.DPTF|CX_Mint patron ignis-id OUROBOROS.GAS|SC_NAME ignis-amount false)
         ;;06]GasTanker transfers GAS(Ignis) <ignis-amount> to <target>
-                (OUROBOROS.DPTF|CX_Transfer patron ignis-id GAS|SC_NAME target ignis-amount)
+                (OUROBOROS.DPTF|CX_Transfer patron ignis-id OUROBOROS.GAS|SC_NAME target ignis-amount)
         ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
-                (OUROBOROS.DPTF|X_Transmute ouro-id GAS|SC_NAME ouro-fee-amount)
+                (OUROBOROS.DPTF|X_Transmute ouro-id OUROBOROS.GAS|SC_NAME ouro-fee-amount)
                 ignis-amount
                 )
             )
@@ -771,15 +844,15 @@
                         (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
                     )
         ;;03]Client sends GAS(Ignis) <ignis-amount> to the GasTanker
-                    (OUROBOROS.DPTF|CX_Transfer patron ignis-id client GAS|SC_NAME ignis-amount)
+                    (OUROBOROS.DPTF|CX_Transfer patron ignis-id client OUROBOROS.GAS|SC_NAME ignis-amount)
         ;;04]GasTanker burns GAS(Ignis) <ignis-amount>
-                    (OUROBOROS.DPTF|CX_Burn patron ignis-id GAS|SC_NAME ignis-amount)
+                    (OUROBOROS.DPTF|CX_Burn patron ignis-id OUROBOROS.GAS|SC_NAME ignis-amount)
         ;;05]GasTanker mints Ouroboros <total-ouro>
-                    (OUROBOROS.DPTF|CX_Mint patron ouro-id GAS|SC_NAME total-ouro false)
+                    (OUROBOROS.DPTF|CX_Mint patron ouro-id OUROBOROS.GAS|SC_NAME total-ouro false)
         ;;06]GAS Smart Contract transfers Ouroboros <ouro-remainder-amount> to <client>
-                    (OUROBOROS.DPTF|CX_Transfer patron ouro-id GAS|SC_NAME client ouro-remainder-amount)
+                    (OUROBOROS.DPTF|CX_Transfer patron ouro-id OUROBOROS.GAS|SC_NAME client ouro-remainder-amount)
         ;;07]Gas Tanker Transmutes Ouroboros <ouro-fee-amount>
-                    (OUROBOROS.DPTF|X_Transmute ouro-id GAS|SC_NAME ouro-fee-amount)
+                    (OUROBOROS.DPTF|X_Transmute ouro-id OUROBOROS.GAS|SC_NAME ouro-fee-amount)
                     ouro-remainder-amount
                 )
             )
@@ -795,33 +868,47 @@
     ;;6.1]    [A] ATS Capabilities
     ;;6.1.1]  [A]   ATS Basic Capabilities
     ;;6.1.1.1][A]           <ATS|Ledger> Table Management
-    
-    
-    
+    (defcap ATS|HOT_RECOVERY (patron:string recoverer:string atspair:string ra:decimal)
+        @doc "Capability required to execute cold or hot recovery"
+        (compose-capability (OUROBOROS.ATS|EXIST atspair))
+        (let
+            (
+                (c-rbt:string (OUROBOROS.ATS|UR_ColdRewardBearingToken atspair))
+                (h-rbt:string (OUROBOROS.ATS|UR_HotRewardBearingToken atspair))
+            )
+            (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER recoverer))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron c-rbt recoverer OUROBOROS.ATS|SC_NAME ra true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron c-rbt OUROBOROS.ATS|SC_NAME ra true true))
+            (compose-capability (OUROBOROS.DPMF|MINT patron h-rbt OUROBOROS.ATS|SC_NAME ra true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron h-rbt OUROBOROS.ATS|SC_NAME recoverer ra true false))
+            (compose-capability (OUROBOROS.ATS|RECOVERY_STATE atspair true false))
+        )
+    )
     (defcap ATS|COLD_RECOVERY (patron:string recoverer:string atspair:string ra:decimal)
+        (compose-capability (OUROBOROS.ATS|EXIST atspair))
         (let
             (
                 (c-rbt:string (OUROBOROS.ATS|UR_ColdRewardBearingToken atspair))
             )
-            (OUROBOROS.ATS|UV_id atspair)
             (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER recoverer))
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron c-rbt recoverer ATS|SC_NAME ra true true))
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron c-rbt ATS|SC_NAME ra true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron c-rbt recoverer OUROBOROS.ATS|SC_NAME ra true true))
+            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron c-rbt OUROBOROS.ATS|SC_NAME ra true true))
             (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
             (compose-capability (ATS|UPDATE_LEDGER))
             (compose-capability (ATS|DEPLOY atspair recoverer))
+            (compose-capability (OUROBOROS.ATS|RECOVERY_STATE atspair true true))
         )
     )
     (defcap ATS|DEPLOY (atspair:string account:string)
-        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
-        (compose-capability (OUROBOROS.DALOS|ACCOUNT_EXIST account))
+        (compose-capability (OUROBOROS.ATS|EXIST atspair))
+        (compose-capability (OUROBOROS.DALOS|EXIST account))
         (compose-capability (ATS|NORMALIZE_LEDGER atspair account))
     )
     (defcap ATS|NORMALIZE_LEDGER (atspair:string account:string)
         @doc "Capability needed to normalize an ATS|Ledger Account \
         \ Normalizing an ATS|Ledger Account updates it it according to the <atspair> <c-positions> and <c-elite-mode> parameters \
         \ Existing entries are left as they are"
-        (compose-capability (OUROBOROS.ATS|PAIR_EXIST atspair))
+        (compose-capability (OUROBOROS.ATS|EXIST atspair))
         (enforce-one
             "Keyset not valid for KadenaLiquidStaking Smart DALOS Account Operations"
             [
@@ -831,7 +918,7 @@
         )
     )
     (defcap ATS|CULL (culler:string atspair:string)
-        (OUROBOROS.ATS|UV_id atspair)
+        (compose-capability (OUROBOROS.ATS|EXIST atspair))
         (compose-capability (OUROBOROS.DALOS|ACCOUNT_OWNER culler))
         (compose-capability (OUROBOROS.ATS|UPDATE_ROU))
         (compose-capability (ATS|NORMALIZE_LEDGER atspair culler))
@@ -973,7 +1060,7 @@
         (fold
             (lambda
                 (acc:[integer] rt:string)
-                (UTILITY.UC_AppendLast acc (DPTF-DPMF|UR_Decimals rt true))
+                (UTILITY.UC_AppendLast acc (OUROBOROS.DPTF-DPMF|UR_Decimals rt true))
             )
             []
             (OUROBOROS.ATS|UR_RewardTokenList atspair)
@@ -1221,9 +1308,32 @@
                 )
                 (OUROBOROS.DPTF|CX_Transfer patron coil-token coiler-vester OUROBOROS.ATS|SC_NAME amount)
                 (OUROBOROS.ATS|X_UpdateRoU atspair coil-token true true amount)
-                (OUROBOROS.DPTF|CX_Mint patron c-rbt ATS|SC_NAME c-rbt-amount false)
-                (VST|C_Vest patron ATS|SC_NAME target-account c-rbt c-rbt-amount offset duration milestones)
+                (OUROBOROS.DPTF|CX_Mint patron c-rbt OUROBOROS.ATS|SC_NAME c-rbt-amount false)
+                (VST|C_Vest patron OUROBOROS.ATS|SC_NAME target-account c-rbt c-rbt-amount offset duration milestones)
                 c-rbt-amount
+            )
+        )
+    )
+    (defun ATS|C_HotRecovery (patron:string recoverer:string atspair:string ra:decimal)
+        @doc "Executes Hot Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
+        (with-capability (ATS|HOT_RECOVERY patron recoverer atspair ra)
+            (let*
+                (
+                    (c-rbt:string (OUROBOROS.ATS|UR_ColdRewardBearingToken atspair))
+                    (h-rbt:string (OUROBOROS.ATS|UR_HotRewardBearingToken atspair))
+                    (present-time:time (at "block-time" (chain-data)))
+                    (meta-data-obj:object{ATS|Hot} { "mint-time" : present-time})
+                    (meta-data:[object] [meta-data-obj])
+                    (new-nonce:integer (+ (OUROBOROS.DPMF|UR_NoncesUsed h-rbt) 1))
+                )
+            ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
+                (OUROBOROS.DPTF|CX_Transfer patron c-rbt recoverer OUROBOROS.ATS|SC_NAME ra)
+            ;;2]ATS|SC_NAME burns c-rbt
+                (OUROBOROS.DPTF|CX_Burn patron c-rbt OUROBOROS.ATS|SC_NAME ra)
+            ;;3]ATS|SC_NAME mints h-rbt
+                (OUROBOROS.DPMF|CX_Mint patron h-rbt OUROBOROS.ATS|SC_NAME ra meta-data)
+            ;;4]ATS|SC_NAME transfers h-rbt to recoverer
+                (OUROBOROS.DPMF|CX_Transfer patron h-rbt new-nonce OUROBOROS.ATS|SC_NAME recoverer ra)
             )
         )
     )
@@ -1252,10 +1362,10 @@
 
                 )
             ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
-                (DPTF|CX_Transfer patron c-rbt recoverer ATS|SC_NAME ra)
+                (OUROBOROS.DPTF|CX_Transfer patron c-rbt recoverer OUROBOROS.ATS|SC_NAME ra)
             ;;2]ATS|SC_NAME burns c-rbt and handles c-fr
-                (DPTF|CX_Burn patron c-rbt ATS|SC_NAME ra)
-            ;;3]ATS|Pairs is updated with the proper information (unbonding RTs), while burning any RTs if needed
+                (OUROBOROS.DPTF|CX_Burn patron c-rbt OUROBOROS.ATS|SC_NAME ra)
+            ;;3]ATS|Pairs is updated with the proper information (unbonding RTs), while burning any fee RTs if needed
                 (if c-fr
                     (map
                         (lambda
@@ -1277,8 +1387,8 @@
                         (map
                             (lambda
                                 (index:integer)
-                                (with-capability (OUROBOROS.DPTF-DPMF|BURN patron (at index rt-lst) ATS|SC_NAME (at index (at 1 negative-c-fr)) true true)
-                                    (OUROBOROS.DPTF|CX_Burn patron (at index rt-lst) ATS|SC_NAME (at index (at 1 negative-c-fr)))
+                                (with-capability (OUROBOROS.DPTF-DPMF|BURN patron (at index rt-lst) OUROBOROS.ATS|SC_NAME (at index (at 1 negative-c-fr)) true true)
+                                    (OUROBOROS.DPTF|CX_Burn patron (at index rt-lst) OUROBOROS.ATS|SC_NAME (at index (at 1 negative-c-fr)))
                                 )
                             )
                             (enumerate 0 (- (length rt-lst) 1))
@@ -1324,8 +1434,8 @@
                         (if (!= (at idx cw) 0.0)
                             (with-capability (COMPOSE)
                                 (OUROBOROS.ATS|X_UpdateRoU atspair (at idx rt-lst) false false (at idx cw))
-                                (with-capability (DPTF-DPMF|TRANSFER patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw) true true)
-                                    (DPTF|CX_Transfer patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw))
+                                (with-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw) true true)
+                                    (OUROBOROS.DPTF|CX_Transfer patron (at idx rt-lst) OUROBOROS.ATS|SC_NAME culler (at idx cw))
                                 )
                             )
                             true
@@ -1477,7 +1587,7 @@
                     (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
                     (positions:integer (OUROBOROS.ATS|UR_ColdRecoveryPositions atspair))
                     (elite:bool (OUROBOROS.ATS|UR_EliteMode atspair))
-                    (major-tier:integer (DALOS|UR_Elite-Tier-Major account))
+                    (major-tier:integer (OUROBOROS.DALOS|UR_Elite-Tier-Major account))
                 )
                 (if (= positions -1)
                     (update ATS|Ledger (concat [atspair UTILITY.BAR account])
@@ -1732,7 +1842,7 @@
         @doc "Validates <id> as bein part of a vested token pair"
         (let
             (
-                (has-vesting:bool (VST|UC_HasVesting id token-type))
+                (has-vesting:bool (OUROBOROS.VST|UC_HasVesting id token-type))
             )
             (enforce (= has-vesting true) (format "Token {} is not part of a vesting-pair"[id]))
         )

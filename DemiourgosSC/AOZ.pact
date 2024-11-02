@@ -98,7 +98,7 @@
         )
     )
     (defun AOZ|A_AddPrimalTrueFungible (tf:string)
-        (OUROBOROS.DPTF-DPMF|UV_id tf true)
+        (OUROBOROS.DPTF-DPMF|UVE_id tf true)
         (require-capability (AOZ))
         (with-read AOZ|Assets AOZ|INFO
             { "primal-tf-ids" := pti }
@@ -113,7 +113,7 @@
         )
     )
     (defun AOZ|A_AddPrimalMetaFungible (mf:string)
-        (OUROBOROS.DPTF-DPMF|UV_id mf false)
+        (OUROBOROS.DPTF-DPMF|UVE_id mf false)
         (require-capability (AOZ))
         (with-read AOZ|Assets AOZ|INFO
             { "primal-mf-ids" := pmi }
@@ -128,7 +128,7 @@
         )
     )
     (defun AOZ|A_AddATSPair (atspair:string)
-        (OUROBOROS.ATS|UV_id atspair)
+        (OUROBOROS.ATS|UVE_id atspair)
         (require-capability (AOZ))
         (with-read AOZ|Assets AOZ|INFO
             { "atspair-ids" := ats }
@@ -143,7 +143,7 @@
         )
     )
     (defun AOZ|A_AddTrueFungibleGameAsset (tf:string)
-        (OUROBOROS.DPTF-DPMF|UV_id tf true)
+        (OUROBOROS.DPTF-DPMF|UVE_id tf true)
         (require-capability (AOZ))
         (with-read AOZ|Assets AOZ|INFO
             { "tf-game-assets" := tga }
@@ -158,7 +158,7 @@
         )
     )
     (defun AOZ|A_AddMetaFungibleGameAsset (mf:string)
-        (OUROBOROS.DPTF-DPMF|UV_id mf false)
+        (OUROBOROS.DPTF-DPMF|UVE_id mf false)
         (require-capability (AOZ))
         (with-read AOZ|Assets AOZ|INFO
             { "mf-game-assets" := mga }
@@ -192,12 +192,6 @@
                             [true true true true true true true true true]          ;;can pause
                         )
                     )
-                    (PlebiumDenariusID:string (at 3 tf-ids))
-                    (ComatusAureusID:string (at 4 tf-ids))
-                    (PileatusSolidusID:string (at 5 tf-ids))
-                    (TarabostesStaterID:string (at 6 tf-ids))
-                    (StrategonDrachmaID:string (at 7 tf-ids))
-                    (BasileonAsID:string (at 8 tf-ids))
                 )
                 (map
                     (lambda
@@ -390,6 +384,7 @@
                 (OUROBOROS.ATS|C_AddSecondary patron PlebeicStrengthID AncientKosonID false)
                 (OUROBOROS.ATS|C_AddHotRBT patron PlebeicStrengthID DenariusDebilisID)
                 (OUROBOROS.ATS|C_TurnRecoveryOn patron PlebeicStrengthID false)
+                (OUROBOROS.ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;must be removed
                 ;;Comati Command
                 (OUROBOROS.ATS|C_AddSecondary patron ComatiCommandID EsothericKosonID false)
                 (OUROBOROS.ATS|C_AddSecondary patron ComatiCommandID AncientKosonID false)

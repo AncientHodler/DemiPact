@@ -1,0 +1,100 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+
+(begin-tx "Init Custom Smart Contract - Load Banana Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/GoodBanana.pact")
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;001]Test Autostake AUryn P1
+(begin-tx "Banana01 - Issue Tokens")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+;;One DPTF issuance is 200 KDA, issuaing 2 DPTFs costs 400 KDA
+;;5%|5%|15%|75% Split is 20|20|60|300
+(env-sigs
+    [   
+        { "key": "PK_BM", "caps": [] }
+        { "key": "59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    20.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    20.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
+                    60.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
+                    300.0
+                )
+                ;(free.OUROBOROS.DPTF-DPMF|ISSUE "BananaManager" "BananaJuicer" true 2)
+            ] 
+        }
+        
+    ]
+)
+    ;(install-capability (OUROBOROS.DPTF-DPMF|ISSUE patron account true l1))
+    ;(install-capability (free.OUROBOROS.DPTF-DPMF|ISSUE "BananaManager" "BananaJuicer" true 2))
+    (free.BANANA.BANANA|A_IssueTrueFungibles "BananaManager")
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_BM", "caps": [] }])
+
+    (print "Setting up True Fungibles")
+    (free.BANANA.BANANA|A_SetupTrueFungibles "BananaManager")
+
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana02 - Sending Banana Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_BM", "caps": [] }])
+
+    (print "Sending Some Bananas to Emma")
+    (free.OUROBOROS.DPTF|C_Transfer "BananaManager" "BANANA-98c486052a51" "BananaManager" "Emma" 10.0)
+    (format "Emma has {} BANANA" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "BANANA-98c486052a51" "Emma" true)])
+
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana03 - Juice Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (format "Emma has {} IGNIS before Juicing" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Emma" true)])
+    (print "Juicing Some Bananas")
+    (free.BANANA.BANANA|C_MakeJuice "Emma" "Emma" "Emma" 2.0)
+    (format "Emma has {} JUICE" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" "Emma" true)])
+    (format "Emma has {} IGNIS after Juicing" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Emma" true)])
+
+(env-gas)
+(commit-tx)

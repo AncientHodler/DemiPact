@@ -319,6 +319,63 @@
             )
         )
     )
+    (defun DALOS|UV_DalosAccount:bool (account:string)
+        @doc "Enforces that a Dalos Account (Address) has the proper format \
+        \ Superseeds <DALOS|UV_Account>"
+        (let*
+            (
+                (account-len:integer (length account))
+                (ouroboros:string "Ѻ")
+                (sigma:string "Σ")
+                (first:string (take 1 account))
+                (second:string (drop 1 (take 2 account)))
+                (point:string ".")
+            )
+            (enforce (= account-len 162) "Address|Account does not conform to the DALOS Standard for Addresses|Accounts")
+            (enforce-one 
+                "Address|Account format is invalid"
+                [
+                    (enforce (= first ouroboros) "Account|Address Identifier is invalid, while checking for a Standard Account|Address")
+                    (enforce (= first sigma) "Account|Address Identifier is invalid, while checking for a Smart Account|Address")
+                ]
+            )
+            (enforce (= second point) "Account|Address Format is invalid, second Character must be a <.>")
+            (let
+                (
+                    (checkup:bool (DALOS.EnforceMultiStringDalosCharset (drop 2 account)))
+                )
+                (enforce checkup "Characters do not conform to the DALOS|CHARSET")
+            )
+        )
+    )
+    (defun DALOS|UV_UniqueAccount (account:string)
+        @doc "Enforces that an Unique Account <account> ID meets charset and length requirements"
+        (DALOS|UV_Account (take (- (length account) 13) account))
+    )
+    (defun DALOS|UV_Account (account:string)
+        @doc "Enforces that Account <account> ID meets charset and length requirements"
+        (enforce
+            (is-charset ACCOUNT_ID_CHARSET account)
+            (format "Account ID does not conform to the required charset: {}" [account])
+        )
+        (enforce
+            (not (contains account ACCOUNT_ID_PROHIBITED_CHARACTER))
+            (format "Account ID contained a prohibited character: {}" [account])
+        )
+        (let 
+            (
+                (al:integer (length account))
+            )
+            (enforce
+              (>= al MIN_DESIGNATION_LENGTH)
+              (format "Account ID does not conform to the min length requirement: {}" [account])
+            )
+            (enforce
+              (<= al ACCOUNT_ID_MAX_LENGTH)
+              (format "Account ID does not conform to the max length requirement: {}" [account])
+            )
+        )
+    )
     (defun DALOS|UC_AccountCheck:bool (account:string)
         @doc "Checks if a DALOS Account ID is valid (meets charset and length requirements), returning true if it is and false if it isnt"
         (let*
@@ -357,34 +414,8 @@
             (if (= capital true) c1 c2)
         )
     )
-    (defun DALOS|UV_Account (account:string)
-        @doc "Enforces that Account <account> ID meets charset and length requirements"
-        (enforce
-            (is-charset ACCOUNT_ID_CHARSET account)
-            (format "Account ID does not conform to the required charset: {}" [account])
-        )
-        (enforce
-            (not (contains account ACCOUNT_ID_PROHIBITED_CHARACTER))
-            (format "Account ID contained a prohibited character: {}" [account])
-        )
-        (let 
-            (
-                (al:integer (length account))
-            )
-            (enforce
-              (>= al MIN_DESIGNATION_LENGTH)
-              (format "Account ID does not conform to the min length requirement: {}" [account])
-            )
-            (enforce
-              (<= al ACCOUNT_ID_MAX_LENGTH)
-              (format "Account ID does not conform to the max length requirement: {}" [account])
-            )
-        )
-    )
-    (defun DALOS|UV_UniqueAccount (account:string)
-        @doc "Enforces that an Unique Account <account> ID meets charset and length requirements"
-        (DALOS|UV_Account (take (- (length account) 13) account))
-    )
+    
+    
     (defun DALOS|UV_Decimals:bool (decimals:integer)
         @doc "Enforces the decimal size is DALOS precision conform"
         (enforce
@@ -744,19 +775,6 @@
     )
     (defun QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool)
         (and (and b1 b2) (and b3 b4))
-    )
-
-    (defun UC_InsertAt:list (in:list idx:integer item)
-        @doc "Insert an item at position idx"
-        (enforce (and? (<= 0) (>= (length in)) idx) "Index out of bounds")
-        (UC_Chain [(take idx in),
-                [item],
-                (drop idx in)])
-    )
-    (defun UC_RemoveAt:list (in:list idx:integer)
-        @doc "Remove element at position idx"
-        (UV_EnforceListBounds in idx)
-        (+ (take idx in) (drop (+ 1 idx) in))
     )
     (defun UC_ReplaceAt:list (in:list idx:integer item)
         @doc "Replace the item at position idx"

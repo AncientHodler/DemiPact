@@ -62,6 +62,11 @@
     (defconst DPTS_NAME_000i "AgeOfZalmoxis")
     (defconst DPTS_PBKY_000i "PK_AOZ")
 
+    (defconst KADN_NAME_000j "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a")
+    (defconst KADN_PBKY_000j (drop 2 KADN_NAME_000j))
+    (defconst DPTS_NAME_000j "BananaMaker")
+    (defconst DPTS_PBKY_000j "PK_BM")
+
     ;;Smart Contracts
     (defconst KADN_NAME_0001 "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
     (defconst KADN_PBKY_0001 (drop 2 KADN_NAME_0001))
@@ -87,6 +92,11 @@
     (defconst KADN_PBKY_0005 (drop 2 KADN_NAME_0005))
     (defconst DPTS_NAME_0005 "DalosVesting")
     (defconst DPTS_PBKY_0005 "PK_DalosVesting")
+
+    (defconst KADN_NAME_0006 "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697")
+    (defconst KADN_PBKY_0006 (drop 2 KADN_NAME_0006))
+    (defconst DPTS_NAME_0006 "BananaJuicer")
+    (defconst DPTS_PBKY_0006 "PK_BJ")
 )
 
 (module TV GOVERNANCE
@@ -121,7 +131,10 @@
         "KEY_US_Kiss": { "keys": [KC.DPTS_PBKY_000f]},
         "KEY_US_Plcs": { "keys": [KC.DPTS_PBKY_000g]},
         "KEY_US_Nani": { "keys": [KC.DPTS_PBKY_000h]},
-        "KEY_US_AOZ": { "keys": [KC.DPTS_PBKY_000i]}
+        "KEY_US_AOZ": { "keys": [KC.DPTS_PBKY_000i]},
+        "KEY_US_BM": { "keys": [KC.DPTS_PBKY_000j]},
+        ;;Foreing SC Keys
+        "KEY_SC_BJ": { "keys": [KC.DPTS_PBKY_0006]}
     }
 )
 ;;Entering Namespace Free
@@ -150,6 +163,11 @@
     (define-keyset "free.User000g-Keyset" (read-keyset "KEY_US_Plcs"))
     (define-keyset "free.User000h-Keyset" (read-keyset "KEY_US_Nani"))
     (define-keyset "free.User000i-Keyset" (read-keyset "KEY_US_AOZ"))
+    (define-keyset "free.User000j-Keyset" (read-keyset "KEY_US_BM"))
+
+    ;;Foreign SMART-CONTRACT KEYSETS
+    (define-keyset "free.Banana_Master-Keyset" (read-keyset "KEY_US_BM"))
+    (define-keyset "free.Banana_Juicer-Keyset" (read-keyset "KEY_SC_BJ"))
 
 (commit-tx)
 ;;==============================================================================
@@ -179,12 +197,33 @@
 ;; PART 03 - Module Load Up
 (print "==========================InitSnake_TX-03..TX-07========================")
 
+(begin-tx "InitSnake 03 - Load ELLIPTIC")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Elliptic.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 03 - Load DALOS Charset")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DALOS.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 03 - Load DALOS Utility")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Dutility.pact")
 (env-gas)
 (commit-tx)
+
+;(begin-tx "InitSnake 03a - Load Blake3")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Blake3.pact")
+;(env-gas)
+;(commit-tx)
 
 (begin-tx "InitSnake 04 - Load OUROBOROS Main Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -200,20 +239,22 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 06 - Load Age of Zalmoxis")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/AOZ.pact")
-(env-gas)
-(commit-tx)
+;(begin-tx "InitSnake 06 - Load Age of Zalmoxis")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/AOZ.pact")
+;(env-gas)
+;(commit-tx)
 
 (begin-tx "InitSnake 07 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
+(use free.ELLIPTIC)
+(use free.DALOS)
 (use free.UTILITY)
+;(use free.BLAKE3)
 (use free.OUROBOROS)
 (use free.OURO2)
-(use free.AGEOFZALMOXIS)
 
 
 (env-gas)
@@ -242,12 +283,14 @@
         "KEY_KDA_Plcs": { "keys": [KC.KADN_PBKY_000g]},
         "KEY_KDA_Nani": { "keys": [KC.KADN_PBKY_000h]},
         "KEY_KDA_AOZ": { "keys": [KC.KADN_PBKY_000i]},
+        "KEY_KDA_BM": { "keys": [KC.KADN_PBKY_000j]},
 
         "KEY_KDA_Ouroboros": { "keys": [KC.KADN_PBKY_0001]},
         "KEY_KDA_GasTanker": { "keys": [KC.KADN_PBKY_0002]},
         "KEY_KDA_KadenaLiquidStaking": { "keys": [KC.KADN_PBKY_0003]},
         "KEY_KDA_DalosAutostake": { "keys": [KC.KADN_PBKY_0004]},
-        "KEY_KDA_DalosVesting": { "keys": [KC.KADN_PBKY_0005]}
+        "KEY_KDA_DalosVesting": { "keys": [KC.KADN_PBKY_0005]},
+        "KEY_KDA_BJ": { "keys": [KC.KADN_PBKY_0006]}
     }
 )
 (env-sigs   
@@ -256,6 +299,7 @@
             [
                 (coin.TRANSFER "alice" KC.KADN_NAME_0000 1000.0)
                 (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
+                (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
             ]
         }
     ]
@@ -274,6 +318,7 @@
 (coin.create-account KC.KADN_NAME_000g (read-keyset "KEY_KDA_Plcs"))
 (coin.create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
 (coin.create-account KC.KADN_NAME_000i (read-keyset "KEY_KDA_AOZ"))
+(coin.create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
 (free.OUROBOROS.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
 
 ;;Kadena Accounts of demi Smart Contracts
@@ -282,6 +327,9 @@
 (coin.create-account KC.KADN_NAME_0003 (read-keyset "KEY_KDA_KadenaLiquidStaking"))
 (coin.create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
 (coin.create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
+(coin.create-account KC.KADN_NAME_0006 (read-keyset "KEY_KDA_BJ"))
+
+(free.OUROBOROS.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
 
 (env-sigs [])
 (env-gas)
@@ -309,6 +357,10 @@
     (free.OUROBOROS.DALOS|C_DeployStandardAccount "Nani" (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
     (free.OUROBOROS.DALOS|C_DeployStandardAccount "AgeOfZalmoxis" (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
 
+    ;;Banana Example
+    (free.OUROBOROS.DALOS|C_DeployStandardAccount "BananaManager" (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
+    (free.OUROBOROS.DALOS|C_DeploySmartAccount "BananaJuicer" (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006)
+
 (env-sigs [])
 (env-gas)
 (commit-tx)
@@ -326,6 +378,22 @@
 (print "==========================InitSnake_TX-10===============================")
 (begin-tx "InitSnake 10 - Main Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (free.OURO2.DALOS|A_Initialise "AncientHodler")
+    
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+
+(print "==========================InitSnake_TX-10b==============================")
+(begin-tx "InitSnake 10b - Autostake 1 DWK so that Fueling becomes possible")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [ 
         { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
@@ -334,18 +402,24 @@
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
                     1.0)
-                  ] 
+                  ]
         }
-        { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_Emma", "caps": [] }
     ]
 )
-            
-    (free.OURO2.DALOS|A_Initialise "AncientHodler")
+
+    (free.OUROBOROS.LIQUID|C_WrapKadena "AncientHodler" "AncientHodler" 1.0)
+    (free.OUROBOROS.ATS|C_Coil 
+        "AncientHodler" 
+        "AncientHodler" 
+        (at 0 (free.OUROBOROS.DPTF|UR_RewardBearingToken (free.OUROBOROS.DALOS|UR_LiquidKadenaID)))
+        (free.OUROBOROS.DALOS|UR_WrappedKadenaID)
+        1.0
+    )
 
 (env-sigs [])
 (env-gas)
 (commit-tx)
+
 
 
 (begin-tx "InitSnake 11 - Secondary Initialisation with OURO Creation and Ouro Origin Mint")
@@ -364,132 +438,25 @@
 
     (free.OUROBOROS.DPTF|C_Transfer "Emma" "OURO-98c486052a51" "Emma" "AncientHodler" 50000.0)
     ;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "AgeOfZalmoxis" 1000.0)
-    (format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
+    ;(format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
+    ;(format "OURO Burn Role on GasTanker is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountRoleBurn "OURO-98c486052a51" "GasTanker" true)])
+    ;(format "OURO Mint Role on GasTanker is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleMint "OURO-98c486052a51" "GasTanker")])
+
     (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "AncientHodler" 100.0)
     (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "AgeOfZalmoxis" 500.0)
+    (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "Emma" 100.0)
+    (free.OURO2.GAS|C_Sublimate "AncientHodler" "AncientHodler" "BananaManager" 100.0)
     (free.OUROBOROS.GAS|A_Toggle false true)             ;;turn virtual gas collection to on
     (free.OUROBOROS.GAS|A_Toggle true true)              ;;turn native gas collection to on
     
 (env-sigs [])
 (env-gas)
 (commit-tx)
-;;
+
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-;; PART 06.02 - Age of Zalmoxis Initialisation
-(print "==========================InitSnake_TX-11===============================")
-(begin-tx "InitSnake 12 - AOZ Initialisation Part 1 - Issuing Primal True Fungibles")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AOZ", "caps": [] }
-        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
-          "caps": 
-            [
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    90.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    90.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
-                    270.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
-                    1350.0
-                )
-            ] 
-        }
-    ]
-)
-    (print "Initialise Asset Table")
-    (free.AGEOFZALMOXIS.AOZ|A_InitialiseAssets)
-    (print "Issuing Primal True Fungibles")
-    (free.AGEOFZALMOXIS.AOZ|A_IssueTrueFungibles "AgeOfZalmoxis")
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 13 - AOZ Initialisation Part 2 - Setup Primal True Fungibles")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_AOZ", "caps": [] }])
-
-    (print "Setting up Primal True Fungibles")
-    (free.AGEOFZALMOXIS.AOZ|A_SetupTrueFungibles "AgeOfZalmoxis")
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 12 - AOZ Initialisation Part 3 - Issuing Primal Meta Fungibles")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AOZ", "caps": [] }
-        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
-          "caps": 
-            [
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    90.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    90.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98"
-                    270.0
-                )
-                (coin.TRANSFER 
-                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
-                    "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
-                    1350.0
-                )
-            ] 
-        }
-    ]
-)
-
-    (print "Issuing Primal Meta Fungibles")
-    (free.AGEOFZALMOXIS.AOZ|A_IssueMetaFungibles "AgeOfZalmoxis")
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 13 - AOZ Initialisation Part 4 - Issuing ATS Pairs")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_AOZ", "caps": [] }])
-
-    (print "Issuing ATS Pairs, Mint Genesis Kosons, and Kickstart ATS-Pairs")
-    (free.AGEOFZALMOXIS.AOZ|A_MakeATSPairs "AgeOfZalmoxis")
-
-    ;(print "Test Values")
-    ;(format "AOZ Account has {} PlebiumDenarius" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(format "AOZ Account has {} ComatusAureus" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "CAKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(format "AOZ Account has {} PileatusSolidus" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "PSKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(format "AOZ Account has {} TarabostesStater" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "TSKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(format "AOZ Account has {} StrategonDrachma" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "SDKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(format "AOZ Account has {} BasileonAs" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "BAKOSON-98c486052a51" "AgeOfZalmoxis" true)])
-    ;(free.OUROBOROS.ATS|UR_ResidentAmountList "PlebeicStrength-98c486052a51")
-
-(env-gas)
-(commit-tx)
-
-;;
-;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-;; PART 06.03 - Vesting Initialisation
+;; PART 06.02 - Vesting Initialisation
 (print "==========================InitSnake_TX-12===============================")
-(begin-tx "InitSnake 13 - Vestinge Initialisation")
+(begin-tx "InitSnake 13 - Vesting Initialisation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             { "key": "PK_DalosVesting", "caps": [] }])

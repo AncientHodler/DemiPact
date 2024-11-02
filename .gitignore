@@ -1,2 +1,6 @@
 TestPacts/
 kadena_repl_sandbox-main.zip
+DemiourgosSC/Elliptic.pact
+DemiourgosSC/Blake3.pact
+DemiourgosSC/DirectTests/Test_003_Blake3.repl
+DemiourgosSC/DirectTests/Test_004_Elliptic.repl

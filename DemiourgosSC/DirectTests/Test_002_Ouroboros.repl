@@ -3,6 +3,7 @@
 ;; PART 01 - Load all Mockup Enviroment Modules
 (load "../../kadena_repl_sandbox-main/kda-env/init.repl")
 (load "../Init_Snake.repl")
+(load "../Init_AOZ.repl")
 (print "LOADED ALL ENV MODULES")
 ;;==============================================================================
 ;;
