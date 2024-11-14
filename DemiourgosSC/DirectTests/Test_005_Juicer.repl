@@ -11,6 +11,13 @@
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/GoodBanana.pact")
 (env-gas)
 (commit-tx)
+
+(begin-tx "Init Bad-Actor Smart Contract - Load Evil Banana Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/BadBanana.pact")
+(env-gas)
+(commit-tx)
 ;;==============================================================================
 ;;
 ;;001]Test Autostake AUryn P1
@@ -21,6 +28,13 @@
 ;;5%|5%|15%|75% Split is 20|20|60|300
 (env-sigs
     [   
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_BM", 
+        ;  "caps": 
+        ;    [
+        ;        (free.OUROBOROS.DPTF-DPMF|ISSUE "BananaMaker" "BananaJuicer" true 2)
+        ;    ] 
+        ;}
         { "key": "PK_BM", "caps": [] }
         { "key": "59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" , 
           "caps": 
@@ -45,38 +59,53 @@
                     "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9"
                     300.0
                 )
-                ;(free.OUROBOROS.DPTF-DPMF|ISSUE "BananaManager" "BananaJuicer" true 2)
+                ;(free.OUROBOROS.DPTF-DPMF|ISSUE "BananaMaker" "BananaJuicer" true 2)
             ] 
         }
         
     ]
 )
+    (free.OUROBOROS.DALOS|C_UpdateSmartAccountGovernor "BananaMaker" "BananaJuicer" "free.BANANA.")
     ;(install-capability (OUROBOROS.DPTF-DPMF|ISSUE patron account true l1))
-    ;(install-capability (free.OUROBOROS.DPTF-DPMF|ISSUE "BananaManager" "BananaJuicer" true 2))
-    (free.BANANA.BANANA|A_IssueTrueFungibles "BananaManager")
+    ;(install-capability (free.OUROBOROS.DPTF-DPMF|ISSUE "BananaMaker" "BananaJuicer" true 2))
+    (free.BANANA.BANANA|A_IssueTrueFungibles "BananaMaker")
+
+(env-sigs [])
 (env-gas)
 (commit-tx)
 
 ;;==============================================================================
 (begin-tx "Banana01 - Setup Primal True Fungibles")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_BM", "caps": [] }])
+(env-sigs 
+    [ 
+        { "key": "PK_BM", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
 
     (print "Setting up True Fungibles")
-    (free.BANANA.BANANA|A_SetupTrueFungibles "BananaManager")
+    (free.BANANA.BANANA|A_SetupTrueFungibles "BananaMaker")
 
+(env-sigs [])    
 (env-gas)
 (commit-tx)
 
 ;;==============================================================================
 (begin-tx "Banana02 - Sending Banana Tester")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs [ { "key": "PK_BM", "caps": [] }])
+(env-sigs 
+    [
+        { "key": "PK_BM", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
 
     (print "Sending Some Bananas to Emma")
-    (free.OUROBOROS.DPTF|C_Transfer "BananaManager" "BANANA-98c486052a51" "BananaManager" "Emma" 10.0)
+    (free.OUROBOROS.DPTF|C_Transfer "BananaMaker" "BANANA-98c486052a51" "BananaMaker" "Emma" 10.0)
     (format "Emma has {} BANANA" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "BANANA-98c486052a51" "Emma" true)])
 
+(env-sigs [])    
 (env-gas)
 (commit-tx)
 
@@ -86,7 +115,7 @@
 (env-sigs 
     [ 
         { "key": "PK_Emma", "caps": [] }
-        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
     ]
 )
 
@@ -96,5 +125,25 @@
     (format "Emma has {} JUICE" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" "Emma" true)])
     (format "Emma has {} IGNIS after Juicing" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Emma" true)])
 
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana03 - Juice Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_Emma", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (format "Emma has {} JUICE before Clandestine Attempt" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" "Emma" true)])
+    (free.BYTA.ClandestineMint "Emma")
+    (format "Emma has {} JUICE after Clandestine Attempt" [(free.OUROBOROS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" "Emma" true)])
+
+
+(env-sigs [])    
 (env-gas)
 (commit-tx)

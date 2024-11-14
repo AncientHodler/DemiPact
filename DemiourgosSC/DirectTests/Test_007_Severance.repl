@@ -1,0 +1,160 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+
+(begin-tx "Init Custom Smart Contract - Load A Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Severance/A.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init Custom Smart Contract - Load B Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Severance/B.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init Custom Smart Contract - Load C Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Severance/C.pact")
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Init Custom Smart Contract - Load X Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Severance/X.pact")
+(env-gas)
+(commit-tx)
+
+(use free.A)
+(use free.BOBO)
+(use free.C)
+(use free.X)
+
+
+
+;;==============================================================================
+;(free.A.A|PRIMAL 15.0 15.0)
+;(free.B.B|PRIMAL 10.0 3.0)
+;(free.C.C|PRIMAL 35.0 5.0)
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        ;{ "key": "PK_BM", "caps": [] }
+        {   "key": "PK_AncientHodler", 
+            "caps": 
+                [
+                    
+                ]
+        }
+        ;{ "key": "PK_AOZ", "caps": [] }
+        ;{ "key": "PK_Byta", "caps": [] }
+        ;{ "key": "PK_Coca", "caps": [] }
+    ]
+)
+    ;;Ori Aici, ori in env.sigs
+    (install-capability (free.A.A|PRIMAL 15.0 15.0))
+    (install-capability (free.BOBO.B|PRIMAL 10.0 3.0))
+    (install-capability (free.C.C|PRIMAL 35.0 5.0))
+
+
+    (print "")
+    (print "Individual Functions Testing")
+    (free.A.A|FunctionA 15.0 15.0)
+    (free.BOBO.B|FunctionB 10.0 3.0)
+    (free.C.C|FunctionC 35.0 5.0)
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        ;{ "key": "PK_BM", "caps": [] }
+        {   "key": "PK_AncientHodler", 
+            "caps": 
+                [
+                    
+                ]
+        }
+        ;{ "key": "PK_AOZ", "caps": [] }
+        ;{ "key": "PK_Byta", "caps": [] }
+        ;{ "key": "PK_Coca", "caps": [] }
+    ]
+)
+    ;(install-capability (free.A.A|PRIMAL 15.0 15.0))
+    ;(install-capability (free.B.B|PRIMAL 15.0 15.0))
+    ;(install-capability (free.C.C|PRIMAL 15.0 15.0))
+
+    (print "")
+    (print "Combined Testing")
+    (free.X.FunctionX 15.0 15.0 10.0 3.0 35.0 5.0)
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        ;{ "key": "PK_BM", "caps": [] }
+        {   "key": "PK_Lumy", 
+            "caps": 
+                [
+                    
+                ]
+        }
+        ;{ "key": "PK_AOZ", "caps": [] }
+        ;{ "key": "PK_Byta", "caps": [] }
+        ;{ "key": "PK_Coca", "caps": [] }
+    ]
+)
+
+    (free.A.A|Spawn "Luminita" (keyset-ref-guard "free.User000d-Keyset"))
+    (free.A.A|UR_Balance "Luminita")
+    (free.A.A|UpdateBalance "Luminita" 6.0)
+    (free.A.A|UR_Balance "Luminita")
+    (free.BOBO.B|UpdateTableA "Luminita" 12.0)
+    (free.A.A|UR_Balance "Luminita")
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        ;{ "key": "PK_BM", "caps": [] }
+        {   "key": "PK_Byta", 
+            "caps": 
+                [
+
+                ]
+        }
+        ;{ "key": "PK_AOZ", "caps": [] }
+        ;{ "key": "PK_Byta", "caps": [] }
+        ;{ "key": "PK_Coca", "caps": [] }
+    ]
+)
+
+    (free.BOBO.B|UpdateTableA "Luminita" 13.0)
+    (free.A.A|UR_Balance "Luminita")
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)

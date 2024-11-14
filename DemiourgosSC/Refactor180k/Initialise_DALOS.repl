@@ -207,14 +207,14 @@
 (begin-tx "InitSnake 03 - Load DALOS Charset")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/DALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/DALOS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 03 - Load DALOS Utility")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Dutility.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-Utils.pact")
 (env-gas)
 (commit-tx)
 
@@ -228,14 +228,14 @@
 (begin-tx "InitSnake 04 - Load OUROBOROS Main Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-MK1.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 05 - Load OUROBOROS Satellite Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/OUROAUX.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-MK2.pact")
 (env-gas)
 (commit-tx)
 
@@ -249,12 +249,10 @@
 (begin-tx "InitSnake 07 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-;(use free.ELLIPTIC)
 (use free.DALOS)
 (use free.UTILITY)
-;(use free.BLAKE3)
-(use free.OUROBOROS)
-(use free.OUROAUX)
+(use free.DEMI_001)
+(use free.DEMI_002)
 
 
 (env-gas)
@@ -306,7 +304,7 @@
 )
 
 (coin.create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
-(free.OUROBOROS.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_0000 1000.0)
+(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_0000 1000.0)
 
 ;;Users
 (coin.create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
@@ -319,7 +317,7 @@
 (coin.create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
 (coin.create-account KC.KADN_NAME_000i (read-keyset "KEY_KDA_AOZ"))
 (coin.create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
-(free.OUROBOROS.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
+(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
 
 ;;Kadena Accounts of demi Smart Contracts
 (coin.create-account KC.KADN_NAME_0001 (read-keyset "KEY_KDA_Ouroboros"))
@@ -329,7 +327,7 @@
 (coin.create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
 (coin.create-account KC.KADN_NAME_0006 (read-keyset "KEY_KDA_BJ"))
 
-(free.OUROBOROS.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
+(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
 
 (env-sigs [])
 (env-gas)
@@ -346,20 +344,34 @@
 (begin-tx "InitSnake 09 - DPTS User Account Creation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "AncientHodler" (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Florian" (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Emma" (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Byta" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Lumy" (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Coca" (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Kiss" (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Plcs" (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "Nani" (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "AgeOfZalmoxis" (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Florean", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Byta", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
+            { "key": "PK_Coca", "caps": [] }
+            { "key": "PK_Kiss", "caps": [] }
+            { "key": "PK_Plcs", "caps": [] }
+            { "key": "PK_Nani", "caps": [] }
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "PK_BM", "caps": [] }
+            { "key": "PK_BJ", "caps": [] }
+          ])
+
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "AncientHodler" (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Florian" (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Emma" (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Byta" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Lumy" (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Coca" (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Kiss" (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Plcs" (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "Nani" (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "AgeOfZalmoxis" (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
 
     ;;Banana Example
-    (free.OUROBOROS.DALOS|C_DeployStandardAccount "BananaMaker" (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
-    (free.OUROBOROS.DALOS|C_DeploySmartAccount "BananaJuicer" (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 "BananaMaker")
+    (free.DEMI_001.DALOS|C_DeployStandardAccount "BananaMaker" (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
+    (free.DEMI_001.DALOS|C_DeploySmartAccount "BananaJuicer" (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 "BananaMaker")
 
 (env-sigs [])
 (env-gas)
@@ -396,7 +408,7 @@
 )
 
     ;(install-capability (free.OUROBOROS.DPTF-DPMF|ISSUE "AncientHodler" "Ouroboros" true 6))
-    (free.OUROAUX.DALOS|A_Initialise "AncientHodler")
+    (free.DEMI_002.DALOS|A_Initialise "AncientHodler")
     
 (env-sigs [])
 (env-gas)
@@ -419,12 +431,12 @@
     ]
 )
 
-    (free.OUROBOROS.LIQUID|C_WrapKadena "AncientHodler" "AncientHodler" 1.0)
-    (free.OUROBOROS.ATS|C_Coil 
+    (free.DEMI_001.LIQUID|C_WrapKadena "AncientHodler" "AncientHodler" 1.0)
+    (free.DEMI_001.ATS|C_Coil 
         "AncientHodler" 
         "AncientHodler" 
-        (at 0 (free.OUROBOROS.DPTF|UR_RewardBearingToken (free.OUROBOROS.DALOS|UR_LiquidKadenaID)))
-        (free.OUROBOROS.DALOS|UR_WrappedKadenaID)
+        (at 0 (free.DEMI_001.DPTF|UR_RewardBearingToken (free.DEMI_001.DALOS|UR_LiquidKadenaID)))
+        (free.DEMI_001.DALOS|UR_WrappedKadenaID)
         1.0
     )
 
@@ -441,7 +453,7 @@
             { "key": "PK_Emma", "caps": [] }
           ])
     ;;OriginMint Ouro
-    (free.OUROBOROS.DPTF|C_Mint
+    (free.DEMI_001.DPTF|C_Mint
         "AncientHodler"
         "OURO-98c486052a51"
         "Emma"
@@ -449,18 +461,18 @@
         true
     )
 
-    (free.OUROBOROS.DPTF|C_Transfer "Emma" "OURO-98c486052a51" "Emma" "Byta" 50000.0)
+    (free.DEMI_001.DPTF|C_Transfer "Emma" "OURO-98c486052a51" "Emma" "Byta" 50000.0)
     ;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "AgeOfZalmoxis" 1000.0)
     ;(format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
     ;(format "OURO Burn Role on GasTanker is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountRoleBurn "OURO-98c486052a51" "GasTanker" true)])
     ;(format "OURO Mint Role on GasTanker is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleMint "OURO-98c486052a51" "GasTanker")])
 
-    (free.OUROAUX.GAS|C_Sublimate "Byta" "Byta" "Byta" 100.0)
-    (free.OUROAUX.GAS|C_Sublimate "Byta" "Byta" "AgeOfZalmoxis" 500.0)
-    (free.OUROAUX.GAS|C_Sublimate "Byta" "Byta" "Emma" 100.0)
-    (free.OUROAUX.GAS|C_Sublimate "Byta" "Byta" "BananaMaker" 100.0)
-    (free.OUROBOROS.GAS|A_Toggle false true)             ;;turn virtual gas collection to on
-    (free.OUROBOROS.GAS|A_Toggle true true)              ;;turn native gas collection to on
+    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "Byta" 100.0)
+    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "AgeOfZalmoxis" 500.0)
+    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "Emma" 100.0)
+    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "BananaMaker" 100.0)
+    (free.DEMI_001.GAS|A_Toggle false true)             ;;turn virtual gas collection to on
+    (free.DEMI_001.GAS|A_Toggle true true)              ;;turn native gas collection to on
 
 (env-sigs [])
 (env-gas)
@@ -474,31 +486,7 @@
 (env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
             { "key": "PK_DalosVesting", "caps": [] }])
 
-    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "OURO-98c486052a51")
-    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "AURYN-98c486052a51")
-    ;(free.OUROBOROS.VST|C_CreateVestingLink "AncientHodler" "ELITEAURYN-98c486052a51")
 
 (env-sigs [])
 (env-gas)
 (commit-tx)
-;;
-;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-;; PART 06.04 - Setting Needed Transfer Roles
-;(print "==========================InitSnake_TX-13===============================")
-;(begin-tx "InitSnake 14 - Seting needed Transfer Roles")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(env-sigs [ { "key": "PK_AncientHodler", "caps": [] },
-            ;{ "key": "PK_DalosAutostake", "caps": [] }])
-
-    ;;06.04.01 - Fee Exeemption Role for Auryn|Elite-Auryn to the DalosVesting Smart DPTS Account
-    ;(free.DPTF.C_ToggleFeeExemptionRole "AncientHodler" "AURYN-98c486052a51" "DalosVesting" true)
-    ;(free.DPTF.C_ToggleFeeExemptionRole "AncientHodler" "ELITEAURYN-98c486052a51" "DalosVesting" true)
-    ;;06.04.02 - Transfer Role for Auryn|Elite-Auryn to the DalosVesting Smart DPTS Account
-    ;(free.DPTF.C_ToggleTransferRole "AncientHodler" "AURYN-98c486052a51" "DalosVesting" true)
-    ;(free.DPTF.C_ToggleTransferRole "AncientHodler" "ELITEAURYN-98c486052a51" "DalosVesting" true)
-    ;;06.04.03 - Saving the Vested Elite-Auryn DPTF ID in the DalosAutostake (needed for complete Elite Account Computation)
-    ;(free.DH_SC_Autostake.A_SaveVestedEliteAurynID "VEAURYN-98c486052a51")
-
-;(env-sigs [])
-;(env-gas)
-;(commit-tx)

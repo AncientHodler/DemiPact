@@ -64,7 +64,7 @@
             (let
                 (
                     (tf-ids:[string]
-                        (OURO2.DPTF|CM_Issue
+                        (OUROBOROS.DPTF|CM_Issue
                             patron
                             BANANA|SC_NAME
                             ["Banana" "BananaJuice"]
@@ -117,44 +117,25 @@
 
     (defun BANANA|C_MakeJuice (patron:string juicer:string recipient:string amount:decimal)
         @doc "Take Banana and generates Juice"
-        (with-capability (BANANA|MakeJuice patron juicer recipient amount)
-            (let
-                (
-                    (juice-amount:decimal (BANANA|UC_JuiceAmount amount))
-                    (b-id:string (BANANA|UR_BananaID))
-                    (j-id:string (BANANA|UR_JuiceID))
-                )
-        ;;Standard Client Account <juicer> transfers Banana to Smart Account <BananaJuicer>
-                (OUROBOROS.DPTF|CX_Transfer patron b-id juicer BANANA|SC_NAME amount)
-        ;;Smart Account <BananaJuicer> burns Banana
-                (OUROBOROS.DPTF|CX_Burn patron b-id BANANA|SC_NAME amount)
-        ;;Smart Account <BananaJuicer> mints BananaJuice
-                (OUROBOROS.DPTF|CX_Mint patron j-id BANANA|SC_NAME juice-amount false)
-        ;;Smart Account <BananaJuicer> transfers BananaJuice to Standard Client Account <recipient>
-                (OUROBOROS.DPTF|CX_Transfer patron j-id BANANA|SC_NAME recipient juice-amount)
-            )
-        )
-    )
-
-    (defcap BANANA|MakeJuice (patron:string juicer:string recipient:string amount:decimal)
+        ;(OUROBOROS.DALOS|EnforceSmartAccount free.BANANA.BANANA|SC_NAME)
         (let
             (
                 (juice-amount:decimal (BANANA|UC_JuiceAmount amount))
                 (b-id:string (BANANA|UR_BananaID))
                 (j-id:string (BANANA|UR_JuiceID))
             )
-        ;;Patron, Juicer, Recipient must be Standard DALOS Account
-            (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART patron false))
-            (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART juicer false))
-            (compose-capability (OUROBOROS.DALOS|IZ_ACCOUNT_SMART recipient false))
-        ;;Standard Client Account <juicer> transfers Banana to Smart Account <BananaJuicer>
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron b-id juicer BANANA|SC_NAME amount true true))
-        ;;Smart Account <BananaJuicer> burns Banana
-            (compose-capability (OUROBOROS.DPTF-DPMF|BURN patron b-id BANANA|SC_NAME amount true true))
-        ;;Smart Account <BananaJuicer> mints BananaJuice
-            (compose-capability (OUROBOROS.DPTF|MINT patron j-id BANANA|SC_NAME juice-amount false true))
-        ;;Smart Account <BananaJuicer> transfers BananaJuice to Standard Client Account <recipient>
-            (compose-capability (OUROBOROS.DPTF-DPMF|TRANSFER patron j-id BANANA|SC_NAME recipient juice-amount true true))
+    ;;Patron, Juicer, Recipient must be Standard DALOS Account
+            (OUROBOROS.DALOS|CAP|StandardAccount patron)
+            (OUROBOROS.DALOS|CAP|StandardAccount juicer)
+            (OUROBOROS.DALOS|CAP|StandardAccount recipient)
+    ;;Standard Client Account <juicer> transfers Banana to Smart Account <BananaJuicer>
+            (OUROBOROS.DPTF|CX_Transfer patron b-id juicer BANANA|SC_NAME amount)
+    ;;Smart Account <BananaJuicer> burns Banana
+            (OUROBOROS.DPTF|CX_Burn patron b-id BANANA|SC_NAME amount)
+    ;;Smart Account <BananaJuicer> mints BananaJuice
+            (OUROBOROS.DPTF|CX_Mint patron j-id BANANA|SC_NAME juice-amount false)
+    ;;Smart Account <BananaJuicer> transfers BananaJuice to Standard Client Account <recipient>
+            (OUROBOROS.DPTF|CX_Transfer patron j-id BANANA|SC_NAME recipient juice-amount)
         )
     )
 )

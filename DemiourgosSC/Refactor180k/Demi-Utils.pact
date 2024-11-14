@@ -304,6 +304,20 @@
             (reverse final-lst)
         )
     )
+    (defun DALOS|UV_Fee (fee:decimal)
+        @doc "Validate input decimal as a fee value"
+        (enforce
+            (= (floor fee FEE_PRECISION) fee)
+            (format "The fee amount of {} is not a valid fee amount decimal wise" [fee])
+        )
+        (enforce 
+            (or 
+                (or (= fee -1.0) (= fee 0.0))
+                (and (>= fee 1.0) (<= fee 999.0))
+            ) 
+            (format "The fee amount of {} is not a valid fee amount value wise" [fee])
+        )
+    )
     (defun DALOS|UC_Filterid:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let 

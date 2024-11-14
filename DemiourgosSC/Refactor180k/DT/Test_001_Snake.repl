@@ -1,0 +1,415 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Initialise_DALOS.repl")
+(load "../AOZ/Init_AOZ.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;001]Test Autostake AUryn P1
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+(print "===============================Start Auryn=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+
+(format "DalosAutostake[0] has {} OURO" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Reward Tokens for Auryndex are {}" [(free.DEMI_001.ATS|UR_RewardTokenList "Auryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "C-RBT for Auryndex is {}" [(free.DEMI_001.ATS|UR_ColdRewardBearingToken "Auryndex-98c486052a51")])
+
+        ;;Tests
+        (free.DEMI_001.ATS|C_Coil "Byta" "Byta" "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.DEMI_001.ATS|C_Fuel "Byta" "Byta" "Auryndex-98c486052a51" "OURO-98c486052a51" 200.0)
+
+(format "Fee Exemption role for DalosAutostake for Auryn is {}" [(free.DEMI_001.DPTF|UR_AccountRoleFeeExemption "AURYN-98c486052a51" "DalosAutostake")])
+(format "Fee Exemption role for DalosAutostake for EliteAuryn is {}" [(free.DEMI_001.DPTF|UR_AccountRoleFeeExemption "ELITEAURYN-98c486052a51" "DalosAutostake")])
+
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis" 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+
+
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 110.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 10.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 15.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 25.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 75.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 175.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "Byta" "Byta" "Auryndex-98c486052a51" 205.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 500.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 700.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1500.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1540.0)
+        (free.DEMI_001.ATS|C_Curl "Byta" "Byta" "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 2540.0)
+
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+(format "Auryn Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+(format "Auryndex RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "Auryndex-98c486052a51")])
+(format "Ouro in Autostake Pool is {}" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(print "===============================END Auryn 2=============================")
+(env-gas)
+(commit-tx)
+
+;;001]Test Autostake AUryn P2
+(begin-tx "Test SC_ATS CULL")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-10-29T21:00:00Z")}
+)
+
+
+(print "Byta Status Before BEFORE")
+(format "Byta has {} OURO, {} AURYN, {} ELITEAURYN, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(free.DEMI_001.ATS|UP_P1 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P2 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P3 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P4 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P5 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P6 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P7 "Auryndex-98c486052a51" "Byta")
+
+(print "Values culled are displayed below:")
+(free.DEMI_001.ATS|C_Cull "Byta" "Byta" "Auryndex-98c486052a51")
+
+(print "P0 AFTER")
+(format "Byta has {} OURO, {} AURYN, {} ELITEAURYN, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(free.DEMI_001.ATS|UP_P1 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P2 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P3 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P4 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P5 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P6 "Auryndex-98c486052a51" "Byta")
+(free.DEMI_001.ATS|UP_P7 "Auryndex-98c486052a51" "Byta")
+
+
+(print "===============================END Auryn 2=============================")
+(env-gas)
+(commit-tx)
+;;001]Test AOZ Autostake
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(print "===============================Start AOZ=============================")
+(format "AOZ has {} PKOSON, {} EKOSON, {} AKOSON, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AgeOfZalmoxis" true)
+    ]
+)
+(format "DalosAutostake has {} PKOSON, {} EKOSON, {} AKOSON." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "DalosAutostake" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "DalosAutostake" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "DalosAutostake" true)
+    ]
+)
+(format "Reward Tokens for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RewardTokenList "PlebeicStrength-98c486052a51")])
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebeicStrength is {};"
+    [
+        (free.DEMI_001.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "C-RBT for PlebeicStrength is {}" [(free.DEMI_001.ATS|UR_ColdRewardBearingToken "PlebeicStrength-98c486052a51")])
+(format "PlebiumDenarius Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+
+        (free.DEMI_001.ATS|C_Coil "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
+        (free.DEMI_001.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
+        (free.DEMI_001.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 40.0)
+        (free.DEMI_001.ATS|C_Fuel "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 80.0)
+
+(format "PlebeicStrength is {};"
+    [
+        (free.DEMI_001.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(print "====================Before COLD Recovery================")
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebiumDenarius Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+(format "PlebeicStrength is {};"
+    [
+        (free.DEMI_001.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+        (free.DEMI_001.DPTF|C_Transfer "AgeOfZalmoxis" "PDKOSON-98c486052a51" "AgeOfZalmoxis" "Byta" 100.0)
+        (free.DEMI_001.DPTF|C_Transfer "Byta" "PDKOSON-98c486052a51" "Byta" "Emma" 100.0)
+        (free.DEMI_001.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 40.0)
+
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+             "block-time": (time "2024-10-28T00:00:00Z")}
+        )      
+        (free.DEMI_001.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 10.0)
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+             "block-time": (time "2024-11-01T00:00:00Z")}
+        )  
+        (free.DEMI_001.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 12.0)
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+             "block-time": (time "2024-11-05T00:00:00Z")}
+        )  
+        (free.DEMI_001.ATS|C_ColdRecovery "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51" 17.0)
+
+(print "====================After COLD Recovery================")
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebiumDenarius Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+(format "PlebeicStrength is {};"
+    [
+        (free.DEMI_001.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "Emma has {} PDKOSON" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "Emma" true)])
+(format "Ouroboros has {} PDKOSON" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" "Ouroboros" true)])
+
+(free.DEMI_001.DPTF|C_Transfer "Byta" "PDKOSON-98c486052a51" "Emma" "Byta"  99.0)
+(format "PlebeicStrength is {};"
+    [
+        (free.DEMI_001.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "PlebiumDenarius Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "PlebeicStrength-98c486052a51")])
+
+        (free.DEMI_001.ATS|UP_P0 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P1 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P2 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P3 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P4 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P5 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P6 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+        (free.DEMI_001.ATS|UP_P7 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+(format "Unbonding Value for PKOSON on Account AOZ is {}" [(free.DEMI_001.ATS|UC_AccountUnbondingBalance "PlebeicStrength-98c486052a51" "AgeOfZalmoxis" "PKOSON-98c486052a51")])
+(format "Total Read Unbonding Value for PKOSON is {}" [(at 0 (free.DEMI_001.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))])
+(format "Total Computed Unbonding Value for PKOSON is {}" [(free.DEMI_002.ATS|UC_RT-Unbonding "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51")])
+
+
+
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-11-27T00:00:00Z")}
+)
+
+
+
+(print "AOZ Status Before BEFORE")
+(format "AOZ has {} PKOSON, {} EKOSON, {} AKOSON, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AgeOfZalmoxis" true)
+    ]
+)
+(free.DEMI_001.ATS|UP_P0 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+
+(print "Values culled are displayed below:")
+(free.DEMI_001.ATS|C_Cull "AgeOfZalmoxis" "AgeOfZalmoxis" "PlebeicStrength-98c486052a51")
+
+(print "P0 AFTER")
+(format "AOZ has {} PKOSON, {} EKOSON, {} AKOSON, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" "AgeOfZalmoxis" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "AgeOfZalmoxis" true)
+    ]
+)
+(free.DEMI_001.ATS|UP_P0 "PlebeicStrength-98c486052a51" "AgeOfZalmoxis")
+
+(print "===============================END AOZ=============================")
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(format "DalosAutostake[0] has {} AURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "DalosAutostake" true)])
+(format "Emma has {} ELITEAURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Emma" true)])
+(format "Emma has {} AURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Emma" true)])
+(format "Reward Tokens for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RewardTokenList "EliteAuryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "EliteAuryn Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+(format "EliteAuryndex RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "EliteAuryndex-98c486052a51")])
+;;
+(print "VALUES are for still credit burn")
+;(test-capability (free.DEMI_001.ATS|UPDATE_ROU))
+;(free.DEMI_001.ATS|CPF_RT-RBT "AURYN-98c486052a51" 15.0)
+(free.DEMI_001.DPTF|C_Transfer "Byta" "AURYN-98c486052a51" "Byta" "Emma" 300.0)
+;;
+(print "=================================AFTER TRANSFER=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(format "DalosAutostake[0] has {} AURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "DalosAutostake" true)])
+(format "Emma has {} ELITEAURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Emma" true)])
+(format "Emma has {} AURYN" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Emma" true)])
+(format "Reward Tokens for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RewardTokenList "EliteAuryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for EliteAuryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "EliteAuryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "EliteAuryn Supply is {}" [(free.DEMI_001.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)])
+(format "EliteAuryndex RBT-Supply is {}" [(free.DEMI_001.ATS|UC_PairRBTSupply "EliteAuryndex-98c486052a51")])
+
+
+
+
+
+
+(print "===============================GAS TESTS=============================")
+(print "===============================Before Making GAS=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(format "Ouroboros has {} OURO" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Ouroboros" true)])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "DalosAutostake has {} OURO" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+;(free.OURO2.GAS|C_Sublimate "Byta" "Byta" "Byta" 1000.0)
+(free.DEMI_002.GAS|C_Compress "Byta" "Byta" 5000.0)
+
+(print "===============================After Making GAS=============================")
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis." 
+    [
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.DEMI_001.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(format "Ouroboros has {} OURO" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Ouroboros" true)])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.DEMI_001.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "DalosAutostake has {} OURO" [(free.DEMI_001.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "DalosAutostake" true)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.DEMI_001.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.DEMI_001.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(env-gas)
+(commit-tx)

@@ -10,18 +10,22 @@
 
 ; Init standards Kadena contracts (coin, etc...)
 (load "init-kadena.repl")
+(load "init-pact-util-lib.repl")
+;(load "init-marmalade.repl")
+(load "init-test-accounts.repl")
+
 
 ; Util lib
-(if (not (try false (read-msg "disable-util-lib")))
-    (load "init-pact-util-lib.repl")
-    "")
+;(if (not (try false (read-msg "disable-util-lib")))
+;    (load "init-pact-util-lib.repl")
+;    "")
 
 ; Marmalade
-(if (not (try false (read-msg "disable-marmalade")))
-    (load "init-marmalade.repl")
-    "")
+;(if (not (try false (read-msg "disable-marmalade")))
+;    (load "init-marmalade.repl")
+;    "")
 
 ; Init test accounts
-(if (not (try false (read-msg "disable-test-accounts")))
-    (load "init-test-accounts.repl")
-    "")
+;(if (not (try false (read-msg "disable-test-accounts")))
+;    (load "init-test-accounts.repl")
+;    "")
