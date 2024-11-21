@@ -24,13 +24,27 @@
     )
 
     (defun B|SpecialUpdateTableA (account:string balance:decimal)
-        (A.A|UpdateBalance account balance)
+        (with-capability (B|UPDATE_FROM_B)
+            (A.A|UpdateBalance account balance)
+        )
     )
 
     (defcap B|PRIMAL (input-one:decimal input-two:decimal)
         @event
         (enforce (>= input-one 0.0) "Invalid Condition")
         (enforce (>= input-two 1.0) "Invalid Condition")
+    )
+
+
+    (defun B|RegisterPolicy ()
+        (A.A|AllowModules
+            "Module_BOBO"
+            (create-capability-guard (B|UPDATE_FROM_B))
+        )
+    )
+
+    (defcap B|UPDATE_FROM_B ()
+        true
     )
 )
 

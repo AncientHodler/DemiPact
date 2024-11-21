@@ -14,88 +14,105 @@
     ;;User Names
     (defconst KADN_NAME_0000 "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
     (defconst KADN_PBKY_0000 (drop 2 KADN_NAME_0000))
-    (defconst DPTS_NAME_0000 "AncientHodler")
+    (defconst DPTS_NAME_0000 "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    (defconst ANCIENTHODLER DPTS_NAME_0000)
     (defconst DPTS_PBKY_0000 "PK_AncientHodler")
     
     (defconst KADN_NAME_000a "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
     (defconst KADN_PBKY_000a (drop 2 KADN_NAME_000a))
-    (defconst DPTS_NAME_000a "Florian")
+    (defconst DPTS_NAME_000a "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι")
+    (defconst FLORIAN DPTS_NAME_000a)
     (defconst DPTS_PBKY_000a "PK_Florean")
 
     (defconst KADN_NAME_000b "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48")
     (defconst KADN_PBKY_000b (drop 2 KADN_NAME_000b))
-    (defconst DPTS_NAME_000b "Emma")
+    (defconst DPTS_NAME_000b "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst EMMA DPTS_NAME_000b)
     (defconst DPTS_PBKY_000b "PK_Emma")
 
     (defconst KADN_NAME_000c "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
     (defconst KADN_PBKY_000c (drop 2 KADN_NAME_000c))
-    (defconst DPTS_NAME_000c "Byta")
+    (defconst DPTS_NAME_000c "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL")
+    (defconst BYTA DPTS_NAME_000c)
     (defconst DPTS_PBKY_000c "PK_Byta")
 
     (defconst KADN_NAME_000d "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
     (defconst KADN_PBKY_000d (drop 2 KADN_NAME_000d))
-    (defconst DPTS_NAME_000d "Lumy")
+    (defconst DPTS_NAME_000d "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+    (defconst LUMY DPTS_NAME_000d)
     (defconst DPTS_PBKY_000d "PK_Lumy")
 
     (defconst KADN_NAME_000e "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba")
     (defconst KADN_PBKY_000e (drop 2 KADN_NAME_000e))
-    (defconst DPTS_NAME_000e "Coca")
+    (defconst DPTS_NAME_000e "Ѻ.áлÜŹZУαŻεvΩ€ÍÉźR5ΠúÉźηüΠÇτOVòÀgZZΠåÈдZëыуЛфЮ13φúνýhMαĄαÖìÍxнпĞjȚ¥бę¥šÔπΓ€Mnøí3ЧθźąйπĆTÌqooŽůŠóŚhřkžφHÿŽBДχpLÉeõxòσûEÜàμΓтÆdôûяàΞRηøćχdîфЩЗьδńŁ$Ü9ř∇ŸŠωVξЦF¢ĆĞÂ₱Ž")
+    (defconst COCA DPTS_NAME_000e)
     (defconst DPTS_PBKY_000e "PK_Coca")
 
     (defconst KADN_NAME_000f "k:134cabaa0e22cd86630773e6e6e4c9c6851715428a49162dcde661b3550ccff9")
     (defconst KADN_PBKY_000f (drop 2 KADN_NAME_000f))
-    (defconst DPTS_NAME_000f "Kiss")
+    (defconst DPTS_NAME_000f "Ѻ.ÔřЦΠúlAŻвnŞÄȘнШĚЖÉřÉĐqлþåΦÉЩвØúÄΣNéSaPpmζżŽtηËJgνπΞ$ЗhêPúÏ£BÀp£β$z7ЯđòÔμЛюGЧĄ7xóЮGЮдYнșШΠŸRA¢śÉ4кAłůaDжp£σÏđχ6ïDжâ5uęΠşÖMþ4¥эăì3cXÛΘИÛźéËBÏžЙŁKjчψĎρЩlźEüśЯŁщbφ2")
+    (defconst KISS DPTS_NAME_000f)
     (defconst DPTS_PBKY_000f "PK_Kiss")
 
     (defconst KADN_NAME_000g "k:fb67ba8ea6d3b4b9463a482c1cadade2efbeb7719ce26344094e9d58d8176748")
     (defconst KADN_PBKY_000g (drop 2 KADN_NAME_000g))
-    (defconst DPTS_NAME_000g "Plcs")
+    (defconst DPTS_NAME_000g "Ѻ.BDțΛZУЩAwÅhУ¥бйeÄGjЯÔIŽ0ΣмωýOÒμψĚяуÿñUĐ€Ú£gâχΓπóÒïЮáпZЧhЫÄIsńËfźÄ1VXУõŘéiàшdĄΞχôCнsÛíÌáàЧßojΛaIλŹЮBøğÔWmòηвá€0ïЗUĞůпøůэóΞÁŘśяŃeÁďfσäKÏßżȚȘÿŒșεúêβÜèkyφΛrβБяK₳ě₱4")
+    (defconst PULECS DPTS_NAME_000g)
     (defconst DPTS_PBKY_000g "PK_Plcs")
 
     (defconst KADN_NAME_000h "k:03c14c229fdcec2e5053b6a7b8a031fbbbfce198a845e94e7908668686706e43")
     (defconst KADN_PBKY_000h (drop 2 KADN_NAME_000h))
-    (defconst DPTS_NAME_000h "Nani")
+    (defconst DPTS_NAME_000h "Ѻ.ЮÝžuÂěуşъøŞrΣσQxvЛòÁćÇлςÿŃYóγõыxÁùöÞÁ₳Ю5šШβíюťğÀÎrÿΛůßXЧщŹюДáŻяιËÔŘЬL4₱ĎěJ8ÃHËÏxĆŞÂÜûBcЭШκÙçóьÞÓŮεUIη2ЯąąÙJζÍêíEȘÇșÇOćΞșъÒýĂ₱χÅкGoЗИůω1cþÑŻÁжиáÿιŞŠÓŒлKõÏE₿ÌxYИн")
+    (defconst NANI DPTS_NAME_000h)
     (defconst DPTS_PBKY_000h "PK_Nani")
 
     (defconst KADN_NAME_000i "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf")
     (defconst KADN_PBKY_000i (drop 2 KADN_NAME_000i))
-    (defconst DPTS_NAME_000i "AgeOfZalmoxis")
+    (defconst DPTS_NAME_000i "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+    (defconst AOZ DPTS_NAME_000i)
     (defconst DPTS_PBKY_000i "PK_AOZ")
 
     (defconst KADN_NAME_000j "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a")
     (defconst KADN_PBKY_000j (drop 2 KADN_NAME_000j))
-    (defconst DPTS_NAME_000j "BananaMaker")
+    (defconst DPTS_NAME_000j "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst BM DPTS_NAME_000j)
     (defconst DPTS_PBKY_000j "PK_BM")
 
     ;;Smart Contracts
     (defconst KADN_NAME_0001 "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
     (defconst KADN_PBKY_0001 (drop 2 KADN_NAME_0001))
-    (defconst DPTS_NAME_0001 "Ouroboros")
+    (defconst DPTS_NAME_0001 "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+    (defconst OUROBOROS DPTS_NAME_0001)
     (defconst DPTS_PBKY_0001 "PK_Ouroboros")
 
     (defconst KADN_NAME_0002 "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9")
     (defconst KADN_PBKY_0002 (drop 2 KADN_NAME_0002))
-    (defconst DPTS_NAME_0002 "GasTanker")
+    (defconst DPTS_NAME_0002 "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
+    (defconst DALOSGAS DPTS_NAME_0002)
     (defconst DPTS_PBKY_0002 "PK_GasTanker")
 
     (defconst KADN_NAME_0003 "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98")
     (defconst KADN_PBKY_0003 (drop 2 KADN_NAME_0003))
-    (defconst DPTS_NAME_0003 "KadenaLiquidStaking")
+    (defconst DPTS_NAME_0003 "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
+    (defconst KADENALS DPTS_NAME_0003)
     (defconst DPTS_PBKY_0003 "PK_KadenaLiquidStaking")
 
     (defconst KADN_NAME_0004 "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
     (defconst KADN_PBKY_0004 (drop 2 KADN_NAME_0004))
-    (defconst DPTS_NAME_0004 "DalosAutostake")
+    (defconst DPTS_NAME_0004 "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+    (defconst AUTOSTAKER DPTS_NAME_0004)
     (defconst DPTS_PBKY_0004 "PK_DalosAutostake")
 
     (defconst KADN_NAME_0005 "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
     (defconst KADN_PBKY_0005 (drop 2 KADN_NAME_0005))
-    (defconst DPTS_NAME_0005 "DalosVesting")
+    (defconst DPTS_NAME_0005 "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+    (defconst VESTER DPTS_NAME_0005)
     (defconst DPTS_PBKY_0005 "PK_DalosVesting")
 
     (defconst KADN_NAME_0006 "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697")
     (defconst KADN_PBKY_0006 (drop 2 KADN_NAME_0006))
-    (defconst DPTS_NAME_0006 "BananaJuicer")
+    (defconst DPTS_NAME_0006 "Σ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst BJ DPTS_NAME_0006)
     (defconst DPTS_PBKY_0006 "PK_BJ")
 )
 
@@ -197,62 +214,60 @@
 ;; PART 03 - Module Load Up
 (print "==========================InitSnake_TX-03..TX-07========================")
 
-;(begin-tx "InitSnake 03 - Load ELLIPTIC")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Elliptic.pact")
-;(env-gas)
-;(commit-tx)
-
-(begin-tx "InitSnake 03 - Load DALOS Charset")
+(begin-tx "InitSnake 03 - Load Utility Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/DALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0000_Utils.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 03 - Load DALOS Utility")
+(begin-tx "InitSnake 04 - Load DALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-Utils.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0001_Dalos.pact")
 (env-gas)
 (commit-tx)
 
-;(begin-tx "InitSnake 03a - Load Blake3")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Blake3.pact")
-;(env-gas)
-;(commit-tx)
-
-(begin-tx "InitSnake 04 - Load OUROBOROS Main Module")
+(begin-tx "InitSnake 05 - Load BASIS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-MK1.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0002_Basis.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 05 - Load OUROBOROS Satellite Module")
+(begin-tx "InitSnake 06 - Load AUTOSTAKE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Refactor180k/Demi-MK2.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003_Autos.pact")
 (env-gas)
 (commit-tx)
 
-;(begin-tx "InitSnake 06 - Load Age of Zalmoxis")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/AOZ.pact")
-;(env-gas)
-;(commit-tx)
+(begin-tx "InitSnake 07 - Load LIQUID Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_Liqud.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 07 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_Ourob.pact")
+(env-gas)
+(commit-tx)
+
+
+
 
 (begin-tx "InitSnake 07 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(use free.DALOS)
 (use free.UTILITY)
-(use free.DEMI_001)
-(use free.DEMI_002)
+(use free.DALOS)
+(use free.BASIS)
+(use free.AUTOSTAKE)
+(use free.LIQUID)
+(use free.OUROBOROS)
 
 
 (env-gas)
@@ -304,7 +319,7 @@
 )
 
 (coin.create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
-(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_0000 1000.0)
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_0000 1000.0)
 
 ;;Users
 (coin.create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
@@ -317,17 +332,18 @@
 (coin.create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
 (coin.create-account KC.KADN_NAME_000i (read-keyset "KEY_KDA_AOZ"))
 (coin.create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
-(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
+
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
 
 ;;Kadena Accounts of demi Smart Contracts
-(coin.create-account KC.KADN_NAME_0001 (read-keyset "KEY_KDA_Ouroboros"))
+(coin.create-account free.OUROBOROS.OUROBOROS|SC_KDA-NAME free.OUROBOROS.OUROBOROS|GUARD)
 (coin.create-account KC.KADN_NAME_0002 (read-keyset "KEY_KDA_GasTanker"))
-(coin.create-account KC.KADN_NAME_0003 (read-keyset "KEY_KDA_KadenaLiquidStaking"))
+(coin.create-account free.LIQUID.LIQUID|SC_KDA-NAME free.LIQUID.LIQUID|GUARD)
 (coin.create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
 (coin.create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
-(coin.create-account KC.KADN_NAME_0006 (read-keyset "KEY_KDA_BJ"))
+(coin.create-account free.BANANA.BANANA|SC_KDA-NAME free.BANANA.BANANA|GUARD)
 
-(free.DEMI_001.GAS|XC_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
 
 (env-sigs [])
 (env-gas)
@@ -358,20 +374,20 @@
             { "key": "PK_BJ", "caps": [] }
           ])
 
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "AncientHodler" (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Florian" (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Emma" (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Byta" (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Lumy" (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Coca" (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Kiss" (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Plcs" (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "Nani" (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "AgeOfZalmoxis" (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.ANCIENTHODLER (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.FLORIAN (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.EMMA (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.BYTA (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.LUMY (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.COCA (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.KISS (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KX.NANI (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.AOZ (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
 
     ;;Banana Example
-    (free.DEMI_001.DALOS|C_DeployStandardAccount "BananaMaker" (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
-    (free.DEMI_001.DALOS|C_DeploySmartAccount "BananaJuicer" (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 "BananaMaker")
+    (free.DEMI_001.DALOS|C_DeployStandardAccount KC.BM (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
+    (free.DEMI_001.DALOS|C_DeploySmartAccount KC.BJ (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 KC.BM)
 
 (env-sigs [])
 (env-gas)
@@ -392,23 +408,11 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
-        ;{ "key": "PK_AncientHodler", 
-        ;  "caps": 
-        ;    [
-        ;        (free.OUROBOROS.DPTF-DPMF|ISSUE
-        ;            "AncientHodler"
-        ;            "Ouroboros"
-        ;            true
-        ;            6
-        ;        )
-        ;    ] 
-        ;}
         { "key": "PK_AncientHodler", "caps": [] }
     ]
 )
 
-    ;(install-capability (free.OUROBOROS.DPTF-DPMF|ISSUE "AncientHodler" "Ouroboros" true 6))
-    (free.DEMI_002.DALOS|A_Initialise "AncientHodler")
+    (free.OUROBOROS.OUROBOROS|A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)
@@ -431,12 +435,12 @@
     ]
 )
 
-    (free.DEMI_001.LIQUID|C_WrapKadena "AncientHodler" "AncientHodler" 1.0)
-    (free.DEMI_001.ATS|C_Coil 
-        "AncientHodler" 
-        "AncientHodler" 
-        (at 0 (free.DEMI_001.DPTF|UR_RewardBearingToken (free.DEMI_001.DALOS|UR_LiquidKadenaID)))
-        (free.DEMI_001.DALOS|UR_WrappedKadenaID)
+    (free.LIQUID.LIQUID|C_WrapKadena KC.ANCIENTHODLER KC.ANCIENTHODLER 1.0)
+    (free.AUTOSTAKE.ATS|C_Coil 
+        KC.ANCIENTHODLER
+        KC.ANCIENTHODLER
+        (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
+        (free.DALOS.DALOS|UR_WrappedKadenaID)
         1.0
     )
 
@@ -453,26 +457,26 @@
             { "key": "PK_Emma", "caps": [] }
           ])
     ;;OriginMint Ouro
-    (free.DEMI_001.DPTF|C_Mint
-        "AncientHodler"
+    (free.BASIS.DPTF|C_Mint
+        KC.ANCIENTHODLER
         "OURO-98c486052a51"
         "Emma"
         50000.0
         true
     )
 
-    (free.DEMI_001.DPTF|C_Transfer "Emma" "OURO-98c486052a51" "Emma" "Byta" 50000.0)
+    (free.AUTOSTAKE.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 50000.0)
     ;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "AgeOfZalmoxis" 1000.0)
     ;(format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
     ;(format "OURO Burn Role on GasTanker is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountRoleBurn "OURO-98c486052a51" "GasTanker" true)])
     ;(format "OURO Mint Role on GasTanker is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleMint "OURO-98c486052a51" "GasTanker")])
 
-    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "Byta" 100.0)
-    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "AgeOfZalmoxis" 500.0)
-    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "Emma" 100.0)
-    (free.DEMI_002.GAS|C_Sublimate "Byta" "Byta" "BananaMaker" 100.0)
-    (free.DEMI_001.GAS|A_Toggle false true)             ;;turn virtual gas collection to on
-    (free.DEMI_001.GAS|A_Toggle true true)              ;;turn native gas collection to on
+    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
+    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)
+    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.EMMA 100.0)
+    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BM 100.0)
+    (free.OUROBOROS.IGNIS|A_Toggle false true)             ;;turn virtual gas collection to on
+    (free.OUROBOROS.IGNIS|A_Toggle true true)              ;;turn native gas collection to on
 
 (env-sigs [])
 (env-gas)

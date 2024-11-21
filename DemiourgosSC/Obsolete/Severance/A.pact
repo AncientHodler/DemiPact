@@ -5,18 +5,17 @@
         (enforce-guard (keyset-ref-guard A|AOZ))
     )
 
-
-    (defcap UPDATE_FROM_B ()
-        true
-    )
-    (defun GuardFromB:guard ()
-        (create-capability-guard (UPDATE_FROM_B))
-    )
-
     (defschema A|TableSchema
         balance:decimal
         guard:guard
     )
+
+    (defschema A|GuardStorageSchema
+        guard:guard
+    )
+
+    (deftable A|Table:{A|TableSchema})
+    (deftable A|AllowedModules:{A|GuardStorageSchema})
 
     (defun A|UR_Balance:decimal (account:string)
         (at "balance" (read A|Table account ["balance"]))
@@ -24,6 +23,29 @@
     (defun A|UR_Guard:guard (account:string)
         (at "guard" (read A|Table account ["guard"]))
     )
+    (defun A|UR_AllowedGuard:guard (allowed-mdl:string)
+        (at "guard" (read A|AllowedModules allowed-mdl ["guard"]))
+    )
+    (defun A|AllowModules (mdl:string guard-to-save:guard)
+        (with-capability (GOVERNANCE)
+            (write A|AllowedModules mdl
+                {"guard" : guard-to-save}
+            )
+        )
+    )
+
+    (defun A|UpdateBalanceAllowedGuards (account:string)
+        (let
+            (
+                (account-guard:guard (A|UR_Guard account))
+                (bobo-guard:guard (A|UR_AllowedGuard "Module_BOBO"))
+            )
+            [account-guard bobo-guard]
+        )
+    )
+
+
+
     (defun A|Spawn (account:string guard:guard)
         (enforce-guard guard)
         (insert A|Table account
@@ -33,20 +55,20 @@
         )
     )
     (defun A|UpdateBalance (account:string new-balance:decimal)
-        (let
-            (
-                (account-guard:guard (A|UR_Guard account))
-            )
-            (enforce-guard (UTILITY.guard-any [account-guard B_GUARD]))
-            ;(enforce-guard account-guard)
-            (update A|Table account
-                {"balance"  : new-balance}
-            )
+        (enforce-one
+            "Update Balance Capability not granted"
+            [
+                (enforce-guard (UTILITY.GUARD|Any (A|UpdateBalanceAllowedGuards account)))
+                (enforce-guard (A|UR_Guard account))
+            ]
+        )
+        (update A|Table account
+            {"balance"  : new-balance}
         )
     )
 
 
-    (deftable A|Table:{A|TableSchema})
+    
 
     (defconst A|AOZ "free.User000i-Keyset") 
 
@@ -74,3 +96,4 @@
     )
 )
 (create-table A|Table)
+(create-table A|AllowedModules)

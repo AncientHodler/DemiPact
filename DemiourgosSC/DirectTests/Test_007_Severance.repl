@@ -140,19 +140,29 @@
 (env-sigs 
     [ 
         ;{ "key": "PK_BM", "caps": [] }
-        {   "key": "PK_Byta", 
-            "caps": 
-                [
-
-                ]
-        }
-        ;{ "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
         ;{ "key": "PK_Byta", "caps": [] }
         ;{ "key": "PK_Coca", "caps": [] }
     ]
 )
+    (free.BOBO.B|RegisterPolicy)
 
-    (free.BOBO.B|UpdateTableA "Luminita" 13.0)
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        ;{ "key": "PK_BM", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_Byta", "caps": [] }
+        ;{ "key": "PK_Coca", "caps": [] }
+    ]
+)
+    (free.BOBO.B|SpecialUpdateTableA "Luminita" 13.0)
     (free.A.A|UR_Balance "Luminita")
 
 (env-sigs [])    

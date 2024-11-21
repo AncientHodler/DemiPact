@@ -1733,7 +1733,7 @@
                 { "role-transfer" := rt }
                 rt
             )
-        )
+        )DPTF|UR_AccountRoleMint
     )
     ;;2.2.1.2][TM]          True|Meta-Fungible Info
     (defun DPTF-DPMF|UR_Konto:string (id:string token-type:bool)
@@ -2083,6 +2083,7 @@
         )
     )
     (defun DPTF-DPMF|X_UpdateRewardBearingToken (id:string atspair:string token-type:bool)
+        @doc "Updates Reward-Bearing-Token Data (atspair name) for DPTF|DPMF Token <id>"
         (require-capability (ATS|UPDATE_RBT id token-type))
         (if (= token-type true)
             (with-read DPTF|PropertiesTable id
@@ -4862,7 +4863,7 @@
             )
             (if (= cold-or-hot true)
                 (enforce (= x state) (format "Cold-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
-                (enforce (= x state) (format "Hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
+                (enforce (= y state) (format "Hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
             )
         )
     )
@@ -5170,7 +5171,7 @@
     )
     ;;6.1.2.2][A]           Create
     (defcap ATS|ISSUE (patron:string atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        @doc "Capability required to EXECUTE <ATS|C_IssueAutostakePair> Function "
+        @doc "Capability required to EXECUTE <ATS|C_IssueAutostakePair> Function"
         (compose-capability (ATS|ISSUE_CORE atspair issuer reward-token reward-bearing-token))
         (compose-capability (GAS|COLLECTION patron issuer UTILITY.GAS_HUGE))
         (compose-capability (DALOS|INCREASE-NONCE))

@@ -178,7 +178,7 @@
         vesting:string
     )
     (defschema DPTF|BalanceSchema
-        @doc "Key = <DPTF id> + UTILITY.BAR + <account>"
+        @doc "Key = <DPTF id> + UTILS.BAR + <account>"
         balance:decimal
         ;;Special Roles
         role-burn:bool
@@ -218,7 +218,7 @@
         vesting:string
     )
     (defschema DPMF|BalanceSchema
-        @doc "Key = <DPMF id> + UTILITY.BAR + <account>"
+        @doc "Key = <DPMF id> + UTILS.BAR + <account>"
         unit:[object{DPMF|Schema}]
         ;;Special Roles
         role-nft-add-quantity:bool
@@ -294,7 +294,7 @@
     )
     ;;==
     (defschema ATS|BalanceSchema
-        @doc "Key = ATS-Pair> + UTILITY.BAR + <account>"
+        @doc "Key = ATS-Pair> + UTILS.BAR + <account>"
         P0:[object{ATS|Unstake}]
         P1:object{ATS|Unstake}
         P2:object{ATS|Unstake}
@@ -354,15 +354,15 @@
     ;;1.1]    [D] DALOS Capabilities
     ;;1.1.1]  [D]   DALOS Basic Capabilities
     (defcap DALOS|EXIST (account:string)
-        (DALOS|UVE_id account)
+        (DALOS.DALOS|UEV_EnforceAccountExists account)
     )
     (defcap DALOS|ACCOUNT_OWNER (account:string)
         (enforce-guard (DALOS|UR_AccountGuard account))
     )
     (defcap DALOS|ABS_ACCOUNT_OWNER (account:string)
-        (DALOS|EnforceAccountOwnership account)
+        (DALOS|CAP_EnforceAccountOwnership account)
     )
-    (defun DALOS|EnforceAccountOwnership (account:string)
+    (defun DALOS|CAP_EnforceAccountOwnership (account:string)
         (let*
             (
                 (type:bool (DALOS|UR_AccountType account))
@@ -380,7 +380,7 @@
                 (governor:string (DALOS|UR_AccountGovernor account))
             )
             (enforce (= sovereign account) "Incompatible Sovereign for Standard DALOS Account")
-            (enforce (= governor UTILITY.BAR) "Incompatible Governer for Standard DALOS Account")
+            (enforce (= governor UTILS.BAR) "Incompatible Governer for Standard DALOS Account")
             (enforce-guard (DALOS|UR_AccountGuard account))
         )
     )
@@ -393,7 +393,7 @@
                 (lengov:integer (length gov))
             )
             (enforce (!= sovereign account) "Incompatible Sovereign for Smart DALOS Account")
-            ;(enforce (!= governor UTILITY.BAR) "Incompatible Governor for Smart DALOS Account")
+            ;(enforce (!= governor UTILS.BAR) "Incompatible Governor for Smart DALOS Account")
             (enforce-one
                 "Insuficient Permissions to handle a Smart DALOS Account"
                 [
@@ -443,7 +443,7 @@
     (defcap DALOS|METHODIC (client:string method:bool)
         (if (= method true)
             (DALOS|Enforce_AccountType client true)
-            (DALOS|EnforceAccountOwnership client)
+            (DALOS|CAP_EnforceAccountOwnership client)
         )
     )
     ;;First Part
@@ -469,7 +469,7 @@
         (compose-capability (DALOS|INCREASE-NONCE))
     )
     (defcap DALOS|GOVERNOR (account:string)
-        (DALOS|EnforceAccountOwnership account)
+        (DALOS|CAP_EnforceAccountOwnership account)
         (DALOS|Enforce_AccountType account true)
     )
     ;;Second Part
@@ -497,7 +497,7 @@
     )
     (defun DALOS|UR_IgnisID:string ()
         (with-default-read DALOS|PropertiesTable DALOS|INFO 
-            { "gas-id" :  UTILITY.BAR }
+            { "gas-id" :  UTILS.BAR }
             { "gas-id" := gas-id}
             gas-id
         )
@@ -640,7 +640,7 @@
         (UTILITY.DALOS|UC_Makeid ticker)
     )
     ;;1.2.1.4][D]           Validations
-    (defun DALOS|UVE_id (dalos-account:string)
+    (defun DALOS.DALOS|UEV_EnforceAccountExists (dalos-account:string)
         (UTILITY.DALOS|UV_Account dalos-account)
         (with-default-read DALOS|AccountTable dalos-account
             { "elite" : DALOS|VOID }
@@ -657,8 +657,8 @@
         )
     )
     (defun DALOS|UV_SenderWithReceiver (sender:string receiver:string)
-        (DALOS|UVE_id sender)
-        (DALOS|UVE_id receiver)
+        (DALOS.DALOS|UEV_EnforceAccountExists sender)
+        (DALOS.DALOS|UEV_EnforceAccountExists receiver)
         (enforce (!= sender receiver) "Sender and Receiver must be different")
     )
     ;;1.2.2]  [D]   DALOS Administration Functions
@@ -722,7 +722,7 @@
             { "guard"                       : guard
             , "kadena-konto"                : kadena
             , "sovereign"                   : account
-            , "governor"                    : UTILITY.BAR
+            , "governor"                    : UTILS.BAR
 
             , "smart-contract"              : false
             , "payable-as-smart-contract"   : false
@@ -751,7 +751,7 @@
                 { "guard"                       : guard
                 , "kadena-konto"                : kadena
                 , "sovereign"                   : sovereign
-                , "governor"                    : UTILITY.BAR
+                , "governor"                    : UTILS.BAR
 
                 , "smart-contract"              : true
                 , "payable-as-smart-contract"   : false
@@ -896,19 +896,19 @@
         (require-capability (DALOS|UPDATE_ELITE))
         (if (= (DALOS|UR_AccountType account) false)
             (update DALOS|AccountTable account
-                { "elite" : (UTILITY.ATS|UC_Elite (DALOS|UR_EliteAurynzSupply account))}
+                { "elite" : (UTILITY.ATS|UCC_Elite (DALOS|UR_EliteAurynzSupply account))}
             )
             true
         )
     )
     (defun DALOS|UR_EliteAurynzSupply (account:string)
-        (if (!= (DALOS|UR_EliteAurynID) UTILITY.BAR)
+        (if (!= (DALOS|UR_EliteAurynID) UTILS.BAR)
             (let
                 (
                     (ea-supply:decimal (DPTF-DPMF|UR_AccountSupply (DALOS|UR_EliteAurynID) account true))
                     (vea:string (DPTF-DPMF|UR_Vesting (DALOS|UR_EliteAurynID) true))
                 )
-                (if (!= vea UTILITY.BAR)
+                (if (!= vea UTILS.BAR)
                     (+ ea-supply (DPTF-DPMF|UR_AccountSupply vea account false))
                     ea-supply
                 )
@@ -928,7 +928,7 @@
     ;;2.1.1]  [TM]  DPTF-DPMF Basic Capabilities
     ;;2.1.1.1][TM]          DPTF-DPMF <DPTF|PropertiesTable>|<DPMF|PropertiesTable> Table Management
     (defun DPTF-DPMF|Owner (id:string token-type:bool)
-        (DALOS|EnforceAccountOwnership (DPTF-DPMF|UR_Konto id token-type))
+        (DALOS|CAP_EnforceAccountOwnership (DPTF-DPMF|UR_Konto id token-type))
     )
     (defcap DPTF-DPMF|OWNER (id:string token-type:bool)
         (DPTF-DPMF|Owner id token-type)
@@ -1042,7 +1042,7 @@
         (DALOS|UV_SenderWithReceiver (DPTF-DPMF|UR_Konto id token-type) new-owner)
         (DPTF-DPMF|Owner id token-type)
         (DPTF-DPMF|CanChangeOwnerON id token-type)
-        (DALOS|UVE_id new-owner)
+        (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
     )
     (defcap DPTF-DPMF|CONTROL (patron:string id:string token-type:bool)
         (compose-capability (DPTF-DPMF|CONTROL_CORE id token-type))
@@ -1124,7 +1124,7 @@
                 (iz-hot-rbt:bool (ATS|UC_IzRBT-Absolute dpmf false))
             )
             (enforce 
-                (and (= tf-vesting-id UTILITY.BAR) (= mf-vesting-id UTILITY.BAR) )
+                (and (= tf-vesting-id UTILS.BAR) (= mf-vesting-id UTILS.BAR) )
                 "Vesting Pairs are immutable !"
             )
             (enforce (= iz-hot-rbt false) "A DPMF defined as a hot-rbt cannot be used as Vesting Token in Vesting pair")
@@ -1143,7 +1143,7 @@
                 (t2:decimal (* (dec issue-size) mf))
             )
             (compose-capability (DALOS|INCREASE-NONCE))
-            (if (!= (DALOS|UR_IgnisID) UTILITY.BAR)
+            (if (!= (DALOS|UR_IgnisID) UTILS.BAR)
                 (compose-capability (GAS|COLLECTION patron client t0))
                 true
             )
@@ -1254,7 +1254,7 @@
     )
     (defcap DPTF-DPMF|CREDIT-DEBIT (id:string account:string token-type:bool)
         (DPTF-DPMF|UVE_id id token-type)
-        (DALOS|UVE_id account)
+        (DALOS.DALOS|UEV_EnforceAccountExists account)
     )
     (defcap DPTF|TRANSMUTE (patron:string id:string transmuter:string)
         (compose-capability (GAS|COLLECTION patron transmuter UTILITY.GAS_SMALLEST))
@@ -1290,7 +1290,7 @@
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
-            (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "balance" : -1.0 }
                 { "balance" := b}
                 (if (= b -1.0)
@@ -1298,7 +1298,7 @@
                     true
                 )
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "unit" : [DPMF|NEGATIVE] }
                 { "unit" := u}
                 (if (= u [DPMF|NEGATIVE])
@@ -1312,12 +1312,12 @@
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
-            (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "balance" : 0.0 }
                 { "balance" := b}
                 b
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR  account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR  account])
                 { "unit" : [DPMF|NEUTRAL] }
                 { "unit" := read-unit}
                 (let 
@@ -1342,12 +1342,12 @@
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
-            (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "role-burn" : false}
                 { "role-burn" := rb }
                 rb
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "role-nft-burn" : false}
                 { "role-nft-burn" := rb }
                 rb
@@ -1358,12 +1358,12 @@
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
-            (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "role-transfer" : false}
                 { "role-transfer" := rt }
                 rt
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "role-transfer" : false }
                 { "role-transfer" := rt }
                 rt
@@ -1555,7 +1555,7 @@
         (DPTF-DPMF|UVE_id id token-type)
         (with-capability (DALOS|EXIST account)
             (if (= token-type true)
-                (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+                (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                     { "balance"                             : 0.0
                     , "role-burn"                           : false
                     , "role-mint"                           : false
@@ -1568,7 +1568,7 @@
                     , "role-transfer"                       := rt
                     , "role-fee-exemption"                  := rfe
                     , "frozen"                              := f}
-                    (write DPTF|BalanceTable (concat [id UTILITY.BAR account])
+                    (write DPTF|BalanceTable (concat [id UTILS.BAR account])
                         { "balance"                         : b
                         , "role-burn"                       : rb
                         , "role-mint"                       : rm
@@ -1582,7 +1582,7 @@
                         (create-role-account:string (DPMF|UR_CreateRoleAccount id))
                         (role-nft-create-boolean:bool (if (= create-role-account account) true false))
                     )
-                    (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                    (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                         { "unit" : [DPMF|NEUTRAL]
                         , "role-nft-add-quantity"           : false
                         , "role-nft-burn"                   : false
@@ -1595,7 +1595,7 @@
                         , "role-nft-create"                 := rnc
                         , "role-transfer"                   := rt
                         , "frozen"                          := f }
-                        (write DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                        (write DPMF|BalanceTable (concat [id UTILS.BAR account])
                             { "unit"                        : u
                             , "role-nft-add-quantity"       : rnaq
                             , "role-nft-burn"               : rb
@@ -1689,12 +1689,12 @@
         (if (= token-type true)
             (with-read DPTF|PropertiesTable id
                 {"reward-bearing-token" := rbt}
-                (if (= (at 0 rbt) UTILITY.BAR)
+                (if (= (at 0 rbt) UTILS.BAR)
                     (update DPTF|PropertiesTable id
                         {"reward-bearing-token" : [atspair]}
                     )
                     (update DPTF|PropertiesTable id
-                        {"reward-bearing-token" : (UTILITY.UC_AppendLast rbt atspair)}
+                        {"reward-bearing-token" : (UTILS.LIST|UC_AppendLast rbt atspair)}
                     )
                 )
             )
@@ -1717,7 +1717,7 @@
             (
                 (ea-id:string (DALOS|UR_EliteAurynID))
             )
-            (if (!= ea-id UTILITY.BAR)
+            (if (!= ea-id UTILS.BAR)
                 (if (= id ea-id)
                     (with-capability (COMPOSE)
                         (DALOS|X_UpdateElite sender)
@@ -1727,7 +1727,7 @@
                         (
                             (v-ea-id:string (DPTF-DPMF|UR_Vesting ea-id true))
                         )
-                        (if (and (!= v-ea-id UTILITY.BAR)(= id v-ea-id))
+                        (if (and (!= v-ea-id UTILS.BAR)(= id v-ea-id))
                             (with-capability (COMPOSE)
                                 (DALOS|X_UpdateElite sender)
                                 (DALOS|X_UpdateElite receiver)
@@ -1766,10 +1766,10 @@
     (defun DPTF-DPMF|X_ToggleFreezeAccount (id:string account:string toggle:bool token-type:bool)
         (require-capability (DPTF-DPMF|FROZEN-ACCOUNT_CORE id account toggle token-type))
         (if (= token-type true)
-            (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "frozen" : toggle}
             )
-            (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "frozen" : toggle}
             )
         )
@@ -1777,10 +1777,10 @@
     (defun DPTF-DPMF|X_ToggleBurnRole (id:string account:string toggle:bool token-type:bool)
         (require-capability (DPTF-DPMF|TOGGLE_BURN-ROLE_CORE id account toggle token-type))
         (if (= token-type true)
-            (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPTF|BalanceTable (concat [id UTILS.BAR account])
                 {"role-burn" : toggle}
             )
-            (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                 {"role-nft-burn" : toggle}
             )
         )
@@ -1788,10 +1788,10 @@
     (defun DPTF-DPMF|X_ToggleTransferRole (id:string account:string toggle:bool token-type:bool)
         (require-capability (DPTF-DPMF|TOGGLE_TRANSFER-ROLE_CORE id account toggle token-type))
         (if (= token-type true)
-            (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPTF|BalanceTable (concat [id UTILS.BAR account])
                 {"role-transfer" : toggle}
             )
-            (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                 {"role-transfer" : toggle}
             )
         )
@@ -1892,7 +1892,7 @@
             (enforce (or (= fee-promile -1.0) (and (>= fee-promile 0.0) (<= fee-promile 1000.0))) "Please Set up Fee Promile before Turning Fee Collection on !")
             (UTILITY.DALOS|UV_Account (DPTF|UR_FeeTarget id))
             (DPTF-DPMF|Owner id true)
-            (DALOS|UVE_id (DPTF|UR_FeeTarget id))
+            (DALOS.DALOS|UEV_EnforceAccountExists (DPTF|UR_FeeTarget id))
             (DPTF|FeeLockState id false)
             (DPTF|FeeToggleState id (not toggle))
         )
@@ -1933,7 +1933,7 @@
     )
     (defcap DPTF|SET_FEE-TARGET_CORE (id:string target:string)
         (UTILITY.DALOS|UV_Account target)
-        (DALOS|UVE_id target)
+        (DALOS.DALOS|UEV_EnforceAccountExists target)
         (DPTF-DPMF|Owner id true)
         (DPTF|FeeLockState id false) 
     )
@@ -2051,7 +2051,7 @@
             (compose-capability (DALOS|METHODIC_TRANSFERABILITY sender receiver true))
         )
     )
-    (defcap DPTF|TRANSFER_MIN (id:string transfer-amount:decimal)
+    (defun DPTF|EnforceMinimumAmount (id:string transfer-amount:decimal)
         (let*
             (
                 (min-move-read:decimal (DPTF|UR_MinMove id))
@@ -2073,7 +2073,7 @@
     (defun DPTF|UR_AccountRoleMint:bool (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id true)
-        (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
             { "role-mint" : false}
             { "role-mint" := rm }
             rm
@@ -2082,7 +2082,7 @@
     (defun DPTF|UR_AccountRoleFeeExemption:bool (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id true)
-        (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
             { "role-fee-exemption" : false}
             { "role-fee-exemption" := rfe }
             rfe
@@ -2092,12 +2092,12 @@
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id token-type)
         (if (= token-type true)
-            (with-default-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "frozen" : false}
                 { "frozen" := fr }
                 fr
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "frozen" : false}
                 { "frozen" := fr }
                 fr
@@ -2406,7 +2406,7 @@
                                 )
                             )
                             (DALOS|X_IncrementNonce patron)
-                            (UTILITY.UC_AppendLast acc id)
+                            (UTILS.LIST|UC_AppendLast acc id)
                         )
                     )
                     []
@@ -2650,7 +2650,7 @@
             )
             (enforce (> amount 0.0) "Crediting amount must be greater than zero")
             (if (= dptf-account-exist false)
-                (insert DPTF|BalanceTable (concat [id UTILITY.BAR account])
+                (insert DPTF|BalanceTable (concat [id UTILS.BAR account])
                     { "balance"                         : amount
                     , "role-burn"                       : false
                     , "role-mint"                       : false
@@ -2659,7 +2659,7 @@
                     , "frozen"                          : false
                     }
                 )
-                (with-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+                (with-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                     { "balance"                         := b
                     , "role-burn"                       := rb
                     , "role-mint"                       := rm
@@ -2667,7 +2667,7 @@
                     , "role-fee-exemption"              := rfe
                     , "frozen"                          := f
                     }
-                    (write DPTF|BalanceTable (concat [id UTILITY.BAR account])
+                    (write DPTF|BalanceTable (concat [id UTILS.BAR account])
                         { "balance"                     : (+ b amount)
                         , "role-burn"                   : rb
                         , "role-mint"                   : rm
@@ -2686,10 +2686,10 @@
             (require-capability (DPTF-DPMF|OWNER id true))
             (require-capability (DPTF-DPMF|DEBIT id account true))
         )
-        (with-read DPTF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-read DPTF|BalanceTable (concat [id UTILS.BAR account])
             { "balance" := balance }
             (enforce (<= amount balance) "Insufficient Funds for debiting")
-            (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+            (update DPTF|BalanceTable (concat [id UTILS.BAR account])
                 {"balance" : (- balance amount)}    
             )
         )
@@ -2718,12 +2718,12 @@
         (with-read DPTF|PropertiesTable id
             {"reward-token" := rt}
             (if (= direction true)
-                (if (= (at 0 rt) UTILITY.BAR)
+                (if (= (at 0 rt) UTILS.BAR)
                     (update DPTF|PropertiesTable id
                         {"reward-token" : [atspair]}
                     )
                     (update DPTF|PropertiesTable id
-                        {"reward-token" : (UTILITY.UC_AppendLast rt atspair)}
+                        {"reward-token" : (UTILS.LIST|UC_AppendLast rt atspair)}
                     )
                 )
                 (update DPTF|PropertiesTable id
@@ -2809,13 +2809,13 @@
     )
     (defun DPTF|X_ToggleMintRole (id:string account:string toggle:bool)
         (require-capability (DPTF|TOGGLE_MINT-ROLE_CORE id account toggle))
-        (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+        (update DPTF|BalanceTable (concat [id UTILS.BAR account])
             {"role-mint" : toggle}
         )
     )
     (defun DPTF|X_ToggleFeeExemptionRole (id:string account:string toggle:bool)
         (require-capability (DPTF|TOGGLE_FEE-EXEMPTION-ROLE_CORE id account toggle))
-        (update DPTF|BalanceTable (concat [id UTILITY.BAR account])
+        (update DPTF|BalanceTable (concat [id UTILS.BAR account])
             {"role-fee-exemption" : toggle}
         )
     )
@@ -2862,9 +2862,9 @@
                 ,"fee-unlocks"          : 0
                 ,"primary-fee-volume"   : 0.0
                 ,"secondary-fee-volume" : 0.0
-                ,"reward-token"         : [UTILITY.BAR]
-                ,"reward-bearing-token" : [UTILITY.BAR]
-                ,"vesting"              : UTILITY.BAR
+                ,"reward-token"         : [UTILS.BAR]
+                ,"reward-bearing-token" : [UTILS.BAR]
+                ,"vesting"              : UTILS.BAR
             }
         )
         ;;Creates a new DPTF Account for the Token Issuer and returns id
@@ -3007,7 +3007,7 @@
     (defun DPMF|UR_AccountUnit:[object] (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" : DPMF|NEGATIVE}
             { "unit" := u }
             u
@@ -3016,7 +3016,7 @@
     (defun DPMF|UR_AccountRoleNFTAQ:bool (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "role-nft-add-quantity" : false}
             { "role-nft-add-quantity" := rnaq }
             rnaq
@@ -3025,7 +3025,7 @@
     (defun DPMF|UR_AccountRoleCreate:bool (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "role-nft-create" : false}
             { "role-nft-create" := rnc }
             rnc
@@ -3035,7 +3035,7 @@
     (defun DPMF|UR_AccountBalances:[decimal] (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR  account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
             (let 
@@ -3045,7 +3045,7 @@
                             (lambda 
                                 (acc:[decimal] item:object{DPMF|Schema})
                                 (if (!= (at "balance" item) 0.0)
-                                        (UTILITY.UC_AppendLast acc (at "balance" item))
+                                        (UTILS.LIST|UC_AppendLast acc (at "balance" item))
                                         acc
                                 )
                             )
@@ -3061,7 +3061,7 @@
     (defun DPMF|UR_AccountNonces:[integer] (id:string account:string)
         (UTILITY.DALOS|UV_Account account)
         (DPTF-DPMF|UVE_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR  account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
             (let 
@@ -3071,7 +3071,7 @@
                             (lambda 
                                 (acc:[integer] item:object{DPMF|Schema})
                                 (if (!= (at "nonce" item) 0)
-                                        (UTILITY.UC_AppendLast acc (at "nonce" item))
+                                        (UTILS.LIST|UC_AppendLast acc (at "nonce" item))
                                         acc
                                 )
                             )
@@ -3294,7 +3294,7 @@
                                 )
                             )
                             (DALOS|X_IncrementNonce patron)
-                            (UTILITY.UC_AppendLast acc id)
+                            (UTILS.LIST|UC_AppendLast acc id)
                         )
                     )
                     []
@@ -3448,7 +3448,7 @@
                 (create-role-account:string (DPMF|UR_CreateRoleAccount id))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "unit" : [DPMF|NEGATIVE]
                 , "role-nft-add-quantity" : false
                 , "role-nft-burn" : false
@@ -3470,11 +3470,11 @@
                         (present-meta-fungible:object{DPMF|Schema} (DPMF|UC_Compose nonce current-nonce-balance meta-data))
                         (credited-meta-fungible:object{DPMF|Schema} (DPMF|UC_Compose nonce credited-balance meta-data))
                         (processed-unit-with-replace:[object{DPMF|Schema}] (UTILITY.UC_ReplaceItem next-unit present-meta-fungible credited-meta-fungible))
-                        (processed-unit-with-append:[object{DPMF|Schema}] (UTILITY.UC_AppendLast next-unit credited-meta-fungible))
+                        (processed-unit-with-append:[object{DPMF|Schema}] (UTILS.LIST|UC_AppendLast next-unit credited-meta-fungible))
                     )
                     (enforce (> amount 0.0) "Crediting amount must be greater than zero")
                     (if (= current-nonce-balance 0.0)
-                        (write DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                        (write DPMF|BalanceTable (concat [id UTILS.BAR account])
                             { "unit"                        : processed-unit-with-append
                             , "role-nft-add-quantity"       : (if is-new false rnaq)
                             , "role-nft-burn"               : (if is-new false rb)
@@ -3482,7 +3482,7 @@
                             , "role-transfer"               : (if is-new false rt)
                             , "frozen"                      : (if is-new false f)}
                         )
-                        (write DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                        (write DPMF|BalanceTable (concat [id UTILS.BAR account])
                             { "unit"                        : processed-unit-with-replace
                             , "role-nft-add-quantity"       : (if is-new false rnaq)
                             , "role-nft-burn"               : (if is-new false rb)
@@ -3500,7 +3500,7 @@
             (require-capability (DPTF-DPMF|OWNER id false))
             (require-capability (DPTF-DPMF|DEBIT id account false))
         )
-        (with-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit"                                := unit  
             ,"role-nft-add-quantity"                := rnaq
             ,"role-nft-burn"                        := rnb
@@ -3519,7 +3519,7 @@
                 )
                 (enforce (>= debited-balance 0.0) "Insufficient Funds for debiting")
                 (if (= debited-balance 0.0)
-                    (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                    (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                         {"unit"                     : processed-unit-with-remove
                         ,"role-nft-add-quantity"    : rnaq
                         ,"role-nft-burn"            : rnb
@@ -3527,7 +3527,7 @@
                         ,"role-transfer"            : rt
                         ,"frozen"                   : f}
                     )
-                    (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                    (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                         {"unit"                     : processed-unit-with-replace
                         ,"role-nft-add-quantity"    : rnaq
                         ,"role-nft-burn"            : rnb
@@ -3590,10 +3590,10 @@
     )
     (defun DPMF|X_MoveCreateRole (id:string receiver:string)
         (require-capability (DPMF|MOVE_CREATE-ROLE_CORE id receiver))
-        (update DPMF|BalanceTable (concat [id UTILITY.BAR (DPMF|UR_CreateRoleAccount id)])
+        (update DPMF|BalanceTable (concat [id UTILS.BAR (DPMF|UR_CreateRoleAccount id)])
             {"role-nft-create" : false}
         )
-        (update DPMF|BalanceTable (concat [id UTILITY.BAR receiver])
+        (update DPMF|BalanceTable (concat [id UTILS.BAR receiver])
             {"role-nft-create" : true}
         )
         (update DPMF|PropertiesTable id
@@ -3602,7 +3602,7 @@
     )
     (defun DPMF|X_ToggleAddQuantityRole (id:string account:string toggle:bool)
         (require-capability (DPMF|TOGGLE_ADD-QUANTITY-ROLE_CORE id account toggle))
-        (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (update DPMF|BalanceTable (concat [id UTILS.BAR account])
             {"role-nft-add-quantity" : toggle}
         )
     )
@@ -3643,8 +3643,8 @@
             ,"create-role-account"  : account
             ,"role-transfer-amount" : 0
             ,"nonces-used"          : 0
-            ,"reward-bearing-token" : UTILITY.BAR
-            ,"vesting"              : UTILITY.BAR}
+            ,"reward-bearing-token" : UTILS.BAR
+            ,"vesting"              : UTILS.BAR}
         )
         (DPTF-DPMF|C_DeployAccount (DALOS|UC_Makeid ticker) account false)
         (DALOS|UC_Makeid ticker)
@@ -3668,7 +3668,7 @@
                 (create-role-account:string (DPMF|UR_CreateRoleAccount id))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
-            (with-default-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+            (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
                 { "unit" : [DPMF|NEUTRAL]
                 , "role-nft-add-quantity" : false
                 , "role-nft-burn" : false
@@ -3685,9 +3685,9 @@
                     (
                         (new-nonce:integer (+ (DPMF|UR_NoncesUsed id) 1))
                         (meta-fungible:object{DPMF|Schema} (DPMF|UC_Compose new-nonce 0.0 meta-data))
-                        (appended-meta-fungible:[object{DPMF|Schema}] (UTILITY.UC_AppendLast u meta-fungible))
+                        (appended-meta-fungible:[object{DPMF|Schema}] (UTILS.LIST|UC_AppendLast u meta-fungible))
                     )
-                    (write DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                    (write DPMF|BalanceTable (concat [id UTILS.BAR account])
                         { "unit"                        : appended-meta-fungible
                         , "role-nft-add-quantity"       : rnaq
                         , "role-nft-burn"               : rb
@@ -3703,7 +3703,7 @@
     )
     (defun DPMF|X_AddQuantity (id:string nonce:integer account:string amount:decimal)
         (require-capability (DPMF|ADD-QUANTITY_CORE id account amount))
-        (with-read DPMF|BalanceTable (concat [id UTILITY.BAR account])
+        (with-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" := unit }
             (let*
                 (
@@ -3714,7 +3714,7 @@
                     (updated-meta-fungible:object{DPMF|Schema} (DPMF|UC_Compose nonce updated-balance current-nonce-meta-data))
                     (processed-unit:[object{DPMF|Schema}] (UTILITY.UC_ReplaceItem unit meta-fungible-to-be-replaced updated-meta-fungible))
                 )
-                (update DPMF|BalanceTable (concat [id UTILITY.BAR account])
+                (update DPMF|BalanceTable (concat [id UTILS.BAR account])
                     {"unit" : processed-unit}    
                 )
             )
@@ -3820,7 +3820,7 @@
     )
     (defcap GAS|PATRON (patron:string)
         (DALOS|Enforce_AccountType patron false)
-        (DALOS|EnforceAccountOwnership patron)
+        (DALOS|CAP_EnforceAccountOwnership patron)
     )
     (defcap GAS|COLLECTION (patron:string sender:string amount:decimal)
         (compose-capability (GAS|PATRON patron))
@@ -3839,7 +3839,7 @@
             (
                 (gas-id:string (DALOS|UR_IgnisID))
             )
-            (if (!= gas-id UTILITY.BAR)
+            (if (!= gas-id UTILS.BAR)
                 (compose-capability (GAS|COLLECTER_STANDARD_CORE patron amount gas-id))
                 true
             )
@@ -3855,7 +3855,7 @@
             (
                 (gas-id:string (DALOS|UR_IgnisID))
             )
-            (if (!= gas-id UTILITY.BAR)
+            (if (!= gas-id UTILS.BAR)
                 (let*
                     (
                         (gas-pot:string (GAS|UR_Tanker))
@@ -3913,7 +3913,7 @@
             (
                 (t1:bool (GAS|UC_Zero sender))
                 (gas-id:string (DALOS|UR_IgnisID))
-                (t2:bool (if (or (= gas-id UTILITY.BAR)(= id gas-id)) true false))
+                (t2:bool (if (or (= gas-id UTILS.BAR)(= id gas-id)) true false))
             )
             (or t1 t2)
         )
@@ -4111,11 +4111,11 @@
     ;;6.1]    [A] ATS Capabilities
     ;;6.1.1]  [A]   ATS Basic Capabilities
     ;;6.1.1.1][A]           <ATS|Pairs> Table Management
-    (defun ATS|Owner (atspair:string)
-        (DALOS|EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
+    (defun ATS|CAP_Owner (atspair:string)
+        (DALOS|CAP_EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
     )
     (defun ATS|CanChangeOwnerON (atspair:string)
-        (ATS|UVE_id atspair)
+        (ATS|UEV_id atspair)
         (let
             (
                 (x:bool (ATS|UR_CanChangeOwner atspair))
@@ -4150,7 +4150,7 @@
             (enforce (= presence-check enforced-presence) (format "ATS Pair {} cant verfiy {} presence for a Hot RBT Token" [atspair enforced-presence]))
         )
     )
-    (defun ATS|ParameterLockState (atspair:string state:bool)
+    (defun ATS|UEV_ParameterLockState (atspair:string state:bool)
         (let
             (
                 (x:bool (ATS|UR_Lock atspair))
@@ -4158,7 +4158,7 @@
             (enforce (= x state) (format "Parameter-lock for ATS Pair {} must be set to {} for this operation" [atspair state]))
         )
     )
-    (defun ATS|FeeState (atspair:string state:bool fee-switch:integer)
+    (defun ATS|UEV_FeeState (atspair:string state:bool fee-switch:integer)
         (let
             (
                 (x:bool (ATS|UR_ColdNativeFeeRedirection atspair))
@@ -4183,9 +4183,9 @@
         )
     )
     (defcap ATS|RECOVERY_STATE (atspair:string state:bool cold-or-hot:bool)
-        (ATS|RecoveryState atspair state cold-or-hot)
+        (ATS|UEV_RecoveryState atspair state cold-or-hot)
     )
-    (defun ATS|RecoveryState (atspair:string state:bool cold-or-hot:bool)
+    (defun ATS|UEV_RecoveryState (atspair:string state:bool cold-or-hot:bool)
         (let
             (
                 (x:bool (ATS|UR_ToggleColdRecovery atspair))
@@ -4193,7 +4193,7 @@
             )
             (if cold-or-hot
                 (enforce (= x state) (format "Cold-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
-                (enforce (= x state) (format "Hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
+                (enforce (= y state) (format "Hot-recovery for ATS Pair {} must be set to {} for this operation" [atspair state]))
             )
         )
     )
@@ -4205,12 +4205,12 @@
         true
     )
     (defcap ATS|DEPLOY (atspair:string account:string)
-        (DALOS|UVE_id account)
-        (ATS|UVE_id atspair)
+        (DALOS.DALOS|UEV_EnforceAccountExists account)
+        (ATS|UEV_id atspair)
         (compose-capability (ATS|NORMALIZE_LEDGER atspair account))
     )
     (defcap ATS|NORMALIZE_LEDGER (atspair:string account:string)
-        (ATS|UVE_id atspair)
+        (ATS|UEV_id atspair)
         (enforce-one
             "Keyset not valid for normalizing ATS|Ledger Account Operations"
             [
@@ -4220,52 +4220,52 @@
         )
     )
     (defcap ATS|HOT_RECOVERY (patron:string recoverer:string atspair:string ra:decimal)
-        (DALOS|EnforceAccountOwnership recoverer)
-        (ATS|UVE_id atspair)
-        (ATS|RecoveryState atspair true false)
+        (DALOS|CAP_EnforceAccountOwnership recoverer)
+        (ATS|UEV_id atspair)
+        (ATS|UEV_RecoveryState atspair true false)
     )
     (defcap ATS|COLD_RECOVERY (patron:string recoverer:string atspair:string ra:decimal)
-        (DALOS|EnforceAccountOwnership recoverer)
-        (ATS|UVE_id atspair)
-        (ATS|RecoveryState atspair true true)
+        (DALOS|CAP_EnforceAccountOwnership recoverer)
+        (ATS|UEV_id atspair)
+        (ATS|UEV_RecoveryState atspair true true)
         (compose-capability (ATS|DEPLOY atspair recoverer))
         (compose-capability (ATS|UPDATE_LEDGER))
         (compose-capability (ATS|UPDATE_ROU))
     )
     (defcap ATS|CULL (culler:string atspair:string)
-        (DALOS|EnforceAccountOwnership culler)
-        (ATS|UVE_id atspair)
+        (DALOS|CAP_EnforceAccountOwnership culler)
+        (ATS|UEV_id atspair)
         (compose-capability (ATS|UPDATE_ROU))
         (compose-capability (ATS|NORMALIZE_LEDGER atspair culler))
         (compose-capability (ATS|UPDATE_LEDGER))
     )
     ;;6.1.2]  [A]   ATS Composed Capabilities
     ;;6.1.2.1][A]           Control
-    (defun ATS|UpdateColdOrHot (atspair:string cold-or-hot:bool)
-        (ATS|ParameterLockState atspair false)
+    (defun ATS|UEV_UpdateColdOrHot (atspair:string cold-or-hot:bool)
+        (ATS|UEV_ParameterLockState atspair false)
         (if cold-or-hot
-            (ATS|RecoveryState atspair false true)
-            (ATS|RecoveryState atspair false false)
+            (ATS|UEV_RecoveryState atspair false true)
+            (ATS|UEV_RecoveryState atspair false false)
         )
     )
-    (defun ATS|UpdateColdAndHot (atspair:string)
-        (ATS|ParameterLockState atspair false)
-        (ATS|RecoveryState atspair false true)
-        (ATS|RecoveryState atspair false false)
+    (defun ATS|UEV_UpdateColdAndHot (atspair:string)
+        (ATS|UEV_ParameterLockState atspair false)
+        (ATS|UEV_RecoveryState atspair false true)
+        (ATS|UEV_RecoveryState atspair false false)
     )
-    (defcap ATS|OWNERSHIP-CHANGE (patron:string atspair:string new-owner:string)
-        (compose-capability (ATS|OWNERSHIP-CHANGE_CORE atspair new-owner))
+    (defcap ATS|OWNERSHIP_CHANGE (patron:string atspair:string new-owner:string)
+        (compose-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_BIGGEST))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|OWNERSHIP-CHANGE_CORE (atspair:string new-owner:string)
+    (defcap ATS|X_OWNERSHIP_CHANGE (atspair:string new-owner:string)
         (DALOS|UV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
-        (ATS|Owner atspair)
+        (ATS|CAP_Owner atspair)
         (ATS|CanChangeOwnerON atspair)
-        (DALOS|UVE_id new-owner)
+        (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
     )
     (defcap ATS|TOGGLE_PARAMETER-LOCK (patron:string atspair:string toggle:bool)
-        (compose-capability (ATS|TOGGLE_PARAMETER-LOCK_CORE atspair toggle))
+        (compose-capability (ATS|X_TOGGLE_PARAMETER-LOCK atspair toggle))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
         (if (not toggle)
@@ -4281,9 +4281,9 @@
             true
         )
     )
-    (defcap ATS|TOGGLE_PARAMETER-LOCK_CORE (atspair:string toggle:bool)
-        (ATS|Owner atspair)
-        (ATS|ParameterLockState atspair (not toggle))
+    (defcap ATS|X_TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair (not toggle))
         (enforce-one
             (format "ATS <parameter-lock> cannot be toggled when both <cold-recovery> and <hot-recovery> are set to false")
             [
@@ -4293,27 +4293,27 @@
         )
     )
     (defcap ATS|TOGGLE_FEE (patron:string atspair:string toggle:bool fee-switch:integer)
-        (compose-capability (ATS|TOGGLE_FEE_CORE atspair toggle fee-switch))
+        (compose-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|TOGGLE_FEE_CORE (atspair:string toggle:bool fee-switch:integer)
+    (defcap ATS|X_TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
         (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
-        (ATS|Owner atspair)
-        (ATS|FeeState atspair (not toggle) fee-switch)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_FeeState atspair (not toggle) fee-switch)
         (if (or (= fee-switch 0)(= fee-switch 1))
-            (ATS|UpdateColdOrHot atspair true)
-            (ATS|UpdateColdOrHot atspair false)
+            (ATS|UEV_UpdateColdOrHot atspair true)
+            (ATS|UEV_UpdateColdOrHot atspair false)
         )
     )
     (defcap ATS|SET_CRD (patron:string atspair:string soft-or-hard:bool base:integer growth:integer)
-        (compose-capability (ATS|SET_CRD_CORE atspair soft-or-hard base growth))
+        (compose-capability (ATS|X_SET_CRD atspair soft-or-hard base growth))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|SET_CRD_CORE (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (ATS|Owner atspair)
-        (ATS|UpdateColdOrHot atspair true)
+    (defcap ATS|X_SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
         (if (= soft-or-hard true)
             (enforce 
                 (and 
@@ -4329,13 +4329,13 @@
         )
     )
     (defcap ATS|SET_COLD_FEE (patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (compose-capability (ATS|SET_COLD_FEE_CORE atspair fee-positions fee-thresholds fee-array))
+        (compose-capability (ATS|X_SET_COLD_FEE atspair fee-positions fee-thresholds fee-array))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|SET_COLD_FEE_CORE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (ATS|Owner atspair)
-        (ATS|UpdateColdOrHot atspair true)
+    (defcap ATS|X_SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
         ;;<fee-positions> validation
         (enforce 
             (or 
@@ -4417,13 +4417,13 @@
         )
     )
     (defcap ATS|SET_HOT_FEE (patron:string atspair:string promile:decimal decay:integer)
-        (compose-capability (ATS|SET_HOT_FEE_CORE atspair promile decay))
+        (compose-capability (ATS|X_SET_HOT_FEE atspair promile decay))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|SET_HOT_FEE_CORE (atspair:string promile:decimal decay:integer)
-        (ATS|Owner atspair)
-        (ATS|UpdateColdOrHot atspair false)
+    (defcap ATS|X_SET_HOT_FEE (atspair:string promile:decimal decay:integer)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair false)
         (UTILITY.DALOS|UV_Fee promile)
         (enforce 
             (and
@@ -4434,13 +4434,13 @@
         )
     )
     (defcap ATS|TOGGLE_ELITE (patron:string atspair:string toggle:bool)
-        (compose-capability (ATS|TOGGLE_ELITE_CORE atspair toggle))
+        (compose-capability (ATS|X_TOGGLE_ELITE atspair toggle))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|TOGGLE_ELITE_CORE (atspair:string toggle:bool)
-        (ATS|Owner atspair)
-        (ATS|UpdateColdOrHot atspair true)
+    (defcap ATS|X_TOGGLE_ELITE (atspair:string toggle:bool)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|EliteState atspair (not toggle))
         (if (= toggle true)
             (let
@@ -4454,33 +4454,33 @@
     )
     (defcap ATS|TOGGLE_RECOVERY (patron:string atspair:string toggle:bool cold-or-hot:bool)
         (if (= toggle true)
-            (compose-capability (ATS|RECOVERY-ON_CORE atspair cold-or-hot))
-            (compose-capability (ATS|RECOVERY-OFF_CORE atspair cold-or-hot))
+            (compose-capability (ATS|X_RECOVERY-ON atspair cold-or-hot))
+            (compose-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
         )
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_SMALL))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|RECOVERY-ON_CORE (atspair:string cold-or-hot:bool)
-        (ATS|Owner atspair)
-        (ATS|ParameterLockState atspair false)
-        (ATS|RecoveryState atspair false cold-or-hot)
+    (defcap ATS|X_RECOVERY-ON (atspair:string cold-or-hot:bool)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair false)
+        (ATS|UEV_RecoveryState atspair false cold-or-hot)
     )
-        (defcap ATS|RECOVERY-OFF_CORE (atspair:string cold-or-hot:bool)
-        (ATS|Owner atspair)
-        (ATS|ParameterLockState atspair false)
-        (ATS|RecoveryState atspair true cold-or-hot)
+        (defcap ATS|X_RECOVERY-OFF (atspair:string cold-or-hot:bool)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair false)
+        (ATS|UEV_RecoveryState atspair true cold-or-hot)
     )
     ;;6.1.2.2][A]           Create
     (defcap ATS|ISSUE (patron:string atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        (compose-capability (ATS|ISSUE_CORE atspair issuer reward-token reward-bearing-token))
+        (compose-capability (ATS|X_ISSUE atspair issuer reward-token reward-bearing-token))
         (compose-capability (GAS|COLLECTION patron issuer UTILITY.GAS_HUGE))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|ISSUE_CORE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
+    (defcap ATS|X_ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
         (enforce (!= reward-token reward-bearing-token) "Reward Token must be different from Reward-Bearing Token")
         (DPTF-DPMF|Owner reward-token true)
         (DPTF-DPMF|Owner reward-bearing-token true)
-        (DALOS|EnforceAccountOwnership issuer)
+        (DALOS|CAP_EnforceAccountOwnership issuer)
         (DALOS|Enforce_AccountType issuer false)
         (compose-capability (ATS|UPDATE_RT))
         (compose-capability (ATS|UPDATE_RBT reward-bearing-token true))
@@ -4488,21 +4488,21 @@
         (ATS|RewardBearingTokenExistance atspair reward-bearing-token false true)
     )
     (defcap ATS|ADD_SECONDARY (patron:string atspair:string reward-token:string token-type:bool)
-        (compose-capability (ATS|ADD_SECONDARY_CORE atspair reward-token token-type))
+        (compose-capability (ATS|X_ADD_SECONDARY atspair reward-token token-type))
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|ADD_SECONDARY_CORE (atspair:string reward-token:string token-type:bool)
+    (defcap ATS|X_ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
         (DPTF-DPMF|Owner reward-token token-type)
-        (ATS|Owner atspair)
-        (ATS|UpdateColdAndHot atspair)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdAndHot atspair)
         (if (= token-type true)
             (compose-capability (ATS|ADD_SECONDARY_RT atspair reward-token))
             (compose-capability (ATS|ADD_SECONDARY_RBT atspair reward-token))
         )
     )
     (defcap ATS|ADD_SECONDARY_RT (atspair:string reward-token:string)
-        (ATS|UV_IzTokenUnique atspair reward-token)
+        (ATS|UEV_IzTokenUnique atspair reward-token)
         (ATS|RewardTokenExistance atspair reward-token false)
         (compose-capability (ATS|UPDATE_RT))
     )
@@ -4517,7 +4517,7 @@
                 (
                     (rbt:string (DPMF|UR_RewardBearingToken id))
                 )
-                (enforce (= rbt UTILITY.BAR) "RBT for a DPMF is immutable")
+                (enforce (= rbt UTILS.BAR) "RBT for a DPMF is immutable")
             )
             true
         )
@@ -4530,13 +4530,13 @@
     )
     ;;6.1.2.3][A]           Destroy
     (defcap ATS|REMOVE_SECONDARY (patron:string atspair:string reward-token:string)
-        (compose-capability (ATS|REMOVE_SECONDARY_CORE atspair reward-token))   
+        (compose-capability (ATS|X_REMOVE_SECONDARY atspair reward-token))   
         (compose-capability (GAS|COLLECTION patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_ISSUE))
         (compose-capability (DALOS|INCREASE-NONCE))
     )
-    (defcap ATS|REMOVE_SECONDARY_CORE (atspair:string reward-token:string)
-        (ATS|Owner atspair)
-        (ATS|UpdateColdAndHot atspair)
+    (defcap ATS|X_REMOVE_SECONDARY (atspair:string reward-token:string)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdAndHot atspair)
         (ATS|RewardTokenExistance atspair reward-token true)
         (compose-capability (ATS|UPDATE_RT))
     )
@@ -4626,7 +4626,7 @@
         (fold
             (lambda
                 (acc:[string] item:object{ATS|RewardTokenSchema})
-                (UTILITY.UC_AppendLast acc (at "token" item))
+                (UTILS.LIST|UC_AppendLast acc (at "token" item))
             )
             []
             (ATS|UR_RewardTokens atspair)
@@ -4637,8 +4637,8 @@
             (lambda
                 (acc:[decimal] item:object{ATS|RewardTokenSchema})
                 (if rou
-                    (UTILITY.UC_AppendLast acc (at "resident" item))
-                    (UTILITY.UC_AppendLast acc (at "unbonding" item))
+                    (UTILS.LIST|UC_AppendLast acc (at "resident" item))
+                    (UTILS.LIST|UC_AppendLast acc (at "unbonding" item))
                 )
             )
             []
@@ -4646,8 +4646,8 @@
         )
     )
     (defun ATS|UR_RT-Data (atspair:string reward-token:string data:integer)
-        (ATS|UVE_id atspair)
-        (UTILITY.DALOS|UV_PositionalVariable data 3 "Invalid Data Integer")
+        (ATS|UEV_id atspair)
+        (UTILS.UTILS|UEV_PositionalVariable data 3 "Invalid Data Integer")
         (let*
             (
                 (rt:[object{ATS|RewardTokenSchema}] (ATS|UR_RewardTokens atspair))
@@ -4688,9 +4688,9 @@
         (format "{}|{} P7: {}" [atspair account (ATS|UR_P1-7 atspair account 7)])
     )
     (defun ATS|UR_P0:[object{ATS|Unstake}] (atspair:string account:string)
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
+        (UTILS.DALOS|UEV_UniqueAtspair atspair)
         (UTILITY.DALOS|UV_Account account)
-        (at "P0" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P0"]))
+        (at "P0" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P0"]))
     )
     (defun ATS|UC_IzCullable:bool (input:object{ATS|Unstake})
         (let*
@@ -4719,17 +4719,17 @@
         )
     )
     (defun ATS|UR_P1-7:object{ATS|Unstake} (atspair:string account:string position:integer)
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
+        (UTILS.DALOS|UEV_UniqueAtspair atspair)
         (UTILITY.DALOS|UV_Account account)
-        (UTILITY.DALOS|UV_PositionalVariable position 7 "Invalid Position Number")
+        (UTILS.UTILS|UEV_PositionalVariable position 7 "Invalid Position Number")
         (cond
-            ((= position 1) (at "P1" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P1"])))
-            ((= position 2) (at "P2" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P2"])))
-            ((= position 3) (at "P3" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P3"])))
-            ((= position 4) (at "P4" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P4"])))
-            ((= position 5) (at "P5" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P5"])))
-            ((= position 6) (at "P6" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P6"])))
-            ((= position 7) (at "P7" (read ATS|Ledger (concat [atspair UTILITY.BAR account]) ["P7"])))
+            ((= position 1) (at "P1" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P1"])))
+            ((= position 2) (at "P2" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P2"])))
+            ((= position 3) (at "P3" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P3"])))
+            ((= position 4) (at "P4" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P4"])))
+            ((= position 5) (at "P5" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P5"])))
+            ((= position 6) (at "P6" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P6"])))
+            ((= position 7) (at "P7" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P7"])))
             true
         )
     )
@@ -4770,7 +4770,7 @@
         (fold
             (lambda
                 (acc:[integer] rt:string)
-                (UTILITY.UC_AppendLast acc (DPTF-DPMF|UR_Decimals rt true))
+                (UTILS.LIST|UC_AppendLast acc (DPTF-DPMF|UR_Decimals rt true))
             )
             []
             (ATS|UR_RewardTokenList atspair)
@@ -4783,19 +4783,19 @@
                 (elite:bool (ATS|UR_EliteMode atspair))
             )
             (if elite
-                (ATS|UC_ElitePosition atspair c-rbt-amount account)
+                (ATS|UCC_ElitePosition atspair c-rbt-amount account)
                 (ATS|UC_NonElitePosition atspair account)
             )
         )
     )
-    (defun ATS|UC_ElitePosition:integer (atspair:string c-rbt-amount:decimal account:string)
+    (defun ATS|UCC_ElitePosition:integer (atspair:string c-rbt-amount:decimal account:string)
         (let
             (
                 (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                 (ea-id:string (DALOS|UR_EliteAurynID))
             )
-            (if (!= ea-id UTILITY.BAR)
+            (if (!= ea-id UTILS.BAR)
                 ;elite auryn is defind
                 (let*
                     (
@@ -4804,7 +4804,7 @@
                         (met:integer (DALOS|UR_Elite-Tier-Major account))
                         (ea-supply:decimal (DPTF-DPMF|UR_AccountSupply ea-id account true))
                         (t-ea-supply:decimal (DALOS|UR_EliteAurynzSupply account))
-                        (virtual-met:integer (str-to-int (take 1 (at "tier" (UTILITY.ATS|UC_Elite (- t-ea-supply c-rbt-amount))))))
+                        (virtual-met:integer (str-to-int (take 1 (at "tier" (UTILITY.ATS|UCC_Elite (- t-ea-supply c-rbt-amount))))))
                         (available:[integer] (if iz-ea-id (take virtual-met pstate) (take met pstate)))
                         (search-res:[integer] (UTILITY.UC_Search available 1))
                     )
@@ -4858,8 +4858,8 @@
         )
     )
     (defun ATS|UC_PositionState:integer (atspair:string account:string position:integer)
-        (UTILITY.DALOS|UV_PositionalVariable position 7 "Input Position out of bounds")
-        (with-read ATS|Ledger (concat [atspair UTILITY.BAR account])
+        (UTILS.UTILS|UEV_PositionalVariable position 7 "Input Position out of bounds")
+        (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P1"  := p1 , "P2"  := p2 , "P3"  := p3, "P4"  := p4, "P5"  := p5, "P6"  := p6, "P7"  := p7 }
             (let
                 (
@@ -4887,8 +4887,8 @@
         @doc "occupied(0), opened(1), closed (-1)"
         (let
             (
-                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
-                (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+                (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
+                (negative:object{ATS|Unstake} (ATS|UCC_MakeNegativeUnstakeObject atspair))
             )
             (if (= input-obj zero)
                 1
@@ -4961,7 +4961,7 @@
             (add-time present-time (hours h))
         )
     )
-    (defun ATS|UC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
+    (defun ATS|UCC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
         (let
             (
                 (rbt-supply:decimal (ATS|UC_PairRBTSupply atspair))
@@ -4974,15 +4974,15 @@
         )
     )
     ;;6.2.1.4][A]           ATS|Ledger Composing
-    (defun ATS|UC_MakeUnstakeObject:object{ATS|Unstake} (atspair:string time:time)
+    (defun ATS|UCC_MakeUnstakeObject:object{ATS|Unstake} (atspair:string time:time)
         { "reward-tokens"   : (make-list (length (ATS|UR_RewardTokenList atspair)) 0.0)
         , "cull-time"       : time}
     )
-    (defun ATS|UC_MakeZeroUnstakeObject:object{ATS|Unstake} (atspair:string)
-        (ATS|UC_MakeUnstakeObject atspair NULLTIME)
+    (defun ATS|UCC_MakeZeroUnstakeObject:object{ATS|Unstake} (atspair:string)
+        (ATS|UCC_MakeUnstakeObject atspair NULLTIME)
     )
-    (defun ATS|UC_MakeNegativeUnstakeObject:object{ATS|Unstake} (atspair:string)
-        (ATS|UC_MakeUnstakeObject atspair ANTITIME)
+    (defun ATS|UCC_MakeNegativeUnstakeObject:object{ATS|Unstake} (atspair:string)
+        (ATS|UCC_MakeUnstakeObject atspair ANTITIME)
     )
     ;;6.2.1.5][A]           Computing|Composing
     (defun ATS|UC_Index (atspair:string)
@@ -5036,10 +5036,10 @@
         (fold (+) 0.0 (ATS|UR_RoUAmountList atspair true)) 
     )
     
-    (defun ATS|UC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
-        (ATS|UC_RT token nfr 0.0 0.0)
+    (defun ATS|UCC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
+        (ATS|UCC_RT token nfr 0.0 0.0)
     )
-    (defun ATS|UC_RT:object{ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
+    (defun ATS|UCC_RT:object{ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
         (enforce (>= r 0.0) "Negative Resident not allowed")
         (enforce (>= u 0.0) "Negative Unbonding not allowed")
         {"token"                    : token
@@ -5049,14 +5049,14 @@
     )
     (defun ATS|UC_IzRT-Absolute:bool (reward-token:string)
         (DPTF-DPMF|UVE_id reward-token true)
-        (if (= (DPTF|UR_RewardToken reward-token) [UTILITY.BAR])
+        (if (= (DPTF|UR_RewardToken reward-token) [UTILS.BAR])
             false
             true
         )
     )
     (defun ATS|UC_IzRT:bool (atspair:string reward-token:string)
         (DPTF-DPMF|UVE_id reward-token true)
-        (if (= (DPTF|UR_RewardToken reward-token) [UTILITY.BAR])
+        (if (= (DPTF|UR_RewardToken reward-token) [UTILS.BAR])
             false
             (if (= (contains atspair (DPTF|UR_RewardToken reward-token)) true)
                 true
@@ -5067,11 +5067,11 @@
     (defun ATS|UC_IzRBT-Absolute:bool (reward-bearing-token:string cold-or-hot:bool)
         (DPTF-DPMF|UVE_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
-            (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILITY.BAR])
+            (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILS.BAR])
                 false
                 true
             )
-            (if (= (DPMF|UR_RewardBearingToken reward-bearing-token) UTILITY.BAR)
+            (if (= (DPMF|UR_RewardBearingToken reward-bearing-token) UTILS.BAR)
                 false
                 true
             )
@@ -5080,14 +5080,14 @@
     (defun ATS|UC_IzRBT:bool (atspair:string reward-bearing-token:string cold-or-hot:bool)
         (DPTF-DPMF|UVE_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
-            (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILITY.BAR])
+            (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILS.BAR])
                 false
                 (if (= (contains atspair (DPTF|UR_RewardBearingToken reward-bearing-token)) true)
                     true
                     false
                 )
             )
-            (if (= (DPMF|UR_RewardBearingToken reward-bearing-token) UTILITY.BAR)
+            (if (= (DPMF|UR_RewardBearingToken reward-bearing-token) UTILS.BAR)
                 false
                 (if (= (DPMF|UR_RewardBearingToken reward-bearing-token) atspair)
                     true
@@ -5096,8 +5096,9 @@
             )
         )
     )
+    ;;take me
     (defun ATS|UC_IzPresentHotRBT:bool (atspair:string)
-        (if (= (ATS|UR_HotRewardBearingToken atspair) UTILITY.BAR)
+        (if (= (ATS|UR_HotRewardBearingToken atspair) UTILS.BAR)
             false
             true
         )
@@ -5224,12 +5225,12 @@
                 (acc:[bool] index:integer)
                 (if rt-or-rbt
                     (if (ATS|UR_RT-Data (at index ats-pairs) id 1)
-                        (UTILITY.UC_AppendLast acc true)
-                        (UTILITY.UC_AppendLast acc false)
+                        (UTILS.LIST|UC_AppendLast acc true)
+                        (UTILS.LIST|UC_AppendLast acc false)
                     )
                     (if (ATS|UR_ColdNativeFeeRedirection (at index ats-pairs))
-                        (UTILITY.UC_AppendLast acc true)
-                        (UTILITY.UC_AppendLast acc false)
+                        (UTILS.LIST|UC_AppendLast acc true)
+                        (UTILS.LIST|UC_AppendLast acc false)
                     )
                 )
             )
@@ -5241,8 +5242,8 @@
         (UTILITY.UC_SplitBalanceWithBooleans (DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
     )
     ;;6.2.1.7][A]           Validations
-    (defun ATS|UVE_id (atspair:string)
-        (UTILITY.DALOS|UV_UniqueAccount atspair)
+    (defun ATS|UEV_id (atspair:string)
+        (UTILS.DALOS|UEV_UniqueAtspair atspair)
         (with-default-read ATS|Pairs atspair
             { "unlocks" : -1 }
             { "unlocks" := u }
@@ -5252,7 +5253,7 @@
             )
         )
     )
-    (defun ATS|UV_IzTokenUnique (atspair:string reward-token:string)
+    (defun ATS|UEV_IzTokenUnique (atspair:string reward-token:string)
         (DPTF-DPMF|UVE_id reward-token true)
         (let
             (
@@ -5268,7 +5269,7 @@
     ;;6.2.3]  [A]   ATS Client Functions
     ;;6.2.3.1][A]           Control
     (defun ATS|C_ChangeOwnership (patron:string atspair:string new-owner:string)
-        (with-capability (ATS|OWNERSHIP-CHANGE patron atspair new-owner)
+        (with-capability (ATS|OWNERSHIP_CHANGE patron atspair new-owner)
             (if (not (GAS|UC_SubZero))
                 (GAS|X_Collect patron (ATS|UR_OwnerKonto atspair) UTILITY.GAS_BIGGEST)
                 true
@@ -5599,12 +5600,12 @@
                     (cull-time:time (ATS|UC_CullColdRecoveryTime atspair recoverer))
 
                     ;;for false
-                    (standard-split:[decimal] (ATS|UC_RTSplitAmounts atspair ra))
+                    (standard-split:[decimal] (ATS|UCC_RTSplitAmounts atspair ra))
                     (rt-precision-lst:[integer] (ATS|UR_RtPrecisions atspair))
                     (negative-c-fr:[[decimal]] (UTILITY.UC_ListPromileSplit fee-promile standard-split rt-precision-lst))
 
                     ;;for true
-                    (positive-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))
+                    (positive-c-fr:[decimal] (ATS|UCC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))
 
                 )
             ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
@@ -5766,13 +5767,13 @@
     ;;6.2.4]  [A]   ATS Aux Functions
     ;;6.2.4.1][A]           Aux Functions Part 1
     (defun ATS|X_ChangeOwnership (atspair:string new-owner:string)
-        (require-capability (ATS|OWNERSHIP-CHANGE_CORE atspair new-owner))
+        (require-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner))
         (update ATS|Pairs atspair
             {"owner-konto"                      : new-owner}
         )
     )
     (defun ATS|X_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
-        (require-capability (ATS|TOGGLE_PARAMETER-LOCK_CORE atspair toggle))
+        (require-capability (ATS|X_TOGGLE_PARAMETER-LOCK atspair toggle))
         (update ATS|Pairs atspair
             { "parameter-lock" : toggle}
         )
@@ -5791,7 +5792,7 @@
         )
     )
     (defun ATS|X_ToggleFeeSettings (atspair:string toggle:bool fee-switch:integer)
-        (require-capability (ATS|TOGGLE_FEE_CORE atspair toggle fee-switch))
+        (require-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
         (if (= fee-switch 0)
             (update ATS|Pairs atspair
                 { "c-nfr" : toggle}
@@ -5807,7 +5808,7 @@
         )
     )
     (defun ATS|X_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (require-capability (ATS|SET_CRD_CORE atspair soft-or-hard base growth))
+        (require-capability (ATS|X_SET_CRD atspair soft-or-hard base growth))
         (if (= soft-or-hard true)
             (update ATS|Pairs atspair
                 { "c-duration" : (UTILITY.ATS|UC_MakeSoftIntervals base growth)}
@@ -5818,7 +5819,7 @@
         )
     )
     (defun ATS|X_SetColdFee (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (require-capability (ATS|SET_COLD_FEE_CORE atspair fee-positions fee-thresholds fee-array))
+        (require-capability (ATS|X_SET_COLD_FEE atspair fee-positions fee-thresholds fee-array))
         (update ATS|Pairs atspair
             { "c-positions"     : fee-positions
             , "c-limits"        : fee-thresholds 
@@ -5826,20 +5827,20 @@
         )
     )
     (defun ATS|X_SetHotFee (atspair:string promile:decimal decay:integer)
-        (require-capability (ATS|SET_HOT_FEE_CORE atspair promile decay))
+        (require-capability (ATS|X_SET_HOT_FEE atspair promile decay))
         (update ATS|Pairs atspair
             { "h-promile"       : promile
             , "h-decay"         : decay}
         )
     )
     (defun ATS|X_ToggleElite (atspair:string toggle:bool)
-        (require-capability (ATS|TOGGLE_ELITE_CORE atspair toggle))
+        (require-capability (ATS|X_TOGGLE_ELITE atspair toggle))
         (update ATS|Pairs atspair
             { "c-elite-mode" : toggle}
         )
     )
     (defun ATS|X_TurnRecoveryOn (atspair:string cold-or-hot:bool)
-        (require-capability (ATS|RECOVERY-ON_CORE atspair cold-or-hot))
+        (require-capability (ATS|X_RECOVERY-ON atspair cold-or-hot))
         (if (= cold-or-hot true)
             (update ATS|Pairs atspair
                 { "cold-recovery" : true}
@@ -5850,7 +5851,7 @@
         )
     )
     (defun ATS|X_TurnRecoveryOff (atspair:string cold-or-hot:bool)
-        (require-capability (ATS|RECOVERY-OFF_CORE atspair cold-or-hot))
+        (require-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
         (if (= cold-or-hot true)
             (update ATS|Pairs atspair
                 { "cold-recovery" : false}
@@ -5874,7 +5875,7 @@
         (UTILITY.DALOS|UV_Name atspair)
         (DPTF-DPMF|UVE_id reward-token true)
         (DPTF-DPMF|UVE_id reward-bearing-token true)
-        (require-capability (ATS|ISSUE_CORE (UTILITY.DALOS|UC_Makeid atspair) account reward-token reward-bearing-token))
+        (require-capability (ATS|X_ISSUE (UTILITY.DALOS|UC_Makeid atspair) account reward-token reward-bearing-token))
         (insert ATS|Pairs (UTILITY.DALOS|UC_Makeid atspair)
             {"owner-konto"                          : account
             ,"can-change-owner"                     : true
@@ -5884,7 +5885,7 @@
             ,"pair-index-name"                      : atspair
             ,"index-decimals"                       : index-decimals
             ;;Reward Tokens
-            ,"reward-tokens"                        : [(ATS|UC_ComposePrimaryRewardToken reward-token rt-nfr)]
+            ,"reward-tokens"                        : [(ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr)]
             ;;Cold Reward Bearing Token Info
             ,"c-rbt"                                : reward-bearing-token
             ,"c-nfr"                                : rbt-nfr
@@ -5895,7 +5896,7 @@
             ,"c-duration"                           : (UTILITY.ATS|UC_MakeSoftIntervals 300 6)
             ,"c-elite-mode"                         : false
             ;;Hot Reward Bearing Token Info
-            ,"h-rbt"                                : UTILITY.BAR
+            ,"h-rbt"                                : UTILS.BAR
             ,"h-promile"                            : 100.0
             ,"h-decay"                              : 1
             ,"h-fr"                                 : true
@@ -5910,22 +5911,22 @@
         (DPTF-DPMF|C_DeployAccount reward-bearing-token ATS|SC_NAME true)
     )
     (defun ATS|X_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
-        (require-capability (ATS|ADD_SECONDARY_CORE atspair reward-token true))
+        (require-capability (ATS|X_ADD_SECONDARY atspair reward-token true))
         (with-read ATS|Pairs atspair
             { "reward-tokens" := rt }
             (update ATS|Pairs atspair
-                {"reward-tokens" : (UTILITY.UC_AppendLast rt (ATS|UC_ComposePrimaryRewardToken reward-token rt-nfr))}
+                {"reward-tokens" : (UTILS.LIST|UC_AppendLast rt (ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr))}
             )
         )
     )
     (defun ATS|X_AddHotRBT (atspair:string hot-rbt:string)
-        (require-capability (ATS|ADD_SECONDARY_CORE atspair hot-rbt false))
+        (require-capability (ATS|X_ADD_SECONDARY atspair hot-rbt false))
         (update ATS|Pairs atspair
             {"h-rbt" : hot-rbt}
         )
     )
     (defun ATS|X_RemoveSecondary (atspair:string reward-token:string)
-        (require-capability (ATS|REMOVE_SECONDARY_CORE atspair reward-token))
+        (require-capability (ATS|X_REMOVE_SECONDARY atspair reward-token))
         (with-read ATS|Pairs atspair
             { "reward-tokens" := rt }
             (update ATS|Pairs atspair
@@ -5946,12 +5947,12 @@
                 (new-rt:object{ATS|RewardTokenSchema} 
                     (if (= rou true)
                         (if (= direction true)
-                            (ATS|UC_RT reward-token nfr (+ resident amount) unbonding)
-                            (ATS|UC_RT reward-token nfr (- resident amount) unbonding)
+                            (ATS|UCC_RT reward-token nfr (+ resident amount) unbonding)
+                            (ATS|UCC_RT reward-token nfr (- resident amount) unbonding)
                         )
                         (if (= direction true)
-                            (ATS|UC_RT reward-token nfr resident (+ unbonding amount))
-                            (ATS|UC_RT reward-token nfr resident (- unbonding amount))
+                            (ATS|UCC_RT reward-token nfr resident (+ unbonding amount))
+                            (ATS|UCC_RT reward-token nfr resident (- unbonding amount))
                         )
                     )
                 )
@@ -5967,54 +5968,54 @@
     ;;6.2.4.2][A]           Aux Functions Part 2 - ATS|Ledger Aux
     (defun ATS|X_StoreUnstakeObjectList (atspair:string account:string obj:[object{ATS|Unstake}])
         (require-capability (ATS|UPDATE_LEDGER))
-        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+        (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0" : obj}
         )
     )
     (defun ATS|X_StoreUnstakeObject (atspair:string account:string position:integer obj:object{ATS|Unstake})
         (require-capability (ATS|UPDATE_LEDGER))
-        (with-read ATS|Ledger (concat [atspair UTILITY.BAR account])
+        (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0"  := p0 , "P1"  := p1 , "P2"  := p2 , "P3"  := p3, "P4"  := p4, "P5"  := p5, "P6"  := p6, "P7"  := p7 }
             (if (= position -1)
                 (if (and 
                         (= (length p0) 1)
                         (= 
                             (at 0 p0) 
-                            (ATS|UC_MakeZeroUnstakeObject atspair)
+                            (ATS|UCC_MakeZeroUnstakeObject atspair)
                         )
                     )
-                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
                         { "P0"  : [obj]}
                     )
-                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
-                        { "P0"  : (UTILITY.UC_AppendLast p0 obj)}
+                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
+                        { "P0"  : (UTILS.LIST|UC_AppendLast p0 obj)}
                     )
                 )
                 (if (= position 1)
-                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
                         { "P1"  : obj}
                     )
                     (if (= position 2)
-                        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                        (update ATS|Ledger (concat [atspair UTILS.BAR account])
                             { "P2"  : obj}
                         )
                         (if (= position 3)
-                            (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                            (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                 { "P3"  : obj}
                             )
                             (if (= position 4)
-                                (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                     { "P4"  : obj}
                                 )
                                 (if (= position 5)
-                                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                         { "P5"  : obj}
                                     )
                                     (if (= position 6)
-                                        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                        (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                             { "P6"  : obj}
                                         )
-                                        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                        (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                             { "P7"  : obj}
                                         )
                                     )
@@ -6030,10 +6031,10 @@
         (require-capability (ATS|DEPLOY atspair account))
         (let
             (
-                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
-                (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+                (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
+                (negative:object{ATS|Unstake} (ATS|UCC_MakeNegativeUnstakeObject atspair))
             )
-            (with-default-read ATS|Ledger (concat [atspair UTILITY.BAR account])
+            (with-default-read ATS|Ledger (concat [atspair UTILS.BAR account])
                 { "P0"  : [zero]
                 , "P1"  : negative
                 , "P2"  : negative
@@ -6052,7 +6053,7 @@
                 , "P6"  := p6
                 , "P7"  := p7
                 }
-                (write ATS|Ledger (concat [atspair UTILITY.BAR account])
+                (write ATS|Ledger (concat [atspair UTILS.BAR account])
                     { "P0"  : p0
                     , "P1"  : p1
                     , "P2"  : p2
@@ -6069,18 +6070,18 @@
     )
     (defun ATS|X_Normalize (atspair:string account:string)
         (require-capability (ATS|NORMALIZE_LEDGER atspair account))
-        (with-read ATS|Ledger (concat [atspair UTILITY.BAR account])
+        (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0"  := p0 , "P1"  := p1 , "P2"  := p2 , "P3"  := p3, "P4"  := p4, "P5"  := p5, "P6"  := p6, "P7"  := p7 }
             (let
                 (
-                    (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
-                    (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+                    (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
+                    (negative:object{ATS|Unstake} (ATS|UCC_MakeNegativeUnstakeObject atspair))
                     (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
                     (elite:bool (ATS|UR_EliteMode atspair))
                     (major-tier:integer (DALOS|UR_Elite-Tier-Major account))
                 )
                 (if (= positions -1)
-                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
                         {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [zero] )
                         ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 negative)
                         ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 negative)
@@ -6092,7 +6093,7 @@
                         }
                     )
                     (if (= positions 1)
-                        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                        (update ATS|Ledger (concat [atspair UTILS.BAR account])
                             {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                             ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                             ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 negative)
@@ -6104,7 +6105,7 @@
                             }
                         )
                         (if (= positions 2)
-                            (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                            (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                 {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                 ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                 ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6116,7 +6117,7 @@
                                 }
                             )
                             (if (= positions 3)
-                                (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                     {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                     ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                     ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6128,7 +6129,7 @@
                                     }
                                 )
                                 (if (= positions 4)
-                                    (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                    (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                         {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                         ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                         ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6140,7 +6141,7 @@
                                         }
                                     )
                                     (if (= positions 5)
-                                        (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                        (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                             {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                             ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                             ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6152,7 +6153,7 @@
                                             }
                                         )
                                         (if (= positions 6)
-                                            (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                            (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                                 {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                                 ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                                 ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6164,7 +6165,7 @@
                                                 }
                                             )
                                             (if (not elite)
-                                                (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                                (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                                     {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                                     ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                                     ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 zero)
@@ -6175,7 +6176,7 @@
                                                     ,"P7"       : (if (and (!= p7 zero) (!= p7 negative)) p7 zero)
                                                     }
                                                 )
-                                                (update ATS|Ledger (concat [atspair UTILITY.BAR account])
+                                                (update ATS|Ledger (concat [atspair UTILS.BAR account])
                                                     {"P0"       : (if (and (!= p0 [zero]) (!= p0 [negative])) p0 [negative] )
                                                     ,"P1"       : (if (and (!= p1 zero) (!= p1 negative)) p1 zero)
                                                     ,"P2"       : (if (and (!= p2 zero) (!= p2 negative)) p2 (if (>= major-tier 2) zero negative))
@@ -6200,7 +6201,7 @@
     (defun ATS|X_SingleCull:[decimal] (atspair:string account:string position:integer)
         (let*
             (
-                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
+                (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
                 (unstake-obj:object{ATS|Unstake} (ATS|UR_P1-7 atspair account position))
                 (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
                 (l:integer (length rt-amounts))
@@ -6217,15 +6218,15 @@
     (defun ATS|X_MultiCull:[decimal] (atspair:string account:string)
         (let*
             (
-                (zero:object{ATS|Unstake} (ATS|UC_MakeZeroUnstakeObject atspair))
-                (negative:object{ATS|Unstake} (ATS|UC_MakeNegativeUnstakeObject atspair))
+                (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
+                (negative:object{ATS|Unstake} (ATS|UCC_MakeNegativeUnstakeObject atspair))
                 (p0:[object{ATS|Unstake}] (ATS|UR_P0 atspair account))
                 (p0l:integer (length p0))
                 (bl:[bool]
                     (fold
                         (lambda
                             (acc:[bool] item:object{ATS|Unstake})
-                            (UTILITY.UC_AppendLast acc (ATS|UC_IzCullable item))
+                            (UTILS.LIST|UC_AppendLast acc (ATS|UC_IzCullable item))
                         )
                         []
                         p0
@@ -6245,7 +6246,7 @@
                                 (fold
                                     (lambda
                                         (acc:[object{ATS|Unstake}] idx:integer)
-                                        (UTILITY.UC_AppendLast acc (at (at idx immutables) p0))
+                                        (UTILS.LIST|UC_AppendLast acc (at (at idx immutables) p0))
                                     )
                                     []
                                     (enumerate 0 (- (length immutables) 1))
@@ -6257,7 +6258,7 @@
                             (fold
                                 (lambda
                                     (acc:[object{ATS|Unstake}] idx:integer)
-                                    (UTILITY.UC_AppendLast acc (at (at idx cullables) p0))
+                                    (UTILS.LIST|UC_AppendLast acc (at (at idx cullables) p0))
                                 )
                                 []
                                 (enumerate 0 (- (length cullables) 1))
@@ -6267,7 +6268,7 @@
                             (fold
                                 (lambda
                                     (acc:[[decimal]] idx:integer)
-                                    (UTILITY.UC_AppendLast acc (ATS|UC_CullValue (at idx to-be-culled)))
+                                    (UTILS.LIST|UC_AppendLast acc (ATS|UC_CullValue (at idx to-be-culled)))
                                 )
                                 []
                                 (enumerate 0 (- (length to-be-culled) 1))
@@ -6296,7 +6297,7 @@
             (
                 (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
             )
-            (enforce (!= wrapped-kda-id UTILITY.BAR) "Kadena Wrapping is not live yet")
+            (enforce (!= wrapped-kda-id UTILS.BAR) "Kadena Wrapping is not live yet")
             (compose-capability (DPTF|MINT patron wrapped-kda-id LIQUID|SC_NAME amount false true))
             (compose-capability (DPTF-DPMF|TRANSFER patron wrapped-kda-id LIQUID|SC_NAME wrapper amount true true))
         )
@@ -6306,7 +6307,7 @@
             (
                 (wrapped-kda-id:string (DALOS|UR_WrappedKadenaID))
             )
-            (enforce (!= wrapped-kda-id UTILITY.BAR) "Kadena Unwrapping is not live yet")
+            (enforce (!= wrapped-kda-id UTILS.BAR) "Kadena Unwrapping is not live yet")
             (compose-capability (DPTF-DPMF|TRANSFER patron wrapped-kda-id unwrapper LIQUID|SC_NAME amount true true))
             (compose-capability (DPTF-DPMF|BURN patron wrapped-kda-id LIQUID|SC_NAME amount true true))
         )
@@ -6389,7 +6390,7 @@
     ;;8.2.1]  [V]   VST Utility Functions
     ;;8.2.1.1][V]           Computing|Composing
     (defun VST|UC_HasVesting:bool (id:string token-type:bool)
-        (if (= (DPTF-DPMF|UR_Vesting id token-type) UTILITY.BAR)
+        (if (= (DPTF-DPMF|UR_Vesting id token-type) UTILS.BAR)
             false
             true
         )
