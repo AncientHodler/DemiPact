@@ -8,12 +8,12 @@
 ;;Entering Namespace Free
 (namespace "free")
 
-(begin-tx "Constant Moduel")
+(begin-tx "Constant Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (module KC GOVERNANCE
     (defcap GOVERNANCE () true)
 
-    (defconst BM "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst BM "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
     (defconst EMMA "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
 )
 

@@ -54,8 +54,28 @@
         @doc "Capability needed for Bulk-Paired Aux Function"
         true
     )
+    ;; POLICY Capabilities
+    (defcap P|ATS|REMOTE-GOV ()
+        @doc "Policy allowing interaction with the Autostake Smart DALOS Account"
+        true
+    )
+    (defcap P|ATS|UPDATE_ROU ()
+        @doc "Policy allowing usage of <AUTOSTAKE.ATS|X_UpdateRoU>"
+        true
+    )
 
     ;;Policies - NONE
+    (defun OUROBOROS|DefinePolicies ()
+        @doc "Add the Policy that allows running external Functions from this Module"
+        (AUTOSTAKE.ATS|A_AddPolicy     ;DALOS|DALOS
+            "OUROBOROS|RemoteAutostakeGovernor"
+            (create-capability-guard (P|ATS|REMOTE-GOV))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
+        )
+        (AUTOSTAKE.ATS|A_AddPolicy     ;DALOS|DALOS
+            "OUROBOROS|UpdateROU"
+            (create-capability-guard (P|ATS|UPDATE_ROU))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
+        )
+    )
     ;;Modules's Governor
     (defcap OUROBOROS|GOV ()
         @doc "Autostake Module Governor Capability for its Smart DALOS Account"
@@ -107,7 +127,7 @@
     ;(DALOS.DPTF|C_ToggleFee patron OuroID true)
     ;(DALOS.DPTF|C_ToggleFeeLock patron OuroID true)
     ;;
-    ;;            BASIS             Submodule
+    ;;            BASIS+AUTOSTAKE   Submodule
     ;;
     ;;            CAPABILITIES      <0>
     ;;            FUNCTIONS         [15]
@@ -190,7 +210,27 @@
             )
         )
     )
-    ;;     <NONE> Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;        <1> Composed CAPABILITIES                 [CC](dont have this tag)
+    (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
+        @doc "Capability needed to perform a kickstart for an ATS-Pair"
+        (let*
+            (
+                (index:decimal (ATS|UC_Index atspair))
+                (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                (l1:integer (length rt-amounts))
+                (l2:integer (length rt-lst))
+                (owner:string (AUTOSTAKE.ATS|UR_OwnerKonto atspair))
+
+            )
+            (enforce (= index -1.0) "Kickstarting can only be done on ATS-Pairs with -1 Index")
+            (enforce (= l1 l2) "RT-Amounts list does not correspond with the Number of the ATS-Pair Reward Tokens")
+            (enforce (> rbt-request-amount 0.0) "RBT Request Amount must be greater than zero!")
+            (DALOS.DALOS|CAP_EnforceAccountOwnership owner)
+            (DALOS.DALOS|UEV_EnforceAccountType kickstarter false)
+            (compose-capability (P|ATS|REMOTE-GOV))
+            (compose-capability (P|ATS|UPDATE_ROU))
+        )
+    )
     ;;========[D] DATA FUNCTIONS===============================================;;
     ;;        [1] Data Read FUNCTIONS                   [UR]
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
@@ -271,7 +311,98 @@
         )
     )
     ;;     (NONE) Administrative Usage FUNCTIONS        [A]
-    ;;        [7] Client Usage FUNCTIONS                [C]
+    ;;        [9] Client Usage FUNCTIONS                [C]
+    (defun ATS|C_KickStart (patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
+        @doc "Kickstarts <atspair> with a specific amount of Reward-Tokens, \
+        \ while asking in retunr for a specific amount of Reward-Bearing-Tokens \
+        \ thus efectively starting the <atspair> at a specific predefined Index"
+        (with-capability (ATS|KICKSTART kickstarter atspair rt-amounts rbt-request-amount)
+            (let
+                (
+                    (rbt-id:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
+                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                )
+            ;;1]Kickstarter transfers the rt-amounts to the AUTOSTAKE.ATS|SC_NAME and updates the Resident Amounts
+                (DPTF|CM_MultiTransfer patron rt-lst kickstarter AUTOSTAKE.ATS|SC_NAME rt-amounts)
+                (map
+                    (lambda
+                        (rto:object{DPTF|ID-Amount})
+                        (AUTOSTAKE.ATS|X_UpdateRoU atspair (at "id" rto) true true (at "amount" rto))
+                    )
+                    (zip (lambda (x:string y:decimal) { "id":x, "amount":y}) rt-lst rt-amounts)
+                )
+            ;;2]AUTOSTAKE.ATS|SC-NAME mints the requested RBT Amount
+                (BASIS.DPTF|C_Mint patron rbt-id AUTOSTAKE.ATS|SC_NAME rbt-request-amount false)
+            ;;3]AUTOSTAKE.ATS|SC-NAME transfers the RBT Amount to the Kickstarter
+                (AUTOSTAKE.DPTF|CM_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount)
+            )
+        )
+    )
+    (defcap ATS|REDEEM (redeemer:string id:string)
+        @doc "Required for redeeming a Hot RBT"
+        (compose-capability (P|ATS|REMOTE-GOV))
+
+        (BASIS.DPTF-DPMF|UEV_id id false)
+        (DALOS.DALOS|UEV_EnforceAccountType redeemer false)
+        (let
+            (
+                (iz-rbt:bool (BASIS.ATS|UC_IzRBT id false))
+                
+            )
+            (enforce iz-rbt "Invalid Hot-RBT")
+        )
+    )
+    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)
+        @doc "Redeems a Hot RBT"
+        (with-capability (ATS|REDEEM redeemer id)
+            (let*
+                (
+                    (precision:integer (BASIS.DPTF-DPMF|UR_Decimals id false))
+                    (current-nonce-balance:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce redeemer))
+                    (meta-data (BASIS.DPMF|UR_AccountBatchMetaData id redeemer nonce))
+                    (birth-date:time (at "mint-time" meta-data))
+                    (present-time:time (at "block-time" (chain-data)))
+                    (elapsed-time:decimal (diff-time present-time birth-date))
+
+                    (atspair:string (BASIS.DPMF|UR_RewardBearingToken id))
+                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (h-promile:decimal (AUTOSTAKE.ATS|UR_HotRecoveryStartingFeePromile atspair))
+                    (h-decay:integer (AUTOSTAKE.ATS|UR_HotRecoveryDecayPeriod atspair))
+                    (h-fr:bool (AUTOSTAKE.ATS|UR_HotRecoveryFeeRedirection atspair))
+
+                    (total-time:decimal (* 86400 h-decay))
+                    (end-time:time (add-time birth-date (hours (* 24 h-decay))))
+                    (earned-rbt:decimal 
+                        (if (= elapsed-time end-time)
+                            current-nonce-balance
+                            (floor (* (* (/ elapsed-time total-time) (/ h-promile 1000.0)) current-nonce-balance) precision)
+                        )
+                    )
+
+                    (total-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair current-nonce-balance))
+                    (earned-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair earned-rbt))
+                    (fee-rts:[decimal] (zip (lambda (x:decimal y:decimal) (- x y)) total-rts earned-rts))
+                )
+            ;;1]Redeemer sends the whole Hot-Rbt to ATS|SC_NAME
+                (BASIS.DPMF|CM_Transfer patron id redeemer ATS|SC_NAME current-nonce-balance)
+            ;;2]ATS|SC_NAME burns the whole Hot-RBT
+                (BASIS.DPMF|C_Burn patron id nonce ATS|SC_NAME current-nonce-balance)
+            ;;3]ATS|SC_NAME transfers the proper amount of RT(s) to the Redeemer
+                (DPTF|C_MultiTransfer patron rt-lst ATS|SC_NAME redeemer earned-rts)
+            ;;4]And the Hot-FeeRediraction is accounted for
+                (if (and (not h-fr) (!= earned-rbt current-nonce-balance))
+                    (map
+                        (lambda
+                            (index:integer)
+                            (BASIS.DPTF|C_Burn patron (at index rt-lst) ATS|SC_NAME (at index fee-rts))
+                        )
+                        (enumerate 0 (- (length rt-lst) 1))
+                    )
+                    true
+                )
+            )
+        )
+    )
     (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
         @doc "Executes a Multi DPTF transfer using 2 lists of multiple IDs and multiple transfer amounts"
         (with-capability (DPTF|MULTI)
@@ -281,7 +412,7 @@
     (defun DPTF|CM_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
         @doc "DPTF Methodic Multi Transfer; Must be used when the Multi Transfer is executed by a Smart DALOS Account"
         (with-capability (DPTF|MULTI)
-            (DPTF|XK_MultiTransfer patron id-lst sender receiver transfer-amount-lst false) 
+            (DPTF|XK_MultiTransfer patron id-lst sender receiver transfer-amount-lst true) 
         )
     )
     (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
@@ -493,7 +624,7 @@
                     (ouro-precision:integer (BASIS.DPTF-DPMF|UR_Decimals ouro-id true))
                     (raw-ouro-amount:decimal (floor (/ ignis-amount (* ouro-price-used 100.0)) ouro-precision))
                     (promile-split:[decimal] (UTILS.ATS|UC_PromilleSplit 15.0 raw-ouro-amount ouro-precision))
-                    (ouro-remainder-amount:decimal (floor (at 0 promile-split) 0))
+                    (ouro-remainder-amount:decimal (floor (at 0 promile-split) ouro-precision))
                     (ouro-fee-amount:decimal (at 1 promile-split))
                 )
                 [ouro-remainder-amount ouro-fee-amount]
@@ -613,7 +744,8 @@
 
         ;;STEP Primordial - Setting Up Policies for Inter-Module Communication
             (BASIS.BASIS|DefinePolicies)
-            (AUTOSTAKE.BASIS|DefinePolicies)
+            (AUTOSTAKE.ATS|DefinePolicies)
+            (OUROBOROS.OUROBOROS|DefinePolicies)
 
         ;;STEP 0
         ;;Deploy the <Dalos> Smart DALOS Account

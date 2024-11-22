@@ -749,27 +749,6 @@
             [remainder fee]
         )
     )
-    (defun ATS|UC_ListPromileSplit:[[decimal]] (promile:decimal input-lst:[decimal] input-precision-lst:[integer])
-        @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
-        [
-            (fold
-                (lambda
-                    (acc:[decimal] index:integer)
-                    (LIST|UC_AppendLast acc (at 0 (ATS|UC_PromilleSplit promile (at index input-lst) (at index input-precision-lst))))
-                )
-                []
-                (enumerate 0 (- (length input-lst) 1))
-            )
-            (fold
-                (lambda
-                    (acc:[decimal] index:integer)
-                    (LIST|UC_AppendLast acc (at 1 (ATS|UC_PromilleSplit promile (at index input-lst) (at index input-precision-lst))))
-                )
-                []
-                (enumerate 0 (- (length input-lst) 1))
-            )
-        ]
-    )
     ;;
     (defun DALOS|UC_Filterid:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"

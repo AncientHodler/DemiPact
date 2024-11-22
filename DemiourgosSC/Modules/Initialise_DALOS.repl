@@ -478,15 +478,12 @@
         KC.ANCIENTHODLER
         "OURO-98c486052a51"
         KC.EMMA
-        50000.0
+        500000.0;;707975.0
         true
     )
 
-    (free.AUTOSTAKE.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 50000.0)
-    ;(free.OUROBOROS.DPTF|C_Transfer "AncientHodler" "OURO-98c486052a51" "AncientHodler" "AgeOfZalmoxis" 1000.0)
-    ;(format "GasID is {}" [(free.OUROBOROS.DALOS|UR_IgnisID)])
-    ;(format "OURO Burn Role on GasTanker is {}" [(free.OUROBOROS.DPTF-DPMF|UR_AccountRoleBurn "OURO-98c486052a51" "GasTanker" true)])
-    ;(format "OURO Mint Role on GasTanker is {}" [(free.OUROBOROS.DPTF|UR_AccountRoleMint "OURO-98c486052a51" "GasTanker")])
+    (free.AUTOSTAKE.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
+    ;(free.OUROBOROS.ATS|C_KickStart KC.BYTA KC.BYTA "Auryndex-98c486052a51" [358323.244088865949848032] 137554.0)
 
     (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
     (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)

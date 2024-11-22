@@ -223,7 +223,7 @@
     (defconst DALOS|PRICES "DalosPrices")
 
     ;;[G] GAS Constant Values
-    (defconst GAS_EXCEPTION [DALOS|SC_NAME LIQUID|SC_NAME])
+    (defconst GAS_EXCEPTION [OUROBOROS|SC_NAME DALOS|SC_NAME LIQUID|SC_NAME])
     (defconst GAS_QUARTER 0.25)     ;;Subunitary Amount earned by Smart DALOS Accounts via GAS Collection
     (defconst GAS_SMALLEST 1.00)
     (defconst GAS_SMALL 2.00)
@@ -494,7 +494,14 @@
                 (governor:guard (DALOS|UR_AccountGovernor account))
             )
             (enforce (!= sovereign account) "Incompatible Sovereign detected for Smart DALOS Account")
-            (enforce-guard (UTILS.GUARD|UEV_Any [account-guard sovereign-guard governor]))
+            (enforce-one
+                "Smart DALOS Account Permissions not satisfied !"
+                [
+                    (enforce-guard account-guard)
+                    (enforce-guard sovereign-guard)
+                    (enforce-guard governor)
+                ]
+            )
         )
     )
     ;;            Function Based Capabilities           [CF]
@@ -1339,9 +1346,11 @@
             ]
         )
         ;;Function
-        (DALOS|UEV_EnforceAccountType account false)
-        (update DALOS|AccountTable account
-            { "elite" : (UTILS.ATS|UCC_Elite amount)}
+        (if (= (DALOS|UR_AccountType account) false)
+            (update DALOS|AccountTable account
+                { "elite" : (UTILS.ATS|UCC_Elite amount)}
+            )
+            true
         )
     )
     (defun DALOS|X_IncrementNonce (client:string)

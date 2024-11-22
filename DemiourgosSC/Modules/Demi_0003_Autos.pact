@@ -57,6 +57,10 @@
         @doc "Usage: update Resident and|or Unbonding Values for RT of any ATS-Pair"
         true
     )
+    (defcap ATS|UPDATE_ROU_PUR ()
+        @doc "Usage: pure update Resident and|or Unbonding Values for RT of any ATS-Pair"
+        true
+    )
     (defcap ATS|INCREMENT-LOCKS ()
         @doc "Capability required to increment ATS lock amounts: <unlocks>"
         true
@@ -180,7 +184,19 @@
 
     ;;Policies
 
-    (defun BASIS|DefinePolicies ()
+    (defun ATS|A_AddPolicy (policy-name:string policy-guard:guard)
+        (with-capability (AUTOS-ADMIN)
+            (write ATS|PoliciesTable policy-name
+                {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun ATS|C_ReadPolicy:guard (policy-name:string)
+        @doc "Reads the guard of a stored policy"
+        (at "policy" (read ATS|PoliciesTable policy-name ["policy"]))
+    )
+
+    (defun ATS|DefinePolicies ()
         @doc "Add the Policy that allows running external Functions from this Module"                
         (DALOS.DALOS|A_AddPolicy     ;DALOS|DALOS
             "AUTOSTAKE|IncrementDalosNonce"
@@ -246,14 +262,19 @@
 
     ;;Modules Governor
     (defcap ATS|GOV ()
-        @doc "Autostake Module Governor Capability for its Smart DALOS Account"
+        @doc "Autostake Governor Capability for local Handling"
         true
     )
     (defun ATS|SetGovernor (patron:string)
         (DALOS.DALOS|C_RotateGovernor
             patron
             ATS|SC_NAME
-            (create-capability-guard (ATS|GOV))
+            (UTILS.GUARD|UEV_Any
+                [
+                    (create-capability-guard (ATS|GOV))
+                    (ATS|C_ReadPolicy "OUROBOROS|RemoteAutostakeGovernor")
+                ]
+            )
         )
     )
     (defcap VST|GOV ()
@@ -275,6 +296,10 @@
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
 ;;  2]SCHEMAS Definitions
     ;;[A] ATS Schemas
+    (defschema ATS|PolicySchema
+        @doc "Schema that stores external policies, that are able to operate within this module"
+        policy:guard
+    )
     (defschema ATS|PropertiesSchema
         owner-konto:string
         can-change-owner:bool
@@ -337,6 +362,7 @@
     )
 ;;  3]TABLES Definitions
     ;;[A] ATS Tables
+    (deftable ATS|PoliciesTable:{ATS|PolicySchema})
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
     ;;
@@ -1227,12 +1253,23 @@
         \ according to the <atspair> <c-positions> and <c-elite-mode> parameters \
         \ Existing entries are left as they are."
         (ATS|UEV_id atspair)
-        (enforce-one
-            "Keyset not valid for normalizing ATS|Ledger Account Operations"
-            [
-                (enforce-guard DALOS.G_DALOS)
-                (enforce-guard (create-user-guard (DALOS.DALOS|CAP_EnforceAccountOwnership account)))
-            ]
+        (let*
+            (
+                (admin:guard DALOS.G_DALOS)
+                (account-g:guard (DALOS|UR_AccountGuard account))
+                (sov:string (DALOS|UR_AccountSovereign account))
+                (sov-g:guard (DALOS|UR_AccountGuard sov))
+                (gov-g:guard (DALOS|UR_AccountGovernor account))
+            )
+            (enforce-one
+                "Invalid permission for normalizing ATS|Ledger Account Operations"
+                [
+                    (enforce-guard admin)
+                    (enforce-guard account-g)
+                    (enforce-guard sov-g)
+                    (enforce-guard gov-g)
+                ]
+            )
         )
     )
     (defcap ATS|HOT_RECOVERY (recoverer:string atspair:string ra:decimal)
@@ -1948,11 +1985,16 @@
         \ The Cull Time depends on ATS-Pair parameters, and DALOS Elite Account Tier"
         (let*
             (
-                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor account))
                 (major:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
-                (mtier:integer (* minor major))
+                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor account))
+                (position:integer 
+                    (if (= major 0)
+                        0
+                        (+ (* (- major 1) 7) minor)
+                    )
+                )
                 (crd:[integer] (ATS|UR_ColdRecoveryDuration atspair))
-                (h:integer (at mtier crd))
+                (h:integer (at position crd))
                 (present-time:time (at "block-time" (chain-data)))
             )
             (add-time present-time (hours h))
@@ -2587,60 +2629,43 @@
                     (usable-position:integer (ATS|UC_WhichPosition atspair ra recoverer))
                     (fee-promile:decimal (ATS|UC_ColdRecoveryFee atspair ra usable-position))
                     (c-rbt-fee-split:[decimal] (UTILS.ATS|UC_PromilleSplit fee-promile ra c-rbt-precision))
+
                     (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
                     (cull-time:time (ATS|UC_CullColdRecoveryTime atspair recoverer))
 
                     ;;for false
-                    (standard-split:[decimal] (ATS|UC_RTSplitAmounts atspair ra))
-                    (rt-precision-lst:[integer] (ATS|UR_RtPrecisions atspair))
-                    (negative-c-fr:[[decimal]] (UTILS.ATS|UC_ListPromileSplit fee-promile standard-split rt-precision-lst))
+                    (negative-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 1 c-rbt-fee-split)))    ;;feeul
 
                     ;;for true
-                    (positive-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))
-
+                    (positive-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))    ;;remainderu
                 )
             ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
                 (DPTF|CM_Transfer patron c-rbt recoverer ATS|SC_NAME ra)
             ;;2]ATS|SC_NAME burns c-rbt and handles c-fr
                 (BASIS.DPTF|C_Burn patron c-rbt ATS|SC_NAME ra)
             ;;3]ATS|Pairs is updated with the proper information (unbonding RTs), while burning any fee RTs if needed
-                (if c-fr
+                (map
+                    (lambda
+                        (index:integer)
+                        (ATS|X_UpdateRoU atspair (at index rt-lst) false true (at index positive-c-fr))
+                        (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index positive-c-fr))
+                    )
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
+                (if (not c-fr)
                     (map
                         (lambda
                             (index:integer)
-                            (ATS|X_UpdateRoU atspair (at index rt-lst) false true (at index positive-c-fr))
-                            (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index positive-c-fr))
+                            (BASIS.DPTF|C_Burn patron (at index rt-lst) ATS|SC_NAME (at index negative-c-fr))
                         )
                         (enumerate 0 (- (length rt-lst) 1))
                     )
-                    (with-capability (COMPOSE)
-                        (map
-                            (lambda
-                                (index:integer)
-                                (ATS|X_UpdateRoU atspair (at index rt-lst) false true (at index (at 0 negative-c-fr)))
-                                (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index (at 0 negative-c-fr)))
-                            )
-                            (enumerate 0 (- (length rt-lst) 1))
-                        )
-                        (map
-                            (lambda
-                                (index:integer)
-                                (BASIS.DPTF|C_Burn patron (at index rt-lst) ATS|SC_NAME (at index (at 1 negative-c-fr)))
-                            )
-                            (enumerate 0 (- (length rt-lst) 1))
-                        )
-                    )
+                    true
                 )
             ;;4]ATS|Ledger is updated with the proper information
-                (if c-fr
-                    (ATS|X_StoreUnstakeObject atspair recoverer usable-position 
-                        { "reward-tokens"   : positive-c-fr 
-                        , "cull-time"       : cull-time}
-                    )
-                    (ATS|X_StoreUnstakeObject atspair recoverer usable-position 
-                        { "reward-tokens"   : (at 0 negative-c-fr) 
-                        , "cull-time"       : cull-time}
-                    )
+                (ATS|X_StoreUnstakeObject atspair recoverer usable-position 
+                    { "reward-tokens"   : positive-c-fr 
+                    , "cull-time"       : cull-time}
                 )
             )
             ;;5]At last, a Normalisation takes place for the recoverer
@@ -2907,8 +2932,8 @@
             ,"h-decay"                              : 1
             ,"h-fr"                                 : true
             ;; Activation Toggles
-            ,"cold-recovery"                 : false
-            ,"hot-recovery"                  : false
+            ,"cold-recovery"                        : false
+            ,"hot-recovery"                         : false
             }
         )
         (BASIS.DPTF-DPMF|C_DeployAccount reward-token account true)
@@ -2943,7 +2968,19 @@
         )
     )
     (defun ATS|X_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
-        (require-capability (ATS|UPDATE_ROU))
+        (enforce-one
+            "Update Resident and/or Amounts in the ATS-Pair not allowed"
+            [
+                (enforce-guard (create-capability-guard (ATS|UPDATE_ROU)))
+                (enforce-guard (ATS|C_ReadPolicy "OUROBOROS|UpdateROU"))
+            ]
+        )
+        (with-capability (ATS|UPDATE_ROU_PUR)
+            (ATS|XP_UpdateRoU atspair reward-token rou direction amount)
+        )
+    )
+    (defun ATS|XP_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
+        (require-capability (ATS|UPDATE_ROU_PUR))
         (let*
             (
                 (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
@@ -3288,6 +3325,8 @@
         )
     )
 )
+;;Policies Table
+(create-table ATS|PoliciesTable)
 ;;[A] ATS Tables
 (create-table ATS|Pairs)
 (create-table ATS|Ledger)

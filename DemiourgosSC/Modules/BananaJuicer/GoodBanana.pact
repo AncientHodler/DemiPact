@@ -37,12 +37,12 @@
     (defconst BANANA|DEMIURGOI BANANA|US_KEY)
 
     ;;Module Accounts Information
-    ;;      STANDARD DALOS Account - The user Account
+    ;;      STANDARD DALOS Account - The Aser Account
     (defconst BANANA|US_KEY "free.Banana_Master-Keyset")
     (defconst BANANA|US_NAME "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
     (defconst BANANA|US_KDA-NAME "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a")
 
-    ;;      SMART DALOS Account - The automatic Account
+    ;;      SMART DALOS Account - The Automatic Account
     (defconst BANANA|SC_KEY "free.Banana_Juicer-Keyset")
     (defconst BANANA|SC_NAME "Σ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
     ;(defconst BANANA|SC_KDA-NAME "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697")
