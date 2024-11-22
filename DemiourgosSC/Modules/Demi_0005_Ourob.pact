@@ -129,19 +129,19 @@
     ;;
     ;;            BASIS+AUTOSTAKE   Submodule
     ;;
-    ;;            CAPABILITIES      <0>
-    ;;            FUNCTIONS         [15]
+    ;;            CAPABILITIES      <2>
+    ;;            FUNCTIONS         [17]
     ;;========[D] RESTRICTIONS=================================================;;
     ;;            Capabilities FUNCTIONS                [CAP]
     ;;            Function Based CAPABILITIES           [CF](have this tag)
     ;;        [3] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;            Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;        <2> Composed CAPABILITIES                 [CC](dont have this tag)
     ;;========[D] DATA FUNCTIONS===============================================;;
     ;;        [1] Data Read FUNCTIONS                   [UR]
     ;;        [1] Data Read and Computation FUNCTIONS   [URC] and [UC]
     ;;        [2] Data Creation|Composition FUNCTIONS   [UCC]
     ;;            Administrative Usage FUNCTIONS        [A]
-    ;;        [4] Client Usage FUNCTIONS                [C]
+    ;;        [6] Client Usage FUNCTIONS                [C]
     ;;        [4] Auxiliary Usage FUNCTIONS             [X]
     ;;=========================================================================;;
     ;;
@@ -210,7 +210,21 @@
             )
         )
     )
-    ;;        <1> Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;        <2> Composed CAPABILITIES                 [CC](dont have this tag)
+    (defcap ATS|REDEEM (redeemer:string id:string)
+        @doc "Required for redeeming a Hot RBT"
+        (compose-capability (P|ATS|REMOTE-GOV))
+
+        (BASIS.DPTF-DPMF|UEV_id id false)
+        (DALOS.DALOS|UEV_EnforceAccountType redeemer false)
+        (let
+            (
+                (iz-rbt:bool (BASIS.ATS|UC_IzRBT id false))
+                
+            )
+            (enforce iz-rbt "Invalid Hot-RBT")
+        )
+    )
     (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
         @doc "Capability needed to perform a kickstart for an ATS-Pair"
         (let*
@@ -311,7 +325,7 @@
         )
     )
     ;;     (NONE) Administrative Usage FUNCTIONS        [A]
-    ;;        [9] Client Usage FUNCTIONS                [C]
+    ;;        [6] Client Usage FUNCTIONS                [C]
     (defun ATS|C_KickStart (patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
         @doc "Kickstarts <atspair> with a specific amount of Reward-Tokens, \
         \ while asking in retunr for a specific amount of Reward-Bearing-Tokens \
@@ -336,20 +350,6 @@
             ;;3]AUTOSTAKE.ATS|SC-NAME transfers the RBT Amount to the Kickstarter
                 (AUTOSTAKE.DPTF|CM_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount)
             )
-        )
-    )
-    (defcap ATS|REDEEM (redeemer:string id:string)
-        @doc "Required for redeeming a Hot RBT"
-        (compose-capability (P|ATS|REMOTE-GOV))
-
-        (BASIS.DPTF-DPMF|UEV_id id false)
-        (DALOS.DALOS|UEV_EnforceAccountType redeemer false)
-        (let
-            (
-                (iz-rbt:bool (BASIS.ATS|UC_IzRBT id false))
-                
-            )
-            (enforce iz-rbt "Invalid Hot-RBT")
         )
     )
     (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)
