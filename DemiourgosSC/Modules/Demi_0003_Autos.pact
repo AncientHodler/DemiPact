@@ -301,32 +301,34 @@
         policy:guard
     )
     (defschema ATS|PropertiesSchema
-        owner-konto:string
-        can-change-owner:bool
-        parameter-lock:bool
+        owner-konto:string                              ;;Flexible
+        can-change-owner:bool                           ;;Flexible
+        parameter-lock:bool                             ;;PROTECTION
         unlocks:integer
         ;;Index
-        pair-index-name:string
-        index-decimals:integer
+        pair-index-name:string                          ;;IMUTABLE
+        index-decimals:integer                          ;;IMUTABLE
+        syphon:decimal                                  ;;Flexible
+        syphoning:bool                                  ;;Flexible [PROTECTED] x
         ;;Reward Tokens
-        reward-tokens:[object{ATS|RewardTokenSchema}]
+        reward-tokens:[object{ATS|RewardTokenSchema}]   ;;Semi-Flexible (1st RT is immutable, rest are flexible) [PROTECTED] x
         ;;Cold Reward Bearing Token Info
-        c-rbt:string
-        c-nfr:bool
-        c-positions:integer
-        c-limits:[decimal]
-        c-array:[[decimal]]
-        c-fr:bool
-        c-duration:[integer]
-        c-elite-mode:bool
+        c-rbt:string                                    ;;IMUTABLE
+        c-nfr:bool                                      ;;Flexible [PROTECTED] x
+        c-positions:integer                             ;;Flexible [PROTECTED] x
+        c-limits:[decimal]                              ;;Flexible [PROTECTED] x
+        c-array:[[decimal]]                             ;;Flexible [PROTECTED] x
+        c-fr:bool                                       ;;Flexible [PROTECTED] x
+        c-duration:[integer]                            ;;Flexible [PROTECTED] x
+        c-elite-mode:bool                               ;;Flexible [PROTECTED] x
         ;;Hot Reward Bearing Token Info
-        h-rbt:string
-        h-promile:decimal
-        h-decay:integer
-        h-fr:bool
+        h-rbt:string                                    ;;Once Set, is IMMUTABLE [PROTECTED] 
+        h-promile:decimal                               ;;Flexible [PROTECTED] x
+        h-decay:integer                                 ;;Flexible [PROTECTED] x
+        h-fr:bool                                       ;;Flexible [PROTECTED] x
         ;; Activation Toggles
-        cold-recovery:bool
-        hot-recovery:bool
+        cold-recovery:bool                              ;;Flexible
+        hot-recovery:bool                               ;;Flexible
     )
     (defschema ATS|RewardTokenSchema
         token:string
@@ -1160,6 +1162,15 @@
             (enforce (= x state) (format "Parameter-lock for ATS Pair {} must be set to {} for this operation" [atspair state]))
         )
     )
+    (defun ATS|UEV_SyphoningState (atspair:string state:bool)
+        @doc "Enforces ATS Pair <syphoning> to <state>"
+        (let
+            (
+                (x:bool (ATS|UR_Syphoning atspair))
+            )
+            (enforce (= x state) (format "Syphoning for ATS Pair {} must be set to {} for this operation" [atspair state]))
+        )
+    )
     (defun ATS|UEV_FeeState (atspair:string state:bool fee-switch:integer)
         @doc "Enforcers one of the 4 ATS fee bool parameters to <state> \
             \ The parameters are: \
@@ -1336,6 +1347,36 @@
             )
         )
     )
+    (defcap ATS|SYPHON (atspair:string syphon:decimal)
+        @doc "Cap required for setting the Syphon value"
+        (compose-capability (ATS|X_SYPHON atspair syphon))
+        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+    )
+    (defcap ATS|X_SYPHON (atspair:string syphon:decimal)
+        @doc "Core cap required for setting the Syphon value"
+        (enforce (>= syphon 0.1) "Syphon cannot be set lower than 0.1")
+        (ATS|CAP_Owner atspair)
+        (let
+            (
+                (precision:integer (ATS|UR_IndexDecimals atspair))
+            )
+            (enforce
+                (= (floor syphon precision) syphon)
+                (format "The syphon value of {} is not a valid Index Value for the {} ATS Pair" [syphon atspair])
+            )
+        )
+    )
+    (defcap ATS|SYPHONING (atspair:string toggle:bool)
+        @doc "Cap required for toggling syphoning"
+        (compose-capability (ATS|X_SYPHONING atspair toggle))
+        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+    )
+    (defcap ATS|X_SYPHONING (atspair:string toggle:bool)
+        @doc "Core cap required for toggling syphoning"
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_SyphoningState atspair (not toggle))
+        (ATS|UEV_ParameterLockState atspair false)
+    )
     (defcap ATS|TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
         @doc "Req for updating <c-nfr>, <c-fr>, <h-fer>"
         (compose-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
@@ -1346,6 +1387,7 @@
         (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
         (ATS|CAP_Owner atspair)
         (ATS|UEV_FeeState atspair (not toggle) fee-switch)
+        (ATS|UEV_ParameterLockState atspair false)
         (if (or (= fee-switch 0)(= fee-switch 1))
             (ATS|UEV_UpdateColdOrHot atspair true)
             (ATS|UEV_UpdateColdOrHot atspair false)
@@ -1360,6 +1402,7 @@
         @doc "Core cap req for setting Cold Recovery Duration"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
+        (ATS|UEV_ParameterLockState atspair false)
         (if (= soft-or-hard true)
             (enforce 
                 (and 
@@ -1383,6 +1426,7 @@
         @doc "Core cap req for setting Cold Recovery Fee"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
+        (ATS|UEV_ParameterLockState atspair false)
         ;;<fee-positions> validation
         (enforce 
             (or 
@@ -1472,6 +1516,7 @@
         @doc "Core cap req for setting Cold Recovery Fee"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair false)
+        (ATS|UEV_ParameterLockState atspair false)
         (UTILS.DALOS|UEV_Fee promile)
         (enforce 
             (and
@@ -1491,6 +1536,7 @@
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|UEV_EliteState atspair (not toggle))
+        (ATS|UEV_ParameterLockState atspair false)
         (if (= toggle true)
             (let
                 (
@@ -1547,6 +1593,7 @@
         (BASIS.DPTF-DPMF|CAP_Owner reward-token token-type)
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdAndHot atspair)
+        (ATS|UEV_ParameterLockState atspair false)
         (if (= token-type true)
             (compose-capability (ATS|ADD_SECONDARY_RT atspair reward-token))
             (compose-capability (ATS|ADD_SECONDARY_RBT atspair reward-token))
@@ -1573,6 +1620,7 @@
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdAndHot atspair)
         (ATS|UEV_RewardTokenExistance atspair reward-token true)
+        (ATS|UEV_ParameterLockState atspair false)
         (compose-capability (P|ATS|UPDATE_RT))
     )
     (defcap ATS|FUEL (atspair:string reward-token:string)
@@ -1617,6 +1665,12 @@
     )
     (defun ATS|UR_IndexDecimals:integer (atspair:string)
         (at "index-decimals" (read ATS|Pairs atspair ["index-decimals"]))
+    )
+    (defun ATS|UR_Syphon:decimal (atspair:string)
+        (at "syphon" (read ATS|Pairs atspair ["syphon"]))
+    )
+    (defun ATS|UR_Syphoning:bool (atspair:string)
+        (at "syphoning" (read ATS|Pairs atspair ["syphoning"]))
     )
     (defun ATS|UR_RewardTokens:[object{ATS|RewardTokenSchema}] (atspair:string)
         (at "reward-tokens" (read ATS|Pairs atspair ["reward-tokens"]))
@@ -1736,6 +1790,30 @@
         )
     )
     ;;       [xx] Data Read and Computation FUNCTIONS   [URC] and [UC]
+    (defun ATS|URC_MaxSyphon:[decimal] (atspair:string)
+        @doc "Computes the maximum amount of Reward Tokens that can be syphoned"
+        (let
+            (
+                (index:decimal (ATS|UC_Index atspair))
+                (syphon:decimal (ATS|UR_Syphon atspair))
+                (resident-rt-amounts:[decimal] (ATS|UR_RoUAmountList atspair true))
+                (precisions:[integer] (ATS|UR_RtPrecisions atspair))
+            )
+            (if (<= index syphon)
+                (make-list (length precisions) 0.0)
+                (fold
+                    (lambda
+                        (acc:[decimal] idx:integer)
+                        (UTILS.LIST|UC_AppendLast acc 
+                            (floor (/ (* (- index syphon) (at idx resident-rt-amounts)) index) (at idx precisions))
+                        )
+                    )
+                    []
+                    (enumerate 0 (- (length precisions) 1))
+                )
+            )
+        )
+    )
     (defun ATS|UC_IzCullable:bool (input:object{ATS|Unstake})
         @doc "Computes if Unstake Object is cullable"
         (let*
@@ -2318,6 +2396,28 @@
             )
         )
     )
+    (defun ATS|C_UpdateSyphon (patron:string atspair:string syphon:decimal)
+        @doc "Updates the Syphon threshold"
+        (with-capability (ATS|SYPHON atspair syphon)
+            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
+                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                true
+            )
+            (ATS|X_UpdateSyphon atspair syphon)
+            (DALOS.DALOS|X_IncrementNonce patron)
+        )
+    )
+    (defun ATS|C_ToggleSyphoning (patron:string atspair:string toggle:bool)
+        @doc "Toggles syphoning, which allows or disallows syphoning mechanic"
+        (with-capability (ATS|SYPHONING atspair toggle)
+            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
+                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                true
+            )
+            (ATS|X_ToggleSyphoning atspair toggle)
+            (DALOS.DALOS|X_IncrementNonce patron)
+        )
+    )
     (defun ATS|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
         @doc "Toggles ATS Boolean Fee Parameters to <toggle> : \
         \ fee-switch = 0 : cold-native-fee-redirection (c-nfr) \
@@ -2833,6 +2933,18 @@
             )
         )
     )
+    (defun ATS|X_UpdateSyphon (atspair:string syphon:decimal)
+        (require-capability (ATS|X_SYPHON))
+        (update ATS|Pairs atspair
+            {"syphon"                           : syphon}
+        )
+    )
+    (defun ATS|X_ToggleSyphoning (atspair:string toggle:bool)
+        (require-capability (ATS|X_SYPHONING))
+        (update ATS|Pairs atspair
+            {"syphoning"                        : toggle}
+        )
+    )
     (defun ATS|X_ToggleFeeSettings (atspair:string toggle:bool fee-switch:integer)
         (require-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
         (if (= fee-switch 0)
@@ -2926,6 +3038,8 @@
             ;;Index
             ,"pair-index-name"                      : atspair
             ,"index-decimals"                       : index-decimals
+            ,"syphon"                               : 1.0
+            ,"syphoning"                            : false
             ;;Reward Tokens
             ,"reward-tokens"                        : [(ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr)]
             ;;Cold Reward Bearing Token Info
