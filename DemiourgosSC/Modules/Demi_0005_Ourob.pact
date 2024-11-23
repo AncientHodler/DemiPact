@@ -214,6 +214,7 @@
     (defcap ATS|REDEEM (redeemer:string id:string)
         @doc "Required for redeeming a Hot RBT"
         (compose-capability (P|ATS|REMOTE-GOV))
+        (compose-capability (P|ATS|UPDATE_ROU))
 
         (BASIS.DPTF-DPMF|UEV_id id false)
         (DALOS.DALOS|UEV_EnforceAccountType redeemer false)
@@ -224,9 +225,13 @@
             )
             (enforce iz-rbt "Invalid Hot-RBT")
         )
+        
     )
     (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
         @doc "Capability needed to perform a kickstart for an ATS-Pair"
+        (compose-capability (P|ATS|REMOTE-GOV))
+        (compose-capability (P|ATS|UPDATE_ROU))
+        
         (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
@@ -241,8 +246,6 @@
             (enforce (> rbt-request-amount 0.0) "RBT Request Amount must be greater than zero!")
             (DALOS.DALOS|CAP_EnforceAccountOwnership owner)
             (DALOS.DALOS|UEV_EnforceAccountType kickstarter false)
-            (compose-capability (P|ATS|REMOTE-GOV))
-            (compose-capability (P|ATS|UPDATE_ROU))
         )
     )
     ;;========[D] DATA FUNCTIONS===============================================;;
@@ -359,8 +362,9 @@
                 (
                     (precision:integer (BASIS.DPTF-DPMF|UR_Decimals id false))
                     (current-nonce-balance:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce redeemer))
-                    (meta-data (BASIS.DPMF|UR_AccountBatchMetaData id redeemer nonce))
-                    (birth-date:time (at "mint-time" meta-data))
+                    (meta-data (BASIS.DPMF|UR_AccountBatchMetaData id nonce redeemer))
+
+                    (birth-date:time (at "mint-time" (at 0 meta-data)))
                     (present-time:time (at "block-time" (chain-data)))
                     (elapsed-time:decimal (diff-time present-time birth-date))
 
@@ -370,12 +374,12 @@
                     (h-decay:integer (AUTOSTAKE.ATS|UR_HotRecoveryDecayPeriod atspair))
                     (h-fr:bool (AUTOSTAKE.ATS|UR_HotRecoveryFeeRedirection atspair))
 
-                    (total-time:decimal (* 86400 h-decay))
+                    (total-time:decimal (* 86400.0 (dec h-decay)))
                     (end-time:time (add-time birth-date (hours (* 24 h-decay))))
                     (earned-rbt:decimal 
-                        (if (= elapsed-time end-time)
+                        (if (>= elapsed-time total-time)
                             current-nonce-balance
-                            (floor (* (* (/ elapsed-time total-time) (/ h-promile 1000.0)) current-nonce-balance) precision)
+                            (floor (* current-nonce-balance (/ (- 1000.0 (* h-promile (- 1.0 (/ elapsed-time total-time)))) 1000.0)) precision)
                         )
                     )
 
@@ -384,11 +388,18 @@
                     (fee-rts:[decimal] (zip (lambda (x:decimal y:decimal) (- x y)) total-rts earned-rts))
                 )
             ;;1]Redeemer sends the whole Hot-Rbt to ATS|SC_NAME
-                (BASIS.DPMF|CM_Transfer patron id redeemer ATS|SC_NAME current-nonce-balance)
+                (BASIS.DPMF|CM_Transfer patron id nonce redeemer ATS|SC_NAME current-nonce-balance)
             ;;2]ATS|SC_NAME burns the whole Hot-RBT
                 (BASIS.DPMF|C_Burn patron id nonce ATS|SC_NAME current-nonce-balance)
-            ;;3]ATS|SC_NAME transfers the proper amount of RT(s) to the Redeemer
+            ;;3]ATS|SC_NAME transfers the proper amount of RT(s) to the Redeemer, and update RoU
                 (DPTF|C_MultiTransfer patron rt-lst ATS|SC_NAME redeemer earned-rts)
+                (map
+                    (lambda
+                        (index:integer)
+                        (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index earned-rts))
+                    )
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
             ;;4]And the Hot-FeeRediraction is accounted for
                 (if (and (not h-fr) (!= earned-rbt current-nonce-balance))
                     (map

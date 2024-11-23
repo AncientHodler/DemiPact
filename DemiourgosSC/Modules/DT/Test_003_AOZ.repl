@@ -39,9 +39,7 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
-        { "key": "PK_Byta", "caps": [] }
-        { "key": "PK_Emma", "caps": [] }
-        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
     ]
 )
 
@@ -62,7 +60,148 @@
     ]
 )
 
+(format "Reward Tokens for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RewardTokenList "PlebeicStrength-98c486052a51")])
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "PlebeicStrength is {};"
+    [
+        (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+(format "C-RBT for PlebeicStrength is {}" [(free.AUTOSTAKE.ATS|UR_ColdRewardBearingToken "PlebeicStrength-98c486052a51")])
+(format "PlebiumDenarius Supply is {}" [(free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
+(format "PlebeicStrength RBT-Supply is {}" [(free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")])
+
+        (free.AUTOSTAKE.ATS|C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
+        (free.AUTOSTAKE.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 40.0)
+        (free.AUTOSTAKE.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 80.0)
+
+(format "PlebeicStrength is {};"
+    [
+        (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+    ]
+)
+
+(format "Cold Recovery is {} and Hot Recovery is {} for PlebeicStrength-98c486052a51"
+    [
+        (free.AUTOSTAKE.ATS|UR_ToggleColdRecovery "PlebeicStrength-98c486052a51")
+        (free.AUTOSTAKE.ATS|UR_ToggleHotRecovery "PlebeicStrength-98c486052a51")
+    ]
+)
 
 (env-gas)
 (commit-tx)
 
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+        (print "BEFORE BLOCK===================================")
+        ;;AOZET RT Info
+        (format "AOZET has has {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+            ]
+        )
+        ;;AOZET RBT Info
+        (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+
+        ;;INDEX Info
+        (print "Plebeic Strength BEFORE HOT Recovery")
+        (format "PlebeicStrength is {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
+            [
+                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
+                (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
+            ]
+        )
+        (format "AUTOSTAKE has BEFORE REDEEM {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
+            [
+                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            ]
+        )
+        (print "BEFORE BLOCK===================================")
+        (print "")
+        (print "Function Block ++++++++++++++++++++++++++++++++")
+        ;;HOT-Recovery plus Redeem Block
+        (free.AUTOSTAKE.ATS|C_HotRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 100.0)
+
+                (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+                    [
+                        (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                        (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                        (at "block-time" (chain-data))
+                    ]
+                )
+
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+            "block-time": (time "2024-10-11T00:00:00Z")}
+        )
+        (free.OUROBOROS.ATS|C_Redeem KC.AOZT KC.AOZT "DDKOSON-98c486052a51" 1)
+        (print "Function Block ++++++++++++++++++++++++++++++++")
+        (print "")
+        (print "AFTER BLOCK====================================")
+        ;;AOZET RT Info
+        (format "AOZET has has {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+            ]
+        )
+        ;;AOZET RBT Info
+        (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+
+        ;;INDEX Info
+        (print "Plebeic Strength BEFORE HOT Recovery")
+        (format "PlebeicStrength is {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+        ]
+        )
+        (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
+            [
+                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
+                (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
+            ]
+        )
+        (format "AUTOSTAKE has AFTER REDEEM {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
+            [
+                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            ]
+        )
+        (print "AFTER BLOCK====================================")
+            
+
+(env-gas)
+(commit-tx)

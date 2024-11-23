@@ -617,7 +617,10 @@
         @doc "Core Capability required to burn a DPTF|DPMF Token"
         (DPTF-DPMF|UEV_Amount id amount token-type)
         (DPTF-DPMF|UEV_AccountBurnState id client true token-type)
-        (compose-capability (DPTF|DEBIT))
+        (if token-type
+            (compose-capability (DPTF|DEBIT))
+            (compose-capability (DPMF|DEBIT))
+        )
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     (defcap DPTF-DPMF|CONTROL (id:string token-type:bool)
@@ -712,7 +715,10 @@
         @doc "Core Capability required to Wipe a DPTF|DPMF Token Balance from a DPTF|DPMF Account"
         (DPTF-DPMF|UEV_CanWipeON id token-type)
         (DPTF-DPMF|UEV_AccountFreezeState id account-to-be-wiped true token-type)
-        (compose-capability (DPTF|DEBIT))
+        (if token-type
+            (compose-capability (DPTF|DEBIT))
+            (compose-capability (DPMF|DEBIT))
+        )
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     ;;

@@ -1648,7 +1648,7 @@
     (defun ATS|UR_HotRewardBearingToken:string (atspair:string)
         (at "h-rbt" (read ATS|Pairs atspair ["h-rbt"]))
     )
-    (defun ATS|UR_HotRecoveryStartingFeePromile:integer (atspair:string)
+    (defun ATS|UR_HotRecoveryStartingFeePromile:decimal (atspair:string)
         (at "h-promile" (read ATS|Pairs atspair ["h-promile"]))
     )
     (defun ATS|UR_HotRecoveryDecayPeriod:integer (atspair:string)
@@ -2408,54 +2408,65 @@
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                 (c-rbt-fer:bool (BASIS.DPTF|UR_AccountRoleFeeExemption c-rbt ATS|SC_NAME))
                 (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
-                (burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn c-rbt ATS|SC_NAME true))
-                (mint-role:bool (BASIS.DPTF|UR_AccountRoleMint c-rbt ATS|SC_NAME))
+                
             )
-            ;;Exemption Roles for all defined Reward Tokens
+            ;;Exemption Roles for all defined Reward Tokens - applies in both cases
             (ATS|C_SetMassRole patron atspair false)
-            ;;Exemption Role for the c-rbt, if it is <false>
-            (if (not c-rbt-fer)
-                (DPTF|C_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
-                true
-            )
-            (if (= cold-or-hot true)
-                (if (= c-fr false)
-                    ;;Burn Roles for all  defined Reward-Tokens if c-fr is set to false
-                    (ATS|C_SetMassRole patron atspair true)
-                    (if (= burn-role false)
+            
+            (if cold-or-hot
+                (let
+                    (
+                        (c-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn c-rbt ATS|SC_NAME true))
+                        (c-rbt-mint-role:bool (BASIS.DPTF|UR_AccountRoleMint c-rbt ATS|SC_NAME))
+                    )
+                    ;;Exemption Role for the c-rbt, if it is <false>
+                    (if (not c-rbt-fer)
+                        (DPTF|C_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
+                        true
+                    )
+                    (if (not c-fr)
+                        ;;Burn Roles for all defined Reward-Tokens if c-fr is set to false
+                        (ATS|C_SetMassRole patron atspair true)
+                        true
+                    )
+                    (if (not c-rbt-burn-role)
                         ;;Burn Role for the C-RBT
                         (DPTF-DPMF|C_ToggleBurnRole patron c-rbt ATS|SC_NAME true true)
-                        (if (= mint-role false)
-                            ;;Mint Role for the C-RBT
-                            (DPTF|C_ToggleMintRole patron c-rbt ATS|SC_NAME true)
-                            true
-                        )
+                        true
+                    )
+                    (if (not c-rbt-mint-role)
+                        ;;Mint Role for the C-RBT
+                        (DPTF|C_ToggleMintRole patron c-rbt ATS|SC_NAME true)
+                        true
                     )
                 )
                 (let*
                     (
                         (h-rbt:string (ATS|UR_HotRewardBearingToken atspair))
                         (h-fr:bool (ATS|UR_HotRecoveryFeeRedirection atspair))
-                        (burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn h-rbt ATS|SC_NAME false))
-                        (create-role:bool (BASIS.DPMF|UR_AccountRoleCreate h-rbt ATS|SC_NAME))
-                        (add-q-role:bool (BASIS.DPMF|UR_AccountRoleNFTAQ h-rbt ATS|SC_NAME))
+                        (h-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn h-rbt ATS|SC_NAME false))
+                        (h-rbt-create-role:bool (BASIS.DPMF|UR_AccountRoleCreate h-rbt ATS|SC_NAME))
+                        (h-rbt-add-q-role:bool (BASIS.DPMF|UR_AccountRoleNFTAQ h-rbt ATS|SC_NAME))
                     )
-                    (if (= h-fr false)
+                    (if (not h-fr)
                         ;;Burn Roles for all defined Reward-Tokens if h-fr is set to false
                         (ATS|C_SetMassRole patron atspair true)
-                        (if (= burn-role false)
-                            ;;Burn Role for the H-RBT
-                            (DPTF-DPMF|C_ToggleBurnRole patron h-rbt ATS|SC_NAME true false)
-                            (if (= create-role false)
-                                ;;Create Role for the H-RBT
-                                (DPMF|C_MoveCreateRole patron h-rbt ATS|SC_NAME)
-                                (if (= add-q-role false)
-                                    ;;Add-Quantity Role for the H-RBT
-                                    (DPMF|C_ToggleAddQuantityRole patron h-rbt ATS|SC_NAME true)
-                                    true
-                                )
-                            )
-                        )
+                        true
+                    )
+                    (if (not h-rbt-burn-role)
+                        ;Burn Role for the H-RBT
+                        (DPTF-DPMF|C_ToggleBurnRole patron h-rbt ATS|SC_NAME true false)
+                        true
+                    )
+                    (if (not h-rbt-create-role)
+                        ;;Create Role for the H-RBT
+                        (DPMF|C_MoveCreateRole patron h-rbt ATS|SC_NAME)
+                        true
+                    )
+                    (if (not h-rbt-add-q-role)
+                        ;;Add-Quantity Role for the H-RBT
+                        (DPMF|C_ToggleAddQuantityRole patron h-rbt ATS|SC_NAME true)
+                        true
                     )
                 )
             )
@@ -2471,7 +2482,7 @@
                         (rt-br:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn reward-token ATS|SC_NAME true))
                         (rt-fer:bool (BASIS.DPTF|UR_AccountRoleFeeExemption reward-token ATS|SC_NAME))
                     )
-                    (if (and (= rt-br false) (= burn-or-exemption true) )
+                    (if (and (= rt-br false) burn-or-exemption)
                         (DPTF-DPMF|C_ToggleBurnRole patron reward-token ATS|SC_NAME true true)        
                         (if (and (= rt-fer false) (= burn-or-exemption false))
                             (DPTF|C_ToggleFeeExemptionRole patron reward-token ATS|SC_NAME true)
