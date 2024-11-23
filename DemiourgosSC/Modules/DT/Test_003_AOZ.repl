@@ -93,7 +93,7 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "Test Gas Compression")
+(begin-tx "Hot RBT and Redeem Test")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -202,6 +202,100 @@
         )
         (print "AFTER BLOCK====================================")
             
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Syphon Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(format "Plebeic Strength Setting Lock state is {}"
+    [
+        (free.AUTOSTAKE.ATS|UR_Lock "PlebeicStrength-98c486052a51")
+    ]
+)
+
+(free.AUTOSTAKE.ATS|C_UpdateSyphon KC.AOZT "PlebeicStrength-98c486052a51" 0.6)
+(free.AUTOSTAKE.ATS|C_ToggleSyphoning KC.AOZT "PlebeicStrength-98c486052a51" true)
+
+        ;;Emma before Syphon
+        (print "BEFORE Syphon  BLOCK===================================")
+        (format "Emma BEFORE SYPHON has has {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.EMMA true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.EMMA true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.EMMA true)
+            ]
+        )
+        ;;INDEX Info
+        (print "Plebeic Strength BEFORE SYPHON")
+        (format "PlebeicStrength is {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
+            [
+                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
+                (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
+            ]
+        )
+        (format "AUTOSTAKE has BEFORE SYPHON {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
+            [
+                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            ]
+        )
+        (print "BEFORE Syphon BLOCK===================================")
+        (print "")
+
+        ;;Syphon
+        (print "AFTER Syphon  BLOCK====================================")
+        (format "Max Syphon is {}"
+            [
+                (free.AUTOSTAKE.ATS|URC_MaxSyphon "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (free.OUROBOROS.ATS|C_Syphon KC.AOZT KC.EMMA "PlebeicStrength-98c486052a51" [125.0 46.25 76.25])
+
+        ;;Emma after Syphon
+        (format "Emma AFTER SYPHON has {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.EMMA true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.EMMA true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.EMMA true)
+            ]
+        )
+        ;;INDEX Info
+        (print "Plebeic Strength AFTER SYPHON")
+        (format "PlebeicStrength is {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
+            [
+                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
+                (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
+            ]
+        )
+        (format "AUTOSTAKE has AFTER SYPHON {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
+            [
+                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            ]
+        )
+        (print "AFTER Syphon BLOCK====================================")
+        (print "")
 
 (env-gas)
 (commit-tx)

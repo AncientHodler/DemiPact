@@ -1792,24 +1792,43 @@
     ;;       [xx] Data Read and Computation FUNCTIONS   [URC] and [UC]
     (defun ATS|URC_MaxSyphon:[decimal] (atspair:string)
         @doc "Computes the maximum amount of Reward Tokens that can be syphoned"
-        (let
+        (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
                 (syphon:decimal (ATS|UR_Syphon atspair))
                 (resident-rt-amounts:[decimal] (ATS|UR_RoUAmountList atspair true))
                 (precisions:[integer] (ATS|UR_RtPrecisions atspair))
+                (max-precision:integer (UTILS|UC_MaxInteger precisions))
+                (max-pp:integer (at 0 (LIST|UC_Search precisions max-precision)))
+                (pair-rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
             )
             (if (<= index syphon)
                 (make-list (length precisions) 0.0)
-                (fold
-                    (lambda
-                        (acc:[decimal] idx:integer)
-                        (UTILS.LIST|UC_AppendLast acc 
-                            (floor (/ (* (- index syphon) (at idx resident-rt-amounts)) index) (at idx precisions))
+                (let*
+                    (
+                        (index-diff:decimal (- index syphon))
+                        (rbt:string (ATS|UR_ColdRewardBearingToken atspair))
+                        (rbt-precision:integer (BASIS.DPTF-DPMF|UR_Decimals rbt true))
+                        (max-sum:decimal (floor (* pair-rbt-supply index-diff) rbt-precision))
+                        (prelim:[decimal]
+                            (fold
+                                (lambda
+                                    (acc:[decimal] idx:integer)
+                                    (UTILS.LIST|UC_AppendLast acc 
+                                        (floor (/ (* (- index syphon) (at idx resident-rt-amounts)) index) (at idx precisions))
+                                    )
+                                )
+                                []
+                                (enumerate 0 (- (length precisions) 1))
+                            )
                         )
+                        (prelim-sum:decimal (fold (+) 0.0 prelim))
+                        (diff:decimal (- max-sum prelim-sum))
                     )
-                    []
-                    (enumerate 0 (- (length precisions) 1))
+                    (if (= diff 0.0)
+                        prelim
+                        (UTILS.LIST|UC_ReplaceAt prelim max-pp (+ diff (at max-pp prelim)))
+                    )
                 )
             )
         )
@@ -2934,13 +2953,13 @@
         )
     )
     (defun ATS|X_UpdateSyphon (atspair:string syphon:decimal)
-        (require-capability (ATS|X_SYPHON))
+        (require-capability (ATS|X_SYPHON atspair syphon))
         (update ATS|Pairs atspair
             {"syphon"                           : syphon}
         )
     )
     (defun ATS|X_ToggleSyphoning (atspair:string toggle:bool)
-        (require-capability (ATS|X_SYPHONING))
+        (require-capability (ATS|X_SYPHONING atspair toggle))
         (update ATS|Pairs atspair
             {"syphoning"                        : toggle}
         )

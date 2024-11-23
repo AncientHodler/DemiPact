@@ -225,13 +225,45 @@
             )
             (enforce iz-rbt "Invalid Hot-RBT")
         )
-        
+    )
+    (defcap ATS|SYPHON (atspair:string syphon-amounts:[decimal])
+        @doc "Capability required to syphon RTs from an ATS-Pair"
+        (compose-capability (P|ATS|REMOTE-GOV))
+        (compose-capability (P|ATS|UPDATE_ROU))
+
+        (AUTOSTAKE.ATS|CAP_Owner atspair)
+        (AUTOSTAKE.ATS|UEV_SyphoningState atspair true)
+        (let*
+            (
+                (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                (l0:integer (length syphon-amounts))
+                (l1:integer (length rt-lst))
+                (max-syphon:[decimal] (AUTOSTAKE.ATS|URC_MaxSyphon atspair))
+                (max-syphon-sum:decimal (fold (+) 0.0 max-syphon))
+                (input-syphon-sum:decimal (fold (+) 0.0 syphon-amounts))
+
+                (resident-amounts:[decimal] (AUTOSTAKE.ATS|UR_RoUAmountList atspair true))
+                (supply-check:[bool] (zip (lambda (x:decimal y:decimal) (<= x y)) syphon-amounts resident-amounts))
+                (tr-nr:integer (length (LIST|UC_Search supply-check true)))
+            )
+            (enforce (= l0 l1) "Invalid Amounts of Syphon Values")
+            (enforce (> input-syphon-sum 0.0) "Invalid Syphon Amounts")
+            (map
+                (lambda
+                    (sv:decimal)
+                    (enforce (>= sv 0.0) "Unallowed Negative Syphon Values Detected !")
+                )
+                syphon-amounts
+            )
+            (enforce (<= input-syphon-sum max-syphon-sum) "Syphon Amounts surpassing pairs Syphon-Index")
+            (enforce (= l0 tr-nr) "Invalid syphon amounts surpassing present resident Amounts")
+        )
     )
     (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
         @doc "Capability needed to perform a kickstart for an ATS-Pair"
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
-        
+
         (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
@@ -355,6 +387,31 @@
             )
         )
     )
+    (defun ATS|C_Syphon (patron:string syphon-target:string atspair:string syphon-amounts:[decimal])
+        @doc "Syphons Reward Tokens from <atspair> to <syphon-target>, reducing its Index"
+        (with-capability (ATS|SYPHON atspair syphon-amounts)
+            (let
+                (
+                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                )
+            ;;1]Syphons RT Amounts and Updates RoU Table
+                ;(DPTF|C_MultiTransfer patron rt-lst AUTOSTAKE.ATS|SC_NAME syphon-target syphon-amounts)
+                (map
+                    (lambda
+                        (index:integer)
+                        (if (> (at index syphon-amounts) 0.0)
+                            (with-capability (COMPOSE)
+                                (DPTF|C_Transfer patron (at index rt-lst) AUTOSTAKE.ATS|SC_NAME syphon-target (at index syphon-amounts))
+                                (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index syphon-amounts))
+                            )
+                            true
+                        )
+                    )
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
+            )
+        )
+    )
     (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)
         @doc "Redeems a Hot RBT"
         (with-capability (ATS|REDEEM redeemer id)
@@ -388,11 +445,11 @@
                     (fee-rts:[decimal] (zip (lambda (x:decimal y:decimal) (- x y)) total-rts earned-rts))
                 )
             ;;1]Redeemer sends the whole Hot-Rbt to ATS|SC_NAME
-                (BASIS.DPMF|CM_Transfer patron id nonce redeemer ATS|SC_NAME current-nonce-balance)
+                (BASIS.DPMF|CM_Transfer patron id nonce redeemer AUTOSTAKE.ATS|SC_NAME current-nonce-balance)
             ;;2]ATS|SC_NAME burns the whole Hot-RBT
-                (BASIS.DPMF|C_Burn patron id nonce ATS|SC_NAME current-nonce-balance)
+                (BASIS.DPMF|C_Burn patron id nonce AUTOSTAKE.ATS|SC_NAME current-nonce-balance)
             ;;3]ATS|SC_NAME transfers the proper amount of RT(s) to the Redeemer, and update RoU
-                (DPTF|C_MultiTransfer patron rt-lst ATS|SC_NAME redeemer earned-rts)
+                (DPTF|C_MultiTransfer patron rt-lst AUTOSTAKE.ATS|SC_NAME redeemer earned-rts)
                 (map
                     (lambda
                         (index:integer)
@@ -405,7 +462,7 @@
                     (map
                         (lambda
                             (index:integer)
-                            (BASIS.DPTF|C_Burn patron (at index rt-lst) ATS|SC_NAME (at index fee-rts))
+                            (BASIS.DPTF|C_Burn patron (at index rt-lst) AUTOSTAKE.ATS|SC_NAME (at index fee-rts))
                         )
                         (enumerate 0 (- (length rt-lst) 1))
                     )
