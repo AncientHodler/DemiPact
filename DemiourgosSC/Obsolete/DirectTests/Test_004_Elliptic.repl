@@ -1,0 +1,54 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;001]Test Autostake AUryn P1
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+    (free.ELLIPTIC.A_DalosElipse)
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    
+    (let*
+        (
+            (p:integer free.ELLIPTIC.P)
+            (gx:integer free.ELLIPTIC.GX)
+            (gy:integer free.ELLIPTIC.GY)
+            (d:integer -26)
+            (x2modp:integer (mod (^ gx 2) p))
+            (y2modp:integer (mod (^ gy 2) p))
+            (left:integer (mod (+ x2modp y2modp) p))
+
+            (v1:integer (mod (* x2modp y2modp) p))
+            (v2:integer (mod (* v1 d) p))
+            (right:integer (mod (+ v2 1) p))
+
+            (diff:integer (- left right))
+        )
+        (format "Left is {}, Right is {}, Diff is {}" [left right diff])
+    )
+
+    (let*
+        (
+            (G:object{free.ELLIPTIC.CoordExtended} (free.ELLIPTIC.MakeExtendedGenerator))
+            (AddedV1 (free.ELLIPTIC.AddingV1 G G))
+            (AddedV2 (free.ELLIPTIC.AddingV11 G G))
+        )
+        (format "Generator in extended is {}" [G])
+        (format "AddedV1 is {}. Added V2 is {}" [AddedV1 AddedV2])
+    )
+
+
+
+
+(env-gas)
+(commit-tx)

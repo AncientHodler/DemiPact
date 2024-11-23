@@ -1,0 +1,56 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Init_Snake.repl")
+(print "LOADED ALL ENV MODULES")
+;;==============================================================================
+;;
+;;001]Test Autostake AUryn P1
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+    (free.DALOS.DALOS|A_WriteGlyphs)
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+
+    ;(print "Validating AncientHodler")
+    ;(expect-failure "Address|Account does not conform to the DALOS Standard for Addresses|Accounts" (free.UTILITY.DALOS|UV_DalosAccount "AncientHodler"))
+    ;(print "Validating Proper Address")
+    (free.UTILITY.DALOS|UV_DalosAccount "Ѻ.T3ąÇяЯУaЧđȚzVтšEÚуûμβΘÊqäØĎUQшiœKźB6ŃËćэçËMБĘιĐßΠZR5ωЧŹGαøoЛ1ĎŘăçышΓПшçÉÀa€ЙigVÚìΩãыÅЫπwþveEćжщŹ4TκßrЛOδΓŠѺЙβèăvÅÄéΦм₳ŠśÆĚqUŞfûþxýéW8мпПãΣȘζřcsXŘЙÉПЖΞЯzșaθ¢йăâč")
+    ;(print "Validating String")
+    ;(free.DALOS.EnforceMultiStringDalosCharset "T3ąÇяЯУaЧđȚzVтšEÚуûμβΘÊqäØĎUQшiœKźB6ŃËćэçËMБĘιĐßΠZR5ωЧŹGαøoЛ1ĎŘăçышΓПшçÉÀa€ЙigVÚìΩãыÅЫπwþveEćжщŹ4TκßrЛOδΓŠѺЙβèăvÅÄéΦм₳ŠśÆĚqUŞfûþxýéW8мпПãΣȘζřcsXŘЙÉПЖΞЯzșaθ¢йăâč")
+
+    
+    ;(free.DALOS.StringLookup "\\")
+    ;(print "AncientHodler")
+    ;(free.BLAKE3.UC_MakeUnique (str-to-list "A fost odată ca-n povești, A fost ca niciodată, Din rude mari împărătești, O prea frumoasă fată.A fost odată ca-n povești, A fost ca niciodată, Din rude mari împărătești, O prea frumoasă fată.A fost odată ca-n povești, A fost ca niciodată, Din rude mari împărătești, O prea frumoasă fată."))
+    ;(free.BLAKE3.UC_GetByteArray ["A" " " "f" "o" "s" "t" "d" "a" "ă" "c" "-" "n" "p" "v" "e" "ș" "i" "," "D" "r" "u" "m" "î" "O" "."])
+    ;(free.BLAKE3.UC_StringToByteSliceCheap "Vitamina C este esentiala pentru mentinerea sanatatii generale si a performantei atletice. Desi este cunoscuta in primul rand pentru rolul sau in intarirea sistemului imunitar, vitamina C contribuie si la formarea colagenului, absortia fierului si protejarea celulelor impotriva stresului oxidativ.")
+    ;(free.BLAKE3.UC_StringToByteSlice "Quantum mechanics arose gradually from theories to explain observations that could not be reconciled with classical physics, such as Max Planck's solution in 1900 to the black-body radiation problem, and the correspondence between energy and frequency in Albert Einstein's 1905 paper, which explained the photoelectric effect. These early attempts to understand microscopic phenomena, now known as the 'old quantum theory', led to the full development of quantum mechanics in the mid-1920s by Niels Bohr, Erwin Schrödinger, Werner Heisenberg, Max Born, Paul Dirac and others. The modern theory is formulated in various specially developed mathematical formalisms. In one of them, a mathematical entity called the wave function provides information, in the form of probability amplitudes, about what measurements of a particle's energy, momentum, and other physical properties may yield.")
+    ;(free.BLAKE3.UC_StringToByteSlice "The thing about smart mother-fuckers is that sometimes, they sound like crazy-mother fuckers to stupid mother fuckers...")
+    ;(length "The thing about smart mother-fuckers is that sometimes, they sound like crazy-mother fuckers to stupid mother fuckers...")
+
+
+    ;;"abcdбвжЦ"
+    ;;"184223Ξ₳iskiller"
+
+
+    ;(free.BLAKE3.UC_StringToByteSlice "184223Ξ₳iskiller")
+    ;(free.BLAKE3.UC_StringToByteSlice "бвджзийклмнптуфцчшщъыьэюяДДДДДДДбвджзийклмнптуфцчшщъыьэюяДДДДДДД")
+    ;(free.BLAKE3.UC_StringToByteSlice "1234567890123456789012345678901234567890123456789012345678901234")
+    ;(free.BLAKE3.UC_StringToByteSlice "бвджзийклмнптуфцчшщъыьэюяДДДДДДДбвджзийклмнптуфцчшщъыьэюяДДДДДДД")
+    ;(print "TEST")
+    ;(format "MakeUnique is {}" [(free.BLAKE3.UC_MakeUnique ["a" "b" "c" "d" "c" "a" "c" "a" "m" "a" "c" "a"])])
+    
+    ;(free.BLAKE3.UC_StringToByteSliceCheap "abcdcacamaca")
+    ;(free.BLAKE3.UC_HexToString [91 190 89 48 178 81 230 118 33 141 141 76 132 92 107 62 218 126 210 122 87 173 77 164 206 73 169 64 190 153 10 28])
+    ;(free.BLAKE3.UC_StringToByteSliceE "0")
+    ;(free.BLAKE3.UC_StringToByteSliceE "Ż")
+
+(env-gas)
+(commit-tx)
