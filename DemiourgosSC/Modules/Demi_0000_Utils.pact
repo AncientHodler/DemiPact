@@ -333,6 +333,47 @@
             array
         )
     )
+    (defun UTILS|UC_Max (x y)
+        (if (> x y) x y)
+    )
+    (defun UTILS|UC_AddHybridArray (lists)
+        @doc "Adds all column elements in an array of numbers, even if the inner lists are of unequal lengths"
+        (let 
+            (
+                (maxl 
+                    (fold 
+                        (lambda 
+                            (acc lst) 
+                            (UTILS|UC_Max acc (length lst))
+                        )
+                        0
+                        lists
+                    )
+                )
+            )
+            (map 
+                (lambda 
+                    (i)
+                    (fold 
+                        (+) 
+                        0.0
+                        (map 
+                            (lambda 
+                                (inner-lst)
+                                (if (< i (length inner-lst))
+                                    (at i inner-lst)
+                                    0.0
+                                )
+                            )
+                            lists
+                        )
+                    )
+                )
+                (enumerate 0 (- maxl 1))
+            )
+        )
+    )
+
     (defun UTILS|UEV_DecimalArray (array:[[decimal]])
         @doc "Enforces all inner list inside an array of decimal elements are of equal size"
         (enforce

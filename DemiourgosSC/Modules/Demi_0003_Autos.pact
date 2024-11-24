@@ -1629,7 +1629,7 @@
             (
                 (index:decimal (ATS|UC_Index atspair))
             )
-            (enforce (>= index 1.0) "Fueling cannot take place on a negative Index")
+            (enforce (>= index 0.1) "Fueling cannot take place on a negative Index")
         )
     )
     (defcap ATS|COIL_OR_CURL (atspair:string coil-token:string)
@@ -1843,12 +1843,13 @@
             )
         )
     )
-    (defun ATS|UC_CullValue:[decimal] (input:object{ATS|Unstake})
-        @doc "Returns the value of a cull object"
+    (defun ATS|UC_CullValue:[decimal] (atspair:string input:object{ATS|Unstake})
+        @doc "Returns the cull-value of an Unstake (cull) object"
         (let*
             (
+                (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
                 (rt-amounts:[decimal] (at "reward-tokens" input))
-                (l:integer (length rt-amounts))
+                (l:integer (length rt-lst))
                 (iz:bool (ATS|UC_IzCullable input))
             )
             (if iz
@@ -2872,7 +2873,7 @@
                     (c6:[decimal] (ATS|X_SingleCull atspair culler 6))
                     (c7:[decimal] (ATS|X_SingleCull atspair culler 7))
                     (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
-                    (cw:[decimal] (UTILS.UTILS|UC_AddArray ca))
+                    (cw:[decimal] (UTILS.UTILS|UC_AddHybridArray ca))
                 )
                 (map
                     (lambda
@@ -3463,12 +3464,13 @@
     (defun ATS|X_SingleCull:[decimal] (atspair:string account:string position:integer)
         (let*
             (
+                (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
+                (l:integer (length rt-lst))
+                (empty:[decimal] (make-list l 0.0))
                 (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
                 (unstake-obj:object{ATS|Unstake} (ATS|UR_P1-7 atspair account position))
                 (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
-                (l:integer (length rt-amounts))
-                (empty:[decimal] (make-list l 0.0))
-                (cull-output:[decimal] (ATS|UC_CullValue unstake-obj))
+                (cull-output:[decimal] (ATS|UC_CullValue atspair unstake-obj))
             )
             (if (!= cull-output empty)
                 (ATS|X_StoreUnstakeObject atspair account position zero)
@@ -3484,7 +3486,7 @@
                 (negative:object{ATS|Unstake} (ATS|UCC_MakeNegativeUnstakeObject atspair))
                 (p0:[object{ATS|Unstake}] (ATS|UR_P0 atspair account))
                 (p0l:integer (length p0))
-                (bl:[bool]
+                (boolean-lst:[bool]
                     (fold
                         (lambda
                             (acc:[bool] item:object{ATS|Unstake})
@@ -3495,8 +3497,8 @@
                     )
                 )
                 (zero-output:[decimal] (make-list (length (ATS|UR_RewardTokenList atspair)) 0.0))
-                (cullables:[integer] (UTILS.LIST|UC_Search bl true))
-                (immutables:[integer] (UTILS.LIST|UC_Search bl false))
+                (cullables:[integer] (UTILS.LIST|UC_Search boolean-lst true))
+                (immutables:[integer] (UTILS.LIST|UC_Search boolean-lst false))
                 (how-many-cullables:integer (length cullables))
             )
             (if (= how-many-cullables 0)
@@ -3530,13 +3532,13 @@
                             (fold
                                 (lambda
                                     (acc:[[decimal]] idx:integer)
-                                    (UTILS.LIST|UC_AppendLast acc (ATS|UC_CullValue (at idx to-be-culled)))
+                                    (UTILS.LIST|UC_AppendLast acc (ATS|UC_CullValue atspair (at idx to-be-culled)))
                                 )
                                 []
                                 (enumerate 0 (- (length to-be-culled) 1))
                             )
                         )
-                        (summed-culled-values:[decimal] (UTILS.UTILS|UC_AddArray culled-values))
+                        (summed-culled-values:[decimal] (UTILS.UTILS|UC_AddHybridArray culled-values))
                     )
                     (ATS|X_StoreUnstakeObjectList atspair account after-cull)
                     summed-culled-values

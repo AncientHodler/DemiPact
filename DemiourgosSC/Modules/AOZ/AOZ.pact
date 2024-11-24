@@ -427,7 +427,7 @@
                 (AUTOSTAKE.ATS|C_AddSecondary patron PlebeicStrengthID AncientKosonID false)
                 (AUTOSTAKE.ATS|C_AddHotRBT patron PlebeicStrengthID DenariusDebilisID)
                 (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PlebeicStrengthID false)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;must be removed
+                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;must be removed as was used for testing
                 ;;Comati Command
                 (AUTOSTAKE.ATS|C_AddSecondary patron ComatiCommandID EsothericKosonID false)
                 (AUTOSTAKE.ATS|C_AddSecondary patron ComatiCommandID AncientKosonID false)

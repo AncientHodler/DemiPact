@@ -301,10 +301,7 @@
 (commit-tx)
 
 
-
-
-
-(begin-tx "Remove Secondary Test")
+(begin-tx "Remove Secondary BEFORE Function")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -363,35 +360,179 @@
         
         (print "After Cold Recovery")
         (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
 
         ;;Begining with Removal of RT
         (print "Begining with removal of RT++++++++++++++++++++")
         (free.AUTOSTAKE.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" false)
         (free.AUTOSTAKE.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" true)
 
-        (free.OUROBOROS.ATS|C_RemoveSecondary KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51")
+        
+(env-gas)
+(commit-tx)
 
-        ;;Verification
-        (print "VERIFICATION===========================================")
-        (format "PlebeicStrength is AFTER {};"
+(begin-tx "Remove Secondary Test-Function Alone")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(free.OUROBOROS.ATS|C_RemoveSecondary KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51")
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Remove Secondary Verification")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+    ;;Verification
+    (print "VERIFICATION===========================================")
+    (format "PlebeicStrength is AFTER {};"
+        [
+            (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+        ]
+    )
+    (format "AUTOSTAKE has AFTER Removal of RT {} PKOSON, {} EKOSON" 
+        [
+            (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+        ]
+    )
+    (format "AOZET has as RT AFTER Removal of RT {} PKOSON, {} EKOSON, {} AKOSON." 
+        [
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+        ]
+    )
+    (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
+
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Add Secondary Again")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+        (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+;;Begining with Removal of RT
+(print "Begining with removal of RT++++++++++++++++++++")
+(free.AUTOSTAKE.ATS|C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 736.247)
+
+
+        (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+
+        (free.AUTOSTAKE.ATS|C_AddSecondary KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" false)
+        (free.AUTOSTAKE.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 2500.0)
+        ;;AOZET RBT Info
+        (format "PlebeicStrength is BEFORE {};"
             [
                 (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
-        (format "AUTOSTAKE has AFTER Removal of RT {} PKOSON, {} EKOSON" 
+        (format "BEFORE COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
             [
-                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
             ]
         )
-        (format "AOZET has as RT AFTER Removal of RT {} PKOSON, {} EKOSON, {} AKOSON." 
-            [
-                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
-                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
-                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
-            ]
-        )
-        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+(env-gas)
+(commit-tx)
 
+
+(begin-tx "2nd Cold Recovery Attempt")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+        (free.AUTOSTAKE.ATS|C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" false)
+        (free.AUTOSTAKE.ATS|C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" true)
+
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 25.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 64.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 90.0)
+
+        (print "After 2nd Cold Recovery")
+        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
+
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+             "block-time": (time "2024-11-01T00:00:00Z")}
+        )
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Cull Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+    (format "AOZET has as RT BEFORE Second Cull of RT {} PKOSON, {} EKOSON, {} AKOSON." 
+        [
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+        ]
+    )
+
+    (free.AUTOSTAKE.ATS|C_Cull KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51")
+
+    (format "AOZET has as RT AFTER Second Cull of RT {} PKOSON, {} EKOSON, {} AKOSON." 
+        [
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+        ]
+    )
 (env-gas)
 (commit-tx)

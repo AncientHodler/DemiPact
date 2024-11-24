@@ -319,43 +319,6 @@
     )
     ;;========[D] DATA FUNCTIONS===============================================;;
     ;;        [1] Data Read FUNCTIONS                   [UR]
-    (defun ATS|C_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
-        @doc "Removes a secondary Reward-Toke from its ATS Pair \
-        \ Secondary Reward Tokens are Reward-Tokens added after the ATS-Pair Creation"
-        (with-capability (ATS|REMOVE_SECONDARY atspair reward-token)
-            (let*
-                (
-                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
-                    (remove-position:integer (at 0 (UTILS.LIST|UC_Search rt-lst reward-token)))
-                    (primal-rt:string (at 0 rt-lst))
-                    (resident-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair true)))
-                    (unbound-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair false)))
-                    (remove-sum:decimal (+ resident-sum unbound-sum))
-
-                    (accounts-with-atspair-data:[string] (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false))
-                )
-            ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
-                (AUTOSTAKE.DPTF|CM_Transfer patron reward-token ATS|SC_NAME remover remove-sum)
-            ;;2]The amount removed is added back as Primal-RT
-                (AUTOSTAKE.DPTF|CM_Transfer patron primal-rt remover ATS|SC_NAME remove-sum)
-            ;;3]ROU Table is updated with the new DATA, now as primal RT
-                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
-                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
-            ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
-                (map
-                    (lambda
-                        (kontos:string)
-                        (AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount atspair kontos remove-position)
-                    )
-                    accounts-with-atspair-data
-                )
-            ;;5]Actually Remove the RT from the ATS-Pair
-                (AUTOSTAKE.ATS|XO_RemoveSecondary atspair reward-token)
-            ;;6]Update Data in the DPTF Token Properties
-                (BASIS.DPTF|XO_UpdateRewardToken atspair reward-token false)
-            )
-        )
-    )
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
@@ -543,6 +506,43 @@
                     )
                     true
                 )
+            )
+        )
+    )
+    (defun ATS|C_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
+        @doc "Removes a secondary Reward-Toke from its ATS Pair \
+        \ Secondary Reward Tokens are Reward-Tokens added after the ATS-Pair Creation"
+        (with-capability (ATS|REMOVE_SECONDARY atspair reward-token)
+            (let*
+                (
+                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (remove-position:integer (at 0 (UTILS.LIST|UC_Search rt-lst reward-token)))
+                    (primal-rt:string (at 0 rt-lst))
+                    (resident-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair true)))
+                    (unbound-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair false)))
+                    (remove-sum:decimal (+ resident-sum unbound-sum))
+
+                    (accounts-with-atspair-data:[string] (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false))
+                )
+            ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
+                (AUTOSTAKE.DPTF|CM_Transfer patron reward-token ATS|SC_NAME remover remove-sum)
+            ;;2]The amount removed is added back as Primal-RT
+                (AUTOSTAKE.DPTF|CM_Transfer patron primal-rt remover ATS|SC_NAME remove-sum)
+            ;;3]ROU Table is updated with the new DATA, now as primal RT
+                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
+                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
+            ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
+                (map
+                    (lambda
+                        (kontos:string)
+                        (AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount atspair kontos remove-position)
+                    )
+                    accounts-with-atspair-data
+                )
+            ;;5]Actually Remove the RT from the ATS-Pair
+                (AUTOSTAKE.ATS|XO_RemoveSecondary atspair reward-token)
+            ;;6]Update Data in the DPTF Token Properties
+                (BASIS.DPTF|XO_UpdateRewardToken atspair reward-token false)
             )
         )
     )
