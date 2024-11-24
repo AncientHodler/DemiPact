@@ -53,6 +53,14 @@
         true
     )
     ;;
+    (defcap ATS|RESHAPE ()
+        @doc "Usage: Unstake Account reshaping"
+        true
+    )
+    (defcap ATS|RM_SECONDARY_RT ()
+        @doc "Usage: pure update for removing RT from an ATS-Pair"
+        true
+    )
     (defcap ATS|UPDATE_ROU ()
         @doc "Usage: update Resident and|or Unbonding Values for RT of any ATS-Pair"
         true
@@ -1611,18 +1619,6 @@
         (compose-capability (P|ATS|UPDATE_RBT))
         (VST|UEV_Existance hot-rbt false false)
     )
-    (defcap ATS|REMOVE_SECONDARY (atspair:string reward-token:string)
-    @doc "Capability required to EXECUTE <ATS|C_AddSecondary> Function"
-        (compose-capability (ATS|X_REMOVE_SECONDARY atspair reward-token))   
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
-    )
-    (defcap ATS|X_REMOVE_SECONDARY (atspair:string reward-token:string)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdAndHot atspair)
-        (ATS|UEV_RewardTokenExistance atspair reward-token true)
-        (ATS|UEV_ParameterLockState atspair false)
-        (compose-capability (P|ATS|UPDATE_RT))
-    )
     (defcap ATS|FUEL (atspair:string reward-token:string)
         @doc "Req for <ATS|C_Fuel>"
         (compose-capability (ATS|GOV))
@@ -2238,7 +2234,7 @@
                                             (acc:decimal index:integer)
                                             (if (at index rt-boolean)
                                                 (with-capability (COMPOSE)
-                                                    (ATS|X_UpdateRoU (at index rt-ats-pairs) id true true (at index split-with-truths))
+                                                    (ATS|XO_UpdateRoU (at index rt-ats-pairs) id true true (at index split-with-truths))
                                                     (+ acc (at index split-with-truths))
                                                 )
                                                 acc
@@ -2297,7 +2293,7 @@
                         (lambda
                             (index:integer)
                             (if (at index ats-pairs-bool)
-                                (ATS|X_UpdateRoU (at index ats-pairs) id true true (at index rt-split-with-boolean))
+                                (ATS|XO_UpdateRoU (at index ats-pairs) id true true (at index rt-split-with-boolean))
                                 true
                             )
                         )
@@ -2333,6 +2329,64 @@
     (defun ATS|UC_BooleanDecimalCombiner:[decimal] (id:string amount:decimal milestones:integer boolean:[bool])
         @doc "Helper function used in the ATS|CPF Functions"
         (UTILS.ATS|UC_SplitBalanceWithBooleans (BASIS.DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
+    )
+    (defun ATS|UC_SolidifyUO:object{ATS|Unstake} (input:object{ATS|Unstake} remove-position:integer)
+        @doc "Solidifies an ATS|Unstake Objects, by removing an RT and add the removed amount to its primal RT \
+        \ Only does object computation, does not actualy modify Table Data"
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (cull-time:time (at "cull-time" input))
+                (how-many-rts:integer (length values))
+            )
+            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
+            (let*
+                (
+                    (primal:decimal (at 0 (at "reward-tokens" input)))
+                    (removee:decimal (at remove-position (at "reward-tokens" input)))
+                    (remove-lst:[decimal] (UTILS.LIST|UC_RemoveItemAt values remove-position))
+                    (new-values:[decimal] (UTILS.LIST|UC_ReplaceAt remove-lst 0 (+ primal removee)))
+                )
+                { "reward-tokens"   : new-values
+                , "cull-time"       : cull-time}
+            )
+        )
+    )
+    (defun ATS|UC_IzUnstakeObjectValid:bool (input:object{ATS|Unstake})
+        @doc "Checks if an unstake Object is valid, meaning if it stores valid unstake Data"
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (sum-values:decimal (fold (+) 0.0 values))
+            )
+            (if (> sum-values 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun ATS|UC_ReshapeUO:object{ATS|Unstake} (input:object{ATS|Unstake} remove-position:integer)
+        @doc "Reshapes Unstake Object, used in the Remove RT Functions."
+        (let
+            (
+                (is-valid:bool (ATS|UC_IzUnstakeObjectValid input))
+            )
+            (if is-valid
+                (ATS|UC_SolidifyUO input remove-position)
+                input
+            )
+        )
+    )
+    (defun ATS|UC_MultiReshapeUO:[object{ATS|Unstake}] (input:[object{ATS|Unstake}] remove-position:integer)
+        @doc "Reshapes an Unstake Object List"
+        (fold
+            (lambda
+                (acc:[object{ATS|Unstake}] item:object{ATS|Unstake})
+                (UTILS.LIST|UC_AppendLast acc (ATS|UC_ReshapeUO item remove-position))
+            )
+            []
+            input
+        )
     )
     ;;        [X] Data Creation|Composition Functions   [UCC]
     (defun ATS|UCC_MakeUnstakeObject:object{ATS|Unstake} (atspair:string time:time)
@@ -2675,7 +2729,7 @@
         (with-capability (ATS|FUEL atspair reward-token)
             ;;1]Fueler transfer the reward-token to ATS|SC_NAME and an update of Resident Amounts is performed
             (DPTF|CM_Transfer patron reward-token fueler ATS|SC_NAME amount)
-            (ATS|X_UpdateRoU atspair reward-token true true amount)
+            (ATS|XO_UpdateRoU atspair reward-token true true amount)
         )
     )
     (defun ATS|C_Coil:decimal (patron:string coiler:string atspair:string coil-token:string amount:decimal)
@@ -2688,7 +2742,7 @@
                 )
             ;;1]Coiler transfers coil-token to ATS|SC_NAME and the Resident Amounts are updated
                 (DPTF|CM_Transfer patron coil-token coiler ATS|SC_NAME amount)
-                (ATS|X_UpdateRoU atspair coil-token true true amount)
+                (ATS|XO_UpdateRoU atspair coil-token true true amount)
             ;;2]ATS|SC_NAME mints c-rbt
                 (BASIS.DPTF|C_Mint patron c-rbt ATS|SC_NAME c-rbt-amount false)
             ;;4]ATS|SC_NAME transfers the minted c-rbt to coiler
@@ -2711,10 +2765,10 @@
                 )
             ;;1]Curler transfers rt to ATS|SC_NAME and the Resident Amounts are updated
                 (DPTF|CM_Transfer patron rt curler ATS|SC_NAME amount)
-                (ATS|X_UpdateRoU atspair1 rt true true amount)
+                (ATS|XO_UpdateRoU atspair1 rt true true amount)
             ;;2]ATS|SC_NAME mints and retains the c-rbt1 and updates the Resident Amounts
                 (BASIS.DPTF|C_Mint patron c-rbt1 ATS|SC_NAME c-rbt1-amount false)
-                (ATS|X_UpdateRoU atspair2 c-rbt1 true true c-rbt1-amount)
+                (ATS|XO_UpdateRoU atspair2 c-rbt1 true true c-rbt1-amount)
             ;;3]ATS|SC_NAME mints c-rbt2
                 (BASIS.DPTF|C_Mint patron c-rbt2 ATS|SC_NAME c-rbt2-amount false)
             ;;4]ATS|SC_NAME transfers the minted c-rbt2 to curler
@@ -2777,8 +2831,8 @@
                 (map
                     (lambda
                         (index:integer)
-                        (ATS|X_UpdateRoU atspair (at index rt-lst) false true (at index positive-c-fr))
-                        (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index positive-c-fr))
+                        (ATS|XO_UpdateRoU atspair (at index rt-lst) false true (at index positive-c-fr))
+                        (ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index positive-c-fr))
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
@@ -2825,7 +2879,7 @@
                         (idx:integer)
                         (if (!= (at idx cw) 0.0)
                             (with-capability (COMPOSE)
-                                (ATS|X_UpdateRoU atspair (at idx rt-lst) false false (at idx cw))
+                                (ATS|XO_UpdateRoU atspair (at idx rt-lst) false false (at idx cw))
                                 (DPTF|CM_Transfer patron (at idx rt-lst) ATS|SC_NAME culler (at idx cw))
                             )
                             true
@@ -2838,22 +2892,7 @@
             )
         )
     )
-    ;;NEEDS FINALISATION
-    (defun ATS|C_RemoveSecondary (patron:string atspair:string reward-token:string)
-        @doc "Removes a secondary Reward-Toke from its ATS Pair \
-        \ Secodnary Reward Tokens are Reward-Tokens added after the ATS-Pair Creation"
-        (with-capability (ATS|REMOVE_SECONDARY atspair reward-token)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_ISSUE)
-                true
-            )
-            (ATS|X_RemoveSecondary atspair reward-token)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (BASIS.DPTF|XO_UpdateRewardToken atspair reward-token false)
-            ;;Unbonding if it exists for pair, must be returned to users
-            ;;Resident, if it exists, must be replaced with primary.
-        )
-    )
+    
     (defun ATS|C_RevokeMint (patron:string id:string)
         @doc "Used when revoking <role-mint> from ATS|SC_NAME \
         \ and <id> is a Cold-RBT for any ATS-Pair"
@@ -3100,8 +3139,45 @@
             {"h-rbt" : hot-rbt}
         )
     )
-    (defun ATS|X_RemoveSecondary (atspair:string reward-token:string)
-        (require-capability (ATS|X_REMOVE_SECONDARY atspair reward-token))
+    (defun ATS|XO_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
+        (enforce-guard (ATS|C_ReadPolicy "OUROBOROS|ReshapeUnstakeAccount"))
+        (with-capability (ATS|RESHAPE)
+            (ATS|XP_ReshapeUnstakeAccount atspair account rp)
+        )
+    )
+    (defun ATS|XP_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
+        @doc "Reshapes an Unstake Account"
+        (require-capability (ATS|RESHAPE))
+        (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
+            { "P0"      := p0 
+            , "P1"      := p1
+            , "P2"      := p2
+            , "P3"      := p3
+            , "P4"      := p4
+            , "P5"      := p5
+            , "P6"      := p6
+            , "P7"      := p7}
+            (update ATS|Ledger (concat [atspair UTILS.BAR account])
+                { "P0"  : (ATS|UC_MultiReshapeUO p0 rp)
+                , "P1"  : (ATS|UC_ReshapeUO p1 rp)
+                , "P2"  : (ATS|UC_ReshapeUO p2 rp)
+                , "P3"  : (ATS|UC_ReshapeUO p3 rp)
+                , "P4"  : (ATS|UC_ReshapeUO p4 rp)
+                , "P5"  : (ATS|UC_ReshapeUO p5 rp)
+                , "P6"  : (ATS|UC_ReshapeUO p6 rp)
+                , "P7"  : (ATS|UC_ReshapeUO p7 rp)}
+            )
+        )
+    )
+    (defun ATS|XO_RemoveSecondary (atspair:string reward-token:string)
+        (enforce-guard (ATS|C_ReadPolicy "OUROBOROS|RemoveSecondaryRT"))
+        (with-capability (ATS|RM_SECONDARY_RT)
+            (ATS|XP_RemoveSecondary atspair reward-token)
+        )
+        
+    )
+    (defun ATS|XP_RemoveSecondary (atspair:string reward-token:string)
+        (require-capability (ATS|RM_SECONDARY_RT))
         (with-read ATS|Pairs atspair
             { "reward-tokens" := rt }
             (update ATS|Pairs atspair
@@ -3111,7 +3187,7 @@
             )
         )
     )
-    (defun ATS|X_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
+    (defun ATS|XO_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
         (enforce-one
             "Update Resident and/or Amounts in the ATS-Pair not allowed"
             [

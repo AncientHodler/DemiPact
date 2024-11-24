@@ -1779,6 +1779,8 @@
         \ Can also be used for issuing a single DPTF Token \
         \ Outputs a list with the IDs of the Issued Tokens \
         \ Creates DPTF Account(s) for the DALOS Account <account> for each issued Token "
+        (UTILS.LIST|UC_IzUnique name)
+        (UTILS.LIST|UC_IzUnique ticker)
         (let*
             (
                 (l1:integer (length name))
@@ -2018,6 +2020,8 @@
         \ Can also be used for issuing a single DPMF Token \
         \ Outputs a list with the IDs of the Issued Tokens \
         \ Creates DPMF Account(s) for the DALOS Account <account> for each issued Token "
+        (UTILS.LIST|UC_IzUnique name)
+        (UTILS.LIST|UC_IzUnique ticker)
         (let*
             (
                 (l1:integer (length name))
@@ -2673,7 +2677,13 @@
     )
     (defun DPTF|XO_UpdateRewardToken (atspair:string id:string direction:bool)
         @doc "Updates (adds or removes) Reward Token for DPTF <id>"
-        (enforce-guard (BASIS|C_ReadPolicy "AUTOSTAKE|UpdateRewardToken"))
+        (enforce-one
+            "Invalid Permissions to update RewardToken"
+            [
+                (enforce-guard (BASIS|C_ReadPolicy "AUTOSTAKE|UpdateRewardToken"))
+                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|UpdateRewardToken"))
+            ]
+        )
         (with-capability (DPTF|UPDATE_RT)
             (DPTF|XP_UpdateRewardToken atspair id direction)
         )

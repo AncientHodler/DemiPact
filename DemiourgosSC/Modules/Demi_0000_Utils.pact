@@ -507,6 +507,39 @@
         @doc "Replace each occurrence of old-item by new-item"
         (map (lambda (x) (if (= x old-item) new-item x)) in)
     )
+    (defun LIST|UC_RemoveItemAt:list (in:list position:integer)
+        @doc "Removes and item from a list existing at a given position"
+        (enforce (and (>= position 0) (< position (length in)) )"Position must be non-negative and within the bounds of the list")
+        (let
+            (
+                (before (take position in))
+                (after (drop (+ position 1) in))
+            )
+            (+ before after)
+        )
+    )
+    (defun LIST|UC_IzUnique (lst:[string])
+        @doc "Ensures List is composed of unique elements"
+        (let
+            (
+                (unique-set 
+                    (fold 
+                        (lambda 
+                            (acc:[string] item:string)
+                            (enforce 
+                                (not (contains item acc)) 
+                                (format "Unique Items Required, duplicate item found: {}" [item])
+                            )
+                            (LIST|UC_AppendLast acc item)
+                        )
+                        [] 
+                        lst
+                    )
+                )
+            )
+            true  ; If all items are unique, the function returns true
+        )
+    )
     (defun LIST|UC_RemoveItem:list (in:list item)
         @doc "Remove an item from a list"
         (filter (!= item) in)

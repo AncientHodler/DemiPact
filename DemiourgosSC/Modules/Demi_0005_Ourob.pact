@@ -55,25 +55,49 @@
         true
     )
     ;; POLICY Capabilities
+    (defcap P|DPTF|UPDATE_RT ()
+        @doc "Policy allowing usage of <BASIS.DPTF|XO_UpdateRewardToken>"
+        true
+    )
     (defcap P|ATS|REMOTE-GOV ()
         @doc "Policy allowing interaction with the Autostake Smart DALOS Account"
         true
     )
+    (defcap P|ATS|RESHAPE ()
+        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount>"
+        true
+    )
+    (defcap P|ATS|RM_SECONDARY_RT ()
+        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_RemoveSecondary>"
+        true
+    )
     (defcap P|ATS|UPDATE_ROU ()
-        @doc "Policy allowing usage of <AUTOSTAKE.ATS|X_UpdateRoU>"
+        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_UpdateRoU>"
         true
     )
 
     ;;Policies - NONE
     (defun OUROBOROS|DefinePolicies ()
         @doc "Add the Policy that allows running external Functions from this Module"
-        (AUTOSTAKE.ATS|A_AddPolicy     ;DALOS|DALOS
+        (BASIS.BASIS|A_AddPolicy         ;BASIS|DPTF
+            "OUROBOROS|UpdateRewardToken"
+            (create-capability-guard (P|DPTF|UPDATE_RT))                  ;;  <BASIS.DPTF|XO_UpdateRewardToken>
+        )
+        (AUTOSTAKE.ATS|A_AddPolicy       ;AUTOSTAKE|ATS
             "OUROBOROS|RemoteAutostakeGovernor"
             (create-capability-guard (P|ATS|REMOTE-GOV))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
         )
-        (AUTOSTAKE.ATS|A_AddPolicy     ;DALOS|DALOS
+        (AUTOSTAKE.ATS|A_AddPolicy
+            "OUROBOROS|ReshapeUnstakeAccount"
+            (create-capability-guard (P|ATS|RESHAPE))                     ;;  <AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount>
+        )
+        (AUTOSTAKE.ATS|A_AddPolicy
+            "OUROBOROS|RemoveSecondaryRT"
+            (create-capability-guard (P|ATS|RM_SECONDARY_RT))             ;;  <AUTOSTAKE.ATS|XO_RemoveSecondary>
+        )
+        (AUTOSTAKE.ATS|A_AddPolicy
             "OUROBOROS|UpdateROU"
-            (create-capability-guard (P|ATS|UPDATE_ROU))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
+            (create-capability-guard (P|ATS|UPDATE_ROU))                  ;;  <AUTOSTAKE.ATS|XO_UpdateRoU>
         )
     )
     ;;Modules's Governor
@@ -280,8 +304,58 @@
             (DALOS.DALOS|UEV_EnforceAccountType kickstarter false)
         )
     )
+    (defcap ATS|REMOVE_SECONDARY (atspair:string reward-token:string)
+        @doc "Needed to remove a secondary RT Token"
+        (compose-capability (P|ATS|REMOTE-GOV))
+        (compose-capability (P|ATS|UPDATE_ROU))
+        (compose-capability (P|ATS|RESHAPE))
+        (compose-capability (P|ATS|RM_SECONDARY_RT))
+        (compose-capability (P|DPTF|UPDATE_RT))
+        
+        (AUTOSTAKE.ATS|CAP_Owner atspair)
+        (AUTOSTAKE.ATS|UEV_UpdateColdAndHot atspair)
+        (AUTOSTAKE.ATS|UEV_RewardTokenExistance atspair reward-token true)
+        (AUTOSTAKE.ATS|UEV_ParameterLockState atspair false)
+    )
     ;;========[D] DATA FUNCTIONS===============================================;;
     ;;        [1] Data Read FUNCTIONS                   [UR]
+    (defun ATS|C_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
+        @doc "Removes a secondary Reward-Toke from its ATS Pair \
+        \ Secondary Reward Tokens are Reward-Tokens added after the ATS-Pair Creation"
+        (with-capability (ATS|REMOVE_SECONDARY atspair reward-token)
+            (let*
+                (
+                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (remove-position:integer (at 0 (UTILS.LIST|UC_Search rt-lst reward-token)))
+                    (primal-rt:string (at 0 rt-lst))
+                    (resident-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair true)))
+                    (unbound-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair false)))
+                    (remove-sum:decimal (+ resident-sum unbound-sum))
+
+                    (accounts-with-atspair-data:[string] (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false))
+                )
+            ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
+                (AUTOSTAKE.DPTF|CM_Transfer patron reward-token ATS|SC_NAME remover remove-sum)
+            ;;2]The amount removed is added back as Primal-RT
+                (AUTOSTAKE.DPTF|CM_Transfer patron primal-rt remover ATS|SC_NAME remove-sum)
+            ;;3]ROU Table is updated with the new DATA, now as primal RT
+                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
+                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
+            ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
+                (map
+                    (lambda
+                        (kontos:string)
+                        (AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount atspair kontos remove-position)
+                    )
+                    accounts-with-atspair-data
+                )
+            ;;5]Actually Remove the RT from the ATS-Pair
+                (AUTOSTAKE.ATS|XO_RemoveSecondary atspair reward-token)
+            ;;6]Update Data in the DPTF Token Properties
+                (BASIS.DPTF|XO_UpdateRewardToken atspair reward-token false)
+            )
+        )
+    )
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
@@ -295,6 +369,7 @@
         ;;Enforces that only integer 1 2 3 can be used as input for the <table-to-query> variable.
         (UTILS.UTILS|UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
         (if mode
+            (DALOS.GLYPH|UEV_DalosAccount account-or-token-id)
             (with-capability (COMPOSE)
                 (if (= table-to-query 1)
                     (BASIS.DPTF-DPMF|UEV_id account-or-token-id true)
@@ -376,7 +451,7 @@
                 (map
                     (lambda
                         (rto:object{DPTF|ID-Amount})
-                        (AUTOSTAKE.ATS|X_UpdateRoU atspair (at "id" rto) true true (at "amount" rto))
+                        (AUTOSTAKE.ATS|XO_UpdateRoU atspair (at "id" rto) true true (at "amount" rto))
                     )
                     (zip (lambda (x:string y:decimal) { "id":x, "amount":y}) rt-lst rt-amounts)
                 )
@@ -402,7 +477,7 @@
                         (if (> (at index syphon-amounts) 0.0)
                             (with-capability (COMPOSE)
                                 (DPTF|C_Transfer patron (at index rt-lst) AUTOSTAKE.ATS|SC_NAME syphon-target (at index syphon-amounts))
-                                (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index syphon-amounts))
+                                (ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index syphon-amounts))
                             )
                             true
                         )
@@ -453,7 +528,7 @@
                 (map
                     (lambda
                         (index:integer)
-                        (ATS|X_UpdateRoU atspair (at index rt-lst) true false (at index earned-rts))
+                        (ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index earned-rts))
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )

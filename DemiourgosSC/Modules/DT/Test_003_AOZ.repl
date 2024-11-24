@@ -299,3 +299,99 @@
 
 (env-gas)
 (commit-tx)
+
+
+
+
+
+(begin-tx "Remove Secondary Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+        ;;AOZET RT Info
+        (format "AOZET has has {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+            ]
+        )
+        ;;AOZET RBT Info
+        (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "PlebeicStrength is BEFORE {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (format "BEFORE COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
+            [
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
+            ]
+        )
+
+        (print "EXECUTING Cold Recovery")
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 40.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 50.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 75.0)
+
+        (format "AFTER COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
+            [
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
+            ]
+        )
+
+         ;;AOZET RBT Info
+        (format "AOZ has after ColdRecovery {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PDKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "DDKOSON-98c486052a51" KC.AOZT false)
+                (at "block-time" (chain-data))
+            ]
+        )
+        
+        (print "After Cold Recovery")
+        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+
+        ;;Begining with Removal of RT
+        (print "Begining with removal of RT++++++++++++++++++++")
+        (free.AUTOSTAKE.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" false)
+        (free.AUTOSTAKE.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" true)
+
+        (free.OUROBOROS.ATS|C_RemoveSecondary KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51")
+
+        ;;Verification
+        (print "VERIFICATION===========================================")
+        (format "PlebeicStrength is AFTER {};"
+            [
+                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            ]
+        )
+        (format "AUTOSTAKE has AFTER Removal of RT {} PKOSON, {} EKOSON" 
+            [
+                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            ]
+        )
+        (format "AOZET has as RT AFTER Removal of RT {} PKOSON, {} EKOSON, {} AKOSON." 
+            [
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "PKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "EKOSON-98c486052a51" KC.AOZT true)
+                (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
+            ]
+        )
+        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+
+(env-gas)
+(commit-tx)
