@@ -163,14 +163,15 @@
     ;;        <2> Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap LIQUID|WRAP ()
         @doc "Capability needed to wrap KDA to DWK"
+        @event
         (compose-capability (LIQUID|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (LIQUID|CF|LIVE))
     )
     (defcap LIQUID|UNWRAP ()
         @doc "Capability needed to unwrap KDA to DWK"
+        @event
         (compose-capability (LIQUID|GOV))
-
         (compose-capability (LIQUID|CF|LIVE))
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
     )

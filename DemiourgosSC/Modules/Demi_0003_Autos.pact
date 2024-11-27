@@ -203,6 +203,8 @@
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap SECURE||SUMMONER||VST|DEFINE ()
+        @doc "Capability needed to EXECUTE the Client Create Vesting Link Function"
+        @event
         (compose-capability (SECURE))
         (compose-capability (SUMMONER))
         (compose-capability (VST|DEFINE))
@@ -439,6 +441,7 @@
     )
     (defcap DPTF|TRANSFER (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @doc "Allows Transfers of DPTF Tokens from <sender> to <receiver>"
+        @event
         (compose-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
         (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
         (compose-capability (P|DALOS|INCREMENT_NONCE))
@@ -507,6 +510,7 @@
     )
     (defcap DPTF|TRANSMUTE ()
         @doc "Core Capabity needed for transmuting a DPTF Token"
+        @event
         (compose-capability (DALOS|EXECUTOR))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
         (compose-capability (DPTF|X_TRANSMUTE))
@@ -859,6 +863,7 @@
     ;;        [2] Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap VST|VEST (vester:string target-account:string id:string)
         @doc "Capability needed for vesting DPTF Tokens"
+        @event
         (compose-capability (VST|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
@@ -870,7 +875,8 @@
         (VST|UEV_Active id (BASIS.DPTF-DPMF|UR_Vesting id true))
     )
     (defcap VST|CULL (culler:string id:string)
-        @doc "Capability needed for culling DPMF Tokens that are vested counterparts of DPTF Tokens"
+        @doc "Capability required for culling DPMF Tokens as vested counterparts of DPTF Tokens"
+        @event
         (compose-capability (VST|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
@@ -1376,7 +1382,8 @@
         )
     )
     (defcap ATS|HOT_RECOVERY (recoverer:string atspair:string ra:decimal)
-        @doc "Capability required to execute hot recovery"
+        @doc "Capability required to execute Hot Recovery"
+        @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
@@ -1385,7 +1392,8 @@
         (ATS|UEV_RecoveryState atspair true false)
     )
     (defcap ATS|COLD_RECOVERY (recoverer:string atspair:string ra:decimal)
-        @doc "Capability required to execute cold recovery"
+        @doc "Capability required to execute Cold recovery"
+        @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
@@ -1396,7 +1404,8 @@
         (compose-capability (ATS|UPDATE_ROU))
     )
     (defcap ATS|CULL (culler:string atspair:string)
-        @doc "Capability required to execute culling"
+        @doc "Capability required to execute Culling"
+        @event
         (compose-capability (ATS|GOV))
         (compose-capability (SECURE))
         (DALOS|CAP_EnforceAccountOwnership culler)
@@ -1406,25 +1415,25 @@
         (compose-capability (ATS|UPDATE_LEDGER))
     )
     (defcap ATS|OWNERSHIP_CHANGE (atspair:string new-owner:string)
-        @doc "Req to change ATS Ownership"
+        @doc "Capability required to EXECUTE Client ATS-Pair Ownership Change Function"
+        @event
         (compose-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_OWNERSHIP_CHANGE (atspair:string new-owner:string)
-        @doc "Core Capability required for ATS-Pair Ownership"
         (DALOS.DALOS|UEV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
         (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
         (ATS|CAP_Owner atspair)
         (ATS|UEV_CanChangeOwnerON atspair)
     )
     (defcap ATS|TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
-        @doc "Capability required to EXECUTE <ATS|C_ToggleParameterLock> Function"
+        @doc "Capability required to EXECUTE Client ATS-Pair Parameter Lock Toggle Function"
+        @event
         (compose-capability (ATS|X_TOGGLE_PARAMETER-LOCK atspair toggle))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
         (compose-capability (ATS|INCREMENT-LOCKS))
     )
     (defcap ATS|X_TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
-        @doc "Core Capability required to set to <toggle> the <parameter-lock> for a ATS Pair"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_ParameterLockState atspair (not toggle))
         (let
@@ -1442,12 +1451,12 @@
         )
     )
     (defcap ATS|SYPHON (atspair:string syphon:decimal)
-        @doc "Cap required for setting the Syphon value"
+        @doc "Capability required to EXECUTE Client ATS-Pair Update Syphon Function"
+        @event
         (compose-capability (ATS|X_SYPHON atspair syphon))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_SYPHON (atspair:string syphon:decimal)
-        @doc "Core cap required for setting the Syphon value"
         (enforce (>= syphon 0.1) "Syphon cannot be set lower than 0.1")
         (ATS|CAP_Owner atspair)
         (let
@@ -1461,23 +1470,23 @@
         )
     )
     (defcap ATS|SYPHONING (atspair:string toggle:bool)
-        @doc "Cap required for toggling syphoning"
+        @doc "Capability required to EXECUTE Client ATS-Pair Syphoning Toggle Function"
+        @event
         (compose-capability (ATS|X_SYPHONING atspair toggle))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_SYPHONING (atspair:string toggle:bool)
-        @doc "Core cap required for toggling syphoning"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_SyphoningState atspair (not toggle))
         (ATS|UEV_ParameterLockState atspair false)
     )
     (defcap ATS|TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
-        @doc "Req for updating <c-nfr>, <c-fr>, <h-fer>"
+        @doc "Capability required to EXECUTE Client ATS-Pair Fee Toggle Function"
+        @event
         (compose-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
-        @doc "Core cap req for updating <c-nfr>, <c-fr>, <h-fer>"
         (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
         (ATS|CAP_Owner atspair)
         (ATS|UEV_FeeState atspair (not toggle) fee-switch)
@@ -1488,12 +1497,12 @@
         )
     )
     (defcap ATS|SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        @doc "Req for setting Cold Recovery Duration"
+        @doc "Capability required to EXECUTE Client ATS-Pair Set CRD Function"
+        @event
         (compose-capability (ATS|X_SET_CRD atspair soft-or-hard base growth))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        @doc "Core cap req for setting Cold Recovery Duration"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|UEV_ParameterLockState atspair false)
@@ -1512,12 +1521,12 @@
         )
     )
     (defcap ATS|SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        @doc "Req for setting Cold Recovery Fee"
+        @doc "Capability required to EXECUTE Client ATS-Pair Set Cold Fee Function"
+        @event
         (compose-capability (ATS|X_SET_COLD_FEE atspair fee-positions fee-thresholds fee-array))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        @doc "Core cap req for setting Cold Recovery Fee"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|UEV_ParameterLockState atspair false)
@@ -1602,12 +1611,12 @@
         )
     )
     (defcap ATS|SET_HOT_FEE (atspair:string promile:decimal decay:integer)
-        @doc "Req for setting Cold Recovery Fee"
+        @doc "Capability required to EXECUTE Client ATS-Pair Set Cold Fee Function"
+        @event
         (compose-capability (ATS|X_SET_HOT_FEE atspair promile decay))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_SET_HOT_FEE (atspair:string promile:decimal decay:integer)
-        @doc "Core cap req for setting Cold Recovery Fee"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair false)
         (ATS|UEV_ParameterLockState atspair false)
@@ -1621,12 +1630,12 @@
         )
     )
     (defcap ATS|TOGGLE_ELITE (atspair:string toggle:bool)
-        @doc "Req for toggling Elite Mode for an ATS Pair"
+        @doc "Capability required to EXECUTE Client ATS-Pair Toggle Elite Function"
+        @event
         (compose-capability (ATS|X_TOGGLE_ELITE atspair toggle))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
     )
     (defcap ATS|X_TOGGLE_ELITE (atspair:string toggle:bool)
-        @doc "Core cap req for toggling Elite Mode for an ATS Pair"
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|UEV_EliteState atspair (not toggle))
@@ -1642,7 +1651,7 @@
         )
     )
     (defcap ATS|TOGGLE_RECOVERY (atspair:string toggle:bool cold-or-hot:bool)
-        @doc "Cap req for toggling ATS-Pair Cold or Hot Recovery"
+        @doc "Capability required to EXECUTE Client ATS-Pair Toggle Recovery Function"
         (if toggle
             (compose-capability (ATS|X_RECOVERY-ON atspair cold-or-hot))
             (compose-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
@@ -1651,26 +1660,26 @@
         (compose-capability (SECURE))
     )
     (defcap ATS|X_RECOVERY-ON (atspair:string cold-or-hot:bool)
-        @doc "Core cap req for turning on ATS Recovery"
+        @event
         (ATS|CAP_Owner atspair)
         (ATS|UEV_ParameterLockState atspair false)
         (ATS|UEV_RecoveryState atspair false cold-or-hot)
     )
     (defcap ATS|X_RECOVERY-OFF (atspair:string cold-or-hot:bool)
-        @doc "Core cap req for turning off ATS Recovery"
+        @event
         (ATS|CAP_Owner atspair)
         (ATS|UEV_ParameterLockState atspair false)
         (ATS|UEV_RecoveryState atspair true cold-or-hot)
     )
     (defcap ATS|ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        @doc "Capability required to EXECUTE <ATS|C_IssueAutostakePair> Function"
+        @doc "Capability required to EXECUTE Client ATS-Pair Issue Function"
+        @event
         (compose-capability (ATS|X_ISSUE atspair issuer reward-token reward-bearing-token))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
         (compose-capability (SECURE))
     )
     (defcap ATS|X_ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        @doc "Core Capability required to Issued a ATS Pair"
-        (enforce (!= reward-token reward-bearing-token) "Reward Token must be different from Reward-Bearing Token")
+        (enforce (!= reward-token reward-bearing-token) "RT must be different from RBT")
         (DALOS.DALOS|CAP_EnforceAccountOwnership issuer)
         (DALOS.DALOS|UEV_EnforceAccountType issuer false)
         (BASIS.DPTF-DPMF|CAP_Owner reward-token true)
@@ -1682,7 +1691,7 @@
         (compose-capability (SUMMONER))
     )
     (defcap ATS|ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
-        @doc "Capability required to EXECUTE <ATS|C_AddSecondary> Function"
+        @doc "Capability required to EXECUTE Client ATS-Pair Add RT or Hot RBT Functions"
         (compose-capability (ATS|X_ADD_SECONDARY atspair reward-token token-type))
         (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
         (compose-capability (SUMMONER))
@@ -1699,22 +1708,22 @@
         )
     )
     (defcap ATS|ADD_SECONDARY_RT (atspair:string reward-token:string)
-        @doc "Cap req for subsequent adding as secondary as RT"
+        @event
         (ATS|UEV_IzTokenUnique atspair reward-token)
         (ATS|UEV_RewardTokenExistance atspair reward-token false)
         (compose-capability (P|ATS|UPDATE_RT))
     )
     (defcap ATS|ADD_SECONDARY_RBT (atspair:string hot-rbt:string)
-        @doc "Cap req for subsequent adding as secondary as Hot-RBT"
+        @event
         (ATS|UEV_HotRewardBearingTokenPresence atspair false)   
         (compose-capability (P|ATS|UPDATE_RBT))
         (VST|UEV_Existance hot-rbt false false)
     )
     (defcap ATS|FUEL (atspair:string reward-token:string)
-        @doc "Req for <ATS|C_Fuel>"
+        @doc "Capability required to EXECUTE Client ATS-Pair Fuel Function"
+        @event
         (compose-capability (ATS|GOV))
         (compose-capability (SECURE))
-
         (ATS|UEV_RewardTokenExistance atspair reward-token true)
         (compose-capability (ATS|UPDATE_ROU))
         (let
@@ -1725,11 +1734,11 @@
         )
     )
     (defcap ATS|COIL_OR_CURL (atspair:string coil-token:string)
-        @doc "Req for coiling and curling"
+        @doc "Capability required to EXECUTE Client ATS-Pair Coil and Curl Functions"
+        @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
-
         (ATS|UEV_RewardTokenExistance atspair coil-token true)
         (compose-capability (ATS|UPDATE_ROU))
     )

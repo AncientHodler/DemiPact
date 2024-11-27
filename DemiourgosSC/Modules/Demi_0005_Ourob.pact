@@ -277,6 +277,7 @@
     ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap ATS|REDEEM (redeemer:string id:string)
         @doc "Required for redeeming a Hot RBT"
+        @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
         (compose-capability (SUMMONER))
@@ -293,6 +294,7 @@
     )
     (defcap ATS|SYPHON (atspair:string syphon-amounts:[decimal])
         @doc "Capability required to syphon RTs from an ATS-Pair"
+        @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
         (compose-capability (SUMMONER))
@@ -326,11 +328,11 @@
     )
     (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
         @doc "Capability needed to perform a kickstart for an ATS-Pair"
+        @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
-
         (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
@@ -349,6 +351,7 @@
     )
     (defcap ATS|REMOVE_SECONDARY (atspair:string reward-token:string)
         @doc "Needed to remove a secondary RT Token"
+        @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
         (compose-capability (P|ATS|RESHAPE))
@@ -749,28 +752,34 @@
     ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap IGNIS|SUBLIMATE (patron:string client:string target:string)
         @doc "Required for Sublimation"
-        (compose-capability (IGNIS|COMPRESS patron client))
+        @event
+        (compose-capability (OUROBOROS|GOV))
+        (compose-capability (SUMMONER))
+        (IGNIS|UEV_Exchange)
+        (DALOS.DALOS|UEV_EnforceAccountType patron false)
+        (DALOS.DALOS|UEV_EnforceAccountType client false)
         (DALOS.DALOS|UEV_EnforceAccountType target false)
     )
     (defcap IGNIS|COMPRESS (patron:string client:string)
         @doc "Required for Compression"
+        @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
-
         (IGNIS|UEV_Exchange)
         (DALOS.DALOS|UEV_EnforceAccountType patron false)
         (DALOS.DALOS|UEV_EnforceAccountType client false)
     )
     (defcap OUROBOROS|WITHDRAW (patron:string id:string target:string)
         @doc "Required to withdraw Fees stored in the Ouroboros Smart DALOS Account"
+        @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
-
         (BASIS.DPTF-DPMF|CAP_Owner id true)
         (DALOS.DALOS|UEV_EnforceAccountType target false)
     )
     (defcap OUROBOROS|ADMIN_FUEL ()
         @doc "Needed to Perform an administrator fueling of Liquid Staking using existing KDA Supply"
+        @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (OUROBOROS|NATIVE-AUTOMATIC))

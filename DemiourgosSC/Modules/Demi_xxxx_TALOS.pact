@@ -108,47 +108,47 @@
     )
     ;;        [6] Client Usage FUNCTIONS                [C]
     ;;DALOS
-    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string)
-        @doc "Deploys a Standard DALOS Account"
+    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string);e
+        @doc "Deploys a Standard DALOS Account";e
         (with-capability (SUMMONER||P|DALOS|AUTO_PATRON)
             (DALOS.DALOS|CO_DeployStandardAccount account guard kadena)
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
-        @doc "Deploys a Smart DALOS Account"
+    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string);e
+        @doc "Deploys a Smart DALOS Account";e
         (with-capability (SUMMONER||P|DALOS|AUTO_PATRON)
             (DALOS.DALOS|CO_DeploySmartAccount account guard kadena sovereign)
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
+    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool);e
         @doc "Updates the Guard stored in the DALOS|AccountTable"
         (with-capability (SUMMONER)
             (DALOS.DALOS|CO_RotateGuard patron account new-guard safe)
         )
     )
-    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
+    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string);e
         @doc "Updates the Kadena Account stored in the DALOS|AccountTable"
         (with-capability (SUMMONER)
             (DALOS.DALOS|CO_RotateKadena patron account kadena)
         )
     )
-    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
+    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string);e
         @doc "Updates the Smart Account Sovereign Account \
             \ Only works for Smart DALOS Accounts"
         (with-capability (SUMMONER)
             (DALOS.DALOS|CO_RotateSovereign patron account new-sovereign)
         )
     )
-    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)
+    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard);e
         @doc "Updates the Smart Account Governor, which is the Governing Module \
             \ Only works for Smart DALOS Accounts"
         (with-capability (SUMMONER)
             (DALOS.DALOS|CO_RotateGovernor patron account governor)
         )
     )
-    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool);e
         @doc "Manages Smart DALOS Account Type via boolean triggers"
         (with-capability (SUMMONER)
             (DALOS|CP_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
@@ -164,40 +164,40 @@
             (BASIS.DPTF-DPMF|CO_DeployAccount id account true)
         )
     )
-    (defun DPTF|C_ChangeOwnership (patron:string id:string new-owner:string)
+    (defun DPTF|C_ChangeOwnership (patron:string id:string new-owner:string);e
         @doc "Moves DPTF <id> Token Ownership to <new-owner> DPTF Account"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CP_ChangeOwnership patron id new-owner true)
         )
     )
-    (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
+    (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool);e
         @doc "Freeze/Unfreeze via boolean <toggle> True-Fungible <id> on DPTF Account <account>"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_ToggleFreezeAccount patron id account toggle true)
         )
     )
-    (defun DPTF|C_TogglePause (patron:string id:string toggle:bool)
+    (defun DPTF|C_TogglePause (patron:string id:string toggle:bool);e
         @doc "Pause/Unpause True-Fungible <id> via the boolean <toggle> \
         \ Paused True Fungible cannot be transferred."
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_TogglePause patron id toggle true)
         )
     )
-    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
+    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool);e
         @doc "Sets |role-burn| to <toggle> for True-Fungible <id> and DPTF Account <account>. \
             \ This determines if Account <account> can burn existing True-Fungibles."
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF-DPMF|CO_ToggleBurnRole patron id account toggle true)
         )
     )
-    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
+    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool);e
         @doc "Sets |role-mint| to <toggle> for TrueFungible <id> and DPTF Account <account>, \
             \ allowing or revoking minting rights"
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF|CO_ToggleMintRole patron id account toggle)
         )
     )
-    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool);e
         @doc "Sets |role-transfer| to <toggle> for True|Meta-Fungible <id> and DPTF|DPMF Account <account>. \
             \ If any DPTF|DPMF Account has |role-transfer| true, normal transfers are restricted. \
             \ Transfers will only be allowed to DPTF|DPMF Accounts with |role-transfer| true, \
@@ -206,33 +206,34 @@
             (BASIS.DPTF-DPMF|CO_ToggleTransferRole patron id account toggle true)
         )
     )
-    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
+    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool);e
         @doc "Sets |role-fee-exemption| to <toggle> for TrueFungible <id> and DPTF Account <account> \
-            \ Accounts with this role true are exempt from fees when sending or receiving the token, if fee settings are active"
+            \ Accounts with this role true are exempt from fees when sending or receiving the token, if fee settings are active \
+            \ Only Smart DALOS Accounts can have this parameter set to TRUE and become exempt from DPTF transfer fees."
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF|CO_ToggleFeeExemptionRole patron id account toggle)
         )
     )
-    (defun DPTF|C_Wipe (patron:string id:string atbw:string)
+    (defun DPTF|C_Wipe (patron:string id:string atbw:string);e
         @doc "Wipes the whole supply of <id> True-Fungible of a frozen DPTF Account <account>"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_Wipe patron id atbw true)
         )
     )
-    (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal)
+    (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal);e
         @doc "Burns DPTF Token <id> from <account>. <Account> needs |role-burn| set to true for <id>"
         (with-capability (SUMMONER)
             (BASIS.DPTF|CO_Burn patron id account amount)
         )
     )
-    (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
+    (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool);e
         @doc "Controls TrueFungible <id> Properties using 6 boolean control triggers \
             \ Setting the <can-upgrade> property to false disables all future Control of Properties"
         (with-capability (SUMMONER)
             (BASIS.DPTF|CO_Control patron id cco cu casr cf cw cp)
         )
     )
-    (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
+    (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]);e
         @doc "Issues Multiple DPTF Tokens at once \
         \ Can also be used for issuing a single DPTF Token \
         \ Outputs a list with the IDs of the Issued Tokens \
@@ -247,7 +248,7 @@
             )
         )
     )
-    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool)
+    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool);e
         @doc "Mints DPTF Token <id> from <account>. <Account> needs |role-mint| set to true for <id> for the Generic Mint \
             \ Setting <origin> boolean to true mints the so called genesis-amount also known as premine. Minting premine does not require |role-mint| \
             \ but requires ownership of the token, and null existing supply; minting origin can only be done once, and this amount is saved in the Token Properties"
@@ -255,14 +256,14 @@
             (BASIS.DPTF|CO_Mint patron id account amount origin)
         )
     )
-    (defun DPTF|C_SetFee (patron:string id:string fee:decimal)
+    (defun DPTF|C_SetFee (patron:string id:string fee:decimal);e
         @doc "Sets the <fee-promile> for DPTF Token <id> to <fee> \
             \ -1.0 activates the Volumetric Transaction Tax (VTT) mechanic."
         (with-capability (SUMMONER)
             (BASIS.DPTF|CO_SetFee patron id fee)
         )
     )
-    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)
+    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string);e
         @doc "Sets the <fee-target> for DPTF Token <id> to <target> \
             \ Default is DALOS.OUROBOROS|SC_NAME (Fee-Carrier Account) \
             \ Setting it to DALOS.DALOS|SC_NAME makes fee act like collected gas \
@@ -272,21 +273,21 @@
             (BASIS.DPTF|CO_SetFeeTarget patron id target)
         )          
     )
-    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)
+    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal);e
         @doc "Sets the <min-move> for the DPTF Token <id> to <min-move-value> \
             \ This parameter represents the minimum Token Amount that can be transferred in standard conditions"
         (with-capability (SUMMONER)
             (BASIS.DPTF|CO_SetMinMove patron id min-move-value)
         )          
     )
-    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)
+    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool);e
         @doc "Toggles <fee-toggle> for the DPTF Token <id> to <toggle> \
             \ <fee-toggle> must be set to true for fee collection to execute"
         (with-capability (SUMMONER)
             (BASIS.DPTF|CO_ToggleFee patron id toggle)
         )          
     )
-    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
+    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool);e
         @doc "Sets the <fee-lock> for DPTF Token <id> to <toggle> \
             \ Unlocking (<toggle> = false) has restrictions: \
             \ - Max 7 unlocks per token \
@@ -298,37 +299,37 @@
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal)
+    (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal);e
         @doc "Transfers a DPTF Token from <sender> to <receiver>"
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF|CO_Transfer patron id sender receiver transfer-amount false)
         )
     )
-    (defun DPTF|CM_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal)
+    (defun DPTF|CM_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal);e
         @doc "Similar to <DPTF|C_Transfer>, but methodic for use when operating with Smart DALOS Accounts"
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF|CO_Transfer patron id sender receiver transfer-amount true)
         )
     )
-    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
+    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal]);e
         @doc "Transfers multiple different DPTFs each with its own amount from a <sender> to a <receiver>"
         (with-capability (SUMMONER)
             (OUROBOROS.DPTF|CO_MultiTransfer patron id-lst sender receiver transfer-amount-lst false)
         )
     )
-    (defun DPTF|CM_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
+    (defun DPTF|CM_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal]);e
         @doc "Methodic variant of <DPTF|C_MultiTransfer>"
         (with-capability (SUMMONER)
             (OUROBOROS.DPTF|CO_MultiTransfer patron id-lst sender receiver transfer-amount-lst true)
         )
     )
-    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
+    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal]);e
         @doc "Transfers a single DPTF Token to multiple receivers, each with its own amount, in bulk"
         (with-capability (SUMMONER)
             (OUROBOROS.DPTF|CO_BulkTransfer patron id sender receiver-lst transfer-amount-lst false)
         )
     )
-    (defun DPTF|CM_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
+    (defun DPTF|CM_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal]);e
         @doc "Methodic variant of <DPTF|C_BulkTransfer>"
         (with-capability (SUMMONER)
             (OUROBOROS.DPTF|CO_BulkTransfer patron id sender receiver-lst transfer-amount-lst true)
@@ -351,25 +352,25 @@
             (BASIS.DPTF-DPMF|CO_DeployAccount id account false)
         )
     )
-    (defun DPMF|C_ChangeOwnership (patron:string id:string new-owner:string)
+    (defun DPMF|C_ChangeOwnership (patron:string id:string new-owner:string);e
         @doc "Similar to <DPTF|C_ChangeOwnership>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CP_ChangeOwnership patron id new-owner false)
         )
     )
-    (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
+    (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool);e
         @doc "Similar to <DPTF|C_ToggleFreezeAccount>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_ToggleFreezeAccount patron id account toggle false)
         )
     )
-    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool)
+    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool);e
         @doc "Similar to <DPTF|C_TogglePause>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_TogglePause patron id toggle false)
         )
     )
-    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
+    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string);e
         @doc "Moves |role-nft-create| from <sender> to <receiver> DPMF Account for MetaFungible <id> \
             \ Only a single DPMF Account can have the |role-nft-create| \
             \ Afterwards the receiver DPMF Account can crete new Meta Fungibles \ 
@@ -378,56 +379,56 @@
             (AUTOSTAKE.DPMF|CO_MoveCreateRole patron id receiver)
         )
     )
-    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
+    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool);e
         @doc "Sets |role-nft-add-quantity| to <toggle> boolean for MetaFungible <id> and DPMF Account <account> \
             \ Afterwards Account <account> can either add quantity or no longer add quantity to existing MetaFungible"
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPMF|CO_ToggleAddQuantityRole patron id account toggle)
         )
     )
-    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
+    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool);e
         @doc "Similar to <DPTF|C_ToggleBurnRole>, but for DPMFs"
         (with-capability (SUMMONER)
             (AUTOSTAKE.DPTF-DPMF|CO_ToggleBurnRole patron id account toggle false)
         )
     )
-    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool);e
         @doc "Similar to <DPTF|C_ToggleTransferRole>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_ToggleTransferRole patron id account toggle false)
         )
     )
-    (defun DPMF|C_Wipe (patron:string id:string atbw:string)
+    (defun DPMF|C_Wipe (patron:string id:string atbw:string);e
         @doc "Similar to <DPTF|C_Wipe>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_Wipe patron id atbw false)
         )
     )
-    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
+    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal);e
         @doc "Adds quantity for an existing DPMF Token"
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_AddQuantity patron id nonce account amount)
         )
     )
-    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal)
+    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal);e
         @doc "Similar to <DPTF|C_Burn>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_Burn patron id nonce account amount)
         )
     )
-    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
+    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool);e
         @doc "Similar to <DPTF|C_Control>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_Control patron id cco cu casr cf cw cp ctncr)
         )
     )
-    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])
+    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]);e
         @doc "Creates a new DPMF Token with the next nonce and zero amount value, for a DPMF Token already issued."
         (with-capability (SUMMONER)
             (BASIS.DPMF|CP_Create patron id account meta-data)
         )
     )
-    (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
+    (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]);e
         @doc "Similar to <DPTF|C_Issue>, but for DPMFs"
         (with-capability (SUMMONER)
             (let
@@ -439,32 +440,32 @@
             )
         )
     )
-    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
+    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]);e
         @doc "Mints a new DPMF Token. Minting means creating and adding supply in a single swoop."
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_Mint patron id account amount meta-data)
         )
     )
-    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal)
+    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal);e
         @doc "Similar to <DPTF|C_Transfer>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_Transfer patron id nonce sender receiver transfer-amount false)
         )
     )
-    (defun DPMF|CM_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal)
+    (defun DPMF|CM_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal);e
         @doc "Methodic variant of <DPMF|C_Transfer>"
         (with-capability (SUMMONER)
             (BASIS.DPMF|CO_Transfer patron id nonce sender receiver transfer-amount true)
         )
     )
     ;;ATS
-    (defun ATS|C_ChangeOwnership (patron:string atspair:string new-owner:string)
+    (defun ATS|C_ChangeOwnership (patron:string atspair:string new-owner:string);e
         @doc "Moves ATS <atspair> Ownership to <new-owner> DALOS Account"   
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_ChangeOwnership patron atspair new-owner)
         )
     )
-    (defun ATS|CP_ToggleParameterLock (patron:string atspair:string toggle:bool)
+    (defun ATS|CP_ToggleParameterLock (patron:string atspair:string toggle:bool);e
         @doc "Sets the <parameter-lock> for the ATS Pair <atspair> to <toggle> \
             \ Unlocking <parameter-toggle> (setting it to false) comes with specific restrictions: \
             \       As many unlocks can be executed for a ATS Pair as needed \
@@ -474,19 +475,19 @@
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun ATS|C_UpdateSyphon (patron:string atspair:string syphon:decimal)
+    (defun ATS|C_UpdateSyphon (patron:string atspair:string syphon:decimal);e
         @doc "Updates the Syphon Index. The Syphon Index represents the minimum ATS-Pair Index until syphoning is allowed"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_UpdateSyphon patron atspair syphon)
         )
     )
-    (defun ATS|C_ToggleSyphoning (patron:string atspair:string toggle:bool)
+    (defun ATS|C_ToggleSyphoning (patron:string atspair:string toggle:bool);e
         @doc "Toggles syphoning, which allows or disallows syphoning mechanic for ATS-Pairs"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_ToggleSyphoning patron atspair toggle)
         )
     )
-    (defun ATS|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
+    (defun ATS|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer);e
         @doc "Toggles ATS Boolean Fee Parameters to <toggle> : \
             \ fee-switch = 0 : cold-native-fee-redirection (c-nfr) \
             \ fee-switch = 1 : cold-fee-redirection (c-fr) \ 
@@ -495,99 +496,99 @@
             (AUTOSTAKE.ATS|CO_ToggleFeeSettings patron atspair toggle fee-switch)
         )
     )
-    (defun ATS|C_SetCRD (patron:string atspair:string soft-or-hard:bool base:integer growth:integer)
+    (defun ATS|C_SetCRD (patron:string atspair:string soft-or-hard:bool base:integer growth:integer);e
         @doc "Sets the Cold Recovery Duration based on input parameters"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_SetCRD patron atspair soft-or-hard base growth)
         )
     )
-    (defun ATS|C_SetColdFee (patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
+    (defun ATS|C_SetColdFee (patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]);e
         @doc "Sets Cold Recovery fee parameters"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_SetColdFee patron atspair fee-positions fee-thresholds fee-array)
         )
     )
-    (defun ATS|C_SetHotFee (patron:string atspair:string promile:decimal decay:integer)
-        @doc "Sets Cold Recovery fee parameters"
+    (defun ATS|C_SetHotFee (patron:string atspair:string promile:decimal decay:integer);e
+        @doc "Sets Hot Recovery fee parameters"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_SetHotFee patron atspair promile decay)
         )
     )
-    (defun ATS|C_ToggleElite (patron:string atspair:string toggle:bool)
+    (defun ATS|C_ToggleElite (patron:string atspair:string toggle:bool);e
         @doc "Toggles <c-elite-mode> to <toggle>"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_ToggleElite patron atspair toggle)
         )
     )
-    (defun ATS|C_TurnRecoveryOn (patron:string atspair:string cold-or-hot:bool)
+    (defun ATS|C_TurnRecoveryOn (patron:string atspair:string cold-or-hot:bool);e
         @doc "Turns <cold-recovery> or <hot-recovery> on"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_TurnRecoveryOn patron atspair cold-or-hot)
         )
     )
-    (defun ATS|C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool)
+    (defun ATS|C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool);e
         @doc "Turns <cold-recovery> or <hot-recovery> off"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_TurnRecoveryOff patron atspair cold-or-hot)
         )
     )
-    (defun ATS|C_Issue:string (patron:string account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
+    (defun ATS|C_Issue:string (patron:string account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool);e
         @doc "Issue a new ATS-Pair"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_Issue patron account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
         )
     )
-    (defun ATS|C_AddSecondary (patron:string atspair:string reward-token:string rt-nfr:bool)
+    (defun ATS|C_AddSecondary (patron:string atspair:string reward-token:string rt-nfr:bool);e
         @doc "Add a secondary Reward Token for the ATS Pair <atspair>"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_AddSecondary patron atspair reward-token rt-nfr)
         )
     )
-    (defun ATS|C_AddHotRBT (patron:string atspair:string hot-rbt:string)
+    (defun ATS|C_AddHotRBT (patron:string atspair:string hot-rbt:string);e
         @doc "Add a DPMF as <h-rbt> for the ATS Pair <atspair>"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_AddHotRBT patron atspair hot-rbt)
         )
     )
-    (defun ATS|C_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal)
+    (defun ATS|C_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal);e
         @doc "Client Function for fueling an ATS Pair"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_Fuel patron fueler atspair reward-token amount)
         )
     )
-    (defun ATS|C_Coil:decimal (patron:string coiler:string atspair:string rt:string amount:decimal)
+    (defun ATS|C_Coil:decimal (patron:string coiler:string atspair:string rt:string amount:decimal);e
         @doc "Autostakes <rt> to the <atspair> ATS-Pair, receiving RBT"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_Coil patron coiler atspair rt amount)
         )
     )
-    (defun ATS|C_Curl:decimal (patron:string curler:string atspair1:string atspair2:string rt:string amount:decimal)
+    (defun ATS|C_Curl:decimal (patron:string curler:string atspair1:string atspair2:string rt:string amount:decimal);e
         @doc "Autostakes <rt> token twice using <atspair1> and <atspair2> \
             \ <rt> must be RBT in <atspair1> and RT in <atspair2> for this to work"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_Curl patron curler atspair1 atspair2 rt amount)
         )
     )
-    (defun ATS|C_HotRecovery (patron:string recoverer:string atspair:string ra:decimal)
+    (defun ATS|C_HotRecovery (patron:string recoverer:string atspair:string ra:decimal);e
         @doc "Executes Hot Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_HotRecovery patron recoverer atspair ra)
         )
     )
-    (defun ATS|C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal)
+    (defun ATS|C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal);e
         @doc "Executes Cold Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_ColdRecovery patron recoverer atspair ra)
         )
     )
-    (defun ATS|C_Cull:[decimal] (patron:string culler:string atspair:string)
+    (defun ATS|C_Cull:[decimal] (patron:string culler:string atspair:string);e
         @doc "Culls <atspair> for <culler>. Culling returns all elapsed past Cold-Recoveries executed by <culler> \
             \ Returns culled values. If no cullable values exists, returns a list of zeros, since nothing has been culled"
         (with-capability (SUMMONER)
             (AUTOSTAKE.ATS|CO_Cull patron culler atspair)
         )
     )
-    (defun ATS|C_KickStart (patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
+    (defun ATS|C_KickStart (patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal);e
         @doc "Kickstarts <atspair> with a specific amount of Reward-Tokens, \
         \ while asking in retunr for a specific amount of Reward-Bearing-Tokens \
         \ thus efectively starting the <atspair> at a specific predefined Index"
@@ -595,20 +596,20 @@
             (OUROBOROS.ATS|CO_KickStart patron kickstarter atspair rt-amounts rbt-request-amount)
         )
     )
-    (defun ATS|C_Syphon (patron:string syphon-target:string atspair:string syphon-amounts:[decimal])
+    (defun ATS|C_Syphon (patron:string syphon-target:string atspair:string syphon-amounts:[decimal]);e
         @doc "Syphons Reward Tokens from <atspair> to <syphon-target>, reducing its Index"
         (with-capability (SUMMONER)
             (OUROBOROS.ATS|CO_Syphon patron syphon-target atspair syphon-amounts)
         )
     )
-    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)
+    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer);e
         @doc "Redeems a Hot RBT; \
         \ Redeeming instantly returns RTs, in amounts determined by the <h-promile> and <h-decay> values."
         (with-capability (SUMMONER)
             (OUROBOROS.ATS|CO_Redeem patron redeemer id nonce)
         )
     )
-    (defun ATS|C_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
+    (defun ATS|C_RemoveSecondary (patron:string remover:string atspair:string reward-token:string);e
         @doc "Removes a secondary Reward-Toke from its ATS Pair \
         \ Secondary Reward Tokens are Reward-Tokens added after the ATS-Pair Creation, \
         \ therefor the Primal Reward Token, (the reward Token the ATS-Pair was created with), cannopt be removed."
@@ -617,40 +618,40 @@
         )
     )
     ;;VST
-    (defun VST|C_CreateVestingLink:string (patron:string dptf:string)
+    (defun VST|C_CreateVestingLink:string (patron:string dptf:string);e
         @doc "Creates an immutable Vesting Pair between the input DPTF Token and a DPMF Token that will be created by this function \
             \ Incurrs the necessary costs for issuing a DPMF Token"
         (with-capability (SUMMONER)
             (let
                 (
-                    (output:string (VST|CO_CreateVestingLink patron dptf))
+                    (output:string (AUTOSTAKE.VST|CO_CreateVestingLink patron dptf))
                 )
                 (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
                 output
             )
         )
     )
-    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
+    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer);e
         @doc "Vests <id> given input parameters to its DPMF Vesting Counterpart to <target-account>"
         (with-capability (SUMMONER)
             (AUTOSTAKE.VST|CO_Vest patron vester target-account id amount offset duration milestones)
         )
     )
-    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
+    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer);e
         @doc "Autostakes <coil-token> and outputs its vested counterpart, to the <target-account> \
             \ Fails if the c-rbt doesnt have an active vesting counterpart"
         (with-capability (SUMMONER)
             (AUTOSTAKE.VST|CO_CoilAndVest patron coiler-vester atspair coil-token amount target-account offset duration milestones)
         )
     )
-    (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string atspair1:string atspair2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
+    (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string atspair1:string atspair2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer);e
         @doc "Autostakes <curl-token> twice and outputs its vested counterpart when it exists, to the <target-account> \
             \ Fails if the c-rbt of <atspair2> doesnt have an active vesting counterpart"
         (with-capability (SUMMONER)
             (AUTOSTAKE.VST|CO_CurlAndVest patron curler-vester atspair1 atspair2 curl-token amount target-account offset duration milestones)
         )
     )
-    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
+    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer);e
         @doc "Culls a DPMF representing a Vested Token \
         \ Culling returns to culler any amounts that can be released by the Vesting Schedule as DPTF Tokens"
         (with-capability (SUMMONER)
@@ -658,26 +659,26 @@
         )
     )
     ;;LQD
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)
+    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal);e
         @doc "Wraps native Kadena to DALOS Kadena"
         (with-capability (SUMMONER)
             (LIQUID.LIQUID|CO_WrapKadena patron wrapper amount)
         )
     )
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)
+    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal);e
         @doc "Unwraps DALOS Kadena to native Kadena"
         (with-capability (SUMMONER)
             (LIQUID.LIQUID|CO_UnwrapKadena patron unwrapper amount)
         )
     )
     ;;OUROBOROS
-    (defun OUROBOROS|C_FuelLiquidStakingFromReserves (patron:string)
+    (defun OUROBOROS|C_FuelLiquidStakingFromReserves (patron:string);e
         @doc "Uses Native KDA cumulated reserves to fuel the Liquid Staking Protocol"
         (with-capability (SUMMONER)
             (OUROBOROS.OUROBOROS|CO_FuelLiquidStakingFromReserves  patron)
         )
     )
-    (defun OUROBOROS|C_WithdrawFees (patron:string id:string target:string)
+    (defun OUROBOROS|C_WithdrawFees (patron:string id:string target:string);e
         @doc "When DPTF <id> <fee-target> is left default (Ouroboros Smart DALOS Account) \
             \ and the DPTF Token is set-up with a fee, fee cumulates to the Ouroboros Smart Account \
             \ The DPTF Token Owner can then withdraw these fees."
@@ -685,7 +686,7 @@
             (OUROBOROS.OUROBOROS|CO_WithdrawFees patron id target)
         )
     )
-    (defun IGNIS|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
+    (defun IGNIS|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal);e
         @doc "Generates GAS(Ignis) from Ouroboros via Sublimation by <client> to <target> \
             \ This means ANY Standard DALOS Account can generate GAS(Ignis) for any other Standard DALOS Account \
             \ Smart DALOS Accounts cannot be used as <client> or <target> \
@@ -697,7 +698,7 @@
             (OUROBOROS.IGNIS|CO_Sublimate patron client target ouro-amount)
         )
     )
-    (defun IGNIS|C_Compress:decimal (patron:string client:string ignis-amount:decimal)
+    (defun IGNIS|C_Compress:decimal (patron:string client:string ignis-amount:decimal);e
         @doc "Generates Ouroboros from GAS(Ignis) via Compression by <client> for itself \
             \ Any Standard DALOS Accounts can compress GAS(Ignis) \
             \ GAS(Ignis) compression costs no GAS(Ignis) \

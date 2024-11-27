@@ -136,10 +136,6 @@
         @doc "Capability required to update balance for a Primordial TrueFungible"
         true
     )
-    (defcap DALOS|DEPLOY ()
-        @doc "Capability needed to Deploy DALOS Accounts"
-        true
-    )
     (defcap SECURE ()
         @doc "Capability that secures Client Functions in this Module"
         true
@@ -622,13 +618,46 @@
         )
     )
     ;;            Composed Capabilities                 [CC]
+    (defcap DALOS|DEPLOY_STANDARD (account:string guard:guard kadena:string)
+        @doc "Capability needed to deploy a Standard DALOS Account"
+        @event
+        (let
+            (
+                (account-validation:bool (GLYPH|UEV_DalosAccount account))
+                (first:string (take 1 account))
+                (ouroboros:string "Ѻ")
+            )
+            (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
+            (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
+            (enforce-guard guard)
+            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
+        )
+    )
+    (defcap DALOS|DEPLOY_SMART (account:string guard:guard kadena:string sovereign:string)
+        @doc "Capability needed to deploy a Smart DALOS Account"
+        @event
+        (let
+            (
+                (account-validation:bool (GLYPH|UEV_DalosAccount account))
+                (first:string (take 1 account))
+                (sigma:string "Σ")
+            )
+            (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
+            (enforce (= first sigma) (format "Account {} doesn|t have the corrrect Format for a Smart DALOS Account" [account]))
+            (DALOS|UEV_EnforceAccountType sovereign false)
+            (enforce-guard guard)
+            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
+        )
+    )
     (defcap DALOS|ROTATE_ACCOUNT (account:string)
         @doc "Capability required to rotate(update|change) DALOS Account information (Kadena-Konto and Guard)"
+        @event
         (compose-capability (DALOS|CF|OWNER account))
         (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
     (defcap DALOS|ROTATE_SOVEREIGN (account:string new-sovereign:string)
         @doc "Capability required to rotate(update|change) the DALOS Account Sovereign"
+        @event
         (compose-capability (DALOS|SOVEREIGN account new-sovereign))
         (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
@@ -641,6 +670,7 @@
     )
     (defcap DALOS|ROTATE_GOVERNOR (account:string)
         @doc "Capability required to rotate(update|change) the DALOS Account Governor"
+        @event
         (compose-capability (DALOS|GOVERNOR account))
         (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
@@ -651,10 +681,11 @@
     )
     (defcap DALOS|CONTROL_SMART-ACCOUNT (account:string pasc:bool pbsc:bool pbm:bool)
         @doc "Capability required to Control a Smart DALOS Account"
-        (compose-capability (DALOS|CONTROL_SMART-ACCOUNT_CORE account pasc pbsc pbm))
+        @event
+        (compose-capability (DALOS|X_CONTROL_SMART-ACCOUNT account pasc pbsc pbm))
         (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
-    (defcap DALOS|CONTROL_SMART-ACCOUNT_CORE (account:string pasc:bool pbsc:bool pbm:bool)
+    (defcap DALOS|X_CONTROL_SMART-ACCOUNT (account:string pasc:bool pbsc:bool pbm:bool)
         @doc "Core Capability required to Control a Smart DALOS Account"
         (compose-capability (DALOS|GOVERNOR account))
         (enforce (= (or (or pasc pbsc) pbm) true) "At least one Smart DALOS Account parameter must be true")
@@ -1082,24 +1113,12 @@
                 (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (DALOS|DEPLOY)
+        (with-capability (DALOS|DEPLOY_STANDARD account guard kadena)
             (DALOS|CP_DeployStandardAccount account guard kadena)
         )
     )
     (defun DALOS|CP_DeployStandardAccount (account:string guard:guard kadena:string)
-        (require-capability (DALOS|DEPLOY))
-        (let
-            (
-                (account-validation:bool (GLYPH|UEV_DalosAccount account))
-                (first:string (take 1 account))
-                (ouroboros:string "Ѻ")
-            )
-            (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
-            (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
-        )
-        ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
-        (enforce-guard guard)
-        ;;Creates DALOS|AccountTable Entry for the <account>
+        (require-capability (DALOS|DEPLOY_STANDARD account guard kadena))
         (insert DALOS|AccountTable account
             { "guard"                       : guard
             , "kadena-konto"                : kadena
@@ -1136,25 +1155,12 @@
                 (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (DALOS|DEPLOY)
+        (with-capability (DALOS|DEPLOY_SMART account guard kadena sovereign)
             (DALOS|CP_DeploySmartAccount account guard kadena sovereign)
         )
     )
     (defun DALOS|CP_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
-        (require-capability (DALOS|DEPLOY))
-        (let
-            (
-                (account-validation:bool (GLYPH|UEV_DalosAccount account))
-                (first:string (take 1 account))
-                (sigma:string "Σ")
-            )
-            (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
-            (enforce (= first sigma) (format "Account {} doesn|t have the corrrect Format for a Smart DALOS Account" [account]))
-        )
-        (DALOS|UEV_EnforceAccountType sovereign false)
-        ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
-        (enforce-guard guard)
-        ;;Creates DALOS|AccountTable Entry for the <account>
+        (require-capability (DALOS|DEPLOY_SMART account guard kadena sovereign))
         (insert DALOS|AccountTable account
             { "guard"                       : guard
             , "kadena-konto"                : kadena
@@ -1326,7 +1332,7 @@
         )
     )
     (defun DALOS|X_UpdateSmartAccountParameters (account:string pasc:bool pbsc:bool pbm:bool)
-        (require-capability (DALOS|CONTROL_SMART-ACCOUNT_CORE account pasc pbsc pbm))
+        (require-capability (DALOS|X_CONTROL_SMART-ACCOUNT account pasc pbsc pbm))
         (update DALOS|AccountTable account
             {"payable-as-smart-contract"    : pasc
             ,"payable-by-smart-contract"    : pbsc
@@ -1386,10 +1392,10 @@
         )
         ;;Function
         (with-capability (IGNIS|COLLECT patron active-account amount)
-            (IGNIS|X_X_Collect patron active-account amount)
+            (IGNIS|XP_Collect patron active-account amount)
         )
     )
-    (defun IGNIS|X_X_Collect (patron:string active-account:string amount:decimal)
+    (defun IGNIS|XP_Collect (patron:string active-account:string amount:decimal)
         @doc "Core Function that Collects GAS"
         (require-capability (IGNIS|COLLECT patron active-account amount))
         (let
