@@ -259,29 +259,29 @@
                 (BasileonAsID:string (AOZ|UR_Assets 1 8))
             )
             ;;Set Transaction Fees for Minor Solid Kosonic Currencies
-            (BASIS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
-            (BASIS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
+            (TALOS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
+            (TALOS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
-            (BASIS.DPTF|C_SetFee patron ComatusAureusID 20.0)
-            (BASIS.DPTF|C_ToggleFee patron ComatusAureusID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
+            (TALOS.DPTF|C_SetFee patron ComatusAureusID 20.0)
+            (TALOS.DPTF|C_ToggleFee patron ComatusAureusID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
-            (BASIS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
-            (BASIS.DPTF|C_ToggleFee patron PileatusSolidusID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
+            (TALOS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
+            (TALOS.DPTF|C_ToggleFee patron PileatusSolidusID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
-            (BASIS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
-            (BASIS.DPTF|C_ToggleFee patron TarabostesStaterID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
+            (TALOS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
+            (TALOS.DPTF|C_ToggleFee patron TarabostesStaterID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
-            (BASIS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
-            (BASIS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
+            (TALOS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
+            (TALOS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
-            (BASIS.DPTF|C_SetFee patron BasileonAsID 60.0)
-            (BASIS.DPTF|C_ToggleFee patron BasileonAsID true)
-            (BASIS.DPTF|C_ToggleFeeLock patron BasileonAsID true)
+            (TALOS.DPTF|C_SetFee patron BasileonAsID 60.0)
+            (TALOS.DPTF|C_ToggleFee patron BasileonAsID true)
+            (TALOS.DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
     (defun AOZ|A_IssueMetaFungibles:[string] (patron:string)
@@ -290,7 +290,7 @@
             (let
                 (
                     (mf-ids:[string]
-                        (BASIS.DPMF|C_Issue
+                        (TALOS.DPMF|C_Issue
                             patron
                             AOZ|SC_NAME
                             ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
@@ -341,7 +341,7 @@
                     (AsInfinimusID:string (AOZ|UR_Assets 2 5))
 
                     (PlebeicStrengthID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "PlebeicStrength"
@@ -353,7 +353,7 @@
                         )
                     )
                     (ComatiCommandID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "ComatiCommand"
@@ -365,7 +365,7 @@
                         )
                     )
                     (PileatiPowerID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "PileatiPower"
@@ -377,7 +377,7 @@
                         )
                     )
                     (TarabostesTenacityID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "TarabostesTenacity"
@@ -389,7 +389,7 @@
                         )
                     )
                     (StrategonVigorID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "StrategonVigor"
@@ -401,7 +401,7 @@
                         )
                     )
                     (AsAuthorityID:string
-                        (AUTOSTAKE.ATS|C_Issue
+                        (TALOS.ATS|C_Issue
                             patron
                             AOZ|SC_NAME
                             "AsAuthority"
@@ -423,58 +423,58 @@
                 )
                 ;;Setup each Autostake Pool
                 ;;Plebeic Strength
-                (AUTOSTAKE.ATS|C_AddSecondary patron PlebeicStrengthID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron PlebeicStrengthID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron PlebeicStrengthID DenariusDebilisID)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PlebeicStrengthID false)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;must be removed as was used for testing
+                (TALOS.ATS|C_AddSecondary patron PlebeicStrengthID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron PlebeicStrengthID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron PlebeicStrengthID DenariusDebilisID)
+                (TALOS.ATS|C_TurnRecoveryOn patron PlebeicStrengthID false)
+                (TALOS.ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;must be removed as was used for testing
                 ;;Comati Command
-                (AUTOSTAKE.ATS|C_AddSecondary patron ComatiCommandID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron ComatiCommandID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron ComatiCommandID AureusFragilisID)
-                (AUTOSTAKE.ATS|C_SetHotFee patron ComatiCommandID 900.0 90)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron ComatiCommandID false)
+                (TALOS.ATS|C_AddSecondary patron ComatiCommandID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron ComatiCommandID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron ComatiCommandID AureusFragilisID)
+                (TALOS.ATS|C_SetHotFee patron ComatiCommandID 900.0 90)
+                (TALOS.ATS|C_TurnRecoveryOn patron ComatiCommandID false)
                 ;;Pileati Power
-                (AUTOSTAKE.ATS|C_AddSecondary patron PileatiPowerID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron PileatiPowerID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron PileatiPowerID SolidusFractusID)
-                (AUTOSTAKE.ATS|C_SetHotFee patron PileatiPowerID 900.0 180)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron PileatiPowerID false)
+                (TALOS.ATS|C_AddSecondary patron PileatiPowerID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron PileatiPowerID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron PileatiPowerID SolidusFractusID)
+                (TALOS.ATS|C_SetHotFee patron PileatiPowerID 900.0 180)
+                (TALOS.ATS|C_TurnRecoveryOn patron PileatiPowerID false)
                 ;;Tarabostes Tenacity
-                (AUTOSTAKE.ATS|C_AddSecondary patron TarabostesTenacityID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron TarabostesTenacityID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron TarabostesTenacityID StaterTenuulusID)
-                (AUTOSTAKE.ATS|C_SetHotFee patron TarabostesTenacityID 900.0 360)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron TarabostesTenacityID false)
+                (TALOS.ATS|C_AddSecondary patron TarabostesTenacityID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron TarabostesTenacityID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron TarabostesTenacityID StaterTenuulusID)
+                (TALOS.ATS|C_SetHotFee patron TarabostesTenacityID 900.0 360)
+                (TALOS.ATS|C_TurnRecoveryOn patron TarabostesTenacityID false)
                 ;;Strategon Vigor
-                (AUTOSTAKE.ATS|C_AddSecondary patron StrategonVigorID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron StrategonVigorID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron StrategonVigorID DrachmaMinimaID)
-                (AUTOSTAKE.ATS|C_SetHotFee patron StrategonVigorID 900.0 720)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron StrategonVigorID false)
+                (TALOS.ATS|C_AddSecondary patron StrategonVigorID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron StrategonVigorID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron StrategonVigorID DrachmaMinimaID)
+                (TALOS.ATS|C_SetHotFee patron StrategonVigorID 900.0 720)
+                (TALOS.ATS|C_TurnRecoveryOn patron StrategonVigorID false)
                 ;;As Authority
-                (AUTOSTAKE.ATS|C_AddSecondary patron AsAuthorityID EsothericKosonID false)
-                (AUTOSTAKE.ATS|C_AddSecondary patron AsAuthorityID AncientKosonID false)
-                (AUTOSTAKE.ATS|C_AddHotRBT patron AsAuthorityID AsInfinimusID)
-                (AUTOSTAKE.ATS|C_SetHotFee patron AsAuthorityID 900.0 1440)
-                (AUTOSTAKE.ATS|C_TurnRecoveryOn patron AsAuthorityID false)
+                (TALOS.ATS|C_AddSecondary patron AsAuthorityID EsothericKosonID false)
+                (TALOS.ATS|C_AddSecondary patron AsAuthorityID AncientKosonID false)
+                (TALOS.ATS|C_AddHotRBT patron AsAuthorityID AsInfinimusID)
+                (TALOS.ATS|C_SetHotFee patron AsAuthorityID 900.0 1440)
+                (TALOS.ATS|C_TurnRecoveryOn patron AsAuthorityID false)
 
                 ;;Genesis Mint and Stake to kickstart staking Pools
-                (BASIS.DPTF|C_Mint
+                (TALOS.DPTF|C_Mint
                     patron
                     PrimordialKosonID
                     patron
                     10000.0
                     true
                 )
-                (BASIS.DPTF|C_Mint
+                (TALOS.DPTF|C_Mint
                     patron
                     EsothericKosonID
                     patron
                     5000.0
                     true
                 )
-                (BASIS.DPTF|C_Mint
+                (TALOS.DPTF|C_Mint
                     patron
                     AncientKosonID
                     patron
@@ -482,29 +482,29 @@
                     true
                 )
                 ;;Stake 150 75 75 PKOSON, EKOSON, AKOSON in each ATS Pool to kickstart the pools.
-                (AUTOSTAKE.ATS|C_Coil patron patron PlebeicStrengthID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron PlebeicStrengthID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron PlebeicStrengthID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron PlebeicStrengthID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron PlebeicStrengthID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron PlebeicStrengthID AncientKosonID 75.0)
 
-                (AUTOSTAKE.ATS|C_Coil patron patron ComatiCommandID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron ComatiCommandID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron ComatiCommandID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron ComatiCommandID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron ComatiCommandID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron ComatiCommandID AncientKosonID 75.0)
 
-                (AUTOSTAKE.ATS|C_Coil patron patron PileatiPowerID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron PileatiPowerID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron PileatiPowerID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron PileatiPowerID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron PileatiPowerID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron PileatiPowerID AncientKosonID 75.0)
 
-                (AUTOSTAKE.ATS|C_Coil patron patron TarabostesTenacityID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron TarabostesTenacityID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron TarabostesTenacityID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron TarabostesTenacityID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron TarabostesTenacityID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron TarabostesTenacityID AncientKosonID 75.0)
 
-                (AUTOSTAKE.ATS|C_Coil patron patron StrategonVigorID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron StrategonVigorID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron StrategonVigorID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron StrategonVigorID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron StrategonVigorID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron StrategonVigorID AncientKosonID 75.0)
 
-                (AUTOSTAKE.ATS|C_Coil patron patron AsAuthorityID PrimordialKosonID 150.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron AsAuthorityID EsothericKosonID 75.0)
-                (AUTOSTAKE.ATS|C_Coil patron patron AsAuthorityID AncientKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron AsAuthorityID PrimordialKosonID 150.0)
+                (TALOS.ATS|C_Coil patron patron AsAuthorityID EsothericKosonID 75.0)
+                (TALOS.ATS|C_Coil patron patron AsAuthorityID AncientKosonID 75.0)
                 atspairs
             )
         )
