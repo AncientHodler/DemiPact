@@ -21,22 +21,27 @@
     (defconst DALOS|SC_KEY                  DALOS.DALOS|SC_KEY)
     (defconst DALOS|SC_NAME                 DALOS.DALOS|SC_NAME)
     (defconst DALOS|SC_KDA-NAME             DALOS.DALOS|SC_KDA-NAME)
+    (defconst DALOS|PBL                     "9G.DwF3imJMCp4ht88DD1vx6pdjEkLM4j7Fvzso8zJF7Ixe1p2oKfGb53a5svtEF0Lz1q4MjvHaMrgqCfjlA1cBj2bzvs86EeLIMg2fmutzwbA5vI4woKoqq0acDHllAonxC4qLBulsLclMGwcw9iGxiw919t4tfD8FpcIc4MJ059ki7giFIAyCghgMwwr199v3qiDfIon426rbz1jMLmCe4jhHwD3sEarwMlmzLJ5li43J70CEDzouh7x8pu4u1GxJHa6Cabrsc147gIlzIdDmCC2j87LFpEdvqLge9o0w4av8mLr0lDAfalpnEabfkl0E6zE9KMG7LH2w7uvBIup3Hxxxu2Giwu29Cqye3fJ5ihcjacop4vtcLsi33ip742uAhGzjHaDLwAh933ntp8tEC1zkt9yi6n89JtsDLk477p80rscbGtsi14nxsMf7y0d7GxzE8FFmljElu5yE3vx25cEvc9574Hw4iIi23FFKfdhGF77LMqaBkDB9hJKmpc1B2rM1a8mfilyvLAdzpj57Ae5FG5vvm1n1nzgau373dBF7CuBAu2zbts09du55")
     ;;  AUTOSTAKE
     (defconst ATS|SC_KEY                    AUTOSTAKE.ATS|SC_KEY)
     (defconst ATS|SC_NAME                   AUTOSTAKE.ATS|SC_NAME)
     (defconst ATS|SC_KDA-NAME               AUTOSTAKE.ATS|SC_KDA-NAME)
+    (defconst ATS|PBL                       "9H.9I8veD6Lqmcd5nKlb1vlHkg976FhdtooE3iH73h8i2Gq9tLKdclnpo07sC29i2yvMeuB0ikkKghiIgdAfkfDiM57o2phj2quCD8gutjIgDs6AlecMtw2lG6kMMBxBH4B5d1xqhpzA7AHkgEqF7Hgqwpx6E5aIMAtqxIpMhjyqziDiwLA69dKlhlwpjoze34Bwz6swBjlA880ItKfwxtulKEJG9oI3Gjmwgn6bbAgL7xy4brdbgK5DukMBHc0K1jIs1DjcDzhJz2liKultB67rKaBf3nMHMkbzhwl1hdu2wBCeHMLLphug2kE3tDtpxw6kLcj80qfBxvwmuxbeHjk349Md2B7eB4brt8fldi2CxGltfj41KA7GkgmtMa6szivDl5aCk9ozab9ohrsfBHikGL7GJ5Az4A2a8ufnIAJIz2mAgwGDmsAl7yyavbx12e5KhFFupclbKadmiFx8dvqkqwziu4vtt3AcKDhl96EzhuiKAF49vGoaAMo5vxM4h0t94nscG8IGl33De5MJGCpdf3g23D13eJ9BDi034wECutafzao4zzCe9IyvD3E")
     ;;  VESTING
     (defconst VST|SC_KEY                    AUTOSTAKE.VST|SC_KEY)
     (defconst VST|SC_NAME                   AUTOSTAKE.VST|SC_NAME)
     (defconst VST|SC_KDA-NAME               AUTOSTAKE.VST|SC_KDA-NAME)
+    (defconst VST|PBL                       "9G.5s5hoiGo96tMqyh3JBklmsvo8Lc3ol9m6zavJcCuqg4mBvkbDfcv5gEorMit8v8Mj9Jc18EI36Gq7cJ1IyA4e4wvl199KuCx3chsDKGDdfsvzk8mo317ulGk00pbxu7MLc2zw7joouaxt3Ax1KnlJz153ko0JtIxz7pqylfis45pDo2vvm1MH2kA2wmE2crxiEo6oEckuGqzz8oEaa9ez8ADLyqnj48lq4jGp4slkKo6a06ElezH619fsihIdmiMdfB036CJAr0rlzA2b5DgvEJcoyIFioru7vynBjLMLv3pvLFnbFeswrlyLjF8ry7kB52cD7bD7xaamCEjgIC2DsKMv5Mrd69BIKn2yKHC86f0hme9zs5dwMekAd6mc4wM4bDAk6Jrsl6s74ykKLF71pk45rIE1xxzFC4EjykBf6G0neBdaExI32HufaE5mEloDtvnC6vJ7HA9akkI3616MnLErA8eMIn7Kr2wI4l9CvGpKcF9HilzJmdqMa4kzJwqzuFc9LhDnrKcu0LvBHqsx2CrCM9EwHqpkkGe7w8eK8x0xK6K8drLaoBKmaB1")
     ;;  LIQUID-STAKING
     (defconst LIQUID|SC_KEY                 LIQUID.LIQUID|SC_KEY)
     (defconst LIQUID|SC_NAME                DALOS.LIQUID|SC_NAME)
     (defconst LIQUID|SC_KDA-NAME            LIQUID.LIQUID|SC_KDA-NAME)
+    (defconst LIQUID|PBL                    "9H.b49lfzLzvC25g87fst6MqCkfbuqq39iGu50gDqi9jBEk6Cn86w54b91zDxeGgLdCxIjJDfyi6gBBwA93lyGLcdfggf0LzwKu405piavx0nEnqpzyHK125h2BhECnobmDBAps61c7mGmw5GrczBjvBMLxHwl2avt5jwhKeGxh7Ibm1ui6wI6lpAKBMay4tvEwHK0EibhbeaA2lLqjIwqMKnldp22txeje3DFLautFC798ExbLxG7q3om8l1f9qpMJkw9f5nmHsHGJcrcIF2mou9lmpr3hbz64La6nF9w26h7osABLMLlK9Glp48yrj4h1MkI7xjftytKDnJFyqvoMFqKvA43cJ81bJCvmn63eJ9jx5n3GxFbc9H4v400iFwtyIilmhKymsa1iCnwL29g21DvkaE6JJyxl5eLCiGH3Ml1nb0jkg16zJbf9cfg41KHA0IGFIvLj9LBhj7okL6wspCEBfkc5Aui6DAM7dvAqH54LApEaAzIgyMloEmqvBgt5wF0lyd05xHxz4Mtb3ItGb5fLpzbMGqGKBffi4dElI7Hbs6Id0hCKGaeIg9JL")
     ;;  OUROBOROS
     (defconst OUROBOROS|SC_KEY              OUROBOROS.OUROBOROS|SC_KEY)
     (defconst OUROBOROS|SC_NAME             DALOS.OUROBOROS|SC_NAME)
     (defconst OUROBOROS|SC_KDA-NAME         OUROBOROS.OUROBOROS|SC_KDA-NAME)
+    (defconst OUROBOROS|PBL                 "9H.28jB2BBny4op601Cfqz9brFJKAEo67jbEDJi91i00pGjcD1Mpn0y0A1CxcAwGgBu35Ix3bG4e4p56Mu6x7Mmd50nKfmpDGtLy1ywyCjoDD5xiHBb0y5dAjB0fuokrqyx3ula9rtxyEHK1A4gkG4g3GEyysMtgF40IBgKjm7t8ffGshICIypFeF3gA5x0MixA0soiCx9tBnMDzI6G5xC8yIJJ3Bt2sCvJHAp7HAEA3rKK6Bgnx8hK94oDbgrpCkxw3zpo7tbeHhcakzbg0ELG3EJvk19hyd9LC73t2gizl0B6puq3Ljji5EDAhzno7K32x8vCagc5D2GLiMfdzEzsj5KEe1c2p7hxj76lMvp40r9F56vzlK8Kb7mrKt90ILEMqCghLrok7D4uH8h28EGqbK75wiyguimc1jDGxthyBJFfApClymKA57ehqbv2Lyv323w44b0kIItu35fjmhe2DCBMwjn67ffDII97b6AdyG010wvAHf55xFt25Mbm2pflsggL4D5jHtokl7qn6g4ltM5ilvHvsxn7jHe23Cfgoxn1JssdFMBpcDvB2xki7")
 
     ;;External Module Usage
     (use free.DALOS)
@@ -108,17 +113,17 @@
     )
     ;;        [6] Client Usage FUNCTIONS                [C]
     ;;DALOS
-    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string);e
+    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string);e
         @doc "Deploys a Standard DALOS Account";e
         (with-capability (SUMMONER||P|DALOS|AUTO_PATRON)
-            (DALOS.DALOS|CO_DeployStandardAccount account guard kadena)
+            (DALOS.DALOS|CO_DeployStandardAccount account guard kadena public)
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string);e
+    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string);e
         @doc "Deploys a Smart DALOS Account";e
         (with-capability (SUMMONER||P|DALOS|AUTO_PATRON)
-            (DALOS.DALOS|CO_DeploySmartAccount account guard kadena sovereign)
+            (DALOS.DALOS|CO_DeploySmartAccount account guard kadena sovereign public)
             (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
@@ -746,18 +751,18 @@
 
         ;;STEP 0
         ;;Deploy the <Dalos> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount DALOS.DALOS|SC_NAME (keyset-ref-guard DALOS.DALOS|SC_KEY) DALOS.DALOS|SC_KDA-NAME patron)
+            (DALOS.DALOS|CO_DeploySmartAccount DALOS.DALOS|SC_NAME (keyset-ref-guard DALOS.DALOS|SC_KEY) DALOS.DALOS|SC_KDA-NAME patron DALOS|PBL)
         ;;Deploy the <Autostake> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.ATS|SC_NAME (keyset-ref-guard AUTOSTAKE.ATS|SC_KEY) AUTOSTAKE.ATS|SC_KDA-NAME patron)
+            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.ATS|SC_NAME (keyset-ref-guard AUTOSTAKE.ATS|SC_KEY) AUTOSTAKE.ATS|SC_KDA-NAME patron ATS|PBL)
             (AUTOSTAKE.ATS|SetGovernor patron)
         ;;Deploy the <Vesting> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.VST|SC_NAME (keyset-ref-guard AUTOSTAKE.VST|SC_KEY) AUTOSTAKE.VST|SC_KDA-NAME patron)
+            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.VST|SC_NAME (keyset-ref-guard AUTOSTAKE.VST|SC_KEY) AUTOSTAKE.VST|SC_KDA-NAME patron VST|PBL)
             (AUTOSTAKE.VST|SetGovernor patron)
         ;;Deploy the <Liquidizer> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount LIQUID.LIQUID|SC_NAME (keyset-ref-guard LIQUID.LIQUID|SC_KEY) LIQUID.LIQUID|SC_KDA-NAME patron)
+            (DALOS.DALOS|CO_DeploySmartAccount LIQUID.LIQUID|SC_NAME (keyset-ref-guard LIQUID.LIQUID|SC_KEY) LIQUID.LIQUID|SC_KDA-NAME patron LIQUID|PBL)
             (LIQUID.LIQUID|SetGovernor patron)
         ;;Deploy the <Ouroboros> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount OUROBOROS.OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS.OUROBOROS|SC_KEY) OUROBOROS.OUROBOROS|SC_KDA-NAME patron)
+            (DALOS.DALOS|CO_DeploySmartAccount OUROBOROS.OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS.OUROBOROS|SC_KEY) OUROBOROS.OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
             (OUROBOROS.OUROBOROS|SetGovernor patron)
 
         ;;STEP 1

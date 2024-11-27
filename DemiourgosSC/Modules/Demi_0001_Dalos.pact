@@ -286,6 +286,7 @@
     (defschema DALOS|AccountSchema
         @doc "Schema that stores DALOS Account Information"
         ;;==================================;;
+        public:string                       ;;Stores the Public Key associated with the Dalos Account string
         guard:guard                         ;;Guard of the DALOS Account
         kadena-konto:string                 ;;stores the underlying Kadena principal Account that was used to create the DALOS Account
                                             ;;this account is used for KDA payments. The guard for this account is not stored in this module
@@ -860,6 +861,10 @@
         (at "kda-price" (read DALOS|PricesTable action ["kda-price"]))
     )
     ;;            DALOS|AccountTable
+    (defun DALOS|UR_AccountPublicKey:string (account:string)
+        @doc "Returns DALOS Account <account> Public Key"
+        (at "public" (read DALOS|AccountTable account ["public"]))
+    )
     (defun DALOS|UR_AccountGuard:guard (account:string)
         @doc "Returns DALOS Account <account> Guard"
         (at "guard" (read DALOS|AccountTable account ["guard"]))
@@ -1092,6 +1097,17 @@
             )
         )
     )
+    (defun DALOS|A_UpdatePublicKey (account:string new-public:string)
+        @doc "Administrative Function to update the Public Key for a DALOS Account \
+        \ Since there is currently no validation in place to properly validate the Public Key string that is to be used  \
+        \ when deploying a new DALOS Account, this function allows the admin to update it, should an account be created with the wrong public Key \
+        \ It is therefore intended to be used as failsafe."
+        (with-capability (DALOS-ADMIN)
+            (write DALOS|AccountTable account
+                {"public"     : new-public}
+            )
+        )
+    )
     ;;[2+3x2+2x5] Client Usage Functions                [C]
     (defun DALOS|C_TransferDalosFuel (sender:string receiver:string amount:decimal)
         @doc "Transfer KDA from sender to receiver \
@@ -1121,12 +1137,12 @@
             (DALOS|C_TransferDalosFuel kda-sender kda-dalos am2)        ;;75% to KDA-Dalos (to be used for DALOS Gas Station)
         )
     )
-    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string)
+    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (with-capability (DALOS-ADMIN)
-            (DALOS|CO_DeployStandardAccount account guard kadena)
+            (DALOS|CO_DeployStandardAccount account guard kadena public)
         )
     )
-    (defun DALOS|CO_DeployStandardAccount (account:string guard:guard kadena:string)
+    (defun DALOS|CO_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (enforce-one
             "Standard Deployment not permitted"
             [
@@ -1135,13 +1151,14 @@
             ]
         )
         (with-capability (DALOS|DEPLOY_STANDARD account guard kadena)
-            (DALOS|CP_DeployStandardAccount account guard kadena)
+            (DALOS|CP_DeployStandardAccount account guard kadena public)
         )
     )
-    (defun DALOS|CP_DeployStandardAccount (account:string guard:guard kadena:string)
+    (defun DALOS|CP_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (require-capability (DALOS|DEPLOY_STANDARD account guard kadena))
         (insert DALOS|AccountTable account
-            { "guard"                       : guard
+            { "public"                      : public
+            , "guard"                       : guard
             , "kadena-konto"                : kadena
             , "sovereign"                   : account
             , "governor"                    : guard
@@ -1165,12 +1182,12 @@
             true
         )
     )
-    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (with-capability (DALOS-ADMIN)
-            (DALOS|CO_DeploySmartAccount account guard kadena sovereign)
+            (DALOS|CO_DeploySmartAccount account guard kadena sovereign public)
         )
     )
-    (defun DALOS|CO_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+    (defun DALOS|CO_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (enforce-one
             "Smart Deployment not permitted"
             [
@@ -1179,13 +1196,14 @@
             ]
         )
         (with-capability (DALOS|DEPLOY_SMART account guard kadena sovereign)
-            (DALOS|CP_DeploySmartAccount account guard kadena sovereign)
+            (DALOS|CP_DeploySmartAccount account guard kadena sovereign public)
         )
     )
-    (defun DALOS|CP_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+    (defun DALOS|CP_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (require-capability (DALOS|DEPLOY_SMART account guard kadena sovereign))
         (insert DALOS|AccountTable account
-            { "guard"                       : guard
+            { "public"                      : public
+            , "guard"                       : guard
             , "kadena-konto"                : kadena
             , "sovereign"                   : sovereign
             , "governor"                    : guard
