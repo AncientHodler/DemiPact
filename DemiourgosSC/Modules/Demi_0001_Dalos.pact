@@ -113,6 +113,10 @@
 
 
     ;;Simple True Capabilities (3+1)
+    (defcap KADENA ()
+        @doc "Capability required to update the KADENA Ledger"
+        true
+    )
     (defcap DALOS|INCREMENT_NONCE ()
         @doc "Capability required to increment the DALOS nonce"
         true
@@ -243,6 +247,10 @@
         n:string        ;;Glyph Name
     )
     ;;DALOS Virtual Blockchain Properties
+    (defschema DALOS|KadenaSchema
+        @doc "Stores information on DALOS Accounts associated with Kadena Addresses"
+        dalos:[string]
+    )
     (defschema DALOS|PolicySchema
         @doc "Schema that stores external policies, that are able to operate within this module"
         policy:guard
@@ -353,7 +361,9 @@
     (deftable DALOS|PricesTable:{DALOS|PricesSchema})
     ;;
     (deftable DALOS|AccountTable:{DALOS|AccountSchema})
-    (deftable DALOS|PoliciesTable:{DALOS|PolicySchema}) 
+    (deftable DALOS|PoliciesTable:{DALOS|PolicySchema})
+    ;;
+    (deftable DALOS|KadenaLedger:{DALOS|KadenaSchema})
     
 
     ;;GLYPH Submodule
@@ -630,6 +640,7 @@
             (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
             (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
             (enforce-guard guard)
+            (compose-capability (KADENA))
             ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
@@ -646,12 +657,14 @@
             (enforce (= first sigma) (format "Account {} doesn|t have the corrrect Format for a Smart DALOS Account" [account]))
             (DALOS|UEV_EnforceAccountType sovereign false)
             (enforce-guard guard)
+            (compose-capability (KADENA))
             ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
     (defcap DALOS|ROTATE_ACCOUNT (account:string)
         @doc "Capability required to rotate(update|change) DALOS Account information (Kadena-Konto and Guard)"
         @event
+        (compose-capability (KADENA))
         (compose-capability (DALOS|CF|OWNER account))
         (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
@@ -957,6 +970,14 @@
     (defun DALOS|UR_TrueFungible_AccountFreezeState:bool (account:string snake-or-gas:bool)
         (at "frozen" (DALOS|UR_TrueFungible account snake-or-gas))
     )
+    ;;
+    (defun DALOS|UR_KadenaLedger:[string] (kadena:string)
+        (with-default-read DALOS|KadenaLedger kadena
+            { "dalos"    : [UTILS.BAR] }
+            { "dalos"    := d }
+            d
+        )
+    )
     ;;            Data Read and Computation Functions   [URC]
     (defun DALOS|URC_Transferability:bool (sender:string receiver:string method:bool)
         @doc "Computes transferability between 2 DALOS Accounts, <sender> and <receiver> given the input <method> \
@@ -1136,6 +1157,8 @@
             , "ignis"                       : DPTF|BLANK
             }  
         )
+        ;;Add Entry in the Kadena Ledger
+        (DALOS|X_UpdateKadenaLedger kadena account true)
         ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
         (if (not (IGNIS|URC_IsNativeGasZero))
             (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "standard"))
@@ -1178,6 +1201,8 @@
             , "ignis"                       : DPTF|BLANK
             }  
         )
+        ;;Add Entry in the Kadena Ledger
+        (DALOS|X_UpdateKadenaLedger kadena account true)
         ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
         (if (not (IGNIS|URC_IsNativeGasZero))
             (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "smart"))
@@ -1217,6 +1242,7 @@
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
+                (current-kadena:string (DALOS|UR_AccountKadena account))
             )
             (with-capability (DALOS|ROTATE_ACCOUNT account)
                 (if (= ZG false)
@@ -1224,6 +1250,8 @@
                     true
                 )
                 (DALOS|X_RotateKadena account kadena)
+                (DALOS|X_UpdateKadenaLedger current-kadena account false)
+                (DALOS|X_UpdateKadenaLedger kadena account true)
                 (DALOS|X_IncrementNonce patron)
             )
         )
@@ -1693,6 +1721,43 @@
             )
         )
     )
+    (defun DALOS|X_UpdateKadenaLedger (kadena:string dalos:string direction:bool)
+        (require-capability (KADENA))
+        (with-default-read DALOS|KadenaLedger kadena
+            { "dalos"    : [UTILS.BAR] }
+            { "dalos"    := d }
+            (let*
+                (
+                    (add-lst:[string]
+                        (if (= d [UTILS.BAR])
+                            [dalos]
+                            (if (contains dalos d)
+                                d
+                                (UTILS.LIST|UC_AppendLast d dalos)
+                            )
+                        )
+                    )
+                    (data-len:integer (length d))
+                    (first:string (at 0 d))
+                    (rmv-lst:[string]
+                        (if (and (= data-len 1)(!= first UTILS.BAR))
+                            [UTILS.BAR]
+                            (UTILS.LIST|UC_RemoveItem d dalos)
+                        )
+                    )
+                )
+                (if direction
+                    (write DALOS|KadenaLedger kadena
+                        { "dalos" : add-lst}
+                    )
+                    (write DALOS|KadenaLedger kadena
+                        { "dalos" : rmv-lst}
+                    )
+                )
+                
+            )
+        )
+    )
 )
 
 (create-table DALOS|Glyphs)
@@ -1703,3 +1768,4 @@
 (create-table DALOS|PricesTable)
 
 (create-table DALOS|AccountTable)
+(create-table DALOS|KadenaLedger)
