@@ -136,7 +136,14 @@
         @doc "Capability required to update balance for a Primordial TrueFungible"
         true
     )
-
+    (defcap DALOS|DEPLOY ()
+        @doc "Capability needed to Deploy DALOS Accounts"
+        true
+    )
+    (defcap SECURE ()
+        @doc "Capability that secures Client Functions in this Module"
+        true
+    )
     ;;Policies
     (defun DALOS|A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (DALOS-ADMIN)
@@ -220,7 +227,6 @@
     ;;[D] DALOS Table Keys
     (defconst DALOS|INFO "DalosInformation")
     (defconst DALOS|VGD "VirtualGasData")
-    (defconst DALOS|PRICES "DalosPrices")
 
     ;;[G] GAS Constant Values
     (defconst GAS_EXCEPTION [OUROBOROS|SC_NAME DALOS|SC_NAME LIQUID|SC_NAME])
@@ -270,13 +276,7 @@
     ;;DALOS Virtual Blockchain Prices
     (defschema DALOS|PricesSchema
         @doc "Schema that stores DALOS KDA prices for specific operations"
-        standard:decimal                    ;; 10 KDA - Cost to deploy a standard DALOS Account
-        smart:decimal                       ;; 25 KDA - Cost to deploy a smart DALOS Account
-        dptf:decimal                        ;;200 KDA - Cost to issue a True Fungible Token (DPTF)
-        dpmf:decimal                        ;;300 KDA - Cost to issue a Meta Fungible Token (DPMF)
-        dpsf:decimal                        ;;400 KDA - Cost to issue a Semi Fungible Token (DPSF)
-        dpnf:decimal                        ;;500 KDA - Cost to issue a Non  Fungible Token (DPNF)
-        blue:decimal                        ;; 25 KDA - Cost to maintain Blue Check for Token per Month
+        kda-price:decimal                   ;;Stores price for action
     )
     ;;DALOS Account Information
     (defschema DALOS|AccountSchema
@@ -438,28 +438,29 @@
         (at "u" (read DALOS|Glyphs s ["u"]))
     )
     ;;
+    ;;
     ;;            DALOS             Submodule
     ;;
-    ;;            CAPABILITIES      <0>
-    ;;            FUNCTIONS         [9]
+    ;;            CAPABILITIES      <16>
+    ;;            FUNCTIONS         [106]
     ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities Functions                [CAP]
-    ;;            Function Based Capabilities           [CF](have this tag)
-    ;;            Enforcements and Validations          [UEV]
-    ;;            Composed Capabilities                 [CC](dont have this tag)
+    ;;      [2+1] Capabilities FUNCTIONS                [CAP]
+    ;;        <1> Function Based & CAPABILITIES         [CF](have this tag)
+    ;;       [10] Enforcements & Validations FUNCTIONS  [UEV]
+    ;;       <15> Composed CAPABILITIES                 [CC](dont have this tag)
     ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read Functions                   [UR]
-    ;;            Data Read and Computation Functions   [URC] and [UC]
+    ;;       [39] Data Read FUNCTIONS                   [UR]
+    ;;       [10] Data Read and Computation FUNCTIONS   [URC] and [UC]
     ;;            Data Creation|Composition Functions   [UCC]
-    ;;            Administrative Usage Functions        [A]
-    ;;            Client Usage Functions                [C]
-    ;;            Auxiliary Usage Functions             [X]
+    ;;        [3] Administrative Usage Functions        [A]
+    ;;[2+3x2+2x5] Client Usage FUNCTIONS                [C]
+    ;;       [23] Auxiliary Usage Functions             [X]
     ;;=========================================================================;;
     ;;
     ;;            START
     ;;
     ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities Functions                [UC]
+    ;;      [2+1] Capabilities Functions                [UC]
     (defun DALOS|CAP_EnforceAccountOwnership (account:string)
         @doc "Enforces DALOS Account Ownership"
         (let*
@@ -607,6 +608,19 @@
             (enforce (= t state) "Invalid native gas collection state!")
         )
     )
+    (defun IGNIS|UEV_Patron (patron:string)
+        @doc "Capability that ensures a DALOS account can act as gas payer, enforcing all necesarry restrictions"
+        (if (DALOS|UR_AccountType patron)
+            (let
+                (
+                    (account-type:bool (DALOS|UR_AccountType patron))
+                )
+                (enforce (= patron DALOS|SC_NAME) "Only the DALOS Account can be a Smart Patron")
+                (enforce (DALOS|C_ReadPolicy "TALOS|AutomaticPatron"))
+            )
+            (DALOS|CAP_EnforceAccountOwnership patron)
+        )
+    )
     ;;            Composed Capabilities                 [CC]
     (defcap DALOS|ROTATE_ACCOUNT (account:string)
         @doc "Capability required to rotate(update|change) DALOS Account information (Kadena-Konto and Guard)"
@@ -646,14 +660,10 @@
         (enforce (= (or (or pasc pbsc) pbm) true) "At least one Smart DALOS Account parameter must be true")
     )
     ;;
-    (defcap IGNIS|PATRON (patron:string)
-        @doc "Capability that ensures a DALOS account can act as gas payer, also enforcing its Guard"
-        (DALOS|CAP_EnforceAccountOwnership patron)
-        (DALOS|UEV_EnforceAccountType patron false)
-    )
+    
     (defcap IGNIS|COLLECT (patron:string active-account:string amount:decimal)
         @doc "Capability required to collect GAS"
-        (compose-capability (IGNIS|PATRON patron))
+        (IGNIS|UEV_Patron patron)
         (let
             (
                 (sender-type:bool (DALOS|UR_AccountType active-account))
@@ -801,33 +811,9 @@
         (at "native-gas-spent" (read DALOS|GasManagementTable DALOS|VGD ["native-gas-spent"]))
     )
     ;;            DALOS|PricesTable
-    (defun DALOS|UR_Standard:decimal ()
-        @doc "Returns the KDA price to deploy a Standard DALOS Account"
-        (at "standard" (read DALOS|PricesTable DALOS|PRICES ["standard"]))
-    )
-    (defun DALOS|UR_Smart:decimal ()
-        @doc "Returns the KDA price to deploy a Smart DALOS Account"
-        (at "smart" (read DALOS|PricesTable DALOS|PRICES ["smart"]))
-    )
-    (defun DALOS|UR_True:decimal ()
-        @doc "Returns the KDA price to issue a True Fungible Token"
-        (at "dptf" (read DALOS|PricesTable DALOS|PRICES ["dptf"]))
-    )
-    (defun DALOS|UR_Meta:decimal ()
-        @doc "Returns the KDA price to issue a Meta Fungible Token"
-        (at "dpmf" (read DALOS|PricesTable DALOS|PRICES ["dpmf"]))
-    )
-    (defun DALOS|UR_Semi:decimal ()
-        @doc "Returns the KDA price to issue a Semi Fungible Token"
-        (at "dpsf" (read DALOS|PricesTable DALOS|PRICES ["dpsf"]))
-    )
-    (defun DALOS|UR_Non:decimal ()
-        @doc "Returns the KDA price to issue a Non Fungible Token"
-        (at "dpnf" (read DALOS|PricesTable DALOS|PRICES ["dpnf"]))
-    )
-    (defun DALOS|UR_Blue:decimal ()
-        @doc "Returns the KDA price for a Blue Check"
-        (at "blue" (read DALOS|PricesTable DALOS|PRICES ["blue"]))
+    (defun DALOS|UR_UsagePrice:decimal (action:string)
+        @doc "Returns the Kadena Price for a specific action"
+        (at "kda-price" (read DALOS|PricesTable action ["kda-price"]))
     )
     ;;            DALOS|AccountTable
     (defun DALOS|UR_AccountGuard:guard (account:string)
@@ -868,7 +854,7 @@
         (at 2 (DALOS|UR_AccountProperties account))
     )
     (defun DALOS|UR_AccountPayableByMethod:bool (account:string)
-    @doc "Returns DALOS Account <account> Boolean payables-by-smart-contract"
+        @doc "Returns DALOS Account <account> Boolean payables-by-smart-contract"
         (at 3 (DALOS|UR_AccountProperties account))
     )
     ;;
@@ -1033,8 +1019,7 @@
             true
         )
     )
-    ;;            Data Creation|Composition Functions   [UCC]
-    ;;            Administrative Usage Functions        [A]
+    ;;        [3] Administrative Usage Functions        [A]
     (defun IGNIS|A_Toggle (native:bool toggle:bool)
         @doc "Turns Native or Virtual Gas collection to <toggle>"
         (with-capability (IGNIS|TOGGLE native toggle)
@@ -1048,63 +1033,14 @@
             (IGNIS|X_UpdateSourcePrice price)
         )
     )
-    (defun DALOS|A_UpdateStandard (price:decimal)
-        @doc "Updates DALOS Kadena Cost for deploying a Standard DALOS Account"
+    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal)
         (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"standard" : (floor price UTILS.KDA_PRECISION)}
+            (write DALOS|PricesTable action
+                {"kda-price"     : (floor new-price UTILS.KDA_PRECISION)}
             )
         )
     )
-    (defun DALOS|A_UpdateSmart(price:decimal)
-        @doc "Updates DALOS Kadena Cost for deploying a Smart DALOS Account"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"smart"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    (defun DALOS|A_UpdateTrue(price:decimal)
-        @doc "Updates DALOS Kadena Cost for issuing a DPTF Token"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"dptf"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    (defun DALOS|A_UpdateMeta(price:decimal)
-        @doc "Updates DALOS Kadena Cost for issuing a DPMF Token"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"dpmf"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    (defun DALOS|A_UpdateSemi(price:decimal)
-        @doc "Updates DALOS Kadena Cost for issuing a DPSF Token"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"dpsf"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    (defun DALOS|A_UpdateNon(price:decimal)
-        @doc "Updates DALOS Kadena Cost for issuing a DPNF Token"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"dpnf"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    (defun DALOS|A_UpdateBlue(price:decimal)
-        @doc "Updates DALOS Kadena Cost for the Blue Checker"
-        (with-capability (DALOS-ADMIN)
-            (update DALOS|PricesTable DALOS|PRICES
-                {"blue"     : (floor price UTILS.KDA_PRECISION)}
-            )
-        )
-    )
-    ;;            Client Usage Functions                [C]
+    ;;[2+3x2+2x5] Client Usage Functions                [C]
     (defun DALOS|C_TransferDalosFuel (sender:string receiver:string amount:decimal)
         @doc "Transfer KDA from sender to receiver \
         \ Sender and Receiver are KDA Accounts, not DALOS Accounts"
@@ -1133,8 +1069,25 @@
             (DALOS|C_TransferDalosFuel kda-sender kda-dalos am2)        ;;75% to KDA-Dalos (to be used for DALOS Gas Station)
         )
     )
-    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string)
-        @doc "Deploys a Standard DALOS Account"
+    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string)
+        (with-capability (DALOS-ADMIN)
+            (DALOS|CO_DeployStandardAccount account guard kadena)
+        )
+    )
+    (defun DALOS|CO_DeployStandardAccount (account:string guard:guard kadena:string)
+        (enforce-one
+            "Standard Deployment not permitted"
+            [
+                (enforce-guard (create-capability-guard (DALOS-ADMIN)))
+                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+            ]
+        )
+        (with-capability (DALOS|DEPLOY)
+            (DALOS|CP_DeployStandardAccount account guard kadena)
+        )
+    )
+    (defun DALOS|CP_DeployStandardAccount (account:string guard:guard kadena:string)
+        (require-capability (DALOS|DEPLOY))
         (let
             (
                 (account-validation:bool (GLYPH|UEV_DalosAccount account))
@@ -1166,12 +1119,29 @@
         )
         ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
         (if (not (IGNIS|URC_IsNativeGasZero))
-            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_Standard))
+            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "standard"))
             true
         )
     )
-    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
-        @doc "Deploys a Smart DALOS Account"
+    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+        (with-capability (DALOS-ADMIN)
+            (DALOS|CO_DeploySmartAccount account guard kadena sovereign)
+        )
+    )
+    (defun DALOS|CO_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+        (enforce-one
+            "Smart Deployment not permitted"
+            [
+                (enforce-guard (create-capability-guard (DALOS-ADMIN)))
+                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+            ]
+        )
+        (with-capability (DALOS|DEPLOY)
+            (DALOS|CP_DeploySmartAccount account guard kadena sovereign)
+        )
+    )
+    (defun DALOS|CP_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string)
+        (require-capability (DALOS|DEPLOY))
         (let
             (
                 (account-validation:bool (GLYPH|UEV_DalosAccount account))
@@ -1204,12 +1174,18 @@
         )
         ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
         (if (not (IGNIS|URC_IsNativeGasZero))
-            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_Smart))
+            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "smart"))
             true
         )
     )
-    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
-        @doc "Updates the Guard stored in the DALOS|AccountTable"
+    (defun DALOS|CO_RotateGuard (patron:string account:string new-guard:guard safe:bool)
+        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DALOS|CP_RotateGuard patron account new-guard safe)
+        )
+    )
+    (defun DALOS|CP_RotateGuard (patron:string account:string new-guard:guard safe:bool)
+        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1224,8 +1200,14 @@
             )
         )
     )
-    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
-        @doc "Updates the Kadena Account stored in the DALOS|AccountTable"
+    (defun DALOS|CO_RotateKadena (patron:string account:string kadena:string)
+        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DALOS|CP_RotateKadena patron account kadena)
+        )
+    )
+    (defun DALOS|CP_RotateKadena (patron:string account:string kadena:string)
+        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1240,9 +1222,14 @@
             )
         )
     )
-    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
-        @doc "Updates the Smart Account Sovereign Account \
-        \ Only works for Smart DALOS Accounts"
+    (defun DALOS|CO_RotateSovereign (patron:string account:string new-sovereign:string)
+        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DALOS|CP_RotateSovereign patron account new-sovereign)
+        )
+    )
+    (defun DALOS|CP_RotateSovereign (patron:string account:string new-sovereign:string)
+        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1257,9 +1244,22 @@
             )
         )
     )
-    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)
-        @doc "Updates the Smart Account Governor, which is the Governing Module \
-        \ Only works for Smart DALOS Accounts"
+    (defun DALOS|CO_RotateGovernor (patron:string account:string governor:guard)
+        (enforce-one
+            "Rotate Governor not permitted"
+            [
+                (enforce-guard (DALOS|C_ReadPolicy "AUTOSTAKE|Summoner"))
+                (enforce-guard (DALOS|C_ReadPolicy "LIQUID|Summoner"))
+                (enforce-guard (DALOS|C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+            ]
+        )
+        (with-capability (SECURE)
+            (DALOS|CP_RotateGovernor patron account governor)
+        )
+    )
+    (defun DALOS|CP_RotateGovernor (patron:string account:string governor:guard)
+        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1274,8 +1274,14 @@
             )
         )
     )
-    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
-        @doc "Manages Smart DALOS Account Type via boolean triggers"
+    (defun DALOS|CO_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DALOS|CP_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
+        )
+    )
+    (defun DALOS|CP_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1290,9 +1296,8 @@
             )
         )
     )
-    ;;            Auxiliary Usage Functions             [X]
+    ;;       [23] Auxiliary Usage Functions             [X]
     (defun DALOS|X_RotateGuard (account:string new-guard:guard safe:bool)
-        @doc "Updates DALOS Account Parameters"
         (require-capability (DALOS|CF|OWNER account))
         (if safe
             (enforce-guard new-guard)
@@ -1303,28 +1308,24 @@
         )
     )
     (defun DALOS|X_RotateKadena (account:string kadena:string)
-        @doc "Updates DALOS Account Parameters"
         (require-capability (DALOS|CF|OWNER account))
         (update DALOS|AccountTable account
             {"kadena-konto"                  : kadena}
         )
     )
     (defun DALOS|X_RotateSovereign (account:string new-sovereign:string)
-        @doc "Updates DALOS Account Sovereign"
         (require-capability (DALOS|SOVEREIGN account new-sovereign))
         (update DALOS|AccountTable account
             {"sovereign"                        : new-sovereign}
         )
     )
     (defun DALOS|X_RotateGovernor (account:string governor:guard)
-        @doc "Updates DALOS Account Governor"
         (require-capability (DALOS|GOVERNOR account))
         (update DALOS|AccountTable account
             {"governor"                        : governor}
         )
     )
     (defun DALOS|X_UpdateSmartAccountParameters (account:string pasc:bool pbsc:bool pbm:bool)
-        @doc "Updates DALOS Account Parameters"
         (require-capability (DALOS|CONTROL_SMART-ACCOUNT_CORE account pasc pbsc pbm))
         (update DALOS|AccountTable account
             {"payable-as-smart-contract"    : pasc
@@ -1394,11 +1395,16 @@
         (let
             (
                 (sender-type:bool (DALOS|UR_AccountType active-account))
+                (account-type:bool (DALOS|UR_AccountType patron))
             )
-            (if (= sender-type false)
-                (IGNIS|X_CollectStandard patron amount)
-                (IGNIS|X_CollectSmart patron active-account amount)
+            (if (not account-type)
+                (if (= sender-type false)
+                    (IGNIS|X_CollectStandard patron amount)
+                    (IGNIS|X_CollectSmart patron active-account amount)
+                )
+                true
             )
+            
         )
     )
     (defun IGNIS|X_CollectStandard (patron:string amount:decimal)

@@ -249,17 +249,24 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 07 - Load OUROBOROS Module")
+(begin-tx "InitSnake 08 - Load OUROBOROS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_Ourob.pact")
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 09 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_TALOS.pact")
+(env-gas)
+(commit-tx)
 
 
 
-(begin-tx "InitSnake 07 - Use Modules")
+
+(begin-tx "InitSnake 10 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (use free.UTILS)
@@ -268,6 +275,7 @@
 (use free.AUTOSTAKE)
 (use free.LIQUID)
 (use free.OUROBOROS)
+(use free.TALOS)
 
 
 (env-gas)
@@ -310,7 +318,7 @@
     [{  "key": "alice-key", 
         "caps": 
             [
-                (coin.TRANSFER "alice" KC.KADN_NAME_0000 1000.0)
+                (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
                 (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
                 (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
             ]
@@ -319,7 +327,7 @@
 )
 
 (coin.create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
-(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_0000 1000.0)
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_0000 25000.0)
 
 ;;Users
 (coin.create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
@@ -374,20 +382,20 @@
             { "key": "PK_BJ", "caps": [] }
           ])
 
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.ANCIENTHODLER (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.FLORIAN (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.EMMA (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.BYTA (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.LUMY (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.COCA (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.KISS (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.NANI (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.AOZ (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.ANCIENTHODLER (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.FLORIAN (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.EMMA (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.BYTA (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.LUMY (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.User000g-Keyset") KC.KADN_NAME_000g)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.User000h-Keyset") KC.KADN_NAME_000h)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.AOZ (keyset-ref-guard "free.User000i-Keyset") KC.KADN_NAME_000i)
 
     ;;Banana Example
-    (free.DALOS.DALOS|C_DeployStandardAccount KC.BM (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
-    (free.DALOS.DALOS|C_DeploySmartAccount KC.BJ (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 KC.BM)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.BM (keyset-ref-guard "free.User000j-Keyset") KC.KADN_NAME_000j)
+    (free.DALOS.DALOS|A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.Banana_Master-Keyset") KC.KADN_NAME_0006 KC.BM)
 
 (env-sigs [])
 (env-gas)
@@ -414,7 +422,7 @@
     ]
 )
 
-    (free.OUROBOROS.OUROBOROS|A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
+    (free.TALOS.TALOS|A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)
@@ -431,13 +439,13 @@
                     (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                    1.0)
+                    20000.0)
                   ]
         }
     ]
 )
 
-    (free.LIQUID.LIQUID|C_WrapKadena KC.ANCIENTHODLER KC.ANCIENTHODLER 1.0)
+    (free.TALOS.LQD|C_WrapKadena KC.ANCIENTHODLER KC.ANCIENTHODLER 20000.0)
     
 
 (env-sigs [])
@@ -453,12 +461,12 @@
     ]
 )
 
-    (free.AUTOSTAKE.ATS|C_Coil 
+    (free.TALOS.ATS|C_Coil 
         KC.ANCIENTHODLER
         KC.ANCIENTHODLER
         (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
         (free.DALOS.DALOS|UR_WrappedKadenaID)
-        1.0
+        20000.0
     )
     
 (env-sigs [])
@@ -474,7 +482,7 @@
             { "key": "PK_Emma", "caps": [] }
           ])
     ;;OriginMint Ouro
-    (free.BASIS.DPTF|C_Mint
+    (free.TALOS.DPTF|C_Mint
         KC.ANCIENTHODLER
         "OURO-98c486052a51"
         KC.EMMA
@@ -482,13 +490,13 @@
         true
     )
 
-    (free.AUTOSTAKE.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
+    (free.TALOS.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
     ;(free.OUROBOROS.ATS|C_KickStart KC.BYTA KC.BYTA "Auryndex-98c486052a51" [358323.244088865949848032] 137554.0)
 
-    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
-    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)
-    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.EMMA 100.0)
-    (free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BM 100.0)
+    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
+    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)
+    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.EMMA 100.0)
+    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BM 100.0)
     (free.DALOS.IGNIS|A_Toggle false true)             ;;turn virtual gas collection to on
     (free.DALOS.IGNIS|A_Toggle true true)              ;;turn native gas collection to on
 

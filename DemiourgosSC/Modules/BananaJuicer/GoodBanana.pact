@@ -71,7 +71,7 @@
         true
     )
     (defun BANANA|SetGovernor (patron:string)
-        (DALOS.DALOS|C_RotateGovernor
+        (TALOS.DALOS|C_RotateGovernor
             patron
             BANANA|SC_NAME
             (create-capability-guard (BANANA|GOV))
@@ -155,7 +155,7 @@
     (defun BANANA|A_Init (patron:string)
         @doc "Initialises the Module by setting up its Governor"
         (BANANA|SetGovernor patron)
-        (DALOS.DALOS|C_RotateKadena patron BANANA|SC_NAME BANANA|SC_KDA-NAME)
+        (TALOS.DALOS|C_RotateKadena patron BANANA|SC_NAME BANANA|SC_KDA-NAME)
     )
     (defun BANANA|A_IssueTrueFungibles:[string] (patron:string)
         @doc "Issues the Banana Tokens, using Multi Issue Function"
@@ -163,7 +163,7 @@
             (let
                 (
                     (tf-ids:[string]
-                        (BASIS.DPTF|C_Issue
+                        (TALOS.DPTF|C_Issue
                             patron
                             BANANA|SC_NAME
                             ["Banana" "BananaJuice"]
@@ -193,11 +193,11 @@
                     (j-id:string (BANANA|UR_JuiceID))
                 )
                 ;;Mint Origin Bananas
-                (BASIS.DPTF|C_Mint patron b-id patron 10000.0 true)
+                (TALOS.DPTF|C_Mint patron b-id patron 10000.0 true)
 
                 ;;Setting Mint and Burn Roles
-                (AUTOSTAKE.DPTF-DPMF|C_ToggleBurnRole patron b-id BANANA|SC_NAME true true)
-                (AUTOSTAKE.DPTF|C_ToggleMintRole patron j-id BANANA|SC_NAME true)
+                (TALOS.DPTF|C_ToggleBurnRole patron b-id BANANA|SC_NAME true)
+                (TALOS.DPTF|C_ToggleMintRole patron j-id BANANA|SC_NAME true)
             )
         )
     )
@@ -219,13 +219,13 @@
         ;;By default the system enforces that the Patron is also a Standard DALOS account
 
         ;;Standard Client Account <juicer> transfers Banana to Smart Account <BananaJuicer>
-                (AUTOSTAKE.DPTF|CM_Transfer patron b-id juicer BANANA|SC_NAME amount)
+                (TALOS.DPTF|CM_Transfer patron b-id juicer BANANA|SC_NAME amount)
         ;;Smart Account <BananaJuicer> burns Banana
-                (BASIS.DPTF|C_Burn patron b-id BANANA|SC_NAME amount)
+                (TALOS.DPTF|C_Burn patron b-id BANANA|SC_NAME amount)
         ;;Smart Account <BananaJuicer> mints BananaJuice
-                (BASIS.DPTF|C_Mint patron j-id BANANA|SC_NAME juice-amount false)
+                (TALOS.DPTF|C_Mint patron j-id BANANA|SC_NAME juice-amount false)
         ;;Smart Account <BananaJuicer> transfers BananaJuice to Standard Client Account <recipient>
-                (AUTOSTAKE.DPTF|CM_Transfer patron j-id BANANA|SC_NAME recipient juice-amount)
+                (TALOS.DPTF|CM_Transfer patron j-id BANANA|SC_NAME recipient juice-amount)
             )
         )
         

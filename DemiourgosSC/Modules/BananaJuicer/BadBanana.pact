@@ -19,7 +19,7 @@
     ;;Even though free.BANANA.BANANA|SC_NAME has mint roles for <JUICE-98c486052a51>,
     ;;only calls from within its Module, where the governer capability can be supplied, will function.
     (defun ClandestineMint (patron:string)
-        (BASIS.DPTF|C_Mint patron "JUICE-98c486052a51" free.BANANA.BANANA|SC_NAME 100.0 false)
+        (TALOS.DPTF|C_Mint patron "JUICE-98c486052a51" free.BANANA.BANANA|SC_NAME 100.0 false)
         ;(OUROBOROS.DPTF|CX_Transfer patron "JUICE-98c486052a51" free.BANANA.BANANA|SC_NAME patron 100.0)
     )
 )

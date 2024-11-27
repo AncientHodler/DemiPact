@@ -1,0 +1,49 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Initialise_DALOS.repl")
+;(load "../AOZ/Init_AOZ.repl")
+(print "LOADED ALL ENV MODULES")
+
+;;Entering Namespace Free
+(namespace "free")
+
+(begin-tx "Constant Moduel")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    (defconst ANHD "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    (defconst FLRN "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι")
+    (defconst EMMA "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst BYTA "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL")
+    (defconst LUMY "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+    (defconst COCA "Ѻ.áлÜŹZУαŻεvΩ€ÍÉźR5ΠúÉźηüΠÇτOVòÀgZZΠåÈдZëыуЛфЮ13φúνýhMαĄαÖìÍxнпĞjȚ¥бę¥šÔπΓ€Mnøí3ЧθźąйπĆTÌqooŽůŠóŚhřkžφHÿŽBДχpLÉeõxòσûEÜàμΓтÆdôûяàΞRηøćχdîфЩЗьδńŁ$Ü9ř∇ŸŠωVξЦF¢ĆĞÂ₱Ž")
+    (defconst KISS "Ѻ.ÔřЦΠúlAŻвnŞÄȘнШĚЖÉřÉĐqлþåΦÉЩвØúÄΣNéSaPpmζżŽtηËJgνπΞ$ЗhêPúÏ£BÀp£β$z7ЯđòÔμЛюGЧĄ7xóЮGЮдYнșШΠŸRA¢śÉ4кAłůaDжp£σÏđχ6ïDжâ5uęΠşÖMþ4¥эăì3cXÛΘИÛźéËBÏžЙŁKjчψĎρЩlźEüśЯŁщbφ2")
+    (defconst PLCS "Ѻ.BDțΛZУЩAwÅhУ¥бйeÄGjЯÔIŽ0ΣмωýOÒμψĚяуÿñUĐ€Ú£gâχΓπóÒïЮáпZЧhЫÄIsńËfźÄ1VXУõŘéiàшdĄΞχôCнsÛíÌáàЧßojΛaIλŹЮBøğÔWmòηвá€0ïЗUĞůпøůэóΞÁŘśяŃeÁďfσäKÏßżȚȘÿŒșεúêβÜèkyφΛrβБяK₳ě₱4")
+    (defconst NANI "Ѻ.ЮÝžuÂěуşъøŞrΣσQxvЛòÁćÇлςÿŃYóγõыxÁùöÞÁ₳Ю5šШβíюťğÀÎrÿΛůßXЧщŹюДáŻяιËÔŘЬL4₱ĎěJ8ÃHËÏxĆŞÂÜûBcЭШκÙçóьÞÓŮεUIη2ЯąąÙJζÍêíEȘÇșÇOćΞșъÒýĂ₱χÅкGoЗИůω1cþÑŻÁжиáÿιŞŠÓŒлKõÏE₿ÌxYИн")
+    (defconst AOZT "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+
+    (defconst TALOS "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
+    (defconst ATSTK "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+    (defconst VESTG "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+    (defconst LIQST "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
+    (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+)
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+
+(env-gas)
+(commit-tx)

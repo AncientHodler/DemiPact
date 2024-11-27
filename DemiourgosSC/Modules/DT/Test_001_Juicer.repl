@@ -13,8 +13,9 @@
 (module KC GOVERNANCE
     (defcap GOVERNANCE () true)
 
-    (defconst BM "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+    (defconst BM "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
     (defconst EMMA "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
 )
 
 
@@ -61,6 +62,7 @@
 (env-sigs 
     [ 
         { "key": "PK_BM", "caps": [] }
+        { "key": "PK_BJ", "caps": [] }
     ]
 )
 
@@ -145,7 +147,7 @@
 )
 
     (print "Sending Some Bananas to Emma")
-    (free.AUTOSTAKE.DPTF|C_Transfer KC.BM "BANANA-98c486052a51" KC.BM KC.EMMA 10.0)
+    (free.TALOS.DPTF|C_Transfer KC.BM "BANANA-98c486052a51" KC.BM KC.EMMA 10.0)
     (format "Emma has {} BANANA" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "BANANA-98c486052a51" KC.EMMA true)])
 
 (env-sigs [])    
@@ -188,5 +190,49 @@
 
 
 (env-sigs [])    
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+
+
+    (print "VERIFICATION===========================================")
+    (format "KDIndex is is BEFORE {};"
+        [
+            (free.AUTOSTAKE.ATS|UC_Index "Kadindex-98c486052a51")
+        ]
+    )
+    (format "AUTOSTAKE has Resident DWK {}" 
+        [
+            (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "Kadindex-98c486052a51")))
+        ]
+    )
+    (format "Ouroboros has as RT AFTER Removal of RT {} DWK" 
+        [
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" KC.OURBR true)
+
+        ]
+    )
+
+    (format "Kadena in Ouroboros is {}"
+        [
+            (at "balance" (coin.details (free.DALOS.DALOS|UR_AccountKadena free.OUROBOROS.OUROBOROS|SC_NAME)))
+        ]
+    )
+    (free.TALOS.OUROBOROS|C_FuelLiquidStakingFromReserves KC.EMMA)
+    (format "KDIndex is is AFTER {};"
+        [
+            (free.AUTOSTAKE.ATS|UC_Index "Kadindex-98c486052a51")
+        ]
+    )
+
 (env-gas)
 (commit-tx)

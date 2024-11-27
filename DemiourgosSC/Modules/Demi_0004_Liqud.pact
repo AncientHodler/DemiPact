@@ -10,16 +10,20 @@
 
     ;;Module Governance
     (defcap GOVERNANCE ()
-        (compose-capability (LIQUD-ADMIN))
+        (compose-capability (LIQUID-ADMIN))
     )
     ;;Module Governance
-    (defcap LIQUD-ADMIN ()
-        (enforce-guard G_LIQUD)
+    (defcap LIQUID-ADMIN ()
+        (enforce-one
+            "Vesting Admin not satisfed"
+            [
+                (enforce-guard DALOS.G_DALOS)
+                (enforce-guard G_LIQUID)
+            ]
+        )
     )
     ;;Module Guard
-    (defconst G_LIQUD   (keyset-ref-guard LIQUD|DEMIURGOI))
-    ;;Module Keys
-    (defconst LIQUD|DEMIURGOI "free.DH_Master-Keyset")
+    (defconst G_LIQUID   (keyset-ref-guard LIQUID|SC_KEY))
     ;;Module Accounts Information
         ;;[L] Liquidizer Account ids for LIQUID Submodule
     (defconst LIQUID|SC_KEY "free.DH_SC_KadenaLiquidStaking-Keyset")
@@ -38,8 +42,44 @@
 
 
     ;;Simple True Capabilities - NONE
+    (defcap SUMMONER ()
+        @doc "Policy allowing usage of Client Functions from the DALOS, BASIS and AUTOSTAKE Modules"
+        true
+    )
+    (defcap SECURE ()
+        @doc "Capability that secures Client Functions in this Module"
+        true
+    )
     
-    ;;Policies - NONE
+    ;;Policies
+
+    (defun LQD|A_AddPolicy (policy-name:string policy-guard:guard)
+        (with-capability (LIQUID-ADMIN)
+            (write LQD|PoliciesTable policy-name
+                {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun LQD|C_ReadPolicy:guard (policy-name:string)
+        @doc "Reads the guard of a stored policy"
+        (at "policy" (read LQD|PoliciesTable policy-name ["policy"]))
+    )
+
+    (defun LIQUID|DefinePolicies ()
+        @doc "Add the Policy that allows running external Functions from this Module"                
+        (DALOS.DALOS|A_AddPolicy     ;DALOS
+            "LIQUID|Summoner"
+            (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
+        )
+        (BASIS.BASIS|A_AddPolicy     ;BASIS
+            "LIQUID|Summoner"
+            (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
+        )
+        (AUTOSTAKE.ATS|A_AddPolicy   ;AUTOSTAKE
+            "LIQUID|Summoner"
+            (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
+        )
+    )
 
     ;;Module's Governor
     (defcap LIQUID|GOV ()
@@ -47,10 +87,12 @@
         true
     )
     (defun LIQUID|SetGovernor (patron:string)
-        (DALOS.DALOS|C_RotateGovernor
-            patron
-            LIQUID|SC_NAME
-            (create-capability-guard (LIQUID|GOV))
+        (with-capability (SUMMONER)
+            (DALOS.DALOS|CO_RotateGovernor
+                patron
+                LIQUID|SC_NAME
+                (create-capability-guard (LIQUID|GOV))
+            )
         )
     )
     (defcap LIQUID|NATIVE-AUTOMATIC ()
@@ -59,12 +101,21 @@
         true
     )
     (defconst LIQUID|GUARD (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
-
-
-    ;;            BASIS             Submodule
+;;  1]CONSTANTS Definitions - NONE
+;;  2]SCHEMAS Definitions
+    ;;[L] LQD Schemas
+    (defschema LQD|PolicySchema
+        @doc "Schema that stores external policies, that are able to operate within this module"
+        policy:guard
+    )
+;;  3]TABLES Definitions
+    ;;[L] LQD Tables
+    (deftable LQD|PoliciesTable:{LQD|PolicySchema})
     ;;
-    ;;            CAPABILITIES      <48>
-    ;;            FUNCTIONS         [158]
+    ;;            LIQUID            Submodule
+    ;;
+    ;;            CAPABILITIES      <3>
+    ;;            FUNCTIONS         [3]
     ;;========[D] RESTRICTIONS=================================================;;
     ;;        [1] Capabilities FUNCTIONS                [CAP]
     ;;        <1> Function Based CAPABILITIES           [CF](have this tag)
@@ -113,7 +164,7 @@
     (defcap LIQUID|WRAP ()
         @doc "Capability needed to wrap KDA to DWK"
         (compose-capability (LIQUID|GOV))
-
+        (compose-capability (SUMMONER))
         (compose-capability (LIQUID|CF|LIVE))
     )
     (defcap LIQUID|UNWRAP ()
@@ -124,13 +175,16 @@
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
     )
     ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;     (NONE) Data Read FUNCTIONS                   [UR]
-    ;;     (NONE) Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;     (NONE) Data Creation|Composition Functions   [UCC]
-    ;;     (NONE) Administrative Usage Functions        [A]
     ;;        [2] Client Usage FUNCTIONS                [C]
-    (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
+    (defun LIQUID|CO_WrapKadena (patron:string wrapper:string amount:decimal)
+        (enforce-guard (LQD|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (LIQUID|CP_WrapKadena patron wrapper amount)
+        )
+    )
+    (defun LIQUID|CP_WrapKadena (patron:string wrapper:string amount:decimal)
         @doc "Client Function for wrapping native Kadena to DALOS Kadena"
+        (require-capability (SECURE))
         (with-capability (LIQUID|WRAP)
             (let
                 (
@@ -140,14 +194,21 @@
             ;;Wrapper transfers KDA to Liquid|SC_KDA-Name
                 (DALOS.DALOS|C_TransferDalosFuel kadena-patron LIQUID|SC_KDA-NAME amount)
             ;;LIQUID|SC_NAME mints DWK
-                (BASIS.DPTF|C_Mint patron w-kda-id LIQUID|SC_NAME amount false)
+                (BASIS.DPTF|CO_Mint patron w-kda-id LIQUID|SC_NAME amount false)
             ;;LIQUID|SC_NAME transfers DWK to wrapper
-                (AUTOSTAKE.DPTF|CM_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount)
+                (AUTOSTAKE.DPTF|CO_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount true)
             )
         )
     )
-    (defun LIQUID|C_UnwrapKadena (patron:string unwrapper:string amount:string)
+    (defun LIQUID|CO_UnwrapKadena (patron:string unwrapper:string amount:decimal)
+        (enforce-guard (LQD|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (LIQUID|CP_UnwrapKadena patron unwrapper amount)
+        )
+    )
+    (defun LIQUID|CP_UnwrapKadena (patron:string unwrapper:string amount:string)
         @doc "Client Function for wrapping native Kadena to DALOS Kadena"
+        (require-capability (SECURE))
         (with-capability (LIQUID|UNWRAP)
             (let
                 (
@@ -155,9 +216,9 @@
                     (w-kda-id:string (DALOS.DALOS|UR_WrappedKadenaID))
                 )
             ;;Unwrapper transfers DWK to LIQUID|SC_NAME
-                (AUTOSTAKE.DPTF|CM_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount)
+                (AUTOSTAKE.DPTF|CO_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount true)
             ;;LIQUID|SC_NAME burns DWK
-                (BASIS.DPTF|C_Burn patron w-kda-id)
+                (BASIS.DPTF|CO_Burn patron w-kda-id)
             ;;LIQUID|SC_NAME transfers native KDA to wrapper
                 (DALOS.DALOS|C_TransferDalosFuel LIQUID|SC_KDA-NAME kadena-patron amount)
             )
@@ -165,3 +226,5 @@
     )
     ;;     (NONE) Auxiliary Usage Functions             [X]
 )
+;;Policies Table
+(create-table LQD|PoliciesTable)

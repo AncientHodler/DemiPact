@@ -221,7 +221,7 @@
             (let*
                 (
                     (tf-ids:[string]
-                        (BASIS.DPTF|C_Issue
+                        (TALOS.DPTF|C_Issue
                             patron
                             AOZ|SC_NAME
                             ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
