@@ -458,6 +458,30 @@
             (BASIS.DPMF|CO_Transfer patron id nonce sender receiver transfer-amount true)
         )
     )
+    (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string);e
+        @doc "Transfers a single Batch of DPMF Tokens from sender to receiver, using all of its balance"
+        (with-capability (SUMMONER)
+            (OUROBOROS.DPMF|XP_SingleBatchTransfer patron id nonce sender receiver false)
+        )
+    )
+    (defun DPMF|CM_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string);e
+        @doc "Methodic Variant of <DPMF|C_SingleBatchTransfer>"
+        (with-capability (SUMMONER)
+            (OUROBOROS.DPMF|XP_SingleBatchTransfer patron id nonce sender receiver true)
+        )
+    )
+    (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string);e
+        @doc "Transfers a multiple DPMF Batches of Tokens from sender to receiver, using all of their balance"
+        (with-capability (SUMMONER)
+            (OUROBOROS.DPMF|XP_MultiBatchTransfer patron id nonces sender receiver false)
+        )
+    )
+    (defun DPMF|CM_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string);e
+        @doc "Methodic Variant of <DPMF|C_MultiBatchTransfer>"
+        (with-capability (SUMMONER)
+            (OUROBOROS.DPMF|XP_MultiBatchTransfer patron id nonces sender receiver true)
+        )
+    )
     ;;ATS
     (defun ATS|C_ChangeOwnership (patron:string atspair:string new-owner:string);e
         @doc "Moves ATS <atspair> Ownership to <new-owner> DALOS Account"   

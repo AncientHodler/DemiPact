@@ -621,19 +621,25 @@
     (defun DPTF|CO_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
-            (if method
-                (DPTF|XP_MultiTransfer patron id-lst sender receiver transfer-amount-lst true) 
-                (DPTF|XP_MultiTransfer patron id-lst sender receiver transfer-amount-lst false) 
-            )
+            (DPTF|XP_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
         )
     )
     (defun DPTF|CO_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
-            (if method
-                (DPTF|XP_BulkTransfer patron id sender receiver-lst transfer-amount-lst true)
-                (DPTF|XP_BulkTransfer patron id sender receiver-lst transfer-amount-lst false)
-            )
+            (DPTF|XP_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+        )
+    )
+    (defun DPMF|CO_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
+        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DPMF|XP_SingleBatchTransfer patron id nonce sender receiver method)
+        )
+    )
+    (defun DPMF|CO_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
+        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (DPMF|XP_MultiBatchTransfer patron id nonces sender receiver method)
         )
     )
     ;;        [x] Auxiliary Usage FUNCTIONS             [X]
@@ -691,6 +697,31 @@
                 (amount:decimal (at "amount" receiver-amount-pair))
             )
             (AUTOSTAKE.DPTF|CO_Transfer patron id sender receiver amount method)
+        )
+    )
+    (defun DPMF|XP_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
+        (let*
+            (
+                (account-nonces:[integer] (BASIS.DPMF|UR_AccountNonces id sender))
+                (contains-all:bool (UTILS.UTILS|UEV_ContainsAll account-nonces nonces))
+            )
+            (enforce contains-all "Invalid Nonce List for DPTf Multi Batch Transfer")
+            (map
+                (lambda
+                    (single-nonce:integer)
+                    (DPMF|XP_SingleBatchTransfer patron id single-nonce sender receiver method)
+                )
+                nonces
+            )
+        )
+    )
+    (defun DPMF|XP_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
+        (require-capability (SECURE))
+        (let
+            (
+                (balance:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce))
+            )
+            (BASIS.DPMF|CO_Transfer patron id nonce sender receiver balance method)
         )
     )
     ;;

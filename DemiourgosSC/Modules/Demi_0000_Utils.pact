@@ -321,6 +321,29 @@
             )
         )
     )
+    (defun UTILS|UEV_ContainsAll (l1:[integer] l2:[integer])
+        (let*
+            (
+                (tl:[bool]
+                    (fold
+                        (lambda
+                            (acc:[bool] item:integer)
+                            (LIST|UC_AppendLast acc (contains item l2))
+                        )
+                        []
+                        l1
+                    )
+                )
+                (sl:[integer] (LIST|UC_Search tl true))
+                (tl2:integer (length sl))
+            )
+            (if (= tl2 (length l1))
+                true
+                false
+            )
+        )
+    )
+
     (defun UTILS|UC_AddArray:[decimal] (array:[[decimal]])
         @doc "Adds all column elements in an array of decimal elements, while ensuring all rows are of equal length"
         (UTILS|UEV_DecimalArray array)
