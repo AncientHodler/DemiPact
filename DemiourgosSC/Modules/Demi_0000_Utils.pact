@@ -1065,21 +1065,4 @@
             )
         )
     )
-    ;;OBSOLETE
-    (defun DALOS|UC_AccountCheck:bool (account:string) ;;OBSOLETE (needs function that checks nomenclature of DALOS Accounts)
-        @doc "Checks if a DALOS Account ID is valid (meets charset and length requirements), returning true if it is and false if it isnt"
-        (let*
-            (
-                (t1:bool (is-charset ACCOUNT_ID_CHARSET account))
-                (t2:bool (not (contains account ACCOUNT_ID_PROHIBITED_CHARACTER)))
-                (t3:bool (and t1 t2))
-                (account-length:integer (length account))
-                (t4:bool (>= account-length MIN_DESIGNATION_LENGTH))
-                (t5:bool (<= account-length ACCOUNT_ID_MAX_LENGTH))
-                (t6:bool (and t4 t5))
-                (t7:bool (and t3 t6))
-            )
-            t7
-        )
-    )
 )

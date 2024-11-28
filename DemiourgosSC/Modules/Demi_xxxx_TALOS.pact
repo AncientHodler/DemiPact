@@ -74,29 +74,29 @@
     ;;Policies
     (defun TALOS|DefinePolicies ()
         @doc "Add the Policies that allows running external Functions from this Module"
-        (DALOS.A_AddPolicy         ;DALOS
+        (DALOS.A_AddPolicy
             "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from DALOS Module
+            (create-capability-guard (SUMMONER))
         )
         (DALOS.A_AddPolicy
             "TALOS|AutomaticPatron"
-            (create-capability-guard (P|DALOS|AUTO_PATRON))                  ;;  Gasless Patron
+            (create-capability-guard (P|DALOS|AUTO_PATRON))
         )
-        (BASIS.A_AddPolicy         ;BASIS
+        (BASIS.A_AddPolicy
             "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from BASIS Module
+            (create-capability-guard (SUMMONER))
         )
-        (AUTOSTAKE.A_AddPolicy       ;AUTOSTAKE
+        (AUTOSTAKE.A_AddPolicy
             "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from AUTOSTAKE Module
+            (create-capability-guard (SUMMONER))
         )
-        (LIQUID.LQD|A_AddPolicy          ;LIQUID
+        (LIQUID.A_AddPolicy
             "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from LIQUID Module
+            (create-capability-guard (SUMMONER))
         )
-        (OUROBOROS.OUROB|A_AddPolicy     ;OUROBOROS
+        (OUROBOROS.A_AddPolicy
             "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from OUROBOROS Module
+            (create-capability-guard (SUMMONER))
         )
     )
     ;;
@@ -973,6 +973,4 @@
             )
         )
     )
-    
-
 )

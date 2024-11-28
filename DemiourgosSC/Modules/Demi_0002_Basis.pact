@@ -88,9 +88,7 @@
         (compose-capability (P|DIN))
         (compose-capability (P|IC))
     )
-
-    ;;Policies
-
+    ;;
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (BASIS-ADMIN)
             (write BASIS|PoliciesTable policy-name
@@ -104,7 +102,6 @@
     )
 
     (defun BASIS|DefinePolicies ()
-        @doc "Add the Policy that allows running external Functions from this Module"
         (DALOS.A_AddPolicy 
             "BASIS|Summoner"
             (create-capability-guard (SUMMONER))
@@ -202,7 +199,6 @@
         vesting:string
     )
     ;;DPTF|BalanceSchema defined in DALOS Module
-
     ;;[M] DPMF Schemas
     (defschema DPMF|PropertiesSchema
         @doc "Schema for DPMF Token (Meta Fungibles) Properties \
@@ -239,7 +235,6 @@
         @doc "Schema that Stores Account Balances for DPMF Tokens (Meta Fungibles)\
             \ Key for the Table is a string composed of: <DPMF id> + UTILS.BAR + <account> \
             \ This ensure a single entry per DPMF id per account."
-
         unit:[object{DPMF|Schema}]
         ;;Special Roles
         role-nft-add-quantity:bool
@@ -272,50 +267,25 @@
         balance:decimal
     )
 
-;;  3]TABLES Definitions
     (deftable BASIS|PoliciesTable:{BASIS|PolicySchema}) 
-    ;;[T] DPTF Tables
     (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchema})
     (deftable DPTF|BalanceTable:{DALOS.DPTF|BalanceSchema})
-    ;;[M] DPMF Tables
     (deftable DPMF|PropertiesTable:{DPMF|PropertiesSchema})
     (deftable DPMF|BalanceTable:{DPMF|BalanceSchema})
     ;;
     ;;
     ;;            BASIS             Submodule
     ;;
-    ;;            CAPABILITIES      <48>
-    ;;            FUNCTIONS         [183]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        [1] Capabilities FUNCTIONS                [CAP]
-    ;;        <1> Function Based & CAPABILITIES         [CF](have this tag)
-    ;;       [23] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;       <47> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;       [45] Data Read FUNCTIONS                   [UR]
-    ;;       [11] Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;        [2] Data Creation|Composition Functions   [UCC]
-    ;;        [1] Administrative Usage Functions        [A]
-    ;;     [2x22] Client Usage FUNCTIONS                [C]
-    ;;       [57] Auxiliary Usage Functions             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        [1] Capabilities FUNCTIONS                [CAP]
+    ;;[CAP]
     (defun DPTF-DPMF|CAP_Owner (id:string token-type:bool)
-        @doc "Enforces DPTF|DPMF Token Ownership"
         (DALOS.DALOS|CAP_EnforceAccountOwnership (DPTF-DPMF|UR_Konto id token-type))
     )
-    ;;        <1> Function Based & CAPABILITIES         [CF](have this tag)
+    ;;[CF]
     (defcap DPTF-DPMF|CF|OWNER (id:string token-type:bool)
-        @doc "Capability that Enforces DPTF|DPMF Token Ownership"
         (DPTF-DPMF|CAP_Owner id token-type)
     )
-    ;;       [23] Enforcements & Validations FUNCTIONS  [UEV]
+    ;;[UEV]
     (defun ATS|UEV_UpdateRewardBearingToken (id:string token-type:bool)
-        @doc "Capability to update the <reward-bearing-token> in the DPTF-DPMF|PropertiesTable"
         (if (= token-type false)
             (let
                 (
@@ -327,7 +297,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanChangeOwnerON (id:string token-type:bool)
-        @doc "Enforces DPTF Token ownership is changeble"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanChangeOwner id token-type))
@@ -336,7 +305,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanUpgradeON (id:string token-type:bool)
-        @doc "Enforces DPTF|DPMF Token is upgradeable"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanUpgrade id token-type))
@@ -346,7 +314,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanAddSpecialRoleON (id:string token-type:bool)
-        @doc "Enforces adding special roles for DPTF|DPMF Token is true"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanAddSpecialRole id token-type))
@@ -356,7 +323,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanFreezeON (id:string token-type:bool)
-        @doc "Enforces DPTF|DPMF Token can be frozen"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanFreeze id token-type))
@@ -366,7 +332,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanWipeON (id:string token-type:bool)
-        @doc "Enforces DPTF|DPMF Token can be wiped"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanWipe id token-type))
@@ -376,7 +341,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CanPauseON (id:string token-type:bool)
-        @doc "Enforces DPTF|DPMF Token can be paused"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_CanPause id token-type))
@@ -386,7 +350,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_PauseState (id:string state:bool token-type:bool)
-        @doc "Enforces DPTF|DPMF Token <is-paused> to <state>"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_Paused id token-type))
@@ -398,7 +361,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_AccountBurnState (id:string account:string state:bool token-type:bool)
-        @doc "Enforces DPTF|DPMF Account <role-burn> to <state>"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_AccountRoleBurn id account token-type))
@@ -407,7 +369,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_AccountTransferState (id:string account:string state:bool token-type:bool)
-        @doc "Enforces DPTF Account <role-transfer> to <state>"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_AccountRoleTransfer id account token-type))
@@ -416,7 +377,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_AccountFreezeState (id:string account:string state:bool token-type:bool)
-        @doc "Enforces DPTF|DPMF Account <frozen> to <state>"
         (let
             (
                 (x:bool (DPTF-DPMF|UR_AccountFrozenState id account token-type))
@@ -425,8 +385,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_Amount (id:string amount:decimal token-type:bool)
-        @doc "Enforce the minimum denomination for a specific DPTF|DPMF id \
-            \ and ensure the amount is greater than zero"
         (let
             (
                 (decimals:integer (DPTF-DPMF|UR_Decimals id token-type))
@@ -442,8 +400,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_CheckID:bool (id:string token-type:bool)
-        @doc "Checks if a DPTF|DPMF Token exists, without enforcements \
-        \ Returns true if it does, and false if it doesnt"
         (if token-type
             (with-default-read DPTF|PropertiesTable id
                 { "supply" : -1.0 }
@@ -464,7 +420,6 @@
         )
     )
     (defun DPTF-DPMF|UEV_id (id:string token-type:bool)
-        @doc "Enforces the True or MetaFungible <id> exists"
         (if token-type
             (with-default-read DPTF|PropertiesTable id
                 { "supply" : -1.0 }
@@ -485,7 +440,6 @@
         )
     )
     (defun DPTF|UEV_Virgin (id:string)
-        @doc "Enforces Origin Mint hasn't been executed"
         (let
             (
                 (om:bool (DPTF|UR_OriginMint id))
@@ -498,7 +452,6 @@
         )
     )
     (defun DPTF|UEV_FeeLockState (id:string state:bool)
-        @doc "Enforces DPTF Token <fee-lock> to <state>"
         (let
             (
                 (x:bool (DPTF|UR_FeeLock id))
@@ -507,7 +460,6 @@
         )
     )
     (defun DPTF|UEV_FeeToggleState (id:string state:bool)
-        @doc "Enforces DPTF Token <fee-toggle> to <state>"
         (let
             (
                 (x:bool (DPTF|UR_FeeToggle id))
@@ -516,7 +468,6 @@
         )
     )
     (defun DPTF|UEV_AccountMintState (id:string account:string state:bool)
-        @doc "Enforces DPTF Account <role-mint> to <state>"
         (let
             (
                 (x:bool (DPTF|UR_AccountRoleMint id account))
@@ -525,7 +476,6 @@
         )
     )
     (defun DPTF|UEV_AccountFeeExemptionState (id:string account:string state:bool)
-        @doc "Enforces DPTF Account <role-fee-exemption> to <state>"
         (let
             (
                 (x:bool (DPTF|UR_AccountRoleFeeExemption id account))
@@ -534,7 +484,6 @@
         )
     )
     (defun DPTF|UEV_EnforceMinimumAmount (id:string transfer-amount:decimal)
-        @doc "Enforces the minimum transfer amount for the DPTF Token"
         (let*
             (
                 (min-move-read:decimal (DPTF|UR_MinMove id))
@@ -550,7 +499,6 @@
         )
     )
     (defun DPMF|UEV_CanTransferNFTCreateRoleON (id:string)
-        @doc "Enforces DPMF Property as On"
         (let
             (
                 (x:bool (DPMF|UR_CanTransferNFTCreateRole id))
@@ -560,7 +508,6 @@
         )
     )
     (defun DPMF|UEV_AccountAddQuantityState (id:string account:string state:bool)
-        @doc "Enforces DPMF Property to <state>"
         (let
             (
                 (x:bool (DPMF|UR_AccountRoleNFTAQ id account))
@@ -569,7 +516,6 @@
         )
     )
     (defun DPMF|UEV_AccountCreateState (id:string account:string state:bool)
-        @doc "Enforces DPMF Property to <state>"
         (let
             (
                 (x:bool (DPMF|UR_AccountRoleCreate id account))
@@ -577,7 +523,7 @@
             (enforce (= x state) (format "Create Role for {} on Account {} must be set to {} for this operation" [id account state]))
         )
     )
-    ;;       <47> Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;[CAP]
     (defcap BASIS|UPGRADE_BRANDING (id:string token-type:bool)
         (DPTF-DPMF|UEV_id id token-type)
         (DPTF-DPMF|CAP_Owner id token-type)
@@ -605,7 +551,6 @@
         (DPTF-DPMF|CAP_Owner id token-type)
     )
     (defcap DPTF-DPMF|BURN (id:string client:string amount:decimal token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Burn Functions"
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPTF-DPMF|X_BURN id client amount token-type))
@@ -622,7 +567,6 @@
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     (defcap DPTF-DPMF|CONTROL (id:string token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Control Functions"
         @event
         (compose-capability (DPTF-DPMF|X_CONTROL id token-type))
         (compose-capability (P|DINIC))
@@ -632,7 +576,6 @@
         (DPTF-DPMF|UEV_CanUpgradeON id token-type)
     )
     (defcap DPTF-DPMF|FROZEN-ACCOUNT (id:string account:string frozen:bool token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Freeze Functions"
         @event
         (compose-capability (DPTF-DPMF|X_FROZEN-ACCOUNT id account frozen token-type))
         (compose-capability (P|DINIC))
@@ -643,11 +586,9 @@
         (DPTF-DPMF|UEV_AccountFreezeState id account (not frozen) token-type)
     )
     (defcap DPTF-DPMF|ISSUE ()
-        @doc "Capability required to EXECUTE the <DPTF-DPMF|X_Issue> Function"
         (compose-capability (P|DINIC))
     )
     (defcap DPTF|ISSUE (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        @doc "Required to Mass Issue DPTFs"
         @event
         (let*
             (
@@ -669,7 +610,6 @@
         )
     )
     (defcap DPMF|ISSUE (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
-        @doc "Required to Mass Issue DPMFs"
         @event
         (let*
             (
@@ -692,7 +632,6 @@
         )
     )
     (defcap DPTF-DPMF|OWNERSHIP-CHANGE (id:string new-owner:string token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Ownership Change Functions"
         @event
         (compose-capability (DPTF-DPMF|X_OWNERSHIP-CHANGE id new-owner token-type))
         (compose-capability (P|DINIC))
@@ -704,7 +643,6 @@
         (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
     )
     (defcap DPTF-DPMF|X_TOGGLE_BURN-ROLE (id:string account:string toggle:bool token-type:bool)
-        @doc "Core Capability required EXECUTE Client DPTF|DPMF Burn Role Toggle Functions"
         @event
         (if toggle
             (DPTF-DPMF|UEV_CanAddSpecialRoleON id token-type)
@@ -714,7 +652,6 @@
         (DPTF-DPMF|UEV_AccountBurnState id account (not toggle) token-type)
     )
     (defcap DPTF-DPMF|TOGGLE_PAUSE (id:string pause:bool token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Pause Functions"
         @event
         (compose-capability (DPTF-DPMF|X_TOGGLE_PAUSE id pause token-type))
         (compose-capability (P|DINIC))
@@ -728,7 +665,6 @@
         (DPTF-DPMF|UEV_PauseState id (not pause) token-type)
     )
     (defcap DPTF-DPMF|TOGGLE_TRANSFER-ROLE (patron:string id:string account:string toggle:bool token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Transfer Role Toggle Functions"
         @event
         (compose-capability (DPTF-DPMF|X_TOGGLE_TRANSFER-ROLE id account toggle token-type))
         (compose-capability (DPTF-DPMF|UPDATE_ROLE-TRANSFER-AMOUNT))
@@ -745,7 +681,6 @@
         (DPTF-DPMF|UEV_AccountTransferState id account (not toggle) token-type)
     )
     (defcap DPTF-DPMF|WIPE (patron:string id:string account-to-be-wiped:string token-type:bool)
-        @doc "Capability required to EXECUTE Client DPTF|DPMF Wipe Functions"
         @event
         (compose-capability (DPTF-DPMF|X_WIPE id account-to-be-wiped token-type))
         (compose-capability (IGNIS|MATRON_SOFT id account-to-be-wiped))
@@ -762,8 +697,6 @@
     )
     ;;
     (defcap DPTF|MINT (id:string client:string amount:decimal origin:bool)
-        @doc "Capability required to EXECUTE Client DPTF Mint Function \
-            \ Master Mint capability, required to mint DPTF Tokens, both as Origin and as Standard Mint"
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (if origin
             (compose-capability (DPTF|MINT-ORIGIN id client amount))
@@ -771,7 +704,6 @@
         )
     )
     (defcap DPTF|MINT-ORIGIN (id:string client:string amount:decimal)
-        @doc "Capability required to mint the Origin DPTF Mint Supply"
         @event
         (compose-capability (DPTF|X_MINT-ORIGIN id amount))
         (compose-capability (IGNIS|MATRON_SOFT id client))
@@ -783,7 +715,6 @@
         (compose-capability (DPTF|MINT_GENERAL id amount))
     )
     (defcap DPTF|MINT-STANDARD (id:string client:string amount:decimal)
-        @doc "Capability required to mint a DPTF Token in the Standard manner"
         @event
         (compose-capability (DPTF|X_MINT-STANDARD id client amount))
         (compose-capability (IGNIS|MATRON_SOFT id client))
@@ -799,7 +730,6 @@
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     (defcap DPTF|SET_FEE (patron:string id:string fee:decimal)
-        @doc "Capability required to EXECUTE Client DPTF Set Fee Function"
         @event
         (compose-capability (DPTF|X_SET_FEE id fee))
         (compose-capability (P|DINIC))
@@ -810,7 +740,6 @@
         (DPTF|UEV_FeeLockState id false)
     )
     (defcap DPTF|SET_FEE-TARGET (patron:string id:string target:string)
-        @doc "Capability required to EXECUTE Client DPTF Set Fee Target Function"
         @event
         (compose-capability (DPTF|X_SET_FEE-TARGET id target))
         (compose-capability (P|DINIC))
@@ -821,7 +750,6 @@
         (DPTF|UEV_FeeLockState id false) 
     )
     (defcap DPTF|SET_MIN-MOVE (patron:string id:string min-move-value:decimal)
-        @doc "Capability required to EXECUTE Client DPTF Set Min Move Function"
         @event
         (compose-capability (DPTF|X_SET_MIN-MOVE id min-move-value))
         (compose-capability (P|DINIC))
@@ -841,7 +769,6 @@
         )
     )
     (defcap DPTF|TOGGLE_FEE (patron:string id:string toggle:bool)
-        @doc "Capability required to EXECUTE Client DPTF Toggle Fee Function"
         @event
         (compose-capability (DPTF|X_TOGGLE_FEE id toggle))
         (compose-capability (P|DINIC))
@@ -859,7 +786,6 @@
         )
     )
     (defcap DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE (id:string account:string toggle:bool)
-        @doc "Core Capability required EXECUTE Client DPTF Fee Exemption Role Toggle Function"
         @event
         (DPTF-DPMF|CAP_Owner id true)
         (DALOS.DALOS|UEV_EnforceAccountType account true)
@@ -870,7 +796,6 @@
         (DPTF|UEV_AccountFeeExemptionState id account (not toggle))
     )
     (defcap DPTF|TOGGLE_FEE-LOCK (patron:string id:string toggle:bool)
-        @doc "Capability required to EXECUTE Client DPTF Fee Lock Function"
         @event
         (compose-capability (DPTF|X_TOGGLE_FEE-LOCK id toggle))
         (compose-capability (P|DINIC))
@@ -881,7 +806,6 @@
         (DPTF|UEV_FeeLockState id (not toggle))
     )
     (defcap DPTF|X_TOGGLE_MINT-ROLE (id:string account:string toggle:bool)
-        @doc "Core Capability required to EXECUTE Client DPTF Mint Role Toggle Function"
         @event
         (DPTF-DPMF|CAP_Owner id true)
         (if toggle
@@ -892,7 +816,6 @@
     )
     ;;
     (defcap DPMF|ADD-QUANTITY (id:string client:string amount:decimal)
-        @doc "Capability required EXECUTE Client DPMF Add Quantity Function"
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPMF|X_ADD-QUANTITY id client amount))
@@ -906,7 +829,6 @@
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     (defcap DPMF|CREATE (id:string client:string)
-        @doc "Capability required EXECUTE Client DPMF Create Function"
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPMF|X_CREATE id client))
@@ -918,7 +840,6 @@
         (compose-capability (DPMF|INCREMENT_NONCE))
     )
     (defcap DPMF|MINT (id:string client:string amount:decimal)
-        @doc "Capability required EXECUTE Client DPMF Mint Function"
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPMF|X_MINT id client amount))
@@ -930,7 +851,6 @@
         (compose-capability (DPMF|X_ADD-QUANTITY id client amount))
     )
     (defcap DPMF|X_MOVE_CREATE-ROLE (id:string receiver:string)
-        @doc "Core Capability required to EXECUTE Client DPMF Move Create Role Function (AUTOSTAKE Module resident)"
         @event
         (DALOS.DALOS|UEV_SenderWithReceiver (DPMF|UR_CreateRoleAccount id) receiver)
         (DPTF-DPMF|CAP_Owner id false)
@@ -939,7 +859,6 @@
         (DPMF|UEV_AccountCreateState id receiver false)
     )
     (defcap DPMF|X_TOGGLE_ADD-QUANTITY-ROLE (id:string account:string toggle:bool)
-        @doc "Core Capability required to execute <DPMF|C_ToggleAddQuantityRole> (AUTOSTAKE Module resident)"
         (DPTF-DPMF|CAP_Owner id false)
         (DPMF|UEV_AccountAddQuantityState id account (not toggle))
         (if toggle
@@ -956,23 +875,16 @@
         (compose-capability (DALOS|EXECUTOR))
     )
     (defcap DPMF|X_TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Core Capability required to execute DPTF Transfers"
-        ;;Sender and Method
         (DALOS.DALOS|CAP_EnforceAccountOwnership sender)
         (if (and method (DALOS.DALOS|UR_AccountType receiver))
             (DALOS.DALOS|CAP_EnforceAccountOwnership receiver)
             true
         )
-        ;;Token and Amount
         (DPTF-DPMF|UEV_Amount id transfer-amount false)
-        ;;Transferability
         (DALOS.DALOS|UEV_EnforceTransferability sender receiver method)
-        ;;Pause State
         (DPTF-DPMF|UEV_PauseState id false false)
-        ;;Freeze State
         (DPTF-DPMF|UEV_AccountFreezeState id sender false false)
         (DPTF-DPMF|UEV_AccountFreezeState id receiver false false)
-        ;;Transfer Role
         (if
             (and 
                 (> (DPTF-DPMF|UR_TransferRoleAmount id false) 0) 
@@ -994,28 +906,24 @@
             )
             (format "No transfer restrictions exist when transfering {} from {} to {}" [id sender receiver])
         )
-        ;;
         (compose-capability (DPMF|DEBIT))
         (compose-capability (DPMF|CREDIT))
         (compose-capability (P|DALOS|UPDATE_ELITE))
     )
     ;;
     (defcap IGNIS|MATRON_SOFT (id:string client:string)
-        @doc "Capability needed to be a gas payer for a patron with a sender"
         (if (DALOS.IGNIS|URC_ZeroGAS id client)
             true
             (compose-capability (P|IC))
         )
     )
     (defcap IGNIS|MATRON_STRONG (id:string client:string target:string)
-        @doc "Capability needed to be a gas payer for a patron with a sender and receiver"
         (if (DALOS.IGNIS|URC_ZeroGAZ id client target)
             true
             (compose-capability (P|IC))
         )
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read Functions                   [UR]
+    ;;[UR]
     (defun DPTF|KEYS:[string] ()
         (keys DPTF|BalanceTable)
     )
@@ -1023,7 +931,6 @@
         (keys DPMF|BalanceTable)
     )
     (defun BASIS|UR_Branding:object{BrandingSchema} (id:string token-type:bool pending:bool)
-        @doc "Returns Branding Data for Token <id>"
         (DPTF-DPMF|UEV_id id token-type)
         (if token-type
             (if pending
@@ -1070,8 +977,6 @@
         (at "premium-until" (BASIS|UR_Branding id token-type pending))
     )
     (defun DPTF-DPMF|UR_AccountFrozenState:bool (id:string account:string token-type:bool)
-        @doc "Returns Account <account> True or Meta Fungible <id> Frozen State \
-            \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (if token-type
             (if (DALOS|UC_IzCoreDPTF id)
                 (if (= id (DALOS.DALOS|UR_OuroborosID))
@@ -1092,8 +997,6 @@
         )
     )
     (defun DPTF-DPMF|UR_AccountRoleBurn:bool (id:string account:string token-type:bool)
-        @doc "Returns Account <account> True or Meta Fungible <id> Burn Role \
-            \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (if token-type
             (if (DALOS|UC_IzCoreDPTF id)
                 (if (= id (DALOS.DALOS|UR_OuroborosID))
@@ -1114,8 +1017,6 @@
         )
     )
     (defun DPTF-DPMF|UR_AccountRoleTransfer:bool (id:string account:string token-type:bool)
-        @doc "Returns Account <account> True or Meta Fungible <id> Transfer Role \
-            \ Assumed as false if DPTF|DPMF Account doesnt exit"
         (if token-type
             (if (DALOS|UC_IzCoreDPTF id)
                 (if (= id (DALOS.DALOS|UR_OuroborosID))
@@ -1136,8 +1037,6 @@
         )
     )
     (defun DPTF-DPMF|UR_AccountSupply:decimal (id:string account:string token-type:bool)
-        @doc "Returns Account <account> True or Meta Fungible <id> Supply \
-            \ If DPTF|DPMF Account doesnt exist, 0.0 balance is returned"
         (if token-type
             (if (DALOS|UC_IzCoreDPTF id)
                 (if (= id (DALOS.DALOS|UR_OuroborosID))
@@ -1257,8 +1156,6 @@
     )
     ;;
     (defun DPTF|UR_AccountRoleFeeExemption:bool (id:string account:string)
-        @doc "Returns Account <account> True Fungible <id> Fee Exemption Role \
-            \ Assumed as false if DPTF Account doesnt exit"
         (if (DALOS|UC_IzCoreDPTF id)
             (if (= id (DALOS.DALOS|UR_OuroborosID))
                 (DALOS.DALOS|UR_TrueFungible_AccountRoleFeeExemption account true)
@@ -1273,8 +1170,6 @@
         
     )
     (defun DPTF|UR_AccountRoleMint:bool (id:string account:string)
-        @doc "Returns Account <account> True Fungible <id> Mint Role \
-            \ Assumed as false if DPTF Account doesnt exit"
         (if (DALOS|UC_IzCoreDPTF id)
             (if (= id (DALOS.DALOS|UR_OuroborosID))
                 (DALOS.DALOS|UR_TrueFungible_AccountRoleMint account true)
@@ -1325,8 +1220,6 @@
     )
     ;;
     (defun DPMF|UR_AccountBalances:[decimal] (id:string account:string)
-        @doc "Returns a list of Balances that exist for MetaFungible <id> on DPMF Account <account>\
-            \ Needed for Mass Debiting"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
@@ -1352,7 +1245,6 @@
         )
     )
     (defun DPMF|UR_AccountBatchMetaData (id:string nonce:integer account:string)
-        @doc "Returns the Meta-Data of a MetaFungible Batch (<id> & <nonce>) held by DPMF Account <account>"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
@@ -1384,7 +1276,6 @@
         )
     )
     (defun DPMF|UR_AccountBatchSupply:decimal (id:string nonce:integer account:string)
-        @doc "Returns the supply of a MetaFungible Batch (<id> & <nonce>) held by DPMF Account <account>"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
@@ -1416,7 +1307,6 @@
         )
     )
     (defun DPMF|UR_AccountNonces:[integer] (id:string account:string)
-        @doc "Returns a list of Nonces that exist for MetaFungible <id> held by DPMF Account <account>"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR  account])
             { "unit" : [DPMF|NEUTRAL] }
@@ -1442,7 +1332,6 @@
         )
     )
     (defun DPMF|UR_AccountRoleCreate:bool (id:string account:string)
-        @doc "Returns Account <account> Meta Fungible <id> Create Role"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "role-nft-create" : false}
@@ -1451,7 +1340,6 @@
         )
     )
     (defun DPMF|UR_AccountRoleNFTAQ:bool (id:string account:string)
-        @doc "Returns Account <account> Meta Fungible <id> NFT Add Quantity Role"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "role-nft-add-quantity" : false}
@@ -1460,7 +1348,6 @@
         )
     )
     (defun DPMF|UR_AccountUnit:[object] (id:string account:string)
-        @doc "Returns Account <account> Meta Fungible <id> Unit"
         (DPTF-DPMF|UEV_id id false)
         (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" : DPMF|NEGATIVE}
@@ -1469,22 +1356,18 @@
         )
     )
     (defun DPMF|UR_CanTransferNFTCreateRole:bool (id:string)
-        @doc "Returns <can-transfer-nft-create-role> for the DPMF <id>"
         (at "can-transfer-nft-create-role" (read DPMF|PropertiesTable id ["can-transfer-nft-create-role"]))
     )
     (defun DPMF|UR_CreateRoleAccount:string (id:string)
-        @doc "Returns <create-role-account> for the DPMF <id>"
         (at "create-role-account" (read DPMF|PropertiesTable id ["create-role-account"]))
     )
     (defun DPMF|UR_NoncesUsed:integer (id:string)
-        @doc "Returns <nonces-used> for the DPMF <id>"
         (at "nonces-used" (read DPMF|PropertiesTable id ["nonces-used"]))
     )
     (defun DPMF|UR_RewardBearingToken:string (id:string)
-        @doc "Returns <reward-bearing-token> for the DPMF <id>"
         (at "reward-bearing-token" (read DPMF|PropertiesTable id ["reward-bearing-token"]))
     )
-    ;;       [11] Data Read and Computation Functions   [URC] and [UC]
+    ;;[URC]& [UC]
     (defun BASIS|UC_BrandingLogo:object{BrandingSchema} (input:object{BrandingSchema} logo:string)
         {"logo"             : logo
         ,"description"      : (at "description" input)
@@ -1554,16 +1437,14 @@
             )
         )
     )
-    (defun ATS|UC_IzRT:bool (reward-token:string)                           ;ATS|UC_IzRT-Absolute
-        @doc "Checks if a DPTF Token is specified as Reward Token in any ATS Pair"
+    (defun ATS|UC_IzRT:bool (reward-token:string)
         (DPTF-DPMF|UEV_id reward-token true)
         (if (= (DPTF|UR_RewardToken reward-token) [UTILS.BAR])
             false
             true
         )
     )
-    (defun ATS|UC_IzRTg:bool (atspair:string reward-token:string)           ;ATS|UC_IzRT
-        @doc "Checks if a DPTF Token is specified as Reward-Token in a given ATS Pair"
+    (defun ATS|UC_IzRTg:bool (atspair:string reward-token:string)
         (DPTF-DPMF|UEV_id reward-token true)
         (if (= (DPTF|UR_RewardToken reward-token) [UTILS.BAR])
             false
@@ -1573,8 +1454,7 @@
             )
         )
     )
-    (defun ATS|UC_IzRBT:bool (reward-bearing-token:string cold-or-hot:bool) ;;ATS|UC_IzRBT-Absolute
-        @doc "Checks if a DPTF|DPMF Tokens is registered as Reward-Bearing-Token in any ATS Pair"
+    (defun ATS|UC_IzRBT:bool (reward-bearing-token:string cold-or-hot:bool)
         (DPTF-DPMF|UEV_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
             (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILS.BAR])
@@ -1588,8 +1468,7 @@
         )
     )
     
-    (defun ATS|UC_IzRBTg:bool (atspair:string reward-bearing-token:string cold-or-hot:bool) ;;ATS|UC_IzRBT
-        @doc "Checks if a DPTF|DPMF Token is registered as Reward-Bearing-Token in a given ATS Pair"
+    (defun ATS|UC_IzRBTg:bool (atspair:string reward-bearing-token:string cold-or-hot:bool)
         (DPTF-DPMF|UEV_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
             (if (= (DPTF|UR_RewardBearingToken reward-bearing-token) [UTILS.BAR])
@@ -1609,8 +1488,6 @@
         )
     )
     (defun DALOS|UC_IzCoreDPTF:bool (id:string)
-        @doc "Checks if Token-Id is a Core DPTF Token \
-        \ The Core DPTF Tokens are OUROBOROS and IGNIS"
         (DPTF-DPMF|UEV_id id true)
         (let*
             (
@@ -1635,7 +1512,6 @@
         )
     )
     (defun DALOS|URC_EliteAurynzSupply (account:string)
-        @doc "Returns Total Elite Auryn (normal and vested) Supply of Account"
         (if (!= (DALOS.DALOS|UR_EliteAurynID) UTILS.BAR)
             (let
                 (
@@ -1651,7 +1527,6 @@
         )
     )
     (defun DPTF-DPMF|URC_AccountExist:bool (id:string account:string token-type:bool)
-        @doc "Checks if DPTF|DPMF Account <account> exists for DPTF|DPMF Token id <id>"
         (if token-type
             (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "balance" : -1.0 }
@@ -1673,14 +1548,11 @@
     )
     (defun DPTF|UC_Fee:[decimal] (id:string amount:decimal)
         @doc "Computes Fee values for a DPTF Token <id> and <amount> \
-            \ and outputs them into a list of strings; The list is as follows: \
+            \ and outputs them into a list: \
             \ \
             \ 1st element, is the Primary Fee, which is the standard Fee set up for the Token \
             \ 2nd element, is the Secondary Fee, which exists if the number of <fee-unlocks> becomes greater than zero \
-            \ 3rd element, is the Remainder, which is the actual amount that reaches the receiver \
-            \ \
-            \ If the <fee-toggle> is set to false, no fee is deducted \
-            \ All 3 amounts, when summed, must equal exactly the input amount to the last decimal"
+            \ 3rd element, is the Remainder, which is the actual amount that reaches the receiver "
         (let
             (
                 (fee-toggle:bool (DPTF|UR_FeeToggle id))
@@ -1734,19 +1606,15 @@
         )
     )
     (defun DPTF|UC_UnlockPrice:[decimal] (id:string)
-        @doc "Computes the <fee-lock> unlock price for a DPTF <id> \
-            \ Outputs [virtual-gas-costs native-gas-cost] \
-            \ Virtual Gas Token = Ignis; Native Gas Token = Kadena"
+        @doc "Computes the <fee-lock> unlock price for a DPTF <id>"
         (UTILS.DPTF|UC_UnlockPrice (DPTF|UR_FeeUnlocks id))
     )
     (defun DPTF|UC_VolumetricTax (id:string amount:decimal)
-        @doc "Computes the Volumetric-Transaction-Tax (VTT), given an DTPF <id> and <amount>"
         (DPTF-DPMF|UEV_Amount id amount true)
         (UTILS.DPTF|UC_VolumetricTax (DPTF-DPMF|UR_Decimals id true) amount)
     )
-    ;;        [2] Data Creation|Composition Functions   [UCC]
+    ;;[UCC]
     (defun DPMF|UCC_Compose:object{DPMF|Schema} (nonce:integer balance:decimal meta-data:[object])
-        @doc "Composes a Meta-Fungible object from <nonce>, <balance> and <meta-data>"
         {"nonce" : nonce, "balance": balance, "meta-data" : meta-data}
     )
     (defun DPMF|UCC_Pair_Nonce-Balance:[object{DPMF|Nonce-Balance}] (nonce-lst:[integer] balance-lst:[decimal])
@@ -1761,7 +1629,7 @@
             (zip (lambda (x:integer y:decimal) { "nonce": x, "balance": y }) nonce-lst balance-lst)
         )
     )
-    ;;        [1] Administrative Usage Functions        [A]
+    ;;[A]
     (defun BASIS|A_SetBrandingFlag (id:string token-type:bool flag:integer)
         (with-capability (BASIS-ADMIN)
             (DPTF-DPMF|UEV_id id token-type)
@@ -1783,7 +1651,6 @@
         )
     )
     (defun BASIS|A_SetBrandingLive (id:string token-type:bool)
-        @doc "Administration Function moving Pending-Branding Data to Live Branding Data"
         (with-capability (BASIS-ADMIN)
             (let*
                 (
@@ -1814,7 +1681,7 @@
             )
         )
     )
-    ;;       [23] Client Usage Functions                [C]
+    ;;[C]
     (defun BASIS|CO_UpgradeBranding (patron:string id:string token-type:bool months:integer)
         (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
@@ -2450,7 +2317,7 @@
             (DPMF|XK_Transfer patron id nonce sender receiver transfer-amount method)
         )
     )
-    ;;       [58] Auxiliary Usage Functions             [X]
+    ;;[X]
     (defun DPTF-DPMF|X_UpdatePendingBranding (id:string token-type:bool logo:string description:string website:string social:[object{SocialSchema}])
         (require-capability (BASIS|X_BRANDING id token-type))
         (let*
@@ -2526,7 +2393,6 @@
         )
     )
     (defun DPTF-DPMF|X_UpdateElite (id:string sender:string receiver:string)
-        @doc "Updates Elite Account in a transfer context"
         (let
             (
                 (ea-id:string (DALOS.DALOS|UR_EliteAurynID))
@@ -2555,7 +2421,6 @@
         )
     )
     (defun DPTF-DPMF|X_UpdateRoleTransferAmount (id:string direction:bool token-type:bool)
-        @doc "Updates <role-transfer-amount> for Token <id>"
         (require-capability (DPTF-DPMF|UPDATE_ROLE-TRANSFER-AMOUNT))
         (if token-type
             (if (= direction true)
@@ -2589,7 +2454,6 @@
         )
     )
     (defun DPTF-DPMF|X_UpdateSupply (id:string amount:decimal direction:bool token-type:bool)
-        @doc "Updates <id> True|Meta-Fungible supply. Boolean <direction> used for increase|decrease"
         (require-capability (DPTF-DPMF|UPDATE_SUPPLY))
         (DPTF-DPMF|UEV_Amount id amount token-type)
         (if token-type
@@ -2675,7 +2539,6 @@
         )
     )
     (defun DPTF-DPMF|XP_UpdateRewardBearingToken (id:string atspair:string token-type:bool)
-        @doc "XP Pure UpdateRewardBearingToken Function"
         (require-capability (ATS|UPDATE_RBT))
         (if token-type
             (with-read DPTF|PropertiesTable id
@@ -2696,14 +2559,12 @@
     )
 
     (defun DPTF-DPMF|XO_UpdateVesting (dptf:string dpmf:string)
-        @doc "Updates Vesting Data for DPTF|DPMF Token Pair" 
         (enforce-guard (BASIS|C_ReadPolicy "ATS|UpVes"))
         (with-capability (VST|UPDATE)
             (DPTF-DPMF|XP_UpdateVesting dptf dpmf)
         )
     )
-    (defun DPTF-DPMF|XP_UpdateVesting (dptf:string dpmf:string)
-        @doc "XP Pure Update Function"            
+    (defun DPTF-DPMF|XP_UpdateVesting (dptf:string dpmf:string)        
         (require-capability (VST|UPDATE))
         (update DPTF|PropertiesTable dptf
             {"vesting" : dpmf}
@@ -2713,16 +2574,7 @@
         )
     )
     ;;
-    (defun DPTF|X_Control
-        (
-            id:string
-            can-change-owner:bool 
-            can-upgrade:bool 
-            can-add-special-role:bool 
-            can-freeze:bool 
-            can-wipe:bool 
-            can-pause:bool
-        )
+    (defun DPTF|X_Control (id:string can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool)
         (require-capability (DPTF-DPMF|X_CONTROL id true))
         (update DPTF|PropertiesTable id
             {"can-change-owner"                 : can-change-owner
@@ -2733,19 +2585,7 @@
             ,"can-pause"                        : can-pause}
         )
     )
-    (defun DPTF|X_Issue:string
-        (
-            account:string
-            name:string 
-            ticker:string 
-            decimals:integer 
-            can-change-owner:bool 
-            can-upgrade:bool 
-            can-add-special-role:bool 
-            can-freeze:bool 
-            can-wipe:bool 
-            can-pause:bool
-        )
+    (defun DPTF|X_Issue:string (account:string name:string ticker:string decimals:integer can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool)
         (UTILS.DALOS|UEV_Decimals decimals)
         (UTILS.DALOS|UEV_TokenName name)
         (UTILS.DALOS|UEV_TickerName ticker)
@@ -2781,7 +2621,6 @@
                 ,"vesting"              : UTILS.BAR
             }
         )
-        ;;Creates a new DPTF Account for the Token Issuer and returns id
         (with-capability (SECURE)
             (DPTF-DPMF|CP_DeployAccount (DALOS|UC_Makeid ticker) account true)    
         )
@@ -2847,23 +2686,17 @@
         )
     )
     (defun DPTF|XO_Burn (id:string account:string amount:decimal)
-        @doc "Auxiliary that burns a DPTF"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|BrTF"))
         (with-capability (DPTF-DPMF|X_BURN id account amount true)
             (DPTF|XP_Burn id account amount)
         )
     )
     (defun DPTF|XP_Burn (id:string account:string amount:decimal)
-        @doc "XP Pure Burn Function"
         (require-capability (DPTF-DPMF|X_BURN id account amount true))
         (DPTF|XO_DebitStandard id account amount)
         (DPTF-DPMF|X_UpdateSupply id amount false true)
     )
     (defun DPTF|XO_Credit (id:string account:string amount:decimal)
-        @doc "Auxiliary Function that credits a TrueFungible to a DPTF Account \
-            \ If a DPTF Account for the Token ID <id> doesnt exist, it will be created \
-            \ However if a DALOS Account (Standard or Smart) doesnt exit for <account>, function will fail, \
-            \ since a DALOS Account is mandatory for a DPTF Account creation"
         (enforce-one
             "Credit Not permitted"
             [
@@ -2876,7 +2709,6 @@
         )
     )
     (defun DPTF|XP_Credit (id:string account:string amount:decimal )
-        @doc "XP Pure Update Function"
         (require-capability (DPTF|CREDIT_PUR))
         (if (DALOS|UC_IzCoreDPTF id)
             (let*
@@ -2928,8 +2760,6 @@
         )
     )
     (defun DPTF|X_DebitAdmin (id:string account:string amount:decimal)
-        @doc "Auxiliary Function that debits a TrueFungible from a DPTF Account \
-            \ Administrative Variant, used when debiting is executed as a part of wiping by the DPTF Owner"
         (require-capability (DPTF|DEBIT))
         (with-capability (DPTF|DEBIT_PUR)
             (DPTF-DPMF|CAP_Owner id true)
@@ -2937,8 +2767,6 @@
         )
     )
     (defun DPTF|XO_DebitStandard (id:string account:string amount:decimal)
-        @doc "Auxiliary Function that debits a TrueFungible from a DPTF Account \
-            \ Standard Variant"
         (enforce-one
             "Standard Debit Not permitted"
             [
@@ -2952,7 +2780,6 @@
         )
     )
     (defun DPTF|XP_Debit (id:string account:string amount:decimal)
-        @doc "XP Pure Debit Function"
         (require-capability (DPTF|DEBIT_PUR))
         (if (DALOS|UC_IzCoreDPTF id)
             (let*
@@ -2977,14 +2804,12 @@
         )
     )
     (defun DPTF|XO_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        @doc "Auxiliary that toggles Fee Exemption Role for a DPTF Token"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|TgFeRl"))
         (with-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle)
             (DPTF|XP_ToggleFeeExemptionRole id account toggle)
         )
     )
     (defun DPTF|XP_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        @doc "XP Pure ToggleFeeExemptionRole Function"
         (require-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle))
         (if (DALOS|UC_IzCoreDPTF id)
             (with-capability (P|DALOS|UP_DATA)
@@ -2996,14 +2821,12 @@
         )
     )
     (defun DPTF|XO_ToggleMintRole (id:string account:string toggle:bool)
-        @doc "Auxiliary that toggles Mint Role for a DPTF Token"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|TgMnRl"))
         (with-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle)
             (DPTF|XP_ToggleMintRole id account toggle)
         )
     )
     (defun DPTF|XP_ToggleMintRole (id:string account:string toggle:bool)
-        @doc "XP Pure ToggleMintRole Function"
         (require-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle))
         (if (DALOS|UC_IzCoreDPTF id)
             (with-capability (P|DALOS|UP_DATA)
@@ -3015,7 +2838,6 @@
         )
     )
     (defun DPTF|XO_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        @doc "Updates Primary Fee Volume for DPTF <id> with <amount>"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|UpFees"))
         (with-capability (DPTF|UPDATE_FEES_PUR)
             (DPTF-DPMF|UEV_Amount id amount true)
@@ -3023,7 +2845,6 @@
         )
     )
     (defun DPTF|XP_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        @doc "XP Pure UpdateFeeVolume Function"
         (require-capability (DPTF|UPDATE_FEES_PUR))
         (if primary
             (with-read DPTF|PropertiesTable id
@@ -3041,7 +2862,6 @@
         )
     )
     (defun DPTF|XO_UpdateRewardToken (atspair:string id:string direction:bool)
-        @doc "Updates (adds or removes) Reward Token for DPTF <id>"
         (enforce-one
             "Invalid Permissions to update RewardToken"
             [
@@ -3054,7 +2874,6 @@
         )
     )
     (defun DPTF|XP_UpdateRewardToken (atspair:string id:string direction:bool)
-        @doc "Updates (adds or removes) Reward Token for DPTF <id>"
         (require-capability (DPTF|UPDATE_RT))
         (with-read DPTF|PropertiesTable id
             {"reward-token" := rt}
@@ -3075,8 +2894,6 @@
     )
     ;;
     (defun DPMF|X_AddQuantity (id:string nonce:integer account:string amount:decimal)
-        @doc "Auxiliary Base Function that adds quantity for an existing Metafungible \
-            \ Assumes <id> and <nonce> exist on DPMF Account"
         (require-capability (DPMF|X_ADD-QUANTITY id account amount))
         (with-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" := unit }
@@ -3097,7 +2914,6 @@
         (DPTF-DPMF|X_UpdateSupply id amount true false)
     )
     (defun DPMF|X_Burn (id:string nonce:integer account:string amount:decimal)
-        @doc "Auxiliary Base Function that burns a DPMF"
         (require-capability (DPTF-DPMF|X_BURN id account amount false))
         (DPMF|X_DebitStandard id nonce account amount)
         (DPTF-DPMF|X_UpdateSupply id amount false false)
@@ -3126,10 +2942,6 @@
         )
     )
     (defun DPMF|X_Credit (id:string nonce:integer meta-data:[object] account:string amount:decimal)
-        @doc "Auxiliary Function that credits a MetaFungible to a DPMF Account \
-            \ Also creates a new DPMF Account if it doesnt exist. \
-            \ If account already has DPMF nonce, it is simply increased \
-            \ If account doesnt have DPMF nonce, it is added"
         (require-capability (DPMF|CREDIT))
         ;(enforce (> amount 0.0) "Crediting amount must be greater than zero") ;;Allready checked as part of the DPMF|X_TRANSFER
         (let*
@@ -3184,9 +2996,6 @@
         )
     )
     (defun DPMF|X_Create:integer (id:string account:string meta-data:[object])
-        @doc "Auxiliary Base Function that creates a MetaFungible. \
-        \ Creating a DPTF means spawning a new DPMF Token as part of al already issued DPMF Token \
-        \ Creating is done with zero amount quantity"
         (require-capability (DPMF|X_CREATE id account))
         (let*
             (
@@ -3283,8 +3092,6 @@
         )
     )
     (defun DPMF|X_DebitMultiple (id:string nonce-lst:[integer] account:string balance-lst:[decimal])
-        @doc "Auxiliary Function needed for Wiping \
-            \ Executes |X_Debit| on a list of nonces and balances via its helper Function |X_DebitPaired|"
         (let
             (
                 (nonce-balance-obj-lst:[object{DPMF|Nonce-Balance}] (DPMF|UCC_Pair_Nonce-Balance nonce-lst balance-lst))
@@ -3293,11 +3100,6 @@
         )
     )
     (defun DPMF|X_DebitPaired (id:string account:string nonce-balance-obj:object{DPMF|Nonce-Balance})
-        @doc "Helper Function designed for making |X_DebitMultiple| possible, which is needed for Wiping \
-            \ Same a |X_Debit| but the nonce and balance are composed into a singular <nonce-balance-obj> object \
-            \ Within |X_DebitPaired|, |X_Debit| is called using true <admin> boolean \
-            \ which is needed when MetaFungible debitation is executed by DPMF Owner (admin) on another DPMF Account \
-            \ as part of the Wiping Process"
         (let
             (
                 (nonce:integer (at "nonce" nonce-balance-obj))
@@ -3352,7 +3154,6 @@
         (DALOS|UC_Makeid ticker)
     )
     (defun DPMF|X_IncrementNonce (id:string)
-        @doc "Increments <id> MetaFungible nonce"
         (require-capability (DPMF|INCREMENT_NONCE))
         (with-read DPMF|PropertiesTable id
             { "nonces-used" := nu }
@@ -3360,9 +3161,6 @@
         )
     )
     (defun DPMF|X_Mint:integer (id:string account:string amount:decimal meta-data:[object])
-        @doc "Auxiliary Base Function that mints a DPMF \
-        \ Minting a DPTF means creating it, and then designating directly an amount for it. \
-        \ Returns the nonce of the minted DPMF"
         (require-capability (DPMF|X_MINT id account amount))
         (let
             (
@@ -3395,14 +3193,12 @@
         (DALOS.DALOS|X_IncrementNonce sender)
     )
     (defun DPMF|XO_MoveCreateRole (id:string receiver:string)
-        @doc "Auxiliary that Moves the Create Role for a DPMF Token"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|MCRl"))
         (with-capability (DPMF|X_MOVE_CREATE-ROLE id receiver)
             (DPMF|XP_MoveCreateRole id receiver)
         )
     )
     (defun DPMF|XP_MoveCreateRole (id:string receiver:string)
-        @doc "XP Pure MoveCreateRole Function"
         (require-capability (DPMF|X_MOVE_CREATE-ROLE id receiver))
         (update DPMF|BalanceTable (concat [id UTILS.BAR (DPMF|UR_CreateRoleAccount id)])
             {"role-nft-create" : false}
@@ -3415,25 +3211,21 @@
         )
     )
     (defun DPMF|XO_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        @doc "Auxiliary that Toggles the Add Quantity Role for a DPMF Token"
         (enforce-guard (BASIS|C_ReadPolicy "ATS|TgAqRl"))
         (with-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle)
             (DPMF|XP_ToggleAddQuantityRole id account toggle)
         )
     )
     (defun DPMF|XP_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        @doc "XP Pure oggleAddQuantityRole Function"
         (require-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle))
         (update DPMF|BalanceTable (concat [id UTILS.BAR account])
             {"role-nft-add-quantity" : toggle}
         )
     )
 )
-;;Policies Table
+
 (create-table BASIS|PoliciesTable)
-;;[T] DPTF Tables
 (create-table DPTF|PropertiesTable)
 (create-table DPTF|BalanceTable)
-;;[M] DPMF Tables
 (create-table DPMF|PropertiesTable)
 (create-table DPMF|BalanceTable)

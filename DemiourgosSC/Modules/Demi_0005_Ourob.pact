@@ -1,14 +1,5 @@
 (module OUROBOROS GOVERNANCE
-    @doc "Demiourgos 0005 Module - OUROB (Ouroboros Module) \
-    \ Module 5 contains initialisation functions, and usage functions that can be executed, \
-    \ after all other functions are defined in the previous module \
-    \ \
-    \ \
-    \ Smart DALOS Accounts governed by the Module (1) \
-    \ \
-    \ 1)Ouroboros Smart Account"
 
-    ;;Module Governance
     (defcap GOVERNANCE ()
         (compose-capability (OUROBOROS-ADMIN))
     )
@@ -22,102 +13,78 @@
             ]
         )
     )
-    ;;Module Guard
     (defconst G_OUROBOROS (keyset-ref-guard OUROBOROS|SC_KEY))
-    ;;Module Accounts Information
-        ;;[O] Ouroboros Account ids for Ouroboros Submodule
     (defconst OUROBOROS|SC_KEY "free.DH_SC_Ouroboros-Keyset")
-    (defconst OUROBOROS|SC_NAME DALOS.OUROBOROS|SC_NAME)                                ;;Former Ouroboros
+    (defconst OUROBOROS|SC_NAME DALOS.OUROBOROS|SC_NAME)
     (defconst OUROBOROS|SC_KDA-NAME (create-principal OUROBOROS|GUARD))
-    ;(defconst OUROBOROS|SC_KDA-NAME "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
-    ;;External Module Usage
+
     (use free.UTILS)
     (use free.DALOS)
     (use free.BASIS)
     (use free.AUTOSTAKE)
     (use free.LIQUID)
 
-    ;;
-    ;;
-    ;;
-
-
-    ;;Simple True Capabilities (1)
     (defcap COMPOSE ()
-        @doc "Capability used to compose multiple functions in an IF statement"
         true
     )
     (defcap SECURE ()
-        @doc "Capability that secures Client Functions in this Module"
         true
     )
-    ;; POLICY Capabilities
+    ;;
     (defcap SUMMONER ()
-        @doc "Policy allowing usage of Client Functions from the DALOS, BASIS, AUTOSTAKE and LIQUID Modules"
         true
     )
     (defcap P|DPTF|UPDATE_RT ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_UpdateRewardToken>"
         true
     )
     (defcap P|ATS|REMOTE-GOV ()
-        @doc "Policy allowing interaction with the Autostake Smart DALOS Account"
         true
     )
     (defcap P|ATS|RESHAPE ()
-        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount>"
         true
     )
     (defcap P|ATS|RM_SECONDARY_RT ()
-        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_RemoveSecondary>"
         true
     )
     (defcap P|ATS|UPDATE_ROU ()
-        @doc "Policy allowing usage of <AUTOSTAKE.ATS|XO_UpdateRoU>"
         true
     )
-
-    ;;Policies - NONE
+    ;;
     (defun OUROBOROS|DefinePolicies ()
-        @doc "Add the Policy that allows running external Functions from this Module"
-        (DALOS.A_AddPolicy         ;DALOS|DALOS
+        (DALOS.A_AddPolicy
             "OUROBOROS|Summoner"
-            (create-capability-guard (SUMMONER))                          ;;  Required to Summon DALOS Functions
+            (create-capability-guard (SUMMONER))
         )
-        (BASIS.A_AddPolicy         ;BASIS|DPTF
+        (BASIS.A_AddPolicy
             "OUROBOROS|Summoner"
-            (create-capability-guard (SUMMONER))                          ;;  Required to Summon BASIS Functions
+            (create-capability-guard (SUMMONER))
         )
         (BASIS.A_AddPolicy
             "OUROBOROS|UpdateRewardToken"
-            (create-capability-guard (P|DPTF|UPDATE_RT))                  ;;  <BASIS.DPTF|XO_UpdateRewardToken>
+            (create-capability-guard (P|DPTF|UPDATE_RT))
         )
-        (AUTOSTAKE.A_AddPolicy       ;AUTOSTAKE|ATS
+        (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|Summoner"
-            (create-capability-guard (SUMMONER))                          ;;  Required to Summon AUTOSTAKE Functions
+            (create-capability-guard (SUMMONER))
         )
         (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|RemoteAutostakeGovernor"
-            (create-capability-guard (P|ATS|REMOTE-GOV))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
+            (create-capability-guard (P|ATS|REMOTE-GOV))
         )
         (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|ReshapeUnstakeAccount"
-            (create-capability-guard (P|ATS|RESHAPE))                     ;;  <AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount>
+            (create-capability-guard (P|ATS|RESHAPE))
         )
         (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|RemoveSecondaryRT"
-            (create-capability-guard (P|ATS|RM_SECONDARY_RT))             ;;  <AUTOSTAKE.ATS|XO_RemoveSecondary>
+            (create-capability-guard (P|ATS|RM_SECONDARY_RT))
         )
         (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|UpdateROU"
-            (create-capability-guard (P|ATS|UPDATE_ROU))                  ;;  <AUTOSTAKE.ATS|XO_UpdateRoU>
+            (create-capability-guard (P|ATS|UPDATE_ROU))
         )
-        ;(LIQUID.LQD|A_AddPolicy          ;LIQUID
-        ;    "TALOS|Summoner"
-        ;    (create-capability-guard (SUMMONER))                          ;;  Required to execute Client Functions from LIQUID Module
-        ;)
     )
-    ;;Modules's Governor
+    ;;
     (defcap OUROBOROS|GOV ()
         @doc "Autostake Module Governor Capability for its Smart DALOS Account"
         true
@@ -136,89 +103,42 @@
         true
     )
     (defconst OUROBOROS|GUARD (create-capability-guard (OUROBOROS|NATIVE-AUTOMATIC)))
-
-    ;;Policies
-
-    (defun OUROB|A_AddPolicy (policy-name:string policy-guard:guard)
+    ;;P
+    (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (OUROBOROS-ADMIN)
             (write OUROB|PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
-    (defun OUROB|C_ReadPolicy:guard (policy-name:string)
-        @doc "Reads the guard of a stored policy"
+    (defun C_ReadPolicy:guard (policy-name:string)
         (at "policy" (read OUROB|PoliciesTable policy-name ["policy"]))
     )
     ;;
-    ;;
-    ;; START
-    ;;
-    ;;
-;;  1]CONSTANTS Definitions
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
-;;  2]SCHEMAS Definitions
-    ;;[O] OUROB Schemas
+    ;;
     (defschema OUROB|PolicySchema
-        @doc "Schema that stores external policies, that are able to operate within this module"
         policy:guard
     )
-    ;;[T] DPTF Schemas
     (defschema DPTF|ID-Amount
-        @doc "Schema for ID-Amount Pair, used in Multi DPTF Transfers"
         id:string
         amount:decimal
     )
     (defschema DPTF|Receiver-Amount
-        @doc "Schema for Receiver-Amount Pair, used in Bulk DPTF Transfers"
         receiver:string
         amount:decimal
     )
-    ;;[V] VST Schemas
     (defschema VST|MetaDataSchema
         release-amount:decimal
         release-date:time
     )
-;;  3]TABLES Definitions
-    ;;[O] OUROB Tables
-    (deftable OUROB|PoliciesTable:{OUROB|PolicySchema})
 
-    ;;DALOS Initialisation Function
-    
-    ;;How to set Fee for a DPTF
-    ;(DALOS.DPTF|C_SetFee patron OuroID 150.0)
-    ;(DALOS.DPTF|C_ToggleFee patron OuroID true)
-    ;(DALOS.DPTF|C_ToggleFeeLock patron OuroID true)
+    (deftable OUROB|PoliciesTable:{OUROB|PolicySchema})
     ;;
     ;;            BASIS+AUTOSTAKE   Submodule
-    ;;
-    ;;            CAPABILITIES      <4>
-    ;;            FUNCTIONS         [17]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities FUNCTIONS                [CAP]
-    ;;            Function Based CAPABILITIES           [CF](have this tag)
-    ;;        [3] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;        [1] Data Read FUNCTIONS                   [UR]
-    ;;        [1] Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;        [2] Data Creation|Composition FUNCTIONS   [UCC]
-    ;;            Administrative Usage FUNCTIONS        [A]
-    ;;        [6] Client Usage FUNCTIONS                [C]
-    ;;        [4] Auxiliary Usage FUNCTIONS             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;     (NONE) Capabilities FUNCTIONS                [CAP]
-    ;;     (NONE) Function Based CAPABILITIES           [CF](have this tag)
-    ;;            Enforcements & Validations FUNCTIONS  [UEV]
+    ;;[UEV]
     (defun DPTF-DPMF|UEV_AmountCheck:bool (id:string amount:decimal token-type:bool)
-        @doc "Checks if the supplied amount is valid with the decimal denomination of the id \
-        \ and if the amount is greater than zero. \
-        \ Uses no enforcements, returns true if it checks, false if it doesnt"
         (let*
             (
                 (decimals:integer (BASIS.DPTF-DPMF|UR_Decimals id token-type))
@@ -230,7 +150,6 @@
         )
     )
     (defun DPTF|UEV_Pair_ID-Amount:bool (id-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Checks an ID-Amount Pair to be conform so that a Multi DPTF Transfer can properly take place"
         (fold
             (lambda
                 (acc:bool item:object{DPTF|ID-Amount})
@@ -241,7 +160,6 @@
         )
     )
     (defun DPTF|UEV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Checks an Receiver-Amount pair to be conform with a token id for Bulk Transfer purposes"
         (BASIS.DPTF-DPMF|UEV_id id true)
         (and
             (fold
@@ -274,9 +192,8 @@
             )
         )
     )
-    ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;[CAP]
     (defcap ATS|REDEEM (redeemer:string id:string)
-        @doc "Required for redeeming a Hot RBT"
         @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
@@ -293,7 +210,6 @@
         )
     )
     (defcap ATS|SYPHON (atspair:string syphon-amounts:[decimal])
-        @doc "Capability required to syphon RTs from an ATS-Pair"
         @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
@@ -327,7 +243,6 @@
         )
     )
     (defcap ATS|KICKSTART (kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
-        @doc "Capability needed to perform a kickstart for an ATS-Pair"
         @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
@@ -350,7 +265,6 @@
         )
     )
     (defcap ATS|REMOVE_SECONDARY (atspair:string reward-token:string)
-        @doc "Needed to remove a secondary RT Token"
         @event
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
@@ -368,8 +282,7 @@
             (enforce (> rt-position 0) "Primal RT cannot be removed")
         )
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;        [1] Data Read FUNCTIONS                   [UR]
+    ;;[UR]
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
@@ -379,8 +292,6 @@
             \       MODE Boolean is only used for proper validation, to accees the needed table, use the proper integer: \
             \ Table-to-query: \
             \ 1 (DPTF|BalanceTable), 2(DPMF|BalanceTable), 3(ATS|Ledger) "
-
-        ;;Enforces that only integer 1 2 3 can be used as input for the <table-to-query> variable.
         (UTILS.UTILS|UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
         (if mode
             (DALOS.GLYPH|UEV_DalosAccount account-or-token-id)
@@ -411,10 +322,8 @@
             output
         )
     )
-    ;;         [1] Data Read and Computation FUNCTIONS   [URC] and [UC]
+    ;;[URC] & [UC]
     (defun ATS|UC_RT-Unbonding (atspair:string reward-token:string)
-        @doc "Computes the Total Unbonding amount for a given <reward-token> of a given <atspair> \
-        \ Result-wise identical to reading it via <DEMI_001.ATS|UR_RT-Data> option 3, except this is done by computation"
         (AUTOSTAKE.ATS|UEV_RewardTokenExistance atspair reward-token true)
         (fold
             (lambda
@@ -425,9 +334,8 @@
             (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false)
         )
     )
-    ;;        [2] Data Creation|Composition FUNCTIONS   [UCC]
+    ;;[UCC]
     (defun DPTF|UCC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Creates an ID-Amount Pair (used in a Multi DPTF Transfer)"
         (let
             (
                 (id-length:integer (length id-lst))
@@ -438,7 +346,6 @@
         )
     )
     (defun DPTF|UCC_Pair_Receiver-Amount:[object{DPTF|Receiver-Amount}] (receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Create a Receiver-Amount Pair (used in Bulk DPTF Transfer)"
         (let
             (
                 (receiver-length:integer (length receiver-lst))
@@ -448,10 +355,9 @@
             (zip (lambda (x:string y:decimal) { "receiver": x, "amount": y }) receiver-lst transfer-amount-lst)
         )
     )
-    ;;     (NONE) Administrative Usage FUNCTIONS        [A]
-    ;;        [6] Client Usage FUNCTIONS                [C]
+    ;;[C]
     (defun ATS|CO_KickStart (patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (ATS|CP_KickStart patron kickstarter atspair rt-amounts rbt-request-amount)
         )
@@ -464,7 +370,6 @@
                     (rbt-id:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
                     (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
                 )
-            ;;1]Kickstarter transfers the rt-amounts to the AUTOSTAKE.ATS|SC_NAME and updates the Resident Amounts
                 (DPTF|XP_MultiTransfer patron rt-lst kickstarter AUTOSTAKE.ATS|SC_NAME rt-amounts true)
                 (map
                     (lambda
@@ -473,15 +378,13 @@
                     )
                     (zip (lambda (x:string y:decimal) { "id":x, "amount":y}) rt-lst rt-amounts)
                 )
-            ;;2]AUTOSTAKE.ATS|SC-NAME mints the requested RBT Amount
                 (BASIS.DPTF|CO_Mint patron rbt-id AUTOSTAKE.ATS|SC_NAME rbt-request-amount false)
-            ;;3]AUTOSTAKE.ATS|SC-NAME transfers the RBT Amount to the Kickstarter
                 (AUTOSTAKE.DPTF|CO_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount true)
             )
         )
     )
     (defun ATS|CO_Syphon (patron:string syphon-target:string atspair:string syphon-amounts:[decimal])
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (ATS|CP_Syphon patron syphon-target atspair syphon-amounts)
         )
@@ -493,8 +396,6 @@
                 (
                     (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
                 )
-            ;;1]Syphons RT Amounts and Updates RoU Table
-                ;(DPTF|C_MultiTransfer patron rt-lst AUTOSTAKE.ATS|SC_NAME syphon-target syphon-amounts)
                 (map
                     (lambda
                         (index:integer)
@@ -512,7 +413,7 @@
         )
     )
     (defun ATS|CO_Redeem (patron:string redeemer:string id:string nonce:integer)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (ATS|CP_Redeem patron redeemer id nonce)
         )
@@ -544,7 +445,6 @@
                             (floor (* current-nonce-balance (/ (- 1000.0 (* h-promile (- 1.0 (/ elapsed-time total-time)))) 1000.0)) precision)
                         )
                     )
-
                     (total-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair current-nonce-balance))
                     (earned-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair earned-rbt))
                     (fee-rts:[decimal] (zip (lambda (x:decimal y:decimal) (- x y)) total-rts earned-rts))
@@ -577,7 +477,7 @@
         )
     )
     (defun ATS|CO_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (ATS|CP_RemoveSecondary patron remover atspair reward-token)
         )
@@ -619,32 +519,31 @@
         )
     )
     (defun DPTF|CO_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DPTF|XP_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
         )
     )
     (defun DPTF|CO_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DPTF|XP_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
         )
     )
     (defun DPMF|CO_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DPMF|XP_SingleBatchTransfer patron id nonce sender receiver method)
         )
     )
     (defun DPMF|CO_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DPMF|XP_MultiBatchTransfer patron id nonces sender receiver method)
         )
     )
-    ;;        [x] Auxiliary Usage FUNCTIONS             [X]
+    ;;[X]
     (defun DPTF|XP_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Auxiliary Kore Multi Transfer Function"
         (require-capability (SECURE))
         (with-capability (SUMMONER)
             (let
@@ -662,7 +561,6 @@
         )
     )
     (defun DPTF|X_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool)
-        @doc "Helper Function needed for making a Multi DPTF Transfer possible"
         (let
             (
                 (id:string (at "id" id-amount-pair))
@@ -672,7 +570,6 @@
         )
     )
     (defun DPTF|XP_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Auxiliary Kore Bulk Transfer Function"
         (require-capability (SECURE))
         (with-capability (SUMMONER)
             (let
@@ -690,7 +587,6 @@
         )
     )
     (defun DPTF|X_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool)
-        @doc "Helper Function needed for making a Bulk DPTF Transfer possible"
         (let
             (
                 (receiver:string (at "receiver" receiver-amount-pair))
@@ -726,32 +622,8 @@
     )
     ;;
     ;;            OUROBOROS         Submodule
-    ;;
-    ;;            CAPABILITIES      <0>
-    ;;            FUNCTIONS         [9]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities FUNCTIONS                [CAP]
-    ;;            Function Based CAPABILITIES           [CF](have this tag)
-    ;;        [2] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;        <3> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read FUNCTIONS                   [UR]
-    ;;        [2] Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;            Data Creation|Composition FUNCTIONS   [UCC]
-    ;;        [1] Administrative Usage FUNCTIONS        [A]
-    ;;        [4] Client Usage FUNCTIONS                [C]
-    ;;            Auxiliary Usage FUNCTIONS             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities FUNCTIONS                [CAP]
-    ;;            Function Based CAPABILITIES           [CF](have this tag)
-    ;;        [2] Enforcements & Validations FUNCTIONS  [UEV]
+    ;;[UEV]
     (defun DALOS|UEV_Live ()
-        @doc "Enforce DALOS Virtual Blockchain is properly set up by checking \
-        \ OUROBOROS and IGNIS IDs are properly saved in the DALOS|PropertiesTable"
         (let
             (
                 (ouro-id:string (DALOS.DALOS|UR_OuroborosID))
@@ -762,8 +634,6 @@
         )
     )
     (defun IGNIS|UEV_Exchange ()
-        @doc "Enforces the Ouroboros Account has the proper permission \
-        \ Such that Ignis Exchange (Sublimation and Compression) is possible"
         (DALOS|UEV_Live)
         (let*
             (
@@ -780,9 +650,8 @@
             (enforce t3 "Permission invalid for Ignis Exchange")
         )
     )
-    ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
+    ;;[CAP]
     (defcap IGNIS|SUBLIMATE (patron:string client:string target:string)
-        @doc "Required for Sublimation"
         @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
@@ -792,7 +661,6 @@
         (DALOS.DALOS|UEV_EnforceAccountType target false)
     )
     (defcap IGNIS|COMPRESS (patron:string client:string)
-        @doc "Required for Compression"
         @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
@@ -801,7 +669,6 @@
         (DALOS.DALOS|UEV_EnforceAccountType client false)
     )
     (defcap OUROBOROS|WITHDRAW (patron:string id:string target:string)
-        @doc "Required to withdraw Fees stored in the Ouroboros Smart DALOS Account"
         @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
@@ -809,17 +676,13 @@
         (DALOS.DALOS|UEV_EnforceAccountType target false)
     )
     (defcap OUROBOROS|ADMIN_FUEL ()
-        @doc "Needed to Perform an administrator fueling of Liquid Staking using existing KDA Supply"
         @event
         (compose-capability (OUROBOROS|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (OUROBOROS|NATIVE-AUTOMATIC))
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;     [NONE] Data Read FUNCTIONS                   [UR]
-    ;;        [2] Data Read and Computation FUNCTIONS   [URC] and [UC]
+    ;;[URC] & [UC]
     (defun IGNIS|UC_Sublimate:decimal (ouro-amount:decimal)
-        @doc "Computes how much GAS(Ignis) can be generated from <ouro-amount> Ouroboros"
         (enforce (>= ouro-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
         (let
             (
@@ -847,7 +710,6 @@
         )
     )
     (defun IGNIS|UC_Compress (ignis-amount:decimal)
-        @doc "Computes how much Ouroboros can be generated from <ignis-amount> GAS(Ignis)"
         (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
         (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
         (let*
@@ -870,11 +732,9 @@
             )
         )
     )
-    ;;     (NONE) Data Creation|Composition FUNCTIONS   [UCC]
-    ;;     (NONE) Administrative Usage FUNCTIONS        [A]
-    ;;        [4] Client Usage FUNCTIONS                [C]
+    ;;[C]
     (defun OUROBOROS|CO_FuelLiquidStakingFromReserves (patron:string)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (OUROBOROS|CP_FuelLiquidStakingFromReserves  patron)
         )
@@ -902,7 +762,7 @@
         )
     )
     (defun OUROBOROS|CO_WithdrawFees (patron:string id:string target:string)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (OUROBOROS|CP_WithdrawFees patron id target)
         )
@@ -921,7 +781,7 @@
         )
     )
     (defun IGNIS|CO_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (IGNIS|CP_Sublimate patron client target ouro-amount)
         )
@@ -954,7 +814,7 @@
         )
     )
     (defun IGNIS|CO_Compress:decimal (patron:string client:string ignis-amount:decimal)
-        (enforce-guard (OUROB|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (IGNIS|CP_Compress patron client ignis-amount)
         )
@@ -985,14 +845,8 @@
             )
         )
     )
-    ;;     (NONE) Auxiliary Usage FUNCTIONS             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;
-    ;;
     ;;========[P] PRINT-FUNCTIONS==============================================;;
     (defun DALOS|UP_AccountProperties (account:string)
-        @doc "Prints DALOS Account <account> Properties"
         (let* 
             (
                 (p:[bool] (DALOS.DALOS|UR_AccountProperties account))
@@ -1007,38 +861,28 @@
         )
     )
     (defun ATS|UP_P0 (atspair:string account:string)
-        @doc "Prints Data of the P0 Position ofr <atspair> and <account>"
         (format "{}|{} P0: {}" [atspair account (AUTOSTAKE.ATS|UR_P0 atspair account)])
     )
     (defun ATS|UP_P1 (atspair:string account:string)
-        @doc "Prints Data of the P1 Position ofr <atspair> and <account>"
         (format "{}|{} P1: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 1)])
     )
     (defun ATS|UP_P2 (atspair:string account:string)
-        @doc "Prints Data of the P2 Position ofr <atspair> and <account>"
         (format "{}|{} P2: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 2)])
     )
     (defun ATS|UP_P3 (atspair:string account:string)
-        @doc "Prints Data of the P3 Position ofr <atspair> and <account>"
         (format "{}|{} P3: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 3)])
     )
     (defun ATS|UP_P4 (atspair:string account:string)
-        @doc "Prints Data of the P4 Position ofr <atspair> and <account>"
         (format "{}|{} P4: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 4)])
     )
     (defun ATS|UP_P5 (atspair:string account:string)
-        @doc "Prints Data of the P5 Position ofr <atspair> and <account>"
         (format "{}|{} P5: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 5)])
     )
     (defun ATS|UP_P6 (atspair:string account:string)
-        @doc "Prints Data of the P6 Position ofr <atspair> and <account>"
         (format "{}|{} P6: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 6)])
     )
     (defun ATS|UP_P7 (atspair:string account:string)
-        @doc "Prints Data of the P7 Position ofr <atspair> and <account>"
         (format "{}|{} P7: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 7)])
     )
 )
-
-;;Policies Table
 (create-table OUROB|PoliciesTable)
