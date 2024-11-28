@@ -74,19 +74,19 @@
     ;;Policies
     (defun TALOS|DefinePolicies ()
         @doc "Add the Policies that allows running external Functions from this Module"
-        (DALOS.DALOS|A_AddPolicy         ;DALOS
+        (DALOS.A_AddPolicy         ;DALOS
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from DALOS Module
         )
-        (DALOS.DALOS|A_AddPolicy
+        (DALOS.A_AddPolicy
             "TALOS|AutomaticPatron"
             (create-capability-guard (P|DALOS|AUTO_PATRON))                  ;;  Gasless Patron
         )
-        (BASIS.BASIS|A_AddPolicy         ;BASIS
+        (BASIS.A_AddPolicy         ;BASIS
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from BASIS Module
         )
-        (AUTOSTAKE.ATS|A_AddPolicy       ;AUTOSTAKE
+        (AUTOSTAKE.A_AddPolicy       ;AUTOSTAKE
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))                             ;;  Required to execute Client Functions from AUTOSTAKE Module
         )
@@ -167,6 +167,20 @@
             \ A DPTF Account can only be created if a coresponding DALOS Account exists."
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_DeployAccount id account true)
+        )
+    )
+    (defun DPTF|C_UpdateBranding (patron:string id:string logo:string description:string website:string social:[object{SocialSchema}])
+        @doc "Updates Pending-Branding with new branding data, 100 IGNIS Cost \
+            \ In order to be brought live, a DALOS Admin must approve the data and move it from Pending-Branding to Branding"
+        (with-capability (SUMMONER)
+            (BASIS.DPTF-DPMF|CO_UpdateBranding patron id true logo description website social)
+        )
+    )
+    (defun DPTF|C_UpgradeBranding (patron:string id:string months:integer)
+        @doc "Pays KDA to upgrade to Blue Flag for Token <id>"
+        (with-capability (SUMMONER)
+            (BASIS|CO_UpgradeBranding patron id true months)
+            (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
     (defun DPTF|C_ChangeOwnership (patron:string id:string new-owner:string);e
@@ -355,6 +369,19 @@
         @doc "Similar to <DPTF|C_DeployAccount>, but for DPMFs"
         (with-capability (SUMMONER)
             (BASIS.DPTF-DPMF|CO_DeployAccount id account false)
+        )
+    )
+    (defun DPMF|C_UpdateBranding (patron:string id:string logo:string description:string website:string social:[object{SocialSchema}])
+        @doc "Similar to <DPTF|C_UpdateBranding>, but for DPMFs"
+        (with-capability (SUMMONER)
+            (BASIS.DPTF-DPMF|CO_UpdateBranding patron id false logo description website social)
+        )
+    )
+    (defun DPMF|C_UpgradeBranding (patron:string id:string months:integer)
+        @doc "Similar to <DPTF|C_UpgradeBranding>, but for DPMFs"
+        (with-capability (SUMMONER)
+            (BASIS|CO_UpgradeBranding patron id false months)
+            (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
     (defun DPMF|C_ChangeOwnership (patron:string id:string new-owner:string);e

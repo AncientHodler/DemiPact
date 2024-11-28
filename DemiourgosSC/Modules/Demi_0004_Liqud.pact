@@ -67,15 +67,15 @@
 
     (defun LIQUID|DefinePolicies ()
         @doc "Add the Policy that allows running external Functions from this Module"                
-        (DALOS.DALOS|A_AddPolicy     ;DALOS
+        (DALOS.A_AddPolicy     ;DALOS
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
         )
-        (BASIS.BASIS|A_AddPolicy     ;BASIS
+        (BASIS.A_AddPolicy     ;BASIS
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
         )
-        (AUTOSTAKE.ATS|A_AddPolicy   ;AUTOSTAKE
+        (AUTOSTAKE.A_AddPolicy   ;AUTOSTAKE
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))                  ;;  Required to Summon DALOS Functions
         )

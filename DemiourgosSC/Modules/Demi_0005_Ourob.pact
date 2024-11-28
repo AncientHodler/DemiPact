@@ -80,35 +80,35 @@
     ;;Policies - NONE
     (defun OUROBOROS|DefinePolicies ()
         @doc "Add the Policy that allows running external Functions from this Module"
-        (DALOS.DALOS|A_AddPolicy         ;DALOS|DALOS
+        (DALOS.A_AddPolicy         ;DALOS|DALOS
             "OUROBOROS|Summoner"
             (create-capability-guard (SUMMONER))                          ;;  Required to Summon DALOS Functions
         )
-        (BASIS.BASIS|A_AddPolicy         ;BASIS|DPTF
+        (BASIS.A_AddPolicy         ;BASIS|DPTF
             "OUROBOROS|Summoner"
             (create-capability-guard (SUMMONER))                          ;;  Required to Summon BASIS Functions
         )
-        (BASIS.BASIS|A_AddPolicy
+        (BASIS.A_AddPolicy
             "OUROBOROS|UpdateRewardToken"
             (create-capability-guard (P|DPTF|UPDATE_RT))                  ;;  <BASIS.DPTF|XO_UpdateRewardToken>
         )
-        (AUTOSTAKE.ATS|A_AddPolicy       ;AUTOSTAKE|ATS
+        (AUTOSTAKE.A_AddPolicy       ;AUTOSTAKE|ATS
             "OUROBOROS|Summoner"
             (create-capability-guard (SUMMONER))                          ;;  Required to Summon AUTOSTAKE Functions
         )
-        (AUTOSTAKE.ATS|A_AddPolicy
+        (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|RemoteAutostakeGovernor"
             (create-capability-guard (P|ATS|REMOTE-GOV))                  ;;  Remote Interactions with AUTOSTAKE.ATS|SC-NAME
         )
-        (AUTOSTAKE.ATS|A_AddPolicy
+        (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|ReshapeUnstakeAccount"
             (create-capability-guard (P|ATS|RESHAPE))                     ;;  <AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount>
         )
-        (AUTOSTAKE.ATS|A_AddPolicy
+        (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|RemoveSecondaryRT"
             (create-capability-guard (P|ATS|RM_SECONDARY_RT))             ;;  <AUTOSTAKE.ATS|XO_RemoveSecondary>
         )
-        (AUTOSTAKE.ATS|A_AddPolicy
+        (AUTOSTAKE.A_AddPolicy
             "OUROBOROS|UpdateROU"
             (create-capability-guard (P|ATS|UPDATE_ROU))                  ;;  <AUTOSTAKE.ATS|XO_UpdateRoU>
         )

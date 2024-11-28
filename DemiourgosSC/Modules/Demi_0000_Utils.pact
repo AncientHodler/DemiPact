@@ -808,7 +808,14 @@
             resident-amounts:[decimal] 
             rt-precisions:[integer] 
         )
-        @doc "Splits a RBT value using an index and an input resident amount list, in equivalenet resident amounts"
+        @doc "Called from AUTOSTAKE.ATS|UC_RTSplitAmounts: Splits a RBT value, the <rbt-amount>, using following inputs: \
+            \ Reward-Bearing-Token supply <rbt-supply> of an <atspair> (read below) \
+            \ The <index> of the <atspair> (read below) \
+            \ A list <resident-amounts> respresenting amounts of resident Reward-Tokens of the <atpsair> \
+            \ A list <rt-precision-lst> representing the precision of these Reward-Tokens \
+            \ \
+            \ Resulting a decimal list of Reward-Token Values coresponding to the input <rbt-amount> \
+            \ The Actual computation takes place in the UTILITY Module in the <UC_SplitByIndexedRBT> Function"
         (if (= rbt-amount pair-rbt-supply)
             resident-amounts
             (let*

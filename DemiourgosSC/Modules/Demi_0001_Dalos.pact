@@ -145,14 +145,14 @@
         true
     )
     ;;Policies
-    (defun DALOS|A_AddPolicy (policy-name:string policy-guard:guard)
+    (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (DALOS-ADMIN)
             (write DALOS|PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
-    (defun DALOS|C_ReadPolicy:guard (policy-name:string)
+    (defun C_ReadPolicy:guard (policy-name:string)
         @doc "Reads the guard of a stored policy"
         (at "policy" (read DALOS|PoliciesTable policy-name ["policy"]))
     )
@@ -237,6 +237,7 @@
     (defconst GAS_BIG 4.00)
     (defconst GAS_BIGGEST 5.00)
     (defconst GAS_ISSUE 15.00)
+    (defconst GAS_BRANDING 100.00)
     (defconst GAS_HUGE 500.00)
 
 ;;  2]SCHEMAS Definitions
@@ -623,7 +624,7 @@
                     (account-type:bool (DALOS|UR_AccountType patron))
                 )
                 (enforce (= patron DALOS|SC_NAME) "Only the DALOS Account can be a Smart Patron")
-                (enforce (DALOS|C_ReadPolicy "TALOS|AutomaticPatron"))
+                (enforce (C_ReadPolicy "TALOS|AutomaticPatron"))
             )
             (DALOS|CAP_EnforceAccountOwnership patron)
         )
@@ -1147,7 +1148,7 @@
             "Standard Deployment not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS-ADMIN)))
-                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
         (with-capability (DALOS|DEPLOY_STANDARD account guard kadena)
@@ -1192,7 +1193,7 @@
             "Smart Deployment not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS-ADMIN)))
-                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
         (with-capability (DALOS|DEPLOY_SMART account guard kadena sovereign)
@@ -1228,7 +1229,7 @@
         )
     )
     (defun DALOS|CO_RotateGuard (patron:string account:string new-guard:guard safe:bool)
-        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DALOS|CP_RotateGuard patron account new-guard safe)
         )
@@ -1250,7 +1251,7 @@
         )
     )
     (defun DALOS|CO_RotateKadena (patron:string account:string kadena:string)
-        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DALOS|CP_RotateKadena patron account kadena)
         )
@@ -1275,7 +1276,7 @@
         )
     )
     (defun DALOS|CO_RotateSovereign (patron:string account:string new-sovereign:string)
-        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DALOS|CP_RotateSovereign patron account new-sovereign)
         )
@@ -1300,10 +1301,10 @@
         (enforce-one
             "Rotate Governor not permitted"
             [
-                (enforce-guard (DALOS|C_ReadPolicy "AUTOSTAKE|Summoner"))
-                (enforce-guard (DALOS|C_ReadPolicy "LIQUID|Summoner"))
-                (enforce-guard (DALOS|C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
         (with-capability (SECURE)
@@ -1327,7 +1328,7 @@
         )
     )
     (defun DALOS|CO_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
-        (enforce-guard (DALOS|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
             (DALOS|CP_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
         )
@@ -1394,8 +1395,8 @@
         (enforce-one
             "Update Elite Account not permitted"
             [
-                (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdateElite"))
-                (enforce-guard (DALOS|C_ReadPolicy "AUTOSTAKE|UpdateElite"))
+                (enforce-guard (C_ReadPolicy "BASIS|UpdateElite"))
+                (enforce-guard (C_ReadPolicy "ATS|UpdElite"))
             ]
         )
         ;;Function
@@ -1414,8 +1415,8 @@
             "Nonce increase not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS|INCREMENT_NONCE)))
-                (enforce-guard (DALOS|C_ReadPolicy "BASIS|IncrementDalosNonce"))
-                (enforce-guard (DALOS|C_ReadPolicy "AUTOSTAKE|IncrementDalosNonce"))
+                (enforce-guard (C_ReadPolicy "BASIS|IncrementDalosNonce"))
+                (enforce-guard (C_ReadPolicy "ATS|PlusDalosNonce"))
             ]
         )
         ;;Function
@@ -1432,8 +1433,8 @@
             "Gas Collection not permitted"
             [
                 (enforce-guard (create-capability-guard (IGNIS|COLLECTER)))
-                (enforce-guard (DALOS|C_ReadPolicy "BASIS|GasCollection"))
-                (enforce-guard (DALOS|C_ReadPolicy "AUTOSTAKE|GasCollection"))
+                (enforce-guard (C_ReadPolicy "BASIS|GasCollection"))
+                (enforce-guard (C_ReadPolicy "ATS|GasCol"))
             ]
         )
         ;;Function
@@ -1539,7 +1540,7 @@
             "Burn Not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS-ADMIN)))
-                (enforce-guard (DALOS|C_ReadPolicy "SWAPER|UpdateOuroborosPrice"))
+                (enforce-guard (C_ReadPolicy "SWAPER|UpdateOuroborosPrice"))
             ]
         )
         (update DALOS|GasManagementTable DALOS|VGD
@@ -1565,7 +1566,7 @@
             "Burn Not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS|UP_BALANCE)))
-                (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialBalance"))
+                (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialBalance"))
             ]
         )
         (let*
@@ -1596,7 +1597,7 @@
     )
     (defun DALOS|XO_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool)
         @doc "Updates Mint Role with no remorse, while keeping other parameters intact"
-        (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialData"))
+        (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialData"))
         (let*
             (
                 (read-balance:decimal (DALOS|UR_TrueFungible_AccountSupply account snake-or-gas))
@@ -1625,7 +1626,7 @@
     )
     (defun DALOS|XO_UpdateMintRole (account:string snake-or-gas:bool new-mint:bool)
         @doc "Updates Mint Role with no remorse, while keeping other parameters intact"
-        (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialData"))
+        (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialData"))
         (let*
             (
                 (read-balance:decimal (DALOS|UR_TrueFungible_AccountSupply account snake-or-gas))
@@ -1654,7 +1655,7 @@
     )
     (defun DALOS|XO_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool)
         @doc "Updates Transfer Role with no remorse, while keeping other parameters intact"
-        (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialData"))
+        (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialData"))
         (let*
             (
                 (read-balance:decimal (DALOS|UR_TrueFungible_AccountSupply account snake-or-gas))
@@ -1683,7 +1684,7 @@
     )
     (defun DALOS|XO_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool)
         @doc "Updates Fee-Exemption Role with no remorse, while keeping other parameters intact"
-        (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialData"))
+        (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialData"))
         (let*
             (
                 (read-balance:decimal (DALOS|UR_TrueFungible_AccountSupply account snake-or-gas))
@@ -1712,7 +1713,7 @@
     )
     (defun DALOS|XO_UpdateFreeze (account:string snake-or-gas:bool new-freeze:bool)
         @doc "Updates Freeze Value with no remorse, while keeping other parameters intact"
-        (enforce-guard (DALOS|C_ReadPolicy "BASIS|UpdatePrimordialData"))
+        (enforce-guard (C_ReadPolicy "BASIS|UpdatePrimordialData"))
         (let*
             (
                 (read-balance:decimal (DALOS|UR_TrueFungible_AccountSupply account snake-or-gas))

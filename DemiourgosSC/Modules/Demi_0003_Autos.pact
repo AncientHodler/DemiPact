@@ -1,24 +1,11 @@
 (module AUTOSTAKE GOVERNANCE
-    @doc "Demiourgos 0003 Module - AUTOS (Autostake Module) \
-    \ Module 3 contains the Autostake Functionality built on top of DPTF and DPMF Tokens \
-    \ Contains the transfer Functions for DPTF and DPMF, as these must be located here, \
-    \ due to their interaction with the Autostake Mechanisms. \
-    \ Vesting Functions are also located here, due to their interaction with the Autostake Module \
-    \ \
-    \ \
-    \ Smart DALOS Accounts governed by the Module (2) \
-    \ \
-    \ 1)Autostake Smart Account (Autostake and DPTF|DPMF Transfer Functions)\
-    \ 2)Vesting Smart Account (Vesting Functions)"
-
-    ;;Module Governance
     (defcap GOVERNANCE ()
         (compose-capability (AUTOS-ADMIN))
         (compose-capability (VESTG-ADMIN))
     )
     (defcap AUTOS-ADMIN ()
         (enforce-one
-            "Vesting Admin not satisfed"
+            "ATS Admn not satisfed"
             [
                 (enforce-guard DALOS.G_DALOS)
                 (enforce-guard G_AUTOS)
@@ -27,7 +14,7 @@
     )
     (defcap VESTG-ADMIN ()
         (enforce-one
-            "Vesting Admin not satisfed"
+            "VST Admn not satisfed"
             [
                 (enforce-guard DALOS.G_DALOS)
                 (enforce-guard G_VESTG)
@@ -35,184 +22,138 @@
         )
         
     )
-    ;;Module Guard
     (defconst G_AUTOS   (keyset-ref-guard ATS|SC_KEY))
     (defconst G_VESTG   (keyset-ref-guard VST|SC_KEY))
-    ;;Module Accounts Information
-        ;;[A] Autostake Account ids for ATS Submodule
     (defconst ATS|SC_KEY "free.DH_SC_Autostake-Keyset")
     (defconst ATS|SC_NAME "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")     ;;Former DalosAutostake
     (defconst ATS|SC_KDA-NAME "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
-        ;;[V] Vesting Account ids for Vesting Submodule
     (defconst VST|SC_KEY "free.DH_SC_Vesting-Keyset")
     (defconst VST|SC_NAME "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")       ;;Former DalosVesting
     (defconst VST|SC_KDA-NAME "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
-    ;;External Module Usage
+
     (use free.UTILS)
     (use free.DALOS)
     (use free.BASIS)
 
-    ;;
-    ;;
-    ;;
-
-
-    ;;Simple True Capabilities (?)
     (defcap COMPOSE ()
-        @doc "Usage: composing multiple functions in an IF statement"
         true
     )
     (defcap SECURE ()
-        @doc "Capability that secures Client Functions in this Module"
         true
     )
-    ;;
     (defcap ATS|RESHAPE ()
-        @doc "Usage: Unstake Account reshaping"
         true
     )
     (defcap ATS|RM_SECONDARY_RT ()
-        @doc "Usage: pure update for removing RT from an ATS-Pair"
         true
     )
     (defcap ATS|UPDATE_ROU ()
-        @doc "Usage: update Resident and|or Unbonding Values for RT of any ATS-Pair"
         true
     )
     (defcap ATS|UPDATE_ROU_PUR ()
-        @doc "Usage: pure update Resident and|or Unbonding Values for RT of any ATS-Pair"
         true
     )
     (defcap ATS|INCREMENT-LOCKS ()
-        @doc "Capability required to increment ATS lock amounts: <unlocks>"
         true
     )
     (defcap ATS|UPDATE_LEDGER ()
-        @doc "Cap required to update entries in the ATS|Ledger"
         true
     )
     (defcap DALOS|EXECUTOR ()
-        @doc "Capability Required to Execute Module Functions that have methodic counterparts"
         true
     )
     (defcap DPTF|CPF_CREDIT-FEE ()
-        @doc "Credit-Primary-Fees Credit Capability"
         true
     )
     (defcap DPTF|CPF_STILL-FEE ()
-        @doc "Credit-Primary-Fees Still Capability"
         true
     )
     (defcap DPTF|CPF_BURN-FEE ()
-        @doc "Credit-Primary-Fees Burn Capability"
         true
     )
     (defcap VST|DEFINE ()
-        @doc "Capability needed to define a vesting pair"
         true
     )
-    ;; POLICY Capabilities
     (defcap SUMMONER ()
-        @doc "Policy allowing usage of Client Functions from the DALOS, and BASIS"
         true
     )
-    (defcap P|DALOS|INCREMENT_NONCE ()
-        @doc "Policy allowing usage of <DALOS.DALOS|X_IncrementNonce>"
+    (defcap P|DIN ()
         true
     )
     (defcap P|DALOS|UPDATE_ELITE ()
-        @doc "Policy allowing usage of <DALOS.DALOS|X_UpdateElite>"
         true
     )
-    (defcap P|IGNIS|COLLECTER ()
-        @doc "Policy allowing usage of <DALOS.IGNIS|X_Collect>"
+    (defcap P|IC ()
         true
     )
     (defcap P|ATS|UPDATE_RBT ()
-        @doc "Policy allowing usage of <BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken>"
         true
     )
     (defcap P|ATS|UPDATE_RT ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_UpdateRewardToken>"
         true
     )
-    (defcap P|DPTF-DPMF|TOGGLE_BURN_ROLE ()
-        @doc "Policy allowing usage of <BASIS.DPTF-DPMF|XO_ToggleBurnRole>"
+    (defcap P|TM|TBR ()
         true
     )
-    (defcap P|DPMF|MOVE_CREATE_ROLE ()
-        @doc "Policy allowing usage of <BASIS.DPMF|XO_MoveCreateRole>"
+    (defcap P|M|MCR ()
         true
     )
-    (defcap P|DPMF|TOGGLE_ADD_QUANTITY_ROLE ()
-        @doc "Policy allowing usage of <BASIS.DPMF|XO_ToggleAddQuantityRole>"
+    (defcap P|M|TAQR ()
         true
     )
     (defcap P|DPTF|BURN ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_Burn>"
         true
     )
     (defcap P|DPTF|CREDIT ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_Credit>"
         true
     )
     (defcap P|DPTF|DEBIT ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_DebitStandard>"
         true
     )
-    (defcap P|DPTF|TOGGLE_FEE_EXEMPTION_ROLE ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_ToggleFeeExemptionRole>"
+    (defcap P|T|TFER ()
         true
     )
-    (defcap P|DPTF|TOGGLE_MINT_ROLE ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_ToggleMintRole>"
+    (defcap P|T|TMR ()
         true
     )
-    (defcap P|DPTF|UPDATE_FEES ()
-        @doc "Policy allowing usage of <BASIS.DPTF|XO_UpdateFeeVolume>"
+    (defcap P|T|UF ()
         true
     )
     (defcap P|VST|UPDATE ()
-        @doc "Policy allowing usage of <BASIS.DPTF-DPMF|XO_UpdateVesting>"
         true
     )
-    ;;Combined Policy Capabilities
-    (defcap P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER ()
-        (compose-capability (P|DALOS|INCREMENT_NONCE))
-        (compose-capability (P|IGNIS|COLLECTER))
+    (defcap P|DINIC ()
+        (compose-capability (P|DIN))
+        (compose-capability (P|IC))
     )
     (defcap DPTF-DPMF|TOGGLE-BURN-ROLE ()
-        (compose-capability (P|DPTF-DPMF|TOGGLE_BURN_ROLE))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|TM|TBR))
+        (compose-capability (P|DINIC))
         (compose-capability (SECURE))
     )
     (defcap DPTF|TOGGLE-MINT-ROLE ()
-        (compose-capability (P|DPTF|TOGGLE_MINT_ROLE))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|T|TMR))
+        (compose-capability (P|DINIC))
     )
     (defcap DPTF|TOGGLE-FEE-EXEMPTION-ROLE ()
-        (compose-capability (P|DPTF|TOGGLE_FEE_EXEMPTION_ROLE))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|T|TFER))
+        (compose-capability (P|DINIC))
     )
     (defcap DPMF|MOVE-CREATE-ROLE ()
-        (compose-capability (P|DPMF|MOVE_CREATE_ROLE))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|M|MCR))
+        (compose-capability (P|DINIC))
     )
     (defcap DPMF|TOGGLE-ADD-QUANTITY-ROLE ()
-        (compose-capability (P|DPMF|TOGGLE_ADD_QUANTITY_ROLE))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|M|TAQR))
+        (compose-capability (P|DINIC))
     )
-    (defcap SECURE||SUMMONER||VST|DEFINE ()
-        @doc "Capability needed to EXECUTE the Client Create Vesting Link Function"
+    (defcap SSVD ()
         @event
         (compose-capability (SECURE))
         (compose-capability (SUMMONER))
         (compose-capability (VST|DEFINE))
     )
-
-    ;;Policies
-
-    (defun ATS|A_AddPolicy (policy-name:string policy-guard:guard)
+    (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (AUTOS-ADMIN)
             (write ATS|PoliciesTable policy-name
                 {"policy" : policy-guard}
@@ -220,84 +161,81 @@
         )
     )
     (defun ATS|C_ReadPolicy:guard (policy-name:string)
-        @doc "Reads the guard of a stored policy"
         (at "policy" (read ATS|PoliciesTable policy-name ["policy"]))
     )
 
-    (defun ATS|DefinePolicies ()
-        @doc "Add the Policy that allows running external Functions from this Module"                
-        (DALOS.DALOS|A_AddPolicy     ;DALOS
-            "AUTOSTAKE|IncrementDalosNonce"
-            (create-capability-guard (P|DALOS|INCREMENT_NONCE))           ;;  DALOS.DALOS|X_IncrementNonce
+    (defun ATS|DefinePolicies ()             
+        (DALOS.A_AddPolicy
+            "ATS|PlusDalosNonce"
+            (create-capability-guard (P|DIN))
         )
-        (DALOS.DALOS|A_AddPolicy 
-            "AUTOSTAKE|UpdateElite"
-            (create-capability-guard (P|DALOS|UPDATE_ELITE))              ;;  DALOS.DALOS|X_UpdateElite
+        (DALOS.A_AddPolicy 
+            "ATS|UpdElite"
+            (create-capability-guard (P|DALOS|UPDATE_ELITE))
         )
-        (DALOS.DALOS|A_AddPolicy 
-            "AUTOSTAKE|Summoner"
-            (create-capability-guard (SUMMONER))                        ;;  Required to Summon DALOS Functions
+        (DALOS.A_AddPolicy 
+            "ATS|Sum"
+            (create-capability-guard (SUMMONER))
         )
-        (DALOS.DALOS|A_AddPolicy     ;DALOS
-            "AUTOSTAKE|GasCollection"
-            (create-capability-guard (P|IGNIS|COLLECTER))                 ;;  DALOS.IGNIS|X_Collect
+        (DALOS.A_AddPolicy
+            "ATS|GasCol"
+            (create-capability-guard (P|IC))
         )
         ;;
-        (BASIS.BASIS|A_AddPolicy     ;BASIS
-            "AUTOSTAKE|Summoner"
-            (create-capability-guard (SUMMONER))                        ;;  Required to Summon DALOS Functions
+        (BASIS.A_AddPolicy
+            "ATS|Sum"
+            (create-capability-guard (SUMMONER))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|UpdateRewardBearingToken"
-            (create-capability-guard (P|ATS|UPDATE_RBT))                  ;;  BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken
+        (BASIS.A_AddPolicy
+            "ATS|UpRBT"
+            (create-capability-guard (P|ATS|UPDATE_RBT))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|UpdateRewardToken"
-            (create-capability-guard (P|ATS|UPDATE_RT))                   ;;  BASIS.DPTF|XO_UpdateRewardToken
+        (BASIS.A_AddPolicy 
+            "ATS|UpRT"
+            (create-capability-guard (P|ATS|UPDATE_RT))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|ToggleBurnRole"
-            (create-capability-guard (P|DPTF-DPMF|TOGGLE_BURN_ROLE))      ;;  BASIS.DPTF-DPMF|XO_ToggleBurnRole
+        (BASIS.A_AddPolicy
+            "ATS|TgBrRl"
+            (create-capability-guard (P|TM|TBR))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|MoveCreateRole"
-            (create-capability-guard (P|DPMF|MOVE_CREATE_ROLE))           ;;  BASIS.DPMF|XO_MoveCreateRole
+        (BASIS.A_AddPolicy
+            "ATS|MCRl"
+            (create-capability-guard (P|M|MCR))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|ToggleAddQuantityRole"
-            (create-capability-guard (P|DPMF|TOGGLE_ADD_QUANTITY_ROLE))   ;;  BASIS.DPMF|XO_ToggleAddQuantityRole
+        (BASIS.A_AddPolicy 
+            "ATS|TgAqRl"
+            (create-capability-guard (P|M|TAQR))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|BurnTrueFungible"
-            (create-capability-guard (P|DPTF|BURN))                       ;;  BASIS.DPTF|XO_Burn
+        (BASIS.A_AddPolicy
+            "ATS|BrTF"
+            (create-capability-guard (P|DPTF|BURN))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|CreditTrueFungible"
-            (create-capability-guard (P|DPTF|CREDIT))                     ;;  BASIS.DPTF|XO_Credit
+        (BASIS.A_AddPolicy 
+            "ATS|CrTF"
+            (create-capability-guard (P|DPTF|CREDIT))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|DebitTrueFungible"
-            (create-capability-guard (P|DPTF|DEBIT))                      ;;  BASIS.DPTF|XO_DebitStandard
+        (BASIS.A_AddPolicy 
+            "ATS|DbTF"
+            (create-capability-guard (P|DPTF|DEBIT))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|ToggleFeeExemptionRole"
-            (create-capability-guard (P|DPTF|TOGGLE_FEE_EXEMPTION_ROLE))  ;;  BASIS.DPTF|XO_ToggleFeeExemptionRole
+        (BASIS.A_AddPolicy 
+            "ATS|TgFeRl"
+            (create-capability-guard (P|T|TFER))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|ToggleMintRole"
-            (create-capability-guard (P|DPTF|TOGGLE_MINT_ROLE))           ;;  BASIS.DPTF|XO_ToggleMintRole
+        (BASIS.A_AddPolicy
+            "ATS|TgMnRl"
+            (create-capability-guard (P|T|TMR))
         )
-        (BASIS.BASIS|A_AddPolicy 
-            "AUTOSTAKE|UpdateFees"
-            (create-capability-guard (P|DPTF|UPDATE_FEES))                ;;  BASIS.DPTF|XO_UpdateFeeVolume
+        (BASIS.A_AddPolicy 
+            "ATS|UpFees"
+            (create-capability-guard (P|T|UF))
         )
-        (BASIS.BASIS|A_AddPolicy
-            "AUTOSTAKE|UpdateVesting"
-            (create-capability-guard (P|VST|UPDATE))                      ;;  BASIS.DPTF-DPMF|XO_UpdateVesting
+        (BASIS.A_AddPolicy
+            "ATS|UpVes"
+            (create-capability-guard (P|VST|UPDATE))
         )
     )
 
-    ;;Modules Governor
     (defcap ATS|GOV ()
         @doc "Autostake Module Governor Capability"
         true
@@ -330,46 +268,42 @@
         )
     )
 
-
-;;  1]CONSTANTS Definitions
-    ;;[A] ATS Constant
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
-;;  2]SCHEMAS Definitions
-    ;;[A] ATS Schemas
+
     (defschema ATS|PolicySchema
         @doc "Schema that stores external policies, that are able to operate within this module"
         policy:guard
     )
     (defschema ATS|PropertiesSchema
-        owner-konto:string                              ;;Flex
-        can-change-owner:bool                           ;;Flex
-        parameter-lock:bool                             ;;PROTECTION
+        owner-konto:string                              ;;Fx
+        can-change-owner:bool                           ;;Fx
+        parameter-lock:bool                             ;;PROT
         unlocks:integer
         ;;Index
         pair-index-name:string                          ;;IMUTABLE
         index-decimals:integer                          ;;IMUTABLE
-        syphon:decimal                                  ;;Flex
-        syphoning:bool                                  ;;Flex [PROT] x
+        syphon:decimal                                  ;;Fx
+        syphoning:bool                                  ;;Fx [P] x
         ;;Reward Tokens
-        reward-tokens:[object{ATS|RewardTokenSchema}]   ;;Semi-Flexible (1st RT is immutable, rest are flexible) [PROTECTED] x
+        reward-tokens:[object{ATS|RewardTokenSchema}]   ;;Semi-Flexible (1st RT is immutable, rest are flexible) [P] x
         ;;Cold Reward Bearing Token Info
         c-rbt:string                                    ;;IMUTABLE
-        c-nfr:bool                                      ;;Flex [PROT] x
-        c-positions:integer                             ;;Flex [PROT] x
-        c-limits:[decimal]                              ;;Flex [PROT] x
-        c-array:[[decimal]]                             ;;Flex [PROT] x
-        c-fr:bool                                       ;;Flex [PROT] x
-        c-duration:[integer]                            ;;Flex [PROT] x
-        c-elite-mode:bool                               ;;Flex [PROT] x
+        c-nfr:bool                                      ;;Fx [P] x
+        c-positions:integer                             ;;Fx [P] x
+        c-limits:[decimal]                              ;;Fx [P] x
+        c-array:[[decimal]]                             ;;Fx [P] x
+        c-fr:bool                                       ;;Fx [P] x
+        c-duration:[integer]                            ;;Fx [P] x
+        c-elite-mode:bool                               ;;Fx [P] x
         ;;Hot Reward Bearing Token Info
-        h-rbt:string                                    ;;Once Set, is IMMUTABLE [PROT] 
-        h-promile:decimal                               ;;Flex [PROT] x
-        h-decay:integer                                 ;;Flex [PROT] x
-        h-fr:bool                                       ;;Flex [PROT] x
+        h-rbt:string                                    ;;Once Set, is IMMUTABLE [P] 
+        h-promile:decimal                               ;;Fx [P] x
+        h-decay:integer                                 ;;Fx [P] x
+        h-fr:bool                                       ;;Fx [P] x
         ;; Activation Toggles
-        cold-recovery:bool                              ;;Flex
-        hot-recovery:bool                               ;;Flex
+        cold-recovery:bool                              ;;Fx
+        hot-recovery:bool                               ;;Fx
     )
     (defschema ATS|RewardTokenSchema
         token:string
@@ -377,7 +311,7 @@
         resident:decimal
         unbonding:decimal
     )
-    ;;==
+
     (defschema ATS|BalanceSchema
         @doc "Schema that Stores ATS Unstake Information for ATS Pairs (True Fungibles)\
             \ Key for the Table is a string composed of: <ATS-Pair> + UTILS.BAR + <account> \
@@ -398,77 +332,45 @@
     (defschema ATS|Hot
         mint-time:time
     )
-    ;;[V] VST Schemas
+
     (defschema VST|MetaDataSchema
         release-amount:decimal
         release-date:time
     )
-;;  3]TABLES Definitions
-    ;;[A] ATS Tables
+
     (deftable ATS|PoliciesTable:{ATS|PolicySchema})
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
-    ;;
-    ;;
-    ;;            BASIS             Submodule
-    ;;
-    ;;            CAPABILITIES      <6>
-    ;;            FUNCTIONS         [22]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities FUNCTIONS                [CAP]
-    ;;            Function Based CAPABILITIES           [CF](have this tag)
-    ;;            Enforcements & Validations FUNCTIONS  [UEV]
-    ;;        <6> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read FUNCTIONS                   [UR]
-    ;;            Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;            Data Creation|Composition FUNCTIONS   [UCC]
-    ;;            Administrative Usage FUNCTIONS        [A]
-    ;;      [2x7] Client Usage FUNCTIONS                [C]
-    ;;        [8] Auxiliary Usage FUNCTIONS             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        <6> Composed CAPABILITIES                 [CC](dont have this tag)
+
+    ;;BASIS
     (defcap IGNIS|MATRON_STRONG (id:string client:string target:string)
-        @doc "Capability needed to be a gas payer for a patron with a sender and receiver"
         (if (DALOS.IGNIS|URC_ZeroGAZ id client target)
             true
-            (compose-capability (P|IGNIS|COLLECTER))
+            (compose-capability (P|IC))
         )
     )
     (defcap DPTF|TRANSFER (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Allows Transfers of DPTF Tokens from <sender> to <receiver>"
         @event
         (compose-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
         (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
-        (compose-capability (P|DALOS|INCREMENT_NONCE))
+        (compose-capability (P|DIN))
         (compose-capability (DALOS|EXECUTOR))
     )
     (defcap DPTF|X_TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Core DPTF Transfer Capability"
-        ;;Sender & Method
         (DALOS.DALOS|CAP_EnforceAccountOwnership sender)
         (if (and method (DALOS.DALOS|UR_AccountType receiver))
             (DALOS.DALOS|CAP_EnforceAccountOwnership receiver)
             true
         )
-        ;;Token & Amount
         (BASIS.DPTF-DPMF|UEV_Amount id transfer-amount true)
         (if (not (BASIS.DPTF|UC_TransferFeeAndMinException id sender receiver))
             (BASIS.DPTF|UEV_EnforceMinimumAmount id transfer-amount)
             true
         )
-        ;;Transferability
         (DALOS.DALOS|UEV_EnforceTransferability sender receiver method)
-        ;;Pause State
         (BASIS.DPTF-DPMF|UEV_PauseState id false true)
-        ;;Freeze State
         (BASIS.DPTF-DPMF|UEV_AccountFreezeState id sender false true)
         (BASIS.DPTF-DPMF|UEV_AccountFreezeState id receiver false true)
-        ;;Transfer Role
         (if 
             (and 
                 (> (BASIS.DPTF-DPMF|UR_TransferRoleAmount id true) 0) 
@@ -496,11 +398,10 @@
         ;;
         (compose-capability (P|DALOS|UPDATE_ELITE))
         ;;
-        (compose-capability (P|DPTF|UPDATE_FEES))
+        (compose-capability (P|T|UF))
         (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
     )
     (defcap DPTF|CREDIT_PRIMARY-FEE ()
-        @doc "Capability needed to Credit Primary Fees"
         (compose-capability (DPTF|CPF_CREDIT-FEE))
         (compose-capability (DPTF|CPF_STILL-FEE))
         (compose-capability (DPTF|CPF_BURN-FEE))
@@ -509,19 +410,17 @@
         (compose-capability (P|DPTF|BURN))
     )
     (defcap DPTF|TRANSMUTE ()
-        @doc "Core Capabity needed for transmuting a DPTF Token"
         @event
         (compose-capability (DALOS|EXECUTOR))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
         (compose-capability (DPTF|X_TRANSMUTE))
     )
     (defcap DPTF|X_TRANSMUTE ()
-        @doc "Helper Capability required for <DPTF|TRANSMUTE>"
         (compose-capability (P|DPTF|DEBIT))
         (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;      [2x7] Client Usage FUNCTIONS                [C]
+    ;;
+    ;;
     (defun DPTF-DPMF|CO_ToggleBurnRole (patron:string id:string account:string toggle:bool token-type:bool)
         (enforce-guard (ATS|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
@@ -666,7 +565,7 @@
             )
         )
     )
-    ;;        [8] Auxiliary Usage FUNCTIONS             [X]
+    ;;
     (defun DPTF|XK_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         (require-capability (DALOS|EXECUTOR))
         (if (not (and (= id (DALOS|UR_UnityID))(>= transmute-amount 10)))
@@ -737,8 +636,6 @@
         )
     )
     (defun DPTF|X_CreditPrimaryFee (id:string pf:decimal native:bool)
-        @doc "Function used within <DPTF|X_Transfer> to credit Primary Fees; \
-        \ Depends on specific ATS Parameters if <id> is part of an ATS-Pair"
         (let
             (
                 (rt:bool (BASIS.ATS|UC_IzRT id))
@@ -786,7 +683,6 @@
         )
     )
     (defun DPTF|X_CPF_StillFee (id:string target:string still-fee:decimal)
-        @doc "Helper Function needed for <DPTF|X_CreditPrimaryFee>"
         (require-capability (DPTF|CPF_STILL-FEE))
         (if (!= still-fee 0.0)
             (BASIS.DPTF|XO_Credit id target still-fee false)
@@ -794,7 +690,6 @@
         )
     )
     (defun DPTF|X_CPF_BurnFee (id:string target:string burn-fee:decimal)
-        @doc "Helper Function needed for <DPTF|X_CreditPrimaryFee>"
         (require-capability (DPTF|CPF_BURN-FEE))
         (if (!= burn-fee 0.0)
             (with-capability (COMPOSE)
@@ -805,35 +700,13 @@
         )
     )
     (defun DPTF|X_CPF_CreditFee (id:string target:string credit-fee:decimal)
-        @doc "Helper Function needed for <DPTF|X_CreditPrimaryFee>"
         (require-capability (DPTF|CPF_CREDIT-FEE))
         (if (!= credit-fee 0.0)
             (BASIS.DPTF|XO_Credit id ATS|SC_NAME credit-fee)
             true
         )
     )
-    ;;            VESTING           Submodule
-    ;;
-    ;;            CAPABILITIES      <4>
-    ;;            FUNCTIONS         [20]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities FUNCTIONS                [CAP]
-    ;;            Function Based CAPABILITIES           [CF](have this tag)
-    ;;        [2] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;        <4> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read FUNCTIONS                   [UR]
-    ;;        [5] Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;        [1] Data Creation|Composition FUNCTIONS   [UCC]
-    ;;            Administrative Usage FUNCTIONS        [A]
-    ;;      [2x5] Client Usage FUNCTIONS                [C]
-    ;;        [2] Auxiliary Usage FUNCTIONS             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        [2] Enforcements & Validations FUNCTIONS  [UEV]
+    ;;VESTING  
     (defun VST|UEV_Active (dptf:string dpmf:string)
         @doc "Enforces Conditions for a Vesting Pair to be active"
         (let
@@ -844,11 +717,11 @@
                 (burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn dpmf VST|SC_NAME false))
                 (transfer-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleTransfer dpmf VST|SC_NAME false))
             )
-            (enforce (= dptf-fee-exemption true) "Vesting needs <role-fee-exemption> for the DPTF Token on the DalosVesting Smart DALOS Account")
-            (enforce (= create-role true) "Vesting needs <role-nft-create> for the DPMF Token on the DalosVesting Smart DALOS Account")
-            (enforce (= add-q-role true) "Vesting needs <role-nft-add-quantity> for the DPMF Token on the DalosVesting Smart DALOS Account")
-            (enforce (= burn-role true) "Vesting needs <role-nft-burn> for the DPMF Token on the DalosVesting Smart DALOS Account")
-            (enforce (= transfer-role true) "Vesting needs <role-transfer> for the DPMF Token on the DalosVesting Smart DALOS Account")
+            (enforce (= dptf-fee-exemption true) "<role-fee-exemption> needed on DalosVesting")
+            (enforce (= create-role true) "<role-nft-create> needed on DalosVesting")
+            (enforce (= add-q-role true) "<role-nft-add-quantity> needed on DalosVesting")
+            (enforce (= burn-role true) "<role-nft-burn> needed on DalosVesting")
+            (enforce (= transfer-role true) "<role-transfer> needed on DalosVesting")
         )
     )
     (defun VST|UEV_Existance (id:string token-type:bool existance:bool)
@@ -860,14 +733,11 @@
             (enforce (= has-vesting existance) (format "Vesting for the Token {} is not satisfied with existance {}" [id existance]))
         )
     )
-    ;;        [2] Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap VST|VEST (vester:string target-account:string id:string)
-        @doc "Capability needed for vesting DPTF Tokens"
         @event
         (compose-capability (VST|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
-
         (BASIS.DPTF-DPMF|CAP_Owner id true)
         (DALOS.DALOS|UEV_EnforceAccountType vester false)
         (DALOS.DALOS|UEV_EnforceAccountType target-account false)
@@ -875,23 +745,19 @@
         (VST|UEV_Active id (BASIS.DPTF-DPMF|UR_Vesting id true))
     )
     (defcap VST|CULL (culler:string id:string)
-        @doc "Capability required for culling DPMF Tokens as vested counterparts of DPTF Tokens"
         @event
         (compose-capability (VST|GOV))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
-
         (DALOS.DALOS|UEV_EnforceAccountType culler false)
         (VST|UEV_Existance id false true)
         (VST|UEV_Active (BASIS.DPTF-DPMF|UR_Vesting id false) id)
     )
     (defcap VST|UPDATE_VESTING (dptf:string dpmf:string)
-        @doc "Capability required to Update Vesting Data"
         (compose-capability (VST|X_UPDATE_VESTING dptf dpmf))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap VST|X_UPDATE_VESTING (dptf:string dpmf:string)
-        @doc "Core Capability required to Update Vesting Data"
         (BASIS.DPTF-DPMF|UEV_id dptf true)
         (BASIS.DPTF-DPMF|UEV_id dpmf false)
         (BASIS.DPTF-DPMF|CAP_Owner dptf true)
@@ -910,25 +776,20 @@
             (enforce (= iz-hot-rbt false) "A DPMF defined as a hot-rbt cannot be used as Vesting Token in Vesting pair")
         )
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;        [5] Data Read and Computation FUNCTIONS   [URC] and [UC]
+    ;;
     (defun VST|UC_HasVesting:bool (id:string token-type:bool)
-        @doc "Checks if a DPTF|DPMF Token has a vesting counterpart"
         (if (= (BASIS.DPTF-DPMF|UR_Vesting id token-type) UTILS.BAR)
             false
             true
         )
     )
     (defun VST|UC_SplitBalanceForVesting:[decimal] (id:string amount:decimal milestones:integer)
-        @doc "Splits an Amount according to vesting parameters"
         (UTILS.VST|UC_SplitBalanceForVesting (BASIS.DPTF-DPMF|UR_Decimals id true) amount milestones)
     )
     (defun VST|UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
-        @doc "Makes a Times list with unvesting milestones according to vesting parameters"
         (UTILS.VST|UC_MakeVestingDateList offset duration milestones)
     )
     (defun VST|UC_CullMetaDataAmount:decimal (client:string id:string nonce:integer)
-        @doc "Returns the amount that a cull on a Vested Token would produce"
         (VST|UC_HasVesting id false)
         (let*
             (
@@ -959,7 +820,6 @@
         )
     )
     (defun VST|UC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer)
-        @doc "Returns the meta-data that a cull on a Vested Token would produce"
         (VST|UC_HasVesting id false)
         (let*
             (
@@ -988,9 +848,8 @@
             culled-object
         )
     )
-    ;;        [1] Data Creation|Composition FUNCTIONS   [UCC]
+    ;;
     (defun VST|UCC_ComposeVestingMetaData:[object{VST|MetaDataSchema}] (id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Creates Vesting MetaData"
         (BASIS.DPTF-DPMF|UEV_Amount id amount true)
         (UTILS.VST|UEV_MilestoneWithTime offset duration milestones)
         (let*
@@ -1002,7 +861,7 @@
             meta-data
         )
     )
-    ;;        [5] Client Usage FUNCTIONS                [C]
+    ;;
     (defun VST|CO_CreateVestingLink:string (patron:string dptf:string)
         (enforce-guard (ATS|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
@@ -1011,7 +870,7 @@
     )
     (defun VST|CP_CreateVestingLink:string (patron:string dptf:string)
         (require-capability (SECURE))
-        (with-capability (SECURE||SUMMONER||VST|DEFINE)
+        (with-capability (SSVD)
             (let*
                 (
                     (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
@@ -1066,11 +925,8 @@
                     (meta-data:string (VST|UCC_ComposeVestingMetaData id amount offset duration milestones))
                     (nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                 )
-            ;;1]VST|SC_NAME mints the DPMF Vesting Token according to input data
                 (BASIS.DPMF|CO_Mint patron dpmf-id VST|SC_NAME amount meta-data)
-            ;;2]Vester transfer the DPTF Token to the VST|SC_NAME for safe keeping
                 (AUTOSTAKE.DPTF|CP_Transfer patron id vester VST|SC_NAME amount true)
-            ;;3]VST|SC_NAME transfer the minted DPMF to the target-account
                 (BASIS.DPMF|CO_Transfer patron dpmf-id nonce VST|SC_NAME target-account amount true)
             )
         )
@@ -1087,9 +943,7 @@
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                 (c-rbt-amount:decimal (ATS|UC_RBT atspair coil-token amount))
             )
-        ;;1]Coiler-Vester coils <coil-token> with <atspair>
             (ATS|CP_Coil patron coiler-vester atspair coil-token amount)
-        ;;2]Upon receiving the <c-rbt>, it then vests it to target-account
             (VST|CP_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
             c-rbt-amount
         )
@@ -1108,9 +962,7 @@
                 (c-rbt2:string (ATS|UR_ColdRewardBearingToken atspair2))
                 (c-rbt2-amount:decimal (ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
             )
-        ;;1]Curler-Vester curls <curl-token> with <atspair1> and <atspair2>
             (ATS|CP_Curl patron curler-vester atspair1 atspair2 curl-token amount)
-        ;;2]Upon receiving the <c-rbt2>, it then vests it to target-account
             (VST|CP_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
             c-rbt2-amount
         )
@@ -1132,30 +984,23 @@
                     (return-amount:decimal (- initial-amount culled-amount))
                 )
                 (if (= return-amount 0.0)
-                ;;1]When <return-amount> is 0.0, the whole amount is returned as DPTF Token
                     (DPTF|CP_Transfer patron dptf-id VST|SC_NAME culler initial-amount true)
-                ;;2]Otherwise, a portion is returned as DPTF, and the remaining amount as a new DPMF with the remaining vesting meta-data
                     (let*
                         (
                             (remaining-vesting-meta-data:[object{VST|MetaDataSchema}] (VST|UC_CullMetaDataObject culler id nonce))
                             (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                         )
-                ;;3]The portion to be returned as a new DPMF is being minted
                         (BASIS.DPMF|CO_Mint patron id VST|SC_NAME return-amount remaining-vesting-meta-data)
-                ;;4]The portion of DPTF is returned to the culler
                         (DPTF|CP_Transfer patron dptf-id VST|SC_NAME culler culled-amount true)
-                ;;5]The newly minted DPMF representing the remainder of the vested tokens is returned to the culler
                         (BASIS.DPMF|CO_Transfer patron id new-nonce VST|SC_NAME culler return-amount true)
                     )
                 )
-                ;;6]Only now the culler sends the input DPMF Token to the VST|SC_NAME to be burned
-                ;;    The operation is done at the end because the let function must probe the DPMF Token while it still exists
                 (BASIS.DPMF|CO_Transfer patron id nonce culler VST|SC_NAME initial-amount true)
                 (BASIS.DPMF|CO_Burn patron id nonce VST|SC_NAME initial-amount)
             )
         )
     )
-    ;;        [2] Auxiliary Usage FUNCTIONS             [X]
+    ;;
     (defun VST|X_DefineVestingPair (patron:string dptf:string dpmf:string)
         (require-capability (VST|DEFINE))
         (let
@@ -1179,42 +1024,14 @@
             (BASIS.DPTF-DPMF|XO_UpdateVesting dptf dpmf)
         )
     )
-    ;;
-    ;;
-    ;;            AUTOSTAKE         Submodule
-    ;;
-    ;;            CAPABILITIES      <34>
-    ;;            FUNCTIONS         [154]
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        [1] Capabilities FUNCTIONS                [CAP]
-    ;;        <1> Function Based & CAPABILITIES         [CF](have this tag)
-    ;;       [13] Enforcements & Validations FUNCTIONS  [UEV]
-    ;;       <34> Composed CAPABILITIES                 [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;       [30] Data Read FUNCTIONS                   [UR]
-    ;;       [30] Data Read and Computation FUNCTIONS   [URC] and [UC]
-    ;;        [5] Data Creation|Composition Functions   [UCC]
-    ;;            Administrative Usage Functions        [A]
-    ;;     [2x20] Client Usage FUNCTIONS                [C]
-    ;;       [34] Auxiliary Usage Functions             [X]
-    ;;=========================================================================;;
-    ;;
-    ;;            START
-    ;;
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;        [1] Capabilities FUNCTIONS                [CAP]
+    ;;ATS
     (defun ATS|CAP_Owner (atspair:string)
-        @doc "Enforces ATS Pair Ownership"
         (DALOS.DALOS|CAP_EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
     )
-    ;;        <1> Function Based & CAPABILITIES         [CF](have this tag)
     (defcap ATS|CF|OWNER (atspair:string)
-        @doc "Capability that enforces ATS Pair Ownership"
         (ATS|CAP_Owner atspair)
     )
-    ;;       [13] Enforcements & Validations FUNCTIONS  [UEV]
     (defun ATS|UEV_CanChangeOwnerON (atspair:string)
-        @doc "Enforces ATS Pair ownership is changeble"
         (ATS|UEV_id atspair)
         (let
             (
@@ -1224,7 +1041,6 @@
         )
     )
     (defun ATS|UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool)
-        @doc "Enforces DPTF <reward-token> <existance> for given <atspair>"
         (let
             (
                 (existance-check:bool (BASIS.ATS|UC_IzRTg atspair reward-token))
@@ -1233,8 +1049,6 @@
         )
     )
     (defun ATS|UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool)
-        @doc "Enforces DPTF|DPMF cold or hot Reward-Bearing-Token <existance> for given <atspair> \
-            \ <true> existance means the Token is registered to an ATS Pair"
         (let
             (
                 (existance-check:bool (BASIS.ATS|UC_IzRBTg atspair reward-bearing-token cold-or-hot))
@@ -1243,7 +1057,6 @@
         )
     )
     (defun ATS|UEV_HotRewardBearingTokenPresence (atspair:string enforced-presence:bool)
-        @doc "Enforces that an ATS Pair has or not a registerd DPMF Token as a Hot RBT"
         (let
             (
                 (presence-check:bool (ATS|UC_IzPresentHotRBT atspair))
@@ -1252,7 +1065,6 @@
         )
     )
     (defun ATS|UEV_ParameterLockState (atspair:string state:bool)
-        @doc "Enforces ATS Pair <parameter-lock> to <state>"
         (let
             (
                 (x:bool (ATS|UR_Lock atspair))
@@ -1261,7 +1073,6 @@
         )
     )
     (defun ATS|UEV_SyphoningState (atspair:string state:bool)
-        @doc "Enforces ATS Pair <syphoning> to <state>"
         (let
             (
                 (x:bool (ATS|UR_Syphoning atspair))
@@ -1270,10 +1081,6 @@
         )
     )
     (defun ATS|UEV_FeeState (atspair:string state:bool fee-switch:integer)
-        @doc "Enforcers one of the 4 ATS fee bool parameters to <state> \
-            \ The parameters are: \
-            \ <c-nfr> or <h-nfr> \
-            \ <c-fr> or <h-fr> "
         (let
             (
                 (x:bool (ATS|UR_ColdNativeFeeRedirection atspair))
@@ -1290,7 +1097,6 @@
         )
     )
     (defun ATS|UEV_EliteState (atspair:string state:bool)
-        @doc "Enforces ATS Pair <c-elite-mode> to <state>"
         (let
             (
                 (x:bool (ATS|UR_EliteMode atspair))
@@ -1299,7 +1105,6 @@
         )
     )
     (defun ATS|UEV_RecoveryState (atspair:string state:bool cold-or-hot:bool)
-        @doc "Enforces ATS Pair <cold-recovery> or <hot-recovery> to <state>"
         (let
             (
                 (x:bool (ATS|UR_ToggleColdRecovery atspair))
@@ -1312,7 +1117,6 @@
         )
     )
     (defun ATS|UEV_UpdateColdOrHot (atspair:string cold-or-hot:bool)
-        @doc "Req for updating Cold or Hot ATS Parameters"
         (ATS|UEV_ParameterLockState atspair false)
         (if cold-or-hot
             (ATS|UEV_RecoveryState atspair false true)
@@ -1320,13 +1124,11 @@
         )
     )
     (defun ATS|UEV_UpdateColdAndHot (atspair:string)
-        @doc "Req for updating Cold and Hot ATS Parameters"
         (ATS|UEV_ParameterLockState atspair false)
         (ATS|UEV_RecoveryState atspair false true)
         (ATS|UEV_RecoveryState atspair false false)
     )
     (defun ATS|UEV_id (atspair:string)
-        @doc "Enforces ATS Pair <atspair> exists"
         (UTILS.DALOS|UEV_UniqueAtspair atspair)
         (with-default-read ATS|Pairs atspair
             { "unlocks" : -1 }
@@ -1338,7 +1140,6 @@
         )
     )
     (defun ATS|UEV_IzTokenUnique (atspair:string reward-token:string)
-        @doc "Enforces that the <reward-token> doesnt exist as reward token for the ATS Pair <atspair>"
         (DPTF-DPMF|UEV_id reward-token true)
         (let
             (
@@ -1349,18 +1150,12 @@
                 (format "Token {} already exists as Reward Token for the ATS Pair {}" [reward-token atspair]))     
         )
     )
-    ;;       <34> Composed CAPABILITIES                 [CC](dont have this tag)
     (defcap ATS|DEPLOY (atspair:string account:string)
-        @doc "Capability required to deploy a new ATS-Pair"
         (DALOS.DALOS|UEV_EnforceAccountExists account)
         (ATS|UEV_id atspair)
         (compose-capability (ATS|NORMALIZE_LEDGER atspair account))
     )
     (defcap ATS|NORMALIZE_LEDGER (atspair:string account:string)
-        @doc "Capability needed to normalize an ATS|Ledger Account \
-        \ Normalizing an ATS|Ledger Account updates it \
-        \ according to the <atspair> <c-positions> and <c-elite-mode> parameters \
-        \ Existing entries are left as they are."
         (ATS|UEV_id atspair)
         (let*
             (
@@ -1382,7 +1177,6 @@
         )
     )
     (defcap ATS|HOT_RECOVERY (recoverer:string atspair:string ra:decimal)
-        @doc "Capability required to execute Hot Recovery"
         @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
@@ -1392,7 +1186,6 @@
         (ATS|UEV_RecoveryState atspair true false)
     )
     (defcap ATS|COLD_RECOVERY (recoverer:string atspair:string ra:decimal)
-        @doc "Capability required to execute Cold recovery"
         @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
@@ -1404,7 +1197,6 @@
         (compose-capability (ATS|UPDATE_ROU))
     )
     (defcap ATS|CULL (culler:string atspair:string)
-        @doc "Capability required to execute Culling"
         @event
         (compose-capability (ATS|GOV))
         (compose-capability (SECURE))
@@ -1415,10 +1207,9 @@
         (compose-capability (ATS|UPDATE_LEDGER))
     )
     (defcap ATS|OWNERSHIP_CHANGE (atspair:string new-owner:string)
-        @doc "Capability required to EXECUTE Client ATS-Pair Ownership Change Function"
         @event
         (compose-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_OWNERSHIP_CHANGE (atspair:string new-owner:string)
         (DALOS.DALOS|UEV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
@@ -1427,10 +1218,9 @@
         (ATS|UEV_CanChangeOwnerON atspair)
     )
     (defcap ATS|TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
-        @doc "Capability required to EXECUTE Client ATS-Pair Parameter Lock Toggle Function"
         @event
         (compose-capability (ATS|X_TOGGLE_PARAMETER-LOCK atspair toggle))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
         (compose-capability (ATS|INCREMENT-LOCKS))
     )
     (defcap ATS|X_TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
@@ -1451,10 +1241,9 @@
         )
     )
     (defcap ATS|SYPHON (atspair:string syphon:decimal)
-        @doc "Capability required to EXECUTE Client ATS-Pair Update Syphon Function"
         @event
         (compose-capability (ATS|X_SYPHON atspair syphon))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_SYPHON (atspair:string syphon:decimal)
         (enforce (>= syphon 0.1) "Syphon cannot be set lower than 0.1")
@@ -1470,10 +1259,9 @@
         )
     )
     (defcap ATS|SYPHONING (atspair:string toggle:bool)
-        @doc "Capability required to EXECUTE Client ATS-Pair Syphoning Toggle Function"
         @event
         (compose-capability (ATS|X_SYPHONING atspair toggle))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_SYPHONING (atspair:string toggle:bool)
         (ATS|CAP_Owner atspair)
@@ -1481,10 +1269,9 @@
         (ATS|UEV_ParameterLockState atspair false)
     )
     (defcap ATS|TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
-        @doc "Capability required to EXECUTE Client ATS-Pair Fee Toggle Function"
         @event
         (compose-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
         (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
@@ -1497,10 +1284,9 @@
         )
     )
     (defcap ATS|SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        @doc "Capability required to EXECUTE Client ATS-Pair Set CRD Function"
         @event
         (compose-capability (ATS|X_SET_CRD atspair soft-or-hard base growth))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
         (ATS|CAP_Owner atspair)
@@ -1521,16 +1307,14 @@
         )
     )
     (defcap ATS|SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        @doc "Capability required to EXECUTE Client ATS-Pair Set Cold Fee Function"
         @event
         (compose-capability (ATS|X_SET_COLD_FEE atspair fee-positions fee-thresholds fee-array))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
         (ATS|CAP_Owner atspair)
         (ATS|UEV_UpdateColdOrHot atspair true)
         (ATS|UEV_ParameterLockState atspair false)
-        ;;<fee-positions> validation
         (enforce 
             (or 
                 (= fee-positions -1)
@@ -1538,7 +1322,6 @@
             )
             "The Number of Fee Positions must be either -1 or between 1 and 7"
         )
-        ;;<fee-threhsolds> validation (number)
         (enforce 
             (and
                 (>= (length fee-thresholds) 1)
@@ -1546,7 +1329,6 @@
             )
             "No More than 100 Fee Threhsolds can be set"
         )
-        ;;<fee-threhsold> validation (value as threshold)
         (fold
             (lambda
                 (acc:bool idx:integer)
@@ -1577,7 +1359,6 @@
             true
             (enumerate 0 (- (length fee-thresholds) 1))
         )
-        ;;<fee-array> validation
         (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
             (if (= fee-positions -1)
                 (enforce (= (length fee-array) 1) "The input <fee-array> must be of length 1")
@@ -1585,9 +1366,7 @@
             )
             true
         )
-        ;;<fee-array> validation; inner lists - equal length
         (UTILS.UTILS|UEV_DecimalArray fee-array)
-        ;;<fee-array> validation: inner lists = (length <fee-threshold> +1)
         (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
             (enforce
                 (= (length (at 0 fee-array)) (+ (length fee-thresholds) 1))
@@ -1595,7 +1374,6 @@
             )
             true
         )
-        ;;<fee-array>: value validation
         (map
             (lambda 
                 (inner-lst:[decimal])
@@ -1611,10 +1389,9 @@
         )
     )
     (defcap ATS|SET_HOT_FEE (atspair:string promile:decimal decay:integer)
-        @doc "Capability required to EXECUTE Client ATS-Pair Set Cold Fee Function"
         @event
         (compose-capability (ATS|X_SET_HOT_FEE atspair promile decay))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_SET_HOT_FEE (atspair:string promile:decimal decay:integer)
         (ATS|CAP_Owner atspair)
@@ -1630,10 +1407,9 @@
         )
     )
     (defcap ATS|TOGGLE_ELITE (atspair:string toggle:bool)
-        @doc "Capability required to EXECUTE Client ATS-Pair Toggle Elite Function"
         @event
         (compose-capability (ATS|X_TOGGLE_ELITE atspair toggle))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
     )
     (defcap ATS|X_TOGGLE_ELITE (atspair:string toggle:bool)
         (ATS|CAP_Owner atspair)
@@ -1651,12 +1427,11 @@
         )
     )
     (defcap ATS|TOGGLE_RECOVERY (atspair:string toggle:bool cold-or-hot:bool)
-        @doc "Capability required to EXECUTE Client ATS-Pair Toggle Recovery Function"
         (if toggle
             (compose-capability (ATS|X_RECOVERY-ON atspair cold-or-hot))
             (compose-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
         )
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
         (compose-capability (SECURE))
     )
     (defcap ATS|X_RECOVERY-ON (atspair:string cold-or-hot:bool)
@@ -1672,10 +1447,9 @@
         (ATS|UEV_RecoveryState atspair true cold-or-hot)
     )
     (defcap ATS|ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        @doc "Capability required to EXECUTE Client ATS-Pair Issue Function"
         @event
         (compose-capability (ATS|X_ISSUE atspair issuer reward-token reward-bearing-token))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
         (compose-capability (SECURE))
     )
     (defcap ATS|X_ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
@@ -1691,9 +1465,8 @@
         (compose-capability (SUMMONER))
     )
     (defcap ATS|ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
-        @doc "Capability required to EXECUTE Client ATS-Pair Add RT or Hot RBT Functions"
         (compose-capability (ATS|X_ADD_SECONDARY atspair reward-token token-type))
-        (compose-capability (P|DALOS|INCREMENT_NONCE||P|IGNIS|COLLECTER))
+        (compose-capability (P|DINIC))
         (compose-capability (SUMMONER))
         (compose-capability (SECURE))
     )
@@ -1720,7 +1493,6 @@
         (VST|UEV_Existance hot-rbt false false)
     )
     (defcap ATS|FUEL (atspair:string reward-token:string)
-        @doc "Capability required to EXECUTE Client ATS-Pair Fuel Function"
         @event
         (compose-capability (ATS|GOV))
         (compose-capability (SECURE))
@@ -1734,7 +1506,6 @@
         )
     )
     (defcap ATS|COIL_OR_CURL (atspair:string coil-token:string)
-        @doc "Capability required to EXECUTE Client ATS-Pair Coil and Curl Functions"
         @event
         (compose-capability (ATS|GOV))
         (compose-capability (SUMMONER))
@@ -1742,8 +1513,7 @@
         (ATS|UEV_RewardTokenExistance atspair coil-token true)
         (compose-capability (ATS|UPDATE_ROU))
     )
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;       [30] Data Read FUNCTIONS                   [UR]
+    ;;
     (defun ATS|KEYS:[string] ()
         (keys ATS|Ledger)
     )
@@ -1817,7 +1587,6 @@
         (at "hot-recovery" (read ATS|Pairs atspair ["hot-recovery"]))
     )
     (defun ATS|UR_RewardTokenList:[string] (atspair:string)
-        @doc "Returns the list of Reward Tokens for an ATS Pair."
         (fold
             (lambda
                 (acc:[string] item:object{ATS|RewardTokenSchema})
@@ -1828,7 +1597,6 @@
         )
     )
     (defun ATS|UR_RoUAmountList:[decimal] (atspair:string rou:bool)
-        @doc "Returns the list of Reward Tokens Resident Amounts for an ATS Pair."
         (fold
             (lambda
                 (acc:[decimal] item:object{ATS|RewardTokenSchema})
@@ -1842,7 +1610,6 @@
         )
     )
     (defun ATS|UR_RT-Data (atspair:string reward-token:string data:integer)
-        @doc "Returns RT Data for a given <reward-token> of a given <atspair>"
         (ATS|UEV_id atspair)
         (UTILS.UTILS|UEV_PositionalVariable data 3 "Invalid Data Integer")
         (let*
@@ -1860,7 +1627,6 @@
         )
     )
     (defun ATS|UR_RtPrecisions:[integer] (atspair:string)
-        @doc "Returns a list of integers representing precisions of RBT Tokens of <atspair>"
         (fold
             (lambda
                 (acc:[integer] rt:string)
@@ -1871,11 +1637,9 @@
         )
     )
     (defun ATS|UR_P0:[object{ATS|Unstake}] (atspair:string account:string)
-        @doc "Returns the <P0> of an ATS-UnstakingAccount"
         (at "P0" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P0"]))
     )
     (defun ATS|UR_P1-7:object{ATS|Unstake} (atspair:string account:string position:integer)
-        @doc "Returns the <P1> through <P7> of an ATS-UnstakingAccount"
         (UTILS.UTILS|UEV_PositionalVariable position 7 "Invalid Position Number")
         (cond
             ((= position 1) (at "P1" (read ATS|Ledger (concat [atspair UTILS.BAR account]) ["P1"])))
@@ -1888,9 +1652,8 @@
             true
         )
     )
-    ;;       [21] Data Read and Computation FUNCTIONS   [URC] and [UC]
+    ;;
     (defun ATS|URC_MaxSyphon:[decimal] (atspair:string)
-        @doc "Computes the maximum amount of Reward Tokens that can be syphoned"
         (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
@@ -1933,7 +1696,6 @@
         )
     )
     (defun ATS|UC_IzCullable:bool (input:object{ATS|Unstake})
-        @doc "Computes if Unstake Object is cullable"
         (let*
             (
                 (present-time:time (at "block-time" (chain-data)))
@@ -1947,7 +1709,6 @@
         )
     )
     (defun ATS|UC_CullValue:[decimal] (atspair:string input:object{ATS|Unstake})
-        @doc "Returns the cull-value of an Unstake (cull) object"
         (let*
             (
                 (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
@@ -1962,8 +1723,6 @@
         )
     )
     (defun ATS|UC_AccountUnbondingBalance (atspair:string account:string reward-token:string)
-        @doc "Returns by computation the Total Unbonding value tied to an ATS-UnstakeAccount (defined with <atspair> and <account>) \
-            \ for a given Reward-Token (which is a Reward-Token of the given <atspair>)"
         (+
             (fold
                 (lambda
@@ -1984,7 +1743,6 @@
         )
     )
     (defun ATS|UCX_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{ATS|Unstake})
-        @doc "Special Helper Function needed for <ATS|UC_AccountUnbondingBalance>"
         (let*
             (
                 (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
@@ -1998,8 +1756,6 @@
         )
     )
     (defun ATS|UC_WhichPosition:integer (atspair:string c-rbt-amount:decimal account:string)
-        @doc "Computes which position can be used for Cold Recovery, given input parameters. \
-            \ Returning 0 means no position is available for cold recovery"
         (let
             (
                 (elite:bool (ATS|UR_EliteMode atspair))
@@ -2011,7 +1767,6 @@
         )
     )
     (defun ATS|UC_ElitePosition:integer (atspair:string c-rbt-amount:decimal account:string)
-        @doc "Computes which position can be used for cold recovery when <c-elite-mode> is true"
         (let
             (
                 (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -2019,7 +1774,6 @@
                 (ea-id:string (DALOS.DALOS|UR_EliteAurynID))
             )
             (if (!= ea-id UTILS.BAR)
-                ;elite auryn is defind
                 (let*
                     (
                         (iz-ea-id:bool (if (= ea-id c-rbt) true false))
@@ -2040,13 +1794,11 @@
                         (+ (at 0 search-res) 1)
                     )
                 )
-                ;elite-auryn is not defined
                 (ATS|UC_NonElitePosition atspair account)
             )
         )
     )
     (defun ATS|UC_NonElitePosition:integer (atspair:string account:string)
-        @doc "Computes which position can be used for cold recovery when <c-elite-mode> is false"
         (let
             (
                 (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -2068,7 +1820,6 @@
         )
     )
     (defun ATS|UC_PSL:[integer] (atspair:string account:string)
-        @doc "Creates a list of position states"
         (let
             (
                 (p1s:integer (ATS|UC_PositionState atspair account 1))
@@ -2109,8 +1860,7 @@
         )
     )
     (defun ATS|UC_PositionalObjectState:integer (atspair:string input-obj:object{ATS|Unstake})
-        @doc "Checks cold recovery position object state: \
-        \ occupied(0), opened(1), closed (-1)"
+        @doc "occupied(0), opened(1), closed (-1)"
         (let
             (
                 (zero:object{ATS|Unstake} (ATS|UCC_MakeZeroUnstakeObject atspair))
@@ -2126,8 +1876,6 @@
         )
     )
     (defun ATS|UC_ColdRecoveryFee (atspair:string c-rbt-amount:decimal input-position:integer)
-        @doc "Computes the Cold Recovery fee of an <atspair>, given an input <c-rbt-amount> of Cold-Reward-Bearing-Token \
-        \ and an input position <input-position> on which the cold recovery takes place."
         (let*
             (
                 (ats-positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -2177,9 +1925,6 @@
         )
     )
     (defun ATS|UC_CullColdRecoveryTime:time (atspair:string account:string)
-        @doc "Computes the Cull Time for the <atspair> and <account> \
-        \ The Cull Time is the unavoidable time that must elapse in order to complete a Cold Recovery in any ATS-Pair \
-        \ The Cull Time depends on ATS-Pair parameters, and DALOS Elite Account Tier"
         (let*
             (
                 (major:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
@@ -2198,14 +1943,6 @@
         )
     )
     (defun ATS|UC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
-        @doc "Splits a RBT value, the <rbt-amount>, using following inputs: \
-            \ Reward-Bearing-Token supply <rbt-supply> of an <atspair> (read below) \
-            \ The <index> of the <atspair> (read below) \
-            \ A list <resident-amounts> respresenting amounts of resident Reward-Tokens of the <atpsair> \
-            \ A list <rt-precision-lst> representing the precision of these Reward-Tokens \
-            \ \
-            \ Resulting a decimal list of Reward-Token Values coresponding to the input <rbt-amount> \
-            \ The Actual computation takes place in the UTILITY Module in the <UC_SplitByIndexedRBT> Function"
         (let
             (
                 (rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
@@ -2218,7 +1955,6 @@
         )
     )
     (defun ATS|UC_Index (atspair:string)
-        @doc "Returns the ATS-Pair Index Value"
         (let
             (
                 (p:integer (ATS|UR_IndexDecimals atspair))
@@ -2233,7 +1969,6 @@
         )
     )
     (defun ATS|UCX_PairRBTSupply:decimal (atspair:string)
-        @doc "Helper Function needed for <ATS|UC_Index>"
         (let*
             (
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
@@ -2252,14 +1987,12 @@
         )
     )
     (defun ATS|UC_RBT:decimal (atspair:string rt:string rt-amount:decimal)
-        @doc "Computes the RBT amount that can be created from an input rt-amount which is part of an ATS-Pair"
         (let*
             (
                 (index:decimal (abs (ATS|UC_Index atspair)))
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                 (p-rbt:integer (BASIS.DPTF-DPMF|UR_Decimals c-rbt true))
             )
-            ;;Ensures the input rt-amount is a number with at most the maximum decimals the c-rbt token has
             (enforce
                 (= (floor rt-amount p-rbt) rt-amount)
                 (format "The entered amount of {} must have at most, the precision c-rbt token {} which is {}" [rt-amount c-rbt p-rbt])
@@ -2268,18 +2001,15 @@
         )
     )
     (defun ATS|UC_ResidentSum:decimal (atspair:string)
-        @doc "Returns the sum of all Resident Reward-Token Amounts for the ATS-Pair"
         (fold (+) 0.0 (ATS|UR_RoUAmountList atspair true)) 
     )
     (defun ATS|UC_IzPresentHotRBT:bool (atspair:string)
-        @doc "Checks if an ATS Pair has registered a Hot-RBT"
         (if (= (ATS|UR_HotRewardBearingToken atspair) UTILS.BAR)
             false
             true
         )
     )
     (defun ATS|UC_RewardTokenPosition:integer (atspair:string reward-token:string)
-        @doc "Returns the <reward-token> position when its part of an <atspair>"
         (let
             (
                 (existance-check:bool (ATS|UC_IzRTg atspair reward-token))
@@ -2289,7 +2019,6 @@
         )
     )
     (defun ATS|UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
-        @doc "Computes a Boolean representing the Zero Fee Exceptions for Cold ATS Fees."
         (not 
             (UTILS.UTILS|UC_TripleAnd
                 (= (length fee-thresholds) 1)
@@ -2302,15 +2031,8 @@
             )
         )
     )
-    ;;CPF Computers
+    ;;CPF-Computers
     (defun ATS|CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal)
-        @doc "Used in the CPF - Credit Primary Fee, within <DPTF|X_Transfer> function \
-            \ Computes how much of the Primarly Fee is used for strenghtening which ATS Index \
-            \ when a token is both RT and RBT for an ATS Pair. \
-            \ Returns 3 values: \
-            \       [0] <still> amount which must still be used as native transfer fee; \
-            \       [1] <credit> amount to be credited to ATS|SC_NAME to strengthen ATS Pair Index\
-            \       [2] <burn> amount which has to be burned to strengthen ATS Pair Index"
         (let*
             (
                 (rt-ats-pairs:[string] (BASIS.DPTF|UR_RewardToken id))
@@ -2362,9 +2084,6 @@
         )
     )
     (defun ATS|CPF_RBT:decimal (id:string native-fee-amount:decimal)
-        @doc "Used in the CPF - Credit Primary Fee, within <DPTF|X_Transfer> function \
-            \ Computes the <still> amount of Primary Fee when a token is only a RBT token as part of ATS Pairs \
-            \ The remaining amount is the <burn> amount."
         (let*
             (
                 (ats-pairs:[string] (BASIS.DPTF|UR_RewardBearingToken id))
@@ -2378,9 +2097,6 @@
         )
     )
     (defun ATS|CPF_RT:decimal (id:string native-fee-amount:decimal)
-        @doc "Used in the CPF - Credit Primary Fee, within <DPTF|X_Transfer> function \
-            \ Computes the <still> amount of Primary Fee when a token is only a RT token as part of ATS Pairs \
-            \ The remaining amount is the <credit> amount."
         (let*
             (
                 (ats-pairs:[string] (BASIS.DPTF|UR_RewardToken id))
@@ -2410,8 +2126,7 @@
         )
     )
     (defun ATS|NFR-Boolean_RT-RBT:[bool] (id:string ats-pairs:[string] rt-or-rbt:bool)
-        @doc "Helper function used in the ATS|CPF Functions \
-        \ Makes a [bool] using RT or RBT <nfr> values from a list of ATS Pair"
+        @doc "Makes a [bool] using RT or RBT <nfr> values from a list of ATS Pair"
         (fold
             (lambda
                 (acc:[bool] index:integer)
@@ -2431,12 +2146,9 @@
         )
     )
     (defun ATS|UC_BooleanDecimalCombiner:[decimal] (id:string amount:decimal milestones:integer boolean:[bool])
-        @doc "Helper function used in the ATS|CPF Functions"
         (UTILS.ATS|UC_SplitBalanceWithBooleans (BASIS.DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
     )
     (defun ATS|UC_SolidifyUO:object{ATS|Unstake} (input:object{ATS|Unstake} remove-position:integer)
-        @doc "Solidifies an ATS|Unstake Objects, by removing an RT and add the removed amount to its primal RT \
-        \ Only does object computation, does not actualy modify Table Data"
         (let*
             (
                 (values:[decimal] (at "reward-tokens" input))
@@ -2457,7 +2169,6 @@
         )
     )
     (defun ATS|UC_IzUnstakeObjectValid:bool (input:object{ATS|Unstake})
-        @doc "Checks if an unstake Object is valid, meaning if it stores valid unstake Data"
         (let*
             (
                 (values:[decimal] (at "reward-tokens" input))
@@ -2470,7 +2181,6 @@
         )
     )
     (defun ATS|UC_ReshapeUO:object{ATS|Unstake} (input:object{ATS|Unstake} remove-position:integer)
-        @doc "Reshapes Unstake Object, used in the Remove RT Functions."
         (let
             (
                 (is-valid:bool (ATS|UC_IzUnstakeObjectValid input))
@@ -2482,7 +2192,6 @@
         )
     )
     (defun ATS|UC_MultiReshapeUO:[object{ATS|Unstake}] (input:[object{ATS|Unstake}] remove-position:integer)
-        @doc "Reshapes an Unstake Object List"
         (fold
             (lambda
                 (acc:[object{ATS|Unstake}] item:object{ATS|Unstake})
@@ -2492,26 +2201,21 @@
             input
         )
     )
-    ;;        [5] Data Creation|Composition Functions   [UCC]
+    ;;
     (defun ATS|UCC_MakeUnstakeObject:object{ATS|Unstake} (atspair:string time:time)
-        @doc "Creates an unstake object"
         { "reward-tokens"   : (make-list (length (ATS|UR_RewardTokenList atspair)) 0.0)
         , "cull-time"       : time}
     )
     (defun ATS|UCC_MakeZeroUnstakeObject:object{ATS|Unstake} (atspair:string)
-        @doc "Generates an Empty Unstake Object. Empty means position is opened for use"
         (ATS|UCC_MakeUnstakeObject atspair NULLTIME)
     )
     (defun ATS|UCC_MakeNegativeUnstakeObject:object{ATS|Unstake} (atspair:string)
-        @doc "Generates a Nmpty Unstake Object. Negative means position is closed and cannot be used for unstaking"
         (ATS|UCC_MakeUnstakeObject atspair ANTITIME)
     )
     (defun ATS|UCC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
-        @doc "Composes a brand-new Reward Token object from input parameters"
         (ATS|UCC_RT token nfr 0.0 0.0)
     )
     (defun ATS|UCC_RT:object{ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
-        @doc "Composes a Reward Token object from input parameters"
         (enforce (>= r 0.0) "Negative Resident not allowed")
         (enforce (>= u 0.0) "Negative Unbonding not allowed")
         {"token"                    : token
@@ -2519,8 +2223,7 @@
         ,"resident"                 : r
         ,"unbonding"                : u}
     )
-    ;;            Administrative Usage Functions        [A]
-    ;;     [2x20] Client Usage FUNCTIONS                [C]
+    ;;
     (defun ATS|CO_ChangeOwnership (patron:string atspair:string new-owner:string)
         (enforce-guard (ATS|C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SECURE)
@@ -2814,10 +2517,8 @@
         )
     )
     (defun ATS|CP_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal)
-        @doc "Client Function for fueling an ATS Pair"
         (require-capability (SECURE))
         (with-capability (ATS|FUEL atspair reward-token)
-            ;;1]Fueler transfers the reward-token to ATS|SC_NAME and an update of Resident Amounts is performed
             (DPTF|CP_Transfer patron reward-token fueler ATS|SC_NAME amount true)
             (ATS|XO_UpdateRoU atspair reward-token true true amount)
         )
@@ -2836,14 +2537,10 @@
                     (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
                     (c-rbt-amount:decimal (ATS|UC_RBT atspair rt amount))
                 )
-            ;;1]Coiler transfers rt to ATS|SC_NAME and the Resident Amounts are updated
                 (DPTF|CP_Transfer patron rt coiler ATS|SC_NAME amount true)
                 (ATS|XO_UpdateRoU atspair rt true true amount)
-            ;;2]ATS|SC_NAME mints c-rbt
                 (BASIS.DPTF|CO_Mint patron c-rbt ATS|SC_NAME c-rbt-amount false)
-            ;;4]ATS|SC_NAME transfers the minted c-rbt to coiler
                 (DPTF|CP_Transfer patron c-rbt ATS|SC_NAME coiler c-rbt-amount true)
-                ;;Function returns the c-rbt minted amount
                 c-rbt-amount
             )
         )
@@ -2864,17 +2561,12 @@
                     (c-rbt2:string (ATS|UR_ColdRewardBearingToken atspair2))
                     (c-rbt2-amount:decimal (ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
                 )
-            ;;1]Curler transfers rt to ATS|SC_NAME and the Resident Amounts are updated
                 (DPTF|CP_Transfer patron rt curler ATS|SC_NAME amount true)
                 (ATS|XO_UpdateRoU atspair1 rt true true amount)
-            ;;2]ATS|SC_NAME mints and retains the c-rbt1 and updates the Resident Amounts
                 (BASIS.DPTF|CO_Mint patron c-rbt1 ATS|SC_NAME c-rbt1-amount false)
                 (ATS|XO_UpdateRoU atspair2 c-rbt1 true true c-rbt1-amount)
-            ;;3]ATS|SC_NAME mints c-rbt2
                 (BASIS.DPTF|CO_Mint patron c-rbt2 ATS|SC_NAME c-rbt2-amount false)
-            ;;4]ATS|SC_NAME transfers the minted c-rbt2 to curler
                 (DPTF|CP_Transfer patron c-rbt2 ATS|SC_NAME curler c-rbt2-amount true)
-                ;;Function returns the c-rbt-2 minted amount
                 c-rbt2-amount
             )
         )
@@ -2897,13 +2589,9 @@
                     (meta-data:[object] [meta-data-obj])
                     (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed h-rbt) 1))
                 )
-            ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
                 (DPTF|CP_Transfer patron c-rbt recoverer ATS|SC_NAME ra true)
-            ;;2]ATS|SC_NAME burns c-rbt
                 (BASIS.DPTF|CO_Burn patron c-rbt ATS|SC_NAME ra)
-            ;;3]ATS|SC_NAME mints h-rbt
                 (BASIS.DPMF|CO_Mint patron h-rbt ATS|SC_NAME ra meta-data)
-            ;;4]ATS|SC_NAME transfers h-rbt to recoverer
                 (BASIS.DPMF|CO_Transfer patron h-rbt new-nonce ATS|SC_NAME recoverer ra true)
             )
         )
@@ -2926,21 +2614,15 @@
                     (usable-position:integer (ATS|UC_WhichPosition atspair ra recoverer))
                     (fee-promile:decimal (ATS|UC_ColdRecoveryFee atspair ra usable-position))
                     (c-rbt-fee-split:[decimal] (UTILS.ATS|UC_PromilleSplit fee-promile ra c-rbt-precision))
-
                     (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
                     (cull-time:time (ATS|UC_CullColdRecoveryTime atspair recoverer))
-
                     ;;for false
                     (negative-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 1 c-rbt-fee-split)))    ;;feeul
-
                     ;;for true
                     (positive-c-fr:[decimal] (ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))    ;;remainderu
                 )
-            ;;1]Recoverer transfers c-rbt to the ATS|SC_NAME
                 (DPTF|CP_Transfer patron c-rbt recoverer ATS|SC_NAME ra true)
-            ;;2]ATS|SC_NAME burns c-rbt and handles c-fr
                 (BASIS.DPTF|CO_Burn patron c-rbt ATS|SC_NAME ra)
-            ;;3]ATS|Pairs is updated with the proper information (unbonding RTs), while burning any fee RTs if needed
                 (map
                     (lambda
                         (index:integer)
@@ -2959,13 +2641,11 @@
                     )
                     true
                 )
-            ;;4]ATS|Ledger is updated with the proper information
                 (ATS|X_StoreUnstakeObject atspair recoverer usable-position 
                     { "reward-tokens"   : positive-c-fr 
                     , "cull-time"       : cull-time}
                 )
             )
-            ;;5]At last, a Normalisation takes place for the recoverer
             (ATS|X_Normalize atspair recoverer)
         )
     )
@@ -3010,12 +2690,9 @@
             )
         )
     )
-    ;;       [34] Auxiliary Usage Functions             [X]
+    ;;
     (defun ATS|XC_EnsureActivationRoles (patron:string atspair:string cold-or-hot:bool)
-        @doc "Ensure proper roles are being set up that can allow Cold or Hot Recovery Activation \
-        \ As an Auxiliary Client Function, it can be used by anyone which has the proper Token ownerships; \
-        \   However, XC Functions are paid for with KDA Gas only if they are used within other free function\
-        \   If they are used on their own, client must pay for KDA gas"
+        @doc "Ensure proper roles are being set up that can allow Cold or Hot Recovery Activation"
         (let*
             (
                 (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
@@ -3024,7 +2701,6 @@
                 (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
                 
             )
-            ;;Exemption Roles for all defined Reward Tokens - applies in both cases
             (ATS|XC_SetMassRole patron atspair false)
             (if cold-or-hot
                 (let
@@ -3032,23 +2708,19 @@
                         (c-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn c-rbt ATS|SC_NAME true))
                         (c-rbt-mint-role:bool (BASIS.DPTF|UR_AccountRoleMint c-rbt ATS|SC_NAME))
                     )
-                    ;;Exemption Role for the c-rbt, if it is <false>
                     (if (not c-rbt-fer)
                         (DPTF|CP_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
                         true
                     )
                     (if (not c-fr)
-                        ;;Burn Roles for all defined Reward-Tokens if c-fr is set to false
                         (ATS|XC_SetMassRole patron atspair true)
                         true
                     )
                     (if (not c-rbt-burn-role)
-                        ;;Burn Role for the C-RBT
                         (DPTF-DPMF|CP_ToggleBurnRole patron c-rbt ATS|SC_NAME true true)
                         true
                     )
                     (if (not c-rbt-mint-role)
-                        ;;Mint Role for the C-RBT
                         (DPTF|CP_ToggleMintRole patron c-rbt ATS|SC_NAME true)
                         true
                     )
@@ -3062,22 +2734,18 @@
                         (h-rbt-add-q-role:bool (BASIS.DPMF|UR_AccountRoleNFTAQ h-rbt ATS|SC_NAME))
                     )
                     (if (not h-fr)
-                        ;;Burn Roles for all defined Reward-Tokens if h-fr is set to false
                         (ATS|XC_SetMassRole patron atspair true)
                         true
                     )
                     (if (not h-rbt-burn-role)
-                        ;Burn Role for the H-RBT
                         (DPTF-DPMF|CP_ToggleBurnRole patron h-rbt ATS|SC_NAME true false)
                         true
                     )
                     (if (not h-rbt-create-role)
-                        ;;Create Role for the H-RBT
                         (DPMF|CP_MoveCreateRole patron h-rbt ATS|SC_NAME)
                         true
                     )
                     (if (not h-rbt-add-q-role)
-                        ;;Add-Quantity Role for the H-RBT
                         (DPMF|CP_ToggleAddQuantityRole patron h-rbt ATS|SC_NAME true)
                         true
                     )
@@ -3108,24 +2776,18 @@
         )
     )
     (defun ATS|XC_RevokeMint (patron:string id:string)
-        @doc "Used when revoking <role-mint> from ATS|SC_NAME \
-        \ and <id> is a Cold-RBT for any ATS-Pair"
         (if (BASIS.ATS|UC_IzRBT id true)
             (ATS|XC_MassTurnColdRecoveryOff patron id)  
             true        
         )
     )
     (defun ATS|XC_RevokeFeeExemption (patron:string id:string)
-        @doc "Used when revoking <role-fee-exemption> from ATS|SC_NAME \
-        \ and <id> is a RT for any ATS-Pair"
         (if (BASIS.ATS|UC_IzRT id)
             (ATS|XC_MassTurnColdRecoveryOff patron id)  
             true
         )
     )
     (defun ATS|XC_RevokeCreateOrAddQ (patron:string id:string)
-        @doc "Used when revoking either <role-nft-add-quantity> or <role-nft-create> from ATS|SC_NAME \
-        \ and <id> is a Hot-RBT for any ATS-Pair"
         (if (BASIS.ATS|UC_IzRBT id false)
             (with-capability (SECURE)
                 (ATS|CP_TurnRecoveryOff patron (BASIS.DPMF|UR_RewardBearingToken id) false)
@@ -3134,12 +2796,6 @@
         )
     )
     (defun ATS|XC_RevokeBurn (patron:string id:string cold-or-hot:bool)
-        @doc "Used when revoking either <role-burn> or <role-nft-burn> from ATS|SC_NAME \
-        \ and <id> is either RT, Cold-RBT or Hot-RBT in any ATS-Pair \
-        \       <id> is RT: if <c-fr> is false, set to true for all ATS-Pairs the RT is part of \
-        \       <id> is RT: if <h-fr> is false, set to true for all ATS-Pairs the RT is part of \
-        \       <id> is Cold-RBT: stops Cold Recovery \
-        \       <id> is Hot-RBT: stops Hot Recovery"
         (if (BASIS.ATS|UC_IzRT id)
             (map
                 (lambda
@@ -3171,7 +2827,6 @@
         )
     )
     (defun ATS|XC_MassTurnColdRecoveryOff (patron:string id:string)
-        @doc "Turns Cold Recovery off for all ATS-Pairs that have <id> as Cold-RBT"
         (map
             (lambda
                 (atspair:string)
@@ -3292,16 +2947,7 @@
             )
         )
     )
-    (defun ATS|X_Issue
-        (
-            account:string
-            atspair:string
-            index-decimals:integer
-            reward-token:string
-            rt-nfr:bool
-            reward-bearing-token:string
-            rbt-nfr:bool
-        )
+    (defun ATS|X_Issue (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
         (UTILS.DALOS|UEV_Decimals index-decimals)
         (UTILS.DALOS|UEV_TokenName atspair)
         (BASIS.DPTF-DPMF|UEV_id reward-token true)
@@ -3312,14 +2958,14 @@
             ,"can-change-owner"                     : true
             ,"parameter-lock"                       : false
             ,"unlocks"                              : 0
-            ;;Index
+
             ,"pair-index-name"                      : atspair
             ,"index-decimals"                       : index-decimals
             ,"syphon"                               : 1.0
             ,"syphoning"                            : false
-            ;;Reward Tokens
+
             ,"reward-tokens"                        : [(ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr)]
-            ;;Cold Reward Bearing Token Info
+ 
             ,"c-rbt"                                : reward-bearing-token
             ,"c-nfr"                                : rbt-nfr
             ,"c-positions"                          : -1
@@ -3328,12 +2974,12 @@
             ,"c-fr"                                 : true
             ,"c-duration"                           : (UTILS.ATS|UC_MakeSoftIntervals 300 6)
             ,"c-elite-mode"                         : false
-            ;;Hot Reward Bearing Token Info
+
             ,"h-rbt"                                : UTILS.BAR
             ,"h-promile"                            : 100.0
             ,"h-decay"                              : 1
             ,"h-fr"                                 : true
-            ;; Activation Toggles
+
             ,"cold-recovery"                        : false
             ,"hot-recovery"                         : false
             }
@@ -3365,7 +3011,6 @@
         )
     )
     (defun ATS|XP_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        @doc "Reshapes an Unstake Account"
         (require-capability (ATS|RESHAPE))
         (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0"      := p0 
@@ -3393,7 +3038,6 @@
         (with-capability (ATS|RM_SECONDARY_RT)
             (ATS|XP_RemoveSecondary atspair reward-token)
         )
-        
     )
     (defun ATS|XP_RemoveSecondary (atspair:string reward-token:string)
         (require-capability (ATS|RM_SECONDARY_RT))
@@ -3408,7 +3052,7 @@
     )
     (defun ATS|XO_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
         (enforce-one
-            "Update Resident and/or Amounts in the ATS-Pair not allowed"
+            "Update RoU not allowed"
             [
                 (enforce-guard (create-capability-guard (ATS|UPDATE_ROU)))
                 (enforce-guard (ATS|C_ReadPolicy "OUROBOROS|UpdateROU"))
@@ -3765,8 +3409,6 @@
         )
     )
 )
-;;Policies Table
 (create-table ATS|PoliciesTable)
-;;[A] ATS Tables
 (create-table ATS|Pairs)
 (create-table ATS|Ledger)
