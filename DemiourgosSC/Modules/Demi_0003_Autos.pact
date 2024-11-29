@@ -1455,7 +1455,6 @@
     (defcap ATS|X_ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
         (enforce (!= reward-token reward-bearing-token) "RT must be different from RBT")
         (DALOS.DALOS|CAP_EnforceAccountOwnership issuer)
-        (DALOS.DALOS|UEV_EnforceAccountType issuer false)
         (BASIS.DPTF-DPMF|CAP_Owner reward-token true)
         (BASIS.DPTF-DPMF|CAP_Owner reward-bearing-token true)
         (ATS|UEV_RewardTokenExistance atspair reward-token false)
