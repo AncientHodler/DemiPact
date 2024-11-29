@@ -673,6 +673,18 @@
             (OUROBOROS.ATS|CO_RemoveSecondary patron remover atspair reward-token)
         )
     )
+    (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
+        @doc "Converts a whole batch of Hot-RBT back to its Cold-RBT Counterpart"                    
+        (with-capability (SUMMONER)
+            (OUROBOROS.ATS|CO_RecoverWholeRBTBatch patron recoverer id nonce)
+        )
+    )
+    (defun ATS|C_RecoverPartialRBTBatch (patron:string recoverer:string id:string nonce:integer amount)
+        @doc "Partially converts a batch of Hot-RBT back to its Cold-RBT Counterpart"                    
+        (with-capability (SUMMONER)
+            (OUROBOROS.ATS|CP_RecoverHotRBT patron recoverer id nonce amount)
+        )
+    )
     ;;VST
     (defun VST|C_CreateVestingLink:string (patron:string dptf:string);e
         @doc "Creates an immutable Vesting Pair between the input DPTF Token and a DPMF Token that will be created by this function \

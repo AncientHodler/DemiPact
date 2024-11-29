@@ -264,6 +264,22 @@
             (DALOS.DALOS|UEV_EnforceAccountType kickstarter false)
         )
     )
+    (defcap ATS|RECOVER (recoverer:string id:string nonce:integer amount:decimal)
+        @event
+        (compose-capability (P|ATS|REMOTE-GOV))
+        (compose-capability (SUMMONER))
+        (BASIS.DPTF-DPMF|UEV_id id false)
+        (DALOS.DALOS|UEV_EnforceAccountType recoverer false)
+        (let
+            (
+                (iz-rbt:bool (BASIS.ATS|UC_IzRBT id false))
+                (nonce-max-amount:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce recoverer))
+                
+            )
+            (enforce iz-rbt "Invalid Hot-RBT")
+            (enforce (>= nonce-max-amount amount) "Recovery Amount surpasses Batch Balance")
+        )
+    )
     (defcap ATS|REMOVE_SECONDARY (atspair:string reward-token:string)
         @event
         (compose-capability (P|ATS|REMOTE-GOV))
@@ -475,6 +491,42 @@
                 )
             )
         )
+    )
+    (defun ATS|CO_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
+        (let
+            (
+                (nonce-max-amount:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce recoverer))
+            )
+            (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+            (with-capability (SECURE)
+                (ATS|CP_RecoverHotRBT patron recoverer id nonce nonce-max-amount)
+            )
+        )
+    )
+    (defun ATS|CO_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (with-capability (SECURE)
+            (ATS|CP_RecoverHotRBT patron recoverer id nonce amount)
+        )
+    )
+    (defun ATS|CP_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
+        (require-capability (SECURE))
+        (with-capability (ATS|RECOVER recoverer id nonce amount)
+            (let*
+                (
+                    (atspair:string (BASIS.DPMF|UR_RewardBearingToken id))
+                    (c-rbt:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
+                )
+            ;;1]Recover sends HotRBT to ATS|SC_NAME
+                (BASIS.DPMF|CO_Transfer patron id nonce recoverer AUTOSTAKE.ATS|SC_NAME amount true)
+            ;;2]ATS|SC_NAME burns Hot RBT
+                (BASIS.DPMF|CO_Burn patron id nonce AUTOSTAKE.ATS|SC_NAME amount)
+            ;;3]ATS|SC_NAME mints Cold RBT
+                (BASIS.DPTF|CO_Mint patron c-rbt ATS|SC_NAME amount false)
+            ;;4]ATS|SC_Name transfer Cold RBT to recoverer
+                (AUTOSTAKE.DPTF|CO_Transfer patron c-rbt ATS|SC_NAME recoverer amount true)
+            )
+        ) 
     )
     (defun ATS|CO_RemoveSecondary (patron:string remover:string atspair:string reward-token:string)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
