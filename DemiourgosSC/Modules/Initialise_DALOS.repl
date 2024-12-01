@@ -254,6 +254,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 06 - Load VESTING Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003b_Vesting.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 07 - Load LIQUID Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -285,6 +292,7 @@
 (use free.DALOS)
 (use free.BASIS)
 (use free.AUTOSTAKE)
+(use free.VESTING)
 (use free.LIQUID)
 (use free.OUROBOROS)
 (use free.TALOS)

@@ -28,9 +28,9 @@
     (defconst ATS|SC_KDA-NAME               AUTOSTAKE.ATS|SC_KDA-NAME)
     (defconst ATS|PBL                       "9H.9I8veD6Lqmcd5nKlb1vlHkg976FhdtooE3iH73h8i2Gq9tLKdclnpo07sC29i2yvMeuB0ikkKghiIgdAfkfDiM57o2phj2quCD8gutjIgDs6AlecMtw2lG6kMMBxBH4B5d1xqhpzA7AHkgEqF7Hgqwpx6E5aIMAtqxIpMhjyqziDiwLA69dKlhlwpjoze34Bwz6swBjlA880ItKfwxtulKEJG9oI3Gjmwgn6bbAgL7xy4brdbgK5DukMBHc0K1jIs1DjcDzhJz2liKultB67rKaBf3nMHMkbzhwl1hdu2wBCeHMLLphug2kE3tDtpxw6kLcj80qfBxvwmuxbeHjk349Md2B7eB4brt8fldi2CxGltfj41KA7GkgmtMa6szivDl5aCk9ozab9ohrsfBHikGL7GJ5Az4A2a8ufnIAJIz2mAgwGDmsAl7yyavbx12e5KhFFupclbKadmiFx8dvqkqwziu4vtt3AcKDhl96EzhuiKAF49vGoaAMo5vxM4h0t94nscG8IGl33De5MJGCpdf3g23D13eJ9BDi034wECutafzao4zzCe9IyvD3E")
     ;;  VESTING
-    (defconst VST|SC_KEY                    AUTOSTAKE.VST|SC_KEY)
-    (defconst VST|SC_NAME                   AUTOSTAKE.VST|SC_NAME)
-    (defconst VST|SC_KDA-NAME               AUTOSTAKE.VST|SC_KDA-NAME)
+    (defconst VST|SC_KEY                    VESTING.VST|SC_KEY)
+    (defconst VST|SC_NAME                   VESTING.VST|SC_NAME)
+    (defconst VST|SC_KDA-NAME               VESTING.VST|SC_KDA-NAME)
     (defconst VST|PBL                       "9G.5s5hoiGo96tMqyh3JBklmsvo8Lc3ol9m6zavJcCuqg4mBvkbDfcv5gEorMit8v8Mj9Jc18EI36Gq7cJ1IyA4e4wvl199KuCx3chsDKGDdfsvzk8mo317ulGk00pbxu7MLc2zw7joouaxt3Ax1KnlJz153ko0JtIxz7pqylfis45pDo2vvm1MH2kA2wmE2crxiEo6oEckuGqzz8oEaa9ez8ADLyqnj48lq4jGp4slkKo6a06ElezH619fsihIdmiMdfB036CJAr0rlzA2b5DgvEJcoyIFioru7vynBjLMLv3pvLFnbFeswrlyLjF8ry7kB52cD7bD7xaamCEjgIC2DsKMv5Mrd69BIKn2yKHC86f0hme9zs5dwMekAd6mc4wM4bDAk6Jrsl6s74ykKLF71pk45rIE1xxzFC4EjykBf6G0neBdaExI32HufaE5mEloDtvnC6vJ7HA9akkI3616MnLErA8eMIn7Kr2wI4l9CvGpKcF9HilzJmdqMa4kzJwqzuFc9LhDnrKcu0LvBHqsx2CrCM9EwHqpkkGe7w8eK8x0xK6K8drLaoBKmaB1")
     ;;  LIQUID-STAKING
     (defconst LIQUID|SC_KEY                 LIQUID.LIQUID|SC_KEY)
@@ -47,6 +47,7 @@
     (use free.DALOS)
     (use free.BASIS)
     (use free.AUTOSTAKE)
+    (use free.VESTING)
     (use free.LIQUID)
     (use free.OUROBOROS)
 
@@ -87,6 +88,10 @@
             (create-capability-guard (SUMMONER))
         )
         (AUTOSTAKE.A_AddPolicy
+            "TALOS|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
+        (VESTING.A_AddPolicy
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))
         )
@@ -692,7 +697,7 @@
         (with-capability (SUMMONER)
             (let
                 (
-                    (output:string (AUTOSTAKE.VST|CO_CreateVestingLink patron dptf))
+                    (output:string (VESTING.VST|CO_CreateVestingLink patron dptf))
                 )
                 (OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
                 output
@@ -702,28 +707,28 @@
     (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer);e
         @doc "Vests <id> given input parameters to its DPMF Vesting Counterpart to <target-account>"
         (with-capability (SUMMONER)
-            (AUTOSTAKE.VST|CO_Vest patron vester target-account id amount offset duration milestones)
+            (VESTING.VST|CO_Vest patron vester target-account id amount offset duration milestones)
         )
     )
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer);e
         @doc "Autostakes <coil-token> and outputs its vested counterpart, to the <target-account> \
             \ Fails if the c-rbt doesnt have an active vesting counterpart"
         (with-capability (SUMMONER)
-            (AUTOSTAKE.VST|CO_CoilAndVest patron coiler-vester atspair coil-token amount target-account offset duration milestones)
+            (VESTING.VST|CO_CoilAndVest patron coiler-vester atspair coil-token amount target-account offset duration milestones)
         )
     )
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string atspair1:string atspair2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer);e
         @doc "Autostakes <curl-token> twice and outputs its vested counterpart when it exists, to the <target-account> \
             \ Fails if the c-rbt of <atspair2> doesnt have an active vesting counterpart"
         (with-capability (SUMMONER)
-            (AUTOSTAKE.VST|CO_CurlAndVest patron curler-vester atspair1 atspair2 curl-token amount target-account offset duration milestones)
+            (VESTING.VST|CO_CurlAndVest patron curler-vester atspair1 atspair2 curl-token amount target-account offset duration milestones)
         )
     )
     (defun VST|C_Cull (patron:string culler:string id:string nonce:integer);e
         @doc "Culls a DPMF representing a Vested Token \
         \ Culling returns to culler any amounts that can be released by the Vesting Schedule as DPTF Tokens"
         (with-capability (SUMMONER)
-            (AUTOSTAKE.VST|CO_Cull patron culler id nonce)
+            (VESTING.VST|CO_Cull patron culler id nonce)
         )
     )
     ;;LQD
@@ -784,24 +789,25 @@
         ;;STEP Primordial - Setting Up Policies for Inter-Module Communication
             (BASIS.BASIS|DefinePolicies)
             (AUTOSTAKE.ATS|DefinePolicies)
+            (VESTING.VST|DefinePolicies)
             (LIQUID.LIQUID|DefinePolicies)
             (OUROBOROS.OUROBOROS|DefinePolicies)
             (TALOS.TALOS|DefinePolicies)
 
         ;;STEP 0
         ;;Deploy the <Dalos> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount DALOS.DALOS|SC_NAME (keyset-ref-guard DALOS.DALOS|SC_KEY) DALOS.DALOS|SC_KDA-NAME patron DALOS|PBL)
+            (DALOS.DALOS|CO_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
         ;;Deploy the <Autostake> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.ATS|SC_NAME (keyset-ref-guard AUTOSTAKE.ATS|SC_KEY) AUTOSTAKE.ATS|SC_KDA-NAME patron ATS|PBL)
+            (DALOS.DALOS|CO_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
             (AUTOSTAKE.ATS|SetGovernor patron)
         ;;Deploy the <Vesting> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount AUTOSTAKE.VST|SC_NAME (keyset-ref-guard AUTOSTAKE.VST|SC_KEY) AUTOSTAKE.VST|SC_KDA-NAME patron VST|PBL)
-            (AUTOSTAKE.VST|SetGovernor patron)
+            (DALOS.DALOS|CO_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
+            (VESTING.VST|SetGovernor patron)
         ;;Deploy the <Liquidizer> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount LIQUID.LIQUID|SC_NAME (keyset-ref-guard LIQUID.LIQUID|SC_KEY) LIQUID.LIQUID|SC_KDA-NAME patron LIQUID|PBL)
+            (DALOS.DALOS|CO_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME patron LIQUID|PBL)
             (LIQUID.LIQUID|SetGovernor patron)
         ;;Deploy the <Ouroboros> Smart DALOS Account
-            (DALOS.DALOS|CO_DeploySmartAccount OUROBOROS.OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS.OUROBOROS|SC_KEY) OUROBOROS.OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
+            (DALOS.DALOS|CO_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
             (OUROBOROS.OUROBOROS|SetGovernor patron)
 
         ;;STEP 1
@@ -906,9 +912,9 @@
             (DPTF|C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
             (DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
         ;;STEP 2.6 - Create Vesting Pairs
-            (AUTOSTAKE.VST|CO_CreateVestingLink patron OuroID)
-            (AUTOSTAKE.VST|CO_CreateVestingLink patron AurynID)
-            (AUTOSTAKE.VST|CO_CreateVestingLink patron EliteAurynID)
+            (VESTING.VST|CO_CreateVestingLink patron OuroID)
+            (VESTING.VST|CO_CreateVestingLink patron AurynID)
+            (VESTING.VST|CO_CreateVestingLink patron EliteAurynID)
         
         ;:STEP 3 - Initialises Autostake Pairs
             (let*

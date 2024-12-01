@@ -199,6 +199,13 @@
         vesting:string
     )
     ;;DPTF|BalanceSchema defined in DALOS Module
+    (defschema DPTF|RoleSchema
+        r-burn:[string]
+        r-mint:[string]
+        r-fee-exemption:[string]
+        r-transfer:[string]
+        a-frozen:[string]
+    )
     ;;[M] DPMF Schemas
     (defschema DPMF|PropertiesSchema
         @doc "Schema for DPMF Token (Meta Fungibles) Properties \
@@ -244,6 +251,13 @@
         ;;States
         frozen:bool
     )
+    (defschema DPMF|RoleSchema
+        r-nft-burn:[string]
+        r-nft-create:[string]
+        r-nft-add-quantity:[string]
+        r-transfer:[string]
+        a-frozen:[string]
+    )
     (defschema DPMF|Schema
         nonce:integer
         balance:decimal
@@ -270,8 +284,11 @@
     (deftable BASIS|PoliciesTable:{BASIS|PolicySchema}) 
     (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchema})
     (deftable DPTF|BalanceTable:{DALOS.DPTF|BalanceSchema})
+    (deftable DPTF|RoleTable:{DPTF|RoleSchema})
+
     (deftable DPMF|PropertiesTable:{DPMF|PropertiesSchema})
     (deftable DPMF|BalanceTable:{DPMF|BalanceSchema})
+    (deftable DPMF|RoleTable:{DPMF|RoleSchema})
     ;;
     ;;
     ;;            BASIS             Submodule
@@ -498,6 +515,20 @@
             (enforce (>= transfer-amount min-move) (format "The transfer-amount of {} is not a valid {} transfer amount" [transfer-amount id]))
         )
     )
+    (defun VST|UEV_Existance (id:string token-type:bool existance:bool)
+        (let
+            (
+                (has-vesting:bool (VST|UC_HasVesting id token-type))
+            )
+            (enforce (= has-vesting existance) (format "Vesting for the Token {} is not satisfied with existance {}" [id existance]))
+        )
+    )
+    (defun VST|UC_HasVesting:bool (id:string token-type:bool)
+        (if (= (DPTF-DPMF|UR_Vesting id token-type) UTILS.BAR)
+            false
+            true
+        )
+    )
     (defun DPMF|UEV_CanTransferNFTCreateRoleON (id:string)
         (let
             (
@@ -578,6 +609,7 @@
     (defcap DPTF-DPMF|FROZEN-ACCOUNT (id:string account:string frozen:bool token-type:bool)
         @event
         (compose-capability (DPTF-DPMF|X_FROZEN-ACCOUNT id account frozen token-type))
+        (compose-capability (BASIS|X_WRITE-ROLES id account 5 token-type))
         (compose-capability (P|DINIC))
     )
     (defcap DPTF-DPMF|X_FROZEN-ACCOUNT (id:string account:string frozen:bool token-type:bool)
@@ -669,6 +701,7 @@
         (compose-capability (DPTF-DPMF|X_TOGGLE_TRANSFER-ROLE id account toggle token-type))
         (compose-capability (DPTF-DPMF|UPDATE_ROLE-TRANSFER-AMOUNT))
         (compose-capability (P|DINIC))
+        (compose-capability (BASIS|X_WRITE-ROLES id account 4 token-type))
     )
     (defcap DPTF-DPMF|X_TOGGLE_TRANSFER-ROLE (id:string account:string toggle:bool token-type:bool)
         (enforce (!= account DALOS.OUROBOROS|SC_NAME) (format "{} Account is immune to transfer roles" [DALOS.OUROBOROS|SC_NAME]))
@@ -975,6 +1008,76 @@
     )
     (defun BASIS|URB_PremiumUntil:time (id:string token-type:bool pending:bool)
         (at "premium-until" (BASIS|UR_Branding id token-type pending))
+    )
+    (defun DPTF-DPMF|UR_Roles:[string] (id:string rp:integer token-type:bool)
+        (if token-type
+            (if (= rp 1)
+                (with-default-read DPTF|RoleTable id
+                    { "r-burn" : [UTILS.BAR]}
+                    { "r-burn" := rb }
+                    rb
+                )
+                (if (= rp 2)
+                    (with-default-read DPTF|RoleTable id
+                        { "r-mint" : [UTILS.BAR]}
+                        { "r-mint" := rm }
+                        rm
+                    )
+                    (if (= rp 3)
+                        (with-default-read DPTF|RoleTable id
+                            { "r-fee-exemption" : [UTILS.BAR]}
+                            { "r-fee-exemption" := rfe }
+                            rfe
+                        )
+                        (if (= rp 4)
+                            (with-default-read DPTF|RoleTable id
+                                { "r-transfer" : [UTILS.BAR]}
+                                { "r-transfer" := rt }
+                                rt
+                            )
+                            (with-default-read DPTF|RoleTable id
+                                { "a-frozen" : [UTILS.BAR]}
+                                { "a-frozen" := af }
+                                af
+                            )
+                        )
+                    )
+                )
+            )
+            (if (= rp 1)
+                (with-default-read DPMF|RoleTable id
+                    { "r-burn" : [UTILS.BAR]}
+                    { "r-burn" := rb }
+                    rb
+                )
+                (if (= rp 2)
+                    (with-default-read DPMF|RoleTable id
+                        { "r-nft-create" : [UTILS.BAR]}
+                        { "r-nft-create" := rnc }
+                        rnc
+                    )
+                    (if (= rp 3)
+                        (with-default-read DPMF|RoleTable id
+                            { "r-nft-add-quantity" : [UTILS.BAR]}
+                            { "r-nft-add-quantity" := rnaq }
+                            rnaq
+                        )
+                        (if (= rp 4)
+                            (with-default-read DPMF|RoleTable id
+                                { "r-transfer" : [UTILS.BAR]}
+                                { "r-transfer" := rt }
+                                rt
+                            )
+                            (with-default-read DPMF|RoleTable id
+                                { "a-frozen" : [UTILS.BAR]}
+                                { "a-frozen" := af }
+                                af
+                            )
+                        )
+                    )
+                )
+            )
+        )
     )
     (defun DPTF-DPMF|UR_AccountFrozenState:bool (id:string account:string token-type:bool)
         (if token-type
@@ -1840,6 +1943,7 @@
                 true
             )
             (DPTF-DPMF|X_ToggleFreezeAccount id account toggle token-type)
+            (DPTF-DPMF|XP_WriteRoles id account 5 toggle token-type)
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
@@ -1881,6 +1985,7 @@
             )
             (DPTF-DPMF|X_ToggleTransferRole id account toggle token-type)
             (DPTF-DPMF|X_UpdateRoleTransferAmount id toggle token-type)
+            (DPTF-DPMF|XP_WriteRoles id account 4 toggle token-type)
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
@@ -2559,7 +2664,7 @@
     )
 
     (defun DPTF-DPMF|XO_UpdateVesting (dptf:string dpmf:string)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|UpVes"))
+        (enforce-guard (BASIS|C_ReadPolicy "VST|UpVes"))
         (with-capability (VST|UPDATE)
             (DPTF-DPMF|XP_UpdateVesting dptf dpmf)
         )
@@ -2888,6 +2993,146 @@
                 )
                 (update DPTF|PropertiesTable id
                     {"reward-token" : (UTILS.LIST|UC_RemoveItem rt atspair)}
+                )
+            )
+        )
+    )
+    (defcap BASIS|X_WRITE-ROLES (id:string account:string rp:integer token-type:bool)
+        (UTILS.UTILS|UEV_PositionalVariable rp 5 "Invalid Role Position")
+        (DALOS.DALOS|UEV_EnforceAccountExists account)
+        (DPTF-DPMF|UEV_id id token-type)
+    )
+    (defun BASIS|UC_NewRoleList (current-lst:[string] account:string direction:bool)
+        (if direction
+            (if 
+                (= current-lst [UTILS.BAR])
+                [account]
+                (UTILS.LIST|UC_AppendLast current-lst account)
+            )
+            (if
+                (= current-lst [UTILS.BAR])
+                [UTILS.BAR]
+                (UTILS.LIST|UC_RemoveItem current-lst account)
+            )
+        )
+    )
+    (defun DPTF-DPMF|XO_WriteRoles (id:string account:string rp:integer d:bool token-type:bool)
+        (enforce-guard (BASIS|C_ReadPolicy "ATS|WR"))
+        (with-capability (BASIS|X_WRITE-ROLES id account rp token-type)
+            (DPTF-DPMF|XP_WriteRoles id account rp d token-type)
+        )
+    )
+    (defun DPTF-DPMF|XP_WriteRoles (id:string account:string rp:integer d:bool token-type:bool)
+        (require-capability (BASIS|X_WRITE-ROLES id account rp token-type))
+        (if token-type
+            (with-default-read DPTF|RoleTable id
+                { "r-burn"          : [UTILS.BAR]
+                , "r-mint"          : [UTILS.BAR]
+                , "r-fee-exemption" : [UTILS.BAR]
+                , "r-transfer"      : [UTILS.BAR]
+                , "a-frozen"        : [UTILS.BAR]}
+                { "r-burn"          := rb
+                , "r-mint"          := rm
+                , "r-fee-exemption" := rfe
+                , "r-transfer"      := rt
+                , "a-frozen"        := af}
+                (if (= rp 1)
+                    (write DPTF|RoleTable id
+                        {"r-burn"           : (BASIS|UC_NewRoleList rb account d)
+                        , "r-mint"          : rm
+                        , "r-fee-exemption" : rfe
+                        , "r-transfer"      : rt
+                        , "a-frozen"        : af}
+                    )
+                    (if (= rp 2)
+                        (write DPTF|RoleTable id
+                            {"r-burn"           : rb
+                            , "r-mint"          : (BASIS|UC_NewRoleList rm account d)
+                            , "r-fee-exemption" : rfe
+                            , "r-transfer"      : rt
+                            , "a-frozen"        : af}
+                        )
+                        (if (= rp 3)
+                            (write DPTF|RoleTable id
+                                {"r-burn"           : rb
+                                , "r-mint"          : rm
+                                , "r-fee-exemption" : (BASIS|UC_NewRoleList rfe account d)
+                                , "r-transfer"      : rt
+                                , "a-frozen"        : af}
+                            )
+                            (if (= rp 4)
+                                (write DPTF|RoleTable id
+                                    {"r-burn"           : rb
+                                    , "r-mint"          : rm
+                                    , "r-fee-exemption" : rfe
+                                    , "r-transfer"      : (BASIS|UC_NewRoleList rt account d)
+                                    , "a-frozen"        : af}
+                                )
+                                (write DPTF|RoleTable id
+                                    {"r-burn"           : rb
+                                    , "r-mint"          : rm
+                                    , "r-fee-exemption" : rfe
+                                    , "r-transfer"      : rt
+                                    , "a-frozen"        : (BASIS|UC_NewRoleList af account d)}
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            (with-default-read DPMF|RoleTable id
+                { "r-nft-burn"          : [UTILS.BAR]
+                , "r-nft-create"        : [UTILS.BAR]
+                , "r-nft-add-quantity"  : [UTILS.BAR]
+                , "r-transfer"          : [UTILS.BAR]
+                , "a-frozen"            : [UTILS.BAR]}
+                { "r-nft-burn"          := rb
+                , "r-nft-create"        := rnc
+                , "r-nft-add-quantity"  := rnaq
+                , "r-transfer"          := rt
+                , "a-frozen"            := af}
+                (if (= rp 1)
+                    (write DPMF|RoleTable id
+                        { "r-nft-burn"          : (BASIS|UC_NewRoleList rb account d)
+                        , "r-nft-create"        : rnc
+                        , "r-nft-add-quantity"  : rnaq
+                        , "r-transfer"          : rt
+                        , "a-frozen"            : af}
+                    )
+                    (if (= rp 2)
+                        (write DPMF|RoleTable id
+                            { "r-nft-burn"          : rb
+                            , "r-nft-create"        : (BASIS|UC_NewRoleList rnc account d)
+                            , "r-nft-add-quantity"  : rnaq
+                            , "r-transfer"          : rt
+                            , "a-frozen"            : af}
+                        )
+                        (if (= rp 3)
+                            (write DPMF|RoleTable id
+                                { "r-nft-burn"          : rb
+                                , "r-nft-create"        : rnc
+                                , "r-nft-add-quantity"  : (BASIS|UC_NewRoleList rnaq account d)
+                                , "r-transfer"          : rt
+                                , "a-frozen"            : af}
+                            )
+                            (if (= rp 4)
+                                (write DPMF|RoleTable id
+                                    { "r-nft-burn"          : rb
+                                    , "r-nft-create"        : rnc
+                                    , "r-nft-add-quantity"  : rnaq
+                                    , "r-transfer"          : (BASIS|UC_NewRoleList rt account d)
+                                    , "a-frozen"            : af}
+                                )
+                                (write DPMF|RoleTable id
+                                    { "r-nft-burn"          : rb
+                                    , "r-nft-create"        : rnc
+                                    , "r-nft-add-quantity"  : rnaq
+                                    , "r-transfer"          : rt
+                                    , "a-frozen"            : (BASIS|UC_NewRoleList af account d)}
+                                )
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -3227,5 +3472,8 @@
 (create-table BASIS|PoliciesTable)
 (create-table DPTF|PropertiesTable)
 (create-table DPTF|BalanceTable)
+(create-table DPTF|RoleTable)
+
 (create-table DPMF|PropertiesTable)
 (create-table DPMF|BalanceTable)
+(create-table DPMF|RoleTable)

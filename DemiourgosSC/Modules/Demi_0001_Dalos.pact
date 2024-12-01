@@ -1258,6 +1258,7 @@
                 (enforce-guard (create-capability-guard (DALOS|INCREMENT_NONCE)))
                 (enforce-guard (C_ReadPolicy "BASIS|IncrementDalosNonce"))
                 (enforce-guard (C_ReadPolicy "ATS|PlusDalosNonce"))
+                (enforce-guard (C_ReadPolicy "VST|PlusDalosNonce"))
             ]
         )
         (with-read DALOS|AccountTable client
@@ -1272,6 +1273,7 @@
                 (enforce-guard (create-capability-guard (IGNIS|COLLECTER)))
                 (enforce-guard (C_ReadPolicy "BASIS|GasCollection"))
                 (enforce-guard (C_ReadPolicy "ATS|GasCol"))
+                (enforce-guard (C_ReadPolicy "VST|GasCol"))
             ]
         )
         (with-capability (IGNIS|COLLECT patron active-account amount)
