@@ -14,26 +14,20 @@
         (enforce-guard
             (UTILS.GUARD|UEV_Any
                 [
-                    DALOS.G_DALOS
-                    G_AOZ
+                    G-MD_AOZ
+                    G-SC_AOZ
                 ]
             )
         )
     )
     ;;Module Guard
-    (defconst G_AOZ      (keyset-ref-guard AOZ|DEMIURGOI))
-    ;;Module Keys
-    (defconst AOZ|DEMIURGOI AOZ|SC_KEY)
+    (defconst G-MD_AOZ   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_AOZ   (keyset-ref-guard AOZ|SC_KEY))
 
-;;  1]CONSTANTS Definitions
-    ;;1.1]Account and KEYs IDs
-    ;;[T] Ouroboros Account ids for DPTF Submodule
-
-    ;;Module Accounts Information
-    ;;      STANDARD DALOS Account - The User Account
     (defconst AOZ|SC_KEY "free.User000i-Keyset")
     (defconst AOZ|SC_NAME "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
     (defconst AOZ|SC_KDA-NAME "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf")
+    (defconst AOZ|PBL "9G.29k17uqiwBF7mbc3rzr5gz228lxepz7a0fwrja2Bgzk1czjCLja3wg9q1ey10ftFhxIAiFBHCtvotkmKIIxFisMni8EA6esncL3lg2uLLH2u89Er9sgbeGmK0k7b63xujf1nAIf5GB583fcE6pzFak2CwhEi1dHzI0F14tvtxv4H8r1ABk5weoJ7HfCoadMm1h8MjIwjzbDKo80H25AJL8I1JiFF66Iwjcj3sFrD9xaqz1ziEEBJICF2k81pG9ABpDk2rK4ooglCK3kmC0h7yvvakjIvMpGp00jnw2Cpg1HoxjK0HoqzuKciIIczGsEzCjoB43x7lKsxkzAm7op2urv0I85Kon7uIBmg328cuKMc8driw8boAFnrdqHEFhx4sFjm8DM44FutCykKGx7GGLnoeJLaC707lot9tM51krmp6KDG8Ii318fIc1L5iuzqEwDnkro35JthzlDD1GkJaGgze3kDApAckn3uMcBypdz4LxbDGrg5K2GdiFBdFHqdpHyssrH8t694BkBtM9EB3yI3ojbnrbKrEM8fMaHAH2zl4x5gdkHnpjAeo8nz")
 
 ;;  1]CONSTANTS Definitions
     (defconst AOZ|INFO "AOZ-Table-Key")

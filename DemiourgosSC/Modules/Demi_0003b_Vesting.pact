@@ -5,15 +5,18 @@
 
     (defcap VESTG-ADMIN ()
         (enforce-one
-            "VST Admn not satisfed"
+            "Vesting Admn not satisfed"
             [
-                (enforce-guard DALOS.G_DALOS)
-                (enforce-guard G_VESTG)
+                (enforce-guard G-MD_VESTG)
+                (enforce-guard G-SC_VESTG)
             ]
         )
     )
-    (defconst G_VESTG   (keyset-ref-guard VST|SC_KEY))
-    (defconst VST|SC_KEY "free.DH_SC_Vesting-Keyset")
+
+    (defconst G-MD_VESTG   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_VESTG   (keyset-ref-guard VST|SC_KEY))
+
+    (defconst VST|SC_KEY "free.dh_sc_vesting-keyset")
     (defconst VST|SC_NAME "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")       ;;Former DalosVesting
     (defconst VST|SC_KDA-NAME "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
 

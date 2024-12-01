@@ -172,14 +172,14 @@
 ;;DPTS KEYSETTS DEFINITIONS
 
     ;;DEMI MASTER KEYSETS
-    (define-keyset "free.DH_Master-Keyset" (read-keyset "DemiourgosSithMasters"))
-    (define-keyset "free.DH_SC_Ouroboros-Keyset" (read-keyset "KEY_SC_Ouroboros"))
-    (define-keyset "free.DH_SC_GAS-Keyset" (read-keyset "KEY_SC_GasTanker"))
-    (define-keyset "free.DH_SC_KadenaLiquidStaking-Keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
-
+    (define-keyset "free.dh_master-keyset" (read-keyset "DemiourgosSithMasters"))
+    (define-keyset "free.dh_sc_dalos-keyset" (read-keyset "KEY_SC_GasTanker"))
+    (define-keyset "free.dh_sc_autostake-keyset" (read-keyset "KEY_SC_DalosAutostake"))
+    (define-keyset "free.dh_sc_vesting-keyset" (read-keyset "KEY_SC_DalosVesting"))
+    (define-keyset "free.dh_sc_kadenaliquidstaking-keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
+    (define-keyset "free.dh_sc_ouroboros-keyset" (read-keyset "KEY_SC_Ouroboros"))
     ;;DEMI SMART_CONTRACTS KEYSETS
-    (define-keyset "free.DH_SC_Autostake-Keyset" (read-keyset "KEY_SC_DalosAutostake"))
-    (define-keyset "free.DH_SC_Vesting-Keyset" (read-keyset "KEY_SC_DalosVesting"))
+    
 
     ;;USER KEYSETS
     (define-keyset "free.User0000-Keyset" (read-keyset "KEY_US_AncientHodler"))

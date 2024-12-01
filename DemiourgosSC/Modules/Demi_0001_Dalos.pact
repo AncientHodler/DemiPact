@@ -19,13 +19,20 @@
         (compose-capability (DALOS-ADMIN))
     )
     (defcap DALOS-ADMIN ()
-        (enforce-guard G_DALOS)
+        (enforce-one
+            "ATS Admin not satisfed"
+            [
+                (enforce-guard G-MD_DALOS)
+                (enforce-guard G-SC_DALOS)
+            ]
+        )
     )
     
-    (defconst G_DALOS   (keyset-ref-guard DALOS|DEMIURGOI))
-    (defconst DALOS|DEMIURGOI "free.DH_Master-Keyset")
-    
-    (defconst DALOS|SC_KEY "free.DH_SC_GAS-Keyset")
+    (defconst G-MD_DALOS   (keyset-ref-guard DALOS|DEMIURGOI))
+    (defconst G-SC_DALOS   (keyset-ref-guard DALOS|SC_KEY))
+
+    (defconst DALOS|DEMIURGOI "free.dh_master-keyset")
+    (defconst DALOS|SC_KEY "free.dh_sc_dalos-keyset")
     (defconst DALOS|SC_KDA-NAME (create-principal DALOS|GUARD))
     (defconst DALOS|SC_NAME         "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
     (defconst LIQUID|SC_NAME        "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
@@ -84,7 +91,7 @@
         (coin.create-account DALOS|SC_KDA-NAME (create-gas-payer-guard))
     )
     (defun create-gas-payer-guard:guard ()
-        (UTILS.GUARD|UEV_Any [G_DALOS (Overunity)])
+        (UTILS.GUARD|UEV_Any [G-SC_DALOS (Overunity)])
     )
     (defun Overunity:guard ()
         (create-user-guard (gas-payer-guard))

@@ -5,16 +5,14 @@
         (compose-capability (TALOS-ADMIN))
     )
     (defcap TALOS-ADMIN ()
-        (enforce-guard G_TALOS)
+        (enforce-guard G-MD_TALOS)
     )
-    (defcap OUROBOROS-ADMIN ()
-        (enforce-guard G_OUROBOROS)
-    )
+
     ;;Module Guards
-    (defconst G_OUROBOROS (keyset-ref-guard OUROBOROS|DEMIURGOI))
-    (defconst G_TALOS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-MD_TALOS (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+
     ;;Module Keys
-    (defconst OUROBOROS|DEMIURGOI "free.DH_Master-Keyset")
+    (defconst OUROBOROS|DEMIURGOI "free.dh_master-keyset")
 
     ;;Module Accounts Information
     ;;  DALOS
@@ -66,10 +64,10 @@
         (compose-capability (SUMMONER))
         (compose-capability (P|DALOS|AUTO_PATRON))
     )
-    (defcap SUMMONER||OUROBOROS-ADMIN ()
+    (defcap SUMMONER||TALOS-ADMIN ()
         @doc "Dual Capability for simple usage"
         (compose-capability (SUMMONER))
-        (compose-capability (OUROBOROS-ADMIN))
+        (compose-capability (TALOS-ADMIN))
     )
 
     ;;Policies
@@ -112,7 +110,7 @@
     ;;            Administrative Usage Functions        [A]
     (defun TALOS|A_InitialiseVirtualBlockchain (patron:string)
         @doc "Main initialisation function for the DALOS Virtual Blockchain"
-        (with-capability (SUMMONER||OUROBOROS-ADMIN)
+        (with-capability (SUMMONER||TALOS-ADMIN)
             (DALOS|X_Initialise patron)
         )
     )
@@ -788,7 +786,7 @@
     ;;       [57] Auxiliary Usage Functions             [X]
     (defun DALOS|X_Initialise (patron:string)
         @doc "Main administrative function that initialises the DALOS Virtual Blockchain"
-        (require-capability (OUROBOROS-ADMIN))
+        (require-capability (TALOS-ADMIN))
         ;;STEP Primordial - Setting Up Policies for Inter-Module Communication
             (BASIS.BASIS|DefinePolicies)
             (AUTOSTAKE.ATS|DefinePolicies)

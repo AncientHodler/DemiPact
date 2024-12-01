@@ -5,16 +5,18 @@
     )
     (defcap LIQUID-ADMIN ()
         (enforce-one
-            "Vesting Admin not satisfed"
+            "Liquid Admin not satisfed"
             [
-                (enforce-guard DALOS.G_DALOS)
-                (enforce-guard G_LIQUID)
+                (enforce-guard G-MD_LIQUID)
+                (enforce-guard G-SC_LIQUID)
             ]
         )
     )
-    (defconst G_LIQUID   (keyset-ref-guard LIQUID|SC_KEY))
 
-    (defconst LIQUID|SC_KEY "free.DH_SC_KadenaLiquidStaking-Keyset")
+    (defconst G-MD_LIQUID   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_LIQUID   (keyset-ref-guard LIQUID|SC_KEY))
+
+    (defconst LIQUID|SC_KEY "free.dh_sc_kadenaliquidstaking-keyset")
     (defconst LIQUID|SC_NAME DALOS.LIQUID|SC_NAME)
     (defconst LIQUID|SC_KDA-NAME (create-principal LIQUID|GUARD))
 

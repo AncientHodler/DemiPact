@@ -16,22 +16,14 @@
         (compose-capability (UTILS_ADMIN))
     )
     (defcap UTILS_ADMIN ()
-        (enforce-guard G_UTILS)
+        (enforce-guard G-MD_UTILS)
     )
-    ;;Module Guards
-    (defconst G_UTILS   (keyset-ref-guard UTILS|DEMIURGOI))
-    ;;Module Keys
-    (defconst UTILS|DEMIURGOI "free.DH_Master-Keyset")
-    ;;Module Accounts Information - NONE
 
+    (defconst G-MD_UTILS   (keyset-ref-guard UTILS|DEMIURGOI))
 
-    ;;
-    ;;
-    ;;
-
+    (defconst UTILS|DEMIURGOI "free.dh_master-keyset")
 
     ;;Policies - NONE
-
 
     ;;[D] DALOS Constant Values
     (defconst KDA_PRECISION 12              "Native Kadena Precision")

@@ -4,17 +4,18 @@
     )
     (defcap AUTOS-ADMIN ()
         (enforce-one
-            "ATS Admn not satisfed"
+            "Autostake Admin not satisfed"
             [
-                (enforce-guard DALOS.G_DALOS)
-                (enforce-guard G_AUTOS)
+                (enforce-guard G-MD_AUTOS)
+                (enforce-guard G-SC_AUTOS)
             ]
         )
     )
 
-    (defconst G_AUTOS   (keyset-ref-guard ATS|SC_KEY))
+    (defconst G-MD_AUTOS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_AUTOS   (keyset-ref-guard ATS|SC_KEY))
     
-    (defconst ATS|SC_KEY "free.DH_SC_Autostake-Keyset")
+    (defconst ATS|SC_KEY "free.dh_sc_autostake-keyset")
     (defconst ATS|SC_NAME "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")     ;;Former DalosAutostake
     (defconst ATS|SC_KDA-NAME "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
     
@@ -835,7 +836,8 @@
         (ATS|UEV_id atspair)
         (let*
             (
-                (admin:guard DALOS.G_DALOS)
+                (dalos-admin:guard G-MD_AUTOS)
+                (autos-admin:guard G-SC_AUTOS)
                 (account-g:guard (DALOS|UR_AccountGuard account))
                 (sov:string (DALOS|UR_AccountSovereign account))
                 (sov-g:guard (DALOS|UR_AccountGuard sov))
@@ -844,7 +846,8 @@
             (enforce-one
                 "Invalid permission for normalizing ATS|Ledger Account Operations"
                 [
-                    (enforce-guard admin)
+                    (enforce-guard dalos-admin)
+                    (enforce-guard autos-admin)
                     (enforce-guard account-g)
                     (enforce-guard sov-g)
                     (enforce-guard gov-g)

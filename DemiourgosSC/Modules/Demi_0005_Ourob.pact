@@ -4,17 +4,20 @@
         (compose-capability (OUROBOROS-ADMIN))
     )
     (defcap OUROBOROS-ADMIN ()
-        (enforce-guard G_OUROBOROS)
         (enforce-one
-            "Vesting Admin not satisfed"
+            "Ouroboros Admin not satisfed"
             [
-                (enforce-guard DALOS.G_DALOS)
-                (enforce-guard G_OUROBOROS)
+                (enforce-guard G-MD_OUROBOROS)
+                (enforce-guard G-SC_OUROBOROS)
             ]
         )
     )
-    (defconst G_OUROBOROS (keyset-ref-guard OUROBOROS|SC_KEY))
-    (defconst OUROBOROS|SC_KEY "free.DH_SC_Ouroboros-Keyset")
+
+    (defconst G-MD_OUROBOROS (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_OUROBOROS (keyset-ref-guard OUROBOROS|SC_KEY))
+
+
+    (defconst OUROBOROS|SC_KEY "free.dh_sc_ouroboros-keyset")
     (defconst OUROBOROS|SC_NAME DALOS.OUROBOROS|SC_NAME)
     (defconst OUROBOROS|SC_KDA-NAME (create-principal OUROBOROS|GUARD))
 

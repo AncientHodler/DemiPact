@@ -3,10 +3,10 @@
         (compose-capability (BASIS-ADMIN))
     )
     (defcap BASIS-ADMIN ()
-        (enforce-guard G_BASIS)
+        (enforce-guard G-MD_BASIS)
     )
-    (defconst G_BASIS   (keyset-ref-guard BASIS|DEMIURGOI))
-    (defconst BASIS|DEMIURGOI DALOS.DALOS|DEMIURGOI)
+    (defconst G-MD_BASIS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+
     (use free.UTILS)
     (use free.DALOS)
 
