@@ -192,6 +192,65 @@
             )
         )
     )
+    ;;[UR]
+    (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool)
+        (UTILS.UTILS|UEV_PositionalVariable position 3 "Invalid Ownership Position")
+        (if poi
+            (if (= position 1)
+                (BASIS.DPTF|P-KEYS)
+                (if (= position 2)
+                    (BASIS.DPMF|P-KEYS)
+                    (AUTOSTAKE.ATS|P-KEYS)
+                )
+            )
+            (if (= position 1)
+                (BASIS.DPTF|KEYS)
+                (if (= position 2)
+                    (BASIS.DPMF|KEYS)
+                    (AUTOSTAKE.ATS|KEYS)
+                )
+            )
+        )
+    )
+    (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer)
+        (UTILS.UTILS|UEV_PositionalVariable table-to-query 3 "Invalid Ownership Position")
+        (let*
+            (
+                (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query true))
+                (owners-lst:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] item:string)
+                            (UTILS.LIST|UC_AppendLast 
+                                acc
+                                (if (= table-to-query 1)
+                                    (DPTF-DPMF|UR_Konto item true)
+                                    (if (= table-to-query 2)
+                                        (DPTF-DPMF|UR_Konto item false)
+                                        (ATS|UR_OwnerKonto item)
+                                    )
+                                )
+                            )
+                        )
+                        []
+                        keyz
+                    )
+                )
+                (owner-pos:[integer] (UTILS.LIST|UC_Search owners-lst account))
+            )
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (UTILS.LIST|UC_AppendLast acc (at (at idx owner-pos) keyz))
+                )
+                []
+                (enumerate 0 (- (length owner-pos) 1))
+            )
+            
+        )
+        
+        
+    )
     ;;[CAP]
     (defcap ATS|REDEEM (redeemer:string id:string)
         @event
@@ -323,15 +382,7 @@
         )
         (let*
             (
-                (keyz:[string]
-                    (if (= table-to-query 1)
-                        (BASIS.DPTF|KEYS)
-                        (if (= table-to-query 2)
-                            (BASIS.DPMF|KEYS)
-                            (AUTOSTAKE.ATS|KEYS)
-                        )
-                    )
-                )
+                (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query false))
                 (listoflists:[[string]] (map (lambda (x:string) (UTILS.LIST|UC_SplitString UTILS.BAR x)) keyz))
                 (output:[string] (UTILS.DALOS|UC_Filterid listoflists account-or-token-id))
             )

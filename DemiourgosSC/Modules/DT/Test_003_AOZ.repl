@@ -536,3 +536,21 @@
     )
 (env-gas)
 (commit-tx)
+
+
+(begin-tx "Ownership Read Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+    (print "")
+    (print "Owned Token List by AOZ account is")
+    (format "Owner DPTFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 1)])
+    (format "Owner DPMFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 2)])
+    (format "Owner ATS-Pairs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 3)])
+
+(env-gas)
+(commit-tx)

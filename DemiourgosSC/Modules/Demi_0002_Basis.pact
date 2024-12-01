@@ -957,6 +957,12 @@
         )
     )
     ;;[UR]
+    (defun DPTF|P-KEYS:[string] ()
+        (keys DPTF|PropertiesTable)
+    )
+    (defun DPMF|P-KEYS:[string] ()
+        (keys DPMF|PropertiesTable)
+    )
     (defun DPTF|KEYS:[string] ()
         (keys DPTF|BalanceTable)
     )

@@ -116,6 +116,9 @@
             (DALOS|X_Initialise patron)
         )
     )
+    (defun TALOS|A_DeployGenesisAdmin (account:string guard:guard kadena:string public:string)
+        (DALOS.DALOS|CO_DeployStandardAccount account (keyset-ref-guard DALOS|SC_KEY) kadena public)
+    )
     ;;        [6] Client Usage FUNCTIONS                [C]
     ;;DALOS
     (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string);e
@@ -982,10 +985,10 @@
                 (ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)
                 (ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)
         ;;STEP 4 - Return Token Ownership to their respective Smart DALOS Accounts
-                (DPTF|C_ChangeOwnership patron AurynID AUTOSTAKE.ATS|SC_NAME)
-                (DPTF|C_ChangeOwnership patron EliteAurynID AUTOSTAKE.ATS|SC_NAME)
-                (DPTF|C_ChangeOwnership patron WrappedKadenaID LIQUID.LIQUID|SC_NAME)
-                (DPTF|C_ChangeOwnership patron StakedKadenaID LIQUID.LIQUID|SC_NAME)
+                ;(DPTF|C_ChangeOwnership patron AurynID AUTOSTAKE.ATS|SC_NAME)
+                ;(DPTF|C_ChangeOwnership patron EliteAurynID AUTOSTAKE.ATS|SC_NAME)
+                ;(DPTF|C_ChangeOwnership patron WrappedKadenaID LIQUID.LIQUID|SC_NAME)
+                ;(DPTF|C_ChangeOwnership patron StakedKadenaID LIQUID.LIQUID|SC_NAME)
         ;;STEP 5 - Return as Output a list of all Token-IDs and ATS-Pair IDs that were created
                 (+ core-tf core-idx)
             )

@@ -1189,6 +1189,9 @@
         (compose-capability (ATS|UPDATE_ROU))
     )
     ;;
+    (defun ATS|P-KEYS:[string] ()
+        (keys ATS|Pairs)
+    )
     (defun ATS|KEYS:[string] ()
         (keys ATS|Ledger)
     )
