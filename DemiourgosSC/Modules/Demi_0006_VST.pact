@@ -1,4 +1,14 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module VESTING GOVERNANCE
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
+    (use UTILS)
+    (use DALOS)
+    (use BASIS)
+    (use ATS)
+
     (defcap GOVERNANCE ()
         (compose-capability (VESTG-ADMIN))
     )
@@ -16,7 +26,9 @@
     (defconst G-MD_VESTG   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
     (defconst G-SC_VESTG   (keyset-ref-guard VST|SC_KEY))
 
-    (defconst VST|SC_KEY "free.dh_sc_vesting-keyset")
+    (defconst VST|SC_KEY
+        (+ UTILS.NS_USE ".dh_sc_vesting-keyset")
+    )
     (defconst VST|SC_NAME "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")       ;;Former DalosVesting
     (defconst VST|SC_KDA-NAME "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
 
@@ -47,25 +59,19 @@
     )
     (defcap SSVD ()
         @event
-        ;(compose-capability (SECURE))
         (compose-capability (SUMMONER))
         (compose-capability (VST|DEFINE))
     )
 
-    (use free.UTILS)
-    (use free.DALOS)
-    (use free.BASIS)
-    (use free.AUTOSTAKE)
-
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (VESTG-ADMIN)
-            (write VST|PoliciesTable policy-name
+            (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read VST|PoliciesTable policy-name ["policy"]))
+        (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
     (defcap VST|GOV ()
@@ -74,14 +80,18 @@
     )
     (defun VST|SetGovernor (patron:string)
         (with-capability (SUMMONER)
-            (DALOS.DALOS|CO_RotateGovernor
+            (DALOS.DALOS|C_RotateGovernor
                 patron
                 VST|SC_NAME
                 (create-capability-guard (VST|GOV))
             )
         )
     )
-    (defun VST|DefinePolicies ()             
+    (defun VST|DefinePolicies ()
+        (DALOS.A_AddPolicy
+            "VST|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
         (DALOS.A_AddPolicy
             "VST|PlusDalosNonce"
             (create-capability-guard (P|DIN))
@@ -94,15 +104,14 @@
             "VST|UpVes"
             (create-capability-guard (P|VST|UPDATE))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (BASIS.A_AddPolicy
             "VST|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        
-    )
-
-    (defschema VST|PolicySchema
-        policy:guard
+        (ATS.A_AddPolicy
+            "VST|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
     )
 
     (defschema VST|MetaDataSchema
@@ -110,7 +119,7 @@
         release-date:time
     )
 
-    (deftable VST|PoliciesTable:{VST|PolicySchema})
+    (deftable PoliciesTable:{DALOS.PolicySchema})
 
     ;;VESTING
     (defun VST|UEV_Active (dptf:string dpmf:string)
@@ -271,7 +280,7 @@
                     (dpmf-name:string (+ "Vested" (take 44 dptf-name)))
                     (dpmf-ticker:string (+ "Z" (take 19 dptf-ticker)))
                     (dpmf-l:[string]
-                        (BASIS.DPMF|CO_Issue
+                        (BASIS.DPMF|C_Issue
                             patron
                             dptf-owner
                             [dpmf-name]
@@ -288,26 +297,20 @@
                     )
                     (dpmf:string (at 0 dpmf-l))
                 )
-                (BASIS.DPTF-DPMF|CO_DeployAccount dptf VST|SC_NAME true)
-                (BASIS.DPTF-DPMF|CO_DeployAccount dpmf VST|SC_NAME false)
-                (DPTF|CO_ToggleFeeExemptionRole patron dptf VST|SC_NAME true)
-                (DPMF|CO_MoveCreateRole patron dpmf VST|SC_NAME)
-                (DPMF|CO_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
-                (DPTF-DPMF|CO_ToggleBurnRole patron dpmf VST|SC_NAME true false)
-                (BASIS.DPTF-DPMF|CO_ToggleTransferRole patron dpmf VST|SC_NAME true false)
+                (BASIS.DPTF-DPMF|C_DeployAccount dptf VST|SC_NAME true)
+                (BASIS.DPTF-DPMF|C_DeployAccount dpmf VST|SC_NAME false)
+                (DPTF|C_ToggleFeeExemptionRole patron dptf VST|SC_NAME true)
+                (DPMF|C_MoveCreateRole patron dpmf VST|SC_NAME)
+                (DPMF|C_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
+                (DPTF-DPMF|C_ToggleBurnRole patron dpmf VST|SC_NAME true false)
+                (BASIS.DPTF-DPMF|C_ToggleTransferRole patron dpmf VST|SC_NAME true false)
                 (VST|X_DefineVestingPair patron dptf dpmf)
                 dpmf
             )
         )
     )
-    (defun VST|CO_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
+    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (VST|CP_Vest patron vester target-account id amount offset duration milestones)
-        )
-    )
-    (defun VST|CP_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
-        (require-capability (SECURE))
         (with-capability (VST|VEST vester target-account id)
             (let*
                 (
@@ -315,49 +318,9 @@
                     (meta-data:string (VST|UCC_ComposeVestingMetaData id amount offset duration milestones))
                     (nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                 )
-                (BASIS.DPMF|CO_Mint patron dpmf-id VST|SC_NAME amount meta-data)
-                (AUTOSTAKE.DPTF|CO_Transfer patron id vester VST|SC_NAME amount true)
-                (BASIS.DPMF|CO_Transfer patron dpmf-id nonce VST|SC_NAME target-account amount true)
-            )
-        )
-    )
-    (defun VST|CO_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (VST|CP_CoilAndVest patron coiler-vester atspair coil-token amount target-account offset duration milestones)
-        )
-    )
-    (defun VST|CP_CoilAndVest:decimal (patron:string coiler-vester:string atspair:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
-        (with-capability (SECURE)
-            (let
-                (
-                    (c-rbt:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
-                    (c-rbt-amount:decimal (AUTOSTAKE.ATS|UC_RBT atspair coil-token amount))
-                )
-                (ATS|CO_Coil patron coiler-vester atspair coil-token amount)
-                (VST|CP_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
-                c-rbt-amount
-            )
-        )
-    )
-    (defun VST|CO_CurlAndVest:decimal (patron:string curler-vester:string atspair1:string atspair2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (VST|CP_CurlAndVest patron curler-vester atspair1 atspair2 curl-token amount target-account offset duration milestones)
-        )
-    )
-    (defun VST|CP_CurlAndVest:decimal (patron:string curler-vester:string atspair1:string atspair2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
-        (with-capability (SECURE)
-            (let*
-                (
-                    (c-rbt1:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair1))
-                    (c-rbt1-amount:decimal (AUTOSTAKE.ATS|UC_RBT atspair1 curl-token amount))
-                    (c-rbt2:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair2))
-                    (c-rbt2-amount:decimal (AUTOSTAKE.ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
-                )
-                (ATS|CO_Curl patron curler-vester atspair1 atspair2 curl-token amount)
-                (VST|CP_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
-                c-rbt2-amount
+                (BASIS.DPMF|C_Mint patron dpmf-id VST|SC_NAME amount meta-data)
+                (ATS.DPTF|C_Transfer patron id vester VST|SC_NAME amount true)
+                (BASIS.DPMF|C_Transfer patron dpmf-id nonce VST|SC_NAME target-account amount true)
             )
         )
     )
@@ -378,19 +341,19 @@
                     (return-amount:decimal (- initial-amount culled-amount))
                 )
                 (if (= return-amount 0.0)
-                    (AUTOSTAKE.DPTF|CO_Transfer patron dptf-id VST|SC_NAME culler initial-amount true)
+                    (ATS.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler initial-amount true)
                     (let*
                         (
                             (remaining-vesting-meta-data:[object{VST|MetaDataSchema}] (VST|UC_CullMetaDataObject culler id nonce))
                             (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                         )
-                        (BASIS.DPMF|CO_Mint patron id VST|SC_NAME return-amount remaining-vesting-meta-data)
-                        (AUTOSTAKE.DPTF|CO_Transfer patron dptf-id VST|SC_NAME culler culled-amount true)
-                        (BASIS.DPMF|CO_Transfer patron id new-nonce VST|SC_NAME culler return-amount true)
+                        (BASIS.DPMF|C_Mint patron id VST|SC_NAME return-amount remaining-vesting-meta-data)
+                        (ATS.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler culled-amount true)
+                        (BASIS.DPMF|C_Transfer patron id new-nonce VST|SC_NAME culler return-amount true)
                     )
                 )
-                (BASIS.DPMF|CO_Transfer patron id nonce culler VST|SC_NAME initial-amount true)
-                (BASIS.DPMF|CO_Burn patron id nonce VST|SC_NAME initial-amount)
+                (BASIS.DPMF|C_Transfer patron id nonce culler VST|SC_NAME initial-amount true)
+                (BASIS.DPMF|C_Burn patron id nonce VST|SC_NAME initial-amount)
             )
         )
     )
@@ -420,4 +383,4 @@
     )
 )
 
-(create-table VST|PoliciesTable)
+(create-table PoliciesTable)

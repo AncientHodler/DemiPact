@@ -1,18 +1,8 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module DALOS GOVERNANCE
-    @doc "Demiourgos 0001 Module - DALOS (Dalos Blockchain and Gas Module) \
-    \ Module 1 containing Primal Blocckchain Functions including Gas and Elite Account Functionality \
-    \ \
-    \ \
-    \ Smart DALOS Accounts governed by the Module (1) \
-    \ \
-    \ 1)DALOS Smart Account (responsible for GAS Collection operations) \
-    \ \
-    \ \
-    \ Submodules (3) \
-    \ \
-    \ 1]GLYPH - Character related operations \
-    \ 2]DALOS - Dalos Module and Account related operations \
-    \ 3]IGNIS - Gas related operations"
+    (use coin)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
+    (use UTILS)
 
     ;;Module Governance
     (defcap GOVERNANCE ()
@@ -31,15 +21,16 @@
     (defconst G-MD_DALOS   (keyset-ref-guard DALOS|DEMIURGOI))
     (defconst G-SC_DALOS   (keyset-ref-guard DALOS|SC_KEY))
 
-    (defconst DALOS|DEMIURGOI "free.dh_master-keyset")
-    (defconst DALOS|SC_KEY "free.dh_sc_dalos-keyset")
+    (defconst DALOS|DEMIURGOI
+        (+ UTILS.NS_USE ".dh_master-keyset")
+    )
+    (defconst DALOS|SC_KEY
+        (+ UTILS.NS_USE ".dh_sc_dalos-keyset")
+    )
     (defconst DALOS|SC_KDA-NAME (create-principal DALOS|GUARD))
     (defconst DALOS|SC_NAME         "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
     (defconst LIQUID|SC_NAME        "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
     (defconst OUROBOROS|SC_NAME     "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
-    
-    (use coin)
-    (use free.UTILS)
 
     (defcap DALOS|NATIVE-AUTOMATIC ()
         @doc "Capability needed for auto management of the <kadena-konto> associated with the Ouroboros Smart DALOS Account"
@@ -107,7 +98,6 @@
     ;;
     ;;
 
-
     ;;Simple True Capabilities (3+1)
     (defcap KADENA ()
         true
@@ -136,13 +126,13 @@
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (DALOS-ADMIN)
-            (write DALOS|PoliciesTable policy-name
+            (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read DALOS|PoliciesTable policy-name ["policy"]))
+        (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
     (defconst DALOS|CHR_AUX
@@ -231,7 +221,7 @@
     (defschema DALOS|KadenaSchema
         dalos:[string]
     )
-    (defschema DALOS|PolicySchema
+    (defschema PolicySchema
         policy:guard
     )
     (defschema DALOS|PropertiesSchema
@@ -325,13 +315,40 @@
         , "tier"  : "0.0"
         , "deb"   : 0.0 }
     )
+    ;;Branding
+    (defschema BrandingSchema
+        logo:string
+        description:string
+        website:string
+        social:[object{SocialSchema}]
+        flag:integer
+        genesis:time
+        premium-until:time
+    )
+    (defschema SocialSchema
+        social-media-name:string
+        social-media-link:string
+    )
+    (defconst SOCIAL|EMPTY
+        {"social-media-name"    : UTILS.BAR
+        ,"social-media-link"    : UTILS.BAR}
+    )
+    (defconst BRANDING|DEFAULT
+        {"logo"                 : UTILS.BAR
+        ,"description"          : UTILS.BAR
+        ,"website"              : UTILS.BAR
+        ,"social"               : [SOCIAL|EMPTY]
+        ,"flag"                 : 3
+        ,"genesis"              : (at "block-time" (chain-data))
+        ,"premium-until"        : (at "block-time" (chain-data))}
+    )
 
     (deftable DALOS|Glyphs:{DALOS|GlyphsSchema})
     (deftable DALOS|PropertiesTable:{DALOS|PropertiesSchema})
     (deftable DALOS|GasManagementTable:{DALOS|GasManagementSchema})
     (deftable DALOS|PricesTable:{DALOS|PricesSchema})
     (deftable DALOS|AccountTable:{DALOS|AccountSchema})
-    (deftable DALOS|PoliciesTable:{DALOS|PolicySchema})
+    (deftable PoliciesTable:{PolicySchema})
     (deftable DALOS|KadenaLedger:{DALOS|KadenaSchema})
     
     ;;GLYPH Submodule
@@ -996,10 +1013,10 @@
     )
     (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (with-capability (DALOS-ADMIN)
-            (DALOS|CO_DeployStandardAccount account guard kadena public)
+            (DALOS|C_DeployStandardAccount account guard kadena public)
         )
     )
-    (defun DALOS|CO_DeployStandardAccount (account:string guard:guard kadena:string public:string)
+    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (enforce-one
             "Standard Deployment not permitted"
             [
@@ -1008,43 +1025,37 @@
             ]
         )
         (with-capability (DALOS|DEPLOY_STANDARD account guard kadena)
-            (DALOS|CP_DeployStandardAccount account guard kadena public)
-        )
-    )
-    (defun DALOS|CP_DeployStandardAccount (account:string guard:guard kadena:string public:string)
-        (require-capability (DALOS|DEPLOY_STANDARD account guard kadena))
-        (insert DALOS|AccountTable account
-            { "public"                      : public
-            , "guard"                       : guard
-            , "kadena-konto"                : kadena
-            , "sovereign"                   : account
-            , "governor"                    : guard
+            (insert DALOS|AccountTable account
+                { "public"                      : public
+                , "guard"                       : guard
+                , "kadena-konto"                : kadena
+                , "sovereign"                   : account
+                , "governor"                    : guard
 
-            , "smart-contract"              : false
-            , "payable-as-smart-contract"   : false
-            , "payable-by-smart-contract"   : false
-            , "payable-by-method"           : false
-            
-            , "nonce"                       : 0
-            , "elite"                       : DALOS|PLEB
-            , "ouroboros"                   : DPTF|BLANK
-            , "ignis"                       : DPTF|BLANK
-            }  
-        )
-        ;;Add Entry in the Kadena Ledger
-        (DALOS|X_UpdateKadenaLedger kadena account true)
-        ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
-        (if (not (IGNIS|URC_IsNativeGasZero))
-            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "standard"))
-            true
+                , "smart-contract"              : false
+                , "payable-as-smart-contract"   : false
+                , "payable-by-smart-contract"   : false
+                , "payable-by-method"           : false
+                
+                , "nonce"                       : 0
+                , "elite"                       : DALOS|PLEB
+                , "ouroboros"                   : DPTF|BLANK
+                , "ignis"                       : DPTF|BLANK
+                }  
+            )
+            (DALOS|X_UpdateKadenaLedger kadena account true)
+            (if (not (IGNIS|URC_IsNativeGasZero))
+                (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "standard"))
+                true
+            )
         )
     )
     (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (with-capability (DALOS-ADMIN)
-            (DALOS|CO_DeploySmartAccount account guard kadena sovereign public)
+            (DALOS|C_DeploySmartAccount account guard kadena sovereign public)
         )
     )
-    (defun DALOS|CO_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
+    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (enforce-one
             "Smart Deployment not permitted"
             [
@@ -1053,45 +1064,33 @@
             ]
         )
         (with-capability (DALOS|DEPLOY_SMART account guard kadena sovereign)
-            (DALOS|CP_DeploySmartAccount account guard kadena sovereign public)
-        )
-    )
-    (defun DALOS|CP_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
-        (require-capability (DALOS|DEPLOY_SMART account guard kadena sovereign))
-        (insert DALOS|AccountTable account
-            { "public"                      : public
-            , "guard"                       : guard
-            , "kadena-konto"                : kadena
-            , "sovereign"                   : sovereign
-            , "governor"                    : guard
+            (insert DALOS|AccountTable account
+                { "public"                      : public
+                , "guard"                       : guard
+                , "kadena-konto"                : kadena
+                , "sovereign"                   : sovereign
+                , "governor"                    : guard
 
-            , "smart-contract"              : true
-            , "payable-as-smart-contract"   : false
-            , "payable-by-smart-contract"   : false
-            , "payable-by-method"           : true
-            
-            , "nonce"                       : 0
-            , "elite"                       : DALOS|PLEB
-            , "ouroboros"                   : DPTF|BLANK
-            , "ignis"                       : DPTF|BLANK
-            }  
-        )
-        ;;Add Entry in the Kadena Ledger
-        (DALOS|X_UpdateKadenaLedger kadena account true)
-        ;;Collect the Deployment fee as Raw KDA, if native Gas is set to ON
-        (if (not (IGNIS|URC_IsNativeGasZero))
-            (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "smart"))
-            true
+                , "smart-contract"              : true
+                , "payable-as-smart-contract"   : false
+                , "payable-by-smart-contract"   : false
+                , "payable-by-method"           : true
+                
+                , "nonce"                       : 0
+                , "elite"                       : DALOS|PLEB
+                , "ouroboros"                   : DPTF|BLANK
+                , "ignis"                       : DPTF|BLANK
+                }  
+            )
+            (DALOS|X_UpdateKadenaLedger kadena account true)
+            (if (not (IGNIS|URC_IsNativeGasZero))
+                (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "smart"))
+                true
+            )
         )
     )
-    (defun DALOS|CO_RotateGuard (patron:string account:string new-guard:guard safe:bool)
+    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DALOS|CP_RotateGuard patron account new-guard safe)
-        )
-    )
-    (defun DALOS|CP_RotateGuard (patron:string account:string new-guard:guard safe:bool)
-        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1106,14 +1105,8 @@
             )
         )
     )
-    (defun DALOS|CO_RotateKadena (patron:string account:string kadena:string)
+    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DALOS|CP_RotateKadena patron account kadena)
-        )
-    )
-    (defun DALOS|CP_RotateKadena (patron:string account:string kadena:string)
-        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1131,14 +1124,8 @@
             )
         )
     )
-    (defun DALOS|CO_RotateSovereign (patron:string account:string new-sovereign:string)
+    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DALOS|CP_RotateSovereign patron account new-sovereign)
-        )
-    )
-    (defun DALOS|CP_RotateSovereign (patron:string account:string new-sovereign:string)
-        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1153,22 +1140,17 @@
             )
         )
     )
-    (defun DALOS|CO_RotateGovernor (patron:string account:string governor:guard)
+    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)
         (enforce-one
             "Rotate Governor not permitted"
             [
                 (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
                 (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
                 (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
                 (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DALOS|CP_RotateGovernor patron account governor)
-        )
-    )
-    (defun DALOS|CP_RotateGovernor (patron:string account:string governor:guard)
-        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1183,14 +1165,8 @@
             )
         )
     )
-    (defun DALOS|CO_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DALOS|CP_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-        )
-    )
-    (defun DALOS|CP_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
-        (require-capability (SECURE))
         (let
             (
                 (ZG:bool (IGNIS|URC_IsVirtualGasZero))
@@ -1265,7 +1241,9 @@
                 (enforce-guard (create-capability-guard (DALOS|INCREMENT_NONCE)))
                 (enforce-guard (C_ReadPolicy "BASIS|IncrementDalosNonce"))
                 (enforce-guard (C_ReadPolicy "ATS|PlusDalosNonce"))
+                (enforce-guard (C_ReadPolicy "ATSM|PlusDalosNonce"))
                 (enforce-guard (C_ReadPolicy "VST|PlusDalosNonce"))
+                (enforce-guard (C_ReadPolicy "BRD|IncrementDalosNonce"))
             ]
         )
         (with-read DALOS|AccountTable client
@@ -1280,7 +1258,9 @@
                 (enforce-guard (create-capability-guard (IGNIS|COLLECTER)))
                 (enforce-guard (C_ReadPolicy "BASIS|GasCollection"))
                 (enforce-guard (C_ReadPolicy "ATS|GasCol"))
+                (enforce-guard (C_ReadPolicy "ATSM|GasCol"))
                 (enforce-guard (C_ReadPolicy "VST|GasCol"))
+                (enforce-guard (C_ReadPolicy "BRD|GasCollection"))
             ]
         )
         (with-capability (IGNIS|COLLECT patron active-account amount)
@@ -1602,8 +1582,8 @@
     )
 )
 
+(create-table PoliciesTable)
 (create-table DALOS|Glyphs)
-(create-table DALOS|PoliciesTable)
 (create-table DALOS|PropertiesTable)
 (create-table DALOS|GasManagementTable)
 (create-table DALOS|PricesTable)

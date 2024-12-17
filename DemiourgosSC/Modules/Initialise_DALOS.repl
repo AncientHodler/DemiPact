@@ -167,6 +167,20 @@
     }
 )
 ;;Entering Namespace Free
+
+;(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/KS/NS.pact")
+
+;(use free.ns)
+
+(define-namespace 
+    (ns.create-principal-namespace (read-keyset  "DemiourgosSithMasters"))
+    (read-keyset  "DemiourgosSithMasters" )
+    (read-keyset  "DemiourgosSithMasters" )
+)
+(print "Above NameSpace defined")
+
+;(namespace "n_c3c81167bd5ea56c31ee027cd365d85cdc8fa35a")
 (namespace "free")
 
 ;;DPTS KEYSETTS DEFINITIONS
@@ -182,10 +196,10 @@
     
 
     ;;USER KEYSETS
-    (define-keyset "free.User0000-Keyset" (read-keyset "KEY_US_AncientHodler"))
-    (define-keyset "free.User000a-Keyset" (read-keyset "KEY_US_Florian"))
+    (define-keyset "free.dh_ah-keyset" (read-keyset "KEY_US_AncientHodler"))
+    (define-keyset "free.dh_hov-keyset" (read-keyset "KEY_US_Florian"))
     (define-keyset "free.User000b-Keyset" (read-keyset "KEY_US_Emma"))
-    (define-keyset "free.User000c-Keyset" (read-keyset "KEY_US_Byta"))
+    (define-keyset "free.dh_cto-keyset" (read-keyset "KEY_US_Byta"))
     (define-keyset "free.User000d-Keyset" (read-keyset "KEY_US_Lumy"))
     (define-keyset "free.User000e-Keyset" (read-keyset "KEY_US_Coca"))
     (define-keyset "free.User000f-Keyset" (read-keyset "KEY_US_Kiss"))
@@ -197,6 +211,8 @@
     ;;Foreign SMART-CONTRACT KEYSETS
     (define-keyset "free.Banana_Master-Keyset" (read-keyset "KEY_US_BM"))
     (define-keyset "free.Banana_Juicer-Keyset" (read-keyset "KEY_SC_BJ"))
+
+
 
 (commit-tx)
 ;;==============================================================================
@@ -225,76 +241,97 @@
 ;;==============================================================================
 ;; PART 03 - Module Load Up
 (print "==========================InitSnake_TX-03..TX-07========================")
-
-(begin-tx "InitSnake 03 - Load Utility Module")
+(begin-tx "InitSnake 03 - Load UTILS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0000_Utils.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0000_UTILS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 04 - Load DALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0001_Dalos.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0001_DALOS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 05 - Load BASIS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0002_Basis.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0002_BASIS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 06 - Load AUTOSTAKE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003_Autos.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003_ATS.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 06 - Load VESTING Module")
+(begin-tx "InitSnake 07 - Load AUTOSTAKE-USAGE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003b_Vesting.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_ATSU.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 07 - Load LIQUID Module")
+(begin-tx "InitSnake 07 - Load AUTOSTAKE-MANAGER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_Liqud.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_ATSM.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 08 - Load OUROBOROS Module")
+(begin-tx "InitSnake 08 - Load VESTING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_Ourob.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0006_VST.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 09 - Load OUROBOROS Module")
+(begin-tx "InitSnake 09 - Load LIQUID Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0007_LIQUID.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 10 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0008_OUROBOROS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 11 - Load BRANDING Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0011_BRANDING.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 12 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_TALOS.pact")
 (env-gas)
 (commit-tx)
 
-
-
-
 (begin-tx "InitSnake 10 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
+
 (use free.UTILS)
 (use free.DALOS)
 (use free.BASIS)
-(use free.AUTOSTAKE)
+(use free.ATS)
+(use free.AUTOSTAKE-USAGE)
+(use free.AUTOSTAKE-MANAGER)
 (use free.VESTING)
 (use free.LIQUID)
 (use free.OUROBOROS)
+(use free.BRANDING)
 (use free.TALOS)
 
 
@@ -402,10 +439,10 @@
             { "key": "PK_BJ", "caps": [] }
           ])
 
-    (free.DALOS.DALOS|A_DeployStandardAccount KC.ANCIENTHODLER (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000 KC.PBLC_0000)
-    (free.DALOS.DALOS|A_DeployStandardAccount KC.FLORIAN (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a KC.PBLC_000a)
+    ;(free.DALOS.DALOS|A_DeployStandardAccount KC.ANCIENTHODLER (keyset-ref-guard "free.User0000-Keyset") KC.KADN_NAME_0000 KC.PBLC_0000)
+    ;(free.DALOS.DALOS|A_DeployStandardAccount KC.FLORIAN (keyset-ref-guard "free.User000a-Keyset") KC.KADN_NAME_000a KC.PBLC_000a)
     (free.DALOS.DALOS|A_DeployStandardAccount KC.EMMA (keyset-ref-guard "free.User000b-Keyset") KC.KADN_NAME_000b KC.PBLC_000b)
-    (free.DALOS.DALOS|A_DeployStandardAccount KC.BYTA (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c KC.PBLC_000c)
+    ;(free.DALOS.DALOS|A_DeployStandardAccount KC.BYTA (keyset-ref-guard "free.User000c-Keyset") KC.KADN_NAME_000c KC.PBLC_000c)
     (free.DALOS.DALOS|A_DeployStandardAccount KC.LUMY (keyset-ref-guard "free.User000d-Keyset") KC.KADN_NAME_000d KC.PBLC_000d)
     (free.DALOS.DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.User000e-Keyset") KC.KADN_NAME_000e KC.PBLC_000e)
     (free.DALOS.DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.User000f-Keyset") KC.KADN_NAME_000f KC.PBLC_000f)
@@ -437,11 +474,14 @@
 (env-sigs
     [   
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Florean", "caps": [] }
         { "key": "PK_DalosAutostake", "caps": [] }
         { "key": "PK_DalosVesting", "caps": [] }
     ]
 )
 
+    (free.TALOS.TALOS|A_SpawnAncientHodler)
     (free.TALOS.TALOS|A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
     
 (env-sigs [])

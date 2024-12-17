@@ -1,3 +1,4 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module UTILS GOVERNANCE
     @doc "Demiourgos 0000 Module - UTILS (Utility Module) \
     \ Module Zero containing Utility Functions \
@@ -11,6 +12,10 @@
     \ \
     \ GUARD LIST UTILS | ATS DALOS DPTF DPMF DPSF DPNF IGNIS VST"
 
+    (defconst NS_TEST "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+    (defconst NS_MAIN "")
+    (defconst NS_USE "free")
+
     ;;Module Governance
     (defcap GOVERNANCE ()
         (compose-capability (UTILS_ADMIN))
@@ -21,7 +26,9 @@
 
     (defconst G-MD_UTILS   (keyset-ref-guard UTILS|DEMIURGOI))
 
-    (defconst UTILS|DEMIURGOI "free.dh_master-keyset")
+    (defconst UTILS|DEMIURGOI 
+        (+ NS_USE ".dh_master-keyset")
+    )
 
     ;;Policies - NONE
 
@@ -167,9 +174,6 @@
     (defconst N75 "Elite Demiurg")
     (defconst N76 "Master Demiurg")
     (defconst N77 "Grand-Master Demiurg")
-
-
-
     ;;========[D] RESTRICTIONS=================================================;;
     ;;            Capabilities Functions (NONE)         [CAP]
     ;;            Function Based Capabilities (NONE)    [CF](have this tag)

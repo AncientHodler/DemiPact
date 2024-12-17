@@ -1,4 +1,10 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module BASIS GOVERNANCE
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
+    (use UTILS)
+    (use DALOS)
+
     (defcap GOVERNANCE ()
         (compose-capability (BASIS-ADMIN))
     )
@@ -6,9 +12,6 @@
         (enforce-guard G-MD_BASIS)
     )
     (defconst G-MD_BASIS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-
-    (use free.UTILS)
-    (use free.DALOS)
 
     (defcap COMPOSE ()
         true
@@ -91,14 +94,13 @@
     ;;
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (BASIS-ADMIN)
-            (write BASIS|PoliciesTable policy-name
+            (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
-    (defun BASIS|C_ReadPolicy:guard (policy-name:string)
-        @doc "Reads the guard of a stored policy"
-        (at "policy" (read BASIS|PoliciesTable policy-name ["policy"]))
+    (defun C_ReadPolicy:guard (policy-name:string)
+        (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
     (defun BASIS|DefinePolicies ()
@@ -128,46 +130,16 @@
         )
     )
     ;;
-    (defschema BASIS|PolicySchema
-        policy:guard
-    )
-    (defschema BrandingSchema
-        logo:string
-        description:string
-        website:string
-        social:[object{SocialSchema}]
-        flag:integer
-        genesis:time
-        premium-until:time
-    )
-    (defschema SocialSchema
-        social-media-name:string
-        social-media-link:string
-    )
-    (defconst SOCIAL|EMPTY
-        {"social-media-name"    : UTILS.BAR
-        ,"social-media-link"    : UTILS.BAR}
-    )
-    (defconst BRANDING|DEFAULT
-        {"logo"                 : UTILS.BAR
-        ,"description"          : UTILS.BAR
-        ,"website"              : UTILS.BAR
-        ,"social"               : [SOCIAL|EMPTY]
-        ,"flag"                 : 3
-        ,"genesis"              : (at "block-time" (chain-data))
-        ,"premium-until"        : (at "block-time" (chain-data))}
-    )
+    
     ;;[T] DPTF Schemas
     (defschema DPTF|PropertiesSchema
-        @doc "Schema for DPTF Token (True Fungibles) Properties \
-            \ Key for Table is DPTF Token id. This ensure a unique entry per Token id"
-        branding:object{BrandingSchema}
-        branding-pending:object{BrandingSchema}
+        branding:object{DALOS.BrandingSchema}
+        branding-pending:object{DALOS.BrandingSchema}
         owner-konto:string
         name:string
         ticker:string
         decimals:integer
-        ;;TM=Token Manager
+        ;;TM
         can-change-owner:bool                 
         can-upgrade:bool
         can-add-special-role:bool
@@ -181,7 +153,7 @@
         origin-mint-amount:decimal
         ;;Roles
         role-transfer-amount:integer
-        ;;DPTF Fee Management
+        ;;Fee Management
         fee-toggle:bool
         min-move:decimal
         fee-promile:decimal
@@ -190,12 +162,9 @@
         fee-unlocks:integer
         primary-fee-volume:decimal
         secondary-fee-volume:decimal
-        ;;Autostake
-        reward-token:[string]           ;;The list of strings are the ATS-Pairs the DPTF Token is part of as RT (Reward Token)
-                                        ;;A DPTF Token can exist as RT in multiple ATS Pairs
-        reward-bearing-token:[string]   ;;The list of strings are the ATS-Pairs the DPTF Token is part of as a cold RBT
-                                        ;;A DPTF Token can exists as cold-RBT in multiple ATS Pairs
-        ;;Vesting
+        ;;ATS-VST
+        reward-token:[string]
+        reward-bearing-token:[string]
         vesting:string
     )
     ;;DPTF|BalanceSchema defined in DALOS Module
@@ -208,15 +177,13 @@
     )
     ;;[M] DPMF Schemas
     (defschema DPMF|PropertiesSchema
-        @doc "Schema for DPMF Token (Meta Fungibles) Properties \
-        \ Key for Table is DPMF Token id. This ensure a unique entry per Token id"
-        branding:object{BrandingSchema}
-        branding-pending:object{BrandingSchema}
+        branding:object{DALOS.BrandingSchema}
+        branding-pending:object{DALOS.BrandingSchema}
         owner-konto:string
         name:string
         ticker:string
         decimals:integer
-        ;;TM=Token Manager
+        ;;TM
         can-change-owner:bool                  
         can-upgrade:bool
         can-add-special-role:bool
@@ -232,16 +199,12 @@
         role-transfer-amount:integer
         ;;Units
         nonces-used:integer
-        ;;Autostake
-        reward-bearing-token:string     ;;String is an ATS Pair the DPMF Token is part of as a Hot-RBT.
-                                        ;;A DPMF can exist as hot-RBT in a single ATS Pair
-        ;;Vesting
+        ;;ATS-VST
+        reward-bearing-token:string
         vesting:string
     )
     (defschema DPMF|BalanceSchema
-        @doc "Schema that Stores Account Balances for DPMF Tokens (Meta Fungibles)\
-            \ Key for the Table is a string composed of: <DPMF id> + UTILS.BAR + <account> \
-            \ This ensure a single entry per DPMF id per account."
+        @doc "Key = <DPMF id> + UTILS.BAR + <account>"
         unit:[object{DPMF|Schema}]
         ;;Special Roles
         role-nft-add-quantity:bool
@@ -263,36 +226,28 @@
         balance:decimal
         meta-data:[object]
     )
-    ;;Neutral MetaFungible Definition, used for existing MetaFungible Accounts that hold no tokens
     (defconst DPMF|NEUTRAL
         { "nonce": 0
         , "balance": 0.0
         , "meta-data": [{}] }
     )
-    ;;Used for non existing MetaFungible Account
     (defconst DPMF|NEGATIVE
         { "nonce": -1
         , "balance": -1.0
         , "meta-data": [{}] }
     )
     (defschema DPMF|Nonce-Balance
-        @doc "Schema for Nonce-Balance, used in Multi Debiting, necesarry for wiping"
         nonce:integer
         balance:decimal
     )
 
-    (deftable BASIS|PoliciesTable:{BASIS|PolicySchema}) 
+    (deftable PoliciesTable:{DALOS.PolicySchema}) 
     (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchema})
     (deftable DPTF|BalanceTable:{DALOS.DPTF|BalanceSchema})
     (deftable DPTF|RoleTable:{DPTF|RoleSchema})
-
     (deftable DPMF|PropertiesTable:{DPMF|PropertiesSchema})
     (deftable DPMF|BalanceTable:{DPMF|BalanceSchema})
     (deftable DPMF|RoleTable:{DPMF|RoleSchema})
-    ;;
-    ;;
-    ;;            BASIS             Submodule
-    ;;
     ;;[CAP]
     (defun DPTF-DPMF|CAP_Owner (id:string token-type:bool)
         (DALOS.DALOS|CAP_EnforceAccountOwnership (DPTF-DPMF|UR_Konto id token-type))
@@ -555,32 +510,6 @@
         )
     )
     ;;[CAP]
-    (defcap BASIS|UPGRADE_BRANDING (id:string token-type:bool)
-        (DPTF-DPMF|UEV_id id token-type)
-        (DPTF-DPMF|CAP_Owner id token-type)
-        (let
-            (
-                (current-flag:integer (BASIS|URB_Flag id token-type false))
-            )
-            (enforce (>= current-flag 1) "Golden Flag cannot be upgraded")
-            (let*
-                (
-                    (premium:time (BASIS|URB_PremiumUntil id token-type false))
-                    (current:time (at "block-time" (chain-data)))
-                    (remaining:decimal (diff-time premium current))
-                )
-                (enforce (< remaining 1296000.0) "Blue Flag has more than 15 days remainig!")
-            )
-        )
-    )
-    (defcap BASIS|BRANDING (id:string token-type:bool)
-        (compose-capability (BASIS|X_BRANDING id token-type))
-        (compose-capability (P|DINIC))
-    )
-    (defcap BASIS|X_BRANDING (id:string token-type:bool)
-        (DPTF-DPMF|UEV_id id token-type)
-        (DPTF-DPMF|CAP_Owner id token-type)
-    )
     (defcap DPTF-DPMF|BURN (id:string client:string amount:decimal token-type:bool)
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
@@ -794,7 +723,7 @@
             )
             (enforce
                 (= (floor min-move-value decimals) min-move-value)
-                (format "The Minimum Transfer amount of {} does not conform with the {} DPTF Token decimals number" [min-move-value id])
+                (format "Min tr amount {} does not conform with the {} DPTF dec. no." [min-move-value id])
             )
             (enforce (or (= min-move-value -1.0) (> min-move-value 0.0)) "Min-Move Value does not compute")
             (DPTF-DPMF|CAP_Owner id true)
@@ -900,7 +829,6 @@
         )
     )
     (defcap DPMF|TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Capability required to execute DPMF Transfers"
         @event
         (compose-capability (DPMF|X_TRANSFER id sender receiver transfer-amount method))
         (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
@@ -934,7 +862,6 @@
                         (enforce (= s true) (format "Transfer-Role doesnt check for sender {}" [sender]))
                         (enforce (= r true) (format "Transfer-Role doesnt check for sender {}" [sender]))
                     ]
-
                 )
             )
             (format "No transfer restrictions exist when transfering {} from {} to {}" [id sender receiver])
@@ -969,7 +896,7 @@
     (defun DPMF|KEYS:[string] ()
         (keys DPMF|BalanceTable)
     )
-    (defun BASIS|UR_Branding:object{BrandingSchema} (id:string token-type:bool pending:bool)
+    (defun BASIS|UR_Branding:object{DALOS.BrandingSchema} (id:string token-type:bool pending:bool)
         (DPTF-DPMF|UEV_id id token-type)
         (if token-type
             (if pending
@@ -1477,75 +1404,6 @@
         (at "reward-bearing-token" (read DPMF|PropertiesTable id ["reward-bearing-token"]))
     )
     ;;[URC]& [UC]
-    (defun BASIS|UC_BrandingLogo:object{BrandingSchema} (input:object{BrandingSchema} logo:string)
-        {"logo"             : logo
-        ,"description"      : (at "description" input)
-        ,"website"          : (at "website" input)
-        ,"social"           : (at "social" input)
-        ,"flag"             : (at "flag" input)
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : (at "premium-until" input)}
-    )
-    (defun BASIS|UC_BrandingDescription:object{BrandingSchema} (input:object{BrandingSchema} description:string)
-        {"logo"             : (at "logo" input)
-        ,"description"      : description
-        ,"website"          : (at "website" input)
-        ,"social"           : (at "social" input)
-        ,"flag"             : (at "flag" input)
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : (at "premium-until" input)}
-    )
-    (defun BASIS|UC_BrandingWebsite:object{BrandingSchema} (input:object{BrandingSchema} website:string)
-        {"logo"             : (at "logo" input)
-        ,"description"      : (at "description" input)
-        ,"website"          : website
-        ,"social"           : (at "social" input)
-        ,"flag"             : (at "flag" input)
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : (at "premium-until" input)}
-    )
-    (defun BASIS|UC_BrandingSocial:object{BrandingSchema} (input:object{BrandingSchema} social:[object{SocialSchema}])
-        {"logo"             : (at "logo" input)
-        ,"description"      : (at "description" input)
-        ,"website"          : (at "website" input)
-        ,"social"           : social
-        ,"flag"             : (at "flag" input)
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : (at "premium-until" input)}
-    )
-    (defun BASIS|UC_BrandingFlag:object{BrandingSchema} (input:object{BrandingSchema} flag:integer)
-        (enforce (contains flag (enumerate 0 4)) "Invalid Flag Integer")
-        {"logo"             : (at "logo" input)
-        ,"description"      : (at "description" input)
-        ,"website"          : (at "website" input)
-        ,"social"           : (at "social" input)
-        ,"flag"             : flag
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : (at "premium-until" input)}
-    )
-    (defun BASIS|UC_BrandingPremium:object{BrandingSchema} (input:object{BrandingSchema} premium:time)
-        {"logo"             : (at "logo" input)
-        ,"description"      : (at "description" input)
-        ,"website"          : (at "website" input)
-        ,"social"           : (at "social" input)
-        ,"flag"             : (at "flag" input)
-        ,"genesis"          : (at "genesis" input)
-        ,"premium-until"    : premium}
-    )
-    (defun BASIS|UC_MaxBluePayment (account:string)
-        (let
-            (
-                (mt:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
-            )
-            (if (<= mt 2)
-                1
-                (if (and (> mt 2)(< mt 5))
-                    2
-                    3
-                )
-            )
-        )
-    )
     (defun ATS|UC_IzRT:bool (reward-token:string)
         (DPTF-DPMF|UEV_id reward-token true)
         (if (= (DPTF|UR_RewardToken reward-token) [UTILS.BAR])
@@ -1576,7 +1434,6 @@
             )
         )
     )
-    
     (defun ATS|UC_IzRBTg:bool (atspair:string reward-bearing-token:string cold-or-hot:bool)
         (DPTF-DPMF|UEV_id reward-bearing-token cold-or-hot)
         (if (= cold-or-hot true)
@@ -1656,12 +1513,6 @@
         )
     )
     (defun DPTF|UC_Fee:[decimal] (id:string amount:decimal)
-        @doc "Computes Fee values for a DPTF Token <id> and <amount> \
-            \ and outputs them into a list: \
-            \ \
-            \ 1st element, is the Primary Fee, which is the standard Fee set up for the Token \
-            \ 2nd element, is the Secondary Fee, which exists if the number of <fee-unlocks> becomes greater than zero \
-            \ 3rd element, is the Remainder, which is the actual amount that reaches the receiver "
         (let
             (
                 (fee-toggle:bool (DPTF|UR_FeeToggle id))
@@ -1694,7 +1545,6 @@
         )
     )
     (defun DPTF|UC_TransferFeeAndMinException:bool (id:string sender:string receiver:string)
-        @doc "Computes if there is a DPTF Fee or Min Transfer Amount Exception"
         (let*
             (
                 (gas-id:string (DALOS.DALOS|UR_IgnisID))
@@ -1715,7 +1565,6 @@
         )
     )
     (defun DPTF|UC_UnlockPrice:[decimal] (id:string)
-        @doc "Computes the <fee-lock> unlock price for a DPTF <id>"
         (UTILS.DPTF|UC_UnlockPrice (DPTF|UR_FeeUnlocks id))
     )
     (defun DPTF|UC_VolumetricTax (id:string amount:decimal)
@@ -1727,8 +1576,6 @@
         {"nonce" : nonce, "balance": balance, "meta-data" : meta-data}
     )
     (defun DPMF|UCC_Pair_Nonce-Balance:[object{DPMF|Nonce-Balance}] (nonce-lst:[integer] balance-lst:[decimal])
-        @doc "Composes a Nonce-Balance object from a <nonce-lst> list and <balance-lst> list \
-        \ Used in <DPMF|X_DebitMultiple>, which itself is part of <DPTF-DPMF|X_Wipe> when used on a DPMF Token"
         (let
             (
                 (nonce-length:integer (length nonce-lst))
@@ -1738,125 +1585,9 @@
             (zip (lambda (x:integer y:decimal) { "nonce": x, "balance": y }) nonce-lst balance-lst)
         )
     )
-    ;;[A]
-    (defun BASIS|A_SetBrandingFlag (id:string token-type:bool flag:integer)
-        (with-capability (BASIS-ADMIN)
-            (DPTF-DPMF|UEV_id id token-type)
-            (enforce (contains flag (enumerate 0 4)) "Invalid Integer Flag")
-            (let*
-                (
-                    (existing-branding:object{BrandingSchema} (BASIS|UR_Branding id token-type false))
-                    (modified-branding:object{BrandingSchema} (BASIS|UC_BrandingFlag existing-branding flag))
-                )
-                (if token-type
-                    (update DPTF|PropertiesTable id
-                        {"branding"             : modified-branding }
-                    )
-                    (update DPMF|PropertiesTable id
-                        {"branding"             : modified-branding}
-                    )
-                )
-            )
-        )
-    )
-    (defun BASIS|A_SetBrandingLive (id:string token-type:bool)
-        (with-capability (BASIS-ADMIN)
-            (let*
-                (
-                    (pending:object{BrandingSchema} (BASIS|UR_Branding id token-type true))
-                    (flag:integer (BASIS|URB_Flag id token-type false))
-                    (updated-flag:integer
-                        (if (<= flag 1)
-                            flag
-                            2
-                        )
-                    )
-                    (updated-branding:object{BrandingSchema} (BASIS|UC_BrandingFlag pending updated-flag))
-                    (np1:object{BrandingSchema} (BASIS|UC_BrandingLogo pending UTILS.BAR))
-                    (np2:object{BrandingSchema} (BASIS|UC_BrandingDescription np1 UTILS.BAR))
-                    (np3:object{BrandingSchema} (BASIS|UC_BrandingWebsite np2 UTILS.BAR))
-                    (np4:object{BrandingSchema} (BASIS|UC_BrandingSocial np3 [SOCIAL|EMPTY]))
-                )
-                (if token-type
-                    (update DPTF|PropertiesTable id
-                        {"branding"             : updated-branding 
-                        ,"branding-pending"     : np4}
-                    )
-                    (update DPMF|PropertiesTable id
-                        {"branding"             : updated-branding
-                        ,"branding-pending"     : np4}
-                    )
-                )
-            )
-        )
-    )
     ;;[C]
-    (defun BASIS|CO_UpgradeBranding (patron:string id:string token-type:bool months:integer)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (BASIS|CP_UpgradeBranding patron id token-type months)
-        )
-    )
-    (defun BASIS|CP_UpgradeBranding (patron:string id:string token-type:bool months:integer)
-        (require-capability (SECURE))
-        (with-capability (BASIS|UPGRADE_BRANDING id token-type)
-            (let*
-                (
-                    (owner:string (DPTF-DPMF|UR_Konto id token-type))
-                    (mp:integer (BASIS|UC_MaxBluePayment owner))
-                    (blue:decimal (DALOS|UR_UsagePrice "blue"))
-                    (current-branding:object{BrandingSchema} (BASIS|UR_Branding id token-type false))
-                    (premium:time (BASIS|URB_PremiumUntil id token-type false))
-                )
-                (enforce (<= months mp) "Invalid Months Integer")
-                (let*
-                    (
-                        (mdec:decimal (dec months))
-                        (days:decimal (* 30.0 mdec))
-                        (seconds:decimal (* 86400.0 days))
-                        (payment:decimal (* mdec blue))
-                        (premium-until:time (add-time premium seconds))
-                        (ub1:object{BrandingSchema} (BASIS|UC_BrandingFlag current-branding 1))
-                        (ub2:object{BrandingSchema} (BASIS|UC_BrandingPremium ub1 premium-until))
-                    )
-                    (DALOS.DALOS|C_TransferRawDalosFuel patron payment)
-                    (if token-type
-                        (update DPTF|PropertiesTable id
-                            {"branding"         : ub2}
-                        )
-                        (update DPMF|PropertiesTable id
-                            {"branding"         : ub2}
-                        )
-                    )
-                )
-            )
-        )
-    )
-    (defun DPTF-DPMF|CO_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{SocialSchema}])
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_UpdateBranding patron id token-type logo description website social)
-        )
-    )
-    (defun DPTF-DPMF|CP_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{SocialSchema}])
-        (require-capability (SECURE))
-        (with-capability (BASIS|BRANDING id token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BRANDING)
-                true
-            )
-            (DPTF-DPMF|X_UpdatePendingBranding id token-type logo description website social)
-            (DALOS.DALOS|X_IncrementNonce patron)
-        )
-    )
-    (defun DPTF-DPMF|CP_ChangeOwnership (patron:string id:string new-owner:string token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF-DPMF|CO_ChangeOwnership patron id new-owner token-type)
-        )
-    )
-    (defun DPTF-DPMF|CO_ChangeOwnership (patron:string id:string new-owner:string token-type:bool)
-        (require-capability (SECURE))
+    (defun DPTF-DPMF|C_ChangeOwnership (patron:string id:string new-owner:string token-type:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|OWNERSHIP-CHANGE id new-owner token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BIGGEST)
@@ -1866,22 +1597,19 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF-DPMF|CO_DeployAccount (id:string account:string token-type:bool)
+    (defun DPTF-DPMF|C_DeployAccount (id:string account:string token-type:bool)
         (enforce-one
             "Deployment of DPTF|DPMF Account not allowed"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_DeployAccount id account token-type)
-        )
-    )
-    (defun DPTF-DPMF|CP_DeployAccount (id:string account:string token-type:bool)
-        (require-capability (SECURE))
-        (DALOS.DALOS|UEV_EnforceAccountExists account)        ;;Validates Dalos Account Existance
-        (DPTF-DPMF|UEV_id id token-type)    ;;Validates Token Existance
+        (DALOS.DALOS|UEV_EnforceAccountExists account)
+        (DPTF-DPMF|UEV_id id token-type)
         (if token-type
             (with-default-read DPTF|BalanceTable (concat [id UTILS.BAR account])
                 { "balance"                             : 0.0
@@ -1935,14 +1663,8 @@
             )
         )
     )
-    (defun DPTF-DPMF|CO_ToggleFreezeAccount (patron:string id:string account:string toggle:bool token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_ToggleFreezeAccount patron id account toggle token-type)
-        )
-    )
-    (defun DPTF-DPMF|CP_ToggleFreezeAccount (patron:string id:string account:string toggle:bool token-type:bool)
-        (require-capability (SECURE))
+    (defun DPTF-DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool token-type:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|FROZEN-ACCOUNT patron id account toggle token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_BIG)
@@ -1953,14 +1675,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF-DPMF|CO_TogglePause (patron:string id:string toggle:bool token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_TogglePause patron id toggle token-type)
-        )
-    )
-    (defun DPTF-DPMF|CP_TogglePause (patron:string id:string toggle:bool token-type:bool)
-        (require-capability (SECURE))
+    (defun DPTF-DPMF|C_TogglePause (patron:string id:string toggle:bool token-type:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|TOGGLE_PAUSE patron id toggle token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron patron DALOS.GAS_MEDIUM)
@@ -1970,20 +1686,14 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF-DPMF|CO_ToggleTransferRole (patron:string id:string account:string toggle:bool token-type:bool)
+    (defun DPTF-DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool token-type:bool)
         (enforce-one
             "Toggle Transfer Role not allowed"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_ToggleTransferRole patron id account toggle token-type)
-        )
-    )
-    (defun DPTF-DPMF|CP_ToggleTransferRole (patron:string id:string account:string toggle:bool token-type:bool)
-        (require-capability (SECURE))
         (with-capability (DPTF-DPMF|TOGGLE_TRANSFER-ROLE patron id account toggle token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -1995,14 +1705,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF-DPMF|CO_Wipe (patron:string id:string atbw:string token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF-DPMF|CP_Wipe patron id atbw token-type)
-        )
-    )
-    (defun DPTF-DPMF|CP_Wipe (patron:string id:string atbw:string token-type:bool)
-        (require-capability (SECURE))
+    (defun DPTF-DPMF|C_Wipe (patron:string id:string atbw:string token-type:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|WIPE patron id atbw token-type)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id atbw))
                 (DALOS.IGNIS|X_Collect patron atbw DALOS.GAS_BIGGEST)
@@ -2013,22 +1717,16 @@
         )
     )
     ;;
-    (defun DPTF|CO_Burn (patron:string id:string account:string amount:decimal)
+    (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal)
         (enforce-one
             "DPTF Burn not allowed"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "LIQUID|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPTF|CP_Burn patron id account amount)
-        )
-    )
-    (defun DPTF|CP_Burn (patron:string id:string account:string amount:decimal)
-        (require-capability (SECURE))
         (with-capability (DPTF-DPMF|BURN id account amount true)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -2038,14 +1736,8 @@
             (DALOS.DALOS|X_IncrementNonce account)
         )
     )
-    (defun DPTF|CO_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_Control patron id cco cu casr cf cw cp)
-        )
-    )
-    (defun DPTF|CP_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (require-capability (SECURE))
+    (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|CONTROL patron id true)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -2055,15 +1747,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF|CO_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
-        )
-    )
-    
-    (defun DPTF|CP_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (require-capability (SECURE))
+    (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
             (let*
                 (
@@ -2112,22 +1797,16 @@
             )
         )
     )
-    (defun DPTF|CO_Mint (patron:string id:string account:string amount:decimal origin:bool)
+    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool)
         (enforce-one
             "DPTF Issue not permitted"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "LIQUID|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+                (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPTF|CP_Mint patron id account amount origin)
-        )
-    )
-    (defun DPTF|CP_Mint (patron:string id:string account:string amount:decimal origin:bool)
-        (require-capability (SECURE))
         (with-capability (DPTF|MINT id account amount origin)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (if origin
@@ -2140,14 +1819,8 @@
             (DALOS.DALOS|X_IncrementNonce account)
         )
     )
-    (defun DPTF|CO_SetFee (patron:string id:string fee:decimal)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_SetFee patron id fee)
-        )
-    )
-    (defun DPTF|CP_SetFee (patron:string id:string fee:decimal)
-        (require-capability (SECURE))
+    (defun DPTF|C_SetFee (patron:string id:string fee:decimal)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF|SET_FEE patron id fee)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -2157,14 +1830,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF|CO_SetFeeTarget (patron:string id:string target:string)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_SetFeeTarget patron id target)
-        )
-    )
-    (defun DPTF|CP_SetFeeTarget (patron:string id:string target:string)
-        (require-capability (SECURE))
+    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF|SET_FEE-TARGET patron id target)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -2174,15 +1841,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF|CO_SetMinMove (patron:string id:string min-move-value:decimal)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_SetMinMove patron id min-move-value)
-        )
-    )
-    (defun DPTF|CP_SetMinMove (patron:string id:string min-move-value:decimal)
-        
-        (require-capability (SECURE))
+    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF|SET_MIN-MOVE patron id min-move-value)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -2192,14 +1852,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF|CO_ToggleFee (patron:string id:string toggle:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_ToggleFee patron id toggle)
-        )
-    )
-    (defun DPTF|CP_ToggleFee (patron:string id:string toggle:bool)
-        (require-capability (SECURE))
+    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF|TOGGLE_FEE patron id toggle)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -2209,14 +1863,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPTF|CO_ToggleFeeLock (patron:string id:string toggle:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|CP_ToggleFeeLock patron id toggle)
-        )
-    )
-    (defun DPTF|CP_ToggleFeeLock (patron:string id:string toggle:bool)
-        (require-capability (SECURE))
+    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (let
             (
                 (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
@@ -2254,14 +1902,8 @@
         )
     )
     ;;
-    (defun DPMF|CO_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|CP_AddQuantity patron id nonce account amount)
-        )
-    )
-    (defun DPMF|CP_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
-        (require-capability (SECURE))
+    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPMF|ADD-QUANTITY id account amount)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -2271,21 +1913,15 @@
             (DALOS.DALOS|X_IncrementNonce account)
         )
     )
-    (defun DPMF|CO_Burn (patron:string id:string nonce:integer account:string amount:decimal)
+    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal)
         (enforce-one
             "DPMF Burn not permitted"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "VST|Sum"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPMF|CP_Burn patron id nonce account amount)
-        )
-    )
-    (defun DPMF|CP_Burn (patron:string id:string nonce:integer account:string amount:decimal)
-        (require-capability (SECURE))
         (with-capability (DPTF-DPMF|BURN id account amount false)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -2295,14 +1931,8 @@
             (DALOS.DALOS|X_IncrementNonce account)
         )
     )
-    (defun DPMF|CO_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|CP_Control patron id cco cu casr cf cw cp ctncr)
-        )
-    )
-    (defun DPMF|CP_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
-        (require-capability (SECURE))
+    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPTF-DPMF|CONTROL id false)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id false) DALOS.GAS_SMALL)
@@ -2312,14 +1942,8 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
-    (defun DPMF|CO_Create:integer (patron:string id:string account:string meta-data:[object])
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|CP_Create patron id account meta-data)
-        )
-    )
-    (defun DPMF|CP_Create:integer (patron:string id:string account:string meta-data:[object])
-        (require-capability (SECURE))
+    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (DPMF|CREATE id account)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -2329,14 +1953,14 @@
             (DPMF|X_Create id account meta-data)
         )
     )
-    (defun DPMF|CO_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
-        (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|CP_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+    (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
+        (enforce-one
+            "DPTF Multi Transfer not permitted"
+            [
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+            ]
         )
-    )
-    (defun DPMF|CP_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
-        (require-capability (SECURE))
         (with-capability (DPMF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
             (let*
                 (
@@ -2386,20 +2010,15 @@
             )
         ) 
     )
-    (defun DPMF|CO_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
+    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
         (enforce-one
             "DPMF Mint not permitted"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPMF|CP_Mint patron id account amount meta-data)
-        )
-    )
-    (defun DPMF|CP_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
-        (require-capability (SECURE))
         (with-capability (DPMF|MINT id account amount)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -2409,42 +2028,38 @@
             (DPMF|X_Mint id account amount meta-data)
         )
     )
-    (defun DPMF|CO_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
         (enforce-one
             "DPMF Transfer not permitted"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|Sum"))
-                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (BASIS|C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "VST|Summoner"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
             ]
         )
-        (with-capability (SECURE)
-            (DPMF|CP_Transfer patron id nonce sender receiver transfer-amount method)
-        )
-    )
-    (defun DPMF|CP_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
-        (require-capability (SECURE))
         (with-capability (DPMF|TRANSFER id sender receiver transfer-amount method)
             (DPMF|XK_Transfer patron id nonce sender receiver transfer-amount method)
         )
     )
     ;;[X]
-    (defun DPTF-DPMF|X_UpdatePendingBranding (id:string token-type:bool logo:string description:string website:string social:[object{SocialSchema}])
-        (require-capability (BASIS|X_BRANDING id token-type))
-        (let*
-            (
-                (pending:object{BrandingSchema} (BASIS|UR_Branding id token-type true))
-                (p1:object{BrandingSchema} (BASIS|UC_BrandingLogo pending logo))
-                (p2:object{BrandingSchema} (BASIS|UC_BrandingDescription p1 description))
-                (p3:object{BrandingSchema} (BASIS|UC_BrandingWebsite p2 website))
-                (p4:object{BrandingSchema} (BASIS|UC_BrandingSocial p3 social))
-            )
-            (if token-type
+    (defun DPTF-DPMF|X_UpdateBranding (id:string token-type:bool pending:bool branding:object{DALOS.BrandingSchema})
+        (enforce-guard (C_ReadPolicy "BRD|Update"))
+        (if token-type
+            (if pending
                 (update DPTF|PropertiesTable id
-                    {"branding-pending" : p4}
+                    {"branding-pending" : branding}
+                )
+                (update DPTF|PropertiesTable id
+                    {"branding" : branding}
+                )
+            )
+            (if pending
+                (update DPMF|PropertiesTable id
+                    {"branding-pending" : branding}
                 )
                 (update DPMF|PropertiesTable id
-                    {"branding-pending" : p4}
+                    {"branding" : branding}
                 )
             )
         )
@@ -2616,7 +2231,7 @@
         )
     )
     (defun DPTF-DPMF|XO_ToggleBurnRole (id:string account:string toggle:bool token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|TgBrRl"))
+        (enforce-guard (C_ReadPolicy "ATS|TgBrRl"))
         (with-capability (DPTF-DPMF|X_TOGGLE_BURN-ROLE id account toggle token-type)
             (DPTF-DPMF|XP_ToggleBurnRole id account toggle token-type)
         )
@@ -2638,12 +2253,13 @@
         )
     )
     (defun DPTF-DPMF|XO_UpdateRewardBearingToken (id:string atspair:string token-type:bool)
-        @doc "Updates Reward-Bearing-Token Data (atspair name) for DPTF|DPMF Token <id> \
-        \ For DPTF Tokens (<token-type> = true), the atspair is added; \
-        \ For DPMF Tokens, (<token-type> = false), the DPTF Token must not have a designated ATS-Pair \
-        \   in the <reward-bearing-token> list. If it has, this new <ats-pair> cant be added, since a DPMF Token \
-        \   is linked immutably to an ATS-Pair, and cannot be unlinked"
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|UpRBT"))
+        (enforce-one
+            "Invalid Permissions to update Reward Bearing Token"
+            [
+                (enforce-guard (C_ReadPolicy "ATS|UpRT"))
+                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+            ]
+        )
         (with-capability (ATS|UPDATE_RBT)
             (ATS|UEV_UpdateRewardBearingToken id token-type)
             (DPTF-DPMF|XP_UpdateRewardBearingToken id atspair token-type)
@@ -2668,9 +2284,8 @@
             )
         )
     )
-
     (defun DPTF-DPMF|XO_UpdateVesting (dptf:string dpmf:string)
-        (enforce-guard (BASIS|C_ReadPolicy "VST|UpVes"))
+        (enforce-guard (C_ReadPolicy "VST|UpVes"))
         (with-capability (VST|UPDATE)
             (DPTF-DPMF|XP_UpdateVesting dptf dpmf)
         )
@@ -2733,7 +2348,7 @@
             }
         )
         (with-capability (SECURE)
-            (DPTF-DPMF|CP_DeployAccount (DALOS|UC_Makeid ticker) account true)    
+            (DPTF-DPMF|C_DeployAccount (DALOS|UC_Makeid ticker) account true)    
         )
         (DALOS.DALOS|UC_Makeid ticker)
     )
@@ -2797,7 +2412,7 @@
         )
     )
     (defun DPTF|XO_Burn (id:string account:string amount:decimal)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|BrTF"))
+        (enforce-guard (C_ReadPolicy "ATS|BrTF"))
         (with-capability (DPTF-DPMF|X_BURN id account amount true)
             (DPTF|XP_Burn id account amount)
         )
@@ -2812,7 +2427,7 @@
             "Credit Not permitted"
             [
                 (enforce-guard (create-capability-guard (DPTF|CREDIT)))
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|CrTF"))
+                (enforce-guard (C_ReadPolicy "ATS|CrTF"))
             ]
         )
         (with-capability (DPTF|CREDIT_PUR)
@@ -2882,7 +2497,7 @@
             "Standard Debit Not permitted"
             [
                 (enforce-guard (create-capability-guard (DPTF|DEBIT)))
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|DbTF"))
+                (enforce-guard (C_ReadPolicy "ATS|DbTF"))
             ]
         )
         (with-capability (DPTF|DEBIT_PUR)
@@ -2915,7 +2530,7 @@
         )
     )
     (defun DPTF|XO_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|TgFeRl"))
+        (enforce-guard (C_ReadPolicy "ATS|TgFeRl"))
         (with-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle)
             (DPTF|XP_ToggleFeeExemptionRole id account toggle)
         )
@@ -2932,7 +2547,7 @@
         )
     )
     (defun DPTF|XO_ToggleMintRole (id:string account:string toggle:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|TgMnRl"))
+        (enforce-guard (C_ReadPolicy "ATS|TgMnRl"))
         (with-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle)
             (DPTF|XP_ToggleMintRole id account toggle)
         )
@@ -2949,7 +2564,7 @@
         )
     )
     (defun DPTF|XO_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|UpFees"))
+        (enforce-guard (C_ReadPolicy "ATS|UpFees"))
         (with-capability (DPTF|UPDATE_FEES_PUR)
             (DPTF-DPMF|UEV_Amount id amount true)
             (DPTF|XP_UpdateFeeVolume id amount primary)
@@ -2974,10 +2589,11 @@
     )
     (defun DPTF|XO_UpdateRewardToken (atspair:string id:string direction:bool)
         (enforce-one
-            "Invalid Permissions to update RewardToken"
+            "Invalid Permissions to update Reward Token"
             [
-                (enforce-guard (BASIS|C_ReadPolicy "ATS|UpRT"))
-                (enforce-guard (BASIS|C_ReadPolicy "OUROBOROS|UpdateRewardToken"))
+                (enforce-guard (C_ReadPolicy "ATS|UpRT"))
+                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+                (enforce-guard (C_ReadPolicy "OUROBOROS|UpdateRewardToken"))
             ]
         )
         (with-capability (DPTF|UPDATE_RT)
@@ -3023,7 +2639,7 @@
         )
     )
     (defun DPTF-DPMF|XO_WriteRoles (id:string account:string rp:integer d:bool token-type:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|WR"))
+        (enforce-guard (C_ReadPolicy "ATS|WR"))
         (with-capability (BASIS|X_WRITE-ROLES id account rp token-type)
             (DPTF-DPMF|XP_WriteRoles id account rp d token-type)
         )
@@ -3194,7 +2810,6 @@
     )
     (defun DPMF|X_Credit (id:string nonce:integer meta-data:[object] account:string amount:decimal)
         (require-capability (DPMF|CREDIT))
-        ;(enforce (> amount 0.0) "Crediting amount must be greater than zero") ;;Allready checked as part of the DPMF|X_TRANSFER
         (let*
             (
                 (create-role-account:string (DPMF|UR_CreateRoleAccount id))
@@ -3400,7 +3015,7 @@
             ,"vesting"              : UTILS.BAR}
         )
         (with-capability (SECURE)
-            (DPTF-DPMF|CP_DeployAccount (DALOS|UC_Makeid ticker) account false)    
+            (DPTF-DPMF|C_DeployAccount (DALOS|UC_Makeid ticker) account false)    
         )
         (DALOS|UC_Makeid ticker)
     )
@@ -3444,7 +3059,7 @@
         (DALOS.DALOS|X_IncrementNonce sender)
     )
     (defun DPMF|XO_MoveCreateRole (id:string receiver:string)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|MCRl"))
+        (enforce-guard (C_ReadPolicy "ATS|MCRl"))
         (with-capability (DPMF|X_MOVE_CREATE-ROLE id receiver)
             (DPMF|XP_MoveCreateRole id receiver)
         )
@@ -3462,7 +3077,7 @@
         )
     )
     (defun DPMF|XO_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        (enforce-guard (BASIS|C_ReadPolicy "ATS|TgAqRl"))
+        (enforce-guard (C_ReadPolicy "ATS|TgAqRl"))
         (with-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle)
             (DPMF|XP_ToggleAddQuantityRole id account toggle)
         )
@@ -3475,11 +3090,10 @@
     )
 )
 
-(create-table BASIS|PoliciesTable)
+(create-table PoliciesTable)
 (create-table DPTF|PropertiesTable)
 (create-table DPTF|BalanceTable)
 (create-table DPTF|RoleTable)
-
 (create-table DPMF|PropertiesTable)
 (create-table DPMF|BalanceTable)
 (create-table DPMF|RoleTable)

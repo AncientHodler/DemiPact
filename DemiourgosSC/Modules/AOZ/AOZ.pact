@@ -1,5 +1,12 @@
+
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module AGEOFZALMOXIS GOVERNANCE
-    @doc "AoZ Module"
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.TALOS)
+    (use BASIS)
+    (use ATS)
+    (use TALOS)
 
     ;;Module Governance
     (defcap GOVERNANCE ()
@@ -165,7 +172,7 @@
         )
     )
     (defun AOZ|A_AddATSPair (atspair:string)
-        (AUTOSTAKE.ATS|UEV_id atspair)
+        (ATS.ATS|UEV_id atspair)
         (require-capability (AOZ-ADMIN))
         (with-read AOZ|Assets AOZ|INFO
             { "atspair-ids" := ats }

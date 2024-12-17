@@ -1,4 +1,13 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module LIQUID GOVERNANCE
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
+    (use UTILS)
+    (use DALOS)
+    (use BASIS)
+    (use ATS)
 
     (defcap GOVERNANCE ()
         (compose-capability (LIQUID-ADMIN))
@@ -16,14 +25,11 @@
     (defconst G-MD_LIQUID   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
     (defconst G-SC_LIQUID   (keyset-ref-guard LIQUID|SC_KEY))
 
-    (defconst LIQUID|SC_KEY "free.dh_sc_kadenaliquidstaking-keyset")
+    (defconst LIQUID|SC_KEY
+        (+ UTILS.NS_USE ".dh_sc_kadenaliquidstaking-keyset")
+    )
     (defconst LIQUID|SC_NAME DALOS.LIQUID|SC_NAME)
     (defconst LIQUID|SC_KDA-NAME (create-principal LIQUID|GUARD))
-
-    (use free.UTILS)
-    (use free.DALOS)
-    (use free.BASIS)
-    (use free.AUTOSTAKE)
 
     (defcap SUMMONER ()
         true
@@ -36,14 +42,14 @@
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (LIQUID-ADMIN)
-            (write LQD|PoliciesTable policy-name
+            (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun C_ReadPolicy:guard (policy-name:string)
         @doc "Reads the guard of a stored policy"
-        (at "policy" (read LQD|PoliciesTable policy-name ["policy"]))
+        (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
     (defun LIQUID|DefinePolicies ()
@@ -56,7 +62,7 @@
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))
         )
@@ -67,7 +73,7 @@
     )
     (defun LIQUID|SetGovernor (patron:string)
         (with-capability (SUMMONER)
-            (DALOS.DALOS|CO_RotateGovernor
+            (DALOS.DALOS|C_RotateGovernor
                 patron
                 LIQUID|SC_NAME
                 (create-capability-guard (LIQUID|GOV))
@@ -79,12 +85,7 @@
     )
     (defconst LIQUID|GUARD (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
 
-    (defschema LQD|PolicySchema
-        @doc "Schema that stores external policies, that are able to operate within this module"
-        policy:guard
-    )
-
-    (deftable LQD|PoliciesTable:{LQD|PolicySchema})
+    (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
     ;;            LIQUID            Submodule
     ;;
@@ -144,8 +145,8 @@
                     (w-kda-id:string (DALOS.DALOS|UR_WrappedKadenaID))
                 )
                 (DALOS.DALOS|C_TransferDalosFuel kadena-patron LIQUID|SC_KDA-NAME amount)
-                (BASIS.DPTF|CO_Mint patron w-kda-id LIQUID|SC_NAME amount false)
-                (AUTOSTAKE.DPTF|CO_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount true)
+                (BASIS.DPTF|C_Mint patron w-kda-id LIQUID|SC_NAME amount false)
+                (ATS.DPTF|C_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount true)
             )
         )
     )
@@ -164,11 +165,11 @@
                     (kadena-patron:string (DALOS.DALOS|UR_AccountKadena unwrapper))
                     (w-kda-id:string (DALOS.DALOS|UR_WrappedKadenaID))
                 )
-                (AUTOSTAKE.DPTF|CO_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount true)
-                (BASIS.DPTF|CO_Burn patron w-kda-id)
+                (ATS.DPTF|C_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount true)
+                (BASIS.DPTF|C_Burn patron w-kda-id)
                 (DALOS.DALOS|C_TransferDalosFuel LIQUID|SC_KDA-NAME kadena-patron amount)
             )
         )
     )
 )
-(create-table LQD|PoliciesTable)
+(create-table PoliciesTable)

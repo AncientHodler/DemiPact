@@ -60,17 +60,17 @@
     ]
 )
 
-(format "Reward Tokens for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RewardTokenList "PlebeicStrength-98c486052a51")])
-(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
-(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
+(format "Reward Tokens for PlebeicStrength are {}" [(free.ATS.ATS|UR_RewardTokenList "PlebeicStrength-98c486052a51")])
+(format "Reward Tokens Resident Amounts for PlebeicStrength are {}" [(free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for PlebeicStrength are {}" [(free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false)])
 (format "PlebeicStrength is {};"
     [
-        (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+        (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
     ]
 )
-(format "C-RBT for PlebeicStrength is {}" [(free.AUTOSTAKE.ATS|UR_ColdRewardBearingToken "PlebeicStrength-98c486052a51")])
+(format "C-RBT for PlebeicStrength is {}" [(free.ATS.ATS|UR_ColdRewardBearingToken "PlebeicStrength-98c486052a51")])
 (format "PlebiumDenarius Supply is {}" [(free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
-(format "PlebeicStrength RBT-Supply is {}" [(free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")])
+(format "PlebeicStrength RBT-Supply is {}" [(free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")])
 
         (free.TALOS.ATS|C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
         (free.TALOS.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
@@ -79,14 +79,14 @@
 
 (format "PlebeicStrength is {};"
     [
-        (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+        (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
     ]
 )
 
 (format "Cold Recovery is {} and Hot Recovery is {} for PlebeicStrength-98c486052a51"
     [
-        (free.AUTOSTAKE.ATS|UR_ToggleColdRecovery "PlebeicStrength-98c486052a51")
-        (free.AUTOSTAKE.ATS|UR_ToggleHotRecovery "PlebeicStrength-98c486052a51")
+        (free.ATS.ATS|UR_ToggleColdRecovery "PlebeicStrength-98c486052a51")
+        (free.ATS.ATS|UR_ToggleHotRecovery "PlebeicStrength-98c486052a51")
     ]
 )
 
@@ -123,21 +123,21 @@
         (print "Plebeic Strength BEFORE HOT Recovery")
         (format "PlebeicStrength is {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
         (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
             [
-                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
                 (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
                 (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
             ]
         )
         (format "AUTOSTAKE has BEFORE REDEEM {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
             [
-                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 0 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
             ]
         )
         (print "BEFORE BLOCK===================================")
@@ -183,21 +183,21 @@
         (print "Plebeic Strength BEFORE HOT Recovery")
         (format "PlebeicStrength is {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
         ]
         )
         (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
             [
-                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
                 (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
                 (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
             ]
         )
         (format "AUTOSTAKE has AFTER REDEEM {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
             [
-                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 0 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
             ]
         )
         (print "AFTER BLOCK====================================")
@@ -216,7 +216,7 @@
 
 (format "Plebeic Strength Setting Lock state is {}"
     [
-        (free.AUTOSTAKE.ATS|UR_Lock "PlebeicStrength-98c486052a51")
+        (free.ATS.ATS|UR_Lock "PlebeicStrength-98c486052a51")
     ]
 )
 
@@ -236,21 +236,21 @@
         (print "Plebeic Strength BEFORE SYPHON")
         (format "PlebeicStrength is {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
         (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
             [
-                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
                 (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
                 (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
             ]
         )
         (format "AUTOSTAKE has BEFORE SYPHON {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
             [
-                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 0 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
             ]
         )
         (print "BEFORE Syphon BLOCK===================================")
@@ -260,7 +260,7 @@
         (print "AFTER Syphon  BLOCK====================================")
         (format "Max Syphon is {}"
             [
-                (free.AUTOSTAKE.ATS|URC_MaxSyphon "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|URC_MaxSyphon "PlebeicStrength-98c486052a51")
             ]
         )
         (free.TALOS.ATS|C_Syphon KC.AOZT KC.EMMA "PlebeicStrength-98c486052a51" [125.0 46.25 76.25])
@@ -277,21 +277,21 @@
         (print "Plebeic Strength AFTER SYPHON")
         (format "PlebeicStrength is {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
         (format "Its RBT Supply is {}; C-RBT is {}; Hot-RBT is {}"
             [
-                (free.AUTOSTAKE.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")
                 (free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)
                 (free.BASIS.DPTF-DPMF|UR_Supply "DDKOSON-98c486052a51" false)
             ]
         )
         (format "AUTOSTAKE has AFTER SYPHON {} PKOSON, {} EKOSON, {} AKOSON in Plebeic Strength" 
             [
-                (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-                (at "resident" (at 2 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 0 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 1 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+                (at "resident" (at 2 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
             ]
         )
         (print "AFTER Syphon BLOCK====================================")
@@ -327,13 +327,13 @@
         )
         (format "PlebeicStrength is BEFORE {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
         (format "BEFORE COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
             [
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
             ]
         )
 
@@ -344,8 +344,8 @@
 
         (format "AFTER COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
             [
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
             ]
         )
 
@@ -402,13 +402,13 @@
     (print "VERIFICATION===========================================")
     (format "PlebeicStrength is AFTER {};"
         [
-            (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+            (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
         ]
     )
     (format "AUTOSTAKE has AFTER Removal of RT {} PKOSON, {} EKOSON" 
         [
-            (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
-            (at "resident" (at 1 (free.AUTOSTAKE.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            (at "resident" (at 0 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
+            (at "resident" (at 1 (free.ATS.ATS|UR_RewardTokens "PlebeicStrength-98c486052a51")))
         ]
     )
     (format "AOZET has as RT AFTER Removal of RT {} PKOSON, {} EKOSON, {} AKOSON." 
@@ -463,13 +463,13 @@
         ;;AOZET RBT Info
         (format "PlebeicStrength is BEFORE {};"
             [
-                (free.AUTOSTAKE.ATS|UC_Index "PlebeicStrength-98c486052a51")
+                (free.ATS.ATS|UC_Index "PlebeicStrength-98c486052a51")
             ]
         )
         (format "BEFORE COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
             [
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
-                (at 2 (free.AUTOSTAKE.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" true))
+                (at 2 (free.ATS.ATS|UR_RoUAmountList "PlebeicStrength-98c486052a51" false))
             ]
         )
 (env-gas)

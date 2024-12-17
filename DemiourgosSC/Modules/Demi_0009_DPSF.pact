@@ -61,7 +61,8 @@
     (defschema DPSF|PropertiesSchema
         @doc "Schema for DPSF Token (Semi Fungibles) Properties \
         \ Key for Table is DPSF Token id. This ensure a unique entry per Token id"
-        branding:{BASIS.BrandingSchema}
+        branding:object{BASIS.BrandingSchema}
+        branding-pending:object{BASIS.BrandingSchema}
         owner-konto:string
         name:string
         ticker:string
@@ -89,17 +90,17 @@
 
         unit:[object{DPSF|Schema}]
         ;;Special Roles
-        role-nft-add-quantity:bool
-        role-nft-burn:bool
-        role-nft-create:bool
-        role-nft-update:bool
-        role-nft-recreate:bool
-        role-modify-royalties:bool
-        role-set-new-uri:bool
-        role-modify-creator:bool
-        role-transfer:bool
+        role-nft-add-quantity:bool      ;;add quantity for a specific SFT
+        role-nft-burn:bool              ;;burn qunatity for a specific SFT
+        role-nft-create:bool            ;;create a new SFT (just create, with no quantity)
+        role-nft-update:bool            ;;allows update of Metadata of SFT
+        role-nft-recreate:bool          ;;allows to recreate the whole SFT (meta-data and attributes)
+        role-modify-royalties:bool      ;;allows to modify royalty value for the whole a specific SFT
+        role-set-new-uri:bool           ;;allows to set new URIs of specific SFTs
+        role-modify-creator:bool        ;;allows to modify the creator of a specific SFT
+        role-transfer:bool              ;;allows to modify the transfer role of a specific SFT
         ;;States
-        frozen:bool
+        frozen:bool                     ;;stores if the account is frozen for this specific Collection
     )
     (defschema DPSF|Schema
         nonce:integer

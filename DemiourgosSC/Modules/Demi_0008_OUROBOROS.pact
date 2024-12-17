@@ -1,4 +1,17 @@
+;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
 (module OUROBOROS GOVERNANCE
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.AUTOSTAKE-MANAGER)
+    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.LIQUID)
+    (use UTILS)
+    (use DALOS)
+    (use BASIS)
+    (use ATS)
+    (use AUTOSTAKE-MANAGER)
+    (use LIQUID)
 
     (defcap GOVERNANCE ()
         (compose-capability (OUROBOROS-ADMIN))
@@ -17,15 +30,11 @@
     (defconst G-SC_OUROBOROS (keyset-ref-guard OUROBOROS|SC_KEY))
 
 
-    (defconst OUROBOROS|SC_KEY "free.dh_sc_ouroboros-keyset")
+    (defconst OUROBOROS|SC_KEY
+        (+ UTILS.NS_USE ".dh_sc_ouroboros-keyset")
+    )
     (defconst OUROBOROS|SC_NAME DALOS.OUROBOROS|SC_NAME)
     (defconst OUROBOROS|SC_KDA-NAME (create-principal OUROBOROS|GUARD))
-
-    (use free.UTILS)
-    (use free.DALOS)
-    (use free.BASIS)
-    (use free.AUTOSTAKE)
-    (use free.LIQUID)
 
     (defcap COMPOSE ()
         true
@@ -66,23 +75,23 @@
             "OUROBOROS|UpdateRewardToken"
             (create-capability-guard (P|DPTF|UPDATE_RT))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "OUROBOROS|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "OUROBOROS|RemoteAutostakeGovernor"
             (create-capability-guard (P|ATS|REMOTE-GOV))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "OUROBOROS|ReshapeUnstakeAccount"
             (create-capability-guard (P|ATS|RESHAPE))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "OUROBOROS|RemoveSecondaryRT"
             (create-capability-guard (P|ATS|RM_SECONDARY_RT))
         )
-        (AUTOSTAKE.A_AddPolicy
+        (ATS.A_AddPolicy
             "OUROBOROS|UpdateROU"
             (create-capability-guard (P|ATS|UPDATE_ROU))
         )
@@ -94,7 +103,7 @@
     )
     (defun OUROBOROS|SetGovernor (patron:string)
         (with-capability (SUMMONER)
-            (DALOS.DALOS|CO_RotateGovernor
+            (DALOS.DALOS|C_RotateGovernor
                 patron
                 OUROBOROS|SC_NAME
                 (create-capability-guard (OUROBOROS|GOV))
@@ -109,21 +118,18 @@
     ;;P
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (OUROBOROS-ADMIN)
-            (write OUROB|PoliciesTable policy-name
+            (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read OUROB|PoliciesTable policy-name ["policy"]))
+        (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
     ;;
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
     ;;
-    (defschema OUROB|PolicySchema
-        policy:guard
-    )
     (defschema DPTF|ID-Amount
         id:string
         amount:decimal
@@ -137,7 +143,7 @@
         release-date:time
     )
 
-    (deftable OUROB|PoliciesTable:{OUROB|PolicySchema})
+    (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
     ;;            BASIS+AUTOSTAKE   Submodule
     ;;[UEV]
@@ -203,14 +209,14 @@
                 (BASIS.DPTF|P-KEYS)
                 (if (= position 2)
                     (BASIS.DPMF|P-KEYS)
-                    (AUTOSTAKE.ATS|P-KEYS)
+                    (ATS.ATS|P-KEYS)
                 )
             )
             (if (= position 1)
                 (BASIS.DPTF|KEYS)
                 (if (= position 2)
                     (BASIS.DPMF|KEYS)
-                    (AUTOSTAKE.ATS|KEYS)
+                    (ATS.ATS|KEYS)
                 )
             )
         )
@@ -276,18 +282,18 @@
         (compose-capability (P|ATS|REMOTE-GOV))
         (compose-capability (P|ATS|UPDATE_ROU))
         (compose-capability (SUMMONER))
-        (AUTOSTAKE.ATS|CAP_Owner atspair)
-        (AUTOSTAKE.ATS|UEV_SyphoningState atspair true)
+        (ATS.ATS|CAP_Owner atspair)
+        (ATS.ATS|UEV_SyphoningState atspair true)
         (let*
             (
-                (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                 (l0:integer (length syphon-amounts))
                 (l1:integer (length rt-lst))
-                (max-syphon:[decimal] (AUTOSTAKE.ATS|URC_MaxSyphon atspair))
+                (max-syphon:[decimal] (ATS.ATS|URC_MaxSyphon atspair))
                 (max-syphon-sum:decimal (fold (+) 0.0 max-syphon))
                 (input-syphon-sum:decimal (fold (+) 0.0 syphon-amounts))
 
-                (resident-amounts:[decimal] (AUTOSTAKE.ATS|UR_RoUAmountList atspair true))
+                (resident-amounts:[decimal] (ATS.ATS|UR_RoUAmountList atspair true))
                 (supply-check:[bool] (zip (lambda (x:decimal y:decimal) (<= x y)) syphon-amounts resident-amounts))
                 (tr-nr:integer (length (LIST|UC_Search supply-check true)))
             )
@@ -313,10 +319,10 @@
         (let*
             (
                 (index:decimal (ATS|UC_Index atspair))
-                (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                 (l1:integer (length rt-amounts))
                 (l2:integer (length rt-lst))
-                (owner:string (AUTOSTAKE.ATS|UR_OwnerKonto atspair))
+                (owner:string (ATS.ATS|UR_OwnerKonto atspair))
 
             )
             (enforce (= index -1.0) "Kickstarting can only be done on ATS-Pairs with -1 Index")
@@ -350,12 +356,12 @@
         (compose-capability (P|ATS|RM_SECONDARY_RT))
         (compose-capability (P|DPTF|UPDATE_RT))
         (compose-capability (SUMMONER))
-        (AUTOSTAKE.ATS|CAP_Owner atspair)
-        (AUTOSTAKE.ATS|UEV_UpdateColdAndHot atspair)
-        (AUTOSTAKE.ATS|UEV_ParameterLockState atspair false)
+        (ATS.ATS|CAP_Owner atspair)
+        (ATS.ATS|UEV_UpdateColdAndHot atspair)
+        (ATS.ATS|UEV_ParameterLockState atspair false)
         (let
             (
-                (rt-position:integer (AUTOSTAKE.ATS|UC_RewardTokenPosition atspair reward-token))
+                (rt-position:integer (ATS.ATS|UC_RewardTokenPosition atspair reward-token))
             )
             (enforce (> rt-position 0) "Primal RT cannot be removed")
         )
@@ -378,7 +384,7 @@
                     (BASIS.DPTF-DPMF|UEV_id account-or-token-id true)
                     (if (= table-to-query 2)
                         (BASIS.DPTF-DPMF|UEV_id account-or-token-id false)
-                        (AUTOSTAKE.ATS|UEV_id account-or-token-id) 
+                        (ATS.ATS|UEV_id account-or-token-id) 
                     )
                 )
             )
@@ -394,11 +400,11 @@
     )
     ;;[URC] & [UC]
     (defun ATS|UC_RT-Unbonding (atspair:string reward-token:string)
-        (AUTOSTAKE.ATS|UEV_RewardTokenExistance atspair reward-token true)
+        (ATS.ATS|UEV_RewardTokenExistance atspair reward-token true)
         (fold
             (lambda
                 (acc:decimal account:string)
-                (+ acc (AUTOSTAKE.ATS|UC_AccountUnbondingBalance atspair account reward-token))
+                (+ acc (ATS.ATS|UC_AccountUnbondingBalance atspair account reward-token))
             )
             0.0
             (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false)
@@ -437,19 +443,19 @@
         (with-capability (ATS|KICKSTART kickstarter atspair rt-amounts rbt-request-amount)
             (let
                 (
-                    (rbt-id:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
-                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (rbt-id:string (ATS.ATS|UR_ColdRewardBearingToken atspair))
+                    (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                 )
-                (DPTF|XP_MultiTransfer patron rt-lst kickstarter AUTOSTAKE.ATS|SC_NAME rt-amounts true)
+                (DPTF|X_MultiTransfer patron rt-lst kickstarter ATS.ATS|SC_NAME rt-amounts true)
                 (map
                     (lambda
                         (rto:object{DPTF|ID-Amount})
-                        (AUTOSTAKE.ATS|XO_UpdateRoU atspair (at "id" rto) true true (at "amount" rto))
+                        (ATS.ATS|XO_UpdateRoU atspair (at "id" rto) true true (at "amount" rto))
                     )
                     (zip (lambda (x:string y:decimal) { "id":x, "amount":y}) rt-lst rt-amounts)
                 )
-                (BASIS.DPTF|CO_Mint patron rbt-id AUTOSTAKE.ATS|SC_NAME rbt-request-amount false)
-                (AUTOSTAKE.DPTF|CO_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount true)
+                (BASIS.DPTF|C_Mint patron rbt-id ATS.ATS|SC_NAME rbt-request-amount false)
+                (ATS.DPTF|C_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount true)
             )
         )
     )
@@ -464,14 +470,14 @@
         (with-capability (ATS|SYPHON atspair syphon-amounts)
             (let
                 (
-                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                 )
                 (map
                     (lambda
                         (index:integer)
                         (if (> (at index syphon-amounts) 0.0)
                             (with-capability (COMPOSE)
-                                (AUTOSTAKE.DPTF|CO_Transfer patron (at index rt-lst) AUTOSTAKE.ATS|SC_NAME syphon-target (at index syphon-amounts) true)
+                                (ATS.DPTF|C_Transfer patron (at index rt-lst) ATS.ATS|SC_NAME syphon-target (at index syphon-amounts) true)
                                 (ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index syphon-amounts))
                             )
                             true
@@ -502,10 +508,10 @@
                     (elapsed-time:decimal (diff-time present-time birth-date))
 
                     (atspair:string (BASIS.DPMF|UR_RewardBearingToken id))
-                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
-                    (h-promile:decimal (AUTOSTAKE.ATS|UR_HotRecoveryStartingFeePromile atspair))
-                    (h-decay:integer (AUTOSTAKE.ATS|UR_HotRecoveryDecayPeriod atspair))
-                    (h-fr:bool (AUTOSTAKE.ATS|UR_HotRecoveryFeeRedirection atspair))
+                    (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
+                    (h-promile:decimal (ATS.ATS|UR_HotRecoveryStartingFeePromile atspair))
+                    (h-decay:integer (ATS.ATS|UR_HotRecoveryDecayPeriod atspair))
+                    (h-fr:bool (ATS.ATS|UR_HotRecoveryFeeRedirection atspair))
 
                     (total-time:decimal (* 86400.0 (dec h-decay)))
                     (end-time:time (add-time birth-date (hours (* 24 h-decay))))
@@ -515,16 +521,16 @@
                             (floor (* current-nonce-balance (/ (- 1000.0 (* h-promile (- 1.0 (/ elapsed-time total-time)))) 1000.0)) precision)
                         )
                     )
-                    (total-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair current-nonce-balance))
-                    (earned-rts:[decimal] (AUTOSTAKE.ATS|UC_RTSplitAmounts atspair earned-rbt))
+                    (total-rts:[decimal] (ATS.ATS|UC_RTSplitAmounts atspair current-nonce-balance))
+                    (earned-rts:[decimal] (ATS.ATS|UC_RTSplitAmounts atspair earned-rbt))
                     (fee-rts:[decimal] (zip (lambda (x:decimal y:decimal) (- x y)) total-rts earned-rts))
                 )
             ;;1]Redeemer sends the whole Hot-Rbt to ATS|SC_NAME
-                (BASIS.DPMF|CO_Transfer patron id nonce redeemer AUTOSTAKE.ATS|SC_NAME current-nonce-balance true)
+                (BASIS.DPMF|C_Transfer patron id nonce redeemer ATS.ATS|SC_NAME current-nonce-balance true)
             ;;2]ATS|SC_NAME burns the whole Hot-RBT
-                (BASIS.DPMF|CO_Burn patron id nonce AUTOSTAKE.ATS|SC_NAME current-nonce-balance)
+                (BASIS.DPMF|C_Burn patron id nonce ATS.ATS|SC_NAME current-nonce-balance)
             ;;3]ATS|SC_NAME transfers the proper amount of RT(s) to the Redeemer, and update RoU
-                (DPTF|XP_MultiTransfer patron rt-lst AUTOSTAKE.ATS|SC_NAME redeemer earned-rts true)
+                (DPTF|X_MultiTransfer patron rt-lst ATS.ATS|SC_NAME redeemer earned-rts true)
                 (map
                     (lambda
                         (index:integer)
@@ -537,7 +543,7 @@
                     (map
                         (lambda
                             (index:integer)
-                            (BASIS.DPTF|CO_Burn patron (at index rt-lst) AUTOSTAKE.ATS|SC_NAME (at index fee-rts))
+                            (BASIS.DPTF|C_Burn patron (at index rt-lst) ATS.ATS|SC_NAME (at index fee-rts))
                         )
                         (enumerate 0 (- (length rt-lst) 1))
                     )
@@ -569,16 +575,16 @@
             (let*
                 (
                     (atspair:string (BASIS.DPMF|UR_RewardBearingToken id))
-                    (c-rbt:string (AUTOSTAKE.ATS|UR_ColdRewardBearingToken atspair))
+                    (c-rbt:string (ATS.ATS|UR_ColdRewardBearingToken atspair))
                 )
             ;;1]Recover sends HotRBT to ATS|SC_NAME
-                (BASIS.DPMF|CO_Transfer patron id nonce recoverer AUTOSTAKE.ATS|SC_NAME amount true)
+                (BASIS.DPMF|C_Transfer patron id nonce recoverer ATS.ATS|SC_NAME amount true)
             ;;2]ATS|SC_NAME burns Hot RBT
-                (BASIS.DPMF|CO_Burn patron id nonce AUTOSTAKE.ATS|SC_NAME amount)
+                (BASIS.DPMF|C_Burn patron id nonce ATS.ATS|SC_NAME amount)
             ;;3]ATS|SC_NAME mints Cold RBT
-                (BASIS.DPTF|CO_Mint patron c-rbt ATS|SC_NAME amount false)
+                (BASIS.DPTF|C_Mint patron c-rbt ATS|SC_NAME amount false)
             ;;4]ATS|SC_Name transfer Cold RBT to recoverer
-                (AUTOSTAKE.DPTF|CO_Transfer patron c-rbt ATS|SC_NAME recoverer amount true)
+                (ATS.DPTF|C_Transfer patron c-rbt ATS|SC_NAME recoverer amount true)
             )
         ) 
     )
@@ -593,64 +599,46 @@
         (with-capability (ATS|REMOVE_SECONDARY atspair reward-token)
             (let*
                 (
-                    (rt-lst:[string] (AUTOSTAKE.ATS|UR_RewardTokenList atspair))
+                    (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                     (remove-position:integer (at 0 (UTILS.LIST|UC_Search rt-lst reward-token)))
                     (primal-rt:string (at 0 rt-lst))
-                    (resident-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair true)))
-                    (unbound-sum:decimal (at remove-position (AUTOSTAKE.ATS|UR_RoUAmountList atspair false)))
+                    (resident-sum:decimal (at remove-position (ATS.ATS|UR_RoUAmountList atspair true)))
+                    (unbound-sum:decimal (at remove-position (ATS.ATS|UR_RoUAmountList atspair false)))
                     (remove-sum:decimal (+ resident-sum unbound-sum))
 
                     (accounts-with-atspair-data:[string] (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false))
                 )
             ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
-                (AUTOSTAKE.DPTF|CO_Transfer patron reward-token ATS|SC_NAME remover remove-sum true)
+                (ATS.DPTF|C_Transfer patron reward-token ATS|SC_NAME remover remove-sum true)
             ;;2]The amount removed is added back as Primal-RT
-                (AUTOSTAKE.DPTF|CO_Transfer patron primal-rt remover ATS|SC_NAME remove-sum true)
+                (ATS.DPTF|C_Transfer patron primal-rt remover ATS|SC_NAME remove-sum true)
             ;;3]ROU Table is updated with the new DATA, now as primal RT
-                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
-                (AUTOSTAKE.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
+                (ATS.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
+                (ATS.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
             ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
                 (map
                     (lambda
                         (kontos:string)
-                        (AUTOSTAKE.ATS|XO_ReshapeUnstakeAccount atspair kontos remove-position)
+                        (ATS.ATS|XO_ReshapeUnstakeAccount atspair kontos remove-position)
                     )
                     accounts-with-atspair-data
                 )
             ;;5]Actually Remove the RT from the ATS-Pair
-                (AUTOSTAKE.ATS|XO_RemoveSecondary atspair reward-token)
+                (ATS.ATS|XO_RemoveSecondary atspair reward-token)
             ;;6]Update Data in the DPTF Token Properties
                 (BASIS.DPTF|XO_UpdateRewardToken atspair reward-token false)
             )
         )
     )
-    (defun DPTF|CO_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|XP_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
-        )
-    )
-    (defun DPTF|CO_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPTF|XP_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
-        )
-    )
-    (defun DPMF|CO_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|XP_SingleBatchTransfer patron id nonce sender receiver method)
-        )
-    )
-    (defun DPMF|CO_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (DPMF|XP_MultiBatchTransfer patron id nonces sender receiver method)
-        )
-    )
     ;;[X]
-    (defun DPTF|XP_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (require-capability (SECURE))
+    (defun DPTF|X_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (enforce-one
+            "DPTF Multi Transfer not permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+            ]
+        )
         (with-capability (SUMMONER)
             (let
                 (
@@ -667,16 +655,19 @@
         )
     )
     (defun DPTF|X_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool)
+        (require-capability (SUMMONER))
         (let
             (
                 (id:string (at "id" id-amount-pair))
                 (amount:decimal (at "amount" id-amount-pair))
             )
-            (AUTOSTAKE.DPTF|CO_Transfer patron id sender receiver amount method)
+            (with-capability (SUMMONER)
+                (ATS.DPTF|C_Transfer patron id sender receiver amount method)
+            )
         )
     )
-    (defun DPTF|XP_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (require-capability (SECURE))
+    (defun DPTF|X_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SUMMONER)
             (let
                 (
@@ -693,15 +684,19 @@
         )
     )
     (defun DPTF|X_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool)
+        (require-capability (SUMMONER))
         (let
             (
                 (receiver:string (at "receiver" receiver-amount-pair))
                 (amount:decimal (at "amount" receiver-amount-pair))
             )
-            (AUTOSTAKE.DPTF|CO_Transfer patron id sender receiver amount method)
+            (with-capability (SUMMONER)
+                (ATS.DPTF|C_Transfer patron id sender receiver amount method)
+            )
         )
     )
-    (defun DPMF|XP_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
+    (defun DPMF|X_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (let*
             (
                 (account-nonces:[integer] (BASIS.DPMF|UR_AccountNonces id sender))
@@ -711,19 +706,27 @@
             (map
                 (lambda
                     (single-nonce:integer)
-                    (DPMF|XP_SingleBatchTransfer patron id single-nonce sender receiver method)
+                    (with-capability (SECURE)
+                        (DPMF|X_SingleBatchTransfer patron id single-nonce sender receiver method)
+                    )
                 )
                 nonces
             )
         )
     )
-    (defun DPMF|XP_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
-        (require-capability (SECURE))
+    (defun DPMF|X_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
+        (enforce-one
+            "DPMF Transfer not permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+            ]
+        )
         (let
             (
                 (balance:decimal (BASIS.DPMF|UR_AccountBatchSupply id nonce))
             )
-            (BASIS.DPMF|CO_Transfer patron id nonce sender receiver balance method)
+            (BASIS.DPMF|C_Transfer patron id nonce sender receiver balance method)
         )
     )
     ;;
@@ -860,7 +863,7 @@
                 ;;Use existing Native Kadena Stock for wrapping int DWK
                         (LIQUID.LIQUID|CO_WrapKadena patron OUROBOROS|SC_NAME present-kda-balance)
                 ;;Use the generated DWK to fuel its Autostake Pair
-                        (AUTOSTAKE.ATS|CO_Fuel patron OUROBOROS|SC_NAME liquid-idx w-kda present-kda-balance)
+                        (AUTOSTAKE-MANAGER.ATSM|C_Fuel patron OUROBOROS|SC_NAME liquid-idx w-kda present-kda-balance)
                     )
                     true
                 )
@@ -882,7 +885,7 @@
                 )
                 (enforce (> withdraw-amount 0.0) (format "There are no {} fees to be withdrawn from {}" [id OUROBOROS|SC_NAME]))
             ;;1]Patron withdraws Fees from Ouroboros Smart DALOS Account to a target Normal DALOS Account
-                (AUTOSTAKE.DPTF|CO_Transfer patron id OUROBOROS|SC_NAME target withdraw-amount true)
+                (ATS.DPTF|C_Transfer patron id OUROBOROS|SC_NAME target withdraw-amount true)
             )
         )
     )
@@ -906,15 +909,15 @@
                     (ignis-amount:decimal (IGNIS|UC_Sublimate ouro-remainder-amount))
                 )
             ;;01]Client sends OURO <ouro-amount> to the Ouroboros Smart DALOS Account
-                (AUTOSTAKE.DPTF|CO_Transfer patron ouro-id client OUROBOROS|SC_NAME ouro-amount true)
+                (ATS.DPTF|C_Transfer patron ouro-id client OUROBOROS|SC_NAME ouro-amount true)
             ;;02]Ouroboros burns OURO <ouro-remainder-amount>
-                (BASIS.DPTF|CO_Burn patron ouro-id OUROBOROS|SC_NAME ouro-remainder-amount)
+                (BASIS.DPTF|C_Burn patron ouro-id OUROBOROS|SC_NAME ouro-remainder-amount)
             ;;03]Ouroboros mints GAS(Ignis) <ignis-amount>
-                (BASIS.DPTF|CO_Mint patron ignis-id OUROBOROS|SC_NAME ignis-amount false)
+                (BASIS.DPTF|C_Mint patron ignis-id OUROBOROS|SC_NAME ignis-amount false)
             ;;04]Ouroboros transfers GAS(Ignis) <ignis-amount> to <target>
-                (AUTOSTAKE.DPTF|CO_Transfer patron ignis-id OUROBOROS|SC_NAME target ignis-amount true)
+                (ATS.DPTF|C_Transfer patron ignis-id OUROBOROS|SC_NAME target ignis-amount true)
             ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
-                (AUTOSTAKE.DPTF|CO_Transmute patron ouro-id OUROBOROS|SC_NAME ouro-fee-amount)
+                (ATS.DPTF|C_Transmute patron ouro-id OUROBOROS|SC_NAME ouro-fee-amount)
                 ignis-amount
             )
         )
@@ -938,15 +941,15 @@
                     (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
                 )
             ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart DALOS Account
-                (AUTOSTAKE.DPTF|CO_Transfer patron ignis-id client OUROBOROS|SC_NAME ignis-amount true)
+                (ATS.DPTF|C_Transfer patron ignis-id client OUROBOROS|SC_NAME ignis-amount true)
             ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
-                (BASIS.DPTF|CO_Burn patron ignis-id OUROBOROS|SC_NAME ignis-amount)
+                (BASIS.DPTF|C_Burn patron ignis-id OUROBOROS|SC_NAME ignis-amount)
             ;;03]Ouroboros mints OURO <total-ouro>
-                (BASIS.DPTF|CO_Mint patron ouro-id OUROBOROS|SC_NAME total-ouro false)
+                (BASIS.DPTF|C_Mint patron ouro-id OUROBOROS|SC_NAME total-ouro false)
             ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
-                (AUTOSTAKE.DPTF|CO_Transfer patron ouro-id OUROBOROS|SC_NAME client ouro-remainder-amount true)
+                (ATS.DPTF|C_Transfer patron ouro-id OUROBOROS|SC_NAME client ouro-remainder-amount true)
             ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
-                (AUTOSTAKE.DPTF|CO_Transmute patron ouro-id OUROBOROS|SC_NAME ouro-fee-amount)
+                (ATS.DPTF|C_Transmute patron ouro-id OUROBOROS|SC_NAME ouro-fee-amount)
                 ouro-remainder-amount
             )
         )
@@ -967,28 +970,28 @@
         )
     )
     (defun ATS|UP_P0 (atspair:string account:string)
-        (format "{}|{} P0: {}" [atspair account (AUTOSTAKE.ATS|UR_P0 atspair account)])
+        (format "{}|{} P0: {}" [atspair account (ATS.ATS|UR_P0 atspair account)])
     )
     (defun ATS|UP_P1 (atspair:string account:string)
-        (format "{}|{} P1: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 1)])
+        (format "{}|{} P1: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 1)])
     )
     (defun ATS|UP_P2 (atspair:string account:string)
-        (format "{}|{} P2: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 2)])
+        (format "{}|{} P2: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 2)])
     )
     (defun ATS|UP_P3 (atspair:string account:string)
-        (format "{}|{} P3: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 3)])
+        (format "{}|{} P3: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 3)])
     )
     (defun ATS|UP_P4 (atspair:string account:string)
-        (format "{}|{} P4: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 4)])
+        (format "{}|{} P4: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 4)])
     )
     (defun ATS|UP_P5 (atspair:string account:string)
-        (format "{}|{} P5: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 5)])
+        (format "{}|{} P5: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 5)])
     )
     (defun ATS|UP_P6 (atspair:string account:string)
-        (format "{}|{} P6: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 6)])
+        (format "{}|{} P6: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 6)])
     )
     (defun ATS|UP_P7 (atspair:string account:string)
-        (format "{}|{} P7: {}" [atspair account (AUTOSTAKE.ATS|UR_P1-7 atspair account 7)])
+        (format "{}|{} P7: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 7)])
     )
 )
-(create-table OUROB|PoliciesTable)
+(create-table PoliciesTable)

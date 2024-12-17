@@ -72,7 +72,7 @@
     ]
 )
 
-(free.BASIS.BASIS|A_SetBrandingLive "OURO-98c486052a51" true)
+(free.BRANDING.BRD|A_SetBrandingLive "OURO-98c486052a51" true)
 
 (print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 (format "PENDING is {}" 
@@ -166,13 +166,29 @@
     ]
 )
 
-(free.BASIS.BASIS|A_SetBrandingFlag "OURO-98c486052a51" true 0)
+(free.BRANDING.BRD|A_SetBrandingFlag "OURO-98c486052a51" true 0)
 
     (format "LIVE is with Golden Flag {}" 
         [
             (free.BASIS.BASIS|UR_Branding "OURO-98c486052a51" true false)
         ]
     )
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+
+(print "Attempting to create NameSpace")
+;(free.DHNS.DHNS|CreateNamespace)
 
 (env-sigs [])
 (env-gas)
