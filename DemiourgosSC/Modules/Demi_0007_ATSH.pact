@@ -10,7 +10,7 @@
     )
     (defcap ATSH-ADMIN ()
         (enforce-one
-            "Autostake Admin not satisfed"
+            "ATSH Autostake Admin not satisfed"
             [
                 (enforce-guard G-MD_ATSH)
                 (enforce-guard G-SC_ATSH)

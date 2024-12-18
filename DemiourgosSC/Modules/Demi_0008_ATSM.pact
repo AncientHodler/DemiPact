@@ -12,16 +12,16 @@
     )
     (defcap ATSM-ADMIN ()
         (enforce-one
-            "Autostake Admin not satisfed"
+            "ATSM Autostake Admin not satisfed"
             [
-                (enforce-guard G-MD_AUTOS)
-                (enforce-guard G-SC_AUTOS)
+                (enforce-guard G-MD_ATSM)
+                (enforce-guard G-SC_ATSM)
             ]
         )
     )
 
-    (defconst G-MD_AUTOS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_AUTOS   (keyset-ref-guard ATS.ATS|SC_KEY))
+    (defconst G-MD_ATSM   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_ATSM   (keyset-ref-guard ATS.ATS|SC_KEY))
 
     (defcap COMPOSE ()
         true

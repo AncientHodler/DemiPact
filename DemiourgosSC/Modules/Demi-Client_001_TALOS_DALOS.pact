@@ -10,7 +10,7 @@
         (enforce-guard G-MD_TALOS)
     )
     (defconst G-MD_TALOS (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst DALOS|SC_NAME                 DALOS.DALOS|SC_NAME)
+    (defconst DALOS|SC_NAME DALOS.DALOS|SC_NAME)
     (defcap SUMMONER ()
         true
     )

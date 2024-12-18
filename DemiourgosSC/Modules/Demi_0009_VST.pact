@@ -15,16 +15,16 @@
 
     (defcap VESTG-ADMIN ()
         (enforce-one
-            "Vesting Admn not satisfed"
+            "Vesting Admin not satisfed"
             [
-                (enforce-guard G-MD_VESTG)
-                (enforce-guard G-SC_VESTG)
+                (enforce-guard G-MD_VST)
+                (enforce-guard G-SC_VST)
             ]
         )
     )
 
-    (defconst G-MD_VESTG   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_VESTG   (keyset-ref-guard VST|SC_KEY))
+    (defconst G-MD_VST   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_VST   (keyset-ref-guard VST|SC_KEY))
 
     (defconst VST|SC_KEY
         (+ UTILS.NS_USE ".dh_sc_vesting-keyset")

@@ -8,20 +8,20 @@
     (use BASIS)
 
     (defcap GOVERNANCE ()
-        (compose-capability (AUTOS-ADMIN))
+        (compose-capability (ATS-ADMIN))
     )
-    (defcap AUTOS-ADMIN ()
+    (defcap ATS-ADMIN ()
         (enforce-one
-            "Autostake Admin not satisfed"
+            "ATS Autostake Admin not satisfed"
             [
-                (enforce-guard G-MD_AUTOS)
-                (enforce-guard G-SC_AUTOS)
+                (enforce-guard G-MD_ATS)
+                (enforce-guard G-SC_ATS)
             ]
         )
     )
 
-    (defconst G-MD_AUTOS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_AUTOS   (keyset-ref-guard ATS|SC_KEY))
+    (defconst G-MD_ATS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_ATS   (keyset-ref-guard ATS|SC_KEY))
     
     (defconst ATS|SC_KEY 
         (+ UTILS.NS_USE ".dh_sc_autostake-keyset")
@@ -64,7 +64,7 @@
     )
     
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
-        (with-capability (AUTOS-ADMIN)
+        (with-capability (ATS-ADMIN)
             (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )

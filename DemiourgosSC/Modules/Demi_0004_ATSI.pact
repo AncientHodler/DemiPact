@@ -7,10 +7,17 @@
         (compose-capability (ATSI-ADMIN))
     )
     (defcap ATSI-ADMIN ()
-        (enforce-guard G-MD_ATSI)
+        (enforce-one
+            "ATSI Autostake Admin not satisfed"
+            [
+                (enforce-guard G-MD_ATSI)
+                (enforce-guard G-SC_ATSI)
+            ]
+        )
     )
 
-    (defconst G-MD_ATSI  (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-MD_ATSI   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_ATSI   (keyset-ref-guard ATS.ATS|SC_KEY))
 
     (defcap COMPOSE ()
         true

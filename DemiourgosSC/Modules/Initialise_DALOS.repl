@@ -396,6 +396,7 @@
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER.pact")
 (env-gas)
 (commit-tx)
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER-Barebone.pact")
 
 (begin-tx "InitSnake 10 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -424,7 +425,7 @@
 (use free.TALOS|VST)        ;;147.602
 (use free.TALOS|LIQUID)     ;;135.711
 
-(use free.DEPLOYER)         ;;170.237
+(use free.DEPLOYER)         ;;142.916
 
 
 (env-gas)
@@ -573,7 +574,7 @@
     ]
 )
 
-    (free.DEPLOYER.A_InitialiseVirtualBlockchainStepOne KC.ANCIENTHODLER)
+(free.DEPLOYER.A_InitialiseVirtualBlockchainStepOne KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)
@@ -590,7 +591,7 @@
     ]
 )
 
-    (free.DEPLOYER.A_InitialiseVirtualBlockchainStepTwo KC.ANCIENTHODLER)
+(free.DEPLOYER.A_InitialiseVirtualBlockchainStepTwo KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)

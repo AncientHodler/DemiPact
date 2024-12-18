@@ -10,7 +10,7 @@
     )
     (defcap ATSC-ADMIN ()
         (enforce-one
-            "Autostake Admin not satisfed"
+            "ATSC Autostake Admin not satisfed"
             [
                 (enforce-guard G-MD_ATSC)
                 (enforce-guard G-SC_ATSC)
