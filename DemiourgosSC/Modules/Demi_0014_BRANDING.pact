@@ -41,7 +41,7 @@
     (defun BRD|C_ReadPolicy:guard (policy-name:string)
         (at "policy" (read BRD|PoliciesTable policy-name ["policy"]))
     )
-    (defun BRD|DefinePolicies ()
+    (defun DefinePolicies ()
         (DALOS.A_AddPolicy 
             "BRD|IncrementDalosNonce"
             (create-capability-guard (P|DIN))
@@ -161,6 +161,13 @@
     )
     ;;[A]
     (defun BRD|A_SetBrandingFlag (id:string token-type:bool flag:integer)
+        (enforce-one
+            "Setting Branding Flag not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (BRANDING-ADMIN)
             (BASIS.DPTF-DPMF|UEV_id id token-type)
             (enforce (contains flag (enumerate 0 4)) "Invalid Integer Flag")
@@ -176,6 +183,13 @@
         )
     )
     (defun BRD|A_SetBrandingLive (id:string token-type:bool)
+        (enforce-one
+            "Setting Branding Live not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (BRANDING-ADMIN)
             (let*
                 (
@@ -203,7 +217,13 @@
     )
     ;;[C]
     (defun BRD|C_UpgradeBranding (patron:string id:string token-type:bool months:integer)
-        (enforce-guard (BRD|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Upgrading Branding not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (BRD|UPGRADE_BRANDING id token-type)
             (let*
                 (
@@ -233,7 +253,13 @@
         )
     )
     (defun DPTF-DPMF|C_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        (enforce-guard (BRD|C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Upgdating Branding not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (BRD|BRANDING id token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BRANDING)

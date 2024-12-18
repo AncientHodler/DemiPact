@@ -269,52 +269,131 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 07 - Load AUTOSTAKE-USAGE Module")
+(begin-tx "InitSnake 07 - Load AUTOSTAKE-ISSUE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_ATSU.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_ATSI.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 07 - Load AUTOSTAKE-MANAGER Module")
+(begin-tx "InitSnake 08 - Load TFT - TrueFungibleTransfer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_ATSM.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_TFT.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 08 - Load VESTING Module")
+(begin-tx "InitSnake 09 - Load AUTOSTAKE-Cold-Recovery Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0006_VST.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0006_ATSC.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 09 - Load LIQUID Module")
+(begin-tx "InitSnake 10 - Load AUTOSTAKE-Hot-Recovery Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0007_LIQUID.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0007_ATSH.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 10 - Load OUROBOROS Module")
+(begin-tx "InitSnake 11 - Load AUTOSTAKE-Manager Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0008_OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0008_ATSM.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 11 - Load BRANDING Module")
+(begin-tx "InitSnake 12 - Load VESTING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0011_BRANDING.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0009_VST.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 12 - Load TALOS Module")
+(begin-tx "InitSnake 13 - Load LIQUID Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_TALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0010_LIQUID.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 14 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0011_OUROBOROS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 15 - Load BRANDING Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0014_BRANDING.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 16 - Load TALOS|OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_000_TALOS_OUROBOROS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load TALOS|DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_001_TALOS_DALOS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 18 - Load TALOS|DPTF Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_002_TALOS_DPTF.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 19 - Load TALOS|DPMF Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_003_TALOS_DPMF.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 20 - Load TALOS|AUTOSTAKE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_004_TALOS_ATS1.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 20 - Load TALOS|AUTOSTAKE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_005_TALOS_ATS2.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 21 - Load TALOS|VST Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_006_TALOS_VST.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 22 - Load TALOS|LIQUID Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_007_TALOS_LIQUID.pact")
+(env-gas)
+(commit-tx)
+
+
+
+(begin-tx "InitSnake 23 - Load DEPLOYER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER.pact")
 (env-gas)
 (commit-tx)
 
@@ -322,17 +401,30 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 
-(use free.UTILS)
-(use free.DALOS)
-(use free.BASIS)
-(use free.ATS)
-(use free.AUTOSTAKE-USAGE)
-(use free.AUTOSTAKE-MANAGER)
-(use free.VESTING)
-(use free.LIQUID)
-(use free.OUROBOROS)
-(use free.BRANDING)
-(use free.TALOS)
+(use free.UTILS)            ;; 85.107
+(use free.DALOS)            ;;107.032
+(use free.BASIS)            ;;145.558
+(use free.ATS)              ;;142.455
+(use free.ATSI)             ;;137.410
+(use free.TFT)              ;;140.426
+(use free.ATSC)             ;;147.856
+(use free.ATSH)             ;;138.321
+(use free.ATSM)             ;;145.648
+(use free.VESTING)          ;;143.212
+(use free.LIQUID)           ;;136.726
+(use free.OUROBOROS)        ;;147.291
+(use free.BRANDING)         ;;121.969
+
+(use free.TALOS|OUROBOROS)  ;;144.788
+(use free.TALOS|DALOS)      ;;145.719
+(use free.TALOS|DPTF)       ;;149.990
+(use free.TALOS|DPMF)       ;;149.254
+(use free.TALOS|ATS1)       ;;
+(use free.TALOS|ATS2)       ;;
+(use free.TALOS|VST)        ;;147.602
+(use free.TALOS|LIQUID)     ;;135.711
+
+(use free.DEPLOYER)         ;;170.237
 
 
 (env-gas)
@@ -481,8 +573,10 @@
     ]
 )
 
-    (free.TALOS.TALOS|A_SpawnAncientHodler)
-    (free.TALOS.TALOS|A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
+    (free.DEPLOYER.A_SpawnAncientHodler)
+    (free.DEPLOYER.A_SpawnCTO)
+    (free.DEPLOYER.A_SpawnHOV)
+    (free.DEPLOYER.A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)
@@ -505,7 +599,7 @@
     ]
 )
 
-    (free.TALOS.LQD|C_WrapKadena KC.ANCIENTHODLER KC.ANCIENTHODLER 20000.0)
+    (free.TALOS|LIQUID.C_WrapKadena KC.ANCIENTHODLER KC.ANCIENTHODLER 20000.0)
     
 
 (env-sigs [])
@@ -521,7 +615,7 @@
     ]
 )
 
-    (free.TALOS.ATS|C_Coil 
+    (free.TALOS|ATS2.C_Coil 
         KC.ANCIENTHODLER
         KC.ANCIENTHODLER
         (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
@@ -542,7 +636,7 @@
             { "key": "PK_Emma", "caps": [] }
           ])
     ;;OriginMint Ouro
-    (free.TALOS.DPTF|C_Mint
+    (free.TALOS|DPTF.C_Mint
         KC.ANCIENTHODLER
         "OURO-98c486052a51"
         KC.EMMA
@@ -550,13 +644,13 @@
         true
     )
 
-    (free.TALOS.DPTF|C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
+    (free.TALOS|DPTF.C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
     ;(free.OUROBOROS.ATS|C_KickStart KC.BYTA KC.BYTA "Auryndex-98c486052a51" [358323.244088865949848032] 137554.0)
 
-    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
-    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)
-    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.EMMA 100.0)
-    (free.TALOS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BM 100.0)
+    (free.TALOS|OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)
+    (free.TALOS|OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.AOZ 500.0)
+    (free.TALOS|OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.EMMA 100.0)
+    (free.TALOS|OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BM 100.0)
     (free.DALOS.IGNIS|A_Toggle false true)             ;;turn virtual gas collection to on
     (free.DALOS.IGNIS|A_Toggle true true)              ;;turn native gas collection to on
 

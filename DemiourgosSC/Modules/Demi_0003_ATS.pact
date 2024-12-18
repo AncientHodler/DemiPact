@@ -44,98 +44,23 @@
     (defcap ATS|UPDATE_ROU ()
         true
     )
-    (defcap ATS|UPDATE_ROU_PUR ()
-        true
-    )
     (defcap DALOS|EXECUTOR ()
-        true
-    )
-    (defcap DPTF|CPF_CREDIT-FEE ()
-        true
-    )
-    (defcap DPTF|CPF_STILL-FEE ()
-        true
-    )
-    (defcap DPTF|CPF_BURN-FEE ()
         true
     )
     (defcap SUMMONER ()
         true
     )
-    (defcap P|WR ()
-        true
-    )
+    
     (defcap P|DIN ()
-        true
-    )
-    (defcap P|DALOS|UPDATE_ELITE ()
         true
     )
     (defcap P|IC ()
         true
     )
-    (defcap P|ATS|UPDATE_RBT ()
-        true
-    )
-    (defcap P|ATS|UPDATE_RT ()
-        true
-    )
-    (defcap P|TM|TBR ()
-        true
-    )
-    (defcap P|M|MCR ()
-        true
-    )
-    (defcap P|M|TAQR ()
-        true
-    )
-    (defcap P|DPTF|BURN ()
-        true
-    )
-    (defcap P|DPTF|CREDIT ()
-        true
-    )
-    (defcap P|DPTF|DEBIT ()
-        true
-    )
-    (defcap P|T|TFER ()
-        true
-    )
-    (defcap P|T|TMR ()
-        true
-    )
-    (defcap P|T|UF ()
-        true
-    )
+    
     (defcap P|DINIC ()
         (compose-capability (P|DIN))
         (compose-capability (P|IC))
-    )
-    (defcap DPTF-DPMF|TOGGLE-BURN-ROLE ()
-        (compose-capability (P|TM|TBR))
-        (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-        (compose-capability (SECURE))
-    )
-    (defcap DPTF|TOGGLE-MINT-ROLE ()
-        (compose-capability (P|T|TMR))
-        (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF|TOGGLE-FEE-EXEMPTION-ROLE ()
-        (compose-capability (P|T|TFER))
-        (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPMF|MOVE-CREATE-ROLE ()
-        (compose-capability (P|M|MCR))
-        (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPMF|TOGGLE-ADD-QUANTITY-ROLE ()
-        (compose-capability (P|M|TAQR))
-        (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
     )
     
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
@@ -149,14 +74,10 @@
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
-    (defun ATS|DefinePolicies ()             
+    (defun DefinePolicies ()             
         (DALOS.A_AddPolicy
             "ATS|PlusDalosNonce"
             (create-capability-guard (P|DIN))
-        )
-        (DALOS.A_AddPolicy 
-            "ATS|UpdElite"
-            (create-capability-guard (P|DALOS|UPDATE_ELITE))
         )
         (DALOS.A_AddPolicy 
             "ATS|Sum"
@@ -170,54 +91,6 @@
         (BASIS.A_AddPolicy
             "ATS|Sum"
             (create-capability-guard (SUMMONER))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|UpRBT"
-            (create-capability-guard (P|ATS|UPDATE_RBT))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|UpRT"
-            (create-capability-guard (P|ATS|UPDATE_RT))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|TgBrRl"
-            (create-capability-guard (P|TM|TBR))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|MCRl"
-            (create-capability-guard (P|M|MCR))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|TgAqRl"
-            (create-capability-guard (P|M|TAQR))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|BrTF"
-            (create-capability-guard (P|DPTF|BURN))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|CrTF"
-            (create-capability-guard (P|DPTF|CREDIT))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|DbTF"
-            (create-capability-guard (P|DPTF|DEBIT))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|TgFeRl"
-            (create-capability-guard (P|T|TFER))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|TgMnRl"
-            (create-capability-guard (P|T|TMR))
-        )
-        (BASIS.A_AddPolicy 
-            "ATS|UpFees"
-            (create-capability-guard (P|T|UF))
-        )
-        (BASIS.A_AddPolicy
-            "ATS|WR"
-            (create-capability-guard (P|WR))
         )
     )
 
@@ -233,8 +106,8 @@
                 (UTILS.GUARD|UEV_Any
                     [
                         (create-capability-guard (ATS|GOV))
-                        (C_ReadPolicy "OUROBOROS|RemoteAutostakeGovernor")
-                        (C_ReadPolicy "ATSU|RemoteAutostakeGovernor")
+                        (C_ReadPolicy "ATSC|RemoteAutostakeGovernor")
+                        (C_ReadPolicy "ATSH|RemoteAutostakeGovernor")
                         (C_ReadPolicy "ATSM|RemoteAutostakeGovernor")
                     ]
                 )
@@ -306,375 +179,6 @@
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
 
-    ;;BASIS
-    (defcap IGNIS|MATRON_STRONG (id:string client:string target:string)
-        (if (DALOS.IGNIS|URC_ZeroGAZ id client target)
-            true
-            (compose-capability (P|IC))
-        )
-    )
-    (defcap DPTF|TRANSFER (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @event
-        (compose-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
-        (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
-        (compose-capability (P|DIN))
-        (compose-capability (DALOS|EXECUTOR))
-    )
-    (defcap DPTF|X_TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (DALOS.DALOS|CAP_EnforceAccountOwnership sender)
-        (if (and method (DALOS.DALOS|UR_AccountType receiver))
-            (DALOS.DALOS|CAP_EnforceAccountOwnership receiver)
-            true
-        )
-        (BASIS.DPTF-DPMF|UEV_Amount id transfer-amount true)
-        (if (not (BASIS.DPTF|UC_TransferFeeAndMinException id sender receiver))
-            (BASIS.DPTF|UEV_EnforceMinimumAmount id transfer-amount)
-            true
-        )
-        (DALOS.DALOS|UEV_EnforceTransferability sender receiver method)
-        (BASIS.DPTF-DPMF|UEV_PauseState id false true)
-        (BASIS.DPTF-DPMF|UEV_AccountFreezeState id sender false true)
-        (BASIS.DPTF-DPMF|UEV_AccountFreezeState id receiver false true)
-        (if 
-            (and 
-                (> (BASIS.DPTF-DPMF|UR_TransferRoleAmount id true) 0) 
-                (not (or (= sender DALOS.OUROBOROS|SC_NAME)(= sender DALOS.DALOS|SC_NAME)))
-            )
-            (let
-                (
-                    (s:bool (BASIS.DPTF-DPMF|UR_AccountRoleTransfer id sender true))
-                    (r:bool (BASIS.DPTF-DPMF|UR_AccountRoleTransfer id receiver true))
-                )
-                (enforce-one
-                    (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
-                    [
-                        (enforce (= s true) (format "TR doesnt check for sender {}" [sender]))
-                        (enforce (= r true) (format "TR doesnt check for receiver {}" [receiver]))
-                    ]
-
-                )
-            )
-            (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
-        )
-        ;;
-        (compose-capability (P|DPTF|DEBIT))
-        (compose-capability (P|DPTF|CREDIT))
-        ;;
-        (compose-capability (P|DALOS|UPDATE_ELITE))
-        ;;
-        (compose-capability (P|T|UF))
-        (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
-    )
-    (defcap DPTF|CREDIT_PRIMARY-FEE ()
-        (compose-capability (DPTF|CPF_CREDIT-FEE))
-        (compose-capability (DPTF|CPF_STILL-FEE))
-        (compose-capability (DPTF|CPF_BURN-FEE))
-        (compose-capability (ATS|UPDATE_ROU))
-        (compose-capability (P|DPTF|CREDIT))
-        (compose-capability (P|DPTF|BURN))
-    )
-    (defcap DPTF|TRANSMUTE ()
-        @event
-        (compose-capability (DALOS|EXECUTOR))
-        (compose-capability (P|DINIC))
-        (compose-capability (DPTF|X_TRANSMUTE))
-    )
-    (defcap DPTF|X_TRANSMUTE ()
-        (compose-capability (P|DPTF|DEBIT))
-        (compose-capability (DPTF|CREDIT_PRIMARY-FEE))
-    )
-    ;;
-    ;;
-    (defun DPTF-DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool token-type:bool)
-        (enforce-one
-            "Toggle Fee Exemption Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPTF-DPMF|TOGGLE-BURN-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
-                true
-            )
-            (BASIS.DPTF-DPMF|XO_ToggleBurnRole id account toggle token-type)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id account 1 toggle token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
-                (ATS|XC_RevokeBurn patron id token-type)
-                true
-            )
-        )
-    )
-    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Toggle Fee Exemption Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPTF|TOGGLE-MINT-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
-                true
-            )
-            (BASIS.DPTF|XO_ToggleMintRole id account toggle)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id account 2 toggle true)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
-                (ATS|XC_RevokeMint patron id)
-                true
-            )
-        )
-    )
-    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Toggle Fee Exemption Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPTF|TOGGLE-FEE-EXEMPTION-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
-                true
-            )
-            (BASIS.DPTF|XO_ToggleFeeExemptionRole id account toggle)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id account 3 toggle true)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
-                (ATS|XC_RevokeFeeExemption patron id)
-                true
-            )
-        )
-    )
-    (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (enforce-one
-            "DPTF Transfer not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
-                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPTF|TRANSFER patron id sender receiver transfer-amount method)
-            (DPTF|XK_Transfer patron id sender receiver transfer-amount method)
-        )
-    )
-    (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        (enforce-one
-            "Transmute not permitted"
-            [
-                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPTF|TRANSMUTE)
-            (DPTF|XK_Transmute patron id transmuter transmute-amount)
-        )
-    )
-    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
-        (enforce-one
-            "Toggle Fee Exemption Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPMF|MOVE-CREATE-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id false) DALOS.GAS_BIGGEST)
-                true
-            )
-            (BASIS.DPMF|XO_MoveCreateRole id receiver)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id (DPMF|UR_CreateRoleAccount id) 2 false false)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id receiver 2 true false)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (if (!= (BASIS.DPMF|UR_CreateRoleAccount id) ATS|SC_NAME)
-                (ATS|XC_RevokeCreateOrAddQ patron id)
-                true
-            )
-        )
-    )
-    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Toggle Add Quantity Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (DPMF|TOGGLE-ADD-QUANTITY-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
-                true
-            )
-            (BASIS.DPMF|XO_ToggleAddQuantityRole id account toggle)
-            (BASIS.DPTF-DPMF|XO_WriteRoles id account 3 toggle false)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
-                (ATS|XC_RevokeCreateOrAddQ patron id)
-                true
-            )
-        )
-    )
-    ;;
-    (defun DPTF|XK_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        (require-capability (DALOS|EXECUTOR))
-        (if (not (and (= id (DALOS|UR_UnityID))(>= transmute-amount 10)))
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id transmuter))
-                (DALOS.IGNIS|X_Collect patron transmuter DALOS.GAS_SMALLEST)
-                true
-            )
-            true
-        )    
-        (DPTF|X_Transmute id transmuter transmute-amount)
-        (DALOS.DALOS|X_IncrementNonce transmuter)
-    )
-    (defun DPTF|X_Transmute (id:string transmuter:string transmute-amount:decimal)
-        (require-capability (DPTF|X_TRANSMUTE))
-        (BASIS.DPTF|XO_DebitStandard id transmuter transmute-amount)
-        (DPTF|X_CreditPrimaryFee id transmute-amount false)
-    )
-    (defun DPTF|XK_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (require-capability (DALOS|EXECUTOR))
-        (if (not (and (= id (DALOS|UR_UnityID))(>= transfer-amount 10)))
-            (if (not (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
-                (DALOS.IGNIS|X_Collect patron sender DALOS.GAS_SMALLEST)
-                true
-            )
-            true
-        )
-        (DPTF|X_Transfer id sender receiver transfer-amount method)
-        (DALOS.DALOS|X_IncrementNonce sender)
-    )
-    (defun DPTF|X_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (require-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
-        (BASIS.DPTF|XO_DebitStandard id sender transfer-amount)
-        (let*
-            (
-                (ea-id:string (DALOS.DALOS|UR_EliteAurynID))
-                (fee-toggle:bool (BASIS.DPTF|UR_FeeToggle id))
-                (iz-exception:bool (BASIS.DPTF|UC_TransferFeeAndMinException id sender receiver))
-                (fees:[decimal] (BASIS.DPTF|UC_Fee id transfer-amount))
-                (primary-fee:decimal (at 0 fees))
-                (secondary-fee:decimal (at 1 fees))
-                (remainder:decimal (at 2 fees))
-                (iz-full-credit:bool 
-                    (or 
-                        (or 
-                            (= fee-toggle false) 
-                            (= iz-exception true)
-                        ) 
-                        (= primary-fee 0.0)
-                    )
-                )
-            )
-            (if iz-full-credit
-                (BASIS.DPTF|XO_Credit id receiver transfer-amount)
-                (if (= secondary-fee 0.0)
-                    (with-capability (COMPOSE)
-                        (DPTF|X_CreditPrimaryFee id primary-fee true)
-                        (BASIS.DPTF|XO_Credit id receiver remainder)
-                    )
-                    (with-capability (COMPOSE)
-                        (DPTF|X_CreditPrimaryFee id primary-fee true)
-                        (BASIS.DPTF|XO_Credit id DALOS.DALOS|SC_NAME secondary-fee)
-                        (BASIS.DPTF|XO_UpdateFeeVolume id secondary-fee false)
-                        (BASIS.DPTF|XO_Credit id receiver remainder)
-                    )
-                )
-            )
-            (BASIS.DPTF-DPMF|X_UpdateElite id sender receiver)
-        )
-    )
-    (defun DPTF|X_CreditPrimaryFee (id:string pf:decimal native:bool)
-        (let
-            (
-                (rt:bool (BASIS.ATS|UC_IzRT id))
-                (rbt:bool (BASIS.ATS|UC_IzRBT id true))
-                (target:string (BASIS.DPTF|UR_FeeTarget id))
-            )
-            (if (and rt rbt)
-                (let*
-                    (
-                        (v:[decimal] (ATS|CPF_RT-RBT id pf))
-                        (v1:decimal (at 0 v))
-                        (v2:decimal (at 1 v))
-                        (v3:decimal (at 2 v))
-                    )
-                    (DPTF|X_CPF_StillFee id target v1)
-                    (DPTF|X_CPF_CreditFee id target v2)
-                    (DPTF|X_CPF_BurnFee id target v3)
-                )
-                (if rt
-                    (let*
-                        (
-                            (v1:decimal (ATS|CPF_RT id pf))
-                            (v2:decimal (- pf v1))
-                        )
-                        (DPTF|X_CPF_StillFee id target v1)
-                        (DPTF|X_CPF_CreditFee id target v2)
-                    )
-                    (if rbt
-                        (let*
-                            (
-                                (v1:decimal (ATS|CPF_RBT id pf))
-                                (v2:decimal (- pf v1))
-                            )
-                            (DPTF|X_CPF_StillFee id target v1)
-                            (DPTF|X_CPF_BurnFee id target v2)
-                        )
-                        (BASIS.DPTF|XO_Credit id target pf false)
-                    )
-                )
-            )
-        )
-        (if native
-            (BASIS.DPTF|XO_UpdateFeeVolume id pf true)
-            true
-        )
-    )
-    (defun DPTF|X_CPF_StillFee (id:string target:string still-fee:decimal)
-        (require-capability (DPTF|CPF_STILL-FEE))
-        (if (!= still-fee 0.0)
-            (BASIS.DPTF|XO_Credit id target still-fee false)
-            true
-        )
-    )
-    (defun DPTF|X_CPF_BurnFee (id:string target:string burn-fee:decimal)
-        (require-capability (DPTF|CPF_BURN-FEE))
-        (if (!= burn-fee 0.0)
-            (with-capability (COMPOSE)
-                (BASIS.DPTF|XO_Credit id ATS|SC_NAME burn-fee)
-                (BASIS.DPTF|XO_Burn id ATS|SC_NAME burn-fee)
-            )
-            true
-        )
-    )
-    (defun DPTF|X_CPF_CreditFee (id:string target:string credit-fee:decimal)
-        (require-capability (DPTF|CPF_CREDIT-FEE))
-        (if (!= credit-fee 0.0)
-            (BASIS.DPTF|XO_Credit id ATS|SC_NAME credit-fee)
-            true
-        )
-    )
     ;;ATS
     (defun ATS|CAP_Owner (atspair:string)
         (DALOS.DALOS|CAP_EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
@@ -843,11 +347,6 @@
         (ATS|UEV_SyphoningState atspair (not toggle))
         (ATS|UEV_ParameterLockState atspair false)
     )
-    (defcap ATS|TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
-        @event
-        (compose-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
-        (compose-capability (P|DINIC))
-    )
     (defcap ATS|X_TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
         (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
         (ATS|CAP_Owner atspair)
@@ -981,10 +480,6 @@
             true
         )
     )
-    (defcap ATS|RECOVERY-OFF (atspair:string cold-or-hot:bool)
-        (compose-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
-        (compose-capability (P|DINIC))
-    )
     (defcap ATS|X_RECOVERY-ON (atspair:string cold-or-hot:bool)
         @event
         (ATS|CAP_Owner atspair)
@@ -997,23 +492,7 @@
         (ATS|UEV_ParameterLockState atspair false)
         (ATS|UEV_RecoveryState atspair true cold-or-hot)
     )
-    (defcap ATS|ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        @event
-        (compose-capability (ATS|X_ISSUE atspair issuer reward-token reward-bearing-token))
-        (compose-capability (P|DINIC))
-        (compose-capability (SECURE))
-    )
-    (defcap ATS|X_ISSUE (atspair:string issuer:string reward-token:string reward-bearing-token:string)
-        (enforce (!= reward-token reward-bearing-token) "RT must be different from RBT")
-        (DALOS.DALOS|CAP_EnforceAccountOwnership issuer)
-        (BASIS.DPTF-DPMF|CAP_Owner reward-token true)
-        (BASIS.DPTF-DPMF|CAP_Owner reward-bearing-token true)
-        (ATS|UEV_RewardTokenExistance atspair reward-token false)
-        (ATS|UEV_RewardBearingTokenExistance atspair reward-bearing-token false true)
-        (compose-capability (P|ATS|UPDATE_RT))
-        (compose-capability (P|ATS|UPDATE_RBT))
-        (compose-capability (SUMMONER))
-    )
+    
     (defcap ATS|X_ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
         (BASIS.DPTF-DPMF|CAP_Owner reward-token token-type)
         (ATS|CAP_Owner atspair)
@@ -1028,12 +507,12 @@
         @event
         (ATS|UEV_IzTokenUnique atspair reward-token)
         (ATS|UEV_RewardTokenExistance atspair reward-token false)
-        (compose-capability (P|ATS|UPDATE_RT))
+        (compose-capability (SUMMONER))
     )
     (defcap ATS|ADD_SECONDARY_RBT (atspair:string hot-rbt:string)
         @event
         (ATS|UEV_HotRewardBearingTokenPresence atspair false)   
-        (compose-capability (P|ATS|UPDATE_RBT))
+        (compose-capability (SUMMONER))
         (BASIS.VST|UEV_Existance hot-rbt false false)
     )
     ;;
@@ -1558,122 +1037,9 @@
         )
     )
     ;;CPF-Computers
-    (defun ATS|CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal)
-        (let*
-            (
-                (rt-ats-pairs:[string] (BASIS.DPTF|UR_RewardToken id))
-                (rbt-ats-pairs:[string] (BASIS.DPTF|UR_RewardBearingToken id))
-                (length-rt:integer (length rt-ats-pairs))
-                (length-rbt:integer (length rbt-ats-pairs))
-                (rt-boolean:[bool] (ATS|NFR-Boolean_RT-RBT id rt-ats-pairs true))
-                (rbt-boolean:[bool] (ATS|NFR-Boolean_RT-RBT id rbt-ats-pairs false))
-                (rt-milestones:integer (length (UTILS.LIST|UC_Search rt-boolean true)))
-                (rbt-milestones:integer (length (UTILS.LIST|UC_Search rbt-boolean true)))
-                (milestones:integer (+ rt-milestones rbt-milestones))
-            )
-            (if (!= milestones 0)
-                (let*
-                    (
-                        (truths:[bool] (+ rt-boolean rbt-boolean))
-                        (split-with-truths:[decimal] (ATS|UC_BooleanDecimalCombiner id native-fee-amount milestones truths))
-                    )
-                    (if (!= rt-milestones 0)
-                        (let
-                            (
-                                (credit-sum:decimal
-                                    (fold
-                                        (lambda
-                                            (acc:decimal index:integer)
-                                            (if (at index rt-boolean)
-                                                (with-capability (COMPOSE)
-                                                    (ATS|XO_UpdateRoU (at index rt-ats-pairs) id true true (at index split-with-truths))
-                                                    (+ acc (at index split-with-truths))
-                                                )
-                                                acc
-                                            )
-                                        )
-                                        0.0
-                                        (enumerate 0 (- (length rt-ats-pairs) 1))
-                                    )
-                                )
-                            )
-                            (if (= credit-sum 0.0)
-                                [0.0 0.0 native-fee-amount]
-                                [0.0 credit-sum (- native-fee-amount credit-sum)]
-                            )
-                        )
-                        [0.0 0.0 native-fee-amount]
-                    )
-                )
-                [native-fee-amount 0.0 0.0]
-            )
-        )
-    )
-    (defun ATS|CPF_RBT:decimal (id:string native-fee-amount:decimal)
-        (let*
-            (
-                (ats-pairs:[string] (BASIS.DPTF|UR_RewardBearingToken id))
-                (ats-pairs-bool:[bool] (ATS|NFR-Boolean_RT-RBT id ats-pairs false))
-                (milestones:integer (length (UTILS.LIST|UC_Search ats-pairs-bool true)))
-            )
-            (if (!= milestones 0)
-                0.0
-                native-fee-amount
-            )
-        )
-    )
-    (defun ATS|CPF_RT:decimal (id:string native-fee-amount:decimal)
-        (let*
-            (
-                (ats-pairs:[string] (BASIS.DPTF|UR_RewardToken id))
-                (ats-pairs-bool:[bool] (ATS|NFR-Boolean_RT-RBT id ats-pairs true))
-                (milestones:integer (length (UTILS.LIST|UC_Search ats-pairs-bool true)))  
-            )
-            (if (!= milestones 0)
-                (let*
-                    (
-                        (rt-split-with-boolean:[decimal] (ATS|UC_BooleanDecimalCombiner id native-fee-amount milestones ats-pairs-bool))
-                        (number-of-zeroes:integer (length (UTILS.LIST|UC_Search rt-split-with-boolean 0.0)))
-                    )
-                    (map
-                        (lambda
-                            (index:integer)
-                            (if (at index ats-pairs-bool)
-                                (ATS|XO_UpdateRoU (at index ats-pairs) id true true (at index rt-split-with-boolean))
-                                true
-                            )
-                        )
-                        (enumerate 0 (- (length ats-pairs) 1))
-                    )
-                    0.0
-                )
-                native-fee-amount
-            )
-        )
-    )
-    (defun ATS|NFR-Boolean_RT-RBT:[bool] (id:string ats-pairs:[string] rt-or-rbt:bool)
-        @doc "Makes a [bool] using RT or RBT <nfr> values from a list of ATS Pair"
-        (fold
-            (lambda
-                (acc:[bool] index:integer)
-                (if rt-or-rbt
-                    (if (ATS|UR_RT-Data (at index ats-pairs) id 1)
-                        (UTILS.LIST|UC_AppendLast acc true)
-                        (UTILS.LIST|UC_AppendLast acc false)
-                    )
-                    (if (ATS|UR_ColdNativeFeeRedirection (at index ats-pairs))
-                        (UTILS.LIST|UC_AppendLast acc true)
-                        (UTILS.LIST|UC_AppendLast acc false)
-                    )
-                )
-            )
-            []
-            (enumerate 0 (- (length ats-pairs) 1))
-        )
-    )
-    (defun ATS|UC_BooleanDecimalCombiner:[decimal] (id:string amount:decimal milestones:integer boolean:[bool])
-        (UTILS.ATS|UC_SplitBalanceWithBooleans (BASIS.DPTF-DPMF|UR_Decimals id true) amount milestones boolean)
-    )
+    
+    
+    
     (defun ATS|UC_SolidifyUO:object{Awo} (input:object{Awo} remove-position:integer)
         (let*
             (
@@ -1749,224 +1115,7 @@
         ,"resident"                 : r
         ,"unbonding"                : u}
     )
-    ;;[C]
-    (defun ATS|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
-        (enforce-one
-            "Toggleing ATS Pair Fee Settings not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (ATS|TOGGLE_FEE atspair toggle fee-switch)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
-                true
-            )
-            (ATS|X_ToggleFeeSettings atspair toggle fee-switch)
-            (DALOS.DALOS|X_IncrementNonce patron)
-        )
-    )
-    (defun ATS|C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool)
-        (enforce-one
-            "Turning Recovery off not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-            ]
-        )
-        (with-capability (ATS|RECOVERY-OFF atspair cold-or-hot)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
-                true
-            )
-            (ATS|X_TurnRecoveryOff atspair cold-or-hot)
-            (DALOS.DALOS|X_IncrementNonce patron)
-        )
-    )
-    (defun ATS|C_Issue:string (patron:string account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (ATS|ISSUE (UTILS.DALOS|UCC_Makeid atspair) account reward-token reward-bearing-token)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_HUGE)
-                true
-            )
-            (ATS|X_Issue account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
-            (DALOS.DALOS|X_IncrementNonce patron)
-            (BASIS.DPTF|XO_UpdateRewardToken (UTILS.DALOS|UCC_Makeid atspair) reward-token true)
-            (BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken reward-bearing-token (UTILS.DALOS|UCC_Makeid atspair) true)
-            (ATS|XC_EnsureActivationRoles patron (UTILS.DALOS|UCC_Makeid atspair) true)
-            (UTILS.DALOS|UCC_Makeid atspair)
-        )
-    )
-    
-    
-    ;;
-    (defun ATS|XC_EnsureActivationRoles (patron:string atspair:string cold-or-hot:bool)
-        (enforce-one
-            "Ensuring Activation Roles not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-            ]
-        )
-        (let*
-            (
-                (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
-                (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                (c-rbt-fer:bool (BASIS.DPTF|UR_AccountRoleFeeExemption c-rbt ATS|SC_NAME))
-                (c-fr:bool (ATS|UR_ColdRecoveryFeeRedirection atspair))
-                
-            )
-            (ATS|XC_SetMassRole patron atspair false)
-            (if cold-or-hot
-                (let
-                    (
-                        (c-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn c-rbt ATS|SC_NAME true))
-                        (c-rbt-mint-role:bool (BASIS.DPTF|UR_AccountRoleMint c-rbt ATS|SC_NAME))
-                    )
-                    (if (not c-rbt-fer)
-                        (DPTF|C_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
-                        true
-                    )
-                    (if (not c-fr)
-                        (ATS|XC_SetMassRole patron atspair true)
-                        true
-                    )
-                    (if (not c-rbt-burn-role)
-                        (DPTF-DPMF|C_ToggleBurnRole patron c-rbt ATS|SC_NAME true true)
-                        true
-                    )
-                    (if (not c-rbt-mint-role)
-                        (DPTF|C_ToggleMintRole patron c-rbt ATS|SC_NAME true)
-                        true
-                    )
-                )
-                (let*
-                    (
-                        (h-rbt:string (ATS|UR_HotRewardBearingToken atspair))
-                        (h-fr:bool (ATS|UR_HotRecoveryFeeRedirection atspair))
-                        (h-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn h-rbt ATS|SC_NAME false))
-                        (h-rbt-create-role:bool (BASIS.DPMF|UR_AccountRoleCreate h-rbt ATS|SC_NAME))
-                        (h-rbt-add-q-role:bool (BASIS.DPMF|UR_AccountRoleNFTAQ h-rbt ATS|SC_NAME))
-                    )
-                    (if (not h-fr)
-                        (ATS|XC_SetMassRole patron atspair true)
-                        true
-                    )
-                    (if (not h-rbt-burn-role)
-                        (DPTF-DPMF|C_ToggleBurnRole patron h-rbt ATS|SC_NAME true false)
-                        true
-                    )
-                    (if (not h-rbt-create-role)
-                        (DPMF|C_MoveCreateRole patron h-rbt ATS|SC_NAME)
-                        true
-                    )
-                    (if (not h-rbt-add-q-role)
-                        (DPMF|C_ToggleAddQuantityRole patron h-rbt ATS|SC_NAME true)
-                        true
-                    )
-                )
-            )
-        )
-    )
-    (defun ATS|XC_SetMassRole (patron:string atspair:string burn-or-exemption:bool)
-        (enforce-one
-            "Using Set Mass Role not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-            ]
-        )
-        (map
-            (lambda
-                (reward-token:string)
-                (let
-                    (
-                        (rt-br:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn reward-token ATS|SC_NAME true))
-                        (rt-fer:bool (BASIS.DPTF|UR_AccountRoleFeeExemption reward-token ATS|SC_NAME))
-                    )
-                    (if (and (= rt-br false) burn-or-exemption)
-                        (DPTF-DPMF|C_ToggleBurnRole patron reward-token ATS|SC_NAME true true)        
-                        (if (and (= rt-fer false) (= burn-or-exemption false))
-                            (DPTF|C_ToggleFeeExemptionRole patron reward-token ATS|SC_NAME true)
-                            true
-                        )
-                    )
-                )
-            )
-            (ATS|UR_RewardTokenList atspair)
-        )
-    )
-    (defun ATS|XC_RevokeMint (patron:string id:string)
-        (if (BASIS.ATS|UC_IzRBT id true)
-            (ATS|XC_MassTurnColdRecoveryOff patron id)  
-            true        
-        )
-    )
-    (defun ATS|XC_RevokeFeeExemption (patron:string id:string)
-        (if (BASIS.ATS|UC_IzRT id)
-            (ATS|XC_MassTurnColdRecoveryOff patron id)  
-            true
-        )
-    )
-    (defun ATS|XC_RevokeCreateOrAddQ (patron:string id:string)
-        (if (BASIS.ATS|UC_IzRBT id false)
-            (with-capability (SECURE)
-                (ATS|C_TurnRecoveryOff patron (BASIS.DPMF|UR_RewardBearingToken id) false)
-            )
-            true
-        )
-    )
-    (defun ATS|XC_RevokeBurn (patron:string id:string cold-or-hot:bool)
-        (if (BASIS.ATS|UC_IzRT id)
-            (map
-                (lambda
-                    (atspair:string)
-                    (with-capability (COMPOSE)
-                        (if (not (ATS|UR_ColdRecoveryFeeRedirection atspair))
-                            (with-capability (SECURE)
-                                (ATS|C_ToggleFeeSettings patron atspair true 1)
-                            )
-                            true
-                        )
-                        (if (not (ATS|UR_HotRecoveryFeeRedirection atspair))
-                            (with-capability (SECURE)
-                                (ATS|C_ToggleFeeSettings patron atspair true 2)
-                            )
-                            true
-                        )
-                    )
-                )
-                (BASIS.DPTF|UR_RewardToken id)
-            )
-            (if (ATS|UC_IzRBT id cold-or-hot)
-                (if (= cold-or-hot true)
-                    (ATS|XC_MassTurnColdRecoveryOff patron id)
-                    (if (= (ATS|UR_ToggleHotRecovery (BASIS.DPMF|UR_RewardBearingToken id)) true)
-                        (with-capability (SECURE)
-                            (ATS|C_TurnRecoveryOff patron (BASIS.DPMF|UR_RewardBearingToken id) false)
-                        )
-                        true
-                    )
-                )
-            )
-        )
-    )
-    (defun ATS|XC_MassTurnColdRecoveryOff (patron:string id:string)
-        (map
-            (lambda
-                (atspair:string)
-                (if (= (ATS|UR_ToggleColdRecovery atspair) true)
-                    (with-capability (SECURE)
-                        (ATS|C_TurnRecoveryOff patron atspair true)
-                    )
-                    true
-                )
-            )
-            (BASIS.DPTF|UR_RewardBearingToken id)
-        )
-    )
+    ;;[X]
     (defun ATS|X_ChangeOwnership (atspair:string new-owner:string)
         (enforce-guard (C_ReadPolicy "ATSM|Caller"))
         (with-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner)
@@ -2013,20 +1162,23 @@
         )
     )
     (defun ATS|X_ToggleFeeSettings (atspair:string toggle:bool fee-switch:integer)
-        (require-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch))
-        (if (= fee-switch 0)
-            (update ATS|Pairs atspair
-                { "c-nfr" : toggle}
-            )
-            (if (= fee-switch 1)
+        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
+        (with-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch)
+            (if (= fee-switch 0)
                 (update ATS|Pairs atspair
-                    { "c-fr" : toggle}
+                    { "c-nfr" : toggle}
                 )
-                (update ATS|Pairs atspair
-                    { "h-fr" : toggle}
+                (if (= fee-switch 1)
+                    (update ATS|Pairs atspair
+                        { "c-fr" : toggle}
+                    )
+                    (update ATS|Pairs atspair
+                        { "h-fr" : toggle}
+                    )
                 )
             )
         )
+        
     )
     (defun ATS|X_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
         (enforce-guard (C_ReadPolicy "ATSM|Caller"))
@@ -2082,22 +1234,21 @@
         )
     )
     (defun ATS|X_TurnRecoveryOff (atspair:string cold-or-hot:bool)
-        (require-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot))
-        (if (= cold-or-hot true)
-            (update ATS|Pairs atspair
-                { "cold-recovery" : false}
-            )
-            (update ATS|Pairs atspair
-                { "hot-recovery" : false}
+        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
+        (with-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot)
+            (if (= cold-or-hot true)
+                (update ATS|Pairs atspair
+                    { "cold-recovery" : false}
+                )
+                (update ATS|Pairs atspair
+                    { "hot-recovery" : false}
+                )
             )
         )
+        
     )
-    (defun ATS|X_Issue (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
-        (UTILS.DALOS|UEV_Decimals index-decimals)
-        (UTILS.DALOS|UEV_TokenName atspair)
-        (BASIS.DPTF-DPMF|UEV_id reward-token true)
-        (BASIS.DPTF-DPMF|UEV_id reward-bearing-token true)
-        (require-capability (ATS|X_ISSUE (UTILS.DALOS|UCC_Makeid atspair) account reward-token reward-bearing-token))
+    (defun ATS|X_InsertNewATSPair (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
+        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
         (insert ATS|Pairs (UTILS.DALOS|UCC_Makeid atspair)
             {"owner-konto"                          : account
             ,"can-change-owner"                     : true
@@ -2110,7 +1261,7 @@
             ,"syphoning"                            : false
 
             ,"reward-tokens"                        : [(ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr)]
- 
+
             ,"c-rbt"                                : reward-bearing-token
             ,"c-nfr"                                : rbt-nfr
             ,"c-positions"                          : -1
@@ -2129,10 +1280,6 @@
             ,"hot-recovery"                         : false
             }
         )
-        (BASIS.DPTF-DPMF|C_DeployAccount reward-token account true)
-        (BASIS.DPTF-DPMF|C_DeployAccount reward-bearing-token account true)
-        (BASIS.DPTF-DPMF|C_DeployAccount reward-token ATS|SC_NAME true)
-        (BASIS.DPTF-DPMF|C_DeployAccount reward-bearing-token ATS|SC_NAME true)
     )
     (defun ATS|X_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
         (enforce-guard (C_ReadPolicy "ATSM|Caller"))
@@ -2154,7 +1301,7 @@
         )
     )
     (defun ATS|XO_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (enforce-guard (C_ReadPolicy "OUROBOROS|ReshapeUnstakeAccount"))
+        (enforce-guard (C_ReadPolicy "ATSM|ReshapeUnstakeAccount"))
         (with-capability (ATS|RESHAPE)
             (ATS|XP_ReshapeUnstakeAccount atspair account rp)
         )
@@ -2183,7 +1330,7 @@
         )
     )
     (defun ATS|XO_RemoveSecondary (atspair:string reward-token:string)
-        (enforce-guard (C_ReadPolicy "OUROBOROS|RemoveSecondaryRT"))
+        (enforce-guard (C_ReadPolicy "ATSM|RemoveSecondaryRT"))
         (with-capability (ATS|RM_SECONDARY_RT)
             (ATS|XP_RemoveSecondary atspair reward-token)
         )
@@ -2204,17 +1351,12 @@
             "Update RoU not allowed"
             [
                 (enforce-guard (create-capability-guard (ATS|UPDATE_ROU)))
-                (enforce-guard (C_ReadPolicy "ATSU|UpdateROU"))
+                (enforce-guard (C_ReadPolicy "TFT|UpdateROU"))
+                (enforce-guard (C_ReadPolicy "ATSC|UpdateROU"))
+                (enforce-guard (C_ReadPolicy "ATSH|UpdateROU"))
                 (enforce-guard (C_ReadPolicy "ATSM|UpdateROU"))
-                (enforce-guard (C_ReadPolicy "OUROBOROS|UpdateROU"))
             ]
         )
-        (with-capability (ATS|UPDATE_ROU_PUR)
-            (ATS|XP_UpdateRoU atspair reward-token rou direction amount)
-        )
-    )
-    (defun ATS|XP_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
-        (require-capability (ATS|UPDATE_ROU_PUR))
         (let*
             (
                 (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
@@ -2243,55 +1385,55 @@
         )
     )
     (defun X_UpP0 (atspair:string account:string obj:[object{Awo}])
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0" : obj}
         )
     )
     (defun X_UpP1 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P1"  : obj}
         )
     )
     (defun X_UpP2 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P2"  : obj}
         )
     )
     (defun X_UpP3 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P3"  : obj}
         )
     )
     (defun X_UpP4 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P4"  : obj}
         )
     )
     (defun X_UpP5 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P5"  : obj}
         )
     )
     (defun X_UpP6 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P6"  : obj}
         )
     )
     (defun X_UpP7 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSU|UpUnsPos"))
+        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P7"  : obj}
         )
     )
     (defun ATS|X_SpawnAutostakeAccount (atspair:string account:string)
-        (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+        (enforce-guard (C_ReadPolicy "ATSC|Caller"))
         (let
             (
                 (zero:object{Awo} (ATS|UCC_MakeZeroUnstakeObject atspair))

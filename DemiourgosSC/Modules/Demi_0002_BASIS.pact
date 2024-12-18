@@ -103,7 +103,7 @@
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
-    (defun BASIS|DefinePolicies ()
+    (defun DefinePolicies ()
         (DALOS.A_AddPolicy 
             "BASIS|Summoner"
             (create-capability-guard (SUMMONER))
@@ -1587,7 +1587,13 @@
     )
     ;;[C]
     (defun DPTF-DPMF|C_ChangeOwnership (patron:string id:string new-owner:string token-type:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Ownership Change of DPTF|DPMF Account not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (DPTF-DPMF|OWNERSHIP-CHANGE id new-owner token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BIGGEST)
@@ -1603,9 +1609,11 @@
             [
                 (enforce-guard (create-capability-guard (SECURE)))
                 (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "ATSI|Caller"))
                 (enforce-guard (C_ReadPolicy "ATSM|Caller"))
                 (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (DALOS.DALOS|UEV_EnforceAccountExists account)
@@ -1664,7 +1672,13 @@
         )
     )
     (defun DPTF-DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool token-type:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Free Toggle of DPTF|DPMF Account not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (DPTF-DPMF|FROZEN-ACCOUNT patron id account toggle token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_BIG)
@@ -1676,7 +1690,13 @@
         )
     )
     (defun DPTF-DPMF|C_TogglePause (patron:string id:string toggle:bool token-type:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Pause Toggle of DPTF|DPMF Account not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (DPTF-DPMF|TOGGLE_PAUSE patron id toggle token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron patron DALOS.GAS_MEDIUM)
@@ -1691,7 +1711,8 @@
             "Toggle Transfer Role not allowed"
             [
                 (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (with-capability (DPTF-DPMF|TOGGLE_TRANSFER-ROLE patron id account toggle token-type)
@@ -1706,7 +1727,13 @@
         )
     )
     (defun DPTF-DPMF|C_Wipe (patron:string id:string atbw:string token-type:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Wipe of DPTF|DPMF Account not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
+            ]
+        )
         (with-capability (DPTF-DPMF|WIPE patron id atbw token-type)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id atbw))
                 (DALOS.IGNIS|X_Collect patron atbw DALOS.GAS_BIGGEST)
@@ -1721,10 +1748,11 @@
         (enforce-one
             "DPTF Burn not allowed"
             [
-                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "ATSC|Caller"))
+                (enforce-guard (C_ReadPolicy "ATSH|Caller"))
                 (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
                 (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
             ]
         )
         (with-capability (DPTF-DPMF|BURN id account amount true)
@@ -1737,7 +1765,7 @@
         )
     )
     (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
         (with-capability (DPTF-DPMF|CONTROL patron id true)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -1748,7 +1776,14 @@
         )
     )
     (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "DPTF Issue not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "DEPLOYER|Summoner"))
+                
+            ]
+        )
         (with-capability (DPTF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
             (let*
                 (
@@ -1801,7 +1836,8 @@
         (enforce-one
             "DPTF Issue not permitted"
             [
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "ATSH|Caller"))
                 (enforce-guard (C_ReadPolicy "ATSM|Caller"))
                 (enforce-guard (C_ReadPolicy "LIQUID|Summoner"))
                 (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
@@ -1820,7 +1856,7 @@
         )
     )
     (defun DPTF|C_SetFee (patron:string id:string fee:decimal)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
         (with-capability (DPTF|SET_FEE patron id fee)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -1831,7 +1867,7 @@
         )
     )
     (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
         (with-capability (DPTF|SET_FEE-TARGET patron id target)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -1842,7 +1878,7 @@
         )
     )
     (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
         (with-capability (DPTF|SET_MIN-MOVE patron id min-move-value)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -1853,7 +1889,7 @@
         )
     )
     (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
         (with-capability (DPTF|TOGGLE_FEE patron id toggle)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) DALOS.GAS_SMALL)
@@ -1864,7 +1900,13 @@
         )
     )
     (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-one
+            "Toggling Fee Lock not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
+                (enforce-guard (C_ReadPolicy "DEPLOYER|Summoner"))
+            ]
+        )
         (let
             (
                 (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
@@ -1903,7 +1945,7 @@
     )
     ;;
     (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
         (with-capability (DPMF|ADD-QUANTITY id account amount)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -1917,9 +1959,10 @@
         (enforce-one
             "DPMF Burn not permitted"
             [
+                (enforce-guard (C_ReadPolicy "ATSH|Caller"))
                 (enforce-guard (C_ReadPolicy "VST|Sum"))
                 (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (with-capability (DPTF-DPMF|BURN id account amount false)
@@ -1932,7 +1975,7 @@
         )
     )
     (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
         (with-capability (DPTF-DPMF|CONTROL id false)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
                 (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id false) DALOS.GAS_SMALL)
@@ -1943,7 +1986,7 @@
         )
     )
     (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+        (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
         (with-capability (DPMF|CREATE id account)
             (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
                 (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
@@ -1958,7 +2001,7 @@
             "DPTF Multi Transfer not permitted"
             [
                 (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (with-capability (DPMF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
@@ -2014,9 +2057,9 @@
         (enforce-one
             "DPMF Mint not permitted"
             [
-                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "ATSH|Caller"))
                 (enforce-guard (C_ReadPolicy "VST|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (with-capability (DPMF|MINT id account amount)
@@ -2032,10 +2075,10 @@
         (enforce-one
             "DPMF Transfer not permitted"
             [
-                (enforce-guard (C_ReadPolicy "ATSU|Caller"))
+                (enforce-guard (C_ReadPolicy "ATSH|Caller"))
                 (enforce-guard (C_ReadPolicy "VST|Summoner"))
                 (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
             ]
         )
         (with-capability (DPMF|TRANSFER id sender receiver transfer-amount method)
@@ -2231,7 +2274,7 @@
         )
     )
     (defun DPTF-DPMF|XO_ToggleBurnRole (id:string account:string toggle:bool token-type:bool)
-        (enforce-guard (C_ReadPolicy "ATS|TgBrRl"))
+        (enforce-guard (C_ReadPolicy "ATSI|TgBrRl"))
         (with-capability (DPTF-DPMF|X_TOGGLE_BURN-ROLE id account toggle token-type)
             (DPTF-DPMF|XP_ToggleBurnRole id account toggle token-type)
         )
@@ -2256,7 +2299,8 @@
         (enforce-one
             "Invalid Permissions to update Reward Bearing Token"
             [
-                (enforce-guard (C_ReadPolicy "ATS|UpRT"))
+                (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "ATSI|Caller"))
                 (enforce-guard (C_ReadPolicy "ATSM|Caller"))
             ]
         )
@@ -2412,7 +2456,7 @@
         )
     )
     (defun DPTF|XO_Burn (id:string account:string amount:decimal)
-        (enforce-guard (C_ReadPolicy "ATS|BrTF"))
+        (enforce-guard (C_ReadPolicy "TFT|BrTF"))
         (with-capability (DPTF-DPMF|X_BURN id account amount true)
             (DPTF|XP_Burn id account amount)
         )
@@ -2427,7 +2471,7 @@
             "Credit Not permitted"
             [
                 (enforce-guard (create-capability-guard (DPTF|CREDIT)))
-                (enforce-guard (C_ReadPolicy "ATS|CrTF"))
+                (enforce-guard (C_ReadPolicy "TFT|CrTF"))
             ]
         )
         (with-capability (DPTF|CREDIT_PUR)
@@ -2497,7 +2541,7 @@
             "Standard Debit Not permitted"
             [
                 (enforce-guard (create-capability-guard (DPTF|DEBIT)))
-                (enforce-guard (C_ReadPolicy "ATS|DbTF"))
+                (enforce-guard (C_ReadPolicy "TFT|DbTF"))
             ]
         )
         (with-capability (DPTF|DEBIT_PUR)
@@ -2530,7 +2574,7 @@
         )
     )
     (defun DPTF|XO_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATS|TgFeRl"))
+        (enforce-guard (C_ReadPolicy "ATSI|TgFeRl"))
         (with-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle)
             (DPTF|XP_ToggleFeeExemptionRole id account toggle)
         )
@@ -2547,7 +2591,7 @@
         )
     )
     (defun DPTF|XO_ToggleMintRole (id:string account:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATS|TgMnRl"))
+        (enforce-guard (C_ReadPolicy "ATSI|TgMnRl"))
         (with-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle)
             (DPTF|XP_ToggleMintRole id account toggle)
         )
@@ -2564,7 +2608,7 @@
         )
     )
     (defun DPTF|XO_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        (enforce-guard (C_ReadPolicy "ATS|UpFees"))
+        (enforce-guard (C_ReadPolicy "TFT|UpFees"))
         (with-capability (DPTF|UPDATE_FEES_PUR)
             (DPTF-DPMF|UEV_Amount id amount true)
             (DPTF|XP_UpdateFeeVolume id amount primary)
@@ -2591,9 +2635,9 @@
         (enforce-one
             "Invalid Permissions to update Reward Token"
             [
-                (enforce-guard (C_ReadPolicy "ATS|UpRT"))
+                (enforce-guard (C_ReadPolicy "ATS|Sum"))
+                (enforce-guard (C_ReadPolicy "ATSI|Caller"))
                 (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-                (enforce-guard (C_ReadPolicy "OUROBOROS|UpdateRewardToken"))
             ]
         )
         (with-capability (DPTF|UPDATE_RT)
@@ -2639,7 +2683,7 @@
         )
     )
     (defun DPTF-DPMF|XO_WriteRoles (id:string account:string rp:integer d:bool token-type:bool)
-        (enforce-guard (C_ReadPolicy "ATS|WR"))
+        (enforce-guard (C_ReadPolicy "ATSI|WR"))
         (with-capability (BASIS|X_WRITE-ROLES id account rp token-type)
             (DPTF-DPMF|XP_WriteRoles id account rp d token-type)
         )
@@ -3059,7 +3103,7 @@
         (DALOS.DALOS|X_IncrementNonce sender)
     )
     (defun DPMF|XO_MoveCreateRole (id:string receiver:string)
-        (enforce-guard (C_ReadPolicy "ATS|MCRl"))
+        (enforce-guard (C_ReadPolicy "ATSI|MCRl"))
         (with-capability (DPMF|X_MOVE_CREATE-ROLE id receiver)
             (DPMF|XP_MoveCreateRole id receiver)
         )
@@ -3077,7 +3121,7 @@
         )
     )
     (defun DPMF|XO_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATS|TgAqRl"))
+        (enforce-guard (C_ReadPolicy "ATSI|TgAqRl"))
         (with-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle)
             (DPMF|XP_ToggleAddQuantityRole id account toggle)
         )

@@ -87,7 +87,7 @@
             )
         )
     )
-    (defun VST|DefinePolicies ()
+    (defun DefinePolicies ()
         (DALOS.A_AddPolicy
             "VST|Summoner"
             (create-capability-guard (SUMMONER))
@@ -109,6 +109,14 @@
             (create-capability-guard (SUMMONER))
         )
         (ATS.A_AddPolicy
+            "VST|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
+        (ATSI.A_AddPolicy
+            "VST|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
+        (TFT.A_AddPolicy
             "VST|Summoner"
             (create-capability-guard (SUMMONER))
         )
@@ -261,14 +269,14 @@
         )
     )
     ;;
-    (defun VST|CO_CreateVestingLink:string (patron:string dptf:string)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (VST|CP_CreateVestingLink patron dptf)
+    (defun VST|C_CreateVestingLink:string (patron:string dptf:string)
+        (enforce-one
+            "Creating Vesting Link not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+                (enforce-guard (C_ReadPolicy "DEPLOYER|Summoner"))
+            ]
         )
-    )
-    (defun VST|CP_CreateVestingLink:string (patron:string dptf:string)
-        (require-capability (SECURE))
         (with-capability (SSVD)
             (let*
                 (
@@ -299,11 +307,11 @@
                 )
                 (BASIS.DPTF-DPMF|C_DeployAccount dptf VST|SC_NAME true)
                 (BASIS.DPTF-DPMF|C_DeployAccount dpmf VST|SC_NAME false)
-                (DPTF|C_ToggleFeeExemptionRole patron dptf VST|SC_NAME true)
-                (DPMF|C_MoveCreateRole patron dpmf VST|SC_NAME)
-                (DPMF|C_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
-                (DPTF-DPMF|C_ToggleBurnRole patron dpmf VST|SC_NAME true false)
                 (BASIS.DPTF-DPMF|C_ToggleTransferRole patron dpmf VST|SC_NAME true false)
+                (ATSI.DPTF-DPMF|C_ToggleBurnRole patron dpmf VST|SC_NAME true false)
+                (ATSI.DPTF|C_ToggleFeeExemptionRole patron dptf VST|SC_NAME true)
+                (ATSI.DPMF|C_MoveCreateRole patron dpmf VST|SC_NAME)
+                (ATSI.DPMF|C_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
                 (VST|X_DefineVestingPair patron dptf dpmf)
                 dpmf
             )
@@ -319,19 +327,13 @@
                     (nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                 )
                 (BASIS.DPMF|C_Mint patron dpmf-id VST|SC_NAME amount meta-data)
-                (ATS.DPTF|C_Transfer patron id vester VST|SC_NAME amount true)
+                (TFT.DPTF|C_Transfer patron id vester VST|SC_NAME amount true)
                 (BASIS.DPMF|C_Transfer patron dpmf-id nonce VST|SC_NAME target-account amount true)
             )
         )
     )
-    (defun VST|CO_Cull (patron:string culler:string id:string nonce:integer)
+    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (VST|CP_Cull patron culler id nonce)
-        )
-    )
-    (defun VST|CP_Cull (patron:string culler:string id:string nonce:integer)
-        (require-capability (SECURE))
         (with-capability (VST|CULL culler id)
             (let*
                 (
@@ -341,14 +343,14 @@
                     (return-amount:decimal (- initial-amount culled-amount))
                 )
                 (if (= return-amount 0.0)
-                    (ATS.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler initial-amount true)
+                    (TFT.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler initial-amount true)
                     (let*
                         (
                             (remaining-vesting-meta-data:[object{VST|MetaDataSchema}] (VST|UC_CullMetaDataObject culler id nonce))
                             (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed id) 1))
                         )
                         (BASIS.DPMF|C_Mint patron id VST|SC_NAME return-amount remaining-vesting-meta-data)
-                        (ATS.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler culled-amount true)
+                        (TFT.DPTF|C_Transfer patron dptf-id VST|SC_NAME culler culled-amount true)
                         (BASIS.DPMF|C_Transfer patron id new-nonce VST|SC_NAME culler return-amount true)
                     )
                 )

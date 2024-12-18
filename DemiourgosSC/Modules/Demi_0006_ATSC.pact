@@ -1,25 +1,25 @@
 ;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
-(module AUTOSTAKE-USAGE GOVERNANCE
+(module ATSC GOVERNANCE
     ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
     ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
     (use BASIS)
     (use ATS)
 
     (defcap GOVERNANCE ()
-        (compose-capability (ATSU-ADMIN))
+        (compose-capability (ATSC-ADMIN))
     )
-    (defcap ATSU-ADMIN ()
+    (defcap ATSC-ADMIN ()
         (enforce-one
             "Autostake Admin not satisfed"
             [
-                (enforce-guard G-MD_AUTOS)
-                (enforce-guard G-SC_AUTOS)
+                (enforce-guard G-MD_ATSC)
+                (enforce-guard G-SC_ATSC)
             ]
         )
     )
 
-    (defconst G-MD_AUTOS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_AUTOS   (keyset-ref-guard ATS.ATS|SC_KEY))
+    (defconst G-MD_ATSC   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst G-SC_ATSC   (keyset-ref-guard ATS.ATS|SC_KEY))
 
     (defcap COMPOSE ()
         true
@@ -29,7 +29,7 @@
     )
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
-        (with-capability (ATSU-ADMIN)
+        (with-capability (ATSC-ADMIN)
             (write PoliciesTable policy-name
                 {"policy" : policy-guard}
             )
@@ -39,84 +39,80 @@
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
-    (defcap P|ATSU|REMOTE-GOV ()
+    (defcap P|ATSC|REMOTE-GOV ()
         true
     )
-    (defcap P|ATSU|CALLER ()
+    (defcap P|ATSC|CALLER ()
         true
     )
-    (defcap P|ATSU|UPDATE_ROU ()
+    (defcap P|ATSC|UPDATE_ROU ()
         true
     )
-    (defcap P|ATSU|UPDATE_UNSTAKE-POS ()
+    (defcap P|ATSC|UPDATE_UNSTAKE-POS ()
         true
     )
     
-    (defun ATSU|DefinePolicies ()
+    (defun DefinePolicies ()
         (BASIS.A_AddPolicy
-            "ATSU|Caller"
-            (create-capability-guard (P|ATSU|CALLER))
+            "ATSC|Caller"
+            (create-capability-guard (P|ATSC|CALLER))
         )
         (ATS.A_AddPolicy
-            "ATSU|RemoteAutostakeGovernor"
-            (create-capability-guard (P|ATSU|REMOTE-GOV))
+            "ATSC|RemoteAutostakeGovernor"
+            (create-capability-guard (P|ATSC|REMOTE-GOV))
         )
         (ATS.A_AddPolicy
-            "ATSU|Caller"
-            (create-capability-guard (P|ATSU|CALLER))
+            "ATSC|Caller"
+            (create-capability-guard (P|ATSC|CALLER))
         )
         (ATS.A_AddPolicy
-            "ATSU|UpdateROU"
-            (create-capability-guard (P|ATSU|UPDATE_ROU))
+            "ATSC|UpdateROU"
+            (create-capability-guard (P|ATSC|UPDATE_ROU))
         )
         (ATS.A_AddPolicy
-            "ATSU|UpUnsPos"
-            (create-capability-guard (P|ATSU|UPDATE_UNSTAKE-POS))
+            "ATSC|UpUnsPos"
+            (create-capability-guard (P|ATSC|UPDATE_UNSTAKE-POS))
+        )
+        (TFT.A_AddPolicy
+            "ATSC|Caller"
+            (create-capability-guard (P|ATSC|CALLER))
         )
     )
 
     (deftable PoliciesTable:{DALOS.PolicySchema})
 
     ;;
-    (defcap ATSU|COLD_RECOVERY (recoverer:string atspair:string ra:decimal)
+    (defcap ATSC|COLD_RECOVERY (recoverer:string atspair:string ra:decimal)
         @event
-        (compose-capability (P|ATSU|REMOTE-GOV))
-        (compose-capability (P|ATSU|CALLER))
-        (compose-capability (P|ATSU|UPDATE_ROU))
-        (compose-capability (ATSU|DEPLOY atspair recoverer))
-        (compose-capability (P|ATSU|UPDATE_UNSTAKE-POS))
+        (compose-capability (P|ATSC|REMOTE-GOV))
+        (compose-capability (P|ATSC|CALLER))
+        (compose-capability (P|ATSC|UPDATE_ROU))
+        (compose-capability (ATSC|DEPLOY atspair recoverer))
+        (compose-capability (P|ATSC|UPDATE_UNSTAKE-POS))
         (DALOS.DALOS|CAP_EnforceAccountOwnership recoverer)
         (ATS.ATS|UEV_RecoveryState atspair true true)
     )
-    (defcap ATSU|HOT_RECOVERY (recoverer:string atspair:string ra:decimal)
+    (defcap ATSC|CULL (culler:string atspair:string)
         @event
-        (compose-capability (P|ATSU|REMOTE-GOV))
-        (compose-capability (P|ATSU|CALLER))
-        (DALOS.DALOS|CAP_EnforceAccountOwnership recoverer)
-        (ATS.ATS|UEV_id atspair)
-        (ATS.ATS|UEV_RecoveryState atspair true false)
-    )
-    (defcap ATSU|CULL (culler:string atspair:string)
-        @event
-        (compose-capability (P|ATSU|REMOTE-GOV))
-        (compose-capability (P|ATSU|CALLER))
-        (compose-capability (P|ATSU|UPDATE_ROU))
-        (compose-capability (P|ATSU|UPDATE_UNSTAKE-POS))
-        (compose-capability (ATSU|NORMALIZE_LEDGER atspair culler))
+        (compose-capability (P|ATSC|REMOTE-GOV))
+        (compose-capability (P|ATSC|CALLER))
+        (compose-capability (P|ATSC|UPDATE_ROU))
+        (compose-capability (P|ATSC|UPDATE_UNSTAKE-POS))
+        (compose-capability (ATSC|NORMALIZE_LEDGER atspair culler))
         (DALOS.DALOS|CAP_EnforceAccountOwnership culler)
         (ATS.ATS|UEV_id atspair)
     )
-    (defcap ATSU|DEPLOY (atspair:string account:string)
+    (defcap ATSC|DEPLOY (atspair:string account:string)
         (DALOS.DALOS|UEV_EnforceAccountExists account)
         (ATS.ATS|UEV_id atspair)
-        (compose-capability (ATSU|NORMALIZE_LEDGER atspair account))
+        (compose-capability (ATSC|NORMALIZE_LEDGER atspair account))
     )
-    (defcap ATSU|NORMALIZE_LEDGER (atspair:string account:string)
+    (defcap ATSC|NORMALIZE_LEDGER (atspair:string account:string)
         (ATS.ATS|UEV_id atspair)
         (let*
             (
-                (dalos-admin:guard G-MD_AUTOS)
-                (autos-admin:guard G-SC_AUTOS)
+                (dalos-admin:guard G-MD_ATSC)
+                (autos-admin:guard G-SC_ATSC)
                 (account-g:guard (DALOS.DALOS|UR_AccountGuard account))
                 (sov:string (DALOS.DALOS|UR_AccountSovereign account))
                 (sov-g:guard (DALOS.DALOS|UR_AccountGuard sov))
@@ -133,13 +129,13 @@
                 ]
             )
         )
-        (compose-capability (P|ATSU|UPDATE_UNSTAKE-POS))
+        (compose-capability (P|ATSC|UPDATE_UNSTAKE-POS))
     )
     ;;
-    (defun ATSU|C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal)
+    (defun ATSC|C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (ATSU|COLD_RECOVERY recoverer atspair ra)
-            (ATSU|X_DeployAccount atspair recoverer)
+        (with-capability (ATSC|COLD_RECOVERY recoverer atspair ra)
+            (ATSC|X_DeployAccount atspair recoverer)
             (let*
                 (
                     (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
@@ -155,7 +151,7 @@
                     ;;for true
                     (positive-c-fr:[decimal] (ATS.ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))    ;;remainderu
                 )
-                (ATS.DPTF|C_Transfer patron c-rbt recoverer ATS.ATS|SC_NAME ra true)
+                (TFT.DPTF|C_Transfer patron c-rbt recoverer ATS.ATS|SC_NAME ra true)
                 (BASIS.DPTF|C_Burn patron c-rbt ATS|SC_NAME ra)
                 (map
                     (lambda
@@ -175,48 +171,29 @@
                     )
                     true
                 )
-                (ATSU|X_StoreUnstakeObject atspair recoverer usable-position 
+                (ATSC|X_StoreUnstakeObject atspair recoverer usable-position 
                     { "reward-tokens"   : positive-c-fr 
                     , "cull-time"       : cull-time}
                 )
             )
-            (ATSU|X_Normalize atspair recoverer)
-        )
-    )
-    (defun ATSU|C_HotRecovery (patron:string recoverer:string atspair:string ra:decimal)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (ATSU|HOT_RECOVERY recoverer atspair ra)
-            (let*
-                (
-                    (c-rbt:string (ATS.ATS|UR_ColdRewardBearingToken atspair))
-                    (h-rbt:string (ATS.ATS|UR_HotRewardBearingToken atspair))
-                    (present-time:time (at "block-time" (chain-data)))
-                    (meta-data-obj:object{ATS|Hot} { "mint-time" : present-time})
-                    (meta-data:[object] [meta-data-obj])
-                    (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed h-rbt) 1))
-                )
-                (ATS.DPTF|C_Transfer patron c-rbt recoverer ATS.ATS|SC_NAME ra true)
-                (BASIS.DPTF|C_Burn patron c-rbt ATS.ATS|SC_NAME ra)
-                (BASIS.DPMF|C_Mint patron h-rbt ATS.ATS|SC_NAME ra meta-data)
-                (BASIS.DPMF|C_Transfer patron h-rbt new-nonce ATS.ATS|SC_NAME recoverer ra true)
-            )
+            (ATSC|X_Normalize atspair recoverer)
         )
     )
     ;;
-    (defun ATSU|C_Cull:[decimal] (patron:string culler:string atspair:string)
+    (defun ATSC|C_Cull:[decimal] (patron:string culler:string atspair:string)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (ATSU|CULL culler atspair)
+        (with-capability (ATSC|CULL culler atspair)
             (let*
                 (
                     (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
-                    (c0:[decimal] (ATSU|X_MultiCull atspair culler))
-                    (c1:[decimal] (ATSU|X_SingleCull atspair culler 1))
-                    (c2:[decimal] (ATSU|X_SingleCull atspair culler 2))
-                    (c3:[decimal] (ATSU|X_SingleCull atspair culler 3))
-                    (c4:[decimal] (ATSU|X_SingleCull atspair culler 4))
-                    (c5:[decimal] (ATSU|X_SingleCull atspair culler 5))
-                    (c6:[decimal] (ATSU|X_SingleCull atspair culler 6))
-                    (c7:[decimal] (ATSU|X_SingleCull atspair culler 7))
+                    (c0:[decimal] (ATSC|X_MultiCull atspair culler))
+                    (c1:[decimal] (ATSC|X_SingleCull atspair culler 1))
+                    (c2:[decimal] (ATSC|X_SingleCull atspair culler 2))
+                    (c3:[decimal] (ATSC|X_SingleCull atspair culler 3))
+                    (c4:[decimal] (ATSC|X_SingleCull atspair culler 4))
+                    (c5:[decimal] (ATSC|X_SingleCull atspair culler 5))
+                    (c6:[decimal] (ATSC|X_SingleCull atspair culler 6))
+                    (c7:[decimal] (ATSC|X_SingleCull atspair culler 7))
                     (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
                     (cw:[decimal] (UTILS.UTILS|UC_AddHybridArray ca))
                 )
@@ -226,20 +203,20 @@
                         (if (!= (at idx cw) 0.0)
                             (with-capability (COMPOSE)
                                 (ATS.ATS|XO_UpdateRoU atspair (at idx rt-lst) false false (at idx cw))
-                                (ATS.DPTF|C_Transfer patron (at idx rt-lst) ATS.ATS|SC_NAME culler (at idx cw) true)
+                                (TFT.DPTF|C_Transfer patron (at idx rt-lst) ATS.ATS|SC_NAME culler (at idx cw) true)
                             )
                             true
                         )
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
-                (ATSU|X_Normalize atspair culler)
+                (ATSC|X_Normalize atspair culler)
                 cw
             )
         )
     )
     ;;
-    (defun ATSU|X_MultiCull:[decimal] (atspair:string account:string)
+    (defun ATSC|X_MultiCull:[decimal] (atspair:string account:string)
         (let*
             (
                 (zr:object{ATS.Awo} (ATS.ATS|UCC_MakeZeroUnstakeObject atspair))
@@ -306,7 +283,7 @@
             )
         )
     )
-    (defun ATSU|X_SingleCull:[decimal] (atspair:string account:string position:integer)
+    (defun ATSC|X_SingleCull:[decimal] (atspair:string account:string position:integer)
         (let*
             (
                 (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
@@ -318,13 +295,13 @@
                 (cull-output:[decimal] (ATS.ATS|UC_CullValue atspair unstake-obj))
             )
             (if (!= cull-output empty)
-                (ATSU|X_StoreUnstakeObject atspair account position zr)
+                (ATSC|X_StoreUnstakeObject atspair account position zr)
                 true
             )
             cull-output
         )
     )
-    (defun ATSU|X_StoreUnstakeObject (atspair:string account:string position:integer obj:object{ATS.Awo})
+    (defun ATSC|X_StoreUnstakeObject (atspair:string account:string position:integer obj:object{ATS.Awo})
         (let
             (
                 (p0:[object{ATS.Awo}] (ATS.ATS|UR_P0 atspair account))
@@ -362,13 +339,13 @@
             )
         )
     )
-    (defun ATSU|X_DeployAccount (atspair:string account:string)
-        (require-capability (ATSU|DEPLOY atspair account))
+    (defun ATSC|X_DeployAccount (atspair:string account:string)
+        (require-capability (ATSC|DEPLOY atspair account))
         (ATS.ATS|X_SpawnAutostakeAccount atspair account)
-        (ATSU|X_Normalize atspair account)
+        (ATSC|X_Normalize atspair account)
     )
-    (defun ATSU|X_Normalize (atspair:string account:string)
-        (require-capability (ATSU|NORMALIZE_LEDGER atspair account))
+    (defun ATSC|X_Normalize (atspair:string account:string)
+        (require-capability (ATSC|NORMALIZE_LEDGER atspair account))
         (let*
             (
                 (p0:[object{ATS.Awo}] (ATS.ATS|UR_P0 atspair account))

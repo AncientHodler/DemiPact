@@ -1224,7 +1224,7 @@
             "Update Elite Account not permitted"
             [
                 (enforce-guard (C_ReadPolicy "BASIS|UpdateElite"))
-                (enforce-guard (C_ReadPolicy "ATS|UpdElite"))
+                (enforce-guard (C_ReadPolicy "TFT|UpdElite"))
             ]
         )
         (if (= (DALOS|UR_AccountType account) false)
@@ -1241,6 +1241,8 @@
                 (enforce-guard (create-capability-guard (DALOS|INCREMENT_NONCE)))
                 (enforce-guard (C_ReadPolicy "BASIS|IncrementDalosNonce"))
                 (enforce-guard (C_ReadPolicy "ATS|PlusDalosNonce"))
+                (enforce-guard (C_ReadPolicy "ATSI|PlusDalosNonce"))
+                (enforce-guard (C_ReadPolicy "TFT|PlusDalosNonce"))
                 (enforce-guard (C_ReadPolicy "ATSM|PlusDalosNonce"))
                 (enforce-guard (C_ReadPolicy "VST|PlusDalosNonce"))
                 (enforce-guard (C_ReadPolicy "BRD|IncrementDalosNonce"))
@@ -1258,6 +1260,8 @@
                 (enforce-guard (create-capability-guard (IGNIS|COLLECTER)))
                 (enforce-guard (C_ReadPolicy "BASIS|GasCollection"))
                 (enforce-guard (C_ReadPolicy "ATS|GasCol"))
+                (enforce-guard (C_ReadPolicy "ATSI|GasCol"))
+                (enforce-guard (C_ReadPolicy "TFT|GasCol"))
                 (enforce-guard (C_ReadPolicy "ATSM|GasCol"))
                 (enforce-guard (C_ReadPolicy "VST|GasCol"))
                 (enforce-guard (C_ReadPolicy "BRD|GasCollection"))

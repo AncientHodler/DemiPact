@@ -52,7 +52,7 @@
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
 
-    (defun LIQUID|DefinePolicies ()
+    (defun DefinePolicies ()
         @doc "Add the Policy that allows running external Functions from this Module"                
         (DALOS.A_AddPolicy
             "LIQUID|Summoner"
@@ -63,6 +63,10 @@
             (create-capability-guard (SUMMONER))
         )
         (ATS.A_AddPolicy
+            "LIQUID|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
+        (TFT.A_AddPolicy
             "LIQUID|Summoner"
             (create-capability-guard (SUMMONER))
         )
@@ -130,14 +134,14 @@
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
     )
     ;;[C]
-    (defun LIQUID|CO_WrapKadena (patron:string wrapper:string amount:decimal)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (LIQUID|CP_WrapKadena patron wrapper amount)
+    (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
+        (enforce-one
+            "Update RoU not allowed"
+            [
+                (enforce-guard (C_ReadPolicy "OUROBOROS|Summoner"))
+                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
+            ]
         )
-    )
-    (defun LIQUID|CP_WrapKadena (patron:string wrapper:string amount:decimal)
-        (require-capability (SECURE))
         (with-capability (LIQUID|WRAP)
             (let
                 (
@@ -146,26 +150,19 @@
                 )
                 (DALOS.DALOS|C_TransferDalosFuel kadena-patron LIQUID|SC_KDA-NAME amount)
                 (BASIS.DPTF|C_Mint patron w-kda-id LIQUID|SC_NAME amount false)
-                (ATS.DPTF|C_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount true)
+                (TFT.DPTF|C_Transfer patron w-kda-id LIQUID|SC_NAME wrapper amount true)
             )
         )
     )
-    (defun LIQUID|CO_UnwrapKadena (patron:string unwrapper:string amount:decimal)
+    (defun LIQUID|C_UnwrapKadena (patron:string unwrapper:string amount:string)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SECURE)
-            (LIQUID|CP_UnwrapKadena patron unwrapper amount)
-        )
-    )
-    (defun LIQUID|CP_UnwrapKadena (patron:string unwrapper:string amount:string)
-        @doc "Client Function for wrapping native Kadena to DALOS Kadena"
-        (require-capability (SECURE))
         (with-capability (LIQUID|UNWRAP)
             (let
                 (
                     (kadena-patron:string (DALOS.DALOS|UR_AccountKadena unwrapper))
                     (w-kda-id:string (DALOS.DALOS|UR_WrappedKadenaID))
                 )
-                (ATS.DPTF|C_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount true)
+                (TFT.DPTF|C_Transfer patron w-kda-id unwrapper LIQUID|SC_NAME amount true)
                 (BASIS.DPTF|C_Burn patron w-kda-id)
                 (DALOS.DALOS|C_TransferDalosFuel LIQUID|SC_KDA-NAME kadena-patron amount)
             )

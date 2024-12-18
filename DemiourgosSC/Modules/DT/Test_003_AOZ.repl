@@ -72,10 +72,10 @@
 (format "PlebiumDenarius Supply is {}" [(free.BASIS.DPTF-DPMF|UR_Supply "PDKOSON-98c486052a51" true)])
 (format "PlebeicStrength RBT-Supply is {}" [(free.ATS.ATS|UCX_PairRBTSupply "PlebeicStrength-98c486052a51")])
 
-        (free.TALOS.ATS|C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
-        (free.TALOS.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
-        (free.TALOS.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 40.0)
-        (free.TALOS.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 80.0)
+        (free.TALOS|ATS2.C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 100.0)
+        (free.TALOS|ATS2.C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "PKOSON-98c486052a51" 50.0)
+        (free.TALOS|ATS2.C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 40.0)
+        (free.TALOS|ATS2.C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 80.0)
 
 (format "PlebeicStrength is {};"
     [
@@ -144,7 +144,7 @@
         (print "")
         (print "Function Block ++++++++++++++++++++++++++++++++")
         ;;HOT-Recovery plus Redeem Block
-        (free.TALOS.ATS|C_HotRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 100.0)
+        (free.TALOS|ATS1.C_HotRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 100.0)
 
                 (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
                     [
@@ -158,7 +158,7 @@
             {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
             "block-time": (time "2024-10-11T00:00:00Z")}
         )
-        (free.TALOS.ATS|C_Redeem KC.AOZT KC.AOZT "DDKOSON-98c486052a51" 1)
+        (free.TALOS|ATS1.C_Redeem KC.AOZT KC.AOZT "DDKOSON-98c486052a51" 1)
         (print "Function Block ++++++++++++++++++++++++++++++++")
         (print "")
         (print "AFTER BLOCK====================================")
@@ -220,8 +220,8 @@
     ]
 )
 
-(free.TALOS.ATS|C_UpdateSyphon KC.AOZT "PlebeicStrength-98c486052a51" 0.6)
-(free.TALOS.ATS|C_ToggleSyphoning KC.AOZT "PlebeicStrength-98c486052a51" true)
+(free.TALOS|ATS2.C_UpdateSyphon KC.AOZT "PlebeicStrength-98c486052a51" 0.6)
+(free.TALOS|ATS2.C_ToggleSyphoning KC.AOZT "PlebeicStrength-98c486052a51" true)
 
         ;;Emma before Syphon
         (print "BEFORE Syphon  BLOCK===================================")
@@ -263,7 +263,7 @@
                 (free.ATS.ATS|URC_MaxSyphon "PlebeicStrength-98c486052a51")
             ]
         )
-        (free.TALOS.ATS|C_Syphon KC.AOZT KC.EMMA "PlebeicStrength-98c486052a51" [125.0 46.25 76.25])
+        (free.TALOS|ATS2.C_Syphon KC.AOZT KC.EMMA "PlebeicStrength-98c486052a51" [125.0 46.25 76.25])
 
         ;;Emma after Syphon
         (format "Emma AFTER SYPHON has {} PKOSON, {} EKOSON, {} AKOSON." 
@@ -338,9 +338,9 @@
         )
 
         (print "EXECUTING Cold Recovery")
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 40.0)
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 50.0)
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 75.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 40.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 50.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 75.0)
 
         (format "AFTER COLD RECOVERY Resident Sum is {}, Unbonding Sum is {}"
             [
@@ -359,19 +359,19 @@
         )
         
         (print "After Cold Recovery")
-        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
 
         ;;Begining with Removal of RT
         (print "Begining with removal of RT++++++++++++++++++++")
-        (free.TALOS.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" false)
-        (free.TALOS.ATS|C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" true)
+        (free.TALOS|ATS1.C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" false)
+        (free.TALOS|ATS1.C_TurnRecoveryOff KC.AOZT "PlebeicStrength-98c486052a51" true)
 
         
 (env-gas)
@@ -385,7 +385,7 @@
     ]
 )
 
-(free.TALOS.ATS|C_RemoveSecondary KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51")
+(free.TALOS|ATS2.C_RemoveSecondary KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51")
 
 (env-gas)
 (commit-tx)
@@ -418,14 +418,14 @@
             (free.BASIS.DPTF-DPMF|UR_AccountSupply "AKOSON-98c486052a51" KC.AOZT true)
         ]
     )
-    (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
-    (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+    (free.DEPLOYER.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
 
 (env-gas)
 (commit-tx)
@@ -447,7 +447,7 @@
         )
 ;;Begining with Removal of RT
 (print "Begining with removal of RT++++++++++++++++++++")
-(free.TALOS.ATS|C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 736.247)
+(free.TALOS|ATS2.C_Coil KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "EKOSON-98c486052a51" 736.247)
 
 
         (format "AOZ has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
@@ -458,8 +458,8 @@
             ]
         )
 
-        (free.TALOS.ATS|C_AddSecondary KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" false)
-        (free.TALOS.ATS|C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 2500.0)
+        (free.TALOS|ATS2.C_AddSecondary KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" false)
+        (free.TALOS|ATS2.C_Fuel KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" "AKOSON-98c486052a51" 2500.0)
         ;;AOZET RBT Info
         (format "PlebeicStrength is BEFORE {};"
             [
@@ -484,22 +484,22 @@
     ]
 )
 
-        (free.TALOS.ATS|C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" false)
-        (free.TALOS.ATS|C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" true)
+        (free.TALOS|ATS2.C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" false)
+        (free.TALOS|ATS2.C_TurnRecoveryOn KC.AOZT "PlebeicStrength-98c486052a51" true)
 
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 25.0)
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 64.0)
-        (free.TALOS.ATS|C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 90.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 25.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 64.0)
+        (free.TALOS|ATS1.C_ColdRecovery KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51" 90.0)
 
         (print "After 2nd Cold Recovery")
-        (free.OUROBOROS.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
-        (free.OUROBOROS.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P0 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P1 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P2 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P3 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P4 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P5 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P6 "PlebeicStrength-98c486052a51" KC.AOZT)
+        (free.DEPLOYER.ATS|UP_P7 "PlebeicStrength-98c486052a51" KC.AOZT)
 
         (env-chain-data
             {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
@@ -525,7 +525,7 @@
         ]
     )
 
-    (free.TALOS.ATS|C_Cull KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51")
+    (free.TALOS|ATS1.C_Cull KC.AOZT KC.AOZT "PlebeicStrength-98c486052a51")
 
     (format "AOZET has as RT AFTER Second Cull of RT {} PKOSON, {} EKOSON, {} AKOSON." 
         [
@@ -538,19 +538,39 @@
 (commit-tx)
 
 
-(begin-tx "Ownership Read Test")
+(begin-tx "Owner Test")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
-        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
     ]
 )
 
-    (print "")
-    (print "Owned Token List by AOZ account is")
-    (format "Owner DPTFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 1)])
-    (format "Owner DPMFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 2)])
-    (format "Owner ATS-Pairs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 3)])
+    ;(format "Owner DPTFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 1)])
+    ;(format "Owner DPMFs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 2)])
+    ;(format "Owner ATS-Pairs by AOZ is {}" [(free.OUROBOROS.DPTF-DPMF-ATS|UR_OwnedTokens KC.AOZT 3)])
 
 (env-gas)
 (commit-tx)
+
+(begin-tx "Simple Transfer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+    ]
+)
+    
+    (free.TALOS|DPTF.C_BulkTransfer 
+        KC.BYTA
+        "OURO-98c486052a51"
+        KC.BYTA
+        [KC.ANHD KC.FLRN KC.EMMA KC.LUMY KC.COCA KC.KISS KC.PLCS KC.NANI KC.AOZT]
+        [1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0]
+    )
+
+(env-gas)
+(commit-tx)
+
+;(format "AH has {} IGNIS" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)])
+;(free.TALOS|DPTF.C_Transfer KC.BYTA "OURO-98c486052a51" KC.BYTA KC.FLRN 1.0)
