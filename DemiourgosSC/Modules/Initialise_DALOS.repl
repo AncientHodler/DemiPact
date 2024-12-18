@@ -419,8 +419,8 @@
 (use free.TALOS|DALOS)      ;;145.719
 (use free.TALOS|DPTF)       ;;149.990
 (use free.TALOS|DPMF)       ;;149.254
-(use free.TALOS|ATS1)       ;;
-(use free.TALOS|ATS2)       ;;
+(use free.TALOS|ATS1)       ;;149.136
+(use free.TALOS|ATS2)       ;;146.235
 (use free.TALOS|VST)        ;;147.602
 (use free.TALOS|LIQUID)     ;;135.711
 
@@ -561,7 +561,7 @@
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;; PART 06.01 - DALOS OUROBOROS Initialisation
 (print "==========================InitSnake_TX-10===============================")
-(begin-tx "InitSnake 10 - Main Initialisation")
+(begin-tx "InitSnake 10 - INIT Step ONE")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -573,15 +573,28 @@
     ]
 )
 
-    (free.DEPLOYER.A_SpawnAncientHodler)
-    (free.DEPLOYER.A_SpawnCTO)
-    (free.DEPLOYER.A_SpawnHOV)
-    (free.DEPLOYER.A_InitialiseVirtualBlockchain KC.ANCIENTHODLER)
+    (free.DEPLOYER.A_InitialiseVirtualBlockchainStepOne KC.ANCIENTHODLER)
     
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
+(print "==========================InitSnake_TX-11===============================")
+(begin-tx "InitSnake 11 - INIT Step TWO")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_DalosVesting", "caps": [] }
+    ]
+)
+
+    (free.DEPLOYER.A_InitialiseVirtualBlockchainStepTwo KC.ANCIENTHODLER)
+    
+(env-sigs [])
+(env-gas)
+(commit-tx)
 
 (print "==========================InitSnake_TX-10b==============================")
 (begin-tx "InitSnake 10b - Generate 1 DWK by wrapping 1 KDA")
