@@ -55,7 +55,7 @@
     )
     (defun C_UpdateBranding (patron:string id:string logo:string description:string website:string social:[object{DALOS.SocialSchema}])
         @doc "Updates Pending-Branding with new branding data, 100 IGNIS Cost \
-            \ In order to be brought live, a DALOS Admin must approve the data moving it from Pending-Branding to Branding"
+            \ Must be approved from DALOS Admin (moving it from Pending-Branding to Branding)"
         (with-capability (S)
             (BRANDING.DPTF-DPMF|C_UpdateBranding patron id true logo description website social)
         )
@@ -137,7 +137,7 @@
         @doc "Issues Multiple DPTF Tokens at once \
         \ Can also be used for issuing a single DPTF Token \
         \ Outputs a list with the IDs of the Issued Tokens \
-        \ Creates DPTF Account(s) involving the DALOS Account <account> for each issued Token "
+        \ Also creates multiple DPTF Account(s)"
         (with-capability (S)
             (let
                 (
@@ -150,8 +150,8 @@
     )
     (defun C_Mint (patron:string id:string account:string amount:decimal origin:bool)
         @doc "Mints DPTF Token <id> from <account>. <Account> needs |role-mint| set to true for <id> for the Generic Mint \
-            \ Setting <origin> boolean to true mints the genesis-amount (premine). Minting premine does not require |role-mint| \
-            \ but requires ownership of the token, and 0.0 supply; minting origin can only be done once, and this amount is saved in the Token Properties"
+            \ True <origin> mints the premine: does not require |role-mint| \
+            \ Requires token ownership with 0.0 supply; can only be done once; amount is saved in the Token Properties"
         (with-capability (S)
             (BASIS.DPTF|C_Mint patron id account amount origin)
         )
@@ -165,9 +165,8 @@
     )
     (defun C_SetFeeTarget (patron:string id:string target:string)
         @doc "Sets the <fee-target> for DPTF Token <id> to <target> \
-            \ Default is DALOS.OUROBOROS|SC_NAME (Fee-Carrier Account) (token owner retrieval) \
-            \ Setting it to DALOS.DALOS|SC_NAME makes fee act like collected gas \
-            \ Fees from DALOS.DALOS|SC_NAME are distributed to DALOS Custodians."
+            \ Default is DALOS.OUROBOROS|SC_NAME (token owner retrieval) \
+            \ Setting it to DALOS.DALOS|SC_NAME makes fee act like collected gas (distributed to DALOS Custodians)"
         (with-capability (S)
             (BASIS.DPTF|C_SetFeeTarget patron id target)
         )          
@@ -191,8 +190,8 @@
             \ Unlocking (<toggle> = false) has restrictions: \
             \ - Max 7 unlocks per token \
             \ - Unlock cost: (10000 IGNIS + 100 KDA) * (fee-unlocks + 1) \
-            \ - Each unlock adds a Secondary Fee collected by the <GasTanker> Smart DALOS Account \
-            \ equal to the VTT * fee-unlocks, calculated by <UTILS.DPTF|UC_VolumetricTax>"
+            \ - Each unlock adds Secondary Fee collected by the <GasTanker> Account \
+            \ equal to the VTT * fee-unlocks: <UTILS.DPTF|UC_VolumetricTax>"
         (with-capability (S)
             (BASIS.DPTF|C_ToggleFeeLock patron id toggle)
             (TALOS|OUROBOROS.C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
@@ -236,7 +235,7 @@
     )
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         @doc "Transmutes a DPTF Token; \
-            \ Transmutation behaves as a DPTF Fee Collection (without actually counting towards Native DPTF Fee Volume), \
+            \ Transmutation = DPTF Fee Collection (without counting towards Native DPTF Fee Volume), \
             \   when the DPTF Token is not part of any ATS-Pair; \
             \ If the Token is part of one or multiple ATS Pairs, \
             \   the input amount will be used to strengthen those ATS-Pairs Indices"
