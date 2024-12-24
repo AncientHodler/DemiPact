@@ -1,0 +1,364 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Initialise_DALOS.repl")
+;(load "../AOZ/Init_AOZ.repl")
+(print "LOADED ALL ENV MODULES")
+
+;;Entering Namespace Free
+(namespace "free")
+
+(begin-tx "Constant Moduel")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    (defconst ANHD "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    (defconst FLRN "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι")
+    (defconst EMMA "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst BYTA "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL")
+    (defconst LUMY "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+    (defconst COCA "Ѻ.áлÜŹZУαŻεvΩ€ÍÉźR5ΠúÉźηüΠÇτOVòÀgZZΠåÈдZëыуЛфЮ13φúνýhMαĄαÖìÍxнпĞjȚ¥бę¥šÔπΓ€Mnøí3ЧθźąйπĆTÌqooŽůŠóŚhřkžφHÿŽBДχpLÉeõxòσûEÜàμΓтÆdôûяàΞRηøćχdîфЩЗьδńŁ$Ü9ř∇ŸŠωVξЦF¢ĆĞÂ₱Ž")
+    (defconst KISS "Ѻ.ÔřЦΠúlAŻвnŞÄȘнШĚЖÉřÉĐqлþåΦÉЩвØúÄΣNéSaPpmζżŽtηËJgνπΞ$ЗhêPúÏ£BÀp£β$z7ЯđòÔμЛюGЧĄ7xóЮGЮдYнșШΠŸRA¢śÉ4кAłůaDжp£σÏđχ6ïDжâ5uęΠşÖMþ4¥эăì3cXÛΘИÛźéËBÏžЙŁKjчψĎρЩlźEüśЯŁщbφ2")
+    (defconst PLCS "Ѻ.BDțΛZУЩAwÅhУ¥бйeÄGjЯÔIŽ0ΣмωýOÒμψĚяуÿñUĐ€Ú£gâχΓπóÒïЮáпZЧhЫÄIsńËfźÄ1VXУõŘéiàшdĄΞχôCнsÛíÌáàЧßojΛaIλŹЮBøğÔWmòηвá€0ïЗUĞůпøůэóΞÁŘśяŃeÁďfσäKÏßżȚȘÿŒșεúêβÜèkyφΛrβБяK₳ě₱4")
+    (defconst NANI "Ѻ.ЮÝžuÂěуşъøŞrΣσQxvЛòÁćÇлςÿŃYóγõыxÁùöÞÁ₳Ю5šШβíюťğÀÎrÿΛůßXЧщŹюДáŻяιËÔŘЬL4₱ĎěJ8ÃHËÏxĆŞÂÜûBcЭШκÙçóьÞÓŮεUIη2ЯąąÙJζÍêíEȘÇșÇOćΞșъÒýĂ₱χÅкGoЗИůω1cþÑŻÁжиáÿιŞŠÓŒлKõÏE₿ÌxYИн")
+    (defconst AOZT "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+
+    (defconst TALOS "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
+    (defconst ATSTK "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+    (defconst VESTG "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+    (defconst LIQST "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
+    (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+)
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+(print "===============================Start GAS Testing=============================")
+(format "AH has initialy {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis. Auryndex is {}, Autostake has {} OURO" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)
+    ]
+)
+
+(free.OUROBOROS.IGNIS|C_Compress KC.BYTA KC.BYTA 900.0)
+
+
+(format "AH has after some IGNIS Compression {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis. Auryndex is {}, Autostake has {} OURO" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)
+    ]
+)
+
+(free.OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 8.0)
+
+(format "AH has after some IGNIS Sublimation {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis.  Auryndex is {}, Autostake has {} OURO" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)
+    ]
+)
+
+(free.AUTOSTAKE.ATS|C_Coil KC.BYTA KC.BYTA "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+(format "Stats are after coil {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis.  Auryndex is {}, Autostake has {} OURO" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)
+    ]
+)
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+(print "===============================Start Auryn=============================")
+
+(format "DalosAutostake[0] has {} OURO" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)])
+(format "Reward Tokens for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RewardTokenList "Auryndex-98c486052a51")])
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.AUTOSTAKE.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+(format "C-RBT for Auryndex is {}" [(free.AUTOSTAKE.ATS|UR_ColdRewardBearingToken "Auryndex-98c486052a51")])
+
+        ;;Tests
+        (free.AUTOSTAKE.ATS|C_Coil KC.BYTA KC.BYTA "Auryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 1000.0)
+        (free.AUTOSTAKE.ATS|C_Fuel KC.BYTA KC.BYTA "Auryndex-98c486052a51" "OURO-98c486052a51" 200.0)
+
+(format "Fee Exemption role for DalosAutostake for Auryn is {}" [(free.BASIS.DPTF|UR_AccountRoleFeeExemption "AURYN-98c486052a51" "DalosAutostake")])
+(format "Fee Exemption role for DalosAutostake for EliteAuryn is {}" [(free.BASIS.DPTF|UR_AccountRoleFeeExemption "ELITEAURYN-98c486052a51" "DalosAutostake")])
+
+(format "AH has {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+    ]
+)
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.AUTOSTAKE.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+
+(format "Byta has {} Elite Account DATA, and a total of {} Elite-Aurynz" 
+    [
+        (free.DALOS.DALOS|UR_Elite KC.BYTA)
+        (free.BASIS.DALOS|URC_EliteAurynzSupply KC.BYTA)
+    ]
+)
+
+(print "CRD is: ")
+(let*
+    (
+        (major:integer (free.DALOS.DALOS|UR_Elite-Tier-Major KC.BYTA))
+        (minor:integer (free.DALOS.DALOS|UR_Elite-Tier-Minor KC.BYTA))
+        (position:integer 
+            (if (= major 0)
+                0
+                (+ (* (- major 1) 7) minor)
+            )
+        )
+        (crd:[integer] (free.AUTOSTAKE.ATS|UR_ColdRecoveryDuration "Auryndex-98c486052a51"))
+        (h:integer (at position crd))
+        (present-time:time (at "block-time" (chain-data)))
+    )
+    [major minor position h]
+)
+
+
+
+(format "Time Now is {} CullColdRecoveryTime for Byta is {}" 
+    [
+        (at "block-time" (chain-data))
+        (free.AUTOSTAKE.ATS|UC_CullColdRecoveryTime "Auryndex-98c486052a51" KC.BYTA)
+    ]
+)
+(format "Hours cost is {}"
+    [
+        (/ (diff-time (free.AUTOSTAKE.ATS|UC_CullColdRecoveryTime "Auryndex-98c486052a51" KC.BYTA) (at "block-time" (chain-data))) 3600.0)
+    ]
+)
+
+
+
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_ColdRecovery KC.BYTA KC.BYTA "Auryndex-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+        (free.AUTOSTAKE.ATS|C_Curl KC.BYTA KC.BYTA "Auryndex-98c486052a51" "EliteAuryndex-98c486052a51" "OURO-98c486052a51" 100.0)
+
+
+(format "Reward Tokens Resident Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" true)])
+(format "Reward Tokens Unbonding Amounts for Auryndex are {}" [(free.AUTOSTAKE.ATS|UR_RoUAmountList "Auryndex-98c486052a51" false)])
+(format "Auryndex is {} ; EliteAuryndex is {}"
+    [
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.AUTOSTAKE.ATS|UC_Index "EliteAuryndex-98c486052a51")
+    ]
+)
+
+(format "Auryn Supply is {}" [(free.BASIS.DPTF-DPMF|UR_Supply "AURYN-98c486052a51" true)])
+(format "Auryndex RBT-Supply is {}" [(free.AUTOSTAKE.ATS|UCX_PairRBTSupply "Auryndex-98c486052a51")])
+(format "Ouro in Autostake Pool is {}" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)])
+(print "===============================END Auryn 2=============================")
+
+(env-gas)
+(commit-tx)
+
+(print "===============================BEGIN CULL=============================")
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+
+
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2024-10-27T11:59:59Z")}
+)
+
+(format "CRD for Auryndex is {}"
+    [
+        (free.AUTOSTAKE.ATS|UR_ColdRecoveryDuration "Auryndex-98c486052a51")
+    ]
+)
+
+(print "Byta Status Before BEFORE")
+(format "Byta has {} OURO, {} AURYN, {} ELITEAURYN, {} Ignis." 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(free.OUROBOROS.ATS|UP_P1 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P2 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P3 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P4 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P5 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P6 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P7 "Auryndex-98c486052a51" KC.BYTA)
+
+(print "Values culled are displayed below:")
+(free.AUTOSTAKE.ATS|C_Cull KC.BYTA KC.BYTA "Auryndex-98c486052a51")
+
+(print "P0 AFTER")
+(format "Byta has {} OURO, {} AURYN, {} ELITEAURYN, {} Ignis." 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" "Byta" true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" "Byta" true)
+    ]
+)
+(free.OUROBOROS.ATS|UP_P1 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P2 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P3 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P4 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P5 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P6 "Auryndex-98c486052a51" KC.BYTA)
+(free.OUROBOROS.ATS|UP_P7 "Auryndex-98c486052a51" KC.BYTA)
+
+(env-gas)
+(commit-tx)
+(print "===============================END CULL=============================")
+
+(print "===============================BEGIN Transfers=============================")
+(begin-tx "Test SC_ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+
+(format "Byta has initialy {} OURO, {} Auryn, {} Elite-Auryn, {} Ignis. Auryndex is {}, Autostake has {} OURO" 
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.BYTA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "OURO-98c486052a51" KC.ATSTK true)
+    ]
+)
+
+(format "Byta has {} OURO and {} IGNIS from Direct Account"
+    [
+        (free.DALOS.DALOS|UR_TrueFungible_AccountSupply KC.BYTA true)
+        (free.DALOS.DALOS|UR_TrueFungible_AccountSupply KC.BYTA false)
+    ]
+
+)
+
+(format "BEFORE: ATS has {} AURYN with a total of {} Elite-Auryn Supply. Auryndex is {} ; EliteAuryndex is {}. Emma has {} AURYN and {} ELITE-AURYN"
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.ATSTK true)
+        (free.BASIS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.AUTOSTAKE.ATS|UC_Index "EliteAuryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.EMMA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.EMMA true)
+    ]
+)
+
+(format "Byta has {} IGNIS before transfer"
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+    ]
+)
+
+(free.AUTOSTAKE.DPTF|C_Transfer KC.BYTA "AURYN-98c486052a51" KC.BYTA KC.EMMA 500.0)
+(free.AUTOSTAKE.DPTF|C_Transfer KC.BYTA "ELITEAURYN-98c486052a51" KC.BYTA KC.EMMA 500.0)
+(free.OUROBOROS.DPTF|C_BulkTransfer KC.BYTA "ELITEAURYN-98c486052a51" KC.BYTA [KC.LUMY KC.COCA] [100.0 100.0])
+
+(format "Byta has {} IGNIS after transfer"
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)
+    ]
+)
+
+(format "BEFORE: ATS has {} AURYN with a total of {} Elite-Auryn Supply. Auryndex is {} ; EliteAuryndex is {}. Emma has {} AURYN and {} ELITE-AURYN"
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.ATSTK true)
+        (free.BASIS.DPTF-DPMF|UR_Supply "ELITEAURYN-98c486052a51" true)
+        (free.AUTOSTAKE.ATS|UC_Index "Auryndex-98c486052a51")
+        (free.AUTOSTAKE.ATS|UC_Index "EliteAuryndex-98c486052a51")
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "AURYN-98c486052a51" KC.EMMA true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.EMMA true)
+    ]
+)
+
+(format "Lumy and Coca have {} and {} Elite Auryn"
+    [
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.LUMY true)
+        (free.BASIS.DPTF-DPMF|UR_AccountSupply "ELITEAURYN-98c486052a51" KC.COCA true)
+    ]
+)
+
+(print "===============================BEGIN Transfers=============================")
+
+(env-gas)
+(commit-tx)

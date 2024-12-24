@@ -1,8 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TFT GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (TFT-ADMIN))
     )
@@ -711,8 +708,6 @@
             (BASIS.DPMF|C_Transfer patron id nonce sender receiver balance method)
         )
     )
-
-
 )
 
 (create-table PoliciesTable)

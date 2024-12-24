@@ -1,4 +1,4 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 
 ;;A_SpawnAncientHodler
 (TALOS|DALOS.A_DeployStandardAccount
@@ -39,9 +39,12 @@
 
 (TALOS|DALOS.DefinePolicies)
 (TALOS|DPTF.DefinePolicies)
+(TALOS|DPTF2.DefinePolicies)
 (TALOS|DPMF.DefinePolicies)
+(TALOS|DPMF2.DefinePolicies)
 (TALOS|ATS1.DefinePolicies)
 (TALOS|ATS2.DefinePolicies)
+(TALOS|ATS3.DefinePolicies)
 (TALOS|VST.DefinePolicies)
 (TALOS|LIQUID.DefinePolicies)
 (TALOS|OUROBOROS.DefinePolicies)
@@ -49,25 +52,23 @@
 (DEPLOYER.DefinePolicies)
 
 ;;A_InitialiseDALOS-02
-(with-capability (DEPLOYER.DEPLOYER-ADMIN)
-    (let
-        (
-            (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
-        )
-        (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.DALOS|SC_NAME (keyset-ref-guard DEPLOYER.DALOS|SC_KEY) DEPLOYER.DALOS|SC_KDA-NAME patron DEPLOYER.DALOS|PBL)
-        ;; 
-        (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.ATS|SC_NAME (keyset-ref-guard DEPLOYER.ATS|SC_KEY) DEPLOYER.ATS|SC_KDA-NAME patron DEPLOYER.ATS|PBL)
-        (ATS.ATS|SetGovernor patron)
-        ;;
-        (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.VST|SC_NAME (keyset-ref-guard DEPLOYER.VST|SC_KEY) DEPLOYER.VST|SC_KDA-NAME patron DEPLOYER.VST|PBL)
-        (VESTING.VST|SetGovernor patron)
-        ;;    
-        (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.LIQUID|SC_NAME (keyset-ref-guard DEPLOYER.LIQUID|SC_KEY) DEPLOYER.LIQUID|SC_KDA-NAME patron DEPLOYER.LIQUID|PBL)
-        (LIQUID.LIQUID|SetGovernor patron)
-        ;;
-        (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
-        (OUROBOROS.OUROBOROS|SetGovernor patron)
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
     )
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.DALOS|SC_NAME (keyset-ref-guard DEPLOYER.DALOS|SC_KEY) DEPLOYER.DALOS|SC_KDA-NAME patron DEPLOYER.DALOS|PBL)
+    ;; 
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.ATS|SC_NAME (keyset-ref-guard DEPLOYER.ATS|SC_KEY) DEPLOYER.ATS|SC_KDA-NAME patron DEPLOYER.ATS|PBL)
+    (ATS.ATS|SetGovernor patron)
+    ;;
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.VST|SC_NAME (keyset-ref-guard DEPLOYER.VST|SC_KEY) DEPLOYER.VST|SC_KDA-NAME patron DEPLOYER.VST|PBL)
+    (VESTING.VST|SetGovernor patron)
+    ;;    
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.LIQUID|SC_NAME (keyset-ref-guard DEPLOYER.LIQUID|SC_KEY) DEPLOYER.LIQUID|SC_KDA-NAME patron DEPLOYER.LIQUID|PBL)
+    (LIQUID.LIQUID|SetGovernor patron)
+    ;;
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
+    (OUROBOROS.OUROBOROS|SetGovernor patron)
 )
 
 ;;A_InitialiseDALOS-03
@@ -87,13 +88,13 @@
     ,"liquid-kda-id"            : UTILS.BAR}
 )
 ;;Set Virtual Blockchain KDA Prices
-(DALOS.DALOS|A_UpdateUsagePrice "standard"      10.0)
-(DALOS.DALOS|A_UpdateUsagePrice "smart"         20.0)
-(DALOS.DALOS|A_UpdateUsagePrice "dptf"         200.0)
-(DALOS.DALOS|A_UpdateUsagePrice "dpmf"         300.0)
-(DALOS.DALOS|A_UpdateUsagePrice "dpsf"         400.0)
-(DALOS.DALOS|A_UpdateUsagePrice "dpnf"         500.0)
-(DALOS.DALOS|A_UpdateUsagePrice "blue"          25.0)
+(DALOS.DALOS|A_UpdateUsagePrice "standard"      0.02)
+(DALOS.DALOS|A_UpdateUsagePrice "smart"         0.04)
+(DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.4)
+(DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.6)
+(DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.8)
+(DALOS.DALOS|A_UpdateUsagePrice "dpnf"           1.0)
+(DALOS.DALOS|A_UpdateUsagePrice "blue"          0.05)
 ;;Set Information in the DALOS|GasManagementTable
 (insert DALOS.DALOS|GasManagementTable DALOS.DALOS|VGD
     {"virtual-gas-tank"         : DALOS.DALOS|SC_NAME

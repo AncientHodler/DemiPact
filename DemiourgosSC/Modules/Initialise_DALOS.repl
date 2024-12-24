@@ -244,156 +244,106 @@
 (begin-tx "InitSnake 03 - Load UTILS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0000_UTILS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0000_UTILS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 04 - Load DALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0001_DALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0001_DALOS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 05 - Load BASIS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0002_BASIS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0002_BASIS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 06 - Load AUTOSTAKE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0003_ATS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0003_ATS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 07 - Load AUTOSTAKE-ISSUE Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0004_ATSI.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0004_ATSI.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 08 - Load TFT - TrueFungibleTransfer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0005_TFT.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0005_TFT.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 09 - Load AUTOSTAKE-Cold-Recovery Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0006_ATSC.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0006_ATSC.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 10 - Load AUTOSTAKE-Hot-Recovery Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0007_ATSH.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0007_ATSH.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 11 - Load AUTOSTAKE-Manager Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0008_ATSM.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0008_ATSM.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 12 - Load VESTING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0009_VST.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0009_VST.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 13 - Load LIQUID Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0010_LIQUID.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0010_LIQUID.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 14 - Load OUROBOROS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0011_OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0011_OUROBOROS.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 15 - Load BRANDING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_0014_BRANDING.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0014_BRANDING.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 16 - Load TALOS|OUROBOROS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_000_TALOS_OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_01_TALOS.pact")
 (env-gas)
 (commit-tx)
-
-(begin-tx "InitSnake 17 - Load TALOS|DALOS Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_001_TALOS_DALOS.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 18 - Load TALOS|DPTF Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_002_TALOS_DPTF.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 19 - Load TALOS|DPMF Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_003_TALOS_DPMF.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 20 - Load TALOS|AUTOSTAKE Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_004_TALOS_ATS1.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 20 - Load TALOS|AUTOSTAKE Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_005_TALOS_ATS2.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 21 - Load TALOS|VST Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_006_TALOS_VST.pact")
-(env-gas)
-(commit-tx)
-
-(begin-tx "InitSnake 22 - Load TALOS|LIQUID Module")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi-Client_007_TALOS_LIQUID.pact")
-(env-gas)
-(commit-tx)
-
 
 
 (begin-tx "InitSnake 23 - Load DEPLOYER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER-Barebone.pact")
 (env-gas)
 (commit-tx)
 ;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/Demi_xxxx_DEPLOYER-Barebone.pact")
@@ -419,9 +369,12 @@
 (use free.TALOS|OUROBOROS)  ;;144.788
 (use free.TALOS|DALOS)      ;;145.719
 (use free.TALOS|DPTF)       ;;149.990
+(use free.TALOS|DPTF2)      ;;149.990
 (use free.TALOS|DPMF)       ;;149.254
+(use free.TALOS|DPMF2)      ;;149.254
 (use free.TALOS|ATS1)       ;;149.136
 (use free.TALOS|ATS2)       ;;146.235
+(use free.TALOS|ATS3)       ;;146.235
 (use free.TALOS|VST)        ;;147.602
 (use free.TALOS|LIQUID)     ;;135.711
 
@@ -574,8 +527,113 @@
     ]
 )
 
-(free.DEPLOYER.A_InitialiseVirtualBlockchainStepOne KC.ANCIENTHODLER)
-    
+(namespace "free")
+;(free.DEPLOYER.A_InitialiseVirtualBlockchainStepOne KC.ANCIENTHODLER)
+;;A_SpawnAncientHodler
+(TALOS|DALOS.A_DeployStandardAccount
+    DEPLOYER.DEMIURGOI|AH_NAME
+    (keyset-ref-guard DEPLOYER.DEMIURGOI|AH_KEY)
+    DEPLOYER.DEMIURGOI|AH_KDA-NAME
+    DEPLOYER.DEMIURGOI|AH_PBL
+)
+
+;;A_SpawnCTO
+(TALOS|DALOS.A_DeployStandardAccount
+    DEPLOYER.DEMIURGOI|CTO_NAME
+    (keyset-ref-guard DEPLOYER.DEMIURGOI|CTO_KEY)
+    DEPLOYER.DEMIURGOI|CTO_KDA-NAME
+    DEPLOYER.DEMIURGOI|CTO_PBL
+)
+
+;;A_SpawnHOV
+(TALOS|DALOS.A_DeployStandardAccount
+    DEPLOYER.DEMIURGOI|HOV_NAME
+    (keyset-ref-guard DEPLOYER.DEMIURGOI|HOV_KEY)
+    DEPLOYER.DEMIURGOI|HOV_KDA-NAME
+    DEPLOYER.DEMIURGOI|HOV_PBL
+)
+
+;;A_InitialiseDALOS-01
+(BASIS.DefinePolicies)
+(ATS.DefinePolicies)
+(ATSI.DefinePolicies)
+(TFT.DefinePolicies)
+(ATSC.DefinePolicies)
+(ATSH.DefinePolicies)
+(ATSM.DefinePolicies)
+(VESTING.DefinePolicies)
+;(LIQUID.DefinePolicies)
+;(OUROBOROS.DefinePolicies)
+(BRANDING.DefinePolicies)
+
+(TALOS.DefinePolicies)
+;(TALOS|DALOS.DefinePolicies)
+;(TALOS|DPTF.DefinePolicies)
+;(TALOS|DPTF2.DefinePolicies)
+;(TALOS|DPMF.DefinePolicies)
+;(TALOS|DPMF2.DefinePolicies)
+;(TALOS|ATS1.DefinePolicies)
+;(TALOS|ATS2.DefinePolicies)
+;(TALOS|ATS3.DefinePolicies)
+;(TALOS|VST.DefinePolicies)
+;(TALOS|LIQUID.DefinePolicies)
+;(TALOS|OUROBOROS.DefinePolicies)
+
+(DEPLOYER.DefinePolicies)
+
+;;A_InitialiseDALOS-02
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    )
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.DALOS|SC_NAME (keyset-ref-guard DEPLOYER.DALOS|SC_KEY) DEPLOYER.DALOS|SC_KDA-NAME patron DEPLOYER.DALOS|PBL)
+    ;; 
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.ATS|SC_NAME (keyset-ref-guard DEPLOYER.ATS|SC_KEY) DEPLOYER.ATS|SC_KDA-NAME patron DEPLOYER.ATS|PBL)
+    (ATS.ATS|SetGovernor patron)
+    ;;
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.VST|SC_NAME (keyset-ref-guard DEPLOYER.VST|SC_KEY) DEPLOYER.VST|SC_KDA-NAME patron DEPLOYER.VST|PBL)
+    (VESTING.VST|SetGovernor patron)
+    ;;    
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.LIQUID|SC_NAME (keyset-ref-guard DEPLOYER.LIQUID|SC_KEY) DEPLOYER.LIQUID|SC_KDA-NAME patron DEPLOYER.LIQUID|PBL)
+    (LIQUID.LIQUID|SetGovernor patron)
+    ;;
+    (TALOS|DALOS.A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
+    (OUROBOROS.OUROBOROS|SetGovernor patron)
+)
+
+;;A_InitialiseDALOS-03
+(insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
+    {"demiurgoi"                : 
+        [
+            DEPLOYER.DEMIURGOI|CTO_NAME
+            DEPLOYER.DEMIURGOI|HOV_NAME
+        ]
+    ,"unity-id"                 : UTILS.BAR
+    ,"gas-source-id"            : UTILS.BAR
+    ,"gas-source-id-price"      : 0.0
+    ,"gas-id"                   : UTILS.BAR
+    ,"ats-gas-source-id"        : UTILS.BAR
+    ,"elite-ats-gas-source-id"  : UTILS.BAR
+    ,"wrapped-kda-id"           : UTILS.BAR
+    ,"liquid-kda-id"            : UTILS.BAR}
+)
+;;Set Virtual Blockchain KDA Prices
+(DALOS.DALOS|A_UpdateUsagePrice "standard"      0.02)
+(DALOS.DALOS|A_UpdateUsagePrice "smart"         0.04)
+(DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.4)
+(DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.6)
+(DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.8)
+(DALOS.DALOS|A_UpdateUsagePrice "dpnf"           1.0)
+(DALOS.DALOS|A_UpdateUsagePrice "blue"          0.05)
+;;Set Information in the DALOS|GasManagementTable
+(insert DALOS.DALOS|GasManagementTable DALOS.DALOS|VGD
+    {"virtual-gas-tank"         : DALOS.DALOS|SC_NAME
+    ,"virtual-gas-toggle"       : false
+    ,"virtual-gas-spent"        : 0.0
+    ,"native-gas-toggle"        : false
+    ,"native-gas-spent"         : 0.0}
+)
+
 (env-sigs [])
 (env-gas)
 (commit-tx)
@@ -591,7 +649,162 @@
     ]
 )
 
-(free.DEPLOYER.A_InitialiseVirtualBlockchainStepTwo KC.ANCIENTHODLER)
+(namespace "free")
+;(free.DEPLOYER.A_InitialiseVirtualBlockchainStepTwo KC.ANCIENTHODLER)
+(let*
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (core-tf:[string]
+            (TALOS.DPTF|C_Issue
+                patron
+                DALOS.DALOS|SC_NAME
+                ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
+                ["OURO" "AURYN" "ELITEAURYN" "GAS" "DWK" "DLK"]
+                [24 24 24 24 24 24]
+                [true true true true true true]         ;;can change owner
+                [true true true true true true]         ;;can upgrade
+                [true true true true true true]         ;;can can-add-special-role
+                [true false false true false false]     ;;can-freeze
+                [true false false false false false]    ;;can-wipe
+                [true false false true false false]     ;;can pause
+            )
+        )
+        (OuroID:string (at 0 core-tf))
+        (AurynID:string (at 1 core-tf))
+        (EliteAurynID:string (at 2 core-tf))
+        (GasID:string (at 3 core-tf))
+        (WrappedKadenaID:string (at 4 core-tf))
+        (StakedKadenaID:string (at 5 core-tf))
+    )
+;;STEP 2.1 - Update DALOS|PropertiesTable with new Data
+    (update DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
+        { "gas-source-id"           : OuroID
+        , "gas-id"                  : GasID
+        , "ats-gas-source-id"       : AurynID
+        , "elite-ats-gas-source-id" : EliteAurynID
+        , "wrapped-kda-id"          : WrappedKadenaID
+        , "liquid-kda-id"           : StakedKadenaID
+        }
+    )
+;;STEP 2.2 - Issue needed DPTF Accounts
+    (TALOS|DPTF.C_DeployAccount AurynID ATS.ATS|SC_NAME)
+    (TALOS|DPTF.C_DeployAccount EliteAurynID ATS.ATS|SC_NAME)
+    (TALOS|DPTF.C_DeployAccount WrappedKadenaID LIQUID.LIQUID|SC_NAME)
+    (TALOS|DPTF.C_DeployAccount StakedKadenaID LIQUID.LIQUID|SC_NAME)
+;;STEP 2.3 - Set Up Auryn and Elite-Auryn
+    (TALOS|DPTF.C_SetFee patron AurynID UTILS.AURYN_FEE)
+    (TALOS|DPTF.C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
+    (TALOS|DPTF.C_ToggleFee patron AurynID true)
+    (TALOS|DPTF.C_ToggleFee patron EliteAurynID true)
+    (with-capability (DEPLOYER.SUMMONER)
+        (BASIS.DPTF|C_ToggleFeeLock patron AurynID true)
+        (BASIS.DPTF|C_ToggleFeeLock patron EliteAurynID true)
+    )
+;;STEP 2.4 - Set Up Ignis
+    ;;Setting Up Ignis Parameters
+    (TALOS|DPTF.C_SetMinMove patron GasID 1000.0)
+    (TALOS|DPTF.C_SetFee patron GasID -1.0)
+    (TALOS|DPTF.C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
+    (TALOS|DPTF.C_ToggleFee patron GasID true)
+    (with-capability (DEPLOYER.SUMMONER)
+        (BASIS.DPTF|C_ToggleFeeLock patron GasID true)
+    )
+    ;;Setting Up Compression|Sublimation Permissions
+    (TALOS|DPTF.C_ToggleBurnRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+    (TALOS|DPTF.C_ToggleBurnRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+    (TALOS|DPTF.C_ToggleMintRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+    (TALOS|DPTF.C_ToggleMintRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+;;STEP 2.5 - Set Up Liquid-Staking System
+    ;;Setting Liquid Staking Tokens Parameters
+    (TALOS|DPTF.C_SetFee patron StakedKadenaID -1.0)
+    (TALOS|DPTF.C_ToggleFee patron StakedKadenaID true)
+    (with-capability (DEPLOYER.SUMMONER)
+        (BASIS.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+    )
+    ;;Setting Liquid Staking Tokens Roles
+    (TALOS|DPTF.C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+    (TALOS|DPTF.C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+;;STEP 2.6 - Create Vesting Pairs
+    (with-capability (DEPLOYER.SUMMONER)
+        (VESTING.VST|C_CreateVestingLink patron OuroID)
+        (VESTING.VST|C_CreateVestingLink patron AurynID)
+        (VESTING.VST|C_CreateVestingLink patron EliteAurynID)
+    )
+
+;:STEP 3 - Initialises Autostake Pairs
+    (let*
+        (
+            (Auryndex:string
+                (TALOS|ATS1.C_Issue
+                    patron
+                    patron
+                    "Auryndex"
+                    24
+                    OuroID
+                    true
+                    AurynID
+                    false
+                )
+            )
+            (Elite-Auryndex:string
+                (TALOS|ATS1.C_Issue
+                    patron
+                    patron
+                    "EliteAuryndex"
+                    24
+                    AurynID
+                    true
+                    EliteAurynID
+                    true
+                )
+            )
+            (Kadena-Liquid-Index:string
+                (TALOS|ATS1.C_Issue
+                    patron
+                    patron
+                    "Kadindex"
+                    24
+                    WrappedKadenaID
+                    false
+                    StakedKadenaID
+                    true
+                )
+            )
+            (core-idx:[string] [Auryndex Elite-Auryndex Kadena-Liquid-Index])
+        )
+;;STEP 3.1 - Set Up <Auryndex> Autostake-Pair
+        (TALOS|ATS3.C_SetColdFee patron Auryndex
+            7
+            [50.0 100.0 200.0 350.0 550.0 800.0]
+            [
+                [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
+                [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
+                [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
+                [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
+                [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
+                [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
+                [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
+            ]
+        )
+        (TALOS|ATS3.C_TurnRecoveryOn patron Auryndex true)
+;;STEP 3.2 - Set Up <EliteAuryndex> Autostake-Pair
+        (TALOS|ATS3.C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
+        (TALOS|ATS3.C_SetCRD patron Elite-Auryndex false 360 24)
+        (TALOS|ATS3.C_ToggleElite patron Elite-Auryndex true)
+        (TALOS|ATS3.C_TurnRecoveryOn patron Elite-Auryndex true)
+;;STEP 3.3 - Set Up <Kadindex> Autostake-Pair
+        (TALOS|ATS3.C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
+        (TALOS|ATS3.C_SetCRD patron Kadena-Liquid-Index false 12 6)
+        (TALOS|ATS3.C_TurnRecoveryOn patron Kadena-Liquid-Index true)
+;;STEP 4 - Return Token Ownership to their respective Smart DALOS Accounts
+        ;(DPTF|C_ChangeOwnership patron AurynID ATS.ATS|SC_NAME)
+        ;(DPTF|C_ChangeOwnership patron EliteAurynID ATS.ATS|SC_NAME)
+        ;(DPTF|C_ChangeOwnership patron WrappedKadenaID LIQUID.LIQUID|SC_NAME)
+        ;(DPTF|C_ChangeOwnership patron StakedKadenaID LIQUID.LIQUID|SC_NAME)
+;;STEP 5 - Return as Output a list of all Token-IDs and ATS-Pair IDs that were created
+        (+ core-tf core-idx)
+    )
+)
     
 (env-sigs [])
 (env-gas)
@@ -629,7 +842,7 @@
     ]
 )
 
-    (free.TALOS|ATS2.C_Coil 
+    (free.TALOS|ATS3.C_Coil
         KC.ANCIENTHODLER
         KC.ANCIENTHODLER
         (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
@@ -658,7 +871,7 @@
         true
     )
 
-    (free.TALOS|DPTF.C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
+    (free.TALOS|DPTF2.C_Transfer KC.EMMA "OURO-98c486052a51" KC.EMMA KC.BYTA 500000.0)
     ;(free.OUROBOROS.ATS|C_KickStart KC.BYTA KC.BYTA "Auryndex-98c486052a51" [358323.244088865949848032] 137554.0)
 
     (free.TALOS|OUROBOROS.IGNIS|C_Sublimate KC.BYTA KC.BYTA KC.BYTA 100.0)

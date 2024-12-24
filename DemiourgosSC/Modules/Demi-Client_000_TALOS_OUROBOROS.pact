@@ -1,8 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|OUROBOROS GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.OUROBOROS)
-    (use OUROBOROS)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -27,7 +24,6 @@
             (create-capability-guard (SUMMONER))
         )
     )
-    ;;        [4] Client Usage FUNCTIONS                [C]
     ;;
     (defun C_FuelLiquidStakingFromReserves (patron:string)
         @doc "Uses Native KDA cumulated reserves to fuel the Liquid Staking Protocol"

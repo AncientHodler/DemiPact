@@ -1,14 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module VESTING GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use UTILS)
-    (use DALOS)
-    (use BASIS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (VESTG-ADMIN))
     )

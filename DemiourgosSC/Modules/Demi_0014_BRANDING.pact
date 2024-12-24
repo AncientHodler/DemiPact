@@ -1,8 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module BRANDING GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    (use BASIS)
-
     (defcap GOVERNANCE ()
         (compose-capability (BRANDING-ADMIN))
     )
@@ -38,7 +35,7 @@
             )
         )
     )
-    (defun BRD|C_ReadPolicy:guard (policy-name:string)
+    (defun C_ReadPolicy:guard (policy-name:string)
         (at "policy" (read BRD|PoliciesTable policy-name ["policy"]))
     )
     (defun DefinePolicies ()
@@ -68,12 +65,12 @@
         (BASIS.DPTF-DPMF|CAP_Owner id token-type)
         (let
             (
-                (current-flag:integer (BASIS|URB_Flag id token-type false))
+                (current-flag:integer (BASIS.BASIS|URB_Flag id token-type false))
             )
             (enforce (>= current-flag 1) "Golden Flag cannot be upgraded")
             (let*
                 (
-                    (premium:time (BASIS|URB_PremiumUntil id token-type false))
+                    (premium:time (BASIS.BASIS|URB_PremiumUntil id token-type false))
                     (current:time (at "block-time" (chain-data)))
                     (remaining:decimal (diff-time premium current))
                 )
@@ -231,7 +228,7 @@
                     (mp:integer (BRD|UC_MaxBluePayment owner))
                     (blue:decimal (DALOS.DALOS|UR_UsagePrice "blue"))
                     (current-branding:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type false))
-                    (premium:time (BASIS|URB_PremiumUntil id token-type false))
+                    (premium:time (BASIS.BASIS|URB_PremiumUntil id token-type false))
                 )
                 (enforce (<= months mp) "Invalid Months Integer")
                 (let*
@@ -262,7 +259,7 @@
         )
         (with-capability (BRD|BRANDING id token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BRANDING)
+                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BRANDING)
                 true
             )
             (DPTF-DPMF|X_UpdatePendingBranding id token-type logo description website social)

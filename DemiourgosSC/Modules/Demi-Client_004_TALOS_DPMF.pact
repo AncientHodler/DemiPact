@@ -1,14 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|DPMF GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.TFT)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSI)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BRANDING)
-    (use BASIS)
-    (use TFT)
-    (use ATSI)
-    (use BRANDING)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -32,38 +23,16 @@
             "TALOS|M|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (TFT.A_AddPolicy
-            "TALOS|M|Summoner"
-            (create-capability-guard (SUMMONER))
-        )
         (ATSI.A_AddPolicy
             "TALOS|M|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (BRANDING.A_AddPolicy
-            "TALOS|M|Summoner"
-            (create-capability-guard (SUMMONER))
-        )
     )
-    ;;       [23] Client Usage FUNCTIONS
     ;;
     (defun C_DeployAccount (id:string account:string)
         @doc "Similar to <TALOS|DPTF.C_DeployAccount>, but for DPMFs"
         (with-capability (S)
             (BASIS.DPTF-DPMF|C_DeployAccount id account false)
-        )
-    )
-    (defun C_UpdateBranding (patron:string id:string logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        @doc "Similar to <TALOS|DPTF.C_UpdateBranding>, but for DPMFs"
-        (with-capability (S)
-            (BRANDING.DPTF-DPMF|C_UpdateBranding patron id false logo description website social)
-        )
-    )
-    (defun C_UpgradeBranding (patron:string id:string months:integer)
-        @doc "Similar to <TALOS|DPTF.C_UpgradeBranding>, but for DPMFs"
-        (with-capability (S)
-            (BRANDING.BRD|C_UpgradeBranding patron id false months)
-            (TALOS|OUROBOROS.C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
     (defun C_ChangeOwnership (patron:string id:string new-owner:string)
@@ -170,30 +139,6 @@
         @doc "Methodic variant of <DPMF|C_Transfer>"
         (with-capability (S)
             (BASIS.DPMF|C_Transfer patron id nonce sender receiver transfer-amount true)
-        )
-    )
-    (defun C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string)
-        @doc "Transfers a single Batch of DPMF Tokens from sender to receiver, using all of its balance"
-        (with-capability (S)
-            (TFT.DPMF|X_SingleBatchTransfer patron id nonce sender receiver false)
-        )
-    )
-    (defun CM_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string)
-        @doc "Methodic Variant of <DPMF|C_SingleBatchTransfer>"
-        (with-capability (S)
-            (TFT.DPMF|X_SingleBatchTransfer patron id nonce sender receiver true)
-        )
-    )
-    (defun C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string)
-        @doc "Transfers a multiple DPMF Batches of Tokens from sender to receiver, using all of their balance"
-        (with-capability (S)
-            (TFT.DPMF|X_MultiBatchTransfer patron id nonces sender receiver false)
-        )
-    )
-    (defun CM_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string)
-        @doc "Methodic Variant of <DPMF|C_MultiBatchTransfer>"
-        (with-capability (S)
-            (TFT.DPMF|X_MultiBatchTransfer patron id nonces sender receiver true)
         )
     )
 )

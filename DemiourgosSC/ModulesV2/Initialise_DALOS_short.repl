@@ -1,0 +1,613 @@
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 01 - Demiourgos DPTS KeySets Definitions
+(print "==========================InitSnake_TX-01===============================")
+(begin-tx "InitSnake 01 - Demiourgos DPTS|KADENA Keyset Definitions")
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    ;;User Names
+    (defconst KADN_NAME_0000 "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+    (defconst KADN_PBKY_0000 (drop 2 KADN_NAME_0000))
+    (defconst DPTS_NAME_0000 "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    (defconst ANCIENTHODLER DPTS_NAME_0000)
+    (defconst DPTS_PBKY_0000 "PK_AncientHodler")
+    (defconst PBLC_0000 "9G.CgcAjiI89ICnk45mxx63hwkBe5G71sIqfEta0ugkzF7EB6cy55BtzlFa27jDGE7Kn7ChljCmkcIsrDw9JwzJECieGLB5Jlkz9Blo6iJct6uxIA1u64Hr7HKa93EAiCwJJBBKAojJtwupEsvspH1jjGxKyFsb8fbfnJm1rAKxcIzcFILmmdHFaICfFpnbJG6tJu0HM9JCJ7MBCE7C2LiqvE6Fc1hqCeAdGHxDp7sGquI0wl2l08aa6wlKvwu44jgqF8mqDnCyjpxHuttEqjs4h9IJ28kmB53ppwoznt16rjzeMl21n3rwfI2es56rp5xavCabDacyCuonniz72L5d7dq3ptIEiuggEyLIIGe9sadH6eaMyitcmKaH7orgFz6d9kL9FKorBr06owFg328wFhCIlCFpwIzokmo47xKKt5kBzhyodBAjhCqayuHBue4oDhoA21A2H9ut9gApMuxokcmsi7Bd1kitrfJAy1GkrGiBK5dvlhgshcnGaG3vhkCm6dI5idCGjDEodivvDbgyI6zaajHvIMdBtrGvuKnxvsBulkbaDbk2wIdKwrK")
+    
+    (defconst KADN_NAME_000a "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
+    (defconst KADN_PBKY_000a (drop 2 KADN_NAME_000a))
+    (defconst DPTS_NAME_000a "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι")
+    (defconst FLORIAN DPTS_NAME_000a)
+    (defconst DPTS_PBKY_000a "PK_Florean")
+    (defconst PBLC_000a "9H.268Bnvp307DmbIcEltbEkpeHuK3C3qsD615ml5qefsA4HErwbqDhy6K1IvqxMeoCBh9mfieMj72jbzzI6a6nDtGhmf2nbHyE6M3zceog4o3bEkqcyvLsBdsGLt7Fu6Ei0Da6iej0n2z5M3bFsAk6iitosvzemff0B18kpeh5ocj5zb7DebFiLgAhIElsgg05Lh5CpyF5LqyKtlFvAay6wtCzsi2cM19BMB29nrfcIgKkaIkh2sjtAE5giM6th727eDekACBvMexk74wxgD2pJegzjuCqIe3BwozG5Fa29DqpcKM5zL1x78h7JKMj1ek2aanqnCtG33Dr3w2mzcIcLjlsDtMD1CG02CFlrCCAzMmlLmFgsBiIpt3Blj1uaxJG67xB2jwKj45s4LIDhzLea24m1AzFh6FD4MsF4Ay35i2Cvbmzdff6nuJbKM5tw5C31xapoqwEIeKkCC9zsiIk8GCMhis557p7Hk9H3aM059D24ar7KLmlr8cydi9n4u2rwH02rb8l1ixDbgoqn2jlCHDBxbCnf3A4GyI4FpaqJuBf1IwdI85Bq6qzcJIiK")
+
+    (defconst KADN_NAME_000b "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48")
+    (defconst KADN_PBKY_000b (drop 2 KADN_NAME_000b))
+    (defconst DPTS_NAME_000b "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst EMMA DPTS_NAME_000b)
+    (defconst DPTS_PBKY_000b "PK_Emma")
+    (defconst PBLC_000b "9G.39tf0E26stf4Dxiows9kidajrJGCjDighDd4jltItj9js3n8dFiiin5yphml1u0uAltxumFngoogIv8jypw4LlehiEbmuzxtwkdajn7j3M0s3s7g6aALwbbGt6uGjeuFw1ovxf769AzklLxke2MKfobAbDyIH2a6zwKC79eypy1tfdF2plELbfMq9KxtF1GvIri0y4c4Ll3rK0FqICktqmJEakeC4GadmsAatJzIa8vHj82uC0A3KrtkhLsz9cGmsC0Lmzi6GFvv0Cola8g1A4k2neFEAoCsHyepILCgCz6ftlLmsjwgBMfLLL0n3Iwa4lzsn0w2qHwqmvckCtEIeHfwd5m9MKg8AA51uaBDm76j9GnMpecaabqELMm2Fc1h4DhgmzJIIndmwj0vxKmqjnxfg891HKezsCJxIDmMvxC7JbGGbaLip7JaJ6kuuBmreFm3GyLIz1KKlIeBG6Ck8ftgpaGum2BrEFF45jom87uhba7lzfpq6ihG8H4MCAGyyrz9q3ben4yLv4Keqq9tt1q0F5AdC4s4Eox0ebLwLiCtgkrfp5qCohHBH8E8")
+
+    (defconst KADN_NAME_000c "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
+    (defconst KADN_PBKY_000c (drop 2 KADN_NAME_000c))
+    (defconst DPTS_NAME_000c "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL")
+    (defconst BYTA DPTS_NAME_000c)
+    (defconst DPTS_PBKY_000c "PK_Byta")
+    (defconst PBLC_000c "9G.7si93iImtrM53Jl9C7pIojCAmq04gHyk8d1lle6x07Hfh57idcrqEznFM7ousiC14d16dlIbwAE2K7MBK79ApIMgb405svepvaz7azIIHGLulbIqBefscnsmydqD1pCHAKlH3xu6tJk6ejJk5fMlvtrvu2gc0lnz7knipdqvE6huvywrFt925E9Ci5bkspirF8GDA03Iorf5zdg1ad6tFG9uMBHL2aqsu0JcoicuoHcCnLHE6dBoignL7DiJrFGxgimrmrF5cLoqDjrjhb3GwFD4wfnMDbIqmq3MMrBJm96Ggve7worr5z5oLh5bhhrjHzf0fLH77ho1zv04kEM8odz6254H4JewC4sw9cxA1Aa9vaggj5owFK332Fff41lCi75otEhdzoheln2Czli46tcKv35o1ftkHLgrjAtMoIFDKuFjzv4d3kbqJ4Crzgtn63o95FMqFF91MbLGMLEBjis3sjJiGB0yLJzdBetdECclzxFo5cAve8o08Hifng4kEgExDzqFhKGdK9lCmyu4E9vo6k3jHjhH96KlvGDCjwMFcpkqyMB2gtlurlst")
+
+    (defconst KADN_NAME_000d "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
+    (defconst KADN_PBKY_000d (drop 2 KADN_NAME_000d))
+    (defconst DPTS_NAME_000d "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+    (defconst LUMY DPTS_NAME_000d)
+    (defconst DPTS_PBKY_000d "PK_Lumy")
+    (defconst PBLC_000d "9G.1CAv9Fq0mmrgALMafmEv46lkzHj7yib75pCbDdtojimK8KHiBMqcMMj4002t612H5HaKD6yBDo556n2Jsc7CvxFlo0knLpoLMs331kCgur71s7tHbc20iAx5IvCdaektlscciwLAH8bKIprgBmJubk12xKGfw2FbdjH8Hgygs5g2LJKsf11sh6croly7w8G6E2LLHsf1D5HImE3K7Jd5wMkjcCHsu2khw6wpmxotBf1l1jMxedypoyGh5GHzy15hKafx4cL97ttq8jEvnioLshycFct228L6xsIIadmcodbyyyDhA2H7yqe2C5rwAvqirFHy5d40Mo2mFyJhG4D3HvwphdCuGCkM9yv3vdDFo4HHGDAllz2Ig6B1y8lf9Dmg9kk3fIFI5m7f8p01Hejq30JsA4av0cruGEIIB94AbyJvec09u2DA9gi7t4qDurc8pxw8qgs8v4IFoB2k1vwint9z2JAc82kw5t4frwip3Isx7zk3za2qdi5M6ifiFokdzidA0A0u3eho6goh5x8nn3llBDz6E9uDKedyApF1nzDkJefAIbigke32psym")
+
+    (defconst KADN_NAME_000e "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba")
+    (defconst KADN_PBKY_000e (drop 2 KADN_NAME_000e))
+    (defconst DPTS_NAME_000e "Ѻ.áлÜŹZУαŻεvΩ€ÍÉźR5ΠúÉźηüΠÇτOVòÀgZZΠåÈдZëыуЛфЮ13φúνýhMαĄαÖìÍxнпĞjȚ¥бę¥šÔπΓ€Mnøí3ЧθźąйπĆTÌqooŽůŠóŚhřkžφHÿŽBДχpLÉeõxòσûEÜàμΓтÆdôûяàΞRηøćχdîфЩЗьδńŁ$Ü9ř∇ŸŠωVξЦF¢ĆĞÂ₱Ž")
+    (defconst COCA DPTS_NAME_000e)
+    (defconst DPTS_PBKY_000e "PK_Coca")
+    (defconst PBLC_000e "9H.1vjfbBee561vk9c8HlEujdAecMvhtCpFfyfg47mM43jLo6givlcovaam6sdtM7C8e9aL0iujJi023ok7s4cKGI0ist8hGhdIjyEtJea4vKwstcLmg1rB5w3he68bgyypx3E5Ev9Elf1Adl4xpfdx83oAyx45ftaMhJIHddB97nhGbw7mkEu9KeHAHrjj8h1yjDonkxDrF1ub8oi8r1izIp2zz02M7JinJb9CE57lc13jzkdywJkljfxMszubyc11szCsgjgGyui7ppxMI39ubvFn9lrGDruqmqsH35dLni7gFralLE0mIJfHGwqBM0AjAvunjI9fi2B8AG5thk8nM4AtidLEkoMgsaxp2wy2rr1qecgpx5qd3DlJ15vp0eLvKC9jcvhvanLy6yALlkfvCxdp9BzHKn47Fw7a2gLknuuk75hpKd69q7sxc6zLlkAM7n8lit7bMtAMLr87qJkeJqey624cmAnA9I1fK7G2f4Daw7pujbfxpKcrFq4M5pczC2da5aGFm7keD5Chhntntat4qpe6wxewjDgekGqBhgC6fBtworLEi2fc6bH75")
+
+    (defconst KADN_NAME_000f "k:134cabaa0e22cd86630773e6e6e4c9c6851715428a49162dcde661b3550ccff9")
+    (defconst KADN_PBKY_000f (drop 2 KADN_NAME_000f))
+    (defconst DPTS_NAME_000f "Ѻ.ÔřЦΠúlAŻвnŞÄȘнШĚЖÉřÉĐqлþåΦÉЩвØúÄΣNéSaPpmζżŽtηËJgνπΞ$ЗhêPúÏ£BÀp£β$z7ЯđòÔμЛюGЧĄ7xóЮGЮдYнșШΠŸRA¢śÉ4кAłůaDжp£σÏđχ6ïDжâ5uęΠşÖMþ4¥эăì3cXÛΘИÛźéËBÏžЙŁKjчψĎρЩlźEüśЯŁщbφ2")
+    (defconst KISS DPTS_NAME_000f)
+    (defconst DPTS_PBKY_000f "PK_Kiss")
+    (defconst PBLC_000f "9G.7j0DhHEur3M45a7IqBBesyAyAvi2txy6tJ1IIlIymHipxq49j262ygykq6n6IpAr9wzCDDh7JjnIGujibkfd42f9w15d5nuKn4z6tL7rmMjAxc8td12G3DngKtjHlp0y60joFKnfy57cMujadqkm7su9b40BjGbz1d5o7ExjAG9zJCdiFrvGn73kCDKAzasM9cgscqylan064g01rzKM3gx37o6n8bHg971msBG0FoMxhrDlj266J9p9EbuDHtItyleMdF9eA3aFiwt0bwbbK7xxeK9pjwd6Fzf1AmKAfJ5LGBCoo2i4B8gfhi4jondIDufA5vhgewcH8HJeyw4HqqqEHwGKbK4t1irgLyhELiokxhC1nKCMb3mpjIw4BofBmxwvdqJnaxB9bCDn2non16vbe8s0j0mIv3Gs73neFawCnrgnzHqjBq8Cb895MBs5EElHHiB2ID4f49y3JaBpG5eG3hybeqCDBFe8qL7pvysGKd5yGru6feCKCLJr9zf51dprjFvHdIAeMJLstdpMDCbuLBrL3A2kcMDGaKiBy2l5t14inhkoLAz1AMro")
+
+    (defconst KADN_NAME_000g "k:fb67ba8ea6d3b4b9463a482c1cadade2efbeb7719ce26344094e9d58d8176748")
+    (defconst KADN_PBKY_000g (drop 2 KADN_NAME_000g))
+    (defconst DPTS_NAME_000g "Ѻ.BDțΛZУЩAwÅhУ¥бйeÄGjЯÔIŽ0ΣмωýOÒμψĚяуÿñUĐ€Ú£gâχΓπóÒïЮáпZЧhЫÄIsńËfźÄ1VXУõŘéiàшdĄΞχôCнsÛíÌáàЧßojΛaIλŹЮBøğÔWmòηвá€0ïЗUĞůпøůэóΞÁŘśяŃeÁďfσäKÏßżȚȘÿŒșεúêβÜèkyφΛrβБяK₳ě₱4")
+    (defconst PULECS DPTS_NAME_000g)
+    (defconst DPTS_PBKY_000g "PK_Plcs")
+    (defconst PBLC_000g "9H.aag6500F9rkygxniouxwiH3clekMp2mnAwlJaGAfMAL85Ki1iE1chBAKFzCouidM7uFeMJdedm8ireb65G60Jime6aGeEI0pDswGj5c2Aowka73MfljtD7Bs2xfMAxd4wo6Je2fFfbxbIKjGywrI897llovbkz0oBki7rac2Mrkkc9BfECpIi0d48z8uxB1sAa9DDj6f1z92ub1rK5yEzDiIFFeGjn5BKHA4Jay1Fyq20b6zF1t6n3d5abBtKpbCatkq1jJ42rGo4aJHHowKka8G9fzijHADfbF655u1s8CqrCdKLbeKFhkkAm4tg74z28zr9Fvr0Mtctz5loeyAycuKtehvLM0o1oJoI4IMK4hKGu4o64kgspB1m1I0DK1cCnwr5iopAtCHI84uod3fujvAjCggGnFxapzGajed3uJefCfKxd7FdpIwfJGxDwzA4k1u87LdGnaFItgm0LK4im9m6DgEkbgdgtfsoxpmHCseMGc9bF5aJ53G1KDnJ8grkglrFruA0jypC8qkspfFw96939yMd02o2ayewEcdt7Bd03Cl0HpJwskt53a4")
+
+    (defconst KADN_NAME_000h "k:03c14c229fdcec2e5053b6a7b8a031fbbbfce198a845e94e7908668686706e43")
+    (defconst KADN_PBKY_000h (drop 2 KADN_NAME_000h))
+    (defconst DPTS_NAME_000h "Ѻ.ЮÝžuÂěуşъøŞrΣσQxvЛòÁćÇлςÿŃYóγõыxÁùöÞÁ₳Ю5šШβíюťğÀÎrÿΛůßXЧщŹюДáŻяιËÔŘЬL4₱ĎěJ8ÃHËÏxĆŞÂÜûBcЭШκÙçóьÞÓŮεUIη2ЯąąÙJζÍêíEȘÇșÇOćΞșъÒýĂ₱χÅкGoЗИůω1cþÑŻÁжиáÿιŞŠÓŒлKõÏE₿ÌxYИн")
+    (defconst NANI DPTS_NAME_000h)
+    (defconst DPTS_PBKY_000h "PK_Nani")
+    (defconst PBLC_000h "9G.1Mg6o7FwxD3EyIGf89ohKvDslnmKHJjmlsjpfLCtinHBL1GGEDElL88CwjfberozpLfJGG6w2d2IHlLGyccesLEL83llCaEK62GwbvtrE27oBDMn656hJi81HIv0yHC9DvL9MeJtstgE36uM9ydi37dACCEpeksJoowfCMLbjf6HKo0D1wsprvqxL479d2t9C7ogoMamm9l03n43B19cbeg22lp5bBDI2qLv4ghGlpjw9xCL2vlfLfpudtpyefeFaA15BvuG3z15mJ68djiBsmn3vhbw1osnpMDjxF33qzM2cClbMLKrMgK37J7u6hMwJcq5h89AAJg3Gwwfkxv5bhed8ll20Metkuwv59xpHxIaHIyKI5oJk2rzJMCFylBxdKoDj8L817ldIvj3JJaM6FEfILzrDpF7wBdFEo8JuLzkvqMrCLggloncKtk99J7iqk6wrfK2cdFoGkA5v3LFp9wtx3BlrrerEjC8M1jhndEw4h25lGim7ECbMdEy4bgmfMpHJaaKMLJpJJa7BqsoHM1BA7ILDIxifpKnycKdcEeqKvnrk0KedstyL26f")
+
+    (defconst KADN_NAME_000i "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf")
+    (defconst KADN_PBKY_000i (drop 2 KADN_NAME_000i))
+    (defconst DPTS_NAME_000i "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+    (defconst AOZ DPTS_NAME_000i)
+    (defconst DPTS_PBKY_000i "PK_AOZ")
+    (defconst PBLC_000i "9G.29k17uqiwBF7mbc3rzr5gz228lxepz7a0fwrja2Bgzk1czjCLja3wg9q1ey10ftFhxIAiFBHCtvotkmKIIxFisMni8EA6esncL3lg2uLLH2u89Er9sgbeGmK0k7b63xujf1nAIf5GB583fcE6pzFak2CwhEi1dHzI0F14tvtxv4H8r1ABk5weoJ7HfCoadMm1h8MjIwjzbDKo80H25AJL8I1JiFF66Iwjcj3sFrD9xaqz1ziEEBJICF2k81pG9ABpDk2rK4ooglCK3kmC0h7yvvakjIvMpGp00jnw2Cpg1HoxjK0HoqzuKciIIczGsEzCjoB43x7lKsxkzAm7op2urv0I85Kon7uIBmg328cuKMc8driw8boAFnrdqHEFhx4sFjm8DM44FutCykKGx7GGLnoeJLaC707lot9tM51krmp6KDG8Ii318fIc1L5iuzqEwDnkro35JthzlDD1GkJaGgze3kDApAckn3uMcBypdz4LxbDGrg5K2GdiFBdFHqdpHyssrH8t694BkBtM9EB3yI3ojbnrbKrEM8fMaHAH2zl4x5gdkHnpjAeo8nz")
+
+    (defconst KADN_NAME_000j "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a")
+    (defconst KADN_PBKY_000j (drop 2 KADN_NAME_000j))
+    (defconst DPTS_NAME_000j "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst BM DPTS_NAME_000j)
+    (defconst DPTS_PBKY_000j "PK_BM")
+    (defconst PBLC_000j "9G.4sL1e97qhq86v50IA4rpqhwF7H6hmj7xcFfy2Imo7xMzAEwclA8ILGgEDGur41Fye8rBexevupdJqmutcuGvqhq4w0jI39AfCn13cb43E92oMdqtjf1gE6K6LIwdqMiy9yoecpJtMrs2hj1qd96n1uMyIH97Jqjqk9Ao587Cwlcxft1uiC2g7BlnalEmHnvFolxpqMDqydv4g2xBuuLb8vwIjphH8zz12Lzn8MtvzCfinoe4s9LrIJa75rspxs5gegtAGbEBpv0vydnepq4IHgB0w9rmiwzGEBmmohlEHkduwFx9y0uazlcFxwugj3G1u0Fz947AKo9CCjpjnKBgM0kd5kug9xwM66rea1KgFeAgI8G6IAI2cgEyAplMpIdn2w55jJsez1Iwe2itojBazeE4BzwFDs3qjMk0L2v59asMtwyGust49DxzAcIrFbcemBwiCi9cwqq7480BhL71pdeDin1fA9zmulrwj04bpBD5JKzHKszL2EmHdfvipb9lC0vkqtfLFI0nuBp27Fa3ndi1uLaxrhFnGB903AMDcIJCmkaxmnr5dxA2J0bL")
+
+    ;;Smart Contracts
+    (defconst KADN_NAME_0001 "k:7c9cd45184af5f61b55178898e00404ec04f795e10fff14b1ea86f4c35ff3a1e")
+    (defconst KADN_PBKY_0001 (drop 2 KADN_NAME_0001))
+    (defconst DPTS_NAME_0001 "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+    (defconst OUROBOROS DPTS_NAME_0001)
+    (defconst DPTS_PBKY_0001 "PK_Ouroboros")
+
+    (defconst KADN_NAME_0002 "k:e0eab7eda0754b0927cb496616a7ab153bfd5928aa18d19018712db9c5c5c0b9")
+    (defconst KADN_PBKY_0002 (drop 2 KADN_NAME_0002))
+    (defconst DPTS_NAME_0002 "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
+    (defconst DALOSGAS DPTS_NAME_0002)
+    (defconst DPTS_PBKY_0002 "PK_GasTanker")
+
+    (defconst KADN_NAME_0003 "k:a3506391811789fe88c4b8507069016eeb9946f3cb6d0b6214e700c343187c98")
+    (defconst KADN_PBKY_0003 (drop 2 KADN_NAME_0003))
+    (defconst DPTS_NAME_0003 "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
+    (defconst KADENALS DPTS_NAME_0003)
+    (defconst DPTS_PBKY_0003 "PK_KadenaLiquidStaking")
+
+    (defconst KADN_NAME_0004 "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
+    (defconst KADN_PBKY_0004 (drop 2 KADN_NAME_0004))
+    (defconst DPTS_NAME_0004 "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+    (defconst AUTOSTAKER DPTS_NAME_0004)
+    (defconst DPTS_PBKY_0004 "PK_DalosAutostake")
+
+    (defconst KADN_NAME_0005 "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d")
+    (defconst KADN_PBKY_0005 (drop 2 KADN_NAME_0005))
+    (defconst DPTS_NAME_0005 "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+    (defconst VESTER DPTS_NAME_0005)
+    (defconst DPTS_PBKY_0005 "PK_DalosVesting")
+
+    (defconst KADN_NAME_0006 "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697")
+    (defconst KADN_PBKY_0006 (drop 2 KADN_NAME_0006))
+    (defconst DPTS_NAME_0006 "Σ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst BJ DPTS_NAME_0006)
+    (defconst DPTS_PBKY_0006 "PK_BJ")
+    (defconst PBLC_0006 "9G.4sL1e97qhq86v50IA4rpqhwF7H6hmj7xcFfy2Imo7xMzAEwclA8ILGgEDGur41Fye8rBexevupdJqmutcuGvqhq4w0jI39AfCn13cb43E92oMdqtjf1gE6K6LIwdqMiy9yoecpJtMrs2hj1qd96n1uMyIH97Jqjqk9Ao587Cwlcxft1uiC2g7BlnalEmHnvFolxpqMDqydv4g2xBuuLb8vwIjphH8zz12Lzn8MtvzCfinoe4s9LrIJa75rspxs5gegtAGbEBpv0vydnepq4IHgB0w9rmiwzGEBmmohlEHkduwFx9y0uazlcFxwugj3G1u0Fz947AKo9CCjpjnKBgM0kd5kug9xwM66rea1KgFeAgI8G6IAI2cgEyAplMpIdn2w55jJsez1Iwe2itojBazeE4BzwFDs3qjMk0L2v59asMtwyGust49DxzAcIrFbcemBwiCi9cwqq7480BhL71pdeDin1fA9zmulrwj04bpBD5JKzHKszL2EmHdfvipb9lC0vkqtfLFI0nuBp27Fa3ndi1uLaxrhFnGB903AMDcIJCmkaxmnr5dxA2J0bL")
+)
+
+(module TV GOVERNANCE
+    (defcap GOVERNANCE () true)
+    
+    (defconst TIME00 (time "2024-10-10T00:00:00Z"))
+    (defconst TIME01 (time "2024-10-28T00:00:00Z"))
+    (defconst TIME02 (time "2024-11-15T16:00:00Z"))
+    (defconst TIME03 (time "2024-11-30T16:00:00Z"))
+    (defconst TIME04 (time "2024-12-15T16:00:00Z"))
+    (defconst TIME05 (time "2024-12-29T16:00:00Z"))
+)
+
+(env-data
+    {
+        ;;DPTS KEYS
+        ;;DEMI-MASTER-KEYS
+        "DemiourgosSithMasters": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_000a], "pred": "keys-any" },
+        "KEY_SC_Ouroboros": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0001], "pred": "keys-any" },
+        "KEY_SC_GasTanker": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0002], "pred": "keys-any" },
+        "KEY_SC_KadenaLiquidStaking": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0003], "pred": "keys-any" },
+        ;;DEMI-SC-KEYS
+        "KEY_SC_DalosAutostake": { "keys": [KC.DPTS_PBKY_0004]},
+        "KEY_SC_DalosVesting": { "keys": [KC.DPTS_PBKY_0005]},
+        ;;DEMI-USER-KEYS
+        "KEY_US_AncientHodler": { "keys": [KC.DPTS_PBKY_0000]},
+        "KEY_US_Florian": { "keys": [KC.DPTS_PBKY_000a]},
+        "KEY_US_Emma": { "keys": [KC.DPTS_PBKY_000b]},
+        "KEY_US_Byta": { "keys": [KC.DPTS_PBKY_000c]},
+        "KEY_US_Lumy": { "keys": [KC.DPTS_PBKY_000d]},
+        "KEY_US_Coca": { "keys": [KC.DPTS_PBKY_000e]},
+        "KEY_US_Kiss": { "keys": [KC.DPTS_PBKY_000f]},
+        "KEY_US_Plcs": { "keys": [KC.DPTS_PBKY_000g]},
+        "KEY_US_Nani": { "keys": [KC.DPTS_PBKY_000h]},
+        "KEY_US_AOZ": { "keys": [KC.DPTS_PBKY_000i]},
+        "KEY_US_BM": { "keys": [KC.DPTS_PBKY_000j]},
+        ;;Foreing SC Keys
+        "KEY_SC_BJ": { "keys": [KC.DPTS_PBKY_0006]}
+    }
+)
+;;Entering Namespace Free
+
+;(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/KS/NS.pact")
+
+;(use free.ns)
+
+(define-namespace 
+    (ns.create-principal-namespace (read-keyset  "DemiourgosSithMasters"))
+    (read-keyset  "DemiourgosSithMasters" )
+    (read-keyset  "DemiourgosSithMasters" )
+)
+(print "Above NameSpace defined")
+
+;(namespace "n_c3c81167bd5ea56c31ee027cd365d85cdc8fa35a")
+(namespace "free")
+
+;;DPTS KEYSETTS DEFINITIONS
+
+    ;;DEMI MASTER KEYSETS
+    (define-keyset "free.dh_master-keyset" (read-keyset "DemiourgosSithMasters"))
+    (define-keyset "free.dh_sc_dalos-keyset" (read-keyset "KEY_SC_GasTanker"))
+    (define-keyset "free.dh_sc_autostake-keyset" (read-keyset "KEY_SC_DalosAutostake"))
+    (define-keyset "free.dh_sc_vesting-keyset" (read-keyset "KEY_SC_DalosVesting"))
+    (define-keyset "free.dh_sc_kadenaliquidstaking-keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
+    (define-keyset "free.dh_sc_ouroboros-keyset" (read-keyset "KEY_SC_Ouroboros"))
+    ;;DEMI SMART_CONTRACTS KEYSETS
+    
+    ;;USER KEYSETS
+    (define-keyset "free.dh_ah-keyset" (read-keyset "KEY_US_AncientHodler"))
+    (define-keyset "free.dh_hov-keyset" (read-keyset "KEY_US_Florian"))
+    (define-keyset "free.dh_cto-keyset" (read-keyset "KEY_US_Byta"))
+
+    (define-keyset "free.us-0000_aozt-keyset" (read-keyset "KEY_US_AOZ"))
+    (define-keyset "free.us-0001_emma-keyset" (read-keyset "KEY_US_Emma"))
+    (define-keyset "free.us-0002_lumy-keyset" (read-keyset "KEY_US_Lumy"))
+    
+
+    (define-keyset "free.us-0003_coca-keyset" (read-keyset "KEY_US_Coca"))
+    (define-keyset "free.us-0004_kiss-keyset" (read-keyset "KEY_US_Kiss"))
+    (define-keyset "free.us-0005_plcs-keyset" (read-keyset "KEY_US_Plcs"))
+    (define-keyset "free.us-0006_nani-keyset" (read-keyset "KEY_US_Nani"))
+    
+    ;;Foreign SMART-CONTRACT KEYSETS
+    (define-keyset "free.us-0007_bnms-keyset" (read-keyset "KEY_US_BM"))
+    (define-keyset "free.us-0008_bnjr-keyset" (read-keyset "KEY_SC_BJ"))
+
+
+
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Chain Data Time SetUp Definition
+(print "==========================InitSnake_TX-02===============================")
+(begin-tx "InitSnake 02 - Chain Data Time SetUp Definition")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Module Load Up
+(print "==========================InitSnake_TX-03..TX-07========================")
+(begin-tx "InitSnake 03 - Load UTILS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0000_UTILS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 04 - Load DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0001_DALOS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 05 - Load BASIS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0002_BASIS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 06 - Load AUTOSTAKE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0003_ATS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 07 - Load AUTOSTAKE-ISSUE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0004_ATSI.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 08 - Load TFT - TrueFungibleTransfer Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0005_TFT.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 09 - Load AUTOSTAKE-Cold-Recovery Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0006_ATSC.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 10 - Load AUTOSTAKE-Hot-Recovery Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0007_ATSH.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 11 - Load AUTOSTAKE-Manager Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0008_ATSM.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 12 - Load VESTING Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0009_VST.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 13 - Load LIQUID Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0010_LIQUID.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 14 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0011_OUROBOROS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 15 - Load BRANDING Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0014_BRANDING.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_00_TALOS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 23 - Load DEPLOYER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_xxxx_DEPLOYER.pact")
+(env-gas)
+(commit-tx)
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_xxxx_DEPLOYER-Barebone.pact")
+
+(begin-tx "InitSnake 10 - Use Modules")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+
+(use free.UTILS)            ;; 85.107
+(use free.DALOS)            ;;107.032
+(use free.BASIS)            ;;145.558
+(use free.ATS)              ;;142.455
+(use free.ATSI)             ;;137.410
+(use free.TFT)              ;;140.426
+(use free.ATSC)             ;;147.856
+(use free.ATSH)             ;;138.321
+(use free.ATSM)             ;;145.648
+(use free.VESTING)          ;;143.212
+(use free.LIQUID)           ;;136.726
+(use free.OUROBOROS)        ;;147.291
+(use free.BRANDING)         ;;121.969
+
+(use free.TALOS)            ;;144.788
+
+(use free.DEPLOYER)         ;;142.916
+
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 04 - Kadena Account Creation
+(print "==========================InitSnake_TX-08===============================")
+(begin-tx "InitSnake 08 - Kadena Account Creation and Fuel of 1st Account")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-data
+    {
+        "KEY_KDA_AncientHodler": { "keys": [KC.KADN_PBKY_0000]},
+        "KEY_KDA_Florian": { "keys": [KC.KADN_PBKY_000a]},
+        "KEY_KDA_Emma": { "keys": [KC.KADN_PBKY_000b]},
+        "KEY_KDA_Byta": { "keys": [KC.KADN_PBKY_000c]},
+
+        "KEY_KDA_Lumy": { "keys": [KC.KADN_PBKY_000d]},
+        "KEY_KDA_Coca": { "keys": [KC.KADN_PBKY_000e]},
+        "KEY_KDA_Kiss": { "keys": [KC.KADN_PBKY_000f]},
+        "KEY_KDA_Plcs": { "keys": [KC.KADN_PBKY_000g]},
+        "KEY_KDA_Nani": { "keys": [KC.KADN_PBKY_000h]},
+        "KEY_KDA_AOZ": { "keys": [KC.KADN_PBKY_000i]},
+        "KEY_KDA_BM": { "keys": [KC.KADN_PBKY_000j]},
+
+        "KEY_KDA_Ouroboros": { "keys": [KC.KADN_PBKY_0001]},
+        "KEY_KDA_GasTanker": { "keys": [KC.KADN_PBKY_0002]},
+        "KEY_KDA_KadenaLiquidStaking": { "keys": [KC.KADN_PBKY_0003]},
+        "KEY_KDA_DalosAutostake": { "keys": [KC.KADN_PBKY_0004]},
+        "KEY_KDA_DalosVesting": { "keys": [KC.KADN_PBKY_0005]},
+        "KEY_KDA_BJ": { "keys": [KC.KADN_PBKY_0006]}
+    }
+)
+(env-sigs   
+    [{  "key": "alice-key", 
+        "caps": 
+            [
+                (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
+                (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
+                (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
+            ]
+        }
+    ]
+)
+
+;;Create KDA Accounts
+
+;;Create AH and transfer to it 25000 KDA
+(coin.create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_0000 25000.0)
+
+;;Create AOZT and transfer to it 5000 KDA
+(coin.create-account KC.KADN_NAME_000i (read-keyset "KEY_KDA_AOZ"))
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
+
+;;Create BananaMaster and transfer to it 1500 KDA
+(coin.create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
+(free.DALOS.DALOS|C_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
+
+;;Users
+(coin.create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
+(coin.create-account KC.KADN_NAME_000b (read-keyset "KEY_KDA_Emma"))
+(coin.create-account KC.KADN_NAME_000c (read-keyset "KEY_KDA_Byta"))              ;;CTO
+(coin.create-account KC.KADN_NAME_000d (read-keyset "KEY_KDA_Lumy"))
+(coin.create-account KC.KADN_NAME_000e (read-keyset "KEY_KDA_Coca"))
+(coin.create-account KC.KADN_NAME_000f (read-keyset "KEY_KDA_Kiss"))
+(coin.create-account KC.KADN_NAME_000g (read-keyset "KEY_KDA_Plcs"))
+(coin.create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
+
+
+;;Kadena Accounts of demi Smart Contracts to be done in Step 016
+;(coin.create-account free.DALOS.DALOS|SC_KDA-NAME free.DALOS.DALOS|GUARD)
+;(coin.create-account free.OUROBOROS.OUROBOROS|SC_KDA-NAME free.OUROBOROS.OUROBOROS|GUARD)
+;(coin.create-account free.LIQUID.LIQUID|SC_KDA-NAME free.LIQUID.LIQUID|GUARD)
+;(coin.create-account free.BANANA.BANANA|SC_KDA-NAME free.BANANA.BANANA|GUARD)
+
+(coin.create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
+(coin.create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Initialise Demiourgos DALOS Accounts
+(print "==========================InitSnake_TX-09===============================")
+(begin-tx "InitSnake 09 - DPTS User Account Creation")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Florean", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Byta", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
+            { "key": "PK_Coca", "caps": [] }
+            { "key": "PK_Kiss", "caps": [] }
+            { "key": "PK_Plcs", "caps": [] }
+            { "key": "PK_Nani", "caps": [] }
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "PK_BM", "caps": [] }
+            { "key": "PK_BJ", "caps": [] }
+          ])
+
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.us-0004_kiss-keyset") KC.KADN_NAME_000f KC.PBLC_000f)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.us-0005_plcs-keyset") KC.KADN_NAME_000g KC.PBLC_000g)
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.us-0006_nani-keyset") KC.KADN_NAME_000h KC.PBLC_000h)
+
+    ;;Banana Example
+    (free.DALOS.DALOS|A_DeployStandardAccount KC.BM (keyset-ref-guard "free.us-0007_bnms-keyset") KC.KADN_NAME_000j KC.PBLC_000j)
+    (free.DALOS.DALOS|A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.us-0008_bnjr-keyset") KC.KADN_NAME_0006 KC.BM KC.PBLC_0006)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(print "==========================Init-STEPS====================================")
+(begin-tx "Init STEP 005a")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Florean", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step005a)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 005b")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step005b)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 006")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step006)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 007")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_DalosVesting", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step007)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 008")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step008)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 009")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step009)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 010")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.DEPLOYER.A_Step010)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 011")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+

@@ -1,18 +1,6 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module UTILS GOVERNANCE
-    @doc "Demiourgos 0000 Module - UTILS (Utility Module) \
-    \ Module Zero containing Utility Functions \
-    \ \
-    \ \
-    \ Acts as Constant Storage, and as a Module for \
-    \ unrestricted computation functions used in Demiourgos Modules \
-    \ \
-    \ \
-    \ Utils Submodules: Unique for Utils | Specific for external modules \
-    \ \
-    \ GUARD LIST UTILS | ATS DALOS DPTF DPMF DPSF DPNF IGNIS VST"
-
-    (defconst NS_TEST "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+    (defconst NS_TEST "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
     (defconst NS_MAIN "")
     (defconst NS_USE "free")
 
@@ -30,8 +18,6 @@
         (+ NS_USE ".dh_master-keyset")
     )
 
-    ;;Policies - NONE
-
     ;;[D] DALOS Constant Values
     (defconst KDA_PRECISION 12              "Native Kadena Precision")
     (defconst MIN_PRECISION 2               "Minimum DALOS Token Precision")
@@ -45,9 +31,7 @@
     (defconst ACCOUNT_ID_CHARSET CHARSET_LATIN1 "Allowed character set for account IDs.");
     (defconst ACCOUNT_ID_PROHIBITED_CHARACTER ["$" "¢" "£"])
     (defconst ACCOUNT_ID_MAX_LENGTH 256 " Maximum character length for account IDs. ")
-
     (defconst BAR "|")
-
     (defconst NUMBERS ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
     (defconst CAPITAL_LETTERS ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"])
     (defconst NON_CAPITAL_LETTERS ["a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"])
@@ -75,7 +59,7 @@
     )
     (defconst AFT
         [50.0 100.0 200.0 350.0 550.0 800.0]
-        "The Fee Threhsolds for Auryn Uncoil; Obsolete; Generated via ATS-Pair Set-up"
+        "The Fee Threhsolds for Auryn Uncoil; Obsolete; Generated on ATS-Pair Set-up"
     )
     (defconst AUHD
         [504 480 478 476 472 468 464 460
@@ -96,7 +80,7 @@
         672 648 624 600 576 552 528
         504 480 456 432 408 384 360]
         "Elite-Auryn Uncoil Hour Duration; Obsolete; Generated via ATS-Pair Set-up"
-    );;generated with <(OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)>
+    );;made by<(OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)>
     
     ;;True-Fungible Auryn and Elite-Auryn Promile Fees stored as constants
     (defconst AURYN_FEE 50.0)

@@ -1,10 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module ATSC GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use BASIS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (ATSC-ADMIN))
     )
@@ -152,7 +147,7 @@
                     (positive-c-fr:[decimal] (ATS.ATS|UC_RTSplitAmounts atspair (at 0 c-rbt-fee-split)))    ;;remainderu
                 )
                 (TFT.DPTF|C_Transfer patron c-rbt recoverer ATS.ATS|SC_NAME ra true)
-                (BASIS.DPTF|C_Burn patron c-rbt ATS|SC_NAME ra)
+                (BASIS.DPTF|C_Burn patron c-rbt ATS.ATS|SC_NAME ra)
                 (map
                     (lambda
                         (index:integer)
@@ -221,7 +216,7 @@
             (
                 (zr:object{ATS.Awo} (ATS.ATS|UCC_MakeZeroUnstakeObject atspair))
                 (ng:object{ATS.Awo} (ATS.ATS|UCC_MakeNegativeUnstakeObject atspair))
-                (p0:[object{Awo}] (ATS.ATS|UR_P0 atspair account))
+                (p0:[object{ATS.Awo}] (ATS.ATS|UR_P0 atspair account))
                 (p0l:integer (length p0))
                 (boolean-lst:[bool]
                     (fold
@@ -289,8 +284,8 @@
                 (rt-lst:[string] (ATS.ATS|UR_RewardTokenList atspair))
                 (l:integer (length rt-lst))
                 (empty:[decimal] (make-list l 0.0))
-                (zr:object{Awo} (ATS.ATS|UCC_MakeZeroUnstakeObject atspair))
-                (unstake-obj:object{Awo} (ATS.ATS|UR_P1-7 atspair account position))
+                (zr:object{ATS.Awo} (ATS.ATS|UCC_MakeZeroUnstakeObject atspair))
+                (unstake-obj:object{ATS.Awo} (ATS.ATS|UR_P1-7 atspair account position))
                 (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
                 (cull-output:[decimal] (ATS.ATS|UC_CullValue atspair unstake-obj))
             )
@@ -495,7 +490,6 @@
             )
         )
     )
-
 )
 
 (create-table PoliciesTable)

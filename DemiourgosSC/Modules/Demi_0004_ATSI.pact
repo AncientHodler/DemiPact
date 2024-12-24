@@ -1,8 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module ATSI GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (ATSI-ADMIN))
     )
@@ -234,8 +231,8 @@
                 )
                 (let*
                     (
-                        (h-rbt:string (ATS|UR_HotRewardBearingToken atspair))
-                        (h-fr:bool (ATS|UR_HotRecoveryFeeRedirection atspair))
+                        (h-rbt:string (ATS.ATS|UR_HotRewardBearingToken atspair))
+                        (h-fr:bool (ATS.ATS|UR_HotRecoveryFeeRedirection atspair))
                         (h-rbt-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn h-rbt ATS.ATS|SC_NAME false))
                         (h-rbt-create-role:bool (BASIS.DPMF|UR_AccountRoleCreate h-rbt ATS.ATS|SC_NAME))
                         (h-rbt-add-q-role:bool (BASIS.DPMF|UR_AccountRoleNFTAQ h-rbt ATS.ATS|SC_NAME))
@@ -301,7 +298,7 @@
             (BASIS.DPTF-DPMF|XO_ToggleBurnRole id account toggle token-type)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 1 toggle token-type)
             (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
+            (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeBurn patron id token-type)
                 true
             )
@@ -348,7 +345,7 @@
             (BASIS.DPTF|XO_ToggleMintRole id account toggle)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 2 toggle true)
             (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
+            (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeMint patron id)
                 true
             )
@@ -373,7 +370,7 @@
             (BASIS.DPTF-DPMF|XO_WriteRoles id (BASIS.DPMF|UR_CreateRoleAccount id) 2 false false)
             (BASIS.DPTF-DPMF|XO_WriteRoles id receiver 2 true false)
             (DALOS.DALOS|X_IncrementNonce patron)
-            (if (!= (BASIS.DPMF|UR_CreateRoleAccount id) ATS|SC_NAME)
+            (if (!= (BASIS.DPMF|UR_CreateRoleAccount id) ATS.ATS|SC_NAME)
                 (ATS|XC_RevokeCreateOrAddQ patron id)
                 true
             )
@@ -397,7 +394,7 @@
             (BASIS.DPMF|XO_ToggleAddQuantityRole id account toggle)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 3 toggle false)
             (DALOS.DALOS|X_IncrementNonce patron)
-            (if (and (= account ATS|SC_NAME) (= toggle false))
+            (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeCreateOrAddQ patron id)
                 true
             )
@@ -416,7 +413,7 @@
                             )
                             true
                         )
-                        (if (not (ATS|UR_HotRecoveryFeeRedirection atspair))
+                        (if (not (ATS.ATS|UR_HotRecoveryFeeRedirection atspair))
                             (with-capability (SECURE)
                                 (ATSI|C_ToggleFeeSettings patron atspair true 2)
                             )
@@ -470,7 +467,7 @@
         )
         (with-capability (P|ATSI)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
                 true
             )
             (ATS.ATS|X_ToggleFeeSettings atspair toggle fee-switch)
@@ -487,7 +484,7 @@
         )
         (with-capability (P|ATSI)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
                 true
             )
             (ATS.ATS|X_TurnRecoveryOff atspair cold-or-hot)

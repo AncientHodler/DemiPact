@@ -1,8 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|DALOS GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    (use DALOS)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -31,7 +28,6 @@
             (create-capability-guard (P|DALOS|AUTO_PATRON))
         )
     )
-    ;;        [2] Administrator Usage FUNCTIONS
     ;;
     (defun A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         @doc "Deploys a Standard DALOS Account in Administrator Mode"
@@ -62,7 +58,6 @@
         \ Until the automatisation of accounts is implemented, this function serves as backup"
         (DALOS.DALOS|A_UpdatePublicKey account new-public)
     )
-    ;;        [7] Client Usage FUNCTIONS
     ;;
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         @doc "Deploys a Standard DALOS Account"

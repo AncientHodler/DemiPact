@@ -1,18 +1,13 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module DEPLOYER GOVERNANCE
-
     (defcap GOVERNANCE ()
         (compose-capability (DEPLOYER-ADMIN))
     )
-
     (defcap DEPLOYER-ADMIN ()
         (enforce-guard G-MD_DEPLOYER)
     )
-
-    ;;Module Guards
     (defconst G-MD_DEPLOYER (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
 
-    ;;Module Accounts Information
     ;;  DALOS
     (defconst DALOS|SC_KEY                  DALOS.DALOS|SC_KEY)
     (defconst DALOS|SC_NAME                 DALOS.DALOS|SC_NAME)
@@ -60,7 +55,6 @@
     (defconst DEMIURGOI|HOV_NAME "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι")
     (defconst DEMIURGOI|HOV_KDA-NAME "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
     (defconst DEMIURGOI|HOV_PBL "9H.268Bnvp307DmbIcEltbEkpeHuK3C3qsD615ml5qefsA4HErwbqDhy6K1IvqxMeoCBh9mfieMj72jbzzI6a6nDtGhmf2nbHyE6M3zceog4o3bEkqcyvLsBdsGLt7Fu6Ei0Da6iej0n2z5M3bFsAk6iitosvzemff0B18kpeh5ocj5zb7DebFiLgAhIElsgg05Lh5CpyF5LqyKtlFvAay6wtCzsi2cM19BMB29nrfcIgKkaIkh2sjtAE5giM6th727eDekACBvMexk74wxgD2pJegzjuCqIe3BwozG5Fa29DqpcKM5zL1x78h7JKMj1ek2aanqnCtG33Dr3w2mzcIcLjlsDtMD1CG02CFlrCCAzMmlLmFgsBiIpt3Blj1uaxJG67xB2jwKj45s4LIDhzLea24m1AzFh6FD4MsF4Ay35i2Cvbmzdff6nuJbKM5tw5C31xapoqwEIeKkCC9zsiIk8GCMhis557p7Hk9H3aM059D24ar7KLmlr8cydi9n4u2rwH02rb8l1ixDbgoqn2jlCHDBxbCnf3A4GyI4FpaqJuBf1IwdI85Bq6qzcJIiK")
-
     ;; POLICY Capabilities
     (defcap SUMMONER ()
         @doc "Policy that allows accesing Client Functions from all prior modules"
@@ -72,7 +66,6 @@
         (compose-capability (SUMMONER))
         (compose-capability (DEPLOYER-ADMIN))
     )
-
     ;;Policies
     (defun DefinePolicies ()
         @doc "Add the Policies that allows running external Functions from this Module"
@@ -80,48 +73,13 @@
             "DEPLOYER|Summoner"
             (create-capability-guard (SUMMONER))
         )
+        (ATSI.A_AddPolicy
+            "DEPLOYER|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
         (VESTING.A_AddPolicy
             "DEPLOYER|Summoner"
             (create-capability-guard (SUMMONER))
         )
-    )
-    ;;========[P] PRINT-FUNCTIONS==============================================;;
-    (defun DALOS|UP_AccountProperties (account:string)
-        (let* 
-            (
-                (p:[bool] (DALOS.DALOS|UR_AccountProperties account))
-                (a:bool (at 0 p))
-                (b:bool (at 1 p))
-                (c:bool (at 2 p))
-            )
-            (if (= a true)
-                (format "Account {} is a Smart Account: Payable: {}; Payable by Smart Account: {}." [account b c])
-                (format "Account {} is a Normal Account" [account])
-            )
-        )
-    )
-    (defun ATS|UP_P0 (atspair:string account:string)
-        (format "{}|{} P0: {}" [atspair account (ATS.ATS|UR_P0 atspair account)])
-    )
-    (defun ATS|UP_P1 (atspair:string account:string)
-        (format "{}|{} P1: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 1)])
-    )
-    (defun ATS|UP_P2 (atspair:string account:string)
-        (format "{}|{} P2: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 2)])
-    )
-    (defun ATS|UP_P3 (atspair:string account:string)
-        (format "{}|{} P3: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 3)])
-    )
-    (defun ATS|UP_P4 (atspair:string account:string)
-        (format "{}|{} P4: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 4)])
-    )
-    (defun ATS|UP_P5 (atspair:string account:string)
-        (format "{}|{} P5: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 5)])
-    )
-    (defun ATS|UP_P6 (atspair:string account:string)
-        (format "{}|{} P6: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 6)])
-    )
-    (defun ATS|UP_P7 (atspair:string account:string)
-        (format "{}|{} P7: {}" [atspair account (ATS.ATS|UR_P1-7 atspair account 7)])
     )
 )

@@ -1,20 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module OUROBOROS GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.TFT)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSM)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.LIQUID)
-    (use UTILS)
-    (use DALOS)
-    (use BASIS)
-    (use ATS)
-    (use TFT)
-    (use ATSM)
-    (use LIQUID)
-
     (defcap GOVERNANCE ()
         (compose-capability (OUROBOROS-ADMIN))
     )
@@ -30,7 +15,6 @@
 
     (defconst G-MD_OUROBOROS (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
     (defconst G-SC_OUROBOROS (keyset-ref-guard OUROBOROS|SC_KEY))
-
 
     (defconst OUROBOROS|SC_KEY
         (+ UTILS.NS_USE ".dh_sc_ouroboros-keyset")
@@ -108,7 +92,6 @@
         release-amount:decimal
         release-date:time
     )
-
     (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
     ;;[UR] & [UC]
@@ -127,7 +110,7 @@
                                     (BASIS.DPTF-DPMF|UR_Konto item true)
                                     (if (= table-to-query 2)
                                         (BASIS.DPTF-DPMF|UR_Konto item false)
-                                        (ATS|UR_OwnerKonto item)
+                                        (ATS.ATS|UR_OwnerKonto item)
                                     )
                                 )
                             )
@@ -160,9 +143,7 @@
             (TFT.DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false)
         )
     )
-    ;;
-    ;;            OUROBOROS         Submodule
-    ;;[UEV]
+    ;;OUROBOROS
     (defun DALOS|UEV_Live ()
         (let
             (
@@ -278,7 +259,7 @@
         (with-capability (OUROBOROS|ADMIN_FUEL)
             (let*
                 (
-                    (present-kda-balance:decimal (at "balance" (coin.details (DALOS|UR_AccountKadena OUROBOROS|SC_NAME))))
+                    (present-kda-balance:decimal (at "balance" (coin.details (DALOS.DALOS|UR_AccountKadena OUROBOROS|SC_NAME))))
                     (w-kda:string (DALOS.DALOS|UR_WrappedKadenaID))
                     (w-kda-as-rt:[string] (BASIS.DPTF|UR_RewardToken w-kda))
                     (liquid-idx:string (at 0 w-kda-as-rt))
@@ -361,6 +342,6 @@
             )
         )
     )
-    
 )
+
 (create-table PoliciesTable)

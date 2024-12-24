@@ -1,12 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module ATS GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    (use UTILS)
-    (use DALOS)
-    (use BASIS)
-
     (defcap GOVERNANCE ()
         (compose-capability (ATS-ADMIN))
     )
@@ -295,7 +288,7 @@
         )
     )
     (defun ATS|UEV_IzTokenUnique (atspair:string reward-token:string)
-        (DPTF-DPMF|UEV_id reward-token true)
+        (BASIS.DPTF-DPMF|UEV_id reward-token true)
         (let
             (
                 (rtl:[string] (ATS|UR_RewardTokenList atspair))
@@ -665,8 +658,8 @@
                 (syphon:decimal (ATS|UR_Syphon atspair))
                 (resident-rt-amounts:[decimal] (ATS|UR_RoUAmountList atspair true))
                 (precisions:[integer] (ATS|UR_RtPrecisions atspair))
-                (max-precision:integer (UTILS|UC_MaxInteger precisions))
-                (max-pp:integer (at 0 (LIST|UC_Search precisions max-precision)))
+                (max-precision:integer (UTILS.UTILS|UC_MaxInteger precisions))
+                (max-pp:integer (at 0 (UTILS.LIST|UC_Search precisions max-precision)))
                 (pair-rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
             )
             (if (<= index syphon)
@@ -977,7 +970,7 @@
         (let*
             (
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                (c-rbt-supply:decimal (DPTF-DPMF|UR_Supply c-rbt true))
+                (c-rbt-supply:decimal (BASIS.DPTF-DPMF|UR_Supply c-rbt true))
             )
             (if (= (ATS|UC_IzPresentHotRBT atspair) false)
                 c-rbt-supply
@@ -1017,7 +1010,7 @@
     (defun ATS|UC_RewardTokenPosition:integer (atspair:string reward-token:string)
         (let
             (
-                (existance-check:bool (ATS|UC_IzRTg atspair reward-token))
+                (existance-check:bool (BASIS.ATS|UC_IzRTg atspair reward-token))
             )
             (enforce (= existance-check true) (format "{} Existance isnt verified for Token {} as RT with ATS Pair {}" [true reward-token atspair]))
             (at 0 (UTILS.LIST|UC_Search (ATS|UR_RewardTokenList atspair) reward-token))
@@ -1473,6 +1466,7 @@
         )
     )
 )
+
 (create-table PoliciesTable)
 (create-table ATS|Pairs)
 (create-table ATS|Ledger)

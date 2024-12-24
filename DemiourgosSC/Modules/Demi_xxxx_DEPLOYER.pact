@@ -1,4 +1,4 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module DEPLOYER GOVERNANCE
 
     (defcap GOVERNANCE ()
@@ -44,7 +44,7 @@
         (+ UTILS.NS_USE ".dh_ah-keyset")
     )
     (defconst DEMIURGOI|AH_NAME "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
-    (defconst DEMIURGOI|AH_KDA-NAME "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+    (defconst DEMIURGOI|AH_KDA-NAME "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")   ;;change to what is needed.
     (defconst DEMIURGOI|AH_PBL "9G.CgcAjiI89ICnk45mxx63hwkBe5G71sIqfEta0ugkzF7EB6cy55BtzlFa27jDGE7Kn7ChljCmkcIsrDw9JwzJECieGLB5Jlkz9Blo6iJct6uxIA1u64Hr7HKa93EAiCwJJBBKAojJtwupEsvspH1jjGxKyFsb8fbfnJm1rAKxcIzcFILmmdHFaICfFpnbJG6tJu0HM9JCJ7MBCE7C2LiqvE6Fc1hqCeAdGHxDp7sGquI0wl2l08aa6wlKvwu44jgqF8mqDnCyjpxHuttEqjs4h9IJ28kmB53ppwoznt16rjzeMl21n3rwfI2es56rp5xavCabDacyCuonniz72L5d7dq3ptIEiuggEyLIIGe9sadH6eaMyitcmKaH7orgFz6d9kL9FKorBr06owFg328wFhCIlCFpwIzokmo47xKKt5kBzhyodBAjhCqayuHBue4oDhoA21A2H9ut9gApMuxokcmsi7Bd1kitrfJAy1GkrGiBK5dvlhgshcnGaG3vhkCm6dI5idCGjDEodivvDbgyI6zaajHvIMdBtrGvuKnxvsBulkbaDbk2wIdKwrK")
 
     (defconst DEMIURGOI|CTO_KEY
@@ -72,11 +72,14 @@
         (compose-capability (SUMMONER))
         (compose-capability (DEPLOYER-ADMIN))
     )
-
     ;;Policies
     (defun DefinePolicies ()
         @doc "Add the Policies that allows running external Functions from this Module"
         (BASIS.A_AddPolicy
+            "DEPLOYER|Summoner"
+            (create-capability-guard (SUMMONER))
+        )
+        (ATSI.A_AddPolicy
             "DEPLOYER|Summoner"
             (create-capability-guard (SUMMONER))
         )
@@ -141,9 +144,12 @@
         ;;
         (TALOS|DALOS.DefinePolicies)
         (TALOS|DPTF.DefinePolicies)
+        (TALOS|DPTF2.DefinePolicies)
         (TALOS|DPMF.DefinePolicies)
+        (TALOS|DPMF2.DefinePolicies)
         (TALOS|ATS1.DefinePolicies)
         (TALOS|ATS2.DefinePolicies)
+        (TALOS|ATS3.DefinePolicies)
         (TALOS|VST.DefinePolicies)
         (TALOS|LIQUID.DefinePolicies)
         (TALOS|OUROBOROS.DefinePolicies)
@@ -151,21 +157,19 @@
         (DEPLOYER.DefinePolicies)
     )
     (defun A_InitialiseDALOS-02 (patron:string)
-        (with-capability (DEPLOYER-ADMIN)
-            (TALOS|DALOS.A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
-        ;; 
-            (TALOS|DALOS.A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
-            (ATS.ATS|SetGovernor patron)
-        ;;
-            (TALOS|DALOS.A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
-            (VESTING.VST|SetGovernor patron)
-        ;;    
-            (TALOS|DALOS.A_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME patron LIQUID|PBL)
-            (LIQUID.LIQUID|SetGovernor patron)
-        ;;
-            (TALOS|DALOS.A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
-            (OUROBOROS.OUROBOROS|SetGovernor patron)
-        )
+        (TALOS|DALOS.A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
+    ;; 
+        (TALOS|DALOS.A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
+        (ATS.ATS|SetGovernor patron)
+    ;;
+        (TALOS|DALOS.A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
+        (VESTING.VST|SetGovernor patron)
+    ;;    
+        (TALOS|DALOS.A_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME patron LIQUID|PBL)
+        (LIQUID.LIQUID|SetGovernor patron)
+    ;;
+        (TALOS|DALOS.A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
+        (OUROBOROS.OUROBOROS|SetGovernor patron)
     )
     (defun A_InitialiseDALOS-03 ()
         (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
@@ -315,7 +319,7 @@
                         (core-idx:[string] [Auryndex Elite-Auryndex Kadena-Liquid-Index])
                     )
             ;;STEP 3.1 - Set Up <Auryndex> Autostake-Pair
-                    (TALOS|ATS2.C_SetColdFee patron Auryndex
+                    (TALOS|ATS3.C_SetColdFee patron Auryndex
                         7
                         [50.0 100.0 200.0 350.0 550.0 800.0]
                         [
@@ -328,16 +332,16 @@
                             [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
                         ]
                     )
-                    (TALOS|ATS2.C_TurnRecoveryOn patron Auryndex true)
+                    (TALOS|ATS3.C_TurnRecoveryOn patron Auryndex true)
             ;;STEP 3.2 - Set Up <EliteAuryndex> Autostake-Pair
-                    (TALOS|ATS2.C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
-                    (TALOS|ATS2.C_SetCRD patron Elite-Auryndex false 360 24)
-                    (TALOS|ATS2.C_ToggleElite patron Elite-Auryndex true)
-                    (TALOS|ATS2.C_TurnRecoveryOn patron Elite-Auryndex true)
+                    (TALOS|ATS3.C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
+                    (TALOS|ATS3.C_SetCRD patron Elite-Auryndex false 360 24)
+                    (TALOS|ATS3.C_ToggleElite patron Elite-Auryndex true)
+                    (TALOS|ATS3.C_TurnRecoveryOn patron Elite-Auryndex true)
             ;;STEP 3.3 - Set Up <Kadindex> Autostake-Pair
-                    (TALOS|ATS2.C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
-                    (TALOS|ATS2.C_SetCRD patron Kadena-Liquid-Index false 12 6)
-                    (TALOS|ATS2.C_TurnRecoveryOn patron Kadena-Liquid-Index true)
+                    (TALOS|ATS3.C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
+                    (TALOS|ATS3.C_SetCRD patron Kadena-Liquid-Index false 12 6)
+                    (TALOS|ATS3.C_TurnRecoveryOn patron Kadena-Liquid-Index true)
             ;;STEP 4 - Return Token Ownership to their respective Smart DALOS Accounts
                     ;(DPTF|C_ChangeOwnership patron AurynID ATS.ATS|SC_NAME)
                     ;(DPTF|C_ChangeOwnership patron EliteAurynID ATS.ATS|SC_NAME)

@@ -1,10 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module BASIS GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    (use UTILS)
-    (use DALOS)
-
     (defcap GOVERNANCE ()
         (compose-capability (BASIS-ADMIN))
     )
@@ -930,7 +925,7 @@
     (defun BASIS|URB_Website:string (id:string token-type:bool pending:bool)
         (at "website" (BASIS|UR_Branding id token-type pending))
     )
-    (defun BASIS|URB_Social:[object{SocialSchema}] (id:string token-type:bool pending:bool)
+    (defun BASIS|URB_Social:[object{DALOS.SocialSchema}] (id:string token-type:bool pending:bool)
         (at "social" (BASIS|UR_Branding id token-type pending))
     )
     (defun BASIS|URB_Flag:integer (id:string token-type:bool pending:bool)
@@ -1282,7 +1277,7 @@
     )
     (defun DPMF|UR_AccountBatchMetaData (id:string nonce:integer account:string)
         (DPTF-DPMF|UEV_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id BAR  account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
             (let 
@@ -1313,7 +1308,7 @@
     )
     (defun DPMF|UR_AccountBatchSupply:decimal (id:string nonce:integer account:string)
         (DPTF-DPMF|UEV_id id false)
-        (with-default-read DPMF|BalanceTable (concat [id BAR  account])
+        (with-default-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" : [DPMF|NEUTRAL] }
             { "unit" := read-unit}
             (let 
@@ -1551,10 +1546,10 @@
                 (sender-fee-exemption:bool (DPTF|UR_AccountRoleFeeExemption id sender))
                 (receiver-fee-exemption:bool (DPTF|UR_AccountRoleFeeExemption id receiver))
                 (token-owner:string (DPTF-DPMF|UR_Konto id true))
-                (sender-t1:bool (or (= sender OUROBOROS|SC_NAME) (= sender DALOS|SC_NAME)))
+                (sender-t1:bool (or (= sender DALOS.OUROBOROS|SC_NAME) (= sender DALOS.DALOS|SC_NAME)))
                 (sender-t2:bool (or (= sender token-owner)(= sender-fee-exemption true)))
                 (iz-sender-exception:bool (or sender-t1 sender-t2))
-                (receiver-t1:bool (or (= receiver OUROBOROS|SC_NAME) (= receiver DALOS|SC_NAME)))
+                (receiver-t1:bool (or (= receiver DALOS.OUROBOROS|SC_NAME) (= receiver DALOS.DALOS|SC_NAME)))
                 (receiver-t2:bool (or (= receiver token-owner)(= receiver-fee-exemption true)))
                 (iz-receiver-exception:bool (or receiver-t1 receiver-t2))
                 (are-members-exception (or iz-sender-exception iz-receiver-exception))
@@ -1910,7 +1905,7 @@
         (let
             (
                 (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (NZG:bool (IGNIS|URC_IsNativeGasZero))
+                (NZG:bool (DALOS.IGNIS|URC_IsNativeGasZero))
                 (token-owner:string (DPTF-DPMF|UR_Konto id true))
             )
             (with-capability (DPTF|TOGGLE_FEE-LOCK patron id toggle)
@@ -2360,9 +2355,9 @@
         (UTILS.DALOS|UEV_TokenName name)
         (UTILS.DALOS|UEV_TickerName ticker)
         (require-capability (DPTF-DPMF|ISSUE))
-        (insert DPTF|PropertiesTable (DALOS|UC_Makeid ticker)
-                {"branding"             : BRANDING|DEFAULT
-                ,"branding-pending"     : BRANDING|DEFAULT
+        (insert DPTF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
+                {"branding"             : DALOS.BRANDING|DEFAULT
+                ,"branding-pending"     : DALOS.BRANDING|DEFAULT
                 ,"owner-konto"          : account
                 ,"name"                 : name
                 ,"ticker"               : ticker
@@ -2392,7 +2387,7 @@
             }
         )
         (with-capability (SECURE)
-            (DPTF-DPMF|C_DeployAccount (DALOS|UC_Makeid ticker) account true)    
+            (DPTF-DPMF|C_DeployAccount (DALOS.DALOS|UC_Makeid ticker) account true)    
         )
         (DALOS.DALOS|UC_Makeid ticker)
     )
@@ -3036,9 +3031,9 @@
         (UTILS.DALOS|UEV_TokenName name)
         (UTILS.DALOS|UEV_TickerName ticker)
         (require-capability (DPTF-DPMF|ISSUE))
-        (insert DPMF|PropertiesTable (DALOS|UC_Makeid ticker)
-            {"branding"             : BRANDING|DEFAULT
-            ,"branding-pending"     : BRANDING|DEFAULT
+        (insert DPMF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
+            {"branding"             : DALOS.BRANDING|DEFAULT
+            ,"branding-pending"     : DALOS.BRANDING|DEFAULT
             ,"owner-konto"          : account
             ,"name"                 : name
             ,"ticker"               : ticker
@@ -3059,9 +3054,9 @@
             ,"vesting"              : UTILS.BAR}
         )
         (with-capability (SECURE)
-            (DPTF-DPMF|C_DeployAccount (DALOS|UC_Makeid ticker) account false)    
+            (DPTF-DPMF|C_DeployAccount (DALOS.DALOS|UC_Makeid ticker) account false)    
         )
-        (DALOS|UC_Makeid ticker)
+        (DALOS.DALOS|UC_Makeid ticker)
     )
     (defun DPMF|X_IncrementNonce (id:string)
         (require-capability (DPMF|INCREMENT_NONCE))

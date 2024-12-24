@@ -1,10 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module ATSH GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use BASIS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (ATSH-ADMIN))
     )
@@ -124,7 +119,7 @@
                     (c-rbt:string (ATS.ATS|UR_ColdRewardBearingToken atspair))
                     (h-rbt:string (ATS.ATS|UR_HotRewardBearingToken atspair))
                     (present-time:time (at "block-time" (chain-data)))
-                    (meta-data-obj:object{ATS|Hot} { "mint-time" : present-time})
+                    (meta-data-obj:object{ATS.ATS|Hot} { "mint-time" : present-time})
                     (meta-data:[object] [meta-data-obj])
                     (new-nonce:integer (+ (BASIS.DPMF|UR_NoncesUsed h-rbt) 1))
                 )
@@ -175,7 +170,7 @@
                 (map
                     (lambda
                         (index:integer)
-                        (ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index earned-rts))
+                        (ATS.ATS|XO_UpdateRoU atspair (at index rt-lst) true false (at index earned-rts))
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
@@ -218,13 +213,12 @@
             ;;2]ATS|SC_NAME burns Hot RBT
                 (BASIS.DPMF|C_Burn patron id nonce ATS.ATS|SC_NAME amount)
             ;;3]ATS|SC_NAME mints Cold RBT
-                (BASIS.DPTF|C_Mint patron c-rbt ATS|SC_NAME amount false)
+                (BASIS.DPTF|C_Mint patron c-rbt ATS.ATS|SC_NAME amount false)
             ;;4]ATS|SC_Name transfer Cold RBT to recoverer
-                (TFT.DPTF|C_Transfer patron c-rbt ATS|SC_NAME recoverer amount true)
+                (TFT.DPTF|C_Transfer patron c-rbt ATS.ATS|SC_NAME recoverer amount true)
             )
-        ) 
+        )
     )
-
 )
 
 (create-table PoliciesTable)

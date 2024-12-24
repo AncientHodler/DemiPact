@@ -1,12 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|ATS1 GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSI)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSC)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSH)
-    (use ATSI)  ;3
-    (use ATSC)  ;2
-    (use ATSH)  ;4
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -30,16 +23,11 @@
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (ATSC.A_AddPolicy
-            "TALOS|Summoner"
-            (create-capability-guard (SUMMONER))
-        )
         (ATSH.A_AddPolicy
             "TALOS|Summoner"
             (create-capability-guard (SUMMONER))
         )
     )
-    ;;       [26] Client Usage FUNCTIONS
     ;;
     (defun C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
         @doc "Toggles ATS Boolean Fee Parameters to <toggle> : \
@@ -66,19 +54,6 @@
         @doc "Executes Hot Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
         (with-capability (S)
             (ATSH.ATSH|C_HotRecovery patron recoverer atspair ra)
-        )
-    )
-    (defun C_ColdRecovery (patron:string recoverer:string atspair:string ra:decimal)
-        @doc "Executes Cold Recovery for <ats-pair> by <recoverer> with the <ra> amount of Cold-Reward-Bearing-Token"
-        (with-capability (S)
-            (ATSC.ATSC|C_ColdRecovery patron recoverer atspair ra)
-        )
-    )
-    (defun C_Cull:[decimal] (patron:string culler:string atspair:string)
-        @doc "Culls <atspair> for <culler>. Culling returns all elapsed past Cold-Recoveries executed by <culler> \
-            \ Returns culled values. If no cullable values exists, returns a list of zeros, since nothing has been culled"
-        (with-capability (S)
-            (ATSC.ATSC|C_Cull patron culler atspair)
         )
     )
     (defun C_Redeem (patron:string redeemer:string id:string nonce:integer)

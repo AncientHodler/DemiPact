@@ -1,14 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module LIQUID GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use UTILS)
-    (use DALOS)
-    (use BASIS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (LIQUID-ADMIN))
     )
@@ -90,10 +81,8 @@
     (defconst LIQUID|GUARD (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
 
     (deftable PoliciesTable:{DALOS.PolicySchema})
-    ;;
-    ;;            LIQUID            Submodule
-    ;;
-    ;;[CAP]
+
+    ;;LIQUID
     (defun LIQUID|CAP_IzLiquidStakingLive ()
         (let
             (
@@ -113,12 +102,12 @@
             )
         )
     )
-    ;;[CF]
+    ;;
     (defcap LIQUID|CF|LIVE ()
         @doc "Capability that enforces Liquid Staking is live with an existing Autostake Pair"
         (LIQUID|CAP_IzLiquidStakingLive)
     )
-    ;;[CAP]
+    ;;
     (defcap LIQUID|WRAP ()
         @doc "Capability needed to wrap KDA to DWK"
         @event
@@ -133,7 +122,7 @@
         (compose-capability (LIQUID|CF|LIVE))
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
     )
-    ;;[C]
+    ;;
     (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
         (enforce-one
             "Update RoU not allowed"
@@ -169,4 +158,5 @@
         )
     )
 )
+
 (create-table PoliciesTable)

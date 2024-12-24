@@ -1,12 +1,5 @@
-;(namespace "n_e096dec549c18b706547e425df9ac0571ebd00b0")
+(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module ATSM GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.UTILS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.DALOS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATS)
-    (use UTILS)
-    (use DALOS)
-    (use ATS)
-
     (defcap GOVERNANCE ()
         (compose-capability (ATSM-ADMIN))
     )
@@ -134,7 +127,7 @@
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS|UR_OwnerKonto atspair) DALOS.GAS_BIGGEST)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_BIGGEST)
                 true
             )
             (ATS.ATS|X_ChangeOwnership atspair new-owner)
@@ -170,7 +163,7 @@
                                 (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
                                 true
                             )
-                            (ATS|X_IncrementParameterUnlocks atspair)
+                            (ATS.ATS|X_IncrementParameterUnlocks atspair)
                         )
                         true
                     )
@@ -301,9 +294,9 @@
                     (accounts-with-atspair-data:[string] (TFT.DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false))
                 )
             ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
-                (TFT.DPTF|C_Transfer patron reward-token ATS|SC_NAME remover remove-sum true)
+                (TFT.DPTF|C_Transfer patron reward-token ATS.ATS|SC_NAME remover remove-sum true)
             ;;2]The amount removed is added back as Primal-RT
-                (TFT.DPTF|C_Transfer patron primal-rt remover ATS|SC_NAME remove-sum true)
+                (TFT.DPTF|C_Transfer patron primal-rt remover ATS.ATS|SC_NAME remove-sum true)
             ;;3]ROU Table is updated with the new DATA, now as primal RT
                 (ATS.ATS|XO_UpdateRoU atspair primal-rt true true resident-sum)
                 (ATS.ATS|XO_UpdateRoU atspair primal-rt false true unbound-sum)
@@ -329,7 +322,7 @@
                 (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_ISSUE)
                 true
             )
-            (BASIS.DPTF-DPMF|C_DeployAccount hot-rbt ATS|SC_NAME false)
+            (BASIS.DPTF-DPMF|C_DeployAccount hot-rbt ATS.ATS|SC_NAME false)
             (ATS.ATS|X_AddHotRBT atspair hot-rbt)
             (DALOS.DALOS|X_IncrementNonce patron)
             (BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken hot-rbt atspair false)
@@ -454,7 +447,8 @@
                     (enumerate 0 (- (length rt-lst) 1))
                 )
                 (BASIS.DPTF|C_Mint patron rbt-id ATS.ATS|SC_NAME rbt-request-amount false)
-                (TFT.DPTF|C_Transfer patron rbt-id ATS|SC_NAME kickstarter rbt-request-amount true)
+                (TFT.DPTF|C_Transfer patron rbt-id ATS.ATS|SC_NAME kickstarter rbt-request-amount true)
+                (ATS.ATS|UC_Index atspair)
             )
         )
     )
@@ -493,10 +487,10 @@
         (with-capability (ATSM|COIL_OR_CURL atspair1 rt)
             (let*
                 (
-                    (c-rbt1:string (ATS|UR_ColdRewardBearingToken atspair1))
-                    (c-rbt1-amount:decimal (ATS|UC_RBT atspair1 rt amount))
-                    (c-rbt2:string (ATS|UR_ColdRewardBearingToken atspair2))
-                    (c-rbt2-amount:decimal (ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
+                    (c-rbt1:string (ATS.ATS|UR_ColdRewardBearingToken atspair1))
+                    (c-rbt1-amount:decimal (ATS.ATS|UC_RBT atspair1 rt amount))
+                    (c-rbt2:string (ATS.ATS|UR_ColdRewardBearingToken atspair2))
+                    (c-rbt2-amount:decimal (ATS.ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
                 )
                 (TFT.DPTF|C_Transfer patron rt curler ATS.ATS|SC_NAME amount true)
                 (ATS.ATS|XO_UpdateRoU atspair1 rt true true amount)

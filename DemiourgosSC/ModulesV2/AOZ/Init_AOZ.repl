@@ -1,0 +1,211 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load AOZ Module
+(begin-tx "AOZ01 - InitAOZ - Load Age of Zalmoxis")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/AOZ/AgeOfZ_xxxx_DEPLOYER.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "Constant Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    (defconst AOZET "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+)
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "AOZ02 - Use Modules")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(use free.AOZ)
+
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(print "==========================Init-STEPS====================================")
+(begin-tx "Init STEP 027")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step027)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 028")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    0.09
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    0.09
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    0.27
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    1.35
+                )
+            ] 
+        }
+    ]
+)
+;;9x200 (per dptf) = 1800 || 90 > 90 > 270 > 1350
+;;For TestNet 1000x smaller: 0.09 > 0.09 > 0.27 > 1.35
+(namespace "free")
+(free.AOZ.A_Step028)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 029")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step029)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 030")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    0.09
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    0.09
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    0.27
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    1.35
+                )
+            ]
+        }
+    ]
+)
+;;6x300 (per dpmf) = 1800 || 90 > 90 > 270 > 1350
+;;For TestNet 1000x smaller: 0.09 > 0.09 > 0.27 > 1.35
+(namespace "free")
+(free.AOZ.A_Step030)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 031")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    0.0075
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    0.0075
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    0.0225
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    0.1125
+                )
+            ] 
+        }
+    ]
+)
+;;6*25 (per ats pair) = 150 || 7.5 > 7.5 > 22.5 > 112.5
+;;For TestNet 1000x smaller: 0.0075 > 0.0075 > 0.0225 > 0.1125
+(namespace "free")
+(free.AOZ.A_Step031)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 032")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step032)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 033")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step033)
+(env-sigs [])
+(env-gas)
+(commit-tx)

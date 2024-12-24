@@ -1,10 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|VST GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSM)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.VESTING)
-    (use ATSM)
-    (use VESTING)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -29,7 +24,6 @@
             (create-capability-guard (SUMMONER))
         )
     )
-    ;;        [5] Client Usage FUNCTIONS
     ;;
     (defun C_CreateVestingLink:string (patron:string dptf:string)
         @doc "Creates an immutable Vesting Pair between the input DPTF Token and a DPMF Token that will be created by this function \

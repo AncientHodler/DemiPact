@@ -1,8 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
-(module TALOS|ATS2 GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSM)
-    (use ATSM)  ;17
-
+(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(module TALOS|ATS4 GOVERNANCE
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -27,7 +24,6 @@
             (create-capability-guard (SUMMONER))
         )
     )
-    ;;       [26] Client Usage FUNCTIONS
     ;;
     (defun C_ChangeOwnership (patron:string atspair:string new-owner:string)
         @doc "Moves ATS <atspair> Ownership to <new-owner> DALOS Account"   

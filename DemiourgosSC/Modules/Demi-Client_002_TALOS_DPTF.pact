@@ -1,14 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|DPTF GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BASIS)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.TFT)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.ATSI)
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.BRANDING)
-    (use BASIS)
-    (use TFT)
-    (use ATSI)
-    (use BRANDING)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -32,39 +23,33 @@
             "TALOS|T|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (TFT.A_AddPolicy
-            "TALOS|T|Summoner"
-            (create-capability-guard (SUMMONER))
-        )
         (ATSI.A_AddPolicy
             "TALOS|T|Summoner"
             (create-capability-guard (SUMMONER))
         )
-        (BRANDING.A_AddPolicy
-            "TALOS|T|Summoner"
-            (create-capability-guard (SUMMONER))
+    )
+    (defun C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
+        @doc "Sets |role-burn| to <toggle> for <id> and DPTF <account>"
+        (with-capability (S)
+            (ATSI.DPTF-DPMF|C_ToggleBurnRole patron id account toggle true)
         )
     )
-    ;;       [27] Client Usage FUNCTIONS
-    ;;
+    (defun C_ToggleMintRole (patron:string id:string account:string toggle:bool)
+        @doc "Sets |role-mint| to <toggle> for <id> and DPTF <account>"
+        (with-capability (S)
+            (ATSI.DPTF|C_ToggleMintRole patron id account toggle)
+        )
+    )
+    (defun C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
+        @doc "Sets |role-fee-exemption| to <toggle> for TrueFungible <id> and DPTF <account>"
+        (with-capability (S)
+            (ATSI.DPTF|C_ToggleFeeExemptionRole patron id account toggle)
+        )
+    )
     (defun C_DeployAccount (id:string account:string)
         @doc "Deploys a new DPTF Account for <id> and <account> (DALOS account must exist)"
         (with-capability (S)
             (BASIS.DPTF-DPMF|C_DeployAccount id account true)
-        )
-    )
-    (defun C_UpdateBranding (patron:string id:string logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        @doc "Updates Pending-Branding with new branding data, 100 IGNIS Cost \
-            \ Must be approved from DALOS Admin (moving it from Pending-Branding to Branding)"
-        (with-capability (S)
-            (BRANDING.DPTF-DPMF|C_UpdateBranding patron id true logo description website social)
-        )
-    )
-    (defun C_UpgradeBranding (patron:string id:string months:integer)
-        @doc "Pays KDA to upgrade to Blue Flag for Token <id>"
-        (with-capability (S)
-            (BRANDING.BRD|C_UpgradeBranding patron id true months)
-            (TALOS|OUROBOROS.C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
     (defun C_ChangeOwnership (patron:string id:string new-owner:string)
@@ -86,18 +71,6 @@
             (BASIS.DPTF-DPMF|C_TogglePause patron id toggle true)
         )
     )
-    (defun C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
-        @doc "Sets |role-burn| to <toggle> for <id> and DPTF <account>"
-        (with-capability (S)
-            (ATSI.DPTF-DPMF|C_ToggleBurnRole patron id account toggle true)
-        )
-    )
-    (defun C_ToggleMintRole (patron:string id:string account:string toggle:bool)
-        @doc "Sets |role-mint| to <toggle> for <id> and DPTF <account>"
-        (with-capability (S)
-            (ATSI.DPTF|C_ToggleMintRole patron id account toggle)
-        )
-    )
     (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
         @doc "Sets |role-transfer| to <toggle> for <id> and DPTF <account>. \
             \ When |role-transfer| is true, transfers are restricted. \
@@ -105,13 +78,6 @@
             \ while these Accounts can transfer the TF freely"
         (with-capability (S)
             (BASIS.DPTF-DPMF|C_ToggleTransferRole patron id account toggle true)
-        )
-    )
-    (defun C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
-        @doc "Sets |role-fee-exemption| to <toggle> for TrueFungible <id> and DPTF <account> \
-            \ Only dor Smart DALOS Accounts"
-        (with-capability (S)
-            (ATSI.DPTF|C_ToggleFeeExemptionRole patron id account toggle)
         )
     )
     (defun C_Wipe (patron:string id:string atbw:string)
@@ -195,52 +161,6 @@
         (with-capability (S)
             (BASIS.DPTF|C_ToggleFeeLock patron id toggle)
             (TALOS|OUROBOROS.C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
-        )
-    )
-    (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal)
-        @doc "Transfers a DPTF Token from <sender> to <receiver>"
-        (with-capability (S)
-            (TFT.DPTF|C_Transfer patron id sender receiver transfer-amount false)
-        )
-    )
-    (defun CM_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal)
-        @doc "Similar to <DPTF|C_Transfer>, but methodic for use when operating with Smart DALOS Accounts"
-        (with-capability (S)
-            (TFT.DPTF|C_Transfer patron id sender receiver transfer-amount true)
-        )
-    )
-    (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
-        @doc "Transfers multiple different DPTFs each with its own amount from a <sender> to a <receiver>"
-        (with-capability (S)
-            (TFT.DPTF|X_MultiTransfer patron id-lst sender receiver transfer-amount-lst false)
-        )
-    )
-    (defun CM_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
-        @doc "Methodic variant of <DPTF|C_MultiTransfer>"
-        (with-capability (S)
-            (TFT.DPTF|X_MultiTransfer patron id-lst sender receiver transfer-amount-lst true)
-        )
-    )
-    (defun C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Transfers a single DPTF Token to multiple receivers, each with its own amount, in bulk"
-        (with-capability (S)
-            (TFT.DPTF|X_BulkTransfer patron id sender receiver-lst transfer-amount-lst false)
-        )
-    )
-    (defun CM_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        @doc "Methodic variant of <DPTF|C_BulkTransfer>"
-        (with-capability (S)
-            (TFT.DPTF|X_BulkTransfer patron id sender receiver-lst transfer-amount-lst true)
-        )
-    )
-    (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        @doc "Transmutes a DPTF Token; \
-            \ Transmutation = DPTF Fee Collection (without counting towards Native DPTF Fee Volume), \
-            \   when the DPTF Token is not part of any ATS-Pair; \
-            \ If the Token is part of one or multiple ATS Pairs, \
-            \   the input amount will be used to strengthen those ATS-Pairs Indices"
-        (with-capability (S)
-            (TFT.DPTF|C_Transmute patron id transmuter transmute-amount)
         )
     )
 )

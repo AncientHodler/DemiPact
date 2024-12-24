@@ -1,8 +1,5 @@
-;(namespace n_e096dec549c18b706547e425df9ac0571ebd00b0)
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module TALOS|LIQUID GOVERNANCE
-    ;(use n_e096dec549c18b706547e425df9ac0571ebd00b0.LIQUID)
-    (use LIQUID)
-
     (defcap GOVERNANCE ()
         (compose-capability (TALOS-ADMIN))
     )
@@ -27,7 +24,6 @@
             (create-capability-guard (SUMMONER))
         )
     )
-    ;;        [2] Client Usage FUNCTIONS
     ;;
     (defun C_WrapKadena (patron:string wrapper:string amount:decimal)
         @doc "Wraps native Kadena to DALOS Kadena"
