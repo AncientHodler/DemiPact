@@ -246,7 +246,7 @@
     (defun DPTF-DPMF|C_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
         (with-capability (BRD|BRANDING id token-type)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) DALOS.GAS_BRANDING)
+                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|branding"))
                 true
             )
             (DPTF-DPMF|X_UpdatePendingBranding id token-type logo description website social)

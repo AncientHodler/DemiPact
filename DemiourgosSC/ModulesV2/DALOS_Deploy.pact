@@ -154,15 +154,51 @@
     ,"native-gas-spent"         : 0.0}
 )
 
-;;STEP 009 - Set Up Virtual Blockhain KDA Prices; Live prices are 500x these values
+;;STEP 009 - Set Up Virtual Blockhain KDA Prices; Live prices are 1000x these values
 (DALOS.DALOS|A_UpdateUsagePrice "standard"      0.01)
 (DALOS.DALOS|A_UpdateUsagePrice "smart"         0.02)
-(DALOS.DALOS|A_UpdateUsagePrice "ats"          0.025)
+(DALOS.DALOS|A_UpdateUsagePrice "ats"            0.1)
 (DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.2)
 (DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
 (DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
 (DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
 (DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
+
+(DALOS.DALOS|UR_UsagePrice "ignis|smallest")
+(DALOS.DALOS|UR_UsagePrice "ignis|small")
+(DALOS.DALOS|UR_UsagePrice "ignis|medium")
+(DALOS.DALOS|UR_UsagePrice "ignis|big")
+(DALOS.DALOS|UR_UsagePrice "ignis|biggest")
+(DALOS.DALOS|UR_UsagePrice "ignis|branding")
+(DALOS.DALOS|UR_UsagePrice "ignis|token-issue")
+(DALOS.DALOS|UR_UsagePrice "ignis|ats-issue")
+
+
+(DALOS.IGNIS|X_Collect 
+    patron 
+    sender 
+    (UTILS.DALOS|UC_GasCost 
+        (DALOS.DALOS|UR_UsagePrice "ignis|small") 
+        (DALOS.DALOS|UR_Elite-Tier-Major patron) 
+        (DALOS.DALOS|UR_Elite-Tier-Minor patron) 
+        false
+    )
+)
+
+(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|smallest") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
+(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
+(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|medium") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
+(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|big") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
+(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
+
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
 
 ;;STEP 010 - Create Autonomous Accounts
 (coin.create-account DALOS.DALOS|SC_KDA-NAME DALOS.DALOS|GUARD) 
@@ -602,23 +638,14 @@
         (PlebiumDenariusID:string (AOZ.AOZ|UR_Assets 1 3))
         (ComatusAureusID:string (AOZ.AOZ|UR_Assets 1 4))
         (PileatusSolidusID:string (AOZ.AOZ|UR_Assets 1 5))
-        (TarabostesStaterID:string (AOZ.AOZ|UR_Assets 1 6))
-        (StrategonDrachmaID:string (AOZ.AOZ|UR_Assets 1 7))
-        (BasileonAsID:string (AOZ.AOZ|UR_Assets 1 8))
 
         (DenariusDebilisID:string (AOZ.AOZ|UR_Assets 2 0))
         (AureusFragilisID:string (AOZ.AOZ|UR_Assets 2 1))
         (SolidusFractusID:string (AOZ.AOZ|UR_Assets 2 2))
-        (StaterTenuulusID:string (AOZ.AOZ|UR_Assets 2 3))
-        (DrachmaMinimaID:string (AOZ.AOZ|UR_Assets 2 4))
-        (AsInfinimusID:string (AOZ.AOZ|UR_Assets 2 5))
 
         (PlebeicStrengthID:string (AOZ.AOZ|UR_Assets 3 0))
         (ComatiCommandID:string (AOZ.AOZ|UR_Assets 3 1))
         (PileatiPowerID:string (AOZ.AOZ|UR_Assets 3 2))
-        (TarabostesTenacityID:string (AOZ.AOZ|UR_Assets 3 3))
-        (StrategonVigorID:string (AOZ.AOZ|UR_Assets 3 4))
-        (AsAuthorityID:string (AOZ.AOZ|UR_Assets 3 5))
     )
     ;;Plebeic Strength
     (ATSM.ATSM|C_AddSecondary patron PlebeicStrengthID EsothericKosonID false)
@@ -638,6 +665,28 @@
     (ATSM.ATSM|C_AddHotRBT patron PileatiPowerID SolidusFractusID)
     (ATSM.ATSM|C_SetHotFee patron PileatiPowerID 900.0 180)
     (ATSM.ATSM|C_TurnRecoveryOn patron PileatiPowerID false)
+)
+
+;;STEP 033 - Setup AOZ ATS Pairs
+(let
+    (
+        (patron:string AOZ.AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ.AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ.AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ.AOZ|UR_Assets 1 2))
+
+        (TarabostesStaterID:string (AOZ.AOZ|UR_Assets 1 6))
+        (StrategonDrachmaID:string (AOZ.AOZ|UR_Assets 1 7))
+        (BasileonAsID:string (AOZ.AOZ|UR_Assets 1 8))
+
+        (StaterTenuulusID:string (AOZ.AOZ|UR_Assets 2 3))
+        (DrachmaMinimaID:string (AOZ.AOZ|UR_Assets 2 4))
+        (AsInfinimusID:string (AOZ.AOZ|UR_Assets 2 5))
+
+        (TarabostesTenacityID:string (AOZ.AOZ|UR_Assets 3 3))
+        (StrategonVigorID:string (AOZ.AOZ|UR_Assets 3 4))
+        (AsAuthorityID:string (AOZ.AOZ|UR_Assets 3 5))
+    )
     ;;Tarabostes Tenacity
     (ATSM.ATSM|C_AddSecondary patron TarabostesTenacityID EsothericKosonID false)
     (ATSM.ATSM|C_AddSecondary patron TarabostesTenacityID AncientKosonID false)
@@ -658,22 +707,13 @@
     (ATSM.ATSM|C_TurnRecoveryOn patron AsAuthorityID false)
 )
 
-;;STEP 033 - Kickstart AOZ ATS Pairs
+;;STEP 034 - Mint initial Koson Amounts
 (let
     (
         (patron:string AOZ.AOZ|SC_NAME)
         (PrimordialKosonID:string (AOZ.AOZ|UR_Assets 1 0))
         (EsothericKosonID:string (AOZ.AOZ|UR_Assets 1 1))
         (AncientKosonID:string (AOZ.AOZ|UR_Assets 1 2))
-
-        (PlebeicStrengthID:string (AOZ.AOZ|UR_Assets 3 0))
-        (ComatiCommandID:string (AOZ.AOZ|UR_Assets 3 1))
-        (PileatiPowerID:string (AOZ.AOZ|UR_Assets 3 2))
-        (TarabostesTenacityID:string (AOZ.AOZ|UR_Assets 3 3))
-        (StrategonVigorID:string (AOZ.AOZ|UR_Assets 3 4))
-        (AsAuthorityID:string (AOZ.AOZ|UR_Assets 3 5))
-
-        (am:decimal 250.0)
     )
     (BASIS.DPTF|C_Mint
         patron
@@ -696,31 +736,111 @@
         10000.0
         true
     )
-    ;;Stake 150 75 75 PKOSON, EKOSON, AKOSON in each ATS Pool to kickstart the pools.
+)
+
+;;STEP 035 - Kickstart AOZ ATS Pool 1
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (PlebeicStrengthID:string (AOZ|UR_Assets 3 0))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in PlebeicStrength to kickstart it.
     (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID AncientKosonID am)
+)
 
+;;STEP 036 - Kickstart AOZ ATS Pool 2
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (ComatiCommandID:string (AOZ|UR_Assets 3 1))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in ComatiCommand to kickstart it.
     (ATSM.ATSM|C_Coil patron patron ComatiCommandID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron ComatiCommandID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron ComatiCommandID AncientKosonID am)
+)
 
+;;STEP 037 - Kickstart AOZ ATS Pool 3
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (PileatiPowerID:string (AOZ|UR_Assets 3 2))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in PileatiPower to kickstart it.
     (ATSM.ATSM|C_Coil patron patron PileatiPowerID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron PileatiPowerID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron PileatiPowerID AncientKosonID am)
+)
 
+;;STEP 038 - Kickstart AOZ ATS Pool 4
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (TarabostesTenacityID:string (AOZ|UR_Assets 3 3))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in TarabostesTenacity to kickstart it.
     (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID AncientKosonID am)
+)
 
+;;STEP 039 - Kickstart AOZ ATS Pool 5
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (StrategonVigorID:string (AOZ|UR_Assets 3 4))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in StrategonVigor to kickstart it.
     (ATSM.ATSM|C_Coil patron patron StrategonVigorID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron StrategonVigorID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron StrategonVigorID AncientKosonID am)
+)
 
+;;STEP 040 - Kickstart AOZ ATS Pool 6
+(let
+    (
+        (patron:string AOZ|SC_NAME)
+        (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+        (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+        (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+        (AsAuthorityID:string (AOZ|UR_Assets 3 5))
+        (am:decimal 250.0)
+    )
+    ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in AsAuthority to kickstart it.
     (ATSM.ATSM|C_Coil patron patron AsAuthorityID PrimordialKosonID am)
     (ATSM.ATSM|C_Coil patron patron AsAuthorityID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron AsAuthorityID AncientKosonID am)
 )
+
+
 
 (let
     (

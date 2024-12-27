@@ -198,7 +198,7 @@
                 (
                     (l1:integer (length atspair))
                     (ats-cost:decimal (DALOS.DALOS|UR_UsagePrice "ats"))
-                    (gas-costs:decimal (* (dec l1) DALOS.GAS_ATS))
+                    (gas-costs:decimal (* (dec l1) (DALOS.DALOS|UR_UsagePrice "ignis|ats-issue")))
                     (kda-costs:decimal (* (dec l1) ats-cost))
                 )
                 (with-capability (ATS|ISSUE)
@@ -346,7 +346,7 @@
     (defun DPTF-DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool token-type:bool)
         (with-capability (DPTF-DPMF|TOGGLE-BURN-ROLE)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (BASIS.DPTF-DPMF|XO_ToggleBurnRole id account toggle token-type)
@@ -361,7 +361,7 @@
     (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPTF|TOGGLE-FEE-EXEMPTION-ROLE)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (BASIS.DPTF|XO_ToggleFeeExemptionRole id account toggle)
@@ -376,7 +376,7 @@
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPTF|TOGGLE-MINT-ROLE)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (BASIS.DPTF|XO_ToggleMintRole id account toggle)
@@ -391,7 +391,7 @@
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
         (with-capability (DPMF|MOVE-CREATE-ROLE)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id false) DALOS.GAS_BIGGEST)
+                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id false) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
                 true
             )
             (BASIS.DPMF|XO_MoveCreateRole id receiver)
@@ -407,7 +407,7 @@
     (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPMF|TOGGLE-ADD-QUANTITY-ROLE)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (BASIS.DPMF|XO_ToggleAddQuantityRole id account toggle)
@@ -471,7 +471,7 @@
     (defun ATSI|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
         (with-capability (P|ATSI)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_ToggleFeeSettings atspair toggle fee-switch)
@@ -481,7 +481,7 @@
     (defun ATSI|C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool)
         (with-capability (P|ATSI)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_TurnRecoveryOff atspair cold-or-hot)

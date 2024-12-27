@@ -118,7 +118,7 @@
     (defun ATSM|C_ChangeOwnership (patron:string atspair:string new-owner:string)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_BIGGEST)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
                 true
             )
             (ATS.ATS|X_ChangeOwnership atspair new-owner)
@@ -135,7 +135,7 @@
             )
             (with-capability (P|ATSM)
                 (if (not ZG)
-                    (DALOS.IGNIS|X_Collect patron atspair-owner DALOS.GAS_SMALL)
+                    (DALOS.IGNIS|X_Collect patron atspair-owner (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (let*
@@ -166,7 +166,7 @@
     (defun ATSM|C_UpdateSyphon (patron:string atspair:string syphon:decimal)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_UpdateSyphon atspair syphon)
@@ -176,7 +176,7 @@
     (defun ATSM|C_ToggleSyphoning (patron:string atspair:string toggle:bool)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_ToggleSyphoning atspair toggle)
@@ -186,7 +186,7 @@
     (defun ATSM|C_SetCRD (patron:string atspair:string soft-or-hard:bool base:integer growth:integer)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_SetCRD atspair soft-or-hard base growth)
@@ -196,7 +196,7 @@
     (defun ATSM|C_SetColdFee (patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_SetColdFee atspair fee-positions fee-thresholds fee-array)
@@ -206,7 +206,7 @@
     (defun ATSM|C_SetHotFee (patron:string atspair:string promile:decimal decay:integer)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_SetHotFee atspair promile decay)
@@ -216,7 +216,7 @@
     (defun ATSM|C_ToggleElite (patron:string atspair:string toggle:bool)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_ToggleElite atspair toggle)
@@ -226,7 +226,7 @@
     (defun ATSM|C_TurnRecoveryOn (patron:string atspair:string cold-or-hot:bool)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_SMALL)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                 true
             )
             (ATS.ATS|X_TurnRecoveryOn atspair cold-or-hot)
@@ -237,7 +237,7 @@
     (defun ATSM|C_AddSecondary (patron:string atspair:string reward-token:string rt-nfr:bool)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_ISSUE)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|token-issue"))
                 true
             )
             (BASIS.DPTF-DPMF|C_DeployAccount reward-token ATS.ATS|SC_NAME true)
@@ -289,7 +289,7 @@
     (defun ATSM|C_AddHotRBT (patron:string atspair:string hot-rbt:string)
         (with-capability (P|ATSM)
             (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) DALOS.GAS_ISSUE)
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|token-issue"))
                 true
             )
             (BASIS.DPTF-DPMF|C_DeployAccount hot-rbt ATS.ATS|SC_NAME false)

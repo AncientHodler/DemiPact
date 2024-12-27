@@ -329,7 +329,7 @@
         (require-capability (DALOS|EXECUTOR))
         (if (not (and (= id (DALOS.DALOS|UR_UnityID))(>= transfer-amount 10)))
             (if (not (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
-                (DALOS.IGNIS|X_Collect patron sender DALOS.GAS_SMALLEST)
+                (DALOS.IGNIS|X_Collect patron sender (DALOS.DALOS|UR_UsagePrice "ignis|smallest"))
                 true
             )
             true
@@ -575,7 +575,7 @@
         (require-capability (DALOS|EXECUTOR))
         (if (not (and (= id (DALOS.DALOS|UR_UnityID))(>= transmute-amount 10)))
             (if (not (DALOS.IGNIS|URC_ZeroGAS id transmuter))
-                (DALOS.IGNIS|X_Collect patron transmuter DALOS.GAS_SMALLEST)
+                (DALOS.IGNIS|X_Collect patron transmuter (DALOS.DALOS|UR_UsagePrice "ignis|smallest"))
                 true
             )
             true

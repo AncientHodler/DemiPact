@@ -373,23 +373,14 @@
                 (PlebiumDenariusID:string (AOZ|UR_Assets 1 3))
                 (ComatusAureusID:string (AOZ|UR_Assets 1 4))
                 (PileatusSolidusID:string (AOZ|UR_Assets 1 5))
-                (TarabostesStaterID:string (AOZ|UR_Assets 1 6))
-                (StrategonDrachmaID:string (AOZ|UR_Assets 1 7))
-                (BasileonAsID:string (AOZ|UR_Assets 1 8))
 
                 (DenariusDebilisID:string (AOZ|UR_Assets 2 0))
                 (AureusFragilisID:string (AOZ|UR_Assets 2 1))
                 (SolidusFractusID:string (AOZ|UR_Assets 2 2))
-                (StaterTenuulusID:string (AOZ|UR_Assets 2 3))
-                (DrachmaMinimaID:string (AOZ|UR_Assets 2 4))
-                (AsInfinimusID:string (AOZ|UR_Assets 2 5))
 
                 (PlebeicStrengthID:string (AOZ|UR_Assets 3 0))
                 (ComatiCommandID:string (AOZ|UR_Assets 3 1))
                 (PileatiPowerID:string (AOZ|UR_Assets 3 2))
-                (TarabostesTenacityID:string (AOZ|UR_Assets 3 3))
-                (StrategonVigorID:string (AOZ|UR_Assets 3 4))
-                (AsAuthorityID:string (AOZ|UR_Assets 3 5))
             )
             ;;Plebeic Strength
             (ATSM.ATSM|C_AddSecondary patron PlebeicStrengthID EsothericKosonID false)
@@ -409,6 +400,28 @@
             (ATSM.ATSM|C_AddHotRBT patron PileatiPowerID SolidusFractusID)
             (ATSM.ATSM|C_SetHotFee patron PileatiPowerID 900.0 180)
             (ATSM.ATSM|C_TurnRecoveryOn patron PileatiPowerID false)
+        )
+    )
+    (defun A_Step033 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (TarabostesStaterID:string (AOZ|UR_Assets 1 6))
+                (StrategonDrachmaID:string (AOZ|UR_Assets 1 7))
+                (BasileonAsID:string (AOZ|UR_Assets 1 8))
+
+                (StaterTenuulusID:string (AOZ|UR_Assets 2 3))
+                (DrachmaMinimaID:string (AOZ|UR_Assets 2 4))
+                (AsInfinimusID:string (AOZ|UR_Assets 2 5))
+
+                (TarabostesTenacityID:string (AOZ|UR_Assets 3 3))
+                (StrategonVigorID:string (AOZ|UR_Assets 3 4))
+                (AsAuthorityID:string (AOZ|UR_Assets 3 5))
+            )
             ;;Tarabostes Tenacity
             (ATSM.ATSM|C_AddSecondary patron TarabostesTenacityID EsothericKosonID false)
             (ATSM.ATSM|C_AddSecondary patron TarabostesTenacityID AncientKosonID false)
@@ -429,23 +442,13 @@
             (ATSM.ATSM|C_TurnRecoveryOn patron AsAuthorityID false)
         )
     )
-
-    (defun A_Step033 ()
+    (defun A_Step034 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
                 (EsothericKosonID:string (AOZ|UR_Assets 1 1))
                 (AncientKosonID:string (AOZ|UR_Assets 1 2))
-
-                (PlebeicStrengthID:string (AOZ|UR_Assets 3 0))
-                (ComatiCommandID:string (AOZ|UR_Assets 3 1))
-                (PileatiPowerID:string (AOZ|UR_Assets 3 2))
-                (TarabostesTenacityID:string (AOZ|UR_Assets 3 3))
-                (StrategonVigorID:string (AOZ|UR_Assets 3 4))
-                (AsAuthorityID:string (AOZ|UR_Assets 3 5))
-
-                (am:decimal 250.0)
             )
             (BASIS.DPTF|C_Mint
                 patron
@@ -468,31 +471,119 @@
                 10000.0
                 true
             )
-            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in each ATS Pool to kickstart the pools.
+        )
+    )
+    (defun A_Step035 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (PlebeicStrengthID:string (AOZ|UR_Assets 3 0))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in PlebeicStrength to kickstart it.
             (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID AncientKosonID am)
-    
+        ) 
+    )
+    (defun A_Step036 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (ComatiCommandID:string (AOZ|UR_Assets 3 1))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in ComatiCommand to kickstart it.
             (ATSM.ATSM|C_Coil patron patron ComatiCommandID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron ComatiCommandID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron ComatiCommandID AncientKosonID am)
-    
+        ) 
+    )
+    (defun A_Step037 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (PileatiPowerID:string (AOZ|UR_Assets 3 2))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in PileatiPower to kickstart it.
             (ATSM.ATSM|C_Coil patron patron PileatiPowerID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron PileatiPowerID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron PileatiPowerID AncientKosonID am)
-    
+        ) 
+    )
+    (defun A_Step038 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (TarabostesTenacityID:string (AOZ|UR_Assets 3 3))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in TarabostesTenacity to kickstart it.
             (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID AncientKosonID am)
-    
+        ) 
+    )
+    (defun A_Step039 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (StrategonVigorID:string (AOZ|UR_Assets 3 4))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in StrategonVigor to kickstart it.
             (ATSM.ATSM|C_Coil patron patron StrategonVigorID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron StrategonVigorID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron StrategonVigorID AncientKosonID am)
-    
+        ) 
+    )
+    (defun A_Step040 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+                (EsothericKosonID:string (AOZ|UR_Assets 1 1))
+                (AncientKosonID:string (AOZ|UR_Assets 1 2))
+
+                (AsAuthorityID:string (AOZ|UR_Assets 3 5))
+                (am:decimal 250.0)
+            )
+            ;;Stake 250 250 250 PKOSON, EKOSON, AKOSON in AsAuthority to kickstart it.
             (ATSM.ATSM|C_Coil patron patron AsAuthorityID PrimordialKosonID am)
             (ATSM.ATSM|C_Coil patron patron AsAuthorityID EsothericKosonID am)
             (ATSM.ATSM|C_Coil patron patron AsAuthorityID AncientKosonID am)
         ) 
+    )
+
+    (defun A_Step041 ()
+        (let
+            (
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
+            )
+            (TALOS.VST|C_CreateVestingLink patron PrimordialKosonID)
+        )
     )
 )
 

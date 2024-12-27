@@ -250,6 +250,7 @@
                 (enforce-guard (C_ReadPolicy "DEPLOYER|Summoner"))
             ]
         )
+        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (with-capability (SSVD)
             (let*
                 (
@@ -261,7 +262,7 @@
                     (dpmf-name:string (+ "Vested" (take 44 dptf-name)))
                     (dpmf-ticker:string (+ "Z" (take 19 dptf-ticker)))
                     (dpmf-l:[string]
-                        (BASIS.DPMF|C_Issue
+                        (BASIS.DPMF|C_IssueFree
                             patron
                             dptf-owner
                             [dpmf-name]
@@ -277,6 +278,7 @@
                         )
                     )
                     (dpmf:string (at 0 dpmf-l))
+                    (kda-costs:decimal (DALOS.DALOS|UR_UsagePrice "dpmf"))
                 )
                 (BASIS.DPTF-DPMF|C_DeployAccount dptf VST|SC_NAME true)
                 (BASIS.DPTF-DPMF|C_DeployAccount dpmf VST|SC_NAME false)
@@ -286,6 +288,10 @@
                 (ATSI.DPMF|C_MoveCreateRole patron dpmf VST|SC_NAME)
                 (ATSI.DPMF|C_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
                 (VST|X_DefineVestingPair patron dptf dpmf)
+                (if (not (DALOS.IGNIS|URC_IsNativeGasZero))
+                    (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
+                    true
+                )
                 dpmf
             )
         )
@@ -340,7 +346,7 @@
             )
             (with-capability (VST|UPDATE_VESTING dptf dpmf)
                 (if (= ZG false)
-                    (DALOS.IGNIS|X_Collect patron dptf-owner DALOS.GAS_BIGGEST)
+                    (DALOS.IGNIS|X_Collect patron dptf-owner (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
                     true
                 )
                 (VST|X_UpdateVesting dptf dpmf)

@@ -964,6 +964,18 @@
         )
     )
     ;;            Data Creation|Composition Functions   [UCC]
+    (defun DALOS|UCC_GasDiscount (major:integer minor:integer native:bool)
+        (if (= major 0)
+            0.0
+            (if native
+                (* 0.5 (+ (* 7.0 (- (dec major) 1.0)) (dec minor)))
+                (+ (* 7.0 (- (dec major) 1.0)) (dec minor))
+            )
+        )
+    )
+    (defun DALOS|UC_GasCost (base-cost:decimal major:integer minor:integer native:bool)
+        (* (/ (- 100.0 (DALOS|UCC_GasDiscount major minor native)) 100.0) base-cost)
+    )
     (defun ATS|UCC_Elite (x:decimal)
         @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (cond

@@ -145,14 +145,6 @@
     ;;
     (defconst GAS_EXCEPTION [OUROBOROS|SC_NAME DALOS|SC_NAME LIQUID|SC_NAME])
     (defconst GAS_QUARTER 0.25)
-    (defconst GAS_SMALLEST 1.00)
-    (defconst GAS_SMALL 2.00)
-    (defconst GAS_MEDIUM 3.00)
-    (defconst GAS_BIG 4.00)
-    (defconst GAS_BIGGEST 5.00)
-    (defconst GAS_ISSUE 15.00)
-    (defconst GAS_BRANDING 100.00)
-    (defconst GAS_ATS 10000.00)
 
     (defschema DALOS|KadenaSchema
         dalos:[string]
@@ -918,7 +910,11 @@
     (defun DALOS|C_TransferRawDalosFuel (sender:string amount:decimal)
         (let*
             (
-                (kadena-split:[decimal] (UTILS.IGNIS|UC_KadenaSplit amount))
+                (major:integer (DALOS.DALOS|UR_Elite-Tier-Major sender))
+                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor sender))
+                (reduced-amount:decimal (UTILS.DALOS|UC_GasCost amount major minor true))
+
+                (kadena-split:[decimal] (UTILS.IGNIS|UC_KadenaSplit reduced-amount))
                 (am0:decimal (at 0 kadena-split))
                 (am1:decimal (at 1 kadena-split))
                 (am2:decimal (at 2 kadena-split))
@@ -1021,7 +1017,7 @@
             )
             (with-capability (DALOS|ROTATE_ACCOUNT account)
                 (if (= ZG false)
-                    (IGNIS|X_Collect patron account GAS_SMALL)
+                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (DALOS|X_RotateGuard account new-guard safe)
@@ -1037,7 +1033,7 @@
             )
             (with-capability (DALOS|ROTATE_ACCOUNT account)
                 (if (= ZG false)
-                    (IGNIS|X_Collect patron account GAS_SMALL)
+                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (DALOS|X_RotateKadena account kadena)
@@ -1054,7 +1050,7 @@
             )
             (with-capability (DALOS|ROTATE_SOVEREIGN account new-sovereign)
                 (if (= ZG false)
-                    (IGNIS|X_Collect patron account GAS_SMALL)
+                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (DALOS|X_RotateSovereign account new-sovereign)
@@ -1069,7 +1065,7 @@
             )
             (with-capability (DALOS|ROTATE_GOVERNOR account)
                 (if (= ZG false)
-                    (IGNIS|X_Collect patron account GAS_SMALL)
+                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (DALOS|X_RotateGovernor account governor)
@@ -1084,7 +1080,7 @@
             )
             (with-capability (DALOS|CONTROL_SMART-ACCOUNT patron account payable-as-smart-contract payable-by-smart-contract)
                 (if (= ZG false)
-                    (IGNIS|X_Collect patron account GAS_SMALL)
+                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
                     true
                 )
                 (DALOS|X_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
@@ -1178,17 +1174,24 @@
                 (enforce-guard (C_ReadPolicy "BRD|GasCollection"))
             ]
         )
-        (with-capability (IGNIS|COLLECT patron active-account amount)
-            (IGNIS|XP_Collect patron active-account amount)
+        (let*
+            (
+                (major:integer (DALOS.DALOS|UR_Elite-Tier-Major patron))
+                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor patron))
+                (reduced-amount:decimal (UTILS.DALOS|UC_GasCost amount major minor false))
+            )
+            (with-capability (IGNIS|COLLECT patron active-account reduced-amount)
+                (IGNIS|XP_Collect patron active-account reduced-amount)
+            )
         )
     )
     (defun IGNIS|XP_Collect (patron:string active-account:string amount:decimal)
-        (require-capability (IGNIS|COLLECT patron active-account amount))
         (let
             (
                 (sender-type:bool (DALOS|UR_AccountType active-account))
                 (account-type:bool (DALOS|UR_AccountType patron))
             )
+            (require-capability (IGNIS|COLLECT patron active-account amount))
             (if (not account-type)
                 (if (= sender-type false)
                     (IGNIS|X_CollectStandard patron amount)
@@ -1196,7 +1199,6 @@
                 )
                 true
             )
-            
         )
     )
     (defun IGNIS|X_CollectStandard (patron:string amount:decimal)

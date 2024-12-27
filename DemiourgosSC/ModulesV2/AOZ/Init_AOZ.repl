@@ -155,29 +155,29 @@
                 (coin.TRANSFER 
                     "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                     "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    0.0075
+                    0.03
                 )
                 (coin.TRANSFER 
                     "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                     "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    0.0075
+                    0.03
                 )
                 (coin.TRANSFER 
                     "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                     "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
-                    0.0225
+                    0.09
                 )
                 (coin.TRANSFER 
                     "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                     "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                    0.1125
+                    0.45
                 )
             ] 
         }
     ]
 )
-;;6*25 (per ats pair) = 150 || 7.5 > 7.5 > 22.5 > 112.5
-;;For TestNet 1000x smaller: 0.0075 > 0.0075 > 0.0225 > 0.1125
+;;6*100 (per ats pair) = 150 || 30.0 > 30.0 > 90.0 > 450.0
+;;For TestNet 1000x smaller: 0.03 > 0.03 > 0.09 > 0.45
 (namespace "free")
 (free.AOZ.A_Step031)
 (env-sigs [])
@@ -206,6 +206,138 @@
 )
 (namespace "free")
 (free.AOZ.A_Step033)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 034")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step034)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 035 - PlebeicStrength")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step035)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 036 - ComatiCommand")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step036)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 037 - PileatiPower")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step037)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 038 - TarabostesTenacity")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step038)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 038 - StrategonVigor")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step039)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init STEP 040 - AsAuthority")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(free.AOZ.A_Step040)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "Init STEP 041")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    0.015
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    0.015
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    0.045
+                )
+                (coin.TRANSFER 
+                    "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    0.225
+                )
+            ] 
+        }
+    ]
+)
+;;1*300 (per dpmf) = 300 || 15 > 15 > 45 > 225
+;;For TestNet 1000x smaller: 0.015 > 0.015 > 0.045 > 0.225
+(namespace "free")
+(free.AOZ.A_Step041)
 (env-sigs [])
 (env-gas)
 (commit-tx)
