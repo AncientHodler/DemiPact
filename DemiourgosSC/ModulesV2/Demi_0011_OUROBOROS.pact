@@ -37,7 +37,7 @@
     )
     ;;
     (defcap OUROBOROS|GOV ()
-        @doc "Autostake Module Governor Capability for its Smart DALOS Account"
+        @doc "Ouroboros Module Governor Capability for its Smart DALOS Account"
         true
     )
     (defun OUROBOROS|SetGovernor (patron:string)
@@ -62,14 +62,6 @@
     )
     (defun C_ReadPolicy:guard (policy-name:string)
         (at "policy" (read PoliciesTable policy-name ["policy"]))
-    )
-    ;;
-    (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
-    (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
-    ;;
-    (defschema VST|MetaDataSchema
-        release-amount:decimal
-        release-date:time
     )
     (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;

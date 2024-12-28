@@ -12,7 +12,6 @@
             ]
         )
     )
-
     (defconst G-MD_LIQUID   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
     (defconst G-SC_LIQUID   (keyset-ref-guard LIQUID|SC_KEY))
 
@@ -21,16 +20,14 @@
     )
     (defconst LIQUID|SC_NAME DALOS.LIQUID|SC_NAME)
     (defconst LIQUID|SC_KDA-NAME (create-principal LIQUID|GUARD))
-
+    ;;
     (defcap SUMMONER ()
         true
     )
     (defcap SECURE ()
         true
     )
-    
-    ;;Policies
-
+    ;;P
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (LIQUID-ADMIN)
             (write PoliciesTable policy-name
@@ -42,11 +39,11 @@
         @doc "Reads the guard of a stored policy"
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
-
+    (deftable PoliciesTable:{DALOS.PolicySchema})
     (defun DefinePolicies ()              
         true
     )
-
+    ;;G
     (defcap LIQUID|GOV ()
         true
     )
@@ -61,9 +58,6 @@
         true
     )
     (defconst LIQUID|GUARD (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
-
-    (deftable PoliciesTable:{DALOS.PolicySchema})
-
     ;;LIQUID
     (defun LIQUID|CAP_IzLiquidStakingLive ()
         (let

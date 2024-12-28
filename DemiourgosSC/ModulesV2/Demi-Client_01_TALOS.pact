@@ -218,7 +218,8 @@
     ;;  08] TALOS.ATS|C_ColdRecovery                    ||  ATSC.ATSC|C_ColdRecovery                                ||  patron:string recoverer:string atspair:string ra:decimal
     ;;  09] TALOS.ATS|C_Cull:[decimal]                  ||  ATSC.ATSC|C_Cull                                        ||  patron:string culler:string atspair:string
     ;;  10] TALOS.ATS|C_ChangeOwnership                 ||  ATSM.ATSM|C_ChangeOwnership                             ||  patron:string atspair:string new-owner:string
-    ;;  11] TALOS.ATS|C_ToggleParameterLock
+    ;;  11] TALOS.ATS|C_ModifyCanChangeOwner            ||  ATSM.ATSM|C_ModifyCanChangeOwner                        ||  patron:string atspair:string new-boolean:bool
+    ;;  12] TALOS.ATS|C_ToggleParameterLock
     (defun ATS|C_ToggleParameterLock (patron:string atspair:string toggle:bool)
         @doc "Sets the <parameter-lock> for the ATS Pair <atspair> to <toggle> \
             \ Unlocking <parameter-toggle> (setting it to false) comes with specific restrictions: \
@@ -229,21 +230,21 @@
             (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    ;;  12] TALOS.ATS|C_UpdateSyphon                    ||  ATSM.ATSM|C_UpdateSyphon                                ||  patron:string atspair:string syphon:decimal
-    ;;  13] TALOS.ATS|C_ToggleSyphoning                 ||  ATSM.ATSM|C_ToggleSyphoning                             ||  patron:string atspair:string toggle:bool
-    ;;  14] TALOS.ATS|C_SetCRD                          ||  ATSM.ATSM|C_SetCRD                                      ||  patron:string atspair:string soft-or-hard:bool base:integer growth:integer
-    ;;  15] TALOS.ATS|C_SetColdFee                      ||  ATSM.ATSM|C_SetColdFee                                  ||  patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]
-    ;;  16] TALOS.ATS|C_SetHotFee                       ||  ATSM.ATSM|C_SetHotFee                                   ||  patron:string atspair:string promile:decimal decay:integer
-    ;;  17] TALOS.ATS|C_ToggleElite                     ||  ATSM.ATSM|C_ToggleElite                                 ||  patron:string atspair:string toggle:bool
-    ;;  18] TALOS.ATS|C_TurnRecoveryOn                  ||  ATSM.ATSM|C_TurnRecoveryOn                              ||  patron:string atspair:string cold-or-hot:bool
-    ;;  19] TALOS.ATS|C_AddSecondary                    ||  ATSM.ATSM|C_AddSecondary                                ||  patron:string atspair:string reward-token:string rt-nfr:bool
-    ;;  20] TALOS.ATS|C_RemoveSecondary                 ||  ATSM.ATSM|C_RemoveSecondary                             ||  patron:string remover:string atspair:string reward-token:string
-    ;;  21] TALOS.ATS|C_C_AddHotRBT                     ||  ATSM.ATSM|C_AddHotRBT                                   ||  patron:string atspair:string hot-rbt:string
-    ;;  22] TALOS.ATS|C_Fuel                            ||  ATSM.ATSM|C_Fuel                                        ||  patron:string fueler:string atspair:string reward-token:string amount:decimal
-    ;;  23] TALOS.ATS|C_Coil:Decimal                    ||  ATSM.ATSM|C_Coil                                        ||  patron:string coiler:string atspair:string rt:string amount:decimal
-    ;;  24] TALOS.ATS|C_Curl:decimal                    ||  ATSM.ATSM|C_Curl                                        ||  patron:string curler:string atspair1:string atspair2:string rt:string amount:decimal
-    ;;  25] TALOS.ATS|C_KickStart:decimal               ||  ATSM.ATSM|C_KickStart                                   ||  patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal
-    ;;  26] TALOS.ATS|C_Syphon                          ||  ATSM.ATSM|C_Syphon                                      ||  patron:string syphon-target:string atspair:string syphon-amounts:[decimal]
+    ;;  13] TALOS.ATS|C_UpdateSyphon                    ||  ATSM.ATSM|C_UpdateSyphon                                ||  patron:string atspair:string syphon:decimal
+    ;;  14] TALOS.ATS|C_ToggleSyphoning                 ||  ATSM.ATSM|C_ToggleSyphoning                             ||  patron:string atspair:string toggle:bool
+    ;;  15] TALOS.ATS|C_SetCRD                          ||  ATSM.ATSM|C_SetCRD                                      ||  patron:string atspair:string soft-or-hard:bool base:integer growth:integer
+    ;;  16] TALOS.ATS|C_SetColdFee                      ||  ATSM.ATSM|C_SetColdFee                                  ||  patron:string atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]
+    ;;  17] TALOS.ATS|C_SetHotFee                       ||  ATSM.ATSM|C_SetHotFee                                   ||  patron:string atspair:string promile:decimal decay:integer
+    ;;  18] TALOS.ATS|C_ToggleElite                     ||  ATSM.ATSM|C_ToggleElite                                 ||  patron:string atspair:string toggle:bool
+    ;;  19] TALOS.ATS|C_TurnRecoveryOn                  ||  ATSM.ATSM|C_TurnRecoveryOn                              ||  patron:string atspair:string cold-or-hot:bool
+    ;;  20] TALOS.ATS|C_AddSecondary                    ||  ATSM.ATSM|C_AddSecondary                                ||  patron:string atspair:string reward-token:string rt-nfr:bool
+    ;;  21] TALOS.ATS|C_RemoveSecondary                 ||  ATSM.ATSM|C_RemoveSecondary                             ||  patron:string remover:string atspair:string reward-token:string
+    ;;  22] TALOS.ATS|C_C_AddHotRBT                     ||  ATSM.ATSM|C_AddHotRBT                                   ||  patron:string atspair:string hot-rbt:string
+    ;;  23] TALOS.ATS|C_Fuel                            ||  ATSM.ATSM|C_Fuel                                        ||  patron:string fueler:string atspair:string reward-token:string amount:decimal
+    ;;  24] TALOS.ATS|C_Coil:Decimal                    ||  ATSM.ATSM|C_Coil                                        ||  patron:string coiler:string atspair:string rt:string amount:decimal
+    ;;  25] TALOS.ATS|C_Curl:decimal                    ||  ATSM.ATSM|C_Curl                                        ||  patron:string curler:string atspair1:string atspair2:string rt:string amount:decimal
+    ;;  26] TALOS.ATS|C_KickStart:decimal               ||  ATSM.ATSM|C_KickStart                                   ||  patron:string kickstarter:string atspair:string rt-amounts:[decimal] rbt-request-amount:decimal
+    ;;  27] TALOS.ATS|C_Syphon                          ||  ATSM.ATSM|C_Syphon                                      ||  patron:string syphon-target:string atspair:string syphon-amounts:[decimal]
     
 
 

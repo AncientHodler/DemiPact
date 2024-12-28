@@ -94,14 +94,12 @@
             (create-capability-guard (SUMMONER))
         )
     )
-
+    ;;
     (defschema VST|MetaDataSchema
         release-amount:decimal
         release-date:time
     )
-
     (deftable PoliciesTable:{DALOS.PolicySchema})
-
     ;;VESTING
     (defun VST|UEV_Active (dptf:string dpmf:string)
         (let

@@ -55,7 +55,7 @@
         (compose-capability (P|DIN))
         (compose-capability (P|IC))
     )
-    
+    ;;P
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (ATS-ADMIN)
             (write PoliciesTable policy-name
@@ -66,7 +66,7 @@
     (defun C_ReadPolicy:guard (policy-name:string)
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
-
+    (deftable PoliciesTable:{DALOS.PolicySchema})
     (defun DefinePolicies ()             
         (DALOS.A_AddPolicy
             "ATS|PlusDalosNonce"
@@ -86,7 +86,7 @@
             (create-capability-guard (SUMMONER))
         )
     )
-
+    ;;G
     (defcap ATS|GOV ()
         @doc "Autostake Module Governor Capability"
         true
@@ -105,10 +105,9 @@
             )
         )
     )
-
+    ;;
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
-
     (defschema ATS|PropertiesSchema
         owner-konto:string
         can-change-owner:bool
@@ -165,11 +164,8 @@
     (defschema ATS|Hot
         mint-time:time
     )
-
-    (deftable PoliciesTable:{DALOS.PolicySchema})
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
-
     ;;ATS
     (defun ATS|CAP_Owner (atspair:string)
         (DALOS.DALOS|CAP_EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
@@ -302,6 +298,15 @@
         (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
         (ATS|CAP_Owner atspair)
         (ATS|UEV_CanChangeOwnerON atspair)
+    )
+    (defcap ATS|X_MODIFY_CAN_CHANGE (atspair:string new-boolean:bool)
+        (let
+            (
+                (current:bool (ATS|UR_CanChangeOwner atspair))
+            )
+            (enforce (!= current new-boolean) "Similar boolean cannot be used for this function")
+            (ATS|CAP_Owner atspair)
+        )
     )
     (defcap ATS|X_TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
         (ATS|CAP_Owner atspair)
@@ -1027,10 +1032,7 @@
             )
         )
     )
-    ;;CPF-Computers
-    
-    
-    
+    ;;
     (defun ATS|UC_SolidifyUO:object{Awo} (input:object{Awo} remove-position:integer)
         (let*
             (
@@ -1114,6 +1116,14 @@
                 {"owner-konto"                      : new-owner}
             )
         )
+    )
+    (defun ATS|X_ModifyCanChangeOwner (atspair:string new-boolean:bool)
+        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+        (with-capability (ATS|X_MODIFY_CAN_CHANGE atspair new-boolean)
+            (update ATS|Pairs atspair
+                {"can-change-owner"                 : new-boolean}
+            )
+        )    
     )
     (defun ATS|X_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
         (enforce-guard (C_ReadPolicy "ATSM|Caller"))

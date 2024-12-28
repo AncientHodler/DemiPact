@@ -125,6 +125,16 @@
             (DALOS.DALOS|X_IncrementNonce patron)
         )
     )
+    (defun ATSM|C_ModifyCanChangeOwner (patron:string atspair:string new-boolean:bool)
+        (with-capability (P|ATSM)
+            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
+                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
+                true
+            )
+            (ATS.ATS|X_ModifyCanChangeOwner atspair new-boolean)
+            (DALOS.DALOS|X_IncrementNonce patron)
+        )
+    )
     (defun ATSM|C_ToggleParameterLock (patron:string atspair:string toggle:bool)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
         (let

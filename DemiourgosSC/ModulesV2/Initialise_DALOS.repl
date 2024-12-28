@@ -150,6 +150,7 @@
         ;;DEMI-SC-KEYS
         "KEY_SC_DalosAutostake": { "keys": [KC.DPTS_PBKY_0004]},
         "KEY_SC_DalosVesting": { "keys": [KC.DPTS_PBKY_0005]},
+        "KEY_SC_DalosSwapper": { "keys": [KC.DPTS_PBKY_0000]},
         ;;DEMI-USER-KEYS
         "KEY_US_AncientHodler": { "keys": [KC.DPTS_PBKY_0000]},
         "KEY_US_Florian": { "keys": [KC.DPTS_PBKY_000a]},
@@ -192,6 +193,7 @@
     (define-keyset "free.dh_sc_vesting-keyset" (read-keyset "KEY_SC_DalosVesting"))
     (define-keyset "free.dh_sc_kadenaliquidstaking-keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
     (define-keyset "free.dh_sc_ouroboros-keyset" (read-keyset "KEY_SC_Ouroboros"))
+    (define-keyset "free.dh_sc_swapper-keyset" (read-keyset "KEY_SC_DalosSwapper"))
     ;;DEMI SMART_CONTRACTS KEYSETS
     
     ;;USER KEYSETS
@@ -333,6 +335,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 15 - Load SWAPPER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0015_SWAPPER.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 17 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -365,10 +374,11 @@
 (use free.LIQUID)           ;;136.726
 (use free.OUROBOROS)        ;;147.291
 (use free.BRANDING)         ;;121.969
+(use free.SWAPPER)          ;;121.969
 
 (use free.TALOS)            ;;144.788
 
-(use free.DEPLOYER)         ;;142.916
+(use free.DEPLOYER)         ;;
 
 
 (env-gas)
