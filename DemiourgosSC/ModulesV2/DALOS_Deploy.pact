@@ -104,31 +104,35 @@
 (VESTING.DefinePolicies)
 
 (BRANDING.DefinePolicies)
-(TALOS.DefinePolicies)
+(TALOS-01.DefinePolicies)
+(TALOS-02.DefinePolicies)
 
 ;(DEPLOYER.DefinePolicies)  || EMPTY
 ;(LIQUID.DefinePolicies)    || EMPTY
 ;(OUROBOROS.DefinePolicies) || EMPTY
 
-;:STEP 007 - Create the Smart DALOS Accounts needed for running the Virtual Blockchain with AH as patron
-(let
-    (
-        (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
-    )
-    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.DALOS|SC_NAME (keyset-ref-guard DEPLOYER.DALOS|SC_KEY) DEPLOYER.DALOS|SC_KDA-NAME patron DEPLOYER.DALOS|PBL)
-    ;; 
-    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.ATS|SC_NAME (keyset-ref-guard DEPLOYER.ATS|SC_KEY) DEPLOYER.ATS|SC_KDA-NAME patron DEPLOYER.ATS|PBL)
-    (ATS.ATS|SetGovernor patron)
-    ;;
-    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.VST|SC_NAME (keyset-ref-guard DEPLOYER.VST|SC_KEY) DEPLOYER.VST|SC_KDA-NAME patron DEPLOYER.VST|PBL)
-    (VESTING.VST|SetGovernor patron)
-    ;;    
-    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.LIQUID|SC_NAME (keyset-ref-guard DEPLOYER.LIQUID|SC_KEY) DEPLOYER.LIQUID|SC_KDA-NAME patron DEPLOYER.LIQUID|PBL)
-    (LIQUID.LIQUID|SetGovernor patron)
-    ;;
-    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
-    (OUROBOROS.OUROBOROS|SetGovernor patron)
-)
+;;STEP 007 - Set Up Virtual Blockhain KDA Prices; Live prices are 1000x these values
+;;Kadena Prices
+(DALOS.DALOS|A_UpdateUsagePrice "standard"      0.01)
+(DALOS.DALOS|A_UpdateUsagePrice "smart"         0.02)
+(DALOS.DALOS|A_UpdateUsagePrice "ats"            0.1)
+(DALOS.DALOS|A_UpdateUsagePrice "swp"           0.15)
+(DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.2)
+(DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
+(DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
+(DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
+(DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
+
+;;Ignis Prices
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
 
 ;:STEP 008 - Initialise the DALOS Properties Table with empty values and the Dalos Gas Management Table with initial values
 (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
@@ -154,51 +158,25 @@
     ,"native-gas-spent"         : 0.0}
 )
 
-;;STEP 009 - Set Up Virtual Blockhain KDA Prices; Live prices are 1000x these values
-(DALOS.DALOS|A_UpdateUsagePrice "standard"      0.01)
-(DALOS.DALOS|A_UpdateUsagePrice "smart"         0.02)
-(DALOS.DALOS|A_UpdateUsagePrice "ats"            0.1)
-(DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.2)
-(DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
-(DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
-(DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
-(DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
-
-(DALOS.DALOS|UR_UsagePrice "ignis|smallest")
-(DALOS.DALOS|UR_UsagePrice "ignis|small")
-(DALOS.DALOS|UR_UsagePrice "ignis|medium")
-(DALOS.DALOS|UR_UsagePrice "ignis|big")
-(DALOS.DALOS|UR_UsagePrice "ignis|biggest")
-(DALOS.DALOS|UR_UsagePrice "ignis|branding")
-(DALOS.DALOS|UR_UsagePrice "ignis|token-issue")
-(DALOS.DALOS|UR_UsagePrice "ignis|ats-issue")
-
-
-(DALOS.IGNIS|X_Collect 
-    patron 
-    sender 
-    (UTILS.DALOS|UC_GasCost 
-        (DALOS.DALOS|UR_UsagePrice "ignis|small") 
-        (DALOS.DALOS|UR_Elite-Tier-Major patron) 
-        (DALOS.DALOS|UR_Elite-Tier-Minor patron) 
-        false
+;:STEP 009 - Create the Smart DALOS Accounts needed for running the Virtual Blockchain with AH as patron
+(let
+    (
+        (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
     )
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.DALOS|SC_NAME (keyset-ref-guard DEPLOYER.DALOS|SC_KEY) DEPLOYER.DALOS|SC_KDA-NAME patron DEPLOYER.DALOS|PBL)
+    ;; 
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.ATS|SC_NAME (keyset-ref-guard DEPLOYER.ATS|SC_KEY) DEPLOYER.ATS|SC_KDA-NAME patron DEPLOYER.ATS|PBL)
+    (ATS.ATS|SetGovernor patron)
+    ;;
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.VST|SC_NAME (keyset-ref-guard DEPLOYER.VST|SC_KEY) DEPLOYER.VST|SC_KDA-NAME patron DEPLOYER.VST|PBL)
+    (VESTING.VST|SetGovernor patron)
+    ;;    
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.LIQUID|SC_NAME (keyset-ref-guard DEPLOYER.LIQUID|SC_KEY) DEPLOYER.LIQUID|SC_KDA-NAME patron DEPLOYER.LIQUID|PBL)
+    (LIQUID.LIQUID|SetGovernor patron)
+    ;;
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
+    (OUROBOROS.OUROBOROS|SetGovernor patron)
 )
-
-(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|smallest") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
-(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
-(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|medium") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
-(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|big") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
-(UTILS.DALOS|UC_GasCost (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.DALOS|UR_Elite-Tier-Major patron) (DALOS.DALOS|UR_Elite-Tier-Minor patron) false)
-
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
-(DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
 
 ;;STEP 010 - Create Autonomous Accounts
 (coin.create-account DALOS.DALOS|SC_KDA-NAME DALOS.DALOS|GUARD) 
@@ -207,7 +185,7 @@
 
 ;;STEP 011 - Create the needed initial True Fungibles
 ;;AH, Dalos key needed, DALOS is owner of the created tokens.
-(TALOS.DPTF|C_Issue
+(TALOS-01.DPTF|C_Issue
     DEPLOYER.DEMIURGOI|AH_NAME
     DALOS.DALOS|SC_NAME
     ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
@@ -259,8 +237,8 @@
     (BASIS.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
     (BASIS.DPTF|C_ToggleFee patron AurynID true)
     (BASIS.DPTF|C_ToggleFee patron EliteAurynID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron AurynID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron EliteAurynID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron AurynID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron EliteAurynID true)
 )
 
 ;;STEP 014 - Setup OURO and IGNIS
@@ -274,7 +252,7 @@
     (BASIS.DPTF|C_SetFee patron GasID -1.0)
     (BASIS.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
     (BASIS.DPTF|C_ToggleFee patron GasID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron GasID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron GasID true)
     (ATSI.DPTF-DPMF|C_ToggleBurnRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true true)
     (ATSI.DPTF-DPMF|C_ToggleBurnRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true true)
     (ATSI.DPTF|C_ToggleMintRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
@@ -290,7 +268,7 @@
     )
     (BASIS.DPTF|C_SetFee patron StakedKadenaID -1.0)
     (BASIS.DPTF|C_ToggleFee patron StakedKadenaID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
     (ATSI.DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true true)
     (ATSI.DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
 )
@@ -303,9 +281,9 @@
         (AurynID:string (DALOS.DALOS|UR_AurynID))
         (EliteAurynID:string (DALOS.DALOS|UR_EliteAurynID))
 
-        (VestedOuroID:string (TALOS.VST|C_CreateVestingLink patron OuroID))
-        (VestedAurynID:string (TALOS.VST|C_CreateVestingLink patron AurynID))
-        (VestedEliteAurynID:string (TALOS.VST|C_CreateVestingLink patron EliteAurynID))
+        (VestedOuroID:string (TALOS-01.VST|C_CreateVestingLink patron OuroID))
+        (VestedAurynID:string (TALOS-01.VST|C_CreateVestingLink patron AurynID))
+        (VestedEliteAurynID:string (TALOS-01.VST|C_CreateVestingLink patron EliteAurynID))
     )
     [VestedOuroID VestedAurynID VestedEliteAurynID]
 )
@@ -320,7 +298,7 @@
         (WrappedKadenaID:string (DALOS.DALOS|UR_WrappedKadenaID))
         (StakedKadenaID:string (DALOS.DALOS|UR_LiquidKadenaID))
         (ats-ids:[string]
-            (TALOS.ATS|C_Issue
+            (TALOS-01.ATS|C_Issue
                 patron
                 patron
                 ["Auryndex" "EliteAuryndex" "KdaLiquindex"]
@@ -483,7 +461,7 @@
     (
         (patron:string AOZ.AOZ|SC_NAME)
         (tf-ids:[string]
-            (TALOS.DPTF|C_Issue
+            (TALOS-01.DPTF|C_Issue
                 patron
                 patron
                 ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
@@ -524,27 +502,27 @@
     
     (BASIS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
     (BASIS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
     (BASIS.DPTF|C_SetFee patron ComatusAureusID 20.0)
     (BASIS.DPTF|C_ToggleFee patron ComatusAureusID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
     (BASIS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
     (BASIS.DPTF|C_ToggleFee patron PileatusSolidusID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
     (BASIS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
     (BASIS.DPTF|C_ToggleFee patron TarabostesStaterID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
     (BASIS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
     (BASIS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
     (BASIS.DPTF|C_SetFee patron BasileonAsID 60.0)
     (BASIS.DPTF|C_ToggleFee patron BasileonAsID true)
-    (TALOS.DPTF|C_ToggleFeeLock patron BasileonAsID true)
+    (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
 )
 
 ;;STEP 030 - Issue AOZ Meta Fungibles, and update their ID in the AOZ|Assets Table
@@ -552,7 +530,7 @@
     (
         (patron:string AOZ.AOZ|SC_NAME)
         (mf-ids:[string]
-            (TALOS.DPMF|C_Issue
+            (TALOS-01.DPMF|C_Issue
                 patron
                 patron
                 ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
@@ -603,7 +581,7 @@
         (AsInfinimusID:string (AOZ.AOZ|UR_Assets 2 5))
 
         (ats-ids:[string]
-            (TALOS.ATS|C_Issue
+            (TALOS-01.ATS|C_Issue
                 patron
                 patron
                 ["PlebeicStrength" "ComatiCommand" "PileatiPower" "TarabostesTenacity" "StrategonVigor" "AsAuthority"]

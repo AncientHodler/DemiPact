@@ -335,21 +335,35 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 15 - Load SWAPPER Module")
+(begin-tx "InitSnake 16 - Load SWAPPER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0015_SWAPPER.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0015_SWP.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load TALOS Module")
+(begin-tx "InitSnake 17 - Load SWAPPER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_00_TALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPM.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 23 - Load DEPLOYER Module")
+(begin-tx "InitSnake 18 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_01_TALOS-01.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 19 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_02_TALOS-02.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 20 - Load DEPLOYER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_xxxx_DEPLOYER.pact")
@@ -374,9 +388,11 @@
 (use free.LIQUID)           ;;136.726
 (use free.OUROBOROS)        ;;147.291
 (use free.BRANDING)         ;;121.969
-(use free.SWAPPER)          ;;121.969
+(use free.SWP)              ;;121.969
+(use free.SWPM)             ;;121.969
 
-(use free.TALOS)            ;;144.788
+(use free.TALOS-01)         ;;144.788
+(use free.TALOS-02)         ;;144.788
 
 (use free.DEPLOYER)         ;;
 
@@ -564,8 +580,6 @@
 (env-sigs
     [   
         { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_DalosAutostake", "caps": [] }
-        { "key": "PK_DalosVesting", "caps": [] }
     ]
 )
 (namespace "free")
@@ -592,6 +606,8 @@
 (env-sigs
     [   
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_DalosVesting", "caps": [] }
     ]
 )
 (namespace "free")

@@ -123,27 +123,31 @@
         (VESTING.DefinePolicies)
 
         (BRANDING.DefinePolicies)
-        (TALOS.DefinePolicies)
+        (TALOS-01.DefinePolicies)
+        (TALOS-02.DefinePolicies)
     )
     (defun A_Step007 ()
-        (let
-            (
-                (patron:string DEMIURGOI|AH_NAME)
-            )
-            (DALOS.DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
-            ;; 
-            (DALOS.DALOS|A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
-            (ATS.ATS|SetGovernor patron)
-            ;;
-            (DALOS.DALOS|A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
-            (VESTING.VST|SetGovernor patron)
-            ;;    
-            (DALOS.DALOS|A_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME patron LIQUID|PBL)
-            (LIQUID.LIQUID|SetGovernor patron)
-            ;;
-            (DALOS.DALOS|A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
-            (OUROBOROS.OUROBOROS|SetGovernor patron)
-        )     
+        ;;Kadena Prices
+        (DALOS.DALOS|A_UpdateUsagePrice "standard"      0.01)
+        (DALOS.DALOS|A_UpdateUsagePrice "smart"         0.02)
+        (DALOS.DALOS|A_UpdateUsagePrice "ats"            0.1)
+        (DALOS.DALOS|A_UpdateUsagePrice "swp"           0.15)
+        (DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.2)
+        (DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
+        (DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
+        (DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
+        (DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
+
+        ;;Ignis Prices
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
     )
     (defun A_Step008 ()
         (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
@@ -170,23 +174,24 @@
         )
     )
     (defun A_Step009 ()
-        (DALOS.DALOS|A_UpdateUsagePrice "standard"      0.01)
-        (DALOS.DALOS|A_UpdateUsagePrice "smart"         0.02)
-        (DALOS.DALOS|A_UpdateUsagePrice "ats"            0.1)
-        (DALOS.DALOS|A_UpdateUsagePrice "dptf"           0.2)
-        (DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
-        (DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
-        (DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
-        (DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
-
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
-        (DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
+        (let
+            (
+                (patron:string DEMIURGOI|AH_NAME)
+            )
+            (DALOS.DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
+            ;; 
+            (DALOS.DALOS|A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
+            (ATS.ATS|SetGovernor patron)
+            ;;
+            (DALOS.DALOS|A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
+            (VESTING.VST|SetGovernor patron)
+            ;;    
+            (DALOS.DALOS|A_DeploySmartAccount LIQUID|SC_NAME (keyset-ref-guard LIQUID|SC_KEY) LIQUID|SC_KDA-NAME patron LIQUID|PBL)
+            (LIQUID.LIQUID|SetGovernor patron)
+            ;;
+            (DALOS.DALOS|A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
+            (OUROBOROS.OUROBOROS|SetGovernor patron)
+        )     
     )
     (defun A_Step010 ()
         (coin.create-account DALOS.DALOS|SC_KDA-NAME DALOS.DALOS|GUARD) 
@@ -194,7 +199,7 @@
         (coin.create-account LIQUID.LIQUID|SC_KDA-NAME LIQUID.LIQUID|GUARD)
     )
     (defun A_Step011 ()
-        (TALOS.DPTF|C_Issue
+        (TALOS-01.DPTF|C_Issue
             DEMIURGOI|AH_NAME
             DALOS.DALOS|SC_NAME
             ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
@@ -245,8 +250,8 @@
             (BASIS.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
             (BASIS.DPTF|C_ToggleFee patron AurynID true)
             (BASIS.DPTF|C_ToggleFee patron EliteAurynID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron AurynID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron EliteAurynID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron AurynID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron EliteAurynID true)
         )
     )
     (defun A_Step014 ()
@@ -260,7 +265,7 @@
             (BASIS.DPTF|C_SetFee patron GasID -1.0)
             (BASIS.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
             (BASIS.DPTF|C_ToggleFee patron GasID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron GasID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron GasID true)
             (ATSI.DPTF-DPMF|C_ToggleBurnRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true true)
             (ATSI.DPTF-DPMF|C_ToggleBurnRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true true)
             (ATSI.DPTF|C_ToggleMintRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
@@ -276,7 +281,7 @@
             )
             (BASIS.DPTF|C_SetFee patron StakedKadenaID -1.0)
             (BASIS.DPTF|C_ToggleFee patron StakedKadenaID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
             (ATSI.DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true true)
             (ATSI.DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
         )
@@ -289,9 +294,9 @@
                 (AurynID:string (DALOS.DALOS|UR_AurynID))
                 (EliteAurynID:string (DALOS.DALOS|UR_EliteAurynID))
         
-                (VestedOuroID:string (TALOS.VST|C_CreateVestingLink patron OuroID))
-                (VestedAurynID:string (TALOS.VST|C_CreateVestingLink patron AurynID))
-                (VestedEliteAurynID:string (TALOS.VST|C_CreateVestingLink patron EliteAurynID))
+                (VestedOuroID:string (TALOS-01.VST|C_CreateVestingLink patron OuroID))
+                (VestedAurynID:string (TALOS-01.VST|C_CreateVestingLink patron AurynID))
+                (VestedEliteAurynID:string (TALOS-01.VST|C_CreateVestingLink patron EliteAurynID))
             )
             [VestedOuroID VestedAurynID VestedEliteAurynID]
         )
@@ -306,7 +311,7 @@
                 (WrappedKadenaID:string (DALOS.DALOS|UR_WrappedKadenaID))
                 (StakedKadenaID:string (DALOS.DALOS|UR_LiquidKadenaID))
                 (ats-ids:[string]
-                    (TALOS.ATS|C_Issue
+                    (TALOS-01.ATS|C_Issue
                         patron
                         patron
                         ["Auryndex" "EliteAuryndex" "KdaLiquindex"]

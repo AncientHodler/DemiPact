@@ -31,8 +31,8 @@
     (defconst MAX_PRECISION 24              "Maximum DALOS Token Precision")
     (defconst FEE_PRECISION 4               "Maximum Precision for a decimal designating a DPTF Fee Value Promille")
     (defconst MIN_DESIGNATION_LENGTH 3      "Minimum Length for DALOS Token-Name, Token-Ticker and ATS Index Name")
-    (defconst MAX_TOKEN_NAME_LENGTH 50      "Maximum Length for DALOS Token-Name") 
-    (defconst MAX_TOKEN_TICKER_LENGTH 20    "Maximum Length for DALOS Token-Ticker")
+    (defconst MAX_TOKEN_NAME_LENGTH 100      "Maximum Length for DALOS Token-Name") 
+    (defconst MAX_TOKEN_TICKER_LENGTH 80    "Maximum Length for DALOS Token-Ticker")
 
     ;;Used for validation of an ATS Index Name
     (defconst ACCOUNT_ID_CHARSET CHARSET_LATIN1 "Allowed character set for account IDs.");

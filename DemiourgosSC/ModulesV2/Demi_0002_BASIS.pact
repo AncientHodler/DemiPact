@@ -64,9 +64,7 @@
         true
     )
     ;;
-    (defcap P|DIN ()
-        true
-    )
+
     (defcap P|DALOS|UP_BALANCE ()
         true
     )
@@ -75,16 +73,6 @@
     )
     (defcap P|DALOS|UPDATE_ELITE ()
         true
-    )
-    (defcap P|IC ()
-        true
-    )
-    (defcap DPTF-DPMF|ISSUE ()
-        (compose-capability (P|DINIC))
-    )
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
     )
     ;;
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
@@ -100,10 +88,6 @@
 
     (defun DefinePolicies ()
         (DALOS.A_AddPolicy 
-            "BASIS|IncrementDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
-        (DALOS.A_AddPolicy 
             "BASIS|UpdatePrimordialBalance"
             (create-capability-guard (P|DALOS|UP_BALANCE))
         )
@@ -114,10 +98,6 @@
         (DALOS.A_AddPolicy 
             "BASIS|UpdateElite"
             (create-capability-guard (P|DALOS|UPDATE_ELITE))
-        )
-        (DALOS.A_AddPolicy 
-            "BASIS|GasCollection"
-            (create-capability-guard (P|IC))
         )
     )
     ;;
@@ -504,11 +484,6 @@
     (defcap DPTF-DPMF|BURN (id:string client:string amount:decimal token-type:bool)
         @event
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
-        (compose-capability (DPTF-DPMF|X_BURN id client amount token-type))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPTF-DPMF|X_BURN (id:string client:string amount:decimal token-type:bool)
         (DPTF-DPMF|UEV_Amount id amount token-type)
         (DPTF-DPMF|UEV_AccountBurnState id client true token-type)
         (if token-type
@@ -519,10 +494,6 @@
     )
     (defcap DPTF-DPMF|CONTROL (id:string token-type:bool)
         @event
-        (compose-capability (DPTF-DPMF|X_CONTROL id token-type))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF-DPMF|X_CONTROL (id:string token-type:bool)
         (DPTF-DPMF|CAP_Owner id token-type)
         (DPTF-DPMF|UEV_CanUpgradeON id token-type)
     )
@@ -530,7 +501,6 @@
         @event
         (compose-capability (DPTF-DPMF|X_FROZEN-ACCOUNT id account frozen token-type))
         (compose-capability (BASIS|X_WRITE-ROLES id account 5 token-type))
-        (compose-capability (P|DINIC))
     )
     (defcap DPTF-DPMF|X_FROZEN-ACCOUNT (id:string account:string frozen:bool token-type:bool)
         (DPTF-DPMF|CAP_Owner id token-type)
@@ -556,6 +526,7 @@
             (UTILS.LIST|UC_IzUnique name)
             (UTILS.LIST|UC_IzUnique ticker)
             (DALOS.DALOS|CAP_EnforceAccountOwnership account)
+            (compose-capability (SECURE))
         )
     )
     (defcap DPMF|ISSUE (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
@@ -578,20 +549,17 @@
             (UTILS.LIST|UC_IzUnique name)
             (UTILS.LIST|UC_IzUnique ticker)
             (DALOS.DALOS|CAP_EnforceAccountOwnership account)
+            (compose-capability (SECURE))
         )
     )
     (defcap DPTF-DPMF|OWNERSHIP-CHANGE (id:string new-owner:string token-type:bool)
         @event
-        (compose-capability (DPTF-DPMF|X_OWNERSHIP-CHANGE id new-owner token-type))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF-DPMF|X_OWNERSHIP-CHANGE (id:string new-owner:string token-type:bool)
         (DALOS.DALOS|UEV_SenderWithReceiver (DPTF-DPMF|UR_Konto id token-type) new-owner)
         (DPTF-DPMF|CAP_Owner id token-type)
         (DPTF-DPMF|UEV_CanChangeOwnerON id token-type)
         (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
     )
-    (defcap DPTF-DPMF|X_TOGGLE_BURN-ROLE (id:string account:string toggle:bool token-type:bool)
+    (defcap DPTF-DPMF|TOGGLE_BURN-ROLE (id:string account:string toggle:bool token-type:bool)
         @event
         (if toggle
             (DPTF-DPMF|UEV_CanAddSpecialRoleON id token-type)
@@ -602,10 +570,6 @@
     )
     (defcap DPTF-DPMF|TOGGLE_PAUSE (id:string pause:bool token-type:bool)
         @event
-        (compose-capability (DPTF-DPMF|X_TOGGLE_PAUSE id pause token-type))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF-DPMF|X_TOGGLE_PAUSE (id:string pause:bool token-type:bool)
         (if pause
             (DPTF-DPMF|UEV_CanPauseON id token-type)
             true
@@ -613,11 +577,10 @@
         (DPTF-DPMF|CAP_Owner id token-type)
         (DPTF-DPMF|UEV_PauseState id (not pause) token-type)
     )
-    (defcap DPTF-DPMF|TOGGLE_TRANSFER-ROLE (patron:string id:string account:string toggle:bool token-type:bool)
+    (defcap DPTF-DPMF|TOGGLE_TRANSFER-ROLE (id:string account:string toggle:bool token-type:bool)
         @event
         (compose-capability (DPTF-DPMF|X_TOGGLE_TRANSFER-ROLE id account toggle token-type))
         (compose-capability (DPTF-DPMF|UPDATE_ROLE-TRANSFER-AMOUNT))
-        (compose-capability (P|DINIC))
         (compose-capability (BASIS|X_WRITE-ROLES id account 4 token-type))
     )
     (defcap DPTF-DPMF|X_TOGGLE_TRANSFER-ROLE (id:string account:string toggle:bool token-type:bool)
@@ -630,13 +593,8 @@
         (DPTF-DPMF|CAP_Owner id token-type)
         (DPTF-DPMF|UEV_AccountTransferState id account (not toggle) token-type)
     )
-    (defcap DPTF-DPMF|WIPE (patron:string id:string account-to-be-wiped:string token-type:bool)
+    (defcap DPTF-DPMF|WIPE (id:string account-to-be-wiped:string token-type:bool)
         @event
-        (compose-capability (DPTF-DPMF|X_WIPE id account-to-be-wiped token-type))
-        (compose-capability (IGNIS|MATRON_SOFT id account-to-be-wiped))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPTF-DPMF|X_WIPE (id:string account-to-be-wiped:string token-type:bool)
         (DPTF-DPMF|UEV_CanWipeON id token-type)
         (DPTF-DPMF|UEV_AccountFreezeState id account-to-be-wiped true token-type)
         (if token-type
@@ -649,28 +607,18 @@
     (defcap DPTF|MINT (id:string client:string amount:decimal origin:bool)
         (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (if origin
-            (compose-capability (DPTF|MINT-ORIGIN id client amount))
+            (compose-capability (DPTF|MINT-ORIGIN id amount))
             (compose-capability (DPTF|MINT-STANDARD id client amount))
         )
     )
-    (defcap DPTF|MINT-ORIGIN (id:string client:string amount:decimal)
+    (defcap DPTF|MINT-ORIGIN (id:string amount:decimal)
         @event
-        (compose-capability (DPTF|X_MINT-ORIGIN id amount))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPTF|X_MINT-ORIGIN (id:string amount:decimal)
         (DPTF-DPMF|CAP_Owner id true)
         (DPTF|UEV_Virgin id)
         (compose-capability (DPTF|MINT_GENERAL id amount))
     )
     (defcap DPTF|MINT-STANDARD (id:string client:string amount:decimal)
         @event
-        (compose-capability (DPTF|X_MINT-STANDARD id client amount))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPTF|X_MINT-STANDARD (id:string client:string amount:decimal )
         (DPTF|UEV_AccountMintState id client true)
         (compose-capability (DPTF|MINT_GENERAL id amount))
     )
@@ -679,32 +627,20 @@
         (compose-capability (DPTF|CREDIT))
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
-    (defcap DPTF|SET_FEE (patron:string id:string fee:decimal)
+    (defcap DPTF|SET_FEE (id:string fee:decimal)
         @event
-        (compose-capability (DPTF|X_SET_FEE id fee))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF|X_SET_FEE (id:string fee:decimal)
         (UTILS.DALOS|UEV_Fee fee)
         (DPTF-DPMF|CAP_Owner id true)
         (DPTF|UEV_FeeLockState id false)
     )
-    (defcap DPTF|SET_FEE-TARGET (patron:string id:string target:string)
+    (defcap DPTF|SET_FEE-TARGET (id:string target:string)
         @event
-        (compose-capability (DPTF|X_SET_FEE-TARGET id target))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF|X_SET_FEE-TARGET (id:string target:string)
         (DALOS.DALOS|UEV_EnforceAccountExists target)
         (DPTF-DPMF|CAP_Owner id true)
         (DPTF|UEV_FeeLockState id false) 
     )
-    (defcap DPTF|SET_MIN-MOVE (patron:string id:string min-move-value:decimal)
+    (defcap DPTF|SET_MIN-MOVE (id:string min-move-value:decimal)
         @event
-        (compose-capability (DPTF|X_SET_MIN-MOVE id min-move-value))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF|X_SET_MIN-MOVE (id:string min-move-value:decimal)
         (let
             (
                 (decimals:integer (DPTF-DPMF|UR_Decimals id true))
@@ -718,12 +654,8 @@
             (DPTF|UEV_FeeLockState id false)
         )
     )
-    (defcap DPTF|TOGGLE_FEE (patron:string id:string toggle:bool)
+    (defcap DPTF|TOGGLE_FEE (id:string toggle:bool)
         @event
-        (compose-capability (DPTF|X_TOGGLE_FEE id toggle))
-        (compose-capability (P|DINIC))
-    )
-    (defcap DPTF|X_TOGGLE_FEE (id:string toggle:bool)
         (let
             (
                 (fee-promile:decimal (DPTF|UR_FeePromile id))
@@ -735,7 +667,7 @@
             (DPTF|UEV_FeeToggleState id (not toggle))
         )
     )
-    (defcap DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE (id:string account:string toggle:bool)
+    (defcap DPTF|TOGGLE_FEE-EXEMPTION-ROLE (id:string account:string toggle:bool)
         @event
         (DPTF-DPMF|CAP_Owner id true)
         (DALOS.DALOS|UEV_EnforceAccountType account true)
@@ -745,17 +677,16 @@
         )
         (DPTF|UEV_AccountFeeExemptionState id account (not toggle))
     )
-    (defcap DPTF|TOGGLE_FEE-LOCK (patron:string id:string toggle:bool)
+    (defcap DPTF|TOGGLE_FEE-LOCK (id:string toggle:bool)
         @event
         (compose-capability (DPTF|X_TOGGLE_FEE-LOCK id toggle))
-        (compose-capability (P|DINIC))
         (compose-capability (DPTF|INCREMENT-LOCKS))
     )
     (defcap DPTF|X_TOGGLE_FEE-LOCK (id:string toggle:bool)
         (DPTF-DPMF|CAP_Owner id true)
         (DPTF|UEV_FeeLockState id (not toggle))
     )
-    (defcap DPTF|X_TOGGLE_MINT-ROLE (id:string account:string toggle:bool)
+    (defcap DPTF|TOGGLE_MINT-ROLE (id:string account:string toggle:bool)
         @event
         (DPTF-DPMF|CAP_Owner id true)
         (if toggle
@@ -767,40 +698,24 @@
     ;;
     (defcap DPMF|ADD-QUANTITY (id:string client:string amount:decimal)
         @event
-        (DALOS.DALOS|CAP_EnforceAccountOwnership client)
-        (compose-capability (DPMF|X_ADD-QUANTITY id client amount))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPMF|X_ADD-QUANTITY (id:string client:string amount:decimal)
         (DPTF-DPMF|UEV_Amount id amount false)
         (DPMF|UEV_AccountAddQuantityState id client true)
+        (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPMF|CREDIT))
         (compose-capability (DPTF-DPMF|UPDATE_SUPPLY))
     )
     (defcap DPMF|CREATE (id:string client:string)
         @event
-        (DALOS.DALOS|CAP_EnforceAccountOwnership client)
-        (compose-capability (DPMF|X_CREATE id client))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
-    )
-    (defcap DPMF|X_CREATE (id:string client:string)
         (DPMF|UEV_AccountCreateState id client true)
+        (DALOS.DALOS|CAP_EnforceAccountOwnership client)
         (compose-capability (DPMF|INCREMENT_NONCE))
     )
     (defcap DPMF|MINT (id:string client:string amount:decimal)
         @event
-        (DALOS.DALOS|CAP_EnforceAccountOwnership client)
-        (compose-capability (DPMF|X_MINT id client amount))
-        (compose-capability (IGNIS|MATRON_SOFT id client))
-        (compose-capability (P|DIN))
+        (compose-capability (DPMF|CREATE id client))
+        (compose-capability (DPMF|ADD-QUANTITY id client amount))
     )
-    (defcap DPMF|X_MINT (id:string client:string amount:decimal)
-        (compose-capability (DPMF|X_CREATE id client))
-        (compose-capability (DPMF|X_ADD-QUANTITY id client amount))
-    )
-    (defcap DPMF|X_MOVE_CREATE-ROLE (id:string receiver:string)
+    (defcap DPMF|MOVE_CREATE-ROLE (id:string receiver:string)
         @event
         (DALOS.DALOS|UEV_SenderWithReceiver (DPMF|UR_CreateRoleAccount id) receiver)
         (DPTF-DPMF|CAP_Owner id false)
@@ -808,7 +723,8 @@
         (DPMF|UEV_AccountCreateState id (DPMF|UR_CreateRoleAccount id) true)
         (DPMF|UEV_AccountCreateState id receiver false)
     )
-    (defcap DPMF|X_TOGGLE_ADD-QUANTITY-ROLE (id:string account:string toggle:bool)
+    (defcap DPMF|TOGGLE_ADD-QUANTITY-ROLE (id:string account:string toggle:bool)
+        @event
         (DPTF-DPMF|CAP_Owner id false)
         (DPMF|UEV_AccountAddQuantityState id account (not toggle))
         (if toggle
@@ -819,8 +735,6 @@
     (defcap DPMF|TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @event
         (compose-capability (DPMF|X_TRANSFER id sender receiver transfer-amount method))
-        (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
-        (compose-capability (P|DIN))
         (compose-capability (DALOS|EXECUTOR))
     )
     (defcap DPMF|X_TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
@@ -857,19 +771,6 @@
         (compose-capability (DPMF|DEBIT))
         (compose-capability (DPMF|CREDIT))
         (compose-capability (P|DALOS|UPDATE_ELITE))
-    )
-    ;;
-    (defcap IGNIS|MATRON_SOFT (id:string client:string)
-        (if (DALOS.IGNIS|URC_ZeroGAS id client)
-            true
-            (compose-capability (P|IC))
-        )
-    )
-    (defcap IGNIS|MATRON_STRONG (id:string client:string target:string)
-        (if (DALOS.IGNIS|URC_ZeroGAZ id client target)
-            true
-            (compose-capability (P|IC))
-        )
     )
     ;;[UR]
     (defun DPTF|P-KEYS:[string] ()
@@ -1576,12 +1477,8 @@
     ;;[C]
     (defun DPTF-DPMF|C_ChangeOwnership (patron:string id:string new-owner:string token-type:bool)
         (with-capability (DPTF-DPMF|OWNERSHIP-CHANGE id new-owner token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
-                true
-            )
             (DPTF-DPMF|X_ChangeOwnership id new-owner token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
         )
     )
     (defun DPTF-DPMF|C_DeployAccount (id:string account:string token-type:bool)
@@ -1641,67 +1538,43 @@
         )
     )
     (defun DPTF-DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool token-type:bool)
-        (with-capability (DPTF-DPMF|FROZEN-ACCOUNT patron id account toggle token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|big"))
-                true
-            )
+        (with-capability (DPTF-DPMF|FROZEN-ACCOUNT id account toggle token-type)
             (DPTF-DPMF|X_ToggleFreezeAccount id account toggle token-type)
             (DPTF-DPMF|XP_WriteRoles id account 5 toggle token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|big"))
         )
     )
     (defun DPTF-DPMF|C_TogglePause (patron:string id:string toggle:bool token-type:bool)
-        (with-capability (DPTF-DPMF|TOGGLE_PAUSE patron id toggle token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron patron (DALOS.DALOS|UR_UsagePrice "ignis|medium"))
-                true
-            )
+        (with-capability (DPTF-DPMF|TOGGLE_PAUSE id toggle token-type)
             (DPTF-DPMF|X_TogglePause id toggle token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron patron (DALOS.DALOS|UR_UsagePrice "ignis|medium"))
         )
     )
     (defun DPTF-DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool token-type:bool)
-        (with-capability (DPTF-DPMF|TOGGLE_TRANSFER-ROLE patron id account toggle token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF-DPMF|TOGGLE_TRANSFER-ROLE id account toggle token-type)
             (DPTF-DPMF|X_ToggleTransferRole id account toggle token-type)
             (DPTF-DPMF|X_UpdateRoleTransferAmount id toggle token-type)
             (DPTF-DPMF|XP_WriteRoles id account 4 toggle token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF-DPMF|C_Wipe (patron:string id:string atbw:string token-type:bool)
-        (with-capability (DPTF-DPMF|WIPE patron id atbw token-type)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id atbw))
-                (DALOS.IGNIS|X_Collect patron atbw (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
-                true
-            )
+        (with-capability (DPTF-DPMF|WIPE id atbw token-type)
             (DPTF-DPMF|X_Wipe id atbw token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_CollectWT patron atbw (DALOS.DALOS|UR_UsagePrice "ignis|biggest") (DALOS.IGNIS|URC_ZeroGAS id atbw))
         )
     )
     ;;
     (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal)
         (with-capability (DPTF-DPMF|BURN id account amount true)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (DPTF|XP_Burn id account amount)
-            (DALOS.DALOS|X_IncrementNonce account)
+            (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
         )
     )
     (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (with-capability (DPTF-DPMF|CONTROL patron id true)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF-DPMF|CONTROL id true)
             (DPTF|X_Control patron id cco cu casr cf cw cp)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
@@ -1717,10 +1590,7 @@
                     )
                 )
             )
-            (if (not (DALOS.IGNIS|URC_IsNativeGasZero))
-                (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
-                true
-            )
+            (DALOS.KDA|C_Collect patron kda-costs)
             issued-ids
         )
     )
@@ -1729,8 +1599,7 @@
             "DPTF Issue not permitted"
             [
                 (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "SWAPS|Summoner"))
-                (enforce-guard (C_ReadPolicy "SWAPL|Summoner"))
+                (enforce-guard (C_ReadPolicy "SWPM|Caller"))
             ]
         )
         (with-capability (DPTF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
@@ -1738,179 +1607,118 @@
                 (
                     (l1:integer (length name))
                     (gas-costs:decimal (* (dec l1) (DALOS.DALOS|UR_UsagePrice "ignis|token-issue")))
-                )
-                (with-capability (DPTF-DPMF|ISSUE)
-                    (let
-                        (
-                            (folded-lst:[string]
-                                (fold
-                                    (lambda
-                                        (acc:[string] index:integer)
-                                        (let
-                                            (
-                                                (id:string
-                                                    (DPTF|X_Issue 
-                                                        account 
-                                                        (at index name)
-                                                        (at index ticker)
-                                                        (at index decimals)
-                                                        (at index can-change-owner)
-                                                        (at index can-upgrade)
-                                                        (at index can-add-special-role)
-                                                        (at index can-freeze)
-                                                        (at index can-wipe) 
-                                                        (at index can-pause)
-                                                    )
-                                                )
+                    (folded-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] index:integer)
+                                (let
+                                    (
+                                        (id:string
+                                            (DPTF|X_Issue 
+                                                account 
+                                                (at index name)
+                                                (at index ticker)
+                                                (at index decimals)
+                                                (at index can-change-owner)
+                                                (at index can-upgrade)
+                                                (at index can-add-special-role)
+                                                (at index can-freeze)
+                                                (at index can-wipe) 
+                                                (at index can-pause)
                                             )
-                                            (DALOS.DALOS|X_IncrementNonce patron)
-                                            (UTILS.LIST|UC_AppendLast acc id)
                                         )
                                     )
-                                    []
-                                    (enumerate 0 (- l1 1))
+                                    (UTILS.LIST|UC_AppendLast acc id)
                                 )
                             )
+                            []
+                            (enumerate 0 (- l1 1))
                         )
-                        (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                            (DALOS.IGNIS|X_Collect patron account gas-costs)
-                            true
-                        )
-                        folded-lst
                     )
                 )
+                (DALOS.IGNIS|C_Collect patron account gas-costs)
+                folded-lst
             )
         )
     )
     (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool)
         (with-capability (DPTF|MINT id account amount origin)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (if origin
-                    (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
-                    (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                )
-                true
+            (if origin
+                (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|biggest") (DALOS.IGNIS|URC_ZeroGAS id account))
+                (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
             )
             (DPTF|X_Mint id account amount origin)
-            (DALOS.DALOS|X_IncrementNonce account)
         )
     )
     (defun DPTF|C_SetFee (patron:string id:string fee:decimal)
-        (with-capability (DPTF|SET_FEE patron id fee)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF|SET_FEE id fee)
             (DPTF|X_SetFee id fee)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)
-        (with-capability (DPTF|SET_FEE-TARGET patron id target)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF|SET_FEE-TARGET id target)
             (DPTF|X_SetFeeTarget id target)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)
-        (with-capability (DPTF|SET_MIN-MOVE patron id min-move-value)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF|SET_MIN-MOVE id min-move-value)
             (DPTF|X_SetMinMove id min-move-value)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)
-        (with-capability (DPTF|TOGGLE_FEE patron id toggle)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (DPTF|TOGGLE_FEE id toggle)
             (DPTF|X_ToggleFee id toggle)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id true) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (let
-            (
-                (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (NZG:bool (DALOS.IGNIS|URC_IsNativeGasZero))
-                (token-owner:string (DPTF-DPMF|UR_Konto id true))
-            )
-            (with-capability (DPTF|TOGGLE_FEE-LOCK patron id toggle)
-                (if (not ZG)
-                    (DALOS.IGNIS|X_Collect patron token-owner (DALOS.DALOS|UR_UsagePrice "ignis|small"))
+        (with-capability (DPTF|TOGGLE_FEE-LOCK id toggle)
+            (let*
+                (
+                    (token-owner:string (DPTF-DPMF|UR_Konto id true))
+                    (g1:decimal (DALOS.DALOS|UR_UsagePrice "ignis|small"))
+                    (toggle-costs:[decimal] (DPTF|X_ToggleFeeLock id toggle))
+                    (g2:decimal (at 0 toggle-costs))
+                    (gas-costs:decimal (+ g1 g2))
+                    (kda-costs:decimal (at 1 toggle-costs))
+                )
+                (DALOS.IGNIS|C_Collect patron token-owner gas-costs)
+                (if (> kda-costs 0.0)
+                    (with-capability (COMPOSE)
+                        (DPTF|X_IncrementFeeUnlocks id)
+                        (DALOS.KDA|C_Collect patron kda-costs)
+                    )
                     true
                 )
-                (let*
-                    (
-                        (toggle-costs:[decimal] (DPTF|X_ToggleFeeLock id toggle))
-                        (gas-costs:decimal (at 0 toggle-costs))
-                        (kda-costs:decimal (at 1 toggle-costs))
-                    )
-                    (if (> gas-costs 0.0)
-                        (with-capability (COMPOSE)
-                            (if (not ZG)
-                                (DALOS.IGNIS|X_Collect patron token-owner gas-costs)
-                                true
-                            )
-                            (if (not NZG)
-                                (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
-                                true
-                            )
-                            (DPTF|X_IncrementFeeUnlocks id)
-                        )
-                        true
-                    )
-                )
-                (DALOS.DALOS|X_IncrementNonce patron)
             )
         )
     )
     ;;
     (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
         (with-capability (DPMF|ADD-QUANTITY id account amount)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (DPMF|X_AddQuantity id nonce account amount)
-            (DALOS.DALOS|X_IncrementNonce account)
+            (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
         )
     )
     (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal)
         (with-capability (DPTF-DPMF|BURN id account amount false)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (DPMF|X_Burn id nonce account amount)
-            (DALOS.DALOS|X_IncrementNonce account)
+            (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
         )
     )
     (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
         (with-capability (DPTF-DPMF|CONTROL id false)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (DPTF-DPMF|UR_Konto id false) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (DPMF|X_Control id cco cu casr cf cw cp ctncr)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (DPTF-DPMF|UR_Konto id false) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])
         (with-capability (DPMF|CREATE id account)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
-            (DALOS.DALOS|X_IncrementNonce account)
+            (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
             (DPMF|X_Create id account meta-data)
         )
     )
@@ -1927,10 +1735,7 @@
                     )
                 )                
             )
-            (if (not (DALOS.IGNIS|URC_IsNativeGasZero))
-                (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
-                true
-            )
+            (DALOS.KDA|C_Collect patron kda-costs)
             issued-ids
         )
     )
@@ -1947,58 +1752,44 @@
                 (
                     (l1:integer (length name))
                     (gas-costs:decimal (* (dec l1) (DALOS.DALOS|UR_UsagePrice "ignis|token-issue")))
-                )
-                (with-capability (DPTF-DPMF|ISSUE)
-                    (let
-                        (
-                            (folded-lst:[string]
-                                (fold
-                                    (lambda
-                                        (acc:[string] index:integer)
-                                        (let
-                                            (
-                                                (id:string
-                                                    (DPMF|X_Issue
-                                                        account 
-                                                        (at index name)
-                                                        (at index ticker)
-                                                        (at index decimals)
-                                                        (at index can-change-owner)
-                                                        (at index can-upgrade)
-                                                        (at index can-add-special-role)
-                                                        (at index can-freeze)
-                                                        (at index can-wipe) 
-                                                        (at index can-pause)
-                                                        (at index can-transfer-nft-create-role)
-                                                    )
-                                                )
+                    (folded-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] index:integer)
+                                (let
+                                    (
+                                        (id:string
+                                            (DPMF|X_Issue
+                                                account 
+                                                (at index name)
+                                                (at index ticker)
+                                                (at index decimals)
+                                                (at index can-change-owner)
+                                                (at index can-upgrade)
+                                                (at index can-add-special-role)
+                                                (at index can-freeze)
+                                                (at index can-wipe) 
+                                                (at index can-pause)
+                                                (at index can-transfer-nft-create-role)
                                             )
-                                            (DALOS.DALOS|X_IncrementNonce patron)
-                                            (UTILS.LIST|UC_AppendLast acc id)
                                         )
                                     )
-                                    []
-                                    (enumerate 0 (- l1 1))
+                                    (UTILS.LIST|UC_AppendLast acc id)
                                 )
                             )
+                            []
+                            (enumerate 0 (- l1 1))
                         )
-                        (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                            (DALOS.IGNIS|X_Collect patron account gas-costs)
-                            true
-                        )
-                        folded-lst
                     )
                 )
+                (DALOS.IGNIS|C_Collect patron account gas-costs)
+                folded-lst
             )
         ) 
     )
     (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
         (with-capability (DPMF|MINT id account amount)
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id account))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
-            (DALOS.DALOS|X_IncrementNonce account)
+            (DALOS.IGNIS|C_CollectWT patron account (DALOS.DALOS|UR_UsagePrice "ignis|small") (DALOS.IGNIS|URC_ZeroGAS id account))
             (DPMF|X_Mint id account amount meta-data)
         )
     )
@@ -2030,7 +1821,7 @@
         )
     )
     (defun DPTF-DPMF|X_ChangeOwnership (id:string new-owner:string token-type:bool)
-        (require-capability (DPTF-DPMF|X_OWNERSHIP-CHANGE id new-owner token-type))
+        (require-capability (DPTF-DPMF|OWNERSHIP-CHANGE id new-owner token-type))
         (if token-type
             (update DPTF|PropertiesTable id
                 {"owner-konto"                      : new-owner}
@@ -2057,7 +1848,7 @@
         )
     )
     (defun DPTF-DPMF|X_TogglePause (id:string toggle:bool token-type:bool)
-        (require-capability (DPTF-DPMF|X_TOGGLE_PAUSE id toggle token-type))
+        (require-capability (DPTF-DPMF|TOGGLE_PAUSE id toggle token-type))
         (if token-type
             (update DPTF|PropertiesTable id
                 { "is-paused" : toggle}
@@ -2175,7 +1966,7 @@
         )
     )
     (defun DPTF-DPMF|X_Wipe (id:string account-to-be-wiped:string token-type:bool)
-        (require-capability (DPTF-DPMF|X_WIPE id account-to-be-wiped token-type))
+        (require-capability (DPTF-DPMF|WIPE id account-to-be-wiped token-type))
         (if token-type
             (let
                 (
@@ -2197,12 +1988,12 @@
     )
     (defun DPTF-DPMF|XO_ToggleBurnRole (id:string account:string toggle:bool token-type:bool)
         (enforce-guard (C_ReadPolicy "ATSI|TgBrRl"))
-        (with-capability (DPTF-DPMF|X_TOGGLE_BURN-ROLE id account toggle token-type)
+        (with-capability (DPTF-DPMF|TOGGLE_BURN-ROLE id account toggle token-type)
             (DPTF-DPMF|XP_ToggleBurnRole id account toggle token-type)
         )
     )
     (defun DPTF-DPMF|XP_ToggleBurnRole (id:string account:string toggle:bool token-type:bool)
-        (require-capability (DPTF-DPMF|X_TOGGLE_BURN-ROLE id account toggle token-type))
+        (require-capability (DPTF-DPMF|TOGGLE_BURN-ROLE id account toggle token-type))
         (if token-type
             (if (DALOS|UC_IzCoreDPTF id)
                 (with-capability (P|DALOS|UP_DATA)
@@ -2267,7 +2058,7 @@
     )
     ;;
     (defun DPTF|X_Control (id:string can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool)
-        (require-capability (DPTF-DPMF|X_CONTROL id true))
+        (require-capability (DPTF-DPMF|CONTROL id true))
         (update DPTF|PropertiesTable id
             {"can-change-owner"                 : can-change-owner
             ,"can-upgrade"                      : can-upgrade
@@ -2281,7 +2072,7 @@
         (UTILS.DALOS|UEV_Decimals decimals)
         (UTILS.DALOS|UEV_TokenName name)
         (UTILS.DALOS|UEV_TickerName ticker)
-        (require-capability (DPTF-DPMF|ISSUE))
+        (require-capability (SECURE))
         (insert DPTF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
                 {"branding"             : DALOS.BRANDING|DEFAULT
                 ,"branding-pending"     : DALOS.BRANDING|DEFAULT
@@ -2318,8 +2109,8 @@
     )
     (defun DPTF|X_Mint (id:string account:string amount:decimal origin:bool)
         (if origin
-            (require-capability (DPTF|X_MINT-ORIGIN id amount ))
-            (require-capability (DPTF|X_MINT-STANDARD id account amount))
+            (require-capability (DPTF|MINT-ORIGIN id amount ))
+            (require-capability (DPTF|MINT-STANDARD id account amount))
         )
         (DPTF|XO_Credit id account amount)
         (DPTF-DPMF|X_UpdateSupply id amount true true)
@@ -2332,25 +2123,25 @@
         )
     )
     (defun DPTF|X_SetFee (id:string fee:decimal)
-        (require-capability (DPTF|X_SET_FEE id fee))
+        (require-capability (DPTF|SET_FEE id fee))
         (update DPTF|PropertiesTable id
             { "fee-promile" : fee}
         )
     )
     (defun DPTF|X_SetFeeTarget (id:string target:string)
-        (require-capability (DPTF|X_SET_FEE-TARGET id target))
+        (require-capability (DPTF|SET_FEE-TARGET id target))
         (update DPTF|PropertiesTable id
             { "fee-target" : target}
         )
     )
     (defun DPTF|X_SetMinMove (id:string min-move-value:decimal)
-        (require-capability (DPTF|X_SET_MIN-MOVE id min-move-value))
+        (require-capability (DPTF|SET_MIN-MOVE id min-move-value))
         (update DPTF|PropertiesTable id
             { "min-move" : min-move-value}
         )
     )
     (defun DPTF|X_ToggleFee (id:string toggle:bool)
-        (require-capability (DPTF|X_TOGGLE_FEE id toggle))
+        (require-capability (DPTF|TOGGLE_FEE id toggle))
         (update DPTF|PropertiesTable id
             { "fee-toggle" : toggle}
         )
@@ -2377,12 +2168,12 @@
     )
     (defun DPTF|XO_Burn (id:string account:string amount:decimal)
         (enforce-guard (C_ReadPolicy "TFT|BrTF"))
-        (with-capability (DPTF-DPMF|X_BURN id account amount true)
+        (with-capability (DPTF-DPMF|BURN id account amount true)
             (DPTF|XP_Burn id account amount)
         )
     )
     (defun DPTF|XP_Burn (id:string account:string amount:decimal)
-        (require-capability (DPTF-DPMF|X_BURN id account amount true))
+        (require-capability (DPTF-DPMF|BURN id account amount true))
         (DPTF|XO_DebitStandard id account amount)
         (DPTF-DPMF|X_UpdateSupply id amount false true)
     )
@@ -2495,12 +2286,12 @@
     )
     (defun DPTF|XO_ToggleFeeExemptionRole (id:string account:string toggle:bool)
         (enforce-guard (C_ReadPolicy "ATSI|TgFeRl"))
-        (with-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle)
+        (with-capability (DPTF|TOGGLE_FEE-EXEMPTION-ROLE id account toggle)
             (DPTF|XP_ToggleFeeExemptionRole id account toggle)
         )
     )
     (defun DPTF|XP_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        (require-capability (DPTF|X_TOGGLE_FEE-EXEMPTION-ROLE id account toggle))
+        (require-capability (DPTF|TOGGLE_FEE-EXEMPTION-ROLE id account toggle))
         (if (DALOS|UC_IzCoreDPTF id)
             (with-capability (P|DALOS|UP_DATA)
                 (DALOS.DALOS|XO_UpdateFeeExemptionRole account (= id (DALOS.DALOS|UR_OuroborosID)) toggle)
@@ -2512,12 +2303,12 @@
     )
     (defun DPTF|XO_ToggleMintRole (id:string account:string toggle:bool)
         (enforce-guard (C_ReadPolicy "ATSI|TgMnRl"))
-        (with-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle)
+        (with-capability (DPTF|TOGGLE_MINT-ROLE id account toggle)
             (DPTF|XP_ToggleMintRole id account toggle)
         )
     )
     (defun DPTF|XP_ToggleMintRole (id:string account:string toggle:bool)
-        (require-capability (DPTF|X_TOGGLE_MINT-ROLE id account toggle))
+        (require-capability (DPTF|TOGGLE_MINT-ROLE id account toggle))
         (if (DALOS|UC_IzCoreDPTF id)
             (with-capability (P|DALOS|UP_DATA)
                 (DALOS.DALOS|XO_UpdateMintRole account (= id (DALOS.DALOS|UR_OuroborosID)) toggle)
@@ -2725,7 +2516,7 @@
     )
     ;;
     (defun DPMF|X_AddQuantity (id:string nonce:integer account:string amount:decimal)
-        (require-capability (DPMF|X_ADD-QUANTITY id account amount))
+        (require-capability (DPMF|ADD-QUANTITY id account amount))
         (with-read DPMF|BalanceTable (concat [id UTILS.BAR account])
             { "unit" := unit }
             (let*
@@ -2745,7 +2536,7 @@
         (DPTF-DPMF|X_UpdateSupply id amount true false)
     )
     (defun DPMF|X_Burn (id:string nonce:integer account:string amount:decimal)
-        (require-capability (DPTF-DPMF|X_BURN id account amount false))
+        (require-capability (DPTF-DPMF|BURN id account amount false))
         (DPMF|X_DebitStandard id nonce account amount)
         (DPTF-DPMF|X_UpdateSupply id amount false false)
     )
@@ -2761,7 +2552,7 @@
             can-pause:bool
             can-transfer-nft-create-role:bool
         )
-        (require-capability (DPTF-DPMF|X_CONTROL id false))
+        (require-capability (DPTF-DPMF|CONTROL id false))
         (update DPMF|PropertiesTable id
             {"can-change-owner"                 : can-change-owner
             ,"can-upgrade"                      : can-upgrade
@@ -2826,7 +2617,7 @@
         )
     )
     (defun DPMF|X_Create:integer (id:string account:string meta-data:[object])
-        (require-capability (DPMF|X_CREATE id account))
+        (require-capability (DPMF|CREATE id account))
         (let*
             (
                 (new-nonce:integer (+ (DPMF|UR_NoncesUsed id) 1))
@@ -2955,7 +2746,7 @@
         (UTILS.DALOS|UEV_Decimals decimals)
         (UTILS.DALOS|UEV_TokenName name)
         (UTILS.DALOS|UEV_TickerName ticker)
-        (require-capability (DPTF-DPMF|ISSUE))
+        (require-capability (SECURE))
         (insert DPMF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
             {"branding"             : DALOS.BRANDING|DEFAULT
             ,"branding-pending"     : DALOS.BRANDING|DEFAULT
@@ -2989,7 +2780,7 @@
         )
     )
     (defun DPMF|X_Mint:integer (id:string account:string amount:decimal meta-data:[object])
-        (require-capability (DPMF|X_MINT id account amount))
+        (require-capability (DPMF|MINT id account amount))
         (let
             (
                 (new-nonce:integer (+ (DPMF|UR_NoncesUsed id) 1))
@@ -3013,21 +2804,17 @@
     )
     (defun DPMF|XK_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
         (require-capability (DALOS|EXECUTOR))
-        (if (not (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
-            (DALOS.IGNIS|X_Collect patron sender (DALOS.DALOS|UR_UsagePrice "ignis|smallest"))
-            true
-        )
         (DPMF|X_Transfer id nonce sender receiver transfer-amount method)
-        (DALOS.DALOS|X_IncrementNonce sender)
+        (DALOS.IGNIS|C_CollectWT patron sender (DALOS.DALOS|UR_UsagePrice "ignis|smallest") (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
     )
     (defun DPMF|XO_MoveCreateRole (id:string receiver:string)
         (enforce-guard (C_ReadPolicy "ATSI|MCRl"))
-        (with-capability (DPMF|X_MOVE_CREATE-ROLE id receiver)
+        (with-capability (DPMF|MOVE_CREATE-ROLE id receiver)
             (DPMF|XP_MoveCreateRole id receiver)
         )
     )
     (defun DPMF|XP_MoveCreateRole (id:string receiver:string)
-        (require-capability (DPMF|X_MOVE_CREATE-ROLE id receiver))
+        (require-capability (DPMF|MOVE_CREATE-ROLE id receiver))
         (update DPMF|BalanceTable (concat [id UTILS.BAR (DPMF|UR_CreateRoleAccount id)])
             {"role-nft-create" : false}
         )
@@ -3040,12 +2827,12 @@
     )
     (defun DPMF|XO_ToggleAddQuantityRole (id:string account:string toggle:bool)
         (enforce-guard (C_ReadPolicy "ATSI|TgAqRl"))
-        (with-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle)
+        (with-capability (DPMF|TOGGLE_ADD-QUANTITY-ROLE id account toggle)
             (DPMF|XP_ToggleAddQuantityRole id account toggle)
         )
     )
     (defun DPMF|XP_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        (require-capability (DPMF|X_TOGGLE_ADD-QUANTITY-ROLE id account toggle))
+        (require-capability (DPMF|TOGGLE_ADD-QUANTITY-ROLE id account toggle))
         (update DPMF|BalanceTable (concat [id UTILS.BAR account])
             {"role-nft-add-quantity" : toggle}
         )

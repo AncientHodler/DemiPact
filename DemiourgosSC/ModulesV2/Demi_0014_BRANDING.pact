@@ -14,18 +14,8 @@
     (defcap SECURE ()
         true
     )
-    (defcap P|DIN ()
-        true
-    )
-    (defcap P|IC ()
-        true
-    )
     (defcap P|BU ()
         true
-    )
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
     )
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
@@ -39,14 +29,6 @@
         (at "policy" (read BRD|PoliciesTable policy-name ["policy"]))
     )
     (defun DefinePolicies ()
-        (DALOS.A_AddPolicy 
-            "BRD|IncrementDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
-        (DALOS.A_AddPolicy 
-            "BRD|GasCollection"
-            (create-capability-guard (P|IC))
-        )
         (BASIS.A_AddPolicy
             "BRD|Update"
             (create-capability-guard (P|BU))
@@ -79,10 +61,7 @@
         )
     )
     (defcap BRD|BRANDING (id:string token-type:bool)
-        (compose-capability (BRD|X_BRANDING id token-type))
-        (compose-capability (P|DINIC))
-    )
-    (defcap BRD|X_BRANDING (id:string token-type:bool)
+        @event
         (BASIS.DPTF-DPMF|UEV_id id token-type)
         (BASIS.DPTF-DPMF|CAP_Owner id token-type)
     )
@@ -238,24 +217,20 @@
                     (with-capability (P|BU)
                         (BASIS.DPTF-DPMF|X_UpdateBranding id token-type false ub2)
                     )
-                    (DALOS.DALOS|C_TransferRawDalosFuel patron payment)
+                    (DALOS.KDA|C_CollectWT patron payment false)
                 )
             )
         )
     )
     (defun DPTF-DPMF|C_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
         (with-capability (BRD|BRANDING id token-type)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|branding"))
-                true
-            )
             (DPTF-DPMF|X_UpdatePendingBranding id token-type logo description website social)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|branding"))
         )
     )
     ;;[X]
     (defun DPTF-DPMF|X_UpdatePendingBranding (id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        (require-capability (BRD|X_BRANDING id token-type))
+        (require-capability (BRD|BRANDING id token-type))
         (let*
             (
                 (pending:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type true))

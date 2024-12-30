@@ -19,16 +19,7 @@
     (defcap COMPOSE ()
         true
     )
-    (defcap SECURE ()
-        true
-    )
     (defcap P|WR ()
-        true
-    )
-    (defcap P|IC ()
-        true
-    )
-    (defcap P|DIN ()
         true
     )
     (defcap P|ATSI|CALLER ()
@@ -51,43 +42,25 @@
         true
     )
 
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
-    )
-    (defcap ATS|ISSUE ()
-        (compose-capability (P|DINIC))
-        (compose-capability (P|ATSI|CALLER))
-    )
     (defcap DPTF-DPMF|TOGGLE-BURN-ROLE ()
         (compose-capability (P|TM|TBR))
         (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-        (compose-capability (SECURE))
     )
     (defcap DPTF|TOGGLE-FEE-EXEMPTION-ROLE ()
         (compose-capability (P|T|TFER))
         (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
     )
     (defcap DPTF|TOGGLE-MINT-ROLE ()
         (compose-capability (P|T|TMR))
         (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
     )
     (defcap DPMF|MOVE-CREATE-ROLE ()
         (compose-capability (P|M|MCR))
         (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
     )
     (defcap DPMF|TOGGLE-ADD-QUANTITY-ROLE ()
         (compose-capability (P|M|TAQR))
         (compose-capability (P|WR))
-        (compose-capability (P|DINIC))
-    )
-    (defcap P|ATSI ()
-        (compose-capability (P|ATSI|CALLER))
-        (compose-capability (P|DINIC))
     )
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
@@ -102,14 +75,6 @@
     )
 
     (defun DefinePolicies ()
-        (DALOS.A_AddPolicy
-            "ATSI|GasCol"
-            (create-capability-guard (P|IC))
-        )
-        (DALOS.A_AddPolicy
-            "ATSI|PlusDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
         (BASIS.A_AddPolicy
             "ATSI|Caller"
             (create-capability-guard (P|ATSI|CALLER))
@@ -169,6 +134,7 @@
                 )
                 (enumerate 0 (- l1 1))
             )
+            (compose-capability (P|ATSI|CALLER))
         )
     )
     (defun ATSI|UEV_IssueData (atspair:string index-decimals:integer reward-token:string reward-bearing-token:string)
@@ -200,59 +166,45 @@
                     (ats-cost:decimal (DALOS.DALOS|UR_UsagePrice "ats"))
                     (gas-costs:decimal (* (dec l1) (DALOS.DALOS|UR_UsagePrice "ignis|ats-issue")))
                     (kda-costs:decimal (* (dec l1) ats-cost))
-                )
-                (with-capability (ATS|ISSUE)
-                    (let
-                        (
-                            (folded-lst:[string]
-                                (fold
-                                    (lambda
-                                        (acc:[string] index:integer)
-                                        (let
-                                            (
-                                                (id:string
-                                                    (ATSI|X_Issue
-                                                        account 
-                                                        (at index atspair)
-                                                        (at index index-decimals)
-                                                        (at index reward-token)
-                                                        (at index rt-nfr)
-                                                        (at index reward-bearing-token)
-                                                        (at index rbt-nfr)
-                                                    )
-                                                )
-                                                (ats-id:string (UTILS.DALOS|UCC_Makeid (at index atspair)))
+                    (folded-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] index:integer)
+                                (let
+                                    (
+                                        (id:string
+                                            (ATSI|X_Issue
+                                                account 
+                                                (at index atspair)
+                                                (at index index-decimals)
+                                                (at index reward-token)
+                                                (at index rt-nfr)
+                                                (at index reward-bearing-token)
+                                                (at index rbt-nfr)
                                             )
-                                            (DALOS.DALOS|X_IncrementNonce patron)
-                                            (BASIS.DPTF|XO_UpdateRewardToken ats-id (at index reward-token) true)
-                                            (BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken (at index reward-bearing-token) ats-id true)
-                                            (UTILS.LIST|UC_AppendLast acc id)
-                                            (ATSI|XC_EnsureActivationRoles patron ats-id true)
-                                            (UTILS.LIST|UC_AppendLast acc id)
                                         )
+                                        (ats-id:string (UTILS.DALOS|UCC_Makeid (at index atspair)))
                                     )
-                                    []
-                                    (enumerate 0 (- l1 1))
+                                    (BASIS.DPTF|XO_UpdateRewardToken ats-id (at index reward-token) true)
+                                    (BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken (at index reward-bearing-token) ats-id true)
+                                    (UTILS.LIST|UC_AppendLast acc id)
+                                    (ATSI|XC_EnsureActivationRoles patron ats-id true)
+                                    (UTILS.LIST|UC_AppendLast acc id)
                                 )
                             )
+                            []
+                            (enumerate 0 (- l1 1))
                         )
-                        (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                            (DALOS.IGNIS|X_Collect patron account gas-costs)
-                            true
-                        )
-                        (if (not (DALOS.IGNIS|URC_IsNativeGasZero))
-                            (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
-                            true
-                        )
-                        folded-lst
                     )
                 )
+                (DALOS.IGNIS|C_Collect patron account gas-costs)
+                (DALOS.KDA|C_Collect patron kda-costs)
+                folded-lst
             )
         )
     )
     ;;
     (defun ATSI|X_Issue:string (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
-        (require-capability (ATS|ISSUE))
         (ATS.ATS|X_InsertNewATSPair account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
         (BASIS.DPTF-DPMF|C_DeployAccount reward-token account true)
         (BASIS.DPTF-DPMF|C_DeployAccount reward-bearing-token account true)
@@ -345,78 +297,58 @@
     ;;True-Fungible Roles
     (defun DPTF-DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool token-type:bool)
         (with-capability (DPTF-DPMF|TOGGLE-BURN-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (BASIS.DPTF-DPMF|XO_ToggleBurnRole id account toggle token-type)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 1 toggle token-type)
-            (DALOS.DALOS|X_IncrementNonce patron)
             (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeBurn patron id token-type)
                 true
             )
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPTF|TOGGLE-FEE-EXEMPTION-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (BASIS.DPTF|XO_ToggleFeeExemptionRole id account toggle)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 3 toggle true)
-            (DALOS.DALOS|X_IncrementNonce patron)
             (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATSI|XC_RevokeFeeExemption patron id)
                 true
             )
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPTF|TOGGLE-MINT-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (BASIS.DPTF|XO_ToggleMintRole id account toggle)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 2 toggle true)
-            (DALOS.DALOS|X_IncrementNonce patron)
             (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeMint patron id)
                 true
             )
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
         (with-capability (DPMF|MOVE-CREATE-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (BASIS.DPTF-DPMF|UR_Konto id false) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
-                true
-            )
             (BASIS.DPMF|XO_MoveCreateRole id receiver)
             (BASIS.DPTF-DPMF|XO_WriteRoles id (BASIS.DPMF|UR_CreateRoleAccount id) 2 false false)
             (BASIS.DPTF-DPMF|XO_WriteRoles id receiver 2 true false)
-            (DALOS.DALOS|X_IncrementNonce patron)
             (if (!= (BASIS.DPMF|UR_CreateRoleAccount id) ATS.ATS|SC_NAME)
                 (ATS|XC_RevokeCreateOrAddQ patron id)
                 true
             )
+            (DALOS.IGNIS|C_Collect patron (BASIS.DPTF-DPMF|UR_Konto id false) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
         )
     )
     (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
         (with-capability (DPMF|TOGGLE-ADD-QUANTITY-ROLE)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
             (BASIS.DPMF|XO_ToggleAddQuantityRole id account toggle)
             (BASIS.DPTF-DPMF|XO_WriteRoles id account 3 toggle false)
-            (DALOS.DALOS|X_IncrementNonce patron)
             (if (and (= account ATS.ATS|SC_NAME) (= toggle false))
                 (ATS|XC_RevokeCreateOrAddQ patron id)
                 true
             )
+            (DALOS.IGNIS|C_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     ;;Revokes
@@ -469,23 +401,15 @@
     )
     ;;Recoveries and Fee Settings
     (defun ATSI|C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
-        (with-capability (P|ATSI)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (P|ATSI|CALLER)
             (ATS.ATS|X_ToggleFeeSettings atspair toggle fee-switch)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun ATSI|C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool)
-        (with-capability (P|ATSI)
-            (if (not (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (DALOS.IGNIS|X_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                true
-            )
+        (with-capability (P|ATSI|CALLER)
             (ATS.ATS|X_TurnRecoveryOff atspair cold-or-hot)
-            (DALOS.DALOS|X_IncrementNonce patron)
+            (DALOS.IGNIS|C_Collect patron (ATS.ATS|UR_OwnerKonto atspair) (DALOS.DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun ATSI|X_MassTurnColdRecoveryOff (patron:string id:string)

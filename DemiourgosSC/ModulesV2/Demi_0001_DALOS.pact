@@ -40,22 +40,14 @@
     ;;
 
     ;;Simple True Capabilities (3+1)
+    (defcap COMPOSE ()
+        true
+    )
     (defcap KADENA ()
-        true
-    )
-    (defcap DALOS|INCREMENT_NONCE ()
-        true
-    )
-    (defcap IGNIS|COLLECTER ()
         true
     )
     (defcap IGNIS|INCREMENT ()
         true
-    )
-    (defcap DALOS|INCREMENT_NONCE||IGNIS|COLLECTER ()
-        @doc "Composed Capability for ease of use"
-        (compose-capability (DALOS|INCREMENT_NONCE))
-        (compose-capability (IGNIS|COLLECTER))
     )
 
     (defcap DALOS|UP_BALANCE ()
@@ -172,7 +164,7 @@
     )
     ;;DALOS Virtual Blockchain Prices
     (defschema DALOS|PricesSchema
-        kda-price:decimal                   ;;Stores price for action
+        price:decimal                   ;;Stores price for action
     )
     ;;DALOS Account Information
     (defschema DALOS|AccountSchema
@@ -529,14 +521,9 @@
         @event
         (compose-capability (KADENA))
         (compose-capability (DALOS|CF|OWNER account))
-        (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
     (defcap DALOS|ROTATE_SOVEREIGN (account:string new-sovereign:string)
         @event
-        (compose-capability (DALOS|SOVEREIGN account new-sovereign))
-        (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
-    )
-    (defcap DALOS|SOVEREIGN (account:string new-sovereign:string)
         (DALOS|CAP_EnforceAccountOwnership account)
         (DALOS|UEV_EnforceAccountType account true)
         (DALOS|UEV_EnforceAccountType new-sovereign false)
@@ -545,7 +532,6 @@
     (defcap DALOS|ROTATE_GOVERNOR (account:string)
         @event
         (compose-capability (DALOS|GOVERNOR account))
-        (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
     (defcap DALOS|GOVERNOR (account:string)
         (DALOS|CAP_EnforceAccountOwnership account)
@@ -554,7 +540,6 @@
     (defcap DALOS|CONTROL_SMART-ACCOUNT (account:string pasc:bool pbsc:bool pbm:bool)
         @event
         (compose-capability (DALOS|X_CONTROL_SMART-ACCOUNT account pasc pbsc pbm))
-        (compose-capability (DALOS|INCREMENT_NONCE||IGNIS|COLLECTER))
     )
     (defcap DALOS|X_CONTROL_SMART-ACCOUNT (account:string pasc:bool pbsc:bool pbm:bool)
         (compose-capability (DALOS|GOVERNOR account))
@@ -689,7 +674,7 @@
     )
     ;;
     (defun DALOS|UR_UsagePrice:decimal (action:string)
-        (at "kda-price" (read DALOS|PricesTable action ["kda-price"]))
+        (at "price" (read DALOS|PricesTable action ["price"]))
     )
     ;;
     (defun DALOS|UR_AccountPublicKey:string (account:string)
@@ -891,7 +876,7 @@
     (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal)
         (with-capability (DALOS-ADMIN)
             (write DALOS|PricesTable action
-                {"kda-price"     : (floor new-price UTILS.KDA_PRECISION)}
+                {"price"     : (floor new-price UTILS.KDA_PRECISION)}
             )
         )
     )
@@ -903,35 +888,6 @@
         )
     )
     ;;[C]
-    (defun DALOS|C_TransferDalosFuel (sender:string receiver:string amount:decimal)
-        (install-capability (coin.TRANSFER sender receiver amount))
-        (coin.transfer sender receiver amount)
-    )
-    (defun DALOS|C_TransferRawDalosFuel (sender:string amount:decimal)
-        (let*
-            (
-                (major:integer (DALOS.DALOS|UR_Elite-Tier-Major sender))
-                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor sender))
-                (reduced-amount:decimal (UTILS.DALOS|UC_GasCost amount major minor true))
-
-                (kadena-split:[decimal] (UTILS.IGNIS|UC_KadenaSplit reduced-amount))
-                (am0:decimal (at 0 kadena-split))
-                (am1:decimal (at 1 kadena-split))
-                (am2:decimal (at 2 kadena-split))
-                (kda-sender:string (DALOS|UR_AccountKadena sender))
-
-                (demiurgoi:[string] (DALOS|UR_DemiurgoiID))
-                (kda-cto:string (DALOS|UR_AccountKadena (at 0 demiurgoi)))
-                (kda-hov:string (DALOS|UR_AccountKadena (at 1 demiurgoi)))
-                (kda-ouroboros:string (DALOS|UR_AccountKadena OUROBOROS|SC_NAME))
-                (kda-dalos:string (DALOS|UR_AccountKadena DALOS|SC_NAME))
-            )
-            (DALOS|C_TransferDalosFuel kda-sender kda-cto am0)          ;; 5% to KDA-CTO
-            (DALOS|C_TransferDalosFuel kda-sender kda-hov am0)          ;; 5% to KDA-HOV
-            (DALOS|C_TransferDalosFuel kda-sender kda-ouroboros am1)    ;;15% to KDA-Ouroboros (to be used for Liquid Kadena Protocol Fueling)
-            (DALOS|C_TransferDalosFuel kda-sender kda-dalos am2)        ;;75% to KDA-Dalos (to be used for DALOS Gas Station)
-        )
-    )
     (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (with-capability (DALOS-ADMIN)
             (DALOS|C_DeployStandardAccount account guard kadena public)
@@ -966,7 +922,7 @@
             )
             (DALOS|X_UpdateKadenaLedger kadena account true)
             (if (not (IGNIS|URC_IsNativeGasZero))
-                (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "standard"))
+                (KDA|C_Collect account (DALOS|UR_UsagePrice "standard"))
                 true
             )
         )
@@ -1005,87 +961,41 @@
             )
             (DALOS|X_UpdateKadenaLedger kadena account true)
             (if (not (IGNIS|URC_IsNativeGasZero))
-                (DALOS|C_TransferRawDalosFuel account (DALOS|UR_UsagePrice "smart"))
+                (KDA|C_Collect account (DALOS|UR_UsagePrice "smart"))
                 true
             )
         )
     )
     (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
-        (let
-            (
-                (ZG:bool (IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (DALOS|ROTATE_ACCOUNT account)
-                (if (= ZG false)
-                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                    true
-                )
-                (DALOS|X_RotateGuard account new-guard safe)
-                (DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (DALOS|ROTATE_ACCOUNT account)
+            (DALOS|X_RotateGuard account new-guard safe)
+            (IGNIS|C_Collect patron account (DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
-        (let
-            (
-                (ZG:bool (IGNIS|URC_IsVirtualGasZero))
-                (current-kadena:string (DALOS|UR_AccountKadena account))
-            )
-            (with-capability (DALOS|ROTATE_ACCOUNT account)
-                (if (= ZG false)
-                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                    true
-                )
-                (DALOS|X_RotateKadena account kadena)
-                (DALOS|X_UpdateKadenaLedger current-kadena account false)
-                (DALOS|X_UpdateKadenaLedger kadena account true)
-                (DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (DALOS|ROTATE_ACCOUNT account)
+            (DALOS|X_RotateKadena account kadena)
+            (DALOS|X_UpdateKadenaLedger (DALOS|UR_AccountKadena account) account false)
+            (DALOS|X_UpdateKadenaLedger kadena account true)
+            (IGNIS|C_Collect patron account (DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
-        (let
-            (
-                (ZG:bool (IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (DALOS|ROTATE_SOVEREIGN account new-sovereign)
-                (if (= ZG false)
-                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                    true
-                )
-                (DALOS|X_RotateSovereign account new-sovereign)
-                (DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (DALOS|ROTATE_SOVEREIGN account new-sovereign)
+            (DALOS|X_RotateSovereign account new-sovereign)
+            (IGNIS|C_Collect patron account (DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)
-        (let
-            (
-                (ZG:bool (IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (DALOS|ROTATE_GOVERNOR account)
-                (if (= ZG false)
-                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                    true
-                )
-                (DALOS|X_RotateGovernor account governor)
-                (DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (DALOS|ROTATE_GOVERNOR account)
+            (DALOS|X_RotateGovernor account governor)
+            (IGNIS|C_Collect patron account (DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
-        (let
-            (
-                (ZG:bool (IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (DALOS|CONTROL_SMART-ACCOUNT patron account payable-as-smart-contract payable-by-smart-contract)
-                (if (= ZG false)
-                    (IGNIS|X_Collect patron account (DALOS.DALOS|UR_UsagePrice "ignis|small"))
-                    true
-                )
-                (DALOS|X_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-                (DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (DALOS|CONTROL_SMART-ACCOUNT patron account payable-as-smart-contract payable-by-smart-contract)
+            (DALOS|X_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
+            (IGNIS|C_Collect patron account (DALOS|UR_UsagePrice "ignis|small"))
         )
     )
     ;;[X]
@@ -1106,7 +1016,7 @@
         )
     )
     (defun DALOS|X_RotateSovereign (account:string new-sovereign:string)
-        (require-capability (DALOS|SOVEREIGN account new-sovereign))
+        (require-capability (DALOS|ROTATE_SOVEREIGN account new-sovereign))
         (update DALOS|AccountTable account
             {"sovereign"                        : new-sovereign}
         )
@@ -1141,47 +1051,68 @@
             true
         )
     )
-    (defun DALOS|X_IncrementNonce (client:string)
-        (enforce-one
-            "Nonce increase not permitted"
-            [
-                (enforce-guard (create-capability-guard (DALOS|INCREMENT_NONCE)))
-                (enforce-guard (C_ReadPolicy "BASIS|IncrementDalosNonce"))
-                (enforce-guard (C_ReadPolicy "ATS|PlusDalosNonce"))
-                (enforce-guard (C_ReadPolicy "ATSI|PlusDalosNonce"))
-                (enforce-guard (C_ReadPolicy "TFT|PlusDalosNonce"))
-                (enforce-guard (C_ReadPolicy "ATSM|PlusDalosNonce"))
-                (enforce-guard (C_ReadPolicy "VST|PlusDalosNonce"))
-                (enforce-guard (C_ReadPolicy "BRD|IncrementDalosNonce"))
-            ]
-        )
-        (with-read DALOS|AccountTable client
-            { "nonce"                       := n }
-            (update DALOS|AccountTable client { "nonce" : (+ n 1)})
+    ;;GAS Collection
+    (defun KDA|C_Collect (sender:string amount:decimal)
+        (KDA|C_CollectWT sender amount (IGNIS|URC_IsNativeGasZero))
+    )
+    (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool)
+        (let*
+            (
+                (major:integer (DALOS.DALOS|UR_Elite-Tier-Major sender))
+                (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor sender))
+                (reduced-amount:decimal (UTILS.DALOS|UC_GasCost amount major minor true))
+
+                (kadena-split:[decimal] (UTILS.IGNIS|UC_KadenaSplit reduced-amount))
+                (am0:decimal (at 0 kadena-split))
+                (am1:decimal (at 1 kadena-split))
+                (am2:decimal (at 2 kadena-split))
+                (kda-sender:string (DALOS|UR_AccountKadena sender))
+
+                (demiurgoi:[string] (DALOS|UR_DemiurgoiID))
+                (kda-cto:string (DALOS|UR_AccountKadena (at 0 demiurgoi)))
+                (kda-hov:string (DALOS|UR_AccountKadena (at 1 demiurgoi)))
+                (kda-ouroboros:string (DALOS|UR_AccountKadena OUROBOROS|SC_NAME))
+                (kda-dalos:string (DALOS|UR_AccountKadena DALOS|SC_NAME))
+            )
+            (if (not trigger)
+                (with-capability (COMPOSE)
+                    (DALOS|C_TransferDalosFuel kda-sender kda-cto am0)          ;; 5% to KDA-CTO
+                    (DALOS|C_TransferDalosFuel kda-sender kda-hov am0)          ;; 5% to KDA-HOV
+                    (DALOS|C_TransferDalosFuel kda-sender kda-ouroboros am1)    ;;15% to KDA-Ouroboros (to be used for Liquid Kadena Protocol Fueling)
+                    (DALOS|C_TransferDalosFuel kda-sender kda-dalos am2)        ;;75% to KDA-Dalos (to be used for DALOS Gas Station)
+                )
+                (format "While Kadena Collection is {}, the {} KDA could not be collected" [trigger amount])
+            )  
         )
     )
-    (defun IGNIS|X_Collect (patron:string active-account:string amount:decimal)
-        (enforce-one
-            "Gas Collection not permitted"
-            [
-                (enforce-guard (create-capability-guard (IGNIS|COLLECTER)))
-                (enforce-guard (C_ReadPolicy "BASIS|GasCollection"))
-                (enforce-guard (C_ReadPolicy "ATS|GasCol"))
-                (enforce-guard (C_ReadPolicy "ATSI|GasCol"))
-                (enforce-guard (C_ReadPolicy "TFT|GasCol"))
-                (enforce-guard (C_ReadPolicy "ATSM|GasCol"))
-                (enforce-guard (C_ReadPolicy "VST|GasCol"))
-                (enforce-guard (C_ReadPolicy "BRD|GasCollection"))
-            ]
-        )
+    (defun DALOS|C_TransferDalosFuel (sender:string receiver:string amount:decimal)
+        (install-capability (coin.TRANSFER sender receiver amount))
+        (coin.transfer sender receiver amount)
+    )
+    (defun IGNIS|C_Collect (patron:string active-account:string amount:decimal)
+        (IGNIS|C_CollectWT patron active-account amount (IGNIS|URC_IsVirtualGasZero))
+    )
+    (defun IGNIS|C_CollectWT (patron:string active-account:string amount:decimal trigger:bool)
         (let*
             (
                 (major:integer (DALOS.DALOS|UR_Elite-Tier-Major patron))
                 (minor:integer (DALOS.DALOS|UR_Elite-Tier-Minor patron))
                 (reduced-amount:decimal (UTILS.DALOS|UC_GasCost amount major minor false))
             )
-            (with-capability (IGNIS|COLLECT patron active-account reduced-amount)
-                (IGNIS|XP_Collect patron active-account reduced-amount)
+            (enforce (>= amount 1.0) "Minimum Base Ignis Base that can be collected is 1.0")
+            (if (not trigger)
+                (with-capability (IGNIS|COLLECT patron active-account reduced-amount)
+                    (IGNIS|XP_Collect patron active-account reduced-amount)
+                )
+                true
+            )
+            (with-read DALOS|AccountTable patron
+                { "nonce" := n }
+                (update DALOS|AccountTable patron { "nonce" : (+ n 1)})
+            )
+            (with-read DALOS|AccountTable active-account
+                { "nonce" := n }
+                (update DALOS|AccountTable active-account { "nonce" : (+ n 1)})
             )
         )
     )

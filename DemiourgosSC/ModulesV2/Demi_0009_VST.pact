@@ -35,20 +35,10 @@
     (defcap VST|DEFINE ()
         true
     )
-    (defcap P|DIN ()
-        true
-    )
-    (defcap P|IC ()
-        true
-    )
     (defcap P|VST|UPDATE ()
         true
     )
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
-    )
-    (defcap SSVD ()
+    (defcap VST|CREATE_VESTING-LINK ()
         @event
         (compose-capability (SUMMONER))
         (compose-capability (VST|DEFINE))
@@ -77,14 +67,6 @@
         )
     )
     (defun DefinePolicies ()
-        (DALOS.A_AddPolicy
-            "VST|PlusDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
-        (DALOS.A_AddPolicy
-            "VST|GasCol"
-            (create-capability-guard (P|IC))
-        )
         (BASIS.A_AddPolicy
             "VST|UpVes"
             (create-capability-guard (P|VST|UPDATE))
@@ -138,10 +120,6 @@
         (VST|UEV_Active (BASIS.DPTF-DPMF|UR_Vesting id false) id)
     )
     (defcap VST|UPDATE_VESTING (dptf:string dpmf:string)
-        (compose-capability (VST|X_UPDATE_VESTING dptf dpmf))
-        (compose-capability (P|DINIC))
-    )
-    (defcap VST|X_UPDATE_VESTING (dptf:string dpmf:string)
         (BASIS.DPTF-DPMF|UEV_id dptf true)
         (BASIS.DPTF-DPMF|UEV_id dpmf false)
         (BASIS.DPTF-DPMF|CAP_Owner dptf true)
@@ -241,24 +219,22 @@
     )
     ;;
     (defun VST|C_CreateVestingLink:string (patron:string dptf:string)
-        (enforce-one
-            "Creating Vesting Link not allowed"
-            [
-                (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-                (enforce-guard (C_ReadPolicy "DEPLOYER|Summoner"))
-            ]
-        )
         (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (SSVD)
+        (with-capability (VST|CREATE_VESTING-LINK)
             (let*
                 (
-                    (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
                     (dptf-owner:string (BASIS.DPTF-DPMF|UR_Konto dptf true))
                     (dptf-name:string (BASIS.DPTF-DPMF|UR_Name dptf true))
                     (dptf-ticker:string (BASIS.DPTF-DPMF|UR_Ticker dptf true))
                     (dptf-decimals:integer (BASIS.DPTF-DPMF|UR_Decimals dptf true))
-                    (dpmf-name:string (+ "Vested" (take 44 dptf-name)))
-                    (dpmf-ticker:string (+ "Z" (take 19 dptf-ticker)))
+
+                    (s1:string "Vested")
+                    (s2:string "W")
+                    (l1:integer (- UTILS.MAX_TOKEN_NAME_LENGTH (length s1)))
+                    (l2:integer (- UTILS.MAX_TOKEN_TICKER_LENGTH (length s2)))
+                    (dpmf-name:string (concat [s1 (take l1 dptf-name)]))
+                    (dpmf-ticker:string (concat [s2 (take l2 dptf-ticker)]))
+
                     (dpmf-l:[string]
                         (BASIS.DPMF|C_IssueFree
                             patron
@@ -286,10 +262,7 @@
                 (ATSI.DPMF|C_MoveCreateRole patron dpmf VST|SC_NAME)
                 (ATSI.DPMF|C_ToggleAddQuantityRole patron dpmf VST|SC_NAME true)
                 (VST|X_DefineVestingPair patron dptf dpmf)
-                (if (not (DALOS.IGNIS|URC_IsNativeGasZero))
-                    (DALOS.DALOS|C_TransferRawDalosFuel patron kda-costs)
-                    true
-                )
+                (DALOS.KDA|C_Collect patron kda-costs)
                 dpmf
             )
         )
@@ -337,23 +310,13 @@
     ;;
     (defun VST|X_DefineVestingPair (patron:string dptf:string dpmf:string)
         (require-capability (VST|DEFINE))
-        (let
-            (
-                (ZG:bool (DALOS.IGNIS|URC_IsVirtualGasZero))
-                (dptf-owner:string (BASIS.DPTF-DPMF|UR_Konto dptf true))
-            )
-            (with-capability (VST|UPDATE_VESTING dptf dpmf)
-                (if (= ZG false)
-                    (DALOS.IGNIS|X_Collect patron dptf-owner (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
-                    true
-                )
-                (VST|X_UpdateVesting dptf dpmf)
-                (DALOS.DALOS|X_IncrementNonce patron)
-            )
+        (with-capability (VST|UPDATE_VESTING dptf dpmf)
+            (VST|X_UpdateVesting dptf dpmf)
+            (DALOS.IGNIS|C_Collect patron (BASIS.DPTF-DPMF|UR_Konto dptf true) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
         )
     )
     (defun VST|X_UpdateVesting (dptf:string dpmf:string)
-        (require-capability (VST|X_UPDATE_VESTING dptf dpmf))
+        (require-capability (VST|UPDATE_VESTING dptf dpmf))
         (with-capability (P|VST|UPDATE)
             (BASIS.DPTF-DPMF|XO_UpdateVesting dptf dpmf)
         )

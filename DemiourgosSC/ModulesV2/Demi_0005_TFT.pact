@@ -18,12 +18,6 @@
     (defcap DALOS|EXECUTOR ()
         true
     )
-    (defcap P|IC ()
-        true
-    )
-    (defcap P|DIN ()
-        true
-    )
     (defcap P|T|UF ()
         true
     )
@@ -42,7 +36,7 @@
     (defcap P|DPTF|BURN ()
         true
     )
-
+    ;;
     (defcap DPTF|CPF_CREDIT-FEE ()
         true
     )
@@ -51,11 +45,6 @@
     )
     (defcap DPTF|CPF_BURN-FEE ()
         true
-    )
-
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
     )
 
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
@@ -70,14 +59,6 @@
     )
 
     (defun DefinePolicies ()
-        (DALOS.A_AddPolicy
-            "TFT|GasCol"
-            (create-capability-guard (P|IC))
-        )
-        (DALOS.A_AddPolicy
-            "TFT|PlusDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
         (DALOS.A_AddPolicy 
             "TFT|UpdElite"
             (create-capability-guard (P|DALOS|UPDATE_ELITE))
@@ -243,17 +224,9 @@
         )
     )
     ;;[CAP]
-    (defcap IGNIS|MATRON_STRONG (id:string client:string target:string)
-        (if (DALOS.IGNIS|URC_ZeroGAZ id client target)
-            true
-            (compose-capability (P|IC))
-        )
-    )
-    (defcap DPTF|TRANSFER (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+    (defcap DPTF|TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @event
         (compose-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
-        (compose-capability (IGNIS|MATRON_STRONG id sender receiver))
-        (compose-capability (P|DIN))
         (compose-capability (DALOS|EXECUTOR))
     )
     (defcap DPTF|X_TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
@@ -312,7 +285,6 @@
     (defcap DPTF|TRANSMUTE ()
         @event
         (compose-capability (DALOS|EXECUTOR))
-        (compose-capability (P|DINIC))
         (compose-capability (DPTF|X_TRANSMUTE))
     )
     (defcap DPTF|X_TRANSMUTE ()
@@ -321,21 +293,17 @@
     )
     ;;Transfer Function
     (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (with-capability (DPTF|TRANSFER patron id sender receiver transfer-amount method)
+        (with-capability (DPTF|TRANSFER id sender receiver transfer-amount method)
             (DPTF|XK_Transfer patron id sender receiver transfer-amount method)
         )
     )
     (defun DPTF|XK_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (require-capability (DALOS|EXECUTOR))
+        (DPTF|X_Transfer id sender receiver transfer-amount method)
         (if (not (and (= id (DALOS.DALOS|UR_UnityID))(>= transfer-amount 10)))
-            (if (not (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
-                (DALOS.IGNIS|X_Collect patron sender (DALOS.DALOS|UR_UsagePrice "ignis|smallest"))
-                true
-            )
+            (DALOS.IGNIS|C_CollectWT patron sender (DALOS.DALOS|UR_UsagePrice "ignis|smallest") (DALOS.IGNIS|URC_ZeroGAZ id sender receiver))
             true
         )
-        (DPTF|X_Transfer id sender receiver transfer-amount method)
-        (DALOS.DALOS|X_IncrementNonce sender)
     )
     (defun DPTF|X_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (require-capability (DPTF|X_TRANSFER id sender receiver transfer-amount method))
@@ -573,15 +541,12 @@
     )
     (defun DPTF|XK_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         (require-capability (DALOS|EXECUTOR))
-        (if (not (and (= id (DALOS.DALOS|UR_UnityID))(>= transmute-amount 10)))
-            (if (not (DALOS.IGNIS|URC_ZeroGAS id transmuter))
-                (DALOS.IGNIS|X_Collect patron transmuter (DALOS.DALOS|UR_UsagePrice "ignis|smallest"))
-                true
-            )
-            true
-        )    
         (DPTF|X_Transmute id transmuter transmute-amount)
-        (DALOS.DALOS|X_IncrementNonce transmuter)
+        (if (not (and (= id (DALOS.DALOS|UR_UnityID))(>= transmute-amount 10)))
+            (DALOS.IGNIS|C_CollectWT patron transmuter (DALOS.DALOS|UR_UsagePrice "ignis|smallest") (DALOS.IGNIS|URC_ZeroGAS id transmuter))
+            true
+        ) 
+        
     )
     (defun DPTF|X_Transmute (id:string transmuter:string transmute-amount:decimal)
         (require-capability (DPTF|X_TRANSMUTE))

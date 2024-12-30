@@ -218,7 +218,7 @@
             (
                 (patron:string AOZ|SC_NAME)
                 (tf-ids:[string]
-                    (TALOS.DPTF|C_Issue
+                    (TALOS-01.DPTF|C_Issue
                         patron
                         patron
                         ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
@@ -259,27 +259,27 @@
             ;;Set Transaction Fees for Minor Solid Kosonic Currencies
             (BASIS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
             (BASIS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
             (BASIS.DPTF|C_SetFee patron ComatusAureusID 20.0)
             (BASIS.DPTF|C_ToggleFee patron ComatusAureusID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
             (BASIS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
             (BASIS.DPTF|C_ToggleFee patron PileatusSolidusID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
             (BASIS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
             (BASIS.DPTF|C_ToggleFee patron TarabostesStaterID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
             (BASIS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
             (BASIS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
             (BASIS.DPTF|C_SetFee patron BasileonAsID 60.0)
             (BASIS.DPTF|C_ToggleFee patron BasileonAsID true)
-            (TALOS.DPTF|C_ToggleFeeLock patron BasileonAsID true)
+            (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
     (defun A_Step030:[string] ()
@@ -287,7 +287,7 @@
             (
                 (patron:string AOZ|SC_NAME)
                 (mf-ids:[string]
-                    (TALOS.DPMF|C_Issue
+                    (TALOS-01.DPMF|C_Issue
                         patron
                         patron
                         ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
@@ -338,7 +338,7 @@
                 (AsInfinimusID:string (AOZ|UR_Assets 2 5))
 
                 (ats-ids:[string]
-                    (TALOS.ATS|C_Issue
+                    (TALOS-01.ATS|C_Issue
                         patron
                         patron
                         ["PlebeicStrength" "ComatiCommand" "PileatiPower" "TarabostesTenacity" "StrategonVigor" "AsAuthority"]
@@ -582,7 +582,7 @@
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (AOZ|UR_Assets 1 0))
             )
-            (TALOS.VST|C_CreateVestingLink patron PrimordialKosonID)
+            (TALOS-01.VST|C_CreateVestingLink patron PrimordialKosonID)
         )
     )
 )
