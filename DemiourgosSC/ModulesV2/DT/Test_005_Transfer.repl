@@ -2,7 +2,8 @@
 ;;==============================================================================
 ;; PART 01 - Load all Mockup Enviroment Modules
 (load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
-(load "../Initialise_DALOS_short.repl")
+;(load "../Initialise_DALOS_short.repl")
+(load "../Initialise_DALOS.repl")
 (print "LOADED ALL ENV MODULES")
 
 ;;Entering Namespace Free
@@ -29,6 +30,7 @@
     (defconst VESTG "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
     (defconst LIQST "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
     (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+    (defconst SWAPR "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
 )
 
 (env-gas)
@@ -53,102 +55,65 @@
 (commit-tx)
 
 
-(begin-tx "Test Transfer DALOS Fuel")
+(begin-tx "Make 10k DWK")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
+(env-sigs
     [   
-        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
-          "caps": 
-            [
-                (coin.TRANSFER 
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": [
+                    (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    5.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    5.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
-                    15.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                    75.0
-                )
-            ] 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    10000.0)
+                  ]
         }
     ]
 )
+(namespace "free")
+(free.LIQUID.LIQUID|C_WrapKadena KC.ANHD KC.ANHD 10000.0)
 
-    (free.DALOS.DALOS|C_TransferDalosFuel
-        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-        5.0
-    )
-    (free.DALOS.DALOS|C_TransferDalosFuel
-        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-        5.0
-    )
-    (free.DALOS.DALOS|C_TransferDalosFuel
-        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-        "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
-        15.0
-    )
-    (free.DALOS.DALOS|C_TransferDalosFuel
-        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-        75.0
-    )
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Make 10k DLK")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.ATSM.ATSM|C_Coil
+    KC.ANHD
+    KC.ANHD
+    (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
+    (free.DALOS.DALOS|UR_WrappedKadenaID)
+    10000.0
+)
+
+(format "AH has {} DWK" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD true)])
+(format "AH has {} DLK" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD true)])
+(format "AH has {} GAS" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD true)])
+
+(format "AH Elite is {}" [(free.DALOS.DALOS|UR_Elite KC.ANHD)])
+
+(format "AH Elite Auryn is {}" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_EliteAurynID) KC.ANHD true)])
+(format "AH Vested Elite Auryn is {}" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.BASIS.DPTF-DPMF|UR_Vesting (free.DALOS.DALOS|UR_EliteAurynID) true) KC.ANHD false)])
 
 (env-gas)
 (commit-tx)
 
-(begin-tx "Test Transfer Raw DALOS Fuel")
+
+(begin-tx "Issue SWPair DLK OURO")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
-        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
-          "caps": 
-            [
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    5.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    5.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
-                    15.0
-                )
-                (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                    75.0
-                )
-            ] 
-        }
+        { "key": "PK_AncientHodler", "caps": [] }
     ]
 )
 
-    (free.DALOS.DALOS|C_TransferRawDalosFuel KC.ANHD 100.0)
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "Test Transfer Raw DALOS Fuel with Account enforcement")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
+(env-sigs
     [   
         { "key": "PK_AncientHodler", "caps": [] }
         { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
@@ -157,54 +122,43 @@
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                    5.0
+                    0.0133875
                 )
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                    5.0
+                    0.0133875
                 )
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
-                    15.0
+                    0.0401625
                 )
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                     "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                    75.0
+                    0.2008125
                 )
             ] 
         }
     ]
 )
 
-    (free.DALOS.DALOS|CAP_EnforceAccountOwnership KC.ANHD)
-    (free.DALOS.DALOS|C_TransferRawDalosFuel KC.ANHD 100.0)
-    
-(env-gas)
-(commit-tx)
-
-(begin-tx "Test Enforcement")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
+;;1x200 (per dptf) + 150 (swp) = 350 || 17.5 > 17.5 > 52.5 > 262.5
+;;For TestNet 1000x smaller: 0.0175 > 0.0175 > 0.0525 > 0.2625
+;;AH is Tier 7.5 has 23.5% reduction, so all values multiplied by 0.765
+;;      0.0133875 > 0.0133875 > 0.0401625 > 0.2008125
+(free.TALOS-02.SWP|C_Issue
+    KC.ANHD
+    KC.ANHD
+    (free.DALOS.DALOS|UR_LiquidKadenaID)
+    (free.DALOS.DALOS|UR_OuroborosID)
+    10000.0
+    25000.0
+    10.0
 )
-    (free.DALOS.DALOS|CAP_EnforceAccountOwnership KC.ANHD)
-    (free.DALOS.DALOS|CAP_EnforceAccountOwnership KC.ANHD)
-(env-gas)
-(commit-tx)
-
-(begin-tx "Test Enforcement")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-    (free.DALOS.DALOS|UR_AccountGuard KC.ANHD)
 
 (env-gas)
 (commit-tx)
+
+;(format "Exemption Role for Ouro on Swapper is {}" [(free.BASIS.DPTF|UR_AccountRoleFeeExemption "OURO-98c486052a51" KC.SWAPR)])

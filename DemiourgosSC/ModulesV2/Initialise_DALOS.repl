@@ -868,3 +868,52 @@
 (env-sigs [])
 (env-gas)
 (commit-tx)
+
+
+;;=============================
+;;Initialise Swapper
+
+(begin-tx "Init SWP 01")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(free.SWP.SWP|A_Step01)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init SWP 02")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(free.SWP.SWP|A_Step02)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init SWP 03")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(free.SWP.SWP|A_Step03 KC.ANCIENTHODLER)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)

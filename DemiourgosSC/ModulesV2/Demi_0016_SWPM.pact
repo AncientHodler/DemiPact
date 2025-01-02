@@ -36,6 +36,10 @@
         (at "policy" (read PoliciesTable policy-name ["policy"]))
     )
     (defun DefinePolicies ()
+        (BASIS.A_AddPolicy
+            "SWPM|Caller"
+            (create-capability-guard (P|SWPM|CALLER))
+        )
         (SWP.A_AddPolicy
             "SWPM|Caller"
             (create-capability-guard (P|SWPM|CALLER))
@@ -52,10 +56,17 @@
     )
     
     (defcap SWPM|ISSUE (account:string token-a:string token-b:string fee-lp:decimal)
-        (compose-capability (P|SWPM|CALLER))
-        (BASIS.DPTF-DPMF|CAP_Owner token-b true)
-        (SWP.SWP|UEV_PoolFee fee-lp)
-        (SWP.SWP|UEV_New token-a token-b)
+        (let*
+            (
+                (principals:[string] (SWP.SWP|UR_Principals))
+                (iz-principal:bool (contains token-a principals))
+            )
+            (enforce iz-principal "Token-A is not a principal Token")
+            (BASIS.DPTF-DPMF|CAP_Owner token-b true)
+            (SWP.SWP|UEV_PoolFee fee-lp)
+            (SWP.SWP|UEV_New token-a token-b)
+            (compose-capability (P|SWPM|CALLER))
+        )
     )
     (defun SWPM|C_Issue:string 
         (
@@ -109,11 +120,16 @@
                     )
                     (token-lp:string (at 0 dptf-l))
                     (swpair:string (SWP|X_Issue account token-a token-b token-lp token-a-amount token-b-amount fee-lp))
+
+                    (bex:bool (BASIS.DPTF|UR_AccountRoleFeeExemption token-b SWP.SWP|SC_NAME))
                 )
-                ;;Burn and Mint Role for <token-lp> and FeeEx for token-b to SWP.SWP|SC_NAME
+                ;;Burn and Mint Role for <token-lp> and FeeEx Role for token-b to SWP.SWP|SC_NAME
                 (ATSI.DPTF-DPMF|C_ToggleBurnRole patron token-lp SWP.SWP|SC_NAME true true)
                 (ATSI.DPTF|C_ToggleMintRole patron token-lp SWP.SWP|SC_NAME true)
-                (ATSI.DPTF|C_ToggleFeeExemptionRole patron token-b SWP.SWP|SC_NAME true)
+                (if (not bex)
+                    (ATSI.DPTF|C_ToggleFeeExemptionRole patron token-b SWP.SWP|SC_NAME true)
+                    true
+                )
                 ;;Transfer Token-A and Token-B to SWP.SWP|SC_NAME and get 10 million Token-LP in return, minted in origin mode.
                 (TFT.DPTF|C_Transfer patron token-a account SWP.SWP|SC_NAME token-a-amount true)
                 (TFT.DPTF|C_Transfer patron token-b account SWP.SWP|SC_NAME token-b-amount true)

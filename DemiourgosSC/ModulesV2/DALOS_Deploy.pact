@@ -104,6 +104,8 @@
 (VESTING.DefinePolicies)
 
 (BRANDING.DefinePolicies)
+(SWPM.DefinePolicies)
+
 (TALOS-01.DefinePolicies)
 (TALOS-02.DefinePolicies)
 
@@ -176,6 +178,9 @@
     ;;
     (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
     (OUROBOROS.OUROBOROS|SetGovernor patron)
+    ;;
+    (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.SWAPPER|SC_NAME (keyset-ref-guard DEPLOYER.SWAPPER|SC_KEY) DEPLOYER.SWAPPER|SC_KDA-NAME patron DEPLOYER.SWAPPER|PBL)
+    (SWP.SWP|SetGovernor patron)
 )
 
 ;;STEP 010 - Create Autonomous Accounts

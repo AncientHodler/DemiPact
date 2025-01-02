@@ -575,3 +575,16 @@
 
 ;(format "AH has {} IGNIS" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.BYTA true)])
 ;(free.TALOS|DPTF.C_Transfer KC.BYTA "OURO-98c486052a51" KC.BYTA KC.FLRN 1.0)
+
+(begin-tx "Keys Function test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.BASIS.DPTF|P-KEYS)
+
+(env-gas)
+(commit-tx)

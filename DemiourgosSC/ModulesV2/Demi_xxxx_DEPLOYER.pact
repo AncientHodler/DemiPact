@@ -38,6 +38,11 @@
     (defconst OUROBOROS|SC_NAME             DALOS.OUROBOROS|SC_NAME)
     (defconst OUROBOROS|SC_KDA-NAME         OUROBOROS.OUROBOROS|SC_KDA-NAME)
     (defconst OUROBOROS|PBL                 "9H.28jB2BBny4op601Cfqz9brFJKAEo67jbEDJi91i00pGjcD1Mpn0y0A1CxcAwGgBu35Ix3bG4e4p56Mu6x7Mmd50nKfmpDGtLy1ywyCjoDD5xiHBb0y5dAjB0fuokrqyx3ula9rtxyEHK1A4gkG4g3GEyysMtgF40IBgKjm7t8ffGshICIypFeF3gA5x0MixA0soiCx9tBnMDzI6G5xC8yIJJ3Bt2sCvJHAp7HAEA3rKK6Bgnx8hK94oDbgrpCkxw3zpo7tbeHhcakzbg0ELG3EJvk19hyd9LC73t2gizl0B6puq3Ljji5EDAhzno7K32x8vCagc5D2GLiMfdzEzsj5KEe1c2p7hxj76lMvp40r9F56vzlK8Kb7mrKt90ILEMqCghLrok7D4uH8h28EGqbK75wiyguimc1jDGxthyBJFfApClymKA57ehqbv2Lyv323w44b0kIItu35fjmhe2DCBMwjn67ffDII97b6AdyG010wvAHf55xFt25Mbm2pflsggL4D5jHtokl7qn6g4ltM5ilvHvsxn7jHe23Cfgoxn1JssdFMBpcDvB2xki7")
+    ;;  SWAPPER
+    (defconst SWAPPER|SC_KEY                SWP.SWP|SC_KEY)
+    (defconst SWAPPER|SC_NAME               SWP.SWP|SC_NAME)
+    (defconst SWAPPER|SC_KDA-NAME           SWP.SWP|SC_KDA-NAME)
+    (defconst SWAPPER|PBL                   SWP.SWP|PBL)
 
     ;; Demiurgoi
     (defconst DEMIURGOI|AH_KEY
@@ -123,6 +128,8 @@
         (VESTING.DefinePolicies)
 
         (BRANDING.DefinePolicies)
+        (SWPM.DefinePolicies)
+
         (TALOS-01.DefinePolicies)
         (TALOS-02.DefinePolicies)
     )
@@ -191,6 +198,9 @@
             ;;
             (DALOS.DALOS|A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
             (OUROBOROS.OUROBOROS|SetGovernor patron)
+            ;;
+            (DALOS.DALOS|A_DeploySmartAccount SWAPPER|SC_NAME (keyset-ref-guard SWAPPER|SC_KEY) SWAPPER|SC_KDA-NAME patron SWAPPER|PBL)
+            (SWP.SWP|SetGovernor patron)
         )     
     )
     (defun A_Step010 ()
@@ -426,7 +436,7 @@
                 (emma:string "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
                 (lumy:string "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
             )
-            (OUROBOROS.IGNIS|C_Sublimate patron patron patron 10.0)
+            (OUROBOROS.IGNIS|C_Sublimate patron patron patron 1000.0)
             (OUROBOROS.IGNIS|C_Sublimate patron patron aozt 750.0)
             (OUROBOROS.IGNIS|C_Sublimate patron patron emma 10.0)
             (OUROBOROS.IGNIS|C_Sublimate patron patron lumy 10.0)

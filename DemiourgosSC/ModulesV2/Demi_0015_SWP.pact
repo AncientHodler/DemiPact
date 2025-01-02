@@ -22,9 +22,9 @@
     (defconst SWP|SC_KEY
         (+ UTILS.NS_USE ".dh_sc_swapper-keyset")
     )
-    (defconst SWP|SC_NAME "")
+    (defconst SWP|SC_NAME "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
     (defconst SWP|SC_KDA-NAME (create-principal SWP|GUARD))
-    (defconst SWP|PBL "")
+    (defconst SWP|PBL "9G.4Bl3bJ5o1eIoBkhynF39lFdvkA3E0n8m5fBr9iG4D6Ahj3xfop72b98rr33vFFLjqaiozE1btl7lgzKcjHwjzu5GuFqvMb43v9CHHe8je3buLbHMkcAyKdEMD85yIHsb9ty58Kzyado3ho1n1mf9GzpeegMrpK9wDFteeKexdL7HHq8GF7ptD2w45IkMf2A8j4pm7E6vJ1ytCckhclD9nd3JzL2j5cyLxawnE76leKmEmFaxqnF76yyJe5Mu6yLkg2yonJa6vx6jd1kr0hdEf81o42Asr8EcCDeeqD4nAehC3w3pFDMwbln4Mbl6t55GHGephx99LJKH1ojhlMlnyC4bbJFAiyD1h6vs0o7mKAaazFG9y0vfbvM9imcs1vCMmpk2cGDAAAqH6iJe32ugHA3AECEgCvxCskw4Mfx6Cc4rx2BkmKMlxeHqyDceI6wa2qjzuyI80vKg6H6tMwEg48H0ywIMDyxteDfHav08eEJE2lljEIAc1jxLlLcosbiknAyxJvu8g7kA4oAlcio2jI8lMxp76vosd5FxpatowuFktILfyCFyHvKfcozy")
     ;;P
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (SWP-ADMIN)
@@ -168,6 +168,15 @@
         (at "governor" (read SWP|Pairs swpair ["governor"]))
     )
     ;;[C-Simple]
+    (defun SWP|UEV_StringIsOnList (item:string item-lst:[string])
+        (let
+            (
+                (iz-present:bool (contains item item-lst))
+            )
+            (enforce (!= item-lst [UTILS.BAR]) (format "Removal of {} from {} cannot be executed" [item item-lst]))
+            (enforce iz-present (format "String {} is not present in list {}." [item item-lst]))
+        )
+    )
     (defun SWP|UEV_New (token-a:string token-b:string)
         (let*
             (
@@ -181,8 +190,8 @@
     )
     (defun SWP|UEV_CheckID:bool (swpair:string)
         (with-default-read SWP|Pairs swpair
-            { "fee-unlocks" : -1 }
-            { "fee-unlocks" := u }
+            { "unlocks" : -1 }
+            { "unlocks" := u }
             (if (< u 0)
                 false
                 true
@@ -191,8 +200,8 @@
     )
     (defun SWP|UEV_id (swpair:string)
         (with-default-read SWP|Pairs swpair
-            { "fee-unlocks" : -1 }
-            { "fee-unlocks" := u }
+            { "unlocks" : -1 }
+            { "unlocks" := u }
             (enforce
                 (>= u 0)
                 (format "SWP-Pair {} does not exist." [swpair])
@@ -229,15 +238,57 @@
         )
         (enforce (and (>= fee 0.0001) (<= fee 999.9999)) (format "SWP Pool Fee amount of {} is invalid size wise" [fee]))
     )
-    ;;[C-Composed]
-    (defcap SWP|PRINCIPALS (principals:[string])
-        (compose-capability (SWP-ADMIN))
-        (map
-            (lambda
-                (principal-id:string)
-                (BASIS.DPTF-DPMF|UEV_id principal-id true)
+    ;;[UC]
+    (defun SWP|UC_PoolTotalFee (swpair:string)
+        (let*
+            (
+                (lb:bool (SWP|UR_LiquidBoost))
+                (current-fee-lp:decimal (SWP|UR_FeeLP swpair))
+                (current-fee-special:decimal (SWP|UR_FeeSP swpair))
+                (tf1:decimal (+ current-fee-lp current-fee-special))
+                (tf2:decimal (+ (* current-fee-lp 2.0) current-fee-special))
             )
-            principals
+            (if lb
+                tf2
+                tf1
+            )
+        )
+    )
+    (defun SWP|UC_A-Input-B-Output:decimal (swpair:string input-amount:decimal a-to-b-or-b-to-a:bool)
+        (let*
+            (
+                (a-id:string (SWP|UR_TokenA swpair))
+                (b-id:string (SWP|UR_TokenB swpair))
+                (a-dec:integer (BASIS.DPTF-DPMF|UR_Decimals a-id true))
+                (b-dec:integer (BASIS.DPTF-DPMF|UR_Decimals b-id true))
+                (r-a:decimal (SWP|UR_TokenAS swpair))
+                (r-b:decimal (SWP|UR_TokenBS swpair))
+                (axb:decimal (* r-a r-b))
+
+                (f1-a:decimal (+ r-a input-amount))
+                (f1-b:decimal (floor (/ axb f1-a) b-dec))
+                (f2-b:decimal (+ r-b input-amount))
+                (f2-a:decimal (floor (/ axb f2-b) a-dec))
+            )
+            (if a-to-b-or-b-to-a
+                (with-capability (COMPOSE)
+                    (BASIS.DPTF-DPMF|UEV_Amount a-id input-amount true)
+                    (- r-b f1-b)
+                )
+                (with-capability (COMPOSE)
+                    (BASIS.DPTF-DPMF|UEV_Amount b-id input-amount true)
+                    (- r-a f2-a)
+                )
+            )
+        )
+    )
+    ;;[C-Composed]
+    (defcap SWP|PRINCIPAL (principal:string add-or-remove:bool)
+        (compose-capability (SWP-ADMIN))
+        (BASIS.DPTF-DPMF|UEV_id principal true)
+        (if (not add-or-remove)
+            (SWP|UEV_StringIsOnList principal (SWP|UR_Principals))
+            true
         )
     )
     (defcap SWP|LQBOOST (new-boost-variable:bool)
@@ -281,21 +332,13 @@
         (SWP|CAP_Owner swpair)
         (SWP|UEV_FeeLockState swpair (not toggle))
     )
-    (defcap SWP|X_ADD-LP (swpair:string lp-token:string)
+    (defcap SWP|X_UPDATE-LP (swpair:string lp-token:string add-or-remove:bool)
         (SWP|CAP_Owner swpair)
         (BASIS.DPTF-DPMF|UEV_id lp-token true)
-    )
-    (defcap SWP|X_REMOVE-LP (swpair:string lp-token:string)
-        (let*
-            (
-                (tlps:[string] (SWP|UR_TokenLPS swpair))
-                (iz-present:bool (contains lp-token tlps))
-            )
-            (enforce (!= tlps [UTILS.BAR]) "No LPs to remove")
-            (enforce iz-present "LP not in the LP List")
-            (SWP|CAP_Owner swpair)
-            (BASIS.DPTF-DPMF|UEV_id lp-token true)
-        ) 
+        (if (not add-or-remove)
+            (SWP|UEV_StringIsOnList lp-token (SWP|UR_TokenLPS swpair))
+            true
+        )
     )
     (defcap SWP|X_UPDATE-SUPPLY (swpair:string new-supply:decimal a-or-b:bool)
         (SWP|UEV_id swpair)
@@ -313,48 +356,74 @@
     (defcap SWP|X_UPDATE-FEE (swpair:string new-fee:decimal lp-or-special:bool)
         (let*
             (
+                (lb:bool (SWP|UR_LiquidBoost))
                 (current-fee-lp:decimal (SWP|UR_FeeLP swpair))
                 (current-fee-special:decimal (SWP|UR_FeeSP swpair))
+
                 (tf1:decimal (+ new-fee current-fee-lp))
                 (tf2:decimal (+ new-fee current-fee-special))
+
+                (tf3:decimal (+ tf1 current-fee-lp))
+                (tf4:decimal (+ tf2 new-fee))
             )
             (SWP|CAP_Owner swpair)
             (SWP|UEV_FeeLockState swpair false)
-            (if lp-or-special
-                (SWP|UEV_PoolFee tf2)
-                (SWP|UEV_PoolFee tf1)
+            (if lb
+                (if lp-or-special
+                    (SWP|UEV_PoolFee tf4)
+                    (SWP|UEV_PoolFee tf3)
+                )
+                (if lp-or-special
+                    (SWP|UEV_PoolFee tf2)
+                    (SWP|UEV_PoolFee tf1)
+                )
             )
-            
         )
     )
     ;;[A]
-    (defun SWP|A_Initialise (patron:string)
-        (let*
-            (
-                (dlk-id:string (DALOS.DALOS|UR_LiquidKadenaID))
-                (ouro-id:string (DALOS.DALOS|UR_OuroborosID))
-                (principals:[string] [dlk-id ouro-id])
-            )
-            (insert SWP|Properties SWP|INFO
-                {"principals"           : principals
-                ,"liquid-boost"         : true}
-            )
-            (map
-                (lambda
-                    (id:string)
-                    (with-capability (COMPOSE)
-                        (BASIS.DPTF-DPMF|C_DeployAccount id SWP|SC_NAME true)
-                        (ATSI.DPTF|C_ToggleFeeExemptionRole patron id SWP|SC_NAME true)
-                    )
-                )
-                principals
-            )
+    ;;Initialise Functions
+    (defun SWP|A_Step01 ()
+        (insert SWP|Properties SWP|INFO
+            {"principals"           : [UTILS.BAR]
+            ,"liquid-boost"         : true}
         )
     )
-    (defun SWP|A_UpdatePrincipals (principals:[string])
-        (with-capability (SWP|PRINCIPALS principals)
-            (update SWP|Properties SWP|INFO
-                {"principals" : principals}
+    (defun SWP|A_Step02 ()
+        (SWP|A_UpdatePrincipal (DALOS.DALOS|UR_LiquidKadenaID) true)
+        (SWP|A_UpdatePrincipal (DALOS.DALOS|UR_OuroborosID) true)
+    )
+    (defun SWP|A_Step03 (patron:string)
+        (SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_LiquidKadenaID))
+        (SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_OuroborosID))
+    )
+    ;;
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool)
+        (with-capability (SWP|PRINCIPAL principal add-or-remove)
+            (with-read SWP|Properties SWP|INFO
+                { "principals" := pp }
+                (if add-or-remove
+                    (if (= pp [UTILS.BAR])
+                        (update SWP|Properties SWP|INFO
+                            {"principals" : [principal]}
+                        )
+                        (update SWP|Properties SWP|INFO
+                            {"principals" : (UTILS.LIST|UC_AppendLast pp principal)}
+                        )
+                    )
+                    (if (= 1 (length pp))
+                        (update SWP|Properties SWP|INFO
+                            {"principals" : [UTILS.BAR]}
+                        )
+                        (let
+                            (
+                                (pp-position:integer (at 0 (UTILS.LIST|UC_Search (SWP|UR_Principals) principal)))
+                            )
+                            (update SWP|Properties SWP|INFO
+                                {"principals" : (UTILS.LIST|UC_RemoveItem pp (at pp-position pp))}
+                            )
+                        )
+                    )
+                )
             )
         )
     )
@@ -364,6 +433,10 @@
                 {"liquid-boost" : new-boost-variable}
             )
         )
+    )
+    (defun SWP|A_EnsurePrincipalRoles (patron:string principal:string)
+        (BASIS.DPTF-DPMF|C_DeployAccount principal SWP|SC_NAME true)
+        (ATSI.DPTF|C_ToggleFeeExemptionRole patron principal SWP|SC_NAME true)
     )
     ;;[X]
     (defun SWP|X_ChangeOwnership (swpair:string new-owner:string)
@@ -415,37 +488,31 @@
             )
         )
     )
-    (defun SWP|X_AddLP (swpair:string lp-token:string)
+    (defun SWP|X_UpdateLP (swpair:string lp-token:string add-or-remove:bool)
         ;;(enforce-guard (C_ReadPolicy "SWPM|Caller"))
-        (with-capability (SWP|X_ADD-LP swpair lp-token)
+        (with-capability (SWP|X_UPDATE-LP swpair lp-token add-or-remove)
             (with-read SWP|Pairs swpair
                 { "token-lps" := tlps}
-                (if (= tlps [UTILS.BAR])
-                    (update SWP|Pairs swpair
-                        {"token-lps" : [lp-token]}
-                    )
-                    (update SWP|Pairs swpair
-                        {"token-lps" : (UTILS.LIST|UC_AppendLast tlps lp-token)}
-                    )
-                )
-            )
-        )
-    )
-    (defun SWP|X_RemoveLP (swpair:string lp-token:string)
-        ;;(enforce-guard (C_ReadPolicy "SWPM|Caller"))
-        (with-capability (SWP|X_REMOVE-LP swpair lp-token)
-            (with-read SWP|Pairs swpair
-                { "token-lps" := tlps}
-                (if (= 1 (length tlps))
-                    (update SWP|Pairs swpair
-                        {"token-lps" : [UTILS.BAR]}
-                    )
-                    (let
-                        (
-                            (lp-token-position:integer (at 0 (UTILS.LIST|UC_Search (SWP|UR_TokenLPS swpair) lp-token)))
+                (if add-or-remove
+                    (if (= tlps [UTILS.BAR])
+                        (update SWP|Pairs swpair
+                            {"token-lps" : [lp-token]}
                         )
                         (update SWP|Pairs swpair
-                            {"token-lps" : (UTILS.LIST|UC_RemoveItem tlps (at lp-token-position tlps))}
+                            {"token-lps" : (UTILS.LIST|UC_AppendLast tlps lp-token)}
+                        )
+                    )
+                    (if (= 1 (length tlps))
+                        (update SWP|Pairs swpair
+                            {"token-lps" : [UTILS.BAR]}
+                        )
+                        (let
+                            (
+                                (lp-token-position:integer (at 0 (UTILS.LIST|UC_Search (SWP|UR_TokenLPS swpair) lp-token)))
+                            )
+                            (update SWP|Pairs swpair
+                                {"token-lps" : (UTILS.LIST|UC_RemoveItem tlps (at lp-token-position tlps))}
+                            )
                         )
                     )
                 )

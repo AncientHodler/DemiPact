@@ -333,10 +333,31 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load TALOS Module")
+(begin-tx "InitSnake 16 - Load SWAPPER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_00_TALOS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0015_SWP.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPM.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 18 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_01_TALOS-01.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 19 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_02_TALOS-02.pact")
 (env-gas)
 (commit-tx)
 
