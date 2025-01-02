@@ -254,7 +254,7 @@
             )
         )
     )
-    (defun SWP|UC_A-Input-B-Output:decimal (swpair:string input-amount:decimal a-to-b-or-b-to-a:bool)
+    (defun SWP|UC_Swap:decimal (swpair:string input-amount:decimal a-to-b-or-b-to-a:bool)
         (let*
             (
                 (a-id:string (SWP|UR_TokenA swpair))

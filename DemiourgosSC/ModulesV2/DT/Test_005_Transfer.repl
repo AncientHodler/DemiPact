@@ -158,7 +158,10 @@
     10.0
 )
 
+(format "Swap 100 DLK to {} OURO" [(free.SWP.SWP|UC_Swap "DLK-98c486052a51|OURO-98c486052a51" 100.0 true)])
+(format "Swap 100 OURO to {} DLK" [(free.SWP.SWP|UC_Swap "DLK-98c486052a51|OURO-98c486052a51" 100.0 false)])
+
+
 (env-gas)
 (commit-tx)
 
-;(format "Exemption Role for Ouro on Swapper is {}" [(free.BASIS.DPTF|UR_AccountRoleFeeExemption "OURO-98c486052a51" KC.SWAPR)])

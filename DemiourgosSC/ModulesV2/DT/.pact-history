@@ -1,3 +1,6 @@
+(free.SWP.SWP|UC_A-Input-B-Output "DLK-98c486052a51|OURO-98c486052a51" 100.0 false)
+(free.SWP.SWP|UC_A-Input-B-Output "DLK-98c486052a51|OURO-98c486052a51" 100.0 true)
+(load "Test_005_Transfer.repl")
 (load "Test_005_Transfer.repl")
 (load "Test_005_Transfer.repl")
 (load "Test_005_Transfer.repl")
@@ -95,6 +98,3 @@
 (not (or true true))
 (not (or true false))
 (not (or false true))
-(not (or false false))
-(or false false)
-(or true true)

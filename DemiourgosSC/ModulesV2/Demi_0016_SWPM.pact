@@ -102,7 +102,6 @@
 
                     (lp-name:string (concat [s1 (take l1 token-a-name) (take l1 token-b-name)]))
                     (lp-ticker:string (concat [s2 (take l2 token-a-ticker) (take l2 token-b-ticker)]))
-
                     (dptf-l:[string]
                         (BASIS.DPTF|C_IssueFree
                             patron
@@ -120,7 +119,6 @@
                     )
                     (token-lp:string (at 0 dptf-l))
                     (swpair:string (SWP|X_Issue account token-a token-b token-lp token-a-amount token-b-amount fee-lp))
-
                     (bex:bool (BASIS.DPTF|UR_AccountRoleFeeExemption token-b SWP.SWP|SC_NAME))
                 )
                 ;;Burn and Mint Role for <token-lp> and FeeEx Role for token-b to SWP.SWP|SC_NAME
