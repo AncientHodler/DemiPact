@@ -18,6 +18,7 @@
     (defcap UTILS_ADMIN ()
         (enforce-guard G-MD_UTILS)
     )
+    (defcap COMPOSE () true)
 
     (defconst G-MD_UTILS   (keyset-ref-guard UTILS|DEMIURGOI))
 
@@ -31,8 +32,8 @@
     (defconst MAX_PRECISION 24              "Maximum DALOS Token Precision")
     (defconst FEE_PRECISION 4               "Maximum Precision for a decimal designating a DPTF Fee Value Promille")
     (defconst MIN_DESIGNATION_LENGTH 3      "Minimum Length for DALOS Token-Name, Token-Ticker and ATS Index Name")
-    (defconst MAX_TOKEN_NAME_LENGTH 100      "Maximum Length for DALOS Token-Name") 
-    (defconst MAX_TOKEN_TICKER_LENGTH 80    "Maximum Length for DALOS Token-Ticker")
+    (defconst MAX_TOKEN_NAME_LENGTH 50      "Maximum Length for DALOS Token-Name") 
+    (defconst MAX_TOKEN_TICKER_LENGTH 30    "Maximum Length for DALOS Token-Ticker")
 
     ;;Used for validation of an ATS Index Name
     (defconst ACCOUNT_ID_CHARSET CHARSET_LATIN1 "Allowed character set for account IDs.");
@@ -42,6 +43,7 @@
     (defconst NUMBERS ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
     (defconst CAPITAL_LETTERS ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"])
     (defconst NON_CAPITAL_LETTERS ["a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"])
+    (defconst SPECIAL ["|" "-" "^"])
 
     ;;[A] Autostake Constant Values
     (defconst ET        ;;Elite Thresholds
@@ -454,41 +456,30 @@
             )
         )
     )
-    (defun DALOS|UEV_TokenName:bool (name:string)
-        @doc "Enforces correct DALOS Token Name specifications"
-        (let
+    (defun DALOS|UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-lp:bool)
+        @doc "Enforces correct DALOS Token Name and/or Ticker specifications"
+        (let*
             (
-                (nl (length name))
+                (nl (length name-ticker))
+                (min:integer MIN_DESIGNATION_LENGTH)
+                (max-n-standard:integer MAX_TOKEN_NAME_LENGTH)
+                (max-t-standard:integer MAX_TOKEN_TICKER_LENGTH)
+                (max-n-lp:integer (+ (* max-n-standard 7) 8))
+                (max-t-lp:integer (+ (* max-t-standard 7) 11))
+                (max-n:integer (if iz-lp max-n-lp max-n-standard))
+                (max-t:integer (if iz-lp max-t-lp max-t-standard))
+                (max:integer (if name-or-ticker max-n max-t))
             )
             (enforce
                 (and
-                    (>= nl MIN_DESIGNATION_LENGTH)
-                    (<= nl MAX_TOKEN_NAME_LENGTH)
+                    (>= nl min)
+                    (<= nl max)
                 )
-            "Token Name does not conform to the DALOS Name Standard for Size!"
+            "Designation does not conform to the DALOS Name Standard for Size!"
             )
             (enforce
-                (DALOS|UC_IzStringANC name false)
-                "Token Name is not AlphaNumeric!"
-            )
-        )    
-    )
-    (defun DALOS|UEV_TickerName:bool (ticker:string)
-        @doc "Enforces correct DALOS Ticker Name specifications"
-        (let
-            (
-                (tl (length ticker))
-            )
-            (enforce
-                (and
-                    (>= tl MIN_DESIGNATION_LENGTH)
-                    (<= tl MAX_TOKEN_TICKER_LENGTH)
-                )
-            "Token Ticker does not conform to the DALOS Ticker Standard for Size!"
-            )
-            (enforce
-                (DALOS|UC_IzStringANC ticker true)
-                "Token Ticker is not Alphanumeric with Capitals Only!"
+                (DALOS|UC_IzStringANC name-ticker (not name-or-ticker) iz-lp)
+                "Designation does not conform character-wise"
             )
         )
     )
@@ -663,26 +654,31 @@
         )
     )
     ;;
-    (defun DALOS|UC_IzStringANC:bool (s:string capital:bool)
+    (defun DALOS|UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)
         @doc "Checks if a string is alphanumeric with or without Uppercase Only \
         \ Uppercase Only toggle is used by setting the capital boolean to true"
         (fold
-            (lambda                                                         ;1st part of the Fold Function the Lambda
-                (acc:bool c:string)                                         ;input variables of the lambda
-                (and acc (DALOS|UC_IzCharacterANC c capital))                     ;operation of the input variables
+            (lambda
+                (acc:bool c:string)
+                (and acc (DALOS|UC_IzCharacterANC c capital iz-lp))
             )
-            true                                                            ;2nd part of the Fold Function, the initial accumulator value
-            (str-to-list s)                                                 ;3rd part of the Fold Function, the List upon which the Lambda is executed
+            true
+            (str-to-list s)
         )
     )
-    (defun DALOS|UC_IzCharacterANC:bool (c:string capital:bool)
+    (defun DALOS|UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool)
         @doc "Checks if a character is alphanumeric with or without Uppercase Only"
         (let*
             (
-                (c1 (or (contains c CAPITAL_LETTERS)(contains c NUMBERS)))
-                (c2 (or c1 (contains c NON_CAPITAL_LETTERS) ))
+                (c1:bool (or (contains c CAPITAL_LETTERS)(contains c NUMBERS)))
+                (c2:bool (or c1 (contains c NON_CAPITAL_LETTERS) ))
+                (c3:bool (or c1 (contains c SPECIAL) ))
+                (c4:bool (or c3 (contains c NON_CAPITAL_LETTERS) ))
             )
-            (if (= capital true) c1 c2)
+            (if iz-lp
+                (if capital c3 c4)
+                (if capital c1 c2)    
+            )
         )
     )
     ;;

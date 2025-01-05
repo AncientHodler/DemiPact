@@ -788,7 +788,6 @@
     )
     ;;[UC] & [URC]
     (defun DALOS|UC_Makeid:string (ticker:string)
-        (UTILS.DALOS|UEV_TickerName ticker)
         (UTILS.DALOS|UCC_Makeid ticker)
     )
     (defun DALOS|URC_Transferability:bool (sender:string receiver:string method:bool)

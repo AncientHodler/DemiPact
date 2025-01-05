@@ -223,6 +223,13 @@
             [true false false true false false]     ;;can pause
         )
     )
+    ;;P|DalosLiquidKadena^Ouroboros^DalosWrappedKadena
+    ;;S|DalosLiquidKadena-Ouroboros-DalosWrappedKadena
+    ;;P|DLK-OURO-DWK|LP
+    ;;S|DLK-OURO-DWK|LP
+
+    ;;S|DLK-abcde|DWK-abcde
+    ;;
     (defun A_Step012 ()
         (let
             (

@@ -47,92 +47,76 @@
     )
     (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
-    (defun SWP|X_Issue:string (account:string token-a:string token-b:string token-lp:string a-init:decimal b-init:decimal fee-lp:decimal)
-        (SWP.SWP|X_InsertNewSwapPair account token-a token-b token-lp a-init b-init fee-lp)
-        (BASIS.DPTF-DPMF|C_DeployAccount token-lp account true)
-        (BASIS.DPTF-DPMF|C_DeployAccount token-b SWP.SWP|SC_NAME true)
-        (BASIS.DPTF-DPMF|C_DeployAccount token-lp SWP.SWP|SC_NAME true)
-        (concat [token-a UTILS.BAR token-b])
-    )
+
     
-    (defcap SWPM|ISSUE (account:string token-a:string token-b:string fee-lp:decimal)
+    (defun SWPM|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
+        (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp amp)
+        (BASIS.DPTF-DPMF|C_DeployAccount token-lp account true)
+        (BASIS.DPTF-DPMF|C_DeployAccount token-lp SWP.SWP|SC_NAME true)
+        (map
+            (lambda
+                (id:string)
+                (BASIS.DPTF-DPMF|C_DeployAccount id SWP.SWP|SC_NAME true)
+            )
+            (drop 1 (SWP.SWP|UC_ExtractTokens pool-tokens))
+        )
+        (SWP.SWP|UC_Swpair pool-tokens amp)
+    )
+    (defcap SWPM|ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
         (let*
             (
+                (l:integer (length pool-tokens))
                 (principals:[string] (SWP.SWP|UR_Principals))
-                (iz-principal:bool (contains token-a principals))
+                (token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
+                (iz-principal:bool (contains (at 0 token-ids) principals))
             )
             (enforce iz-principal "Token-A is not a principal Token")
-            (BASIS.DPTF-DPMF|CAP_Owner token-b true)
+            (enforce (and (>= l 2) (<= l 7)) "A min of 2 and a max of 7 Tokens can be used to create a Swap Pair")
             (SWP.SWP|UEV_PoolFee fee-lp)
-            (SWP.SWP|UEV_New token-a token-b)
+            (map
+                (lambda
+                    (id:string)
+                    (BASIS.DPTF-DPMF|CAP_Owner id true)
+                )
+                (drop 1 token-ids)
+            )
+            (SWP.SWP|UEV_New pool-tokens amp)
             (compose-capability (P|SWPM|CALLER))
         )
     )
-    (defun SWPM|C_Issue:string 
-        (
-            patron:string 
-            account:string 
-            token-a:string 
-            token-b:string 
-            token-a-amount:decimal
-            token-b-amount:decimal
-            fee-lp:decimal
-        )
-        (with-capability (SWPM|ISSUE account token-a token-b fee-lp)
+    (defun SWPM|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
+        (SWPM|C_IssueStable patron account pool-tokens fee-lp -1.0)
+    )
+    (defun SWPM|C_IssueStable:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+        (with-capability (SWPM|ISSUE account pool-tokens fee-lp amp)
             (let*
                 (
                     (kda-dptf-cost:decimal (DALOS.DALOS|UR_UsagePrice "dptf"))
                     (kda-swp-cost:decimal (DALOS.DALOS|UR_UsagePrice "swp"))
                     (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
                     (gas-swp-cost:decimal (DALOS.DALOS|UR_UsagePrice "ignis|swp-issue"))
-                    
-                    (tad:integer (BASIS.DPTF-DPMF|UR_Decimals token-a true))
-                    (tbd:integer (BASIS.DPTF-DPMF|UR_Decimals token-b true))
-                    (token-lp-decimal:integer (if (> tad tbd) tad tbd))
-
-                    (token-a-name:string (BASIS.DPTF-DPMF|UR_Name token-a true))
-                    (token-b-name:string (BASIS.DPTF-DPMF|UR_Name token-b true))
-                    (token-a-ticker:string (BASIS.DPTF-DPMF|UR_Ticker token-a true))
-                    (token-b-ticker:string (BASIS.DPTF-DPMF|UR_Ticker token-b true))
-
-                    (s1:string "Swap")
-                    (s2:string "SW")
-                    (l1:integer (floor (/ (dec (- UTILS.MAX_TOKEN_NAME_LENGTH (length s1))) 2.0)))
-                    (l2:integer (floor (/ (dec (- UTILS.MAX_TOKEN_TICKER_LENGTH (length s2))) 2.0)))
-
-                    (lp-name:string (concat [s1 (take l1 token-a-name) (take l1 token-b-name)]))
-                    (lp-ticker:string (concat [s2 (take l2 token-a-ticker) (take l2 token-b-ticker)]))
-                    (dptf-l:[string]
-                        (BASIS.DPTF|C_IssueFree
-                            patron
-                            account
-                            [lp-name]
-                            [lp-ticker]
-                            [token-lp-decimal]
-                            [false]
-                            [false]
-                            [true]
-                            [false]
-                            [false]
-                            [false]
-                        )
-                    )
-                    (token-lp:string (at 0 dptf-l))
-                    (swpair:string (SWP|X_Issue account token-a token-b token-lp token-a-amount token-b-amount fee-lp))
-                    (bex:bool (BASIS.DPTF|UR_AccountRoleFeeExemption token-b SWP.SWP|SC_NAME))
+                    (lp-name-ticker:[string] (SWP.SWP|UC_LP pool-tokens amp))
+                    (token-lp:string (BASIS.DPTF|C_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
+                    (swpair:string (SWPM|X_Issue account pool-tokens token-lp fee-lp amp))
+                    (pool-token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
+                    (pool-token-amounts:[decimal] (SWP.SWP|UC_ExtractTokenSupplies pool-tokens))
+                    (last-ids:[string] (drop 1 pool-token-ids))
                 )
-                ;;Burn and Mint Role for <token-lp> and FeeEx Role for token-b to SWP.SWP|SC_NAME
+                ;;Burn and Mint Role for <token-lp> and FeeEx Role for every token except for first to SWP.SWP|SC_NAME
                 (ATSI.DPTF-DPMF|C_ToggleBurnRole patron token-lp SWP.SWP|SC_NAME true true)
                 (ATSI.DPTF|C_ToggleMintRole patron token-lp SWP.SWP|SC_NAME true)
-                (if (not bex)
-                    (ATSI.DPTF|C_ToggleFeeExemptionRole patron token-b SWP.SWP|SC_NAME true)
-                    true
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (not (BASIS.DPTF|UR_AccountRoleFeeExemption (at idx last-ids) SWP.SWP|SC_NAME))
+                            (ATSI.DPTF|C_ToggleFeeExemptionRole patron (at idx last-ids) SWP.SWP|SC_NAME true)
+                            true
+                        )
+                    )
+                    (enumerate 0 (- (length pool-tokens) 2))
                 )
-                ;;Transfer Token-A and Token-B to SWP.SWP|SC_NAME and get 10 million Token-LP in return, minted in origin mode.
-                (TFT.DPTF|C_Transfer patron token-a account SWP.SWP|SC_NAME token-a-amount true)
-                (TFT.DPTF|C_Transfer patron token-b account SWP.SWP|SC_NAME token-b-amount true)
-                (SWP.SWP|X_UpdateSupply swpair token-a-amount true)
-                (SWP.SWP|X_UpdateSupply swpair token-b-amount false)
+                ;;Transfer All Tokens to SWP.SWP|SC_NAME and get 10 million Token-LP in return, minted in origin mode.
+                (TFT.DPTF|C_MultiTransfer patron pool-token-ids account SWP.SWP|SC_NAME pool-token-amounts true)
                 (BASIS.DPTF|C_Mint patron token-lp SWP.SWP|SC_NAME 10000000.0 true)
                 (TFT.DPTF|C_Transfer patron token-lp SWP.SWP|SC_NAME account 10000000.0 true)
                 ;;Collect IGNIS for Operation

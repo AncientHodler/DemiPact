@@ -1582,11 +1582,12 @@
         (let*
             (
                 (l1:integer (length name))
+                (tl:[bool] (make-list l1 false))
                 (tf-cost:decimal (DALOS.DALOS|UR_UsagePrice "dptf"))
                 (kda-costs:decimal (* (dec l1) tf-cost))
                 (issued-ids:[string]
                     (with-capability (SECURE)
-                        (DPTF|C_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+                        (DPTF|C_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause tl)
                     )
                 )
             )
@@ -1594,14 +1595,14 @@
             issued-ids
         )
     )
-    (defun DPTF|C_IssueFree:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (enforce-one
-            "DPTF Issue not permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (C_ReadPolicy "SWPM|Caller"))
-            ]
+    (defun DPTF|C_IssueLP:string (patron:string account:string name:string ticker:string)
+        (enforce-guard (C_ReadPolicy "SWPM|Caller"))
+        (with-capability (SECURE)
+            (at 0 (DPTF|C_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
         )
+    )
+    (defun DPTF|C_IssueFree:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] iz-lp:[bool])
+        (require-capability (SECURE))
         (with-capability (DPTF|ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
             (let*
                 (
@@ -1625,6 +1626,7 @@
                                                 (at index can-freeze)
                                                 (at index can-wipe) 
                                                 (at index can-pause)
+                                                (at index iz-lp)
                                             )
                                         )
                                     )
@@ -2068,10 +2070,23 @@
             ,"can-pause"                        : can-pause}
         )
     )
-    (defun DPTF|X_Issue:string (account:string name:string ticker:string decimals:integer can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool)
+    (defun DPTF|X_Issue:string 
+        (
+            account:string 
+            name:string 
+            ticker:string 
+            decimals:integer 
+            can-change-owner:bool 
+            can-upgrade:bool 
+            can-add-special-role:bool 
+            can-freeze:bool 
+            can-wipe:bool 
+            can-pause:bool 
+            iz-lp:bool
+        )
         (UTILS.DALOS|UEV_Decimals decimals)
-        (UTILS.DALOS|UEV_TokenName name)
-        (UTILS.DALOS|UEV_TickerName ticker)
+        (UTILS.DALOS|UEV_NameOrTicker name true iz-lp)
+        (UTILS.DALOS|UEV_NameOrTicker ticker false iz-lp)
         (require-capability (SECURE))
         (insert DPTF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
                 {"branding"             : DALOS.BRANDING|DEFAULT
@@ -2744,8 +2759,8 @@
             can-transfer-nft-create-role:bool
         )
         (UTILS.DALOS|UEV_Decimals decimals)
-        (UTILS.DALOS|UEV_TokenName name)
-        (UTILS.DALOS|UEV_TickerName ticker)
+        (UTILS.DALOS|UEV_NameOrTicker name true false)
+        (UTILS.DALOS|UEV_NameOrTicker ticker false false)
         (require-capability (SECURE))
         (insert DPMF|PropertiesTable (DALOS.DALOS|UC_Makeid ticker)
             {"branding"             : DALOS.BRANDING|DEFAULT

@@ -14,10 +14,24 @@
     (defcap COMPOSE ()
         true
     )
-
+    (defcap SECURE ()
+        true
+    )
     (defconst G-MD_SWP (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
     (defconst G-SC_SWP (keyset-ref-guard SWP|SC_KEY))
     (defconst SWP|INFO "SwapperInformation")
+    (defconst P2 "ProductWithTwo")
+    (defconst P3 "ProductWithThree")
+    (defconst P4 "ProductWithFour")
+    (defconst P5 "ProductWithFive")
+    (defconst P6 "ProductWithSix")
+    (defconst P7 "ProductWithSeven")
+    (defconst S2 "StableWithTwo")
+    (defconst S3 "StableWithThree")
+    (defconst S4 "StableWithFour")
+    (defconst S5 "StableWithFive")
+    (defconst S6 "StableWithSix")
+    (defconst S7 "StableWithSeven")
     ;;Smart Account Parameters
     (defconst SWP|SC_KEY
         (+ UTILS.NS_USE ".dh_sc_swapper-keyset")
@@ -62,6 +76,7 @@
         principals:[string]
         liquid-boost:bool
     )
+    
     (defschema SWP|Schema
         @doc "Key = <token-a-id> + UTILS.BAR + <token-b-id>"
         owner-konto:string
@@ -69,15 +84,10 @@
         can-add:bool
         can-swap:bool
 
-        token-a:string
-        token-b:string
+        genesis-ratio:[object{SWP|PoolTokens}]
+        pool-tokens:[object{SWP|PoolTokens}]
         token-lp:string
         token-lps:[string]
-
-        a-init:decimal
-        b-init:decimal
-        token-a-supply:decimal
-        token-b-supply:decimal
 
         fee-lp:decimal
         fee-special:decimal
@@ -87,6 +97,11 @@
 
         special:bool
         governor:guard
+        amplifier:decimal
+    )
+    (defschema SWP|PoolTokens
+        token-id:string
+        token-supply:decimal
     )
     (defschema SWP|FeeSplit
         target:string
@@ -96,8 +111,14 @@
         { "target": UTILS.BAR
         , "value": 1.0 }
     )
+    (defschema SWP|PoolsSchema
+        pools:[string]
+    )
+    ;;
     (deftable SWP|Properties:{SWP|PropertiesSchema})
     (deftable SWP|Pairs:{SWP|Schema})
+    (deftable SWP|Pools:{SWP|PoolsSchema})
+    
     ;;
     (defun SWP|UR_Principals:[string] ()
         (at "principals" (read SWP|Properties SWP|INFO ["principals"]))
@@ -105,7 +126,7 @@
     (defun SWP|UR_LiquidBoost:bool ()
         (at "liquid-boost" (read SWP|Properties SWP|INFO ["liquid-boost"]))
     )
-    ;;;;
+    ;;
     (defun SWP|UR_OwnerKonto:string (swpair:string)
         (at "owner-konto" (read SWP|Pairs swpair ["owner-konto"]))
     )
@@ -119,11 +140,25 @@
         (at "can-swap" (read SWP|Pairs swpair ["can-swap"]))
     )
     ;;
-    (defun SWP|UR_TokenA:string (swpair:string)
-        (at "token-a" (read SWP|Pairs swpair ["token-a"]))
+    (defun SWP|UR_PoolTokenObject:[object{SWP|PoolTokens}] (swpair:string)
+        (at "pool-tokens" (read SWP|Pairs swpair ["pool-tokens"]))
     )
-    (defun SWP|UR_TokenB:string (swpair:string)
-        (at "token-b" (read SWP|Pairs swpair ["token-b"]))
+    (defun SWP|UR_PoolTokens:[string] (swpair:string)
+        (SWP|UC_ExtractTokens (SWP|UR_PoolTokenObject swpair))
+    )
+    (defun SWP|UR_PoolTokenSupplies:[decimal] (swpair:string)
+        (SWP|UC_ExtractTokenSupplies (SWP|UR_PoolTokenObject swpair))
+    )
+    (defun SWP|UR_PoolTokenSupply (swpair:string id:string)
+        (let*
+            (
+                (pool-tokens:[string] (SWP|UR_PoolTokens swpair))
+                (pool-token-supplies:[string] (SWP|UR_PoolTokenSupplies swpair))
+                (iz-on-pool:bool (contains id pool-tokens))
+            )
+            (enforce iz-on-pool (format "Token {} is not part of Pool {}" [id swpair]))
+            (at (at 0 (UTILS.LIST|UC_Search pool-tokens id)) pool-token-supplies)
+        )
     )
     (defun SWP|UR_TokenLP:string (swpair:string)
         (at "token-lp" (read SWP|Pairs swpair ["token-lp"]))
@@ -132,12 +167,6 @@
         (at "token-lps" (read SWP|Pairs swpair ["token-lps"]))
     )
     ;;
-    (defun SWP|UR_TokenAS:decimal (swpair:string)
-        (at "token-a-supply" (read SWP|Pairs swpair ["token-a-supply"]))
-    )
-    (defun SWP|UR_TokenBS:decimal (swpair:string)
-        (at "token-b-supply" (read SWP|Pairs swpair ["token-b-supply"]))
-    )
     (defun SWP|UR_AInit:decimal (swpair:string)
         (at "a-init" (read SWP|Pairs swpair ["a-init"]))
     )
@@ -167,6 +196,13 @@
     (defun SWP|UR_Governor:guard (swpair:string)
         (at "governor" (read SWP|Pairs swpair ["governor"]))
     )
+    (defun SWP|UR_Amplifier:decimal (swpair:string)
+        (at "amplifier" (read SWP|Pairs swpair ["amplifier"]))
+    )
+    ;;
+    (defun SWP|UR_Pools:[string] (pool-category:string)
+        (at "pools" (read SWP|Pools pool-category ["pools"]))
+    )
     ;;[C-Simple]
     (defun SWP|UEV_StringIsOnList (item:string item-lst:[string])
         (let
@@ -177,17 +213,7 @@
             (enforce iz-present (format "String {} is not present in list {}." [item item-lst]))
         )
     )
-    (defun SWP|UEV_New (token-a:string token-b:string)
-        (let*
-            (
-                (a-with-b:string (concat [token-a UTILS.BAR token-b]))
-                (b-with-a:string (concat [token-b UTILS.BAR token-a]))
-                (t1:bool (SWP|UEV_CheckID a-with-b))
-                (t2:bool (SWP|UEV_CheckID b-with-a))
-            )
-            (enforce (not (or t1 t2)) (format "New Swap Pair with {} and {} cannot be created" [token-a token-b]))
-        )
-    )
+    ;;need remake
     (defun SWP|UEV_CheckID:bool (swpair:string)
         (with-default-read SWP|Pairs swpair
             { "unlocks" : -1 }
@@ -239,6 +265,26 @@
         (enforce (and (>= fee 0.0001) (<= fee 999.9999)) (format "SWP Pool Fee amount of {} is invalid size wise" [fee]))
     )
     ;;[UC]
+    (defun SWP|UC_ExtractTokens:[string] (input:[object{SWP|PoolTokens}])
+        (fold
+            (lambda
+                (acc:[string] item:object{SWP|PoolTokens})
+                (UTILS.LIST|UC_AppendLast acc (at "token-id" item))
+            )            
+            []
+            input
+        )
+    )
+    (defun SWP|UC_ExtractTokenSupplies:[decimal] (input:[object{SWP|PoolTokens}])
+        (fold
+            (lambda
+                (acc:[decimal] item:object{SWP|PoolTokens})
+                (UTILS.LIST|UC_AppendLast acc (at "token-supply" item))
+            )            
+            []
+            input
+        )
+    )
     (defun SWP|UC_PoolTotalFee (swpair:string)
         (let*
             (
@@ -254,33 +300,9 @@
             )
         )
     )
+    ;;needs rework
     (defun SWP|UC_Swap:decimal (swpair:string input-amount:decimal a-to-b-or-b-to-a:bool)
-        (let*
-            (
-                (a-id:string (SWP|UR_TokenA swpair))
-                (b-id:string (SWP|UR_TokenB swpair))
-                (a-dec:integer (BASIS.DPTF-DPMF|UR_Decimals a-id true))
-                (b-dec:integer (BASIS.DPTF-DPMF|UR_Decimals b-id true))
-                (r-a:decimal (SWP|UR_TokenAS swpair))
-                (r-b:decimal (SWP|UR_TokenBS swpair))
-                (axb:decimal (* r-a r-b))
-
-                (f1-a:decimal (+ r-a input-amount))
-                (f1-b:decimal (floor (/ axb f1-a) b-dec))
-                (f2-b:decimal (+ r-b input-amount))
-                (f2-a:decimal (floor (/ axb f2-b) a-dec))
-            )
-            (if a-to-b-or-b-to-a
-                (with-capability (COMPOSE)
-                    (BASIS.DPTF-DPMF|UEV_Amount a-id input-amount true)
-                    (- r-b f1-b)
-                )
-                (with-capability (COMPOSE)
-                    (BASIS.DPTF-DPMF|UEV_Amount b-id input-amount true)
-                    (- r-a f2-a)
-                )
-            )
-        )
+        true
     )
     ;;[C-Composed]
     (defcap SWP|PRINCIPAL (principal:string add-or-remove:bool)
@@ -340,18 +362,9 @@
             true
         )
     )
-    (defcap SWP|X_UPDATE-SUPPLY (swpair:string new-supply:decimal a-or-b:bool)
+    (defcap SWP|X_UPDATE-SUPPLY (swpair:string id:string new-supply:decimal)
         (SWP|UEV_id swpair)
-        (let
-            (
-                (token-a:string (SWP|UR_TokenA swpair))
-                (token-b:string (SWP|UR_TokenB swpair))
-            )
-            (if a-or-b
-                (BASIS.DPTF-DPMF|UEV_Amount token-a new-supply true)
-                (BASIS.DPTF-DPMF|UEV_Amount token-b new-supply true)
-            )
-        )
+        (BASIS.DPTF-DPMF|UEV_Amount id new-supply true)
     )
     (defcap SWP|X_UPDATE-FEE (swpair:string new-fee:decimal lp-or-special:bool)
         (let*
@@ -380,12 +393,57 @@
             )
         )
     )
+    (defcap SWP|X_UPDATE-AMPLIFIER (swpair:string new-amplifier:decimal)
+        (let
+            (
+                (current-amp:decimal (SWP|UR_Amplifier swpair))
+            )
+            (enforce (> current-amp 0.0) "Amplifier can only be updated for Stable Pools")
+            (SWP|CAP_Owner swpair)
+        )
+    )
     ;;[A]
     ;;Initialise Functions
     (defun SWP|A_Step01 ()
         (insert SWP|Properties SWP|INFO
             {"principals"           : [UTILS.BAR]
             ,"liquid-boost"         : true}
+        )
+        (insert SWP|Pools P2
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools P3
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools P4
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools P5
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools P6
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools P7
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S2
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S3
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S4
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S5
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S6
+            {"pools"                : [UTILS.BAR]}
+        )
+        (insert SWP|Pools S7
+            {"pools"                : [UTILS.BAR]}
         )
     )
     (defun SWP|A_Step02 ()
@@ -519,15 +577,22 @@
             )
         )
     )
-    (defun SWP|X_UpdateSupply (swpair:string new-supply:decimal a-or-b:bool)
+    (defun SWP|X_UpdateSupply (swpair:string id:string new-supply:decimal)
         (enforce-guard (C_ReadPolicy "SWPM|Caller"))
-        (with-capability (SWP|X_UPDATE-SUPPLY swpair new-supply a-or-b)
-            (if a-or-b
-                (update SWP|Pairs swpair
-                    {"token-a-supply"                 : new-supply}
+        (with-capability (SWP|X_UPDATE-SUPPLY swpair id new-supply)
+            (let*
+                (
+                    (current-pool-tokens:[object{SWP|PoolTokens}] (SWP|UR_PoolTokens swpair))
+                    (pool-tokens:[string] (SWP|UC_ExtractTokens current-pool-tokens))
+                    (pool-token-supplies:[decimal] (SWP|UC_ExtractTokenSupplies current-pool-tokens))
+                    (id-pos:integer (at 0 (UTILS.LIST|UC_Search pool-tokens id)))
+                    (iz-on-pool:bool (contains id pool-tokens))
+                    (new:object{SWP|PoolTokens} { "token-id" : id, "token-supply" : new-supply})
+                    (new-pool-tokens:[object{SWP|PoolTokens}] (UTILS.LIST|UC_ReplaceAt current-pool-tokens id-pos new))
                 )
+                (enforce iz-on-pool (format "Token {} is not part of Pool {}" [id swpair]))
                 (update SWP|Pairs swpair
-                    {"token-b-supply"                 : new-supply}
+                    {"pool-tokens" : new-pool-tokens}
                 )
             )
         )
@@ -573,37 +638,447 @@
             )
         )
     )
-    (defun SWP|X_InsertNewSwapPair (account:string token-a:string token-b:string token-lp:string a-init:decimal b-init:decimal fee-lp:decimal)
+    (defun SWP|X_UpdateAmplifier (swpair:string new-amplifier:decimal)
+        ;;(enforce-guard (C_ReadPolicy "SWPM|Caller"))
+        (with-capability (SWP|X_UPDATE-AMPLIFIER swpair new-amplifier)
+            (update SWP|Pairs swpair
+                {"amplifier" : new-amplifier}
+            )
+        )
+    )
+    (defun SWP|UC_LP:[string] (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (if (= amp -1.0)
+            (SWP|UC_LpIDs pool-tokens true)
+            (SWP|UC_LpIDs pool-tokens false)
+        )
+    )
+    (defun SWP|UC_LpIDs:[string] (pool-tokens:[object{SWP|PoolTokens}] p-or-s:bool)
+        (let*
+            (
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+                (prefix:string (if p-or-s "P" "S"))
+                (u:string UTILS.BAR)
+                (minus:string "-")
+                (caron:string "^")
+                (lp-name-elements:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (if (!= idx (- (length pool-tokens) 1))
+                                (UTILS.LIST|UC_AppendLast acc (+ (BASIS.DPTF-DPMF|UR_Name (at idx token-ids) true) caron))
+                                (UTILS.LIST|UC_AppendLast acc (BASIS.DPTF-DPMF|UR_Name (at idx token-ids) true))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length pool-tokens) 1))
+                    )
+                )
+                (lp-ticker-elements:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (if (!= idx (- (length pool-tokens) 1))
+                                (UTILS.LIST|UC_AppendLast acc (+ (BASIS.DPTF-DPMF|UR_Ticker (at idx token-ids) true) minus))
+                                (UTILS.LIST|UC_AppendLast acc (BASIS.DPTF-DPMF|UR_Ticker (at idx token-ids) true))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length pool-tokens) 1))
+                    )
+                )
+                (lp-name:string (concat [prefix u (concat lp-name-elements)]))
+                (lp-ticker:string (concat [prefix u (concat lp-ticker-elements) u "LP"]))
+            )
+            [lp-name lp-ticker]
+        )
+    )
+    (defun SWP|UC_Swpair:string (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (if (= amp -1.0)
+            (SWP|UC_PoolID pool-tokens true)
+            (SWP|UC_PoolID pool-tokens false)
+        )
+    )
+    (defun SWP|UC_PoolID:string (pool-tokens:[object{SWP|PoolTokens}] p-or-s:bool)
+        (let*
+            (
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+                (prefix:string (if p-or-s "P" "S"))
+                (u:string UTILS.BAR)
+                (swpair-elements:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (if (!= idx (- (length pool-tokens) 1))
+                                (UTILS.LIST|UC_AppendLast acc (+ (at idx token-ids) u))
+                                (UTILS.LIST|UC_AppendLast acc (at idx token-ids))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length pool-tokens) 1))
+                    )
+                )
+            )
+            (concat [prefix u (concat swpair-elements)])
+        )
+    )
+    (defun SWP|UC_Variables (n:integer what:bool)
+        (let
+            (
+                (p2:[string] (SWP|UR_Pools P2))
+                (p3:[string] (SWP|UR_Pools P3))
+                (p4:[string] (SWP|UR_Pools P4))
+                (p5:[string] (SWP|UR_Pools P5))
+                (p6:[string] (SWP|UR_Pools P6))
+                (p7:[string] (SWP|UR_Pools P7))
+                (s2:[string] (SWP|UR_Pools S2))
+                (s3:[string] (SWP|UR_Pools S3))
+                (s4:[string] (SWP|UR_Pools S4))
+                (s5:[string] (SWP|UR_Pools S5))
+                (s6:[string] (SWP|UR_Pools S6))
+                (s7:[string] (SWP|UR_Pools S7))
+            )
+            (if (= n 2)
+                (if what
+                    [p2 P2]
+                    [s2 S2]
+                )
+                (if (= n 3)
+                    (if what
+                        [p3 P3]
+                        [s3 S3]
+                    )
+                    (if (= n 4)
+                        (if what
+                            [p4 P4]
+                            [s4 S4]
+                        )
+                        (if (= n 5)
+                            (if what
+                                [p5 P5]
+                                [s5 S5]
+                            )
+                            (if (= n 6)
+                                (if what
+                                    [p6 P6]
+                                    [s6 S6]
+                                )
+                                (if what
+                                    [p7 P7]
+                                    [s7 S7]
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (defun SWP|X_SavePool (n:integer what:bool swpair:string)
+        (require-capability (SECURE))
+        (let*
+            (
+                (u:string UTILS.BAR)
+                (vars (SWP|UC_Variables n what))
+                (sp-n:[string] (at 0 vars))
+                (SPN:string (at 1 vars))
+            )
+            (if (= sp-n [u])
+                (update SWP|Pools SPN
+                    {"pools" : [swpair]}
+                )
+                (update SWP|Pools SPN
+                    {"pools" : (UTILS.LIST|UC_AppendLast sp-n swpair)}
+                )
+            )
+        )
+    )
+    (defun SWP|X_InsertNew (account:string pool-tokens:[object{SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
         (enforce-guard (C_ReadPolicy "SWPM|Caller"))
-        (insert SWP|Pairs (concat [token-a UTILS.BAR token-b])
-            {"owner-konto"                          : account
-            ,"can-change-owner"                     : true
-            ,"can-add"                              : false
-            ,"can-swap"                             : false
+        (let
+            (
+                (n:integer (length pool-tokens))
+                (what:bool (if (= amp -1.0) true false))
+                (swpair:string (SWP|UC_Swpair pool-tokens amp))
+            )
+            (with-capability (SECURE)
+                (SWP|X_SavePool n what swpair)
+            )
+            (insert SWP|Pairs swpair
+                {"owner-konto"                          : account
+                ,"can-change-owner"                     : true
+                ,"can-add"                              : false
+                ,"can-swap"                             : false
 
-            ,"token-a"                              : token-a
-            ,"token-b"                              : token-b
-            ,"token-lp"                             : token-lp
-            ,"token-lps"                            : [UTILS.BAR]
+                ,"genesis-ratio"                        : pool-tokens
+                ,"pool-tokens"                          : pool-tokens
+                ,"token-lp"                             : token-lp
+                ,"token-lps"                            : [UTILS.BAR]
 
-            ,"a-init"                               : a-init
-            ,"b-init"                               : b-init
-            ,"token-a-supply"                       : 0.0
-            ,"token-b-supply"                       : 0.0
+                ,"fee-lp"                               : fee-lp
+                ,"fee-special"                          : 0.0
+                ,"fee-special-targets"                  : [SWP|EMPTY-TARGET]
+                ,"fee-lock"                             : false
+                ,"unlocks"                              : 0
 
-            ,"fee-lp"                               : fee-lp
-            ,"fee-special"                          : 0.0
-            ,"fee-special-targets"                  : [SWP|EMPTY-TARGET]
-            ,"fee-lock"                             : false
-            ,"unlocks"                              : 0
+                ,"special"                              : false
+                ,"governor"                             : (DALOS.DALOS|UR_AccountGuard account)
+                ,"amplifier"                            : amp
+                }
+            )
+        )
+    )
+    ;;
+    (defun SWP|UEV_New (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let
+            (
+                (n:integer (length pool-tokens))
+            )
+            (if (= n 2)
+                (SWP|UEV_CheckTwo pool-tokens amp)
+                (if (= n 3)
+                    (SWP|UEV_CheckThree pool-tokens amp)
+                    (if (= n 4)
+                        (enforce (not (SWP|UEV_CheckFour pool-tokens amp)) "Pool already exists for given Tokens")
+                        (if (= n 5)
+                            (enforce (not (SWP|UEV_CheckFive pool-tokens amp)) "Pool already exists for given Tokens")
+                            (if (= n 6)
+                                (enforce (not (SWP|UEV_CheckSix pool-tokens amp)) "Pool already exists for given Tokens")
+                                (enforce (not (SWP|UEV_CheckSeven pool-tokens amp)) "Pool already exists for given Tokens")
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (defun SWP|UEV_CheckTwo (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let*
+            (
+                (e0:object{SWP|PoolTokens} (at 0 pool-tokens))
+                (e1:object{SWP|PoolTokens} (at 1 pool-tokens))
+                (swp1:string (SWP|UC_Swpair pool-tokens amp))
+                (swp2:string (SWP|UC_Swpair [e1 e0] amp))
+                (t1:bool (SWP|UEV_CheckID swp1))
+                (t2:bool (SWP|UEV_CheckID swp2))
+            )
+            (enforce (not t1) (format "Pair {} must not exist" [swp1]))
+            (enforce (not t2) (format "Pair {} must not exist" [swp2]))
+        )
+    )
+    (defun SWP|UEV_CheckThree (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let*
+            (
+                (e0:object{SWP|PoolTokens} (at 0 pool-tokens))
+                (e1:object{SWP|PoolTokens} (at 1 pool-tokens))
+                (e2:object{SWP|PoolTokens} (at 2 pool-tokens))
 
-            ,"special"                              : false
-            ,"governor"                             : (DALOS.DALOS|UR_AccountGuard account)
-            }
+                (swp1:string (SWP|UC_Swpair pool-tokens amp))
+                (swp2:string (SWP|UC_Swpair [e0 e2 e1] amp))
+                (swp3:string (SWP|UC_Swpair [e1 e0 e2] amp))
+                (swp4:string (SWP|UC_Swpair [e1 e2 e0] amp))
+                (swp5:string (SWP|UC_Swpair [e2 e0 e1] amp))
+                (swp6:string (SWP|UC_Swpair [e2 e1 e0] amp))
+
+                (t1:bool (SWP|UEV_CheckID swp1))
+                (t2:bool (SWP|UEV_CheckID swp2))
+                (t3:bool (SWP|UEV_CheckID swp3))
+                (t4:bool (SWP|UEV_CheckID swp4))
+                (t5:bool (SWP|UEV_CheckID swp5))
+                (t6:bool (SWP|UEV_CheckID swp6))
+
+                (swpl:[string] [swp1 swp2 swp3 swp4 swp5 swp6])
+                (tl:[bool] [t1 t2 t3 t4 t5 t6])
+            )
+            (map
+                (lambda
+                    (idx:integer)
+                    (enforce (not (at idx tl)) (format "Pair {} must not exist" [(at idx swpl)]))
+                )
+                (enumerate 0 5)
+            )
+        )
+    )
+    (defun SWP|UEV_CheckFour:bool (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let
+            (
+                (present-pools:[string] (if (< amp 0.0) (SWP|UR_Pools P4) (SWP|UR_Pools S4)))
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+            )
+            (SWP|UEV_CheckAgainstMass token-ids present-pools)
+        )
+    )
+    (defun SWP|UEV_CheckFive:bool (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let
+            (
+                (present-pools:[string] (if (< amp 0.0) (SWP|UR_Pools P5) (SWP|UR_Pools S5)))
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+            )
+            (SWP|UEV_CheckAgainstMass token-ids present-pools)
+        )
+    )
+    (defun SWP|UEV_CheckSix:bool (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let
+            (
+                (present-pools:[string] (if (< amp 0.0) (SWP|UR_Pools P7) (SWP|UR_Pools S7)))
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+            )
+            (SWP|UEV_CheckAgainstMass token-ids present-pools)
+        )
+    )
+    (defun SWP|UEV_CheckSeven:bool (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+        (let
+            (
+                (present-pools:[string] (if (< amp 0.0) (SWP|UR_Pools P7) (SWP|UR_Pools S7)))
+                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+            )
+            (SWP|UEV_CheckAgainstMass token-ids present-pools)
+        )
+    )
+    ;;
+    (defun SWP|UEV_CheckAgainstMass:bool (token-ids:[string] present-pools:[string])
+        (fold
+            (lambda
+                (acc:bool idx:integer)
+                (or
+                    acc
+                    (SWP|UEV_CheckAgainst token-ids (SWP|UC_TokenIDs (at idx present-pools)))
+                )
+            )
+            true
+            (enumerate 0 (- (length present-pools) 1))
+        )
+    )
+    (defun SWP|UC_TokenIDs:[string] (swpair:string)
+        (drop 1 (UTILS.LIST|UC_SplitString UTILS.BAR swpair))
+    )
+    (defun SWP|UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string])
+        (fold
+            (lambda
+                (acc:bool idx:integer)
+                (and acc (contains (at idx token-ids) pool-tokens))
+            )
+            true
+            (enumerate 0 (- (length token-ids) 1))
+        )
+
+    )
+    ;;
+    (defun SSWP|UCC_DNext (D:decimal A:decimal X:[decimal])
+        @doc "Computes Dnext: \
+        \ n = (length X) \
+        \ S=x1+x2+x3+... \
+        \ P=x1*x2*x3*... \
+        \ Dp = (D^(n+1))/(P*n^n) \
+        \ Numerator = (A*n^n*S + Dp*n)*D \
+        \ Denominator = (A*n^n-1)*D + (n+1)*Dp \
+        \ DNext = Numerator / Denominator"
+        ;;
+        (let*
+            (
+                (prec:integer 24)
+                (n:decimal (dec (length X)))
+                (S:decimal (fold (+) 0.0 X))
+                (P:decimal (floor (fold (*) 1.0 X) prec))
+                (n1:decimal (+ 1.0 n))
+                (nn:decimal (^ n n))
+                (Dp:decimal (floor (/ (^ D n1) (* nn P)) prec))
+
+                (v1:decimal (floor (fold (*) 1.0 [A nn S]) prec))
+                (v2:decimal (* Dp n))
+                (v3:decimal (+ v1 v2))
+                (numerator:decimal (floor (* v3 D) prec))
+
+                (v4:decimal (- (* A nn) 1.0))
+                (v5:decimal (* v4 D))
+                (v6:decimal (floor (* n1 Dp) prec))
+                (denominator:decimal (+ v5 v6))
+            )
+            (floor (/ numerator denominator) prec)
+        )
+    )
+    (defun SSWP|UCC_ComputeD:decimal (A:decimal X:[decimal])
+        (let*
+            (
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (d-values:[decimal] idx:integer)
+                            (let*
+                                (
+                                    (prev-d:decimal (at idx d-values))
+                                    (d-value:decimal (SSWP|UCC_DNext prev-d A X))
+                                )
+                                (UTILS.LIST|UC_AppendLast d-values d-value)
+                            )
+                        )
+                        [(fold (+) 0.0 X)]
+                        (enumerate 0 5)
+                    )
+                )
+            )
+            (UTILS.LIST|UC_LastListElement output-lst)
+        )
+    )
+    (defun SSWP|UCC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer)
+        @doc "Computes Y such that the invariant remains satisfied \
+        \ Sp = x1+x2+x3+ ... without the term to be computed, containing the modified input token amount \
+        \ Pp = x1*x2*x3* ... without the term to be computed, containing the modified input token amount \
+        \ c = (D^(n+1))/(n^n*Pp*A*n^n) \
+        \ b = Sp + (D/A*n^n) \
+        \ Numerator = y^2 + c \
+        \ Denominator = 2*y + b - D \
+        \ YNext = Numerator / Denominator "
+        (let*
+            (
+                (prec:integer 24)
+                (n:decimal (dec (length X)))
+                (XXX:[decimal] (UTILS.LIST|UC_RemoveItem X (at op X)))
+                (Sp:decimal (fold (+) 0.0 XXX))
+                (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
+                (n1:decimal (+ 1.0 n))
+                (nn:decimal (^ n n))
+                (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
+                (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
+                (Ysq:decimal (^ Y 2.0))
+                (numerator:decimal (floor (+ Ysq c) prec))
+                (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
+            )
+            (floor (/ numerator denominator) prec)
+        )
+    )
+
+    (defun SSWP|UCC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer)
+        (let*
+            (
+                (xi:decimal (at ip X))
+                (xn:decimal (+ xi input-amount))
+                (XX:[decimal] (UTILS.LIST|UC_ReplaceAt X ip xn))
+                (NewD:decimal (SSWP|UCC_ComputeD A XX))
+                (y0:decimal (+ (at op X) input-amount))
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (y-values:[decimal] idx:integer)
+                            (let*
+                                (
+                                    (prev-y:decimal (at idx y-values))
+                                    (y-value:decimal (SSWP|UCC_YNext prev-y NewD A X op))
+                                )
+                                (UTILS.LIST|UC_AppendLast y-values y-value)
+                            )
+                        )
+                        [y0]
+                        (enumerate 0 10)
+                    )
+                )
+            )
+            (- (UTILS.LIST|UC_LastListElement output-lst) (at op X))
         )
     )
 )
 
+
 (create-table PoliciesTable)
 (create-table SWP|Properties)
 (create-table SWP|Pairs)
+(create-table SWP|Pools)

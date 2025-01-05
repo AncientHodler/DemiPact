@@ -25,11 +25,22 @@
             (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
         )
     )
-    (defun SWP|C_Issue:string (patron:string account:string token-a:string token-b:string token-a-amount:decimal token-b-amount:decimal fee-lp:decimal)
+    (defun SWP|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
         (with-capability (S)
             (let
                 (
-                    (output:string (SWPM.SWPM|C_Issue patron account token-a token-b token-a-amount token-b-amount fee-lp))
+                    (output:string (SWPM.SWPM|C_IssueStandard patron account pool-tokens fee-lp))
+                )
+                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                output
+            )
+        )
+    )
+    (defun SWP|C_IssueStable:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+        (with-capability (S)
+            (let
+                (
+                    (output:string (SWPM.SWPM|C_IssueStable patron account pool-tokens fee-lp amp))
                 )
                 (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
                 output
