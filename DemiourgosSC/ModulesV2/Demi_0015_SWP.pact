@@ -149,16 +149,18 @@
     (defun SWP|UR_PoolTokenSupplies:[decimal] (swpair:string)
         (SWP|UC_ExtractTokenSupplies (SWP|UR_PoolTokenObject swpair))
     )
-    (defun SWP|UR_PoolTokenSupply (swpair:string id:string)
+    (defun SWP|UR_PoolTokenPosition:integer (swpair:string id:string)
         (let*
             (
                 (pool-tokens:[string] (SWP|UR_PoolTokens swpair))
-                (pool-token-supplies:[string] (SWP|UR_PoolTokenSupplies swpair))
                 (iz-on-pool:bool (contains id pool-tokens))
             )
             (enforce iz-on-pool (format "Token {} is not part of Pool {}" [id swpair]))
-            (at (at 0 (UTILS.LIST|UC_Search pool-tokens id)) pool-token-supplies)
+            (at 0 (UTILS.LIST|UC_Search pool-tokens id))
         )
+    )
+    (defun SWP|UR_PoolTokenSupply:decimal (swpair:string id:string)
+        (at (SWP|UR_PoolTokenPosition swpair id) (SWP|UR_PoolTokenSupplies swpair))
     )
     (defun SWP|UR_TokenLP:string (swpair:string)
         (at "token-lp" (read SWP|Pairs swpair ["token-lp"]))
@@ -213,7 +215,7 @@
             (enforce iz-present (format "String {} is not present in list {}." [item item-lst]))
         )
     )
-    ;;need remake
+    ;;
     (defun SWP|UEV_CheckID:bool (swpair:string)
         (with-default-read SWP|Pairs swpair
             { "unlocks" : -1 }
@@ -299,10 +301,6 @@
                 tf1
             )
         )
-    )
-    ;;needs rework
-    (defun SWP|UC_Swap:decimal (swpair:string input-amount:decimal a-to-b-or-b-to-a:bool)
-        true
     )
     ;;[C-Composed]
     (defcap SWP|PRINCIPAL (principal:string add-or-remove:bool)
@@ -892,7 +890,7 @@
             (map
                 (lambda
                     (idx:integer)
-                    (enforce (not (at idx tl)) (format "Pair {} must not exist" [(at idx swpl)]))
+                    (enforce (not (at idx tl)) (format "Pair {} cannot be created because Pair {} already exists" [ swp1 (at idx swpl)]))
                 )
                 (enumerate 0 5)
             )
@@ -1073,6 +1071,65 @@
                 )
             )
             (- (UTILS.LIST|UC_LastListElement output-lst) (at op X))
+        )
+    )
+
+    ;;needs rework
+    (defun SWP|UC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+        (let*
+            (
+                (p:integer (BASIS.DPTF-DPMF|UR_Decimals output-id true))
+                (l1:integer (length input-ids))
+                (l2:integer (length input-amounts))
+                (lengths:[integer] [l1 l2])
+                (pool-tokens:[string] (SWP|UR_PoolTokens swpair))
+                (pool-supplies:[decimal] (SWP|UR_PoolTokenSupplies swpair))
+                (iz-on-pool:bool (SWP|UEV_CheckAgainst input-ids pool-tokens))
+                (l3:integer (length pool-tokens))
+                (t1:bool (contains output-id input-ids))
+                (t2:bool (contains output-id pool-tokens))
+                (pool-product:decimal (floor (fold (*) 1.0 pool-supplies) 24))
+                (new-supplies:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (UTILS.LIST|UC_AppendLast 
+                                acc 
+                                (+ 
+                                    (if (contains (at idx pool-tokens) input-ids)
+                                        (at (at 0 (UTILS.LIST|UC_Search input-ids (at idx pool-tokens))) input-amounts)
+                                        0.0
+                                    )
+                                    (SWP|UR_PoolTokenSupply swpair (at idx pool-tokens))
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- l3 1))
+                    )
+                )
+            )
+            (UTILS.UTILS|UEV_EnforceUniformIntegerList lengths)
+            (enforce iz-on-pool "Input Tokens are not part of the pool")
+            (enforce t2 "OutputID is not part of Swpair Tokens")
+            (enforce (not t1) "Output-ID cannot be within the Input-IDs")
+            (enforce (and (>= l2 1) (< l2 l3)) "Incorrect amount of swap Tokens")
+            (map
+                (lambda
+                    (idx:integer)
+                    (BASIS.DPTF-DPMF|UEV_Amount (at idx input-ids) (at idx input-amounts) true)
+                )
+                (enumerate 0 (- l1 1))
+            )
+            (let*
+                (
+                    (o-id-pos:integer (SWP|UR_PoolTokenPosition swpair output-id))
+                    (new-supplies-rem:[decimal] (UTILS.LIST|UC_RemoveItemAt new-supplies o-id-pos))
+                    (new-supplies-product:decimal (floor (fold (*) 1.0 new-supplies-rem) 24))
+                    (output:decimal (floor (/ pool-product new-supplies-product) p))
+                )
+                (- (SWP|UR_PoolTokenSupply swpair output-id) output)
+            )
         )
     )
 )
