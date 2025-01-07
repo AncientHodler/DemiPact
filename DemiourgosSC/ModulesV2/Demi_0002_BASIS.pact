@@ -1596,7 +1596,7 @@
         )
     )
     (defun DPTF|C_IssueLP:string (patron:string account:string name:string ticker:string)
-        (enforce-guard (C_ReadPolicy "SWPM|Caller"))
+        (enforce-guard (C_ReadPolicy "SWPI|Caller"))
         (with-capability (SECURE)
             (at 0 (DPTF|C_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
         )

@@ -13,25 +13,19 @@
         true
     )
     (defun DefinePolicies ()
-        (SWPM.A_AddPolicy
+        (SWPI.A_AddPolicy
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
     )
     ;;
-    (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool)
-        (with-capability (S)
-            (SWPM.SWPM|C_ToggleFeeLock patron swpair toggle)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
-        )
-    )
     (defun SWP|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
         (with-capability (S)
             (let
                 (
-                    (output:string (SWPM.SWPM|C_IssueStandard patron account pool-tokens fee-lp))
+                    (output:string (SWPI.SWPI|C_IssueStandard patron account pool-tokens fee-lp))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )
@@ -40,9 +34,9 @@
         (with-capability (S)
             (let
                 (
-                    (output:string (SWPM.SWPM|C_IssueStable patron account pool-tokens fee-lp amp))
+                    (output:string (SWPI.SWPI|C_IssueStable patron account pool-tokens fee-lp amp))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )

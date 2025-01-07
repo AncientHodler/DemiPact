@@ -101,6 +101,7 @@
                     (C_ReadPolicy "ATSC|RemoteAutostakeGovernor")
                     (C_ReadPolicy "ATSH|RemoteAutostakeGovernor")
                     (C_ReadPolicy "ATSM|RemoteAutostakeGovernor")
+                    (C_ReadPolicy "ATSF|RemoteAutostakeGovernor")
                 ]
             )
         )
@@ -1356,6 +1357,7 @@
                 (enforce-guard (C_ReadPolicy "ATSC|UpdateROU"))
                 (enforce-guard (C_ReadPolicy "ATSH|UpdateROU"))
                 (enforce-guard (C_ReadPolicy "ATSM|UpdateROU"))
+                (enforce-guard (C_ReadPolicy "ATSF|UpdateROU"))
             ]
         )
         (let*

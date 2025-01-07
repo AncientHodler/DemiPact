@@ -101,13 +101,18 @@
 (ATSH.DefinePolicies)
 
 (ATSM.DefinePolicies)
+(ATSF.DefinePolicies)
+
 (VESTING.DefinePolicies)
+(OUROBOROS.DefinePolicies)
 
 (BRANDING.DefinePolicies)
 (SWPM.DefinePolicies)
+(SWPI.DefinePolicies)
 
 (TALOS-01.DefinePolicies)
 (TALOS-02.DefinePolicies)
+(TALOS-03.DefinePolicies)
 
 ;(DEPLOYER.DefinePolicies)  || EMPTY
 ;(LIQUID.DefinePolicies)    || EMPTY
@@ -177,7 +182,7 @@
     (LIQUID.LIQUID|SetGovernor patron)
     ;;
     (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.OUROBOROS|SC_NAME (keyset-ref-guard DEPLOYER.OUROBOROS|SC_KEY) DEPLOYER.OUROBOROS|SC_KDA-NAME patron DEPLOYER.OUROBOROS|PBL)
-    (OUROBOROS.OUROBOROS|SetGovernor patron)
+    (LIQUIDFUEL.OUROBOROS|SetGovernor patron)
     ;;
     (DALOS.DALOS|A_DeploySmartAccount DEPLOYER.SWAPPER|SC_NAME (keyset-ref-guard DEPLOYER.SWAPPER|SC_KEY) DEPLOYER.SWAPPER|SC_KDA-NAME patron DEPLOYER.SWAPPER|PBL)
     (SWP.SWP|SetGovernor patron)
@@ -185,7 +190,7 @@
 
 ;;STEP 010 - Create Autonomous Accounts
 (coin.create-account DALOS.DALOS|SC_KDA-NAME DALOS.DALOS|GUARD) 
-(coin.create-account OUROBOROS.OUROBOROS|SC_KDA-NAME OUROBOROS.OUROBOROS|GUARD) 
+(coin.create-account LIQUIDFUEL.OUROBOROS|SC_KDA-NAME LIQUIDFUEL.OUROBOROS|GUARD) 
 (coin.create-account LIQUID.LIQUID|SC_KDA-NAME LIQUID.LIQUID|GUARD)
 
 ;;STEP 011 - Create the needed initial True Fungibles
@@ -495,17 +500,27 @@
     )
 )
 
-;;STEP 028
-(SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_LiquidKadenaID) true)
-(SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_OuroborosID) true)
-
-;;STEP 029
+;;STEP 028 - Add and update LiquidKadena as Pool Principal
 (let
     (
         (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
+        (p:string (DALOS.DALOS|UR_LiquidKadenaID))
     )
-    (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_LiquidKadenaID))
-    (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_OuroborosID))
+    (SWP.SWP|A_UpdatePrincipal p true)
+    (BASIS.DPTF-DPMF|C_DeployAccount p SWP.SWP|SC_NAME true)
+    (ATSI.DPTF|C_ToggleFeeExemptionRole patron p SWP.SWP|SC_NAME true)
+)
+
+
+;;STEP 029 - Add and update Ouroboros as Pool Principal
+(let
+    (
+        (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
+        (p:string (DALOS.DALOS|UR_OuroborosID))
+    )
+    (SWP.SWP|A_UpdatePrincipal p true)
+    (BASIS.DPTF-DPMF|C_DeployAccount p SWP.SWP|SC_NAME true)
+    (ATSI.DPTF|C_ToggleFeeExemptionRole patron p SWP.SWP|SC_NAME true)
 )
 
 ;;AGE OF ZALMOXIS Deploy

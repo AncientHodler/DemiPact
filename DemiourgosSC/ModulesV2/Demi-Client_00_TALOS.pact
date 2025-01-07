@@ -47,7 +47,7 @@
     ;;====================================================
     ;;  MODULE || OUROBOROS
     ;;  
-    ;;  01] TALOS.OURO|C_FuelLiquidStakingFromReserves  ||  OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves     ||  patron:string
+    ;;  01] TALOS.OURO|C_FuelLiquidStakingFromReserves  ||  LIQUIDFUEL.C_Fuel                                       ||  patron:string
     ;;  02] TALOS.OURO|C_WithdrawFees                   ||  OUROBOROS.OUROBOROS|C_WithdrawFees                      ||  patron:string id:string target:string
     ;;  03] TALOS.OURO|C_Sublimate:decimal              ||  OUROBOROS.IGNIS|C_Sublimate                             ||  patron:string client:string target:string ouro-amount:decimal
     ;;  04] TALOS.OURO|C_Compress:decimal               ||  OUROBOROS.IGNIS|C_Compress                              ||  patron:string client:string ignis-amount:decimal
@@ -68,7 +68,7 @@
         @doc "Deploys a Standard DALOS Account"
         (with-capability (S)
             (DALOS.DALOS|C_DeployStandardAccount account guard kadena public)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  08] TALOS.C_DeploySmartAccount
@@ -76,7 +76,7 @@
         @doc "Deploys a Smart DALOS Account"
         (with-capability (S)
             (DALOS.DALOS|C_DeploySmartAccount account guard kadena sovereign public)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  09] TALOS.DALOS|C_RotateGuard                   ||  DALOS.DALOS|C_RotateGuard                               ||  patron:string account:string new-guard:guard safe:bool
@@ -109,7 +109,7 @@
                 (
                     (output:[string] (BASIS.DPTF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )
@@ -129,7 +129,7 @@
             \ equal to the VTT * fee-unlocks: <UTILS.DPTF|UC_VolumetricTax>"
         (with-capability (S)
             (BASIS.DPTF|C_ToggleFeeLock patron id toggle)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  19] TALOS.DPTF|C_UpdateBranding                 ||  BRANDING.DPTF-DPMF|C_UpdateBranding                     ||  patron:string id:string <TRUE> logo:string description:string website:string social:[object{DALOS.SocialSchema}]
@@ -138,7 +138,7 @@
         @doc "Upgrades branding to Blue"
         (with-capability (S)
             (BRANDING.BRD|C_UpgradeBranding patron id true months)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  21] TALOS.DPTF|C_Transfer                       ||  TFT.DPTF|C_Transfer                                     ||  patron:string id:string sender:string receiver:string transfer-amount:decimal <FALSE>
@@ -174,7 +174,7 @@
                 (
                     (output:[string] (BASIS.DPMF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )
@@ -188,7 +188,7 @@
         @doc "Similar to <TALOS|DPTF.C_UpgradeBranding>, but for DPMFs"
         (with-capability (S)
             (BRANDING.BRD|C_UpgradeBranding patron id false months)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  20] TALOS.DPMF|C_SingleBatchTransfer            ||  TFT.DPMF|C_SingleBatchTransfer                          ||  patron:string id:string nonce:integer sender:string receiver:string <FALSE>
@@ -210,7 +210,7 @@
                 (
                     (output:[string] (ATSI.ATSI|C_Issue patron account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )
@@ -231,7 +231,7 @@
             \       The Cost for unlock is (1000 IGNIS + 10 KDA )*(1 + <unlocks>)"
         (with-capability (S)
             (ATSM.ATSM|C_ToggleParameterLock patron atspair toggle)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     ;;  13] TALOS.ATS|C_UpdateSyphon                    ||  ATSM.ATSM|C_UpdateSyphon                                ||  patron:string atspair:string syphon:decimal
@@ -264,7 +264,7 @@
                 (
                     (output:string (VESTING.VST|C_CreateVestingLink patron dptf))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )
@@ -322,18 +322,31 @@
             \       The Cost for unlock is (1000 IGNIS + 10 KDA )*(1 + <unlocks>)"
         (with-capability (S)
             (SWPM.SWPM|C_ToggleFeeLock patron swpair toggle)
-            (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+            (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
-    ;; 04 TALOS.SWP|C_Issue
-    (defun SWP|C_Issue:string (patron:string account:string token-a:string token-b:string token-a-amount:decimal token-b-amount:decimal fee-lp:decimal)
-        @doc "Issues an SWP Pair. Price 4000 IGNIS and 150 KDA + Associated Costs for issuing a DPTF"
+    ;; 04 TALOS.SWP|C_IssueStandard
+    (defun SWP|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
+        @doc "Issues an Standard (constant product) SWP Pair. Price 4000 IGNIS and 150 KDA + Associated Costs for issuing a DPTF"
         (with-capability (S)
             (let
                 (
-                    (output:string (SWPM.SWPM|C_Issue patron account token-a token-b token-a-amount token-b-amount fee-lp))
+                    (output:string (SWPI.SWPI|C_IssueStandard patron account pool-tokens fee-lp))
                 )
-                (OUROBOROS.OUROBOROS|C_FuelLiquidStakingFromReserves DALOS|SC_NAME)
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
+                output
+            )
+        )
+    )
+    ;; 05 TALOS.SWP|C_IssueStable
+    (defun SWP|C_IssueStable:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+        @doc "Issues an Stable SWP Pair. Price 4000 IGNIS and 150 KDA + Associated Costs for issuing a DPTF"
+        (with-capability (S)
+            (let
+                (
+                    (output:string (SWPI.SWPI|C_IssueStable patron account pool-tokens fee-lp amp))
+                )
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
             )
         )

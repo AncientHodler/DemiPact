@@ -232,25 +232,12 @@
         )
     )
     ;;Usage
-    (defcap ATSM|FCC (atspair:string fcc-token:string)
-        (ATS.ATS|UEV_RewardTokenExistance atspair fcc-token true)
-        (compose-capability (P|ATSM|REMOTE-GOV))
-        (compose-capability (P|ATSM|UPDATE_ROU))
-        (compose-capability (P|ATSM|CALLER))
-    )
-    (defcap ATSM|FUEL (atspair:string reward-token:string)
-        @event
-        (compose-capability (ATSM|FCC atspair reward-token))
-        (let
-            (
-                (index:decimal (ATS.ATS|UC_Index atspair))
-            )
-            (enforce (>= index 0.1) "Fueling cannot take place on a negative Index")
-        )
-    )
     (defcap ATSM|COIL_OR_CURL (atspair:string coil-token:string)
         @event
-        (compose-capability (ATSM|FCC atspair coil-token))
+        (ATS.ATS|UEV_RewardTokenExistance atspair coil-token true)
+        (compose-capability (P|ATSM|REMOTE-GOV))
+        (compose-capability (P|ATSM|UPDATE_ROU))
+        ;(compose-capability (P|ATSM|CALLER))
     )
     (defcap ATSM|SYPHON (atspair:string syphon-amounts:[decimal])
         @event
@@ -352,13 +339,7 @@
             )
         )
     )
-    (defun ATSM|C_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal)
-        (with-capability (ATSM|FUEL atspair reward-token)
-            (TFT.DPTF|C_Transfer patron reward-token fueler ATS.ATS|SC_NAME amount true)
-            (ATS.ATS|XO_UpdateRoU atspair reward-token true true amount)
-        )
-    )
-    
+    ;;
     (defun ATSM|C_Coil:decimal (patron:string coiler:string atspair:string rt:string amount:decimal)
         (with-capability (ATSM|COIL_OR_CURL atspair rt)
             (let

@@ -1204,4 +1204,84 @@
             (floor (/ numerator denominator) prec)
         )
     )
+    ;;
+    (defun SWP|UC_LP:[string] (token-names:[string] token-tickers:[string] amp:decimal)
+        (if (= amp -1.0)
+            (SWP|UC_LpIDs token-names token-tickers true)
+            (SWP|UC_LpIDs token-names token-tickers false)
+        )
+    )
+    (defun SWP|UC_LpIDs:[string] (token-names:[string] token-tickers:[string] p-or-s:bool)
+        (let*
+            (
+                (l1:integer (length token-names))
+                (l2:integer (length token-tickers))
+                (lengths:[integer] [l1 l2])
+                (prefix:string (if p-or-s "P" "S"))
+                (minus:string "-")
+                (caron:string "^")
+            )
+            (UTILS|UEV_EnforceUniformIntegerList lengths)
+            (let*
+                (
+                    (lp-name-elements:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] idx:integer)
+                                (if (!= idx (- l1 1))
+                                    (LIST|UC_AppendLast acc (+ (at idx token-names) caron))
+                                    (LIST|UC_AppendLast acc (at idx token-names))
+                                )
+                            )
+                            []
+                            (enumerate 0 (- l1 1))
+                        )
+                    )
+                    (lp-ticker-elements:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] idx:integer)
+                                (if (!= idx (- l1 1))
+                                    (LIST|UC_AppendLast acc (+ (at idx token-tickers) minus))
+                                    (LIST|UC_AppendLast acc (at idx token-tickers))
+                                )
+                            )
+                            []
+                            (enumerate 0 (- l1 1))
+                        )
+                    )
+                    (lp-name:string (concat [prefix BAR (concat lp-name-elements)]))
+                    (lp-ticker:string (concat [prefix BAR (concat lp-ticker-elements) BAR "LP"]))
+                )
+                [lp-name lp-ticker]
+            )
+        )
+    )
+    (defun SWP|UC_Swpair:string (token-ids:[string] amp:decimal)
+        (if (= amp -1.0)
+            (SWP|UC_PoolID token-ids true)
+            (SWP|UC_PoolID token-ids false)
+        )
+    )
+    (defun SWP|UC_PoolID:string (token-ids:[string] p-or-s:bool)
+        (let*
+            (
+                (prefix:string (if p-or-s "P" "S"))
+                (swpair-elements:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (if (!= idx (- (length token-ids) 1))
+                                (LIST|UC_AppendLast acc (+ (at idx token-ids) BAR))
+                                (LIST|UC_AppendLast acc (at idx token-ids))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length token-ids) 1))
+                    )
+                )
+            )
+            (concat [prefix BAR (concat swpair-elements)])
+        )
+    )
 )

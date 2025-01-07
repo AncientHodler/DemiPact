@@ -49,6 +49,7 @@
 (format "HOV is {}" [(free.DALOS.DALOS|UR_AccountKadena (at 1 (free.DALOS.DALOS|UR_DemiurgoiID)))])
 (format "OUROBOROS is {}" [(free.DALOS.DALOS|UR_AccountKadena free.DALOS.OUROBOROS|SC_NAME)])
 (format "DALOS is {}" [(free.DALOS.DALOS|UR_AccountKadena free.DALOS.DALOS|SC_NAME)])
+(format "LIQUID is {}" [(free.DALOS.DALOS|UR_AccountKadena free.DALOS.LIQUID|SC_NAME)])
 
 
 (env-gas)
@@ -133,7 +134,7 @@
                 )
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    "c:jOhIfjEtMqCfY82q2AB9xcghYxw_8qSt1wgn04mjy4U"
                     0.0401625
                 )
                 (coin.TRANSFER 
@@ -195,7 +196,7 @@
                 )
                 (coin.TRANSFER 
                     "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    "c:jOhIfjEtMqCfY82q2AB9xcghYxw_8qSt1wgn04mjy4U"
                     0.0401625
                 )
                 (coin.TRANSFER 

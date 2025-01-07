@@ -307,24 +307,38 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 11 - Load AUTOSTAKE-Manager Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0009_ATSF.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 12 - Load VESTING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0009_VST.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0010_VST.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 13 - Load LIQUID Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0010_LIQUID.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0011_LIQUID.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 14 - Load OUROBOROS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0011_OUROBOROS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0012_LIQUIDFUEL.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 14 - Load OUROBOROS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0013_OUROBOROS.pact")
 (env-gas)
 (commit-tx)
 
@@ -345,7 +359,14 @@
 (begin-tx "InitSnake 17 - Load SWAPPER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPM.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPI.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0017_SWPM.pact")
 (env-gas)
 (commit-tx)
 
@@ -363,6 +384,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 19 - Load TALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_03_TALOS-03.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 20 - Load DEPLOYER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -375,26 +403,30 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 
-(use free.UTILS)            ;; 85.107
-(use free.DALOS)            ;;107.032
-(use free.BASIS)            ;;145.558
-(use free.ATS)              ;;142.455
-(use free.ATSI)             ;;137.410
-(use free.TFT)              ;;140.426
-(use free.ATSC)             ;;147.856
-(use free.ATSH)             ;;138.321
-(use free.ATSM)             ;;145.648
-(use free.VESTING)          ;;143.212
-(use free.LIQUID)           ;;136.726
-(use free.OUROBOROS)        ;;147.291
-(use free.BRANDING)         ;;121.969
-(use free.SWP)              ;;121.969
-(use free.SWPM)             ;;121.969
+(use free.UTILS)            ;; 89.915
+(use free.DALOS)            ;;107.749
+(use free.BASIS)            ;;143.815
+(use free.ATS)              ;;142.885
+(use free.ATSI)             ;;136.929
+(use free.TFT)              ;;139.755
+(use free.ATSC)             ;;147.603
+(use free.ATSH)             ;;137.855
+(use free.ATSM)             ;;143.478
+(use free.ATSF)             ;;135.331
+(use free.VESTING)          ;;142.180
+(use free.LIQUID)           ;;136.208
+(use free.LIQUIDFUEL)       ;;136.857
+(use free.OUROBOROS)        ;;140.094
+(use free.BRANDING)         ;;121.775
+(use free.SWP)              ;;131.990
+(use free.SWPI)             ;;146.990
+(use free.SWPM)             ;;125.638
 
-(use free.TALOS-01)         ;;144.788
-(use free.TALOS-02)         ;;144.788
+(use free.TALOS-01)         ;;147.441
+(use free.TALOS-02)         ;;147.386
+(use free.TALOS-03)         ;;143.648
 
-(use free.DEPLOYER)         ;;
+(use free.DEPLOYER)         ;;N/A
 
 
 (env-gas)

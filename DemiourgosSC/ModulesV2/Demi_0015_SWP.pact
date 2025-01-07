@@ -4,7 +4,7 @@
     )
     (defcap SWP-ADMIN ()
         (enforce-one
-            "SWP Admin not satisfed"
+            "SWP Swapper Admin not satisfed"
             [
                 (enforce-guard G-MD_SWP)
                 (enforce-guard G-SC_SWP)
@@ -438,16 +438,11 @@
             )
         )
     )
-    (defun SWP|A_EnsurePrincipalRoles (patron:string principal:string)
-        (BASIS.DPTF-DPMF|C_DeployAccount principal SWP|SC_NAME true)
-        (ATSI.DPTF|C_ToggleFeeExemptionRole patron principal SWP|SC_NAME true)
-    )
     ;;[UEV]
-    (defun SWP|UEV_New (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+    (defun SWP|UEV_New (t-ids:[string] amp:decimal)
         (let
             (
-                (n:integer (length pool-tokens))
-                (t-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+                (n:integer (length t-ids))
                 (SP3:[string] (if (= amp -1.0) (SWP|UR_Pools P3) (SWP|UR_Pools S3)))
                 (SP4:[string] (if (= amp -1.0) (SWP|UR_Pools P4) (SWP|UR_Pools S4)))
                 (SP5:[string] (if (= amp -1.0) (SWP|UR_Pools P5) (SWP|UR_Pools S5)))
@@ -456,7 +451,7 @@
                 (msg:string "Pool already exists for given Tokens!")
             )
             (if (= n 2)
-                (SWP|UEV_CheckTwo pool-tokens amp)
+                (SWP|UEV_CheckTwo t-ids amp)
                 (if (= n 3)
                     (enforce (not (SWP|UEV_CheckAgainstMass t-ids SP3)) msg)
                     (if (= n 4)
@@ -473,13 +468,13 @@
             )
         )
     )
-    (defun SWP|UEV_CheckTwo (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
+    (defun SWP|UEV_CheckTwo (token-ids:[string] amp:decimal)
         (let*
             (
-                (e0:object{SWP|PoolTokens} (at 0 pool-tokens))
-                (e1:object{SWP|PoolTokens} (at 1 pool-tokens))
-                (swp1:string (SWP|UC_Swpair pool-tokens amp))
-                (swp2:string (SWP|UC_Swpair [e1 e0] amp))
+                (e0:string (at 0 token-ids))
+                (e1:string (at 1 token-ids))
+                (swp1:string (UTILS.SWP|UC_Swpair token-ids amp))
+                (swp2:string (UTILS.SWP|UC_Swpair [e1 e0] amp))
                 (t1:bool (SWP|UEV_CheckID swp1))
                 (t2:bool (SWP|UEV_CheckID swp2))
             )
@@ -514,81 +509,6 @@
     ;;[UC]
     (defun SWP|UC_SplitTokenIDs:[string] (swpair:string)
         (drop 1 (UTILS.LIST|UC_SplitString UTILS.BAR swpair))
-    )
-    (defun SWP|UC_LP:[string] (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_LpIDs pool-tokens true)
-            (SWP|UC_LpIDs pool-tokens false)
-        )
-    )
-    (defun SWP|UC_LpIDs:[string] (pool-tokens:[object{SWP|PoolTokens}] p-or-s:bool)
-        (let*
-            (
-                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
-                (prefix:string (if p-or-s "P" "S"))
-                (u:string UTILS.BAR)
-                (minus:string "-")
-                (caron:string "^")
-                (lp-name-elements:[string]
-                    (fold
-                        (lambda
-                            (acc:[string] idx:integer)
-                            (if (!= idx (- (length pool-tokens) 1))
-                                (UTILS.LIST|UC_AppendLast acc (+ (BASIS.DPTF-DPMF|UR_Name (at idx token-ids) true) caron))
-                                (UTILS.LIST|UC_AppendLast acc (BASIS.DPTF-DPMF|UR_Name (at idx token-ids) true))
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length pool-tokens) 1))
-                    )
-                )
-                (lp-ticker-elements:[string]
-                    (fold
-                        (lambda
-                            (acc:[string] idx:integer)
-                            (if (!= idx (- (length pool-tokens) 1))
-                                (UTILS.LIST|UC_AppendLast acc (+ (BASIS.DPTF-DPMF|UR_Ticker (at idx token-ids) true) minus))
-                                (UTILS.LIST|UC_AppendLast acc (BASIS.DPTF-DPMF|UR_Ticker (at idx token-ids) true))
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length pool-tokens) 1))
-                    )
-                )
-                (lp-name:string (concat [prefix u (concat lp-name-elements)]))
-                (lp-ticker:string (concat [prefix u (concat lp-ticker-elements) u "LP"]))
-            )
-            [lp-name lp-ticker]
-        )
-    )
-    (defun SWP|UC_Swpair:string (pool-tokens:[object{SWP|PoolTokens}] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_PoolID pool-tokens true)
-            (SWP|UC_PoolID pool-tokens false)
-        )
-    )
-    (defun SWP|UC_PoolID:string (pool-tokens:[object{SWP|PoolTokens}] p-or-s:bool)
-        (let*
-            (
-                (token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
-                (prefix:string (if p-or-s "P" "S"))
-                (u:string UTILS.BAR)
-                (swpair-elements:[string]
-                    (fold
-                        (lambda
-                            (acc:[string] idx:integer)
-                            (if (!= idx (- (length pool-tokens) 1))
-                                (UTILS.LIST|UC_AppendLast acc (+ (at idx token-ids) u))
-                                (UTILS.LIST|UC_AppendLast acc (at idx token-ids))
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length pool-tokens) 1))
-                    )
-                )
-            )
-            (concat [prefix u (concat swpair-elements)])
-        )
     )
     (defun SWP|UC_Variables (n:integer what:bool)
         (let
@@ -896,12 +816,13 @@
         )
     )
     (defun SWP|X_InsertNew (account:string pool-tokens:[object{SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
-        (enforce-guard (C_ReadPolicy "SWPM|Caller"))
-        (let
+        (enforce-guard (C_ReadPolicy "SWPI|Caller"))
+        (let*
             (
                 (n:integer (length pool-tokens))
                 (what:bool (if (= amp -1.0) true false))
-                (swpair:string (SWP|UC_Swpair pool-tokens amp))
+                (pool-token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
+                (swpair:string (UTILS.SWP|UC_Swpair pool-token-ids amp))
             )
             (with-capability (SECURE)
                 (SWP|X_SavePool n what swpair)
