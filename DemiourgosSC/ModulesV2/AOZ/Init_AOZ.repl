@@ -38,7 +38,7 @@
 ;;
 ;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (print "==========================Init-STEPS====================================")
-(begin-tx "Init STEP 027")
+(begin-tx "Init STEP 01")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -46,12 +46,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step027)
+(free.AOZ.A_Step01)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 028")
+(begin-tx "Init STEP 02")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -86,12 +86,12 @@
 ;;9x200 (per dptf) = 1800 || 90 > 90 > 270 > 1350
 ;;For TestNet 1000x smaller: 0.09 > 0.09 > 0.27 > 1.35
 (namespace "free")
-(free.AOZ.A_Step028)
+(free.AOZ.A_Step02)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 029")
+(begin-tx "Init STEP 03")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -99,12 +99,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step029)
+(free.AOZ.A_Step03)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 030")
+(begin-tx "Init STEP 04")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -139,12 +139,12 @@
 ;;6x300 (per dpmf) = 1800 || 90 > 90 > 270 > 1350
 ;;For TestNet 1000x smaller: 0.09 > 0.09 > 0.27 > 1.35
 (namespace "free")
-(free.AOZ.A_Step030)
+(free.AOZ.A_Step04)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 031")
+(begin-tx "Init STEP 05")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -179,12 +179,12 @@
 ;;6*100 (per ats pair) = 150 || 30.0 > 30.0 > 90.0 > 450.0
 ;;For TestNet 1000x smaller: 0.03 > 0.03 > 0.09 > 0.45
 (namespace "free")
-(free.AOZ.A_Step031)
+(free.AOZ.A_Step05)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 032")
+(begin-tx "Init STEP 06")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -192,12 +192,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step032)
+(free.AOZ.A_Step06)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 033")
+(begin-tx "Init STEP 07")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -205,12 +205,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step033)
+(free.AOZ.A_Step07)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 034")
+(begin-tx "Init STEP 08")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -218,12 +218,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step034)
+(free.AOZ.A_Step08)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 035 - PlebeicStrength")
+(begin-tx "Init STEP 09 - PlebeicStrength")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -231,12 +231,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step035)
+(free.AOZ.A_Step09)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 036 - ComatiCommand")
+(begin-tx "Init STEP 10 - ComatiCommand")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -244,12 +244,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step036)
+(free.AOZ.A_Step10)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 037 - PileatiPower")
+(begin-tx "Init STEP 11 - PileatiPower")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -257,12 +257,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step037)
+(free.AOZ.A_Step11)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 038 - TarabostesTenacity")
+(begin-tx "Init STEP 12 - TarabostesTenacity")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -270,12 +270,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step038)
+(free.AOZ.A_Step12)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 038 - StrategonVigor")
+(begin-tx "Init STEP 13 - StrategonVigor")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -283,12 +283,12 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step039)
+(free.AOZ.A_Step13)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
-(begin-tx "Init STEP 040 - AsAuthority")
+(begin-tx "Init STEP 14 - AsAuthority")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -296,13 +296,13 @@
     ]
 )
 (namespace "free")
-(free.AOZ.A_Step040)
+(free.AOZ.A_Step14)
 (env-sigs [])
 (env-gas)
 (commit-tx)
 
 
-(begin-tx "Init STEP 041")
+(begin-tx "Init STEP 15")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -337,7 +337,7 @@
 ;;1*300 (per dpmf) = 300 || 15 > 15 > 45 > 225
 ;;For TestNet 1000x smaller: 0.015 > 0.015 > 0.045 > 0.225
 (namespace "free")
-(free.AOZ.A_Step041)
+(free.AOZ.A_Step15)
 (env-sigs [])
 (env-gas)
 (commit-tx)

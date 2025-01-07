@@ -1060,4 +1060,148 @@
             )
         )
     )
+    ;;
+    (defun SWP|UCC_ComputeP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec)
+        (let*
+            (
+                (pool-product:decimal (floor (fold (*) 1.0 X) 24))
+                (l1:integer (length X))
+                (new-supplies:[decimal] (SWP|UCC_NewSupply X input-amounts ip))
+                (new-supplies-rem:[decimal] (LIST|UC_RemoveItemAt new-supplies op))
+                (new-supplies-product:decimal (floor (fold (*) 1.0 new-supplies-rem) 24))
+                (output:decimal (floor (/ pool-product new-supplies-product) o-prec))
+            )
+            (- (at op X) output)
+        )
+    )
+    (defun SWP|UCC_NewSupply (X:[decimal] input-amounts:[decimal] ip:[integer])
+        (fold
+            (lambda
+                (acc:[decimal] idx:integer)
+                (LIST|UC_AppendLast 
+                    acc 
+                    (+ 
+                        (if (contains idx ip)
+                            (at (at 0 (LIST|UC_Search ip idx)) input-amounts)
+                            0.0
+                        )
+                        (at idx X)
+                    )
+                )
+            )
+            []
+            (enumerate 0 (- (length X) 1))
+        )
+    )
+    (defun SWP|UCC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer)
+        (let*
+            (
+                (xi:decimal (at ip X))
+                (xn:decimal (+ xi input-amount))
+                (XX:[decimal] (LIST|UC_ReplaceAt X ip xn))
+                (NewD:decimal (SWP|UCC_ComputeD A XX))
+                (y0:decimal (+ (at op X) input-amount))
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (y-values:[decimal] idx:integer)
+                            (let*
+                                (
+                                    (prev-y:decimal (at idx y-values))
+                                    (y-value:decimal (SWP|UCC_YNext prev-y NewD A X op))
+                                )
+                                (LIST|UC_AppendLast y-values y-value)
+                            )
+                        )
+                        [y0]
+                        (enumerate 0 10)
+                    )
+                )
+            )
+            (- (LIST|UC_LastListElement output-lst) (at op X))
+        )
+    )
+    (defun SWP|UCC_ComputeD:decimal (A:decimal X:[decimal])
+        (let*
+            (
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (d-values:[decimal] idx:integer)
+                            (let*
+                                (
+                                    (prev-d:decimal (at idx d-values))
+                                    (d-value:decimal (SWP|UCC_DNext prev-d A X))
+                                )
+                                (LIST|UC_AppendLast d-values d-value)
+                            )
+                        )
+                        [(fold (+) 0.0 X)]
+                        (enumerate 0 5)
+                    )
+                )
+            )
+            (LIST|UC_LastListElement output-lst)
+        )
+    )
+    (defun SWP|UCC_DNext (D:decimal A:decimal X:[decimal])
+        @doc "Computes Dnext: \
+        \ n = (length X) \
+        \ S=x1+x2+x3+... \
+        \ P=x1*x2*x3*... \
+        \ Dp = (D^(n+1))/(P*n^n) \
+        \ Numerator = (A*n^n*S + Dp*n)*D \
+        \ Denominator = (A*n^n-1)*D + (n+1)*Dp \
+        \ DNext = Numerator / Denominator"
+        ;;
+        (let*
+            (
+                (prec:integer 24)
+                (n:decimal (dec (length X)))
+                (S:decimal (fold (+) 0.0 X))
+                (P:decimal (floor (fold (*) 1.0 X) prec))
+                (n1:decimal (+ 1.0 n))
+                (nn:decimal (^ n n))
+                (Dp:decimal (floor (/ (^ D n1) (* nn P)) prec))
+
+                (v1:decimal (floor (fold (*) 1.0 [A nn S]) prec))
+                (v2:decimal (* Dp n))
+                (v3:decimal (+ v1 v2))
+                (numerator:decimal (floor (* v3 D) prec))
+
+                (v4:decimal (- (* A nn) 1.0))
+                (v5:decimal (* v4 D))
+                (v6:decimal (floor (* n1 Dp) prec))
+                (denominator:decimal (+ v5 v6))
+            )
+            (floor (/ numerator denominator) prec)
+        )
+    )
+    (defun SWP|UCC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer)
+        @doc "Computes Y such that the invariant remains satisfied \
+        \ Sp = x1+x2+x3+ ... without the term to be computed, containing the modified input token amount \
+        \ Pp = x1*x2*x3* ... without the term to be computed, containing the modified input token amount \
+        \ c = (D^(n+1))/(n^n*Pp*A*n^n) \
+        \ b = Sp + (D/A*n^n) \
+        \ Numerator = y^2 + c \
+        \ Denominator = 2*y + b - D \
+        \ YNext = Numerator / Denominator "
+        (let*
+            (
+                (prec:integer 24)
+                (n:decimal (dec (length X)))
+                (XXX:[decimal] (LIST|UC_RemoveItem X (at op X)))
+                (Sp:decimal (fold (+) 0.0 XXX))
+                (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
+                (n1:decimal (+ 1.0 n))
+                (nn:decimal (^ n n))
+                (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
+                (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
+                (Ysq:decimal (^ Y 2.0))
+                (numerator:decimal (floor (+ Ysq c) prec))
+                (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
+            )
+            (floor (/ numerator denominator) prec)
+        )
+    )
 )

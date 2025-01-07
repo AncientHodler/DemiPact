@@ -202,7 +202,7 @@
     )
     ;;========[D] Deploy FUNCTIONS===============================================;;
     ;;            Administrative Usage Functions        [A]
-    (defun A_Step027 ()
+    (defun A_Step01 ()
         (insert AOZ|Assets AOZ|INFO
             {"primal-tf-ids"            : [""]
             ,"primal-mf-ids"            : [""]
@@ -213,7 +213,7 @@
             ,"nf-game-assets"           : [""]}
         )
     )
-    (defun A_Step028:[string] ()
+    (defun A_Step02:[string] ()
         (let*
             (
                 (patron:string AOZ|SC_NAME)
@@ -245,7 +245,7 @@
             tf-ids
         )
     )
-    (defun A_Step029 ()
+    (defun A_Step03 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -282,7 +282,7 @@
             (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
-    (defun A_Step030:[string] ()
+    (defun A_Step04:[string] ()
         (let*
             (
                 (patron:string AOZ|SC_NAME)
@@ -315,7 +315,7 @@
             mf-ids
         )
     )
-    (defun A_Step031:[string] ()
+    (defun A_Step05:[string] ()
         (let*
             (
                 (patron:string AOZ|SC_NAME)
@@ -362,7 +362,7 @@
             ats-ids
         )
     )
-    (defun A_Step032 ()
+    (defun A_Step06 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -402,7 +402,7 @@
             (ATSM.ATSM|C_TurnRecoveryOn patron PileatiPowerID false)
         )
     )
-    (defun A_Step033 ()
+    (defun A_Step07 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -442,7 +442,7 @@
             (ATSM.ATSM|C_TurnRecoveryOn patron AsAuthorityID false)
         )
     )
-    (defun A_Step034 ()
+    (defun A_Step08 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -473,7 +473,7 @@
             )
         )
     )
-    (defun A_Step035 ()
+    (defun A_Step09 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -490,7 +490,7 @@
             (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID AncientKosonID am)
         ) 
     )
-    (defun A_Step036 ()
+    (defun A_Step10 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -507,7 +507,7 @@
             (ATSM.ATSM|C_Coil patron patron ComatiCommandID AncientKosonID am)
         ) 
     )
-    (defun A_Step037 ()
+    (defun A_Step11 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -524,7 +524,7 @@
             (ATSM.ATSM|C_Coil patron patron PileatiPowerID AncientKosonID am)
         ) 
     )
-    (defun A_Step038 ()
+    (defun A_Step12 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -541,7 +541,7 @@
             (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID AncientKosonID am)
         ) 
     )
-    (defun A_Step039 ()
+    (defun A_Step13 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -558,7 +558,7 @@
             (ATSM.ATSM|C_Coil patron patron StrategonVigorID AncientKosonID am)
         ) 
     )
-    (defun A_Step040 ()
+    (defun A_Step14 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)
@@ -576,7 +576,7 @@
         ) 
     )
 
-    (defun A_Step041 ()
+    (defun A_Step15 ()
         (let
             (
                 (patron:string AOZ|SC_NAME)

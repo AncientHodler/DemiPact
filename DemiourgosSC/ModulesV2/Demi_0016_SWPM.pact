@@ -47,21 +47,6 @@
     )
     (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
-
-    
-    (defun SWPM|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
-        (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp amp)
-        (BASIS.DPTF-DPMF|C_DeployAccount token-lp account true)
-        (BASIS.DPTF-DPMF|C_DeployAccount token-lp SWP.SWP|SC_NAME true)
-        (map
-            (lambda
-                (id:string)
-                (BASIS.DPTF-DPMF|C_DeployAccount id SWP.SWP|SC_NAME true)
-            )
-            (drop 1 (SWP.SWP|UC_ExtractTokens pool-tokens))
-        )
-        (SWP.SWP|UC_Swpair pool-tokens amp)
-    )
     (defcap SWPM|ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
         (let*
             (
@@ -70,9 +55,10 @@
                 (token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                 (iz-principal:bool (contains (at 0 token-ids) principals))
             )
-            (enforce iz-principal "Token-A is not a principal Token")
-            (enforce (and (>= l 2) (<= l 7)) "A min of 2 and a max of 7 Tokens can be used to create a Swap Pair")
+            (compose-capability (P|SWPM|CALLER))
+            ;;
             (SWP.SWP|UEV_PoolFee fee-lp)
+            (SWP.SWP|UEV_New pool-tokens amp)
             (map
                 (lambda
                     (id:string)
@@ -80,8 +66,10 @@
                 )
                 (drop 1 token-ids)
             )
-            (SWP.SWP|UEV_New pool-tokens amp)
-            (compose-capability (P|SWPM|CALLER))
+            ;;
+            (enforce iz-principal "First Token is not a principal Token")
+            (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid Amplifier value")
+            (enforce (and (>= l 2) (<= l 7)) "A min of 2 and a max of 7 Tokens can be used to create a Swap Pair")
         )
     )
     (defun SWPM|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
@@ -162,6 +150,20 @@
                 )
             )
         )
+    )
+    ;;
+    (defun SWPM|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
+        (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp amp)
+        (BASIS.DPTF-DPMF|C_DeployAccount token-lp account true)
+        (BASIS.DPTF-DPMF|C_DeployAccount token-lp SWP.SWP|SC_NAME true)
+        (map
+            (lambda
+                (id:string)
+                (BASIS.DPTF-DPMF|C_DeployAccount id SWP.SWP|SC_NAME true)
+            )
+            (drop 1 (SWP.SWP|UC_ExtractTokens pool-tokens))
+        )
+        (SWP.SWP|UC_Swpair pool-tokens amp)
     )
 )
 

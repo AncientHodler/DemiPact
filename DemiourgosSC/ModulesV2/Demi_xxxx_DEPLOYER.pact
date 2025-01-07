@@ -466,6 +466,62 @@
             (TFT.DPTF|C_Transfer patron ouro-id patron emma 2.0 false)
         )
     )
+    ;;========SWP-Initialisations==============================================;;
+    (defun A_Step27 ()
+        (let
+            (
+                (u:[string] [UTILS.BAR])
+            )
+            (insert SWP.SWP|Properties SWP.SWP|INFO
+                {"principals"           : u
+                ,"liquid-boost"         : true}
+            )
+            (insert SWP.SWP|Pools SWP.P2
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.P3
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.P4
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.P5
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.P6
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.P7
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S2
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S3
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S4
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S5
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S6
+                {"pools"                : u}
+            )
+            (insert SWP.SWP|Pools SWP.S7
+                {"pools"                : u}
+            )
+        )
+    )
+    (defun A_Step28 ()
+        (SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_LiquidKadenaID) true)
+        (SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_OuroborosID) true)
+    )
+    (defun A_Step29 (patron:string)
+        (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_LiquidKadenaID))
+        (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_OuroborosID))
+    )
     ;;========[P] PRINT-FUNCTIONS==============================================;;
     (defun DALOS|UP_AccountProperties (account:string)
         (let* 

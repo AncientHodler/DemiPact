@@ -447,11 +447,70 @@
     (TFT.DPTF|C_Transfer patron ouro-id patron emma 2.0 false)
 )
 
+;;Swapper Module Initialisations
+;;STEP 027
+(let
+    (
+        (u:[string] [UTILS.BAR])
+    )
+    (insert SWP.SWP|Properties SWP.SWP|INFO
+        {"principals"           : u
+        ,"liquid-boost"         : true}
+    )
+    (insert SWP.SWP|Pools SWP.P2
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.P3
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.P4
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.P5
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.P6
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.P7
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S2
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S3
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S4
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S5
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S6
+        {"pools"                : u}
+    )
+    (insert SWP.SWP|Pools SWP.S7
+        {"pools"                : u}
+    )
+)
 
+;;STEP 028
+(SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_LiquidKadenaID) true)
+(SWP.SWP|A_UpdatePrincipal (DALOS.DALOS|UR_OuroborosID) true)
 
-;;Age of Zalmoxis Deploy
-;;STEP 027 - Initialise AOZ Assets Table
-(insert AOZ|Assets AOZ|INFO
+;;STEP 029
+(let
+    (
+        (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
+    )
+    (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_LiquidKadenaID))
+    (SWP.SWP|A_EnsurePrincipalRoles patron (DALOS.DALOS|UR_OuroborosID))
+)
+
+;;AGE OF ZALMOXIS Deploy
+;;STEP 01 - Initialise AOZ Assets Table
+(insert AOZ.AOZ|Assets AOZ.AOZ|INFO
     {"primal-tf-ids"            : [""]
     ,"primal-mf-ids"            : [""]
     ,"atspair-ids"              : [""]
@@ -461,7 +520,7 @@
     ,"nf-game-assets"           : [""]}
 )
 
-;;STEP 028 - Issue AOZ True Fungibles, and update their ID in the AOZ|Assets Table
+;;STEP 02 - Issue AOZ True Fungibles, and update their ID in the AOZ|Assets Table
 (let*
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -493,7 +552,7 @@
     tf-ids
 )
 
-;:STEP 029 - Setup AOZ True Fungibles
+;:STEP 03 - Setup AOZ True Fungibles
 (let
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -530,7 +589,7 @@
     (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
 )
 
-;;STEP 030 - Issue AOZ Meta Fungibles, and update their ID in the AOZ|Assets Table
+;;STEP 04 - Issue AOZ Meta Fungibles, and update their ID in the AOZ|Assets Table
 (let*
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -563,7 +622,7 @@
     mf-ids
 )
 
-;;STEP 031 - Issue AOZ ATS Pairs
+;;STEP 05 - Issue AOZ ATS Pairs
 (let*
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -610,7 +669,7 @@
     ats-ids
 )
 
-;;STEP 032 - Setup AOZ ATS Pairs
+;;STEP 06 - Setup AOZ ATS Pairs
 (let
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -650,7 +709,7 @@
     (ATSM.ATSM|C_TurnRecoveryOn patron PileatiPowerID false)
 )
 
-;;STEP 033 - Setup AOZ ATS Pairs
+;;STEP 07 - Setup AOZ ATS Pairs
 (let
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -690,7 +749,7 @@
     (ATSM.ATSM|C_TurnRecoveryOn patron AsAuthorityID false)
 )
 
-;;STEP 034 - Mint initial Koson Amounts
+;;STEP 08 - Mint initial Koson Amounts
 (let
     (
         (patron:string AOZ.AOZ|SC_NAME)
@@ -721,7 +780,7 @@
     )
 )
 
-;;STEP 035 - Kickstart AOZ ATS Pool 1
+;;STEP 09 - Kickstart AOZ ATS Pool 1
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -738,7 +797,7 @@
     (ATSM.ATSM|C_Coil patron patron PlebeicStrengthID AncientKosonID am)
 )
 
-;;STEP 036 - Kickstart AOZ ATS Pool 2
+;;STEP 10 - Kickstart AOZ ATS Pool 2
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -755,7 +814,7 @@
     (ATSM.ATSM|C_Coil patron patron ComatiCommandID AncientKosonID am)
 )
 
-;;STEP 037 - Kickstart AOZ ATS Pool 3
+;;STEP 11 - Kickstart AOZ ATS Pool 3
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -772,7 +831,7 @@
     (ATSM.ATSM|C_Coil patron patron PileatiPowerID AncientKosonID am)
 )
 
-;;STEP 038 - Kickstart AOZ ATS Pool 4
+;;STEP 12 - Kickstart AOZ ATS Pool 4
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -789,7 +848,7 @@
     (ATSM.ATSM|C_Coil patron patron TarabostesTenacityID AncientKosonID am)
 )
 
-;;STEP 039 - Kickstart AOZ ATS Pool 5
+;;STEP 13 - Kickstart AOZ ATS Pool 5
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -806,7 +865,7 @@
     (ATSM.ATSM|C_Coil patron patron StrategonVigorID AncientKosonID am)
 )
 
-;;STEP 040 - Kickstart AOZ ATS Pool 6
+;;STEP 14 - Kickstart AOZ ATS Pool 6
 (let
     (
         (patron:string AOZ|SC_NAME)
@@ -822,7 +881,7 @@
     (ATSM.ATSM|C_Coil patron patron AsAuthorityID EsothericKosonID am)
     (ATSM.ATSM|C_Coil patron patron AsAuthorityID AncientKosonID am)
 )
-
+;;===========================================================================================
 
 
 (let
