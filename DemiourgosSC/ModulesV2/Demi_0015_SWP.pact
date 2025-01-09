@@ -721,7 +721,6 @@
                                 (enumerate 0 (- li 1))
                             )
                         )
-                        
                     )
                     (floor (/ (* (- (UTILS.SWP|UCC_ComputeD amp adjusted-balances) d0) lp-supply) d0) lp-prec)
                 )
