@@ -59,7 +59,6 @@
             (UTILS.LIST|UC_LastListElement output-lst)
         )
     )
-
     (defun SSWP|UCC_ComputeD2:[decimal] (A:decimal X:[decimal])
         (let*
             (
@@ -295,6 +294,31 @@
     (defun SSWP|UC_ND (i:decimal p:integer)
         (+ i (/ 1.0 (dec(^ 10 p))))
     )
+    ;;=============================================================================
+    (defun SWP|UC_Liquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
+        (let*
+            (
+                (raport:decimal (floor (/ ia (at ip X)) i-prec))
+                (output:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (UTILS.LIST|UC_AppendLast 
+                                acc 
+                                (if (= idx ip)
+                                    ia
+                                    (floor (* raport (at idx X)) (at idx Xp))
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length X) 1))
+                    )
+                )
+            )
+            output
+        )
+    )
 
-
+    
 )

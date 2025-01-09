@@ -218,9 +218,9 @@
     KC.ANHD
     KC.ANHD
     [
-        { "token-id":  (free.DALOS.DALOS|UR_LiquidKadenaID), "token-supply": 2500.0}
-        { "token-id":  (free.DALOS.DALOS|UR_OuroborosID), "token-supply": 25000.0}
-        { "token-id":  (free.DALOS.DALOS|UR_WrappedKadenaID), "token-supply": 2500.0}
+        { "token-id":  (free.DALOS.DALOS|UR_LiquidKadenaID), "token-supply": 2000.0}
+        { "token-id":  (free.DALOS.DALOS|UR_OuroborosID), "token-supply": 20000.0}
+        { "token-id":  (free.DALOS.DALOS|UR_WrappedKadenaID), "token-supply": 2000.0}
     ]
     10.0
     85.0
@@ -281,25 +281,11 @@
 )
 
 (print "=======================================SWAP=================================")
-
-(print "====================NEW-SUPPLY TEST=========================================")
-
-
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [0 1])
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [1 0])
-
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [0 2])
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [2 0])
-
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [1 2])
-(free.UTILS.SWP|UCC_NewSupply [12.0 15.0 17.0] [27.0 37.0] [2 1])
-
-
 (env-gas)
 (commit-tx)
 
 
-(begin-tx "Check for D")
+(begin-tx "LP value Computation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -307,20 +293,16 @@
     ]
 )
 
-(free.UTILS.SWP|UCC_ComputeD 
-    85.0 
-    [
-        100100.0
-        80000.0
-        70000.0
-    ]
+(free.SWP.SWP|UC_Liquidity
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    "OURO-98c486052a51"
+    2000.0
 )
-
 
 (env-gas)
 (commit-tx)
 
-(begin-tx "Check for D")
+(begin-tx "LP value Computation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -328,20 +310,14 @@
     ]
 )
 
-(free.UTILS.SWP|UCC_ComputeD 
-    85.0 
-    [
-        100000.0
-        80000.0
-        70000.0
-    ]
+(free.SWP.SWP|UC_LpCapacity
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
 )
-
 
 (env-gas)
 (commit-tx)
 
-(begin-tx "Compute Y")
+(begin-tx "Symetric LP Computation")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -349,19 +325,109 @@
     ]
 )
 
-(free.UTILS.SWP|UCC_ComputeY
-    85.0 
-    [
-        100000.0
-        10000.0
-        70000.0
+(free.SWP.SWP|UC_P_SymetricLpAmount
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    "OURO-98c486052a51"
+    2000.0
+)
+
+(env-gas)
+(commit-tx)
+
+
+
+(begin-tx "Add Stable Liquidity")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
     ]
-    2500.0
-    0
-    1
+)
+
+(print "=======================ADD-STABLE-LIQUIDTY-TEST=================================")
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [20.0 200.0 20.0]
+)
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [100.0 100.0 100.0]
+)
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [300.0 0.0 0.0]
+)
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [200.0 200.0 200.0]
+)
+
+(print "Are Amounts balanced:")
+(free.SWP.SWP|UC_AreAmountsBalanced
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [20.0 200.0 20.0]
+)
+
+(print "=======================ADD-CONSTANT-PRODUCT-TEST=================================")
+
+(free.SWP.SWP|UC_P_LpAmount 
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [250.0 2500.0 250.0]
+)
+
+(free.SWP.SWP|UC_P_SymetricLpAmount
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    "DLK-98c486052a51"
+    250.0
+)
+
+(free.SWP.SWP|UC_P_LpAmount 
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [250.0 10000.0 500.0]
+)
+
+(free.SWP.SWP|UC_LpAmount
+    "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [250.0 10000.0 500.0]
 )
 
 
 (env-gas)
 (commit-tx)
 
+
+(begin-tx "Add balanced Liquidity")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [20.0 200.0 20.0]
+)
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Add UNbalanced Liquidity")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.SWP.SWP|UC_S_LpAmount 
+    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [100.0 250.0 770.0]
+)
+
+(env-gas)
+(commit-tx)

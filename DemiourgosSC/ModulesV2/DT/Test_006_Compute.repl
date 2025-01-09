@@ -45,97 +45,173 @@
     ]
 )
 
-(free.TEST.SSWP|UCC_ComputeD2 
-    85.0 
+(let*
+    (
+        (initial:[decimal] [200.0 200.0 200.0])
+        (d1:decimal
+            (free.TEST.SSWP|UCC_ComputeD
+                85.0 
+                initial
+            )
+        )
+        (d2:decimal
+            (free.TEST.SSWP|UCC_ComputeD
+                85.0 
+                [
+                    260.0
+                    200.0
+                    200.0
+                ]
+            )
+        )
+        (lp:decimal 10000000.0)
+        (diff:decimal (- d2 d1))
+        (lp-ideal:decimal (floor (/ (* lp diff) d1) 24))
+
+        
+        (sym-liquidity:[decimal] 
+            (free.UTILS.SWP|UC_Liquidity
+                60.0
+                0
+                24
+                [
+                    200.0
+                    200.0
+                    200.0
+                ]
+                [24 24 24]
+            )
+        )
+        (with-symetric-liquidty:[decimal] (free.UTILS.UTILS|UC_AddHybridArray [[100.0 200.0 300.0] sym-liquidity]))
+
+        (d-symetric:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 with-symetric-liquidty))
+        (diff2:decimal (- d-symetric d1))
+        (penalty-factor:decimal (floor (/ diff diff2) 24))
+        (lp-final:decimal (floor (* lp-ideal penalty-factor) 24))
+    )
     [
-        109500.67538293
-        80000.0
-        70000.0
+        sym-liquidity 
+        with-symetric-liquidty 
+        d1 
+        d2 
+        d-symetric 
+        diff 
+        diff2 
+        lp-ideal 
+        penalty-factor
+        lp-final
     ]
+)
+(print "==========================================")
+
+;;compute LP Amount to be handed
+(let*
+    (
+        (initial-a:decimal 2000.0)
+        (initial-b:decimal 20000.0)
+        (initial-c:decimal 2000.0)
+        (initial:[decimal] [initial-a initial-b initial-c])
+
+        (d0:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 initial))
+        (lp:decimal 10000000.0)
+        (fee:decimal 0.01)    ;;1%
+        (a:decimal 20.0)
+        (b:decimal 200.0)
+        (c:decimal 20.0)
+        (actual-a:decimal (+ initial-a a))
+        (actual-b:decimal (+ initial-b b))
+        (actual-c:decimal (+ initial-c c))
+
+        (new-values:[decimal] [actual-a actual-b actual-c])
+        (d1:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 new-values))
+
+        (d-ratio:decimal (floor (/ d1 d0) 24))
+        (ideal-a:decimal (floor (* initial-a d-ratio) 24))
+        (ideal-b:decimal (floor (* initial-b d-ratio) 24))
+        (ideal-c:decimal (floor (* initial-c d-ratio) 24))
+
+        (a-diff:decimal (abs (- actual-a ideal-a)))
+        (b-diff:decimal (abs (- actual-b ideal-b)))
+        (c-diff:decimal (abs (- actual-c ideal-c)))
+
+        (a-diff-fee:decimal (floor (* a-diff fee) 24))
+        (b-diff-fee:decimal (floor (* b-diff fee) 24))
+        (c-diff-fee:decimal (floor (* c-diff fee) 24))
+
+        (adjusted-a:decimal (- actual-a a-diff-fee))
+        (adjusted-b:decimal (- actual-b b-diff-fee))
+        (adjusted-c:decimal (- actual-c c-diff-fee))
+        (adjusted-values:[decimal] [adjusted-a adjusted-b adjusted-c])
+
+        (d2:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 adjusted-values))
+
+        (v1:decimal (- d2 d0))
+        (final-lp:decimal (floor (/ (* v1 lp) d0) 24))
+
+    )
+    [[d2 d0] v1 (* v1 lp)  final-lp]
+)
+
+;;compute LP amount to be handed with no penalty
+(print "compute LP amount to be handed with no penalty")
+(let*
+    (
+        (initial-a:decimal 2000.0)
+        (initial-b:decimal 20000.0)
+        (initial-c:decimal 2000.0)
+        (initial:[decimal] [initial-a initial-b initial-c])
+
+        (d0:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 initial))
+        (lp:decimal 10000000.0)
+        (fee:decimal 0.01)    ;;0.25%
+        (a:decimal 20.0)
+        (b:decimal 200.0)
+        (c:decimal 20.0)
+        (initial-amount:decimal (+ (+ a b) c))
+
+        (share-value:decimal (floor (/ d0 lp) 24))
+        (ideal-shares:decimal (floor (/ initial-amount share-value) 24))
+    )
+    [d0 share-value ideal-shares]
+)
+
+(print "===========================")
+(let*
+    (
+        (initial-a:decimal 200.0)
+        (initial-b:decimal 400.0)
+        (initial:[decimal] [initial-a initial-b])
+
+        (d0:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 initial))
+        (lpw:decimal 0.1)
+        (lpr:decimal (- 1.0 lpw))
+
+        (d1:decimal (floor (* lpr d0) 24))
+        (y:decimal (free.UTILS.SWP|UCC_ComputeYD 85.0 initial d1 0))
+
+        (d3:decimal (free.TEST.SSWP|UCC_ComputeD 85.0 [y 400.0]))
+
+        (by:decimal (floor (* lpw (at 0 initial)) 24))
+    )
+
+    [d0 d1 d3 y by]
 )
 
 
 (env-gas)
 (commit-tx)
 
-(begin-tx "Compute D2")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.TEST.SSWP|UCC_ComputeD 
-    85.0 
-    [
-        100000.0
-        89498.145196535224937422426262
-        70000.0
-    ]
-)
-
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "Compute Y")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.TEST.SSWP|UCC_ComputeY
-    85.0 
-    [
-        100000.0
-        80000.0
-        70000.0
-    ]
-    9500.67538293
-    0
-    1
-)
-
-
-(env-gas)
-(commit-tx)
-
-
-(begin-tx "Refine Test")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.TEST.SSWP|UCC_RefineY
-    85.0
-    [
-        100000.0
-        80000.0
-        70000.0
-    ]
-    9500.67538293
-    0
-    1
-)
 
 
 
-(env-gas)
-(commit-tx)
+
 
 ;82499.308365845512581303649233
 
     ;82499.308365845523|397120128828
     ;82499.308365845523|483992994197
 
- (- 89498.145196535224937422426262 89498.145196535220779825162606)
- (- 89498.145196535224937422426262 89498.145196535220779825162606)
+
  ;      0.000000000004157597263656
 
  ;0.000000000004157597263656

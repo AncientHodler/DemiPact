@@ -791,7 +791,7 @@
             resident-amounts:[decimal] 
             rt-precisions:[integer] 
         )
-        @doc "Called from AUTOSTAKE.ATS|UC_RTSplitAmounts: Splits a RBT value, the <rbt-amount>, using following inputs: \
+        @doc "Called from ATS.ATS|UC_RTSplitAmounts: Splits a RBT value, the <rbt-amount>, using following inputs: \
             \ Reward-Bearing-Token supply <rbt-supply> of an <atspair> (read below) \
             \ The <index> of the <atspair> (read below) \
             \ A list <resident-amounts> respresenting amounts of resident Reward-Tokens of the <atpsair> \
@@ -1093,6 +1093,34 @@
             (enumerate 0 (- (length X) 1))
         )
     )
+    ;;
+    (defun SWP|UCC_ComputeYD (A:decimal X:[decimal] NewD:decimal op:integer)
+        (let*
+            (
+                (d0:decimal (SWP|UCC_ComputeD A X))
+                (percent:decimal (floor (/ NewD d0) 24))
+                (y0:decimal (floor (* percent (at op X)) 24))
+
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (y-values:[decimal] idx:integer)
+                            (let*
+                                (
+                                    (prev-y:decimal (at idx y-values))
+                                    (y-value:decimal (SWP|UCC_YNext prev-y NewD A X op))
+                                )
+                                (LIST|UC_AppendLast y-values y-value)
+                            )
+                        )
+                        [y0]
+                        (enumerate 0 20)
+                    )
+                )
+            )
+            (LIST|UC_LastListElement output-lst)
+        )
+    )
     (defun SWP|UCC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer)
         (let*
             (
@@ -1282,6 +1310,31 @@
                 )
             )
             (concat [prefix BAR (concat swpair-elements)])
+        )
+    )
+    ;;
+    (defun SWP|UC_Liquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
+        (let*
+            (
+                (raport:decimal (floor (/ ia (at ip X)) i-prec))
+                (output:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (UTILS.LIST|UC_AppendLast 
+                                acc 
+                                (if (= idx ip)
+                                    ia
+                                    (floor (* raport (at idx X)) (at idx Xp))
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length X) 1))
+                    )
+                )
+            )
+            output
         )
     )
 )
