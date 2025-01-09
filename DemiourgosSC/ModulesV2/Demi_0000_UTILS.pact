@@ -1313,7 +1313,7 @@
         )
     )
     ;;
-    (defun SWP|UC_Liquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
+    (defun SWP|UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
         (let*
             (
                 (raport:decimal (floor (/ ia (at ip X)) i-prec))

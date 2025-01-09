@@ -590,7 +590,7 @@
             (
                 (first-id:string (at 0 (SWP|UR_PoolTokens swpair)))
                 (first-amount:decimal (at 0 input-amounts))
-                (balanced-amounts:[decimal] (SWP|UC_Liquidity swpair first-id first-amount))
+                (balanced-amounts:[decimal] (SWP|UC_BalancedLiquidity swpair first-id first-amount))
             )
             (if (= balanced-amounts input-amounts)
                 true
@@ -709,7 +709,7 @@
     (defun SWP|UC_P_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal)
         @doc "Computes the Amount of LP resulted, if balanced Liquidity (derived from <input-id> and <input-amount>) \
         \ were to be added to a Constant Product Pool"
-        (SWP|UC_P_LpAmount swpair (SWP|UC_Liquidity swpair input-id input-amount))
+        (SWP|UC_P_LpAmount swpair (SWP|UC_BalancedLiquidity swpair input-id input-amount))
     )
     (defun SWP|UC_LpCapacity:decimal (swpair:string)
         @doc "Computes the LP Capacity of a Given Swap Pair"
@@ -744,7 +744,7 @@
             )
         )
     )
-    (defun SWP|UC_Liquidity:[decimal] (swpair:string input-id:string input-amount:decimal)
+    (defun SWP|UC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal)
         @doc "Outputs the amount of tokens, for given <input-id> and <input-amount> that are needed to add Balanced Liquidity"
         (let*
             (
@@ -761,10 +761,11 @@
                     (X:[decimal] (SWP|UR_PoolTokenSupplies swpair))
                     (Xp:[integer] (SWP|UR_PoolTokenPrecisions swpair))
                 )
-                (UTILS.SWP|UC_Liquidity input-amount input-position input-precision X Xp)
+                (UTILS.SWP|UC_BalancedLiquidity input-amount input-position input-precision X Xp)
             )
         )
     )
+    ;;
     (defun SWP|UC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
         (let
             (
