@@ -598,6 +598,28 @@
             )
         )
     )
+    (defun SWP|UC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal)
+        @doc "Computes the Pool Token Amounts that result from removing <input-lp-amount> of LP Token"
+        (let*
+            (
+                (lp-supply:decimal (SWP|UC_LpCapacity swpair))
+                (ratio:decimal (floor (/ input-lp-amount lp-supply) 24))
+                (pool-token-supplies:[decimal] (SWP|UR_PoolTokenSupplies swpair))
+                (pool-token-precisions:[integer] (SWP|UR_PoolTokenPrecisions swpair))
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (UTILS.LIST|UC_AppendLast 
+                        acc 
+                        (floor (* ratio (at idx pool-token-supplies)) (at idx pool-token-precisions))
+                    )
+                )
+                []
+                (enumerate 0 (- (length pool-token-supplies) 1))
+            )
+        )
+    )
     (defun SWP|UC_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount resulting from adding Liquidity with <input-amount> Tokens on <swpair> Pool"
         (if (= (take 1 swpair) "P")
