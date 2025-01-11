@@ -133,6 +133,7 @@
         (BRANDING.DefinePolicies)
         (SWPM.DefinePolicies)
         (SWPI.DefinePolicies)
+        (SWPL.DefinePolicies)
 
         (TALOS-01.DefinePolicies)
         (TALOS-02.DefinePolicies)

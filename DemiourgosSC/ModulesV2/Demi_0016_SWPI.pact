@@ -24,6 +24,9 @@
     (defcap P|SWPI|CALLER ()
         true
     )
+    (defcap P|SWPI|REMOTE-GOV ()
+        true
+    )
     ;;
     (defun A_AddPolicy (policy-name:string policy-guard:guard)
         (with-capability (SWPI-ADMIN)
@@ -44,6 +47,10 @@
             "SWPI|Caller"
             (create-capability-guard (P|SWPI|CALLER))
         )
+        (SWP.A_AddPolicy
+            "SWPI|RemoteSwapGovernor"
+            (create-capability-guard (P|SWPI|REMOTE-GOV))
+        )
     )
     (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
@@ -55,6 +62,7 @@
                 (token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                 (iz-principal:bool (contains (at 0 token-ids) principals))
             )
+            (compose-capability (P|SWPI|REMOTE-GOV))
             (compose-capability (P|SWPI|CALLER))
             ;;
             (SWP.SWP|UEV_PoolFee fee-lp)

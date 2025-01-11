@@ -349,7 +349,7 @@
         (if (> x y) x y)
     )
     (defun UTILS|UC_AddHybridArray (lists)
-        @doc "Adds all column elements in an array of numbers, even if the inner lists are of unequal lengths"
+        @doc "Adds all column elements in an array of numbers (decimals or integers), even if the inner lists are of unequal lengths"
         (let 
             (
                 (maxl 
@@ -389,25 +389,22 @@
     (defun UTILS|UEV_DecimalArray (array:[[decimal]])
         @doc "Enforces all inner list inside an array of decimal elements are of equal size"
         (enforce
-            (=
-                true
-                (fold
-                    (lambda
-                        (acc:bool inner-lst:[decimal])
-                        (and
-                            acc
-                            (if (= 
-                                    (length inner-lst) 
-                                    (length (at 0 array))
-                                )
-                                true
-                                false
+            (fold
+                (lambda
+                    (acc:bool inner-lst:[decimal])
+                    (and
+                        acc
+                        (if (= 
+                                (length inner-lst) 
+                                (length (at 0 array))
                             )
+                            true
+                            false
                         )
                     )
-                    true
-                    array
                 )
+                true
+                array
             )
             "All Fee-Array Lists must be of equal length !"
         )
@@ -1316,7 +1313,7 @@
     (defun SWP|UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
         (let*
             (
-                (raport:decimal (floor (/ ia (at ip X)) i-prec))
+                (ratio:decimal (floor (/ ia (at ip X)) i-prec))
                 (output:[decimal]
                     (fold
                         (lambda
@@ -1325,7 +1322,7 @@
                                 acc 
                                 (if (= idx ip)
                                     ia
-                                    (floor (* raport (at idx X)) (at idx Xp))
+                                    (floor (* ratio (at idx X)) (at idx Xp))
                                 )
                             )
                         )

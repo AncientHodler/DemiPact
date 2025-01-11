@@ -370,6 +370,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0018_SWPL.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 18 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -421,6 +428,7 @@
 (use free.SWP)              ;;131.990
 (use free.SWPI)             ;;146.990
 (use free.SWPM)             ;;125.638
+(use free.SWPL)             ;;125.638
 
 (use free.TALOS-01)         ;;147.441
 (use free.TALOS-02)         ;;147.386

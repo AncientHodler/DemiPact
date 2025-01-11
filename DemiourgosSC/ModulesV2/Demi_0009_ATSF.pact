@@ -58,8 +58,8 @@
     (defcap ATSF|FUEL (atspair:string reward-token:string)
         @event
         (ATS.ATS|UEV_RewardTokenExistance atspair reward-token true)
-        (compose-capability (P|ATSF|UPDATE_ROU))
         (compose-capability (P|ATSF|REMOTE-GOV))
+        (compose-capability (P|ATSF|UPDATE_ROU))
         (let
             (
                 (index:decimal (ATS.ATS|UC_Index atspair))
