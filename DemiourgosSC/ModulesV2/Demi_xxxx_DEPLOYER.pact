@@ -129,11 +129,13 @@
 
         (VESTING.DefinePolicies)
         (OUROBOROS.DefinePolicies)
-
         (BRANDING.DefinePolicies)
+
         (SWPM.DefinePolicies)
         (SWPI.DefinePolicies)
+        
         (SWPL.DefinePolicies)
+        (SWPS.DefinePolicies)
 
         (TALOS-01.DefinePolicies)
         (TALOS-02.DefinePolicies)
@@ -161,6 +163,7 @@
         (DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
         (DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
         (DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
+        (DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
     )
     (defun A_Step008 ()
         (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO

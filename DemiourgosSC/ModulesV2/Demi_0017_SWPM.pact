@@ -4,7 +4,7 @@
     )
     (defcap SWPM-ADMIN ()
         (enforce-one
-            "SWPM Autostake Admin not satisfed"
+            "SWPM Swapper Admin not satisfed"
             [
                 (enforce-guard G-MD_SWPM)
                 (enforce-guard G-SC_SWPM)

@@ -105,11 +105,13 @@
 
 (VESTING.DefinePolicies)
 (OUROBOROS.DefinePolicies)
-
 (BRANDING.DefinePolicies)
+
 (SWPM.DefinePolicies)
 (SWPI.DefinePolicies)
+
 (SWPL.DefinePolicies)
+(SWPC.DefinePolicies)
 
 (TALOS-01.DefinePolicies)
 (TALOS-02.DefinePolicies)
@@ -141,6 +143,7 @@
 (DALOS.DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
 (DALOS.DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
 (DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
+(DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
 
 ;:STEP 008 - Initialise the DALOS Properties Table with empty values and the Dalos Gas Management Table with initial values
 (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO

@@ -307,73 +307,94 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 11 - Load AUTOSTAKE-Manager Module")
+(begin-tx "InitSnake 12 - Load AUTOSTAKE-Fueling Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0009_ATSF.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 12 - Load VESTING Module")
+(begin-tx "InitSnake 13 - Load VESTING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0010_VST.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 13 - Load LIQUID Module")
+(begin-tx "InitSnake 14 - Load LIQUID Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0011_LIQUID.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 14 - Load OUROBOROS Module")
+(begin-tx "InitSnake 15 - Load LIQUIDFUEL Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0012_LIQUIDFUEL.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 14 - Load OUROBOROS Module")
+(begin-tx "InitSnake 16 - Load OUROBOROS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0013_OUROBOROS.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 15 - Load BRANDING Module")
+(begin-tx "InitSnake 17 - Load BRANDING Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0014_BRANDING.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 16 - Load SWAPPER Module")
+(begin-tx "InitSnake 18 - Load SWP Swapper Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0015_SWP.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(begin-tx "InitSnake 19 - Load SWPI Swapper-Issue Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPI.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(begin-tx "InitSnake 20 - Load SWPM Swapper Manager Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0017_SWPM.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWAPPER Module")
+(begin-tx "InitSnake 17 - Load SWPLC Swapper Liquidity Computer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0018_SWPL.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0018_SWPLC.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load SWPSC Swapper Swap Computer Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0019_SWPSC.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load SWPL Swapper Liquidity Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0020_SWPL.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 17 - Load SWPS Swapper Swap Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0021_SWPS.pact")
 (env-gas)
 (commit-tx)
 
@@ -428,7 +449,11 @@
 (use free.SWP)              ;;131.990
 (use free.SWPI)             ;;146.990
 (use free.SWPM)             ;;125.638
+
+(use free.SWPLC)             ;;125.638
+;(use free.SWPSC)             ;;
 (use free.SWPL)             ;;125.638
+;(use free.SWPS)             ;;
 
 (use free.TALOS-01)         ;;147.441
 (use free.TALOS-02)         ;;147.386

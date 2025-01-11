@@ -265,7 +265,7 @@
 
 
 (print "Swapping 25 DLK and 25 DWK to OURO in a constant product pool:")
-(free.SWP.SWP|UC_Swap
+(free.SWPSC.SWPSC|UC_Swap
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51" "DWK-98c486052a51"]
     [25.0 25.0]
@@ -282,7 +282,7 @@
 (print "==============")
 ;;
 (print "Swapping 50 DLK to OURO in a constant product pool:")
-(free.SWP.SWP|UC_Swap
+(free.SWPSC.SWPSC|UC_Swap
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51"]
     [50.0]
@@ -298,7 +298,7 @@
 )
 (print "==============")
 (print "Swapping 50 DLK to OURO in a stable swap pool:")
-(free.SWP.SWP|UC_Swap
+(free.SWPSC.SWPSC|UC_Swap
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51"]
     [50.0]
@@ -318,7 +318,7 @@
     ]
 )
 
-(free.SWPL.SWPL|UC_BalancedLiquidity
+(free.SWPLC.SWPLC|UC_BalancedLiquidity
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "OURO-98c486052a51"
     2000.0
@@ -335,7 +335,7 @@
     ]
 )
 
-(free.SWPL.SWPL|UC_LpCapacity
+(free.SWPLC.SWPLC|UC_LpCapacity
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
 )
 
@@ -350,7 +350,7 @@
     ]
 )
 
-(free.SWPL.SWPL|UC_SymetricLpAmount
+(free.SWPLC.SWPLC|UC_SymetricLpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "OURO-98c486052a51"
     2000.0
@@ -371,62 +371,62 @@
 
 (print "=======================ADD-STABLE-LIQUIDTY-TEST=================================")
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [100.0 100.0 100.0]
 )
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [300.0 0.0 0.0]
 )
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [200.0 200.0 200.0]
 )
 
 (print "Are Amounts balanced:")
-(free.SWPL.SWPL|UC_AreAmountsBalanced
+(free.SWPLC.SWPLC|UC_AreAmountsBalanced
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
 
 (print "=======================ADD-CONSTANT-PRODUCT-TEST=================================")
 
-(free.SWPL.SWPL|UC_P_LpAmount 
+(free.SWPLC.SWPLC|UC_P_LpAmount 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 2500.0 250.0]
 )
 
-(free.SWPL.SWPL|UC_SymetricLpAmount
+(free.SWPLC.SWPLC|UC_SymetricLpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "DLK-98c486052a51"
     250.0
 )
 
-(free.SWPL.SWPL|UC_P_LpAmount 
+(free.SWPLC.SWPLC|UC_P_LpAmount 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 10000.0 500.0]
 )
 
-(free.SWPL.SWPL|UC_LpAmount
+(free.SWPLC.SWPLC|UC_LpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 10000.0 500.0]
 )
 
 (print "=======================Compute LP Removal Amounts=================================")
 
-(free.SWPL.SWPL|UC_LpBreakAmounts 
+(free.SWPLC.SWPLC|UC_LpBreakAmounts 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     1000000.0
 )
-(free.SWPL.SWPL|UC_LpBreakAmounts 
+(free.SWPLC.SWPLC|UC_LpBreakAmounts 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     1000000.0
 )
@@ -444,7 +444,7 @@
     ]
 )
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
@@ -460,7 +460,7 @@
     ]
 )
 
-(free.SWPL.SWPL|UC_S_LpAmount 
+(free.SWPLC.SWPLC|UC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [100.0 250.0 770.0]
 )
@@ -557,3 +557,35 @@
 (env-gas)
 (commit-tx)
 (print "=======================ADD-NAKED-LIQ-TESTS=================================")
+
+(print "=======================SmartSwapGraphTest=================================")
+(begin-tx "Add naked Liqudity Liquidity")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(print "Node1 test")
+(free.SWPSC.SWPSC|UC_SmartSwapGraph "OURO-98c486052a51" "DLK-98c486052a51")
+(print "Node2 test")
+(free.SWPSC.SWPSC|UC_SmartSwapGraph "OURO-98c486052a51" "DWK-98c486052a51")
+(print "CustomTest")
+(free.SWPSC.SWPSC|UC_SmartSwapGraphCustom
+    [
+        "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+        "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+        "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51"
+        "P|OURO-98c486052a51|PKOSON-98c486052a51"
+        "P|OURO-98c486052a51|ESTAR-98c486052a51"
+        "P|OURO-98c486052a51|VESTA-98c486052a51"
+        "P|OURO-98c486052a51|USDD-98c486052a51"
+        "S|USDD-98c486052a51|USDC-98c486052a51|USDT-98c486052a51|BUSD-98c486052a51"
+    ]
+    "PKOSON-98c486052a51"
+    "DLK-98c486052a51"
+)
+
+(env-gas)
+(commit-tx)
+(print "=======================SmartSwapGraphTest=================================")
