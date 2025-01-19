@@ -92,7 +92,7 @@
                     )
                     (Xp:[integer] (SWP.SWP|UR_PoolTokenPrecisions swpair))
                 )
-                (UTILS.SWP|UC_BalancedLiquidity input-amount input-position input-precision X Xp)
+                (SUT.SWP|UC_BalancedLiquidity input-amount input-position input-precision X Xp)
             )
         )
     )
@@ -230,8 +230,8 @@
                     (
                         (amp:decimal (SWP.SWP|UR_Amplifier swpair))
                         (new-balances:[decimal] (zip (+) pool-token-supplies input-amounts))
-                        (d0:decimal (UTILS.SWP|UCC_ComputeD amp pool-token-supplies))
-                        (d1:decimal (UTILS.SWP|UCC_ComputeD amp new-balances))
+                        (d0:decimal (SUT.SUT|UC_ComputeD amp pool-token-supplies))
+                        (d1:decimal (SUT.SUT|UC_ComputeD amp new-balances))
                         (dr:decimal (floor (/ d1 d0) 24))
                         (Xp:[integer] (SWP.SWP|UR_PoolTokenPrecisions swpair))
                         (adjusted-balances:[decimal]
@@ -256,7 +256,7 @@
                             )
                         )
                     )
-                    (floor (/ (* (- (UTILS.SWP|UCC_ComputeD amp adjusted-balances) d0) lp-supply) d0) lp-prec)
+                    (floor (/ (* (- (SUT.SUT|UC_ComputeD amp adjusted-balances) d0) lp-supply) d0) lp-prec)
                 )
             )
         )

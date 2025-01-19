@@ -129,7 +129,7 @@
             (map
                 (lambda
                     (index:integer)
-                    (ATSI|UEV_IssueData (UTILS.DALOS|UCC_Makeid (at index atspair)) (at index index-decimals) (at index reward-token) (at index reward-bearing-token))
+                    (ATSI|UEV_IssueData (UTILS.DALOS|UDC_Makeid (at index atspair)) (at index index-decimals) (at index reward-token) (at index reward-bearing-token))
 
                 )
                 (enumerate 0 (- l1 1))
@@ -183,7 +183,7 @@
                                                 (at index rbt-nfr)
                                             )
                                         )
-                                        (ats-id:string (UTILS.DALOS|UCC_Makeid (at index atspair)))
+                                        (ats-id:string (UTILS.DALOS|UDC_Makeid (at index atspair)))
                                     )
                                     (BASIS.DPTF|XO_UpdateRewardToken ats-id (at index reward-token) true)
                                     (BASIS.DPTF-DPMF|XO_UpdateRewardBearingToken (at index reward-bearing-token) ats-id true)
@@ -210,7 +210,7 @@
         (BASIS.DPTF-DPMF|C_DeployAccount reward-bearing-token account true)
         (BASIS.DPTF-DPMF|C_DeployAccount reward-token ATS.ATS|SC_NAME true)
         (BASIS.DPTF-DPMF|C_DeployAccount reward-bearing-token ATS.ATS|SC_NAME true)
-        (UTILS.DALOS|UCC_Makeid atspair)
+        (UTILS.DALOS|UDC_Makeid atspair)
     )
     (defun ATSI|XC_EnsureActivationRoles (patron:string atspair:string cold-or-hot:bool)
         (let*

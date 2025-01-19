@@ -783,7 +783,7 @@
                         (met:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
                         (ea-supply:decimal (BASIS.DPTF-DPMF|UR_AccountSupply ea-id account true))
                         (t-ea-supply:decimal (BASIS.DALOS|URC_EliteAurynzSupply account))
-                        (virtual-met:integer (str-to-int (take 1 (at "tier" (UTILS.ATS|UCC_Elite (- t-ea-supply c-rbt-amount))))))
+                        (virtual-met:integer (str-to-int (take 1 (at "tier" (UTILS.ATS|UDC_Elite (- t-ea-supply c-rbt-amount))))))
                         (available:[integer] (if iz-ea-id (take virtual-met pstate) (take met pstate)))
                         (search-res:[integer] (UTILS.LIST|UC_Search available 1))
                     )
@@ -1251,7 +1251,7 @@
     )
     (defun ATS|X_InsertNewATSPair (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
         (enforce-guard (C_ReadPolicy "ATSI|Caller"))
-        (insert ATS|Pairs (UTILS.DALOS|UCC_Makeid atspair)
+        (insert ATS|Pairs (UTILS.DALOS|UDC_Makeid atspair)
             {"owner-konto"                          : account
             ,"can-change-owner"                     : true
             ,"parameter-lock"                       : false

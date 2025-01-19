@@ -1,32 +1,38 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-(module UTILS GOVERNANCE
+(module UTILS GOV
+    ;;  
+    ;;{G1}
     (defconst NS_TEST "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
     (defconst NS_MAIN "")
     (defconst NS_USE "free")
+    (defconst GOV|MD_UTILS   (keyset-ref-guard GOV|DEMIURGOI))
+    (defconst GOV|DEMIURGOI 
+        (+ NS_USE ".dh_master-keyset")
+    )
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|UTILS_ADMIN))
+    )
+    (defcap GOV|UTILS_ADMIN ()
+        (enforce-guard GOV|MD_UTILS)
+    )
+    ;;{G3}
+    ;;
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;
+    ;;{1}
+    ;;{2}
+    ;;{3}
     (defconst DPTF_FEE-LOCK
         (if (or (= NS_USE NS_TEST) (= NS_USE "free"))
             1.0
             10000.0
         )
     )
+
     (defconst ATS_FEE-LOCK (/ DPTF_FEE-LOCK 10.0))
-
-    ;;Module Governance
-    (defcap GOVERNANCE ()
-        (compose-capability (UTILS_ADMIN))
-    )
-    (defcap UTILS_ADMIN ()
-        (enforce-guard G-MD_UTILS)
-    )
-    (defcap COMPOSE () true)
-
-    (defconst G-MD_UTILS   (keyset-ref-guard UTILS|DEMIURGOI))
-
-    (defconst UTILS|DEMIURGOI 
-        (+ NS_USE ".dh_master-keyset")
-    )
-
-    ;;[D] DALOS Constant Values
     (defconst KDA_PRECISION 12              "Native Kadena Precision")
     (defconst MIN_PRECISION 2               "Minimum DALOS Token Precision")
     (defconst MAX_PRECISION 24              "Maximum DALOS Token Precision")
@@ -35,7 +41,6 @@
     (defconst MAX_TOKEN_NAME_LENGTH 50      "Maximum Length for DALOS Token-Name") 
     (defconst MAX_TOKEN_TICKER_LENGTH 30    "Maximum Length for DALOS Token-Ticker")
 
-    ;;Used for validation of an ATS Index Name
     (defconst ACCOUNT_ID_CHARSET CHARSET_LATIN1 "Allowed character set for account IDs.");
     (defconst ACCOUNT_ID_PROHIBITED_CHARACTER ["$" "¢" "£"])
     (defconst ACCOUNT_ID_MAX_LENGTH 256 " Maximum character length for account IDs. ")
@@ -45,8 +50,7 @@
     (defconst NON_CAPITAL_LETTERS ["a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"])
     (defconst SPECIAL ["|" "-" "^"])
 
-    ;;[A] Autostake Constant Values
-    (defconst ET        ;;Elite Thresholds
+    (defconst ET
         [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
         105.0 110.0 125.0 150.0 200.0 350.0 600.0
         610.0 620.0 650.0 700.0 800.0 1100.0 1600.0
@@ -56,6 +60,7 @@
         67600.0 68600.0 71600.0 76600.0 86600.0 116600.0 166600.0]
         "Represents the Total-Elite-Auryn (vested and non-vested) to increase in Elite-Account Rank"
     )
+
     (defconst DEB
         [1.0 1.01 1.02 1.03 1.04 1.05 1.06 1.07
         1.09 1.11 1.13 1.15 1.17 1.19 1.21
@@ -66,10 +71,12 @@
         3.45 3.66 3.87 4.08 4.29 4.50 4.71]
         "Represents the Demiourgos Elite Bonus as non-percentual, direct multipler"
     )
+
     (defconst AFT
         [50.0 100.0 200.0 350.0 550.0 800.0]
         "The Fee Threhsolds for Auryn Uncoil; Obsolete; Generated on ATS-Pair Set-up"
     )
+
     (defconst AUHD
         [504 480 478 476 472 468 464 460
         456 454 452 448 444 440 436
@@ -80,6 +87,7 @@
         336 330 324 318 312 306 300]
         "Auryn Uncoil Hour Duration; Obsolete; Generated via ATS-Pair creation as the Default Value of the ATS Pair"
     )
+
     (defconst EAUHD
         [1680 1512 1488 1464 1440 1416 1392 1368
         1344 1320 1296 1272 1248 1224 1200
@@ -90,17 +98,13 @@
         504 480 456 432 408 384 360]
         "Elite-Auryn Uncoil Hour Duration; Obsolete; Generated via ATS-Pair Set-up"
     );;made by<(OUROBOROS.ATS|C_SetCRD patron Elite-Auryndex false 360 24)>
-    
-    ;;True-Fungible Auryn and Elite-Auryn Promile Fees stored as constants
+
     (defconst AURYN_FEE 50.0)
     (defconst ELITE-AURYN_FEE 100.0)
 
-    ;;Time Constants (used in AUTOSTAKE Module)
     (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
     (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
-
-    ;;Elite Account Tier Designations
-    ;;Elite Account Classes
+    ;;
     (defconst C1 "NOVICE")
     (defconst C2 "INVESTOR")
     (defconst C3 "ENTREPRENEUR")
@@ -108,8 +112,7 @@
     (defconst C5 "MAGNATE")
     (defconst C6 "TYCOON")
     (defconst C7 "DEMIURG")
-    ;;Elite Account Names
-    ;;Tier 1 - NOVICE Class
+    ;;T1
     (defconst N00 "Infidel")
     (defconst N01 "Indigent")
     (defconst N11 "Fledgling")
@@ -119,7 +122,7 @@
     (defconst N15 "Aspirant")
     (defconst N16 "Enthusiast")
     (defconst N17 "Partner")
-    ;;Tier 2 - INVESTOR Class
+    ;;T2
     (defconst N21 "Novice Investor")
     (defconst N22 "Associate Investor")
     (defconst N23 "Junior Investor")
@@ -127,7 +130,7 @@
     (defconst N25 "Adept Investor")
     (defconst N26 "Expert Investor")
     (defconst N27 "Elite Investor")
-    ;;Tier 3 - ENTREPRENEUR Class
+    ;;T3
     (defconst N31 "Novice Entrepreneur")
     (defconst N32 "Associate Entrepreneur")
     (defconst N33 "Junior Entrepreneur")
@@ -135,7 +138,7 @@
     (defconst N35 "Adept Entrepreneur")
     (defconst N36 "Expert Entrepreneur")
     (defconst N37 "Elite Entrepreneur")
-    ;;Tier 4 - MOGUL Class
+    ;;T4
     (defconst N41 "Associate Mogul")
     (defconst N42 "Junior Mogul")
     (defconst N43 "Senior Mogul")
@@ -143,7 +146,7 @@
     (defconst N45 "Expert Mogul")
     (defconst N46 "Elite Mogul")
     (defconst N47 "Master Mogul")
-    ;;Tier 5 - MAGNATE Class
+    ;;T5
     (defconst N51 "Associate Magnate")
     (defconst N52 "Junior Magnate")
     (defconst N53 "Senior Magnate")
@@ -151,7 +154,7 @@
     (defconst N55 "Expert Magnate")
     (defconst N56 "Elite Magnate")
     (defconst N57 "Master Magnate")
-    ;;Tier 6 - TYCOON Class
+    ;;T6
     (defconst N61 "Junior Tycoon")
     (defconst N62 "Senior Tycoon")
     (defconst N63 "Adept Tycoon")
@@ -159,7 +162,7 @@
     (defconst N65 "Elite Tycoon")
     (defconst N66 "Master Tycoon")
     (defconst N67 "Grand-Master Tycoon")
-    ;;Tier 6 - DEMIURG Class
+    ;;T7
     (defconst N71 "Neophyte Demiurg")
     (defconst N72 "Acolyte Demiurg")
     (defconst N73 "Adept Demiurg")
@@ -167,249 +170,102 @@
     (defconst N75 "Elite Demiurg")
     (defconst N76 "Master Demiurg")
     (defconst N77 "Grand-Master Demiurg")
-    ;;========[D] RESTRICTIONS=================================================;;
-    ;;            Capabilities Functions (NONE)         [CAP]
-    ;;            Function Based Capabilities (NONE)    [CF](have this tag)
-    ;;            Enforcements and Validations          [UEV]
-    (defun GUARD|UEV_All:guard (guards:[guard])
-        @doc "Create a guard that only succeeds if every guard in GUARDS is successfully enforced."
-        (enforce (< 0 (length guards)) "Guard list cannot be empty")
-        (create-user-guard (GUARD|UEV_X_All guards))
-    )
-    (defun GUARD|UEV_X_All:bool (guards:[guard])
-        @doc "Enforces all guards in GUARDS"
-        (map (enforce-guard) guards)
-        true
-    )
-    (defun GUARD|UEV_Any:guard (guards:[guard])
-        @doc "Create a guard that succeeds if at least one guard in GUARDS is successfully enforced."
-        (enforce (< 0 (length guards)) "Guard list cannot be empty")
-        (create-user-guard (GUARD|UEV_X_Any guards))
-    )
-    (defun GUARD|UEV_X_Any:bool (guards:[guard])
-        @doc "Will succeed if at least one guard in GUARDS is successfully enforced."
-        (enforce 
-            (< 0 (length (filter (= true) (map (GUARD|UC_Try) guards))))
-            "None of the guards passed"
-        )
-    )
-    ;;gas-station functions
-    (defun max-gas-notional:guard (gasNotional:decimal)
-        @doc "Guard to enforce gas price * gas limit is smaller than or equal to GAS"
-        (create-user-guard
-            (enforce-below-or-at-gas-notional gasNotional)
-        )
-    )
-    (defun enforce-below-gas-notional (gasNotional:decimal)
-        (enforce (< (chain-gas-notional) gasNotional)
-            (format "Gas Limit * Gas Price must be smaller than {}" [gasNotional])
-        )
-    )
-    (defun enforce-below-or-at-gas-notional (gasNotional:decimal)
-        (enforce (<= (chain-gas-notional) gasNotional)
-            (format "Gas Limit * Gas Price must be smaller than or equal to {}" [gasNotional])
-        )
-    )
-    (defun max-gas-price:guard (gasPrice:decimal)
-        @doc "Guard to enforce gas price is smaller than or equal to GAS PRICE"
-        (create-user-guard
-            (enforce-below-or-at-gas-price gasPrice)
-        )
-    )
-    (defun enforce-below-gas-price:bool (gasPrice:decimal)
-        (enforce (< (chain-gas-price) gasPrice)
-            (format "Gas Price must be smaller than {}" [gasPrice])
-        )
-    )
-    (defun enforce-below-or-at-gas-price:bool (gasPrice:decimal)
-        (enforce (<= (chain-gas-price) gasPrice)
-            (format "Gas Price must be smaller than or equal to {}" [gasPrice])
-        )
-    )
-    (defun max-gas-limit:guard (gasLimit:integer)
-        @doc "Guard to enforce gas limit is smaller than or equal to GAS LIMIT"
-        (create-user-guard
-            (enforce-below-or-at-gas-limit gasLimit)
-        )
-    )
-    (defun enforce-below-gas-limit:bool (gasLimit:integer)
-        (enforce (< (chain-gas-limit) gasLimit)
-            (format "Gas Limit must be smaller than {}" [gasLimit])
-        )
-    )
-    (defun enforce-below-or-at-gas-limit:bool (gasLimit:integer)
-        (enforce (<= (chain-gas-limit) gasLimit)
-            (format "Gas Limit must be smaller than or equal to {}" [gasLimit])
-        )
-    )
-    (defun chain-gas-price ()
-        @doc "Return gas price from chain-data"
-        (at 'gas-price (chain-data))
-    )
-    (defun chain-gas-limit ()
-        @doc "Return gas limit from chain-data"
-        (at 'gas-limit (chain-data))
-    )
-    (defun chain-gas-notional ()
-        @doc "Return gas limit * gas price from chain-data"
-        (* (chain-gas-price) (chain-gas-limit))
-    )
     ;;
-    (defun UTILS|UEV_EnforceReserved:bool (account:string guard:guard)
-        @doc "Enforce reserved account name protocols"
-        (if 
-            (validate-principal guard account)
-            true
-            (let 
-                (
-                    (r (UTILS|UEV_CheckReserved account))
-                )
-                (if 
-                    (= r "")
-                    true
-                    (if 
-                        (= r "k")
-                        (enforce false "Single-key account protocol violation")
-                        (enforce false (format "Reserved protocol guard violation: {}" [r]))
-                    )
-                )
-            )
+    ;;{4}
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    ;;
+    ;;{8}
+    ;;{9}
+    (defun ATS|UDC_Elite (x:decimal)
+        @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
+        (cond
+            ;;Class Novice
+            ((<= x (at 0 ET)) { "class": C1, "name": N00, "tier": "0.0", "deb": (at 0 DEB)})
+            ((and (> x (at 0 ET))(< x (at 1 ET))) { "class": C1, "name": N01, "tier": "0.1", "deb": (at 0 DEB)})
+            ((and (>= x (at 1 ET))(< x (at 2 ET))) { "class": C1, "name": N11, "tier": "1.1", "deb": (at 1 DEB)})
+            ((and (>= x (at 2 ET))(< x (at 3 ET))) { "class": C1, "name": N12, "tier": "1.2", "deb": (at 2 DEB)})
+            ((and (>= x (at 3 ET))(< x (at 4 ET))) { "class": C1, "name": N13, "tier": "1.3", "deb": (at 3 DEB)})
+            ((and (>= x (at 4 ET))(< x (at 5 ET))) { "class": C1, "name": N14, "tier": "1.4", "deb": (at 4 DEB)})
+            ((and (>= x (at 5 ET))(< x (at 6 ET))) { "class": C1, "name": N15, "tier": "1.5", "deb": (at 5 DEB)})
+            ((and (>= x (at 6 ET))(< x (at 7 ET))) { "class": C1, "name": N16, "tier": "1.6", "deb": (at 6 DEB)})
+            ((and (>= x (at 7 ET))(< x (at 8 ET))) { "class": C1, "name": N17, "tier": "1.7", "deb": (at 7 DEB)})
+            ;;Class INVESTOR
+            ((and (>= x (at 8 ET))(< x (at 9 ET))) { "class": C2, "name": N21, "tier": "2.1", "deb": (at 8 DEB)})
+            ((and (>= x (at 9 ET))(< x (at 10 ET))) { "class": C2, "name": N22, "tier": "2.2", "deb": (at 9 DEB)})
+            ((and (>= x (at 10 ET))(< x (at 11 ET))) { "class": C2, "name": N23, "tier": "2.3", "deb": (at 10 DEB)})
+            ((and (>= x (at 11 ET))(< x (at 12 ET))) { "class": C2, "name": N24, "tier": "2.4", "deb": (at 11 DEB)})
+            ((and (>= x (at 12 ET))(< x (at 13 ET))) { "class": C2, "name": N25, "tier": "2.5", "deb": (at 12 DEB)})
+            ((and (>= x (at 13 ET))(< x (at 14 ET))) { "class": C2, "name": N26, "tier": "2.6", "deb": (at 13 DEB)})
+            ((and (>= x (at 14 ET))(< x (at 15 ET))) { "class": C2, "name": N27, "tier": "2.7", "deb": (at 14 DEB)})
+            ;;Class ENTREPRENEUR
+            ((and (>= x (at 15 ET))(< x (at 16 ET))) { "class": C3, "name": N31, "tier": "3.1", "deb": (at 15 DEB)})
+            ((and (>= x (at 16 ET))(< x (at 17 ET))) { "class": C3, "name": N32, "tier": "3.2", "deb": (at 16 DEB)})
+            ((and (>= x (at 17 ET))(< x (at 18 ET))) { "class": C3, "name": N33, "tier": "3.3", "deb": (at 17 DEB)})
+            ((and (>= x (at 18 ET))(< x (at 19 ET))) { "class": C3, "name": N34, "tier": "3.4", "deb": (at 18 DEB)})
+            ((and (>= x (at 19 ET))(< x (at 20 ET))) { "class": C3, "name": N35, "tier": "3.5", "deb": (at 19 DEB)})
+            ((and (>= x (at 20 ET))(< x (at 21 ET))) { "class": C3, "name": N36, "tier": "3.6", "deb": (at 20 DEB)})
+            ((and (>= x (at 21 ET))(< x (at 22 ET))) { "class": C3, "name": N37, "tier": "3.7", "deb": (at 21 DEB)})
+            ;;Class MOGUL
+            ((and (>= x (at 22 ET))(< x (at 23 ET))) { "class": C4, "name": N41, "tier": "4.1", "deb": (at 22 DEB)})
+            ((and (>= x (at 23 ET))(< x (at 24 ET))) { "class": C4, "name": N42, "tier": "4.2", "deb": (at 23 DEB)})
+            ((and (>= x (at 24 ET))(< x (at 25 ET))) { "class": C4, "name": N43, "tier": "4.3", "deb": (at 24 DEB)})
+            ((and (>= x (at 25 ET))(< x (at 26 ET))) { "class": C4, "name": N44, "tier": "4.4", "deb": (at 25 DEB)})
+            ((and (>= x (at 26 ET))(< x (at 27 ET))) { "class": C4, "name": N45, "tier": "4.5", "deb": (at 26 DEB)})
+            ((and (>= x (at 27 ET))(< x (at 28 ET))) { "class": C4, "name": N46, "tier": "4.6", "deb": (at 27 DEB)})
+            ((and (>= x (at 28 ET))(< x (at 29 ET))) { "class": C4, "name": N47, "tier": "4.7", "deb": (at 28 DEB)})
+            ;;Class MAGNATE
+            ((and (>= x (at 29 ET))(< x (at 30 ET))) { "class": C5, "name": N51, "tier": "5.1", "deb": (at 29 DEB)})
+            ((and (>= x (at 30 ET))(< x (at 31 ET))) { "class": C5, "name": N52, "tier": "5.2", "deb": (at 30 DEB)})
+            ((and (>= x (at 31 ET))(< x (at 32 ET))) { "class": C5, "name": N53, "tier": "5.3", "deb": (at 31 DEB)})
+            ((and (>= x (at 32 ET))(< x (at 33 ET))) { "class": C5, "name": N54, "tier": "5.4", "deb": (at 32 DEB)})
+            ((and (>= x (at 33 ET))(< x (at 34 ET))) { "class": C5, "name": N55, "tier": "5.5", "deb": (at 33 DEB)})
+            ((and (>= x (at 34 ET))(< x (at 35 ET))) { "class": C5, "name": N56, "tier": "5.6", "deb": (at 34 DEB)})
+            ((and (>= x (at 35 ET))(< x (at 36 ET))) { "class": C5, "name": N57, "tier": "5.7", "deb": (at 35 DEB)})
+            ;;Class TYCOON
+            ((and (>= x (at 36 ET))(< x (at 37 ET))) { "class": C6, "name": N61, "tier": "6.1", "deb": (at 36 DEB)})
+            ((and (>= x (at 37 ET))(< x (at 38 ET))) { "class": C6, "name": N62, "tier": "6.2", "deb": (at 37 DEB)})
+            ((and (>= x (at 38 ET))(< x (at 39 ET))) { "class": C6, "name": N63, "tier": "6.3", "deb": (at 38 DEB)})
+            ((and (>= x (at 39 ET))(< x (at 40 ET))) { "class": C6, "name": N64, "tier": "6.4", "deb": (at 39 DEB)})
+            ((and (>= x (at 40 ET))(< x (at 41 ET))) { "class": C6, "name": N65, "tier": "6.5", "deb": (at 40 DEB)})
+            ((and (>= x (at 41 ET))(< x (at 42 ET))) { "class": C6, "name": N66, "tier": "6.6", "deb": (at 41 DEB)})
+            ((and (>= x (at 42 ET))(< x (at 43 ET))) { "class": C6, "name": N67, "tier": "6.7", "deb": (at 42 DEB)})
+            ;;Class DEMIURG
+            ((and (>= x (at 43 ET))(< x (at 44 ET))) { "class": C7, "name": N71, "tier": "7.1", "deb": (at 43 DEB)})
+            ((and (>= x (at 44 ET))(< x (at 45 ET))) { "class": C7, "name": N72, "tier": "7.2", "deb": (at 44 DEB)})
+            ((and (>= x (at 45 ET))(< x (at 46 ET))) { "class": C7, "name": N73, "tier": "7.3", "deb": (at 45 DEB)})
+            ((and (>= x (at 46 ET))(< x (at 47 ET))) { "class": C7, "name": N74, "tier": "7.4", "deb": (at 46 DEB)})
+            ((and (>= x (at 47 ET))(< x (at 48 ET))) { "class": C7, "name": N75, "tier": "7.5", "deb": (at 47 DEB)})
+            ((and (>= x (at 48 ET))(< x (at 49 ET))) { "class": C7, "name": N76, "tier": "7.6", "deb": (at 48 DEB)})
+            { "class": C7, "name": N77, "tier": "7.7", "deb": (at 49 DEB)}
         )
     )
-    (defun UTILS|UEV_CheckReserved:string (account:string)
-        @doc "Checks account for reserved name and returns type if \
-            \ found or empty string. Reserved names start with a \
-            \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
-        (let 
+    (defun DALOS|UDC_Makeid:string (ticker:string)
+        @doc "Creates a DPTF id \ 
+            \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
+        (let
             (
-                (pfx (take 2 account))
+                (dash "-")
+                (twelve (take 12 (at "prev-block-hash" (chain-data))))
             )
-            (if (= ":" (take -1 pfx)) 
-                (take 1 pfx) 
-                ""
-            )
+            (concat [ticker dash twelve])
         )
     )
-    (defun UTILS|UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string)
-        @doc "Validates a number (positions-number) as positional variables"
-        (enforce (= (contains integer-to-validate (enumerate 1 positions)) true) message)
-    )
-    (defun UTILS|UEV_EnforceUniformIntegerList (input:[integer])
-        @doc "Enforces that all elements in the integer list are the same."
-        (let 
-            (
-                (fe:integer (at 0 input))
-            )  ;; Get the first element in the list
-            (map
-                (lambda 
-                    (index:integer)
-                    (enforce (= fe (at index input)) "List elements are not the same")
-                    true
-                )
-                (enumerate 0 (- (length input) 1))
-            )
-        )
-    )
-    (defun UTILS|UEV_ContainsAll (l1:[integer] l2:[integer])
+    (defun DALOS|UDC_MakeMVXNonce:string (nonce:integer)
+        @doc "Creates a MultiversX specific NFT nonce from an integer"
         (let*
             (
-                (tl:[bool]
-                    (fold
-                        (lambda
-                            (acc:[bool] item:integer)
-                            (LIST|UC_AppendLast acc (contains item l2))
-                        )
-                        []
-                        l1
-                    )
-                )
-                (sl:[integer] (LIST|UC_Search tl true))
-                (tl2:integer (length sl))
+                (hexa:string (int-to-str 16 nonce))
+                (hexalength:integer (length hexa))
             )
-            (if (= tl2 (length l1))
-                true
-                false
+            (if (= (mod hexalength 2) 1 )
+                (concat ["0" hexa])
+                hexa
             )
         )
     )
-
-    (defun UTILS|UC_AddArray:[decimal] (array:[[decimal]])
-        @doc "Adds all column elements in an array of decimal elements, while ensuring all rows are of equal length"
-        (UTILS|UEV_DecimalArray array)
-        (fold
-            (lambda
-                (acc:[decimal] item:[decimal])
-                (zip (+) acc item)
-            )
-            (make-list (length (at 0 array)) 0.0)
-            array
-        )
-    )
-    (defun UTILS|UC_Max (x y)
-        (if (> x y) x y)
-    )
-    (defun UTILS|UC_AddHybridArray (lists)
-        @doc "Adds all column elements in an array of numbers (decimals or integers), even if the inner lists are of unequal lengths"
-        (let 
-            (
-                (maxl 
-                    (fold 
-                        (lambda 
-                            (acc lst) 
-                            (UTILS|UC_Max acc (length lst))
-                        )
-                        0
-                        lists
-                    )
-                )
-            )
-            (map 
-                (lambda 
-                    (i)
-                    (fold 
-                        (+) 
-                        0.0
-                        (map 
-                            (lambda 
-                                (inner-lst)
-                                (if (< i (length inner-lst))
-                                    (at i inner-lst)
-                                    0.0
-                                )
-                            )
-                            lists
-                        )
-                    )
-                )
-                (enumerate 0 (- maxl 1))
-            )
-        )
-    )
-
-    (defun UTILS|UEV_DecimalArray (array:[[decimal]])
-        @doc "Enforces all inner list inside an array of decimal elements are of equal size"
-        (enforce
-            (fold
-                (lambda
-                    (acc:bool inner-lst:[decimal])
-                    (and
-                        acc
-                        (if (= 
-                                (length inner-lst) 
-                                (length (at 0 array))
-                            )
-                            true
-                            false
-                        )
-                    )
-                )
-                true
-                array
-            )
-            "All Fee-Array Lists must be of equal length !"
-        )
-    )
-    ;;
+    ;;{10}
     (defun DALOS|UEV_Fee (fee:decimal)
         @doc "Validate input decimal as a fee value"
         (enforce
@@ -490,7 +346,106 @@
             "Decimal Size is not between 2 and 24 as per DALOS Standard!"
         )
     )
-    ;;
+    (defun GUARD|UEV_All:guard (guards:[guard])
+        @doc "Create a guard that only succeeds if every guard in GUARDS is successfully enforced."
+        (enforce (< 0 (length guards)) "Guard list cannot be empty")
+        (create-user-guard (GUARD|UEV_X_All guards))
+    )
+    (defun GUARD|UEV_X_All:bool (guards:[guard])
+        @doc "Enforces all guards in <guards>"
+        (map (enforce-guard) guards)
+        true
+    )
+    (defun GUARD|UEV_Any:guard (guards:[guard])
+        @doc "Create a guard that succeeds if at least one guard in GUARDS is successfully enforced."
+        (enforce (< 0 (length guards)) "Guard list cannot be empty")
+        (create-user-guard (GUARD|UEV_X_Any guards))
+    )
+    (defun GUARD|UEV_X_Any:bool (guards:[guard])
+        @doc "Will succeed if at least one guard in GUARDS is successfully enforced."
+        (enforce 
+            (< 0 (length (filter (= true) (map (GUARD|UC_Try) guards))))
+            "None of the guards passed"
+        )
+    )
+    (defun UTILS|UEV_EnforceReserved:bool (account:string guard:guard)
+        @doc "Enforce reserved account name protocols"
+        (if 
+            (validate-principal guard account)
+            true
+            (let 
+                (
+                    (r (UTILS|UEV_CheckReserved account))
+                )
+                (if 
+                    (= r "")
+                    true
+                    (if 
+                        (= r "k")
+                        (enforce false "Single-key account protocol violation")
+                        (enforce false (format "Reserved protocol guard violation: {}" [r]))
+                    )
+                )
+            )
+        )
+    )
+    (defun UTILS|UEV_CheckReserved:string (account:string)
+        @doc "Checks account for reserved name and returns type if \
+            \ found or empty string. Reserved names start with a \
+            \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
+        (let 
+            (
+                (pfx (take 2 account))
+            )
+            (if (= ":" (take -1 pfx)) 
+                (take 1 pfx) 
+                ""
+            )
+        )
+    )
+    (defun UTILS|UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string)
+        @doc "Validates a number (positions-number) as positional variables"
+        (enforce (= (contains integer-to-validate (enumerate 1 positions)) true) message)
+    )
+    (defun UTILS|UEV_EnforceUniformIntegerList (input:[integer])
+        @doc "Enforces that all elements in the integer list are the same."
+        (let 
+            (
+                (fe:integer (at 0 input))
+            )  ;; Get the first element in the list
+            (map
+                (lambda 
+                    (index:integer)
+                    (enforce (= fe (at index input)) "List elements are not the same")
+                    true
+                )
+                (enumerate 0 (- (length input) 1))
+            )
+        )
+    )
+    (defun UTILS|UEV_DecimalArray (array:[[decimal]])
+        @doc "Enforces all inner list inside an array of decimal elements are of equal size"
+        (enforce
+            (fold
+                (lambda
+                    (acc:bool inner-lst:[decimal])
+                    (and
+                        acc
+                        (if (= 
+                                (length inner-lst) 
+                                (length (at 0 array))
+                            )
+                            true
+                            false
+                        )
+                    )
+                )
+                true
+                array
+            )
+            "All Fee-Array Lists must be of equal length !"
+        )
+    )
     (defun VST|UEV_Milestone (milestones:integer)
         @doc "Restrict Milestone integer between 1 and 365 Milestones"
         (enforce 
@@ -506,179 +461,7 @@
             "Total Vesting Time cannot be greater than 25 years"
         )
     )
-    ;;            Composed Capabilities (NONE)          [CC](dont have this tag)
-    ;;========[D] DATA FUNCTIONS===============================================;;
-    ;;            Data Read Functions (NONE)            [UR]
-    ;;            Data Read and Computation Functions   [URC] and [UC]
-    (defun GUARD|UC_Try (g:guard)
-        @doc "Helper function used in <GUARD|UEV_Any>"
-        (try false (enforce-guard g))
-    );;
-    (defun LIST|UC_SplitString:[string] (splitter:string splitee:string)
-        @doc "Splits a string using a single string as splitter"
-        (if (= 0 (length splitee))
-            [] ;If the string is empty return a zero length list
-            (let* 
-                (
-                    (sep-pos (LIST|UC_Search (str-to-list splitee) splitter))
-                    (substart (map (+ 1) (LIST|UC_InsertFirst sep-pos -1)))
-                    (sublen  (zip (-) (LIST|UC_AppendLast sep-pos 10000000) substart))
-                    (cut (lambda (start len) (take len (drop start splitee))))
-                )
-                (zip (cut) substart sublen)
-            )
-        )
-    )
-    (defun LIST|UC_Search:[integer] (searchee:list item)
-        @doc "Search an item into the list and returns a list of index"
-        (if (contains item searchee)
-            (let 
-                (
-                    (indexes (enumerate 0 (length searchee)))
-                    (match (lambda (v i) (if (= item v) i -1)))
-                )
-                (LIST|UC_RemoveItem (zip (match) searchee indexes) -1)
-            )
-            []
-        )
-    )
-    (defun LIST|UC_ReplaceItem:list (in:list old-item new-item)
-        @doc "Replace each occurrence of old-item by new-item"
-        (map (lambda (x) (if (= x old-item) new-item x)) in)
-    )
-    (defun LIST|UC_RemoveItemAt:list (in:list position:integer)
-        @doc "Removes and item from a list existing at a given position"
-        (enforce (and (>= position 0) (< position (length in)) )"Position must be non-negative and within the bounds of the list")
-        (let
-            (
-                (before (take position in))
-                (after (drop (+ position 1) in))
-            )
-            (+ before after)
-        )
-    )
-    (defun LIST|UC_IzUnique (lst:[string])
-        @doc "Ensures List is composed of unique elements"
-        (let
-            (
-                (unique-set 
-                    (fold 
-                        (lambda 
-                            (acc:[string] item:string)
-                            (enforce 
-                                (not (contains item acc)) 
-                                (format "Unique Items Required, duplicate item found: {}" [item])
-                            )
-                            (LIST|UC_AppendLast acc item)
-                        )
-                        [] 
-                        lst
-                    )
-                )
-            )
-            true  ; If all items are unique, the function returns true
-        )
-    )
-    (defun LIST|UC_RemoveItem:list (in:list item)
-        @doc "Remove an item from a list"
-        (filter (!= item) in)
-    )
-    (defun LIST|UC_FirstListElement (in:list)
-        @doc "Returns the first item of a list"
-        (LIST|X_EnforceNotEmpty in)
-        (at 0 in)
-    )
-    (defun LIST|UC_SecondListElement (in:list)
-        @doc "Returns the second item of a list"
-        (LIST|X_EnforceNotEmpty in)
-        (at 1 in)
-    )
-    (defun LIST|UC_LastListElement (in:list)
-        @doc "Returns the last item of the list"
-        (LIST|X_EnforceNotEmpty in)
-        (at (- (length in) 1) in)
-    )
-    (defun LIST|UC_InsertFirst:list (in:list item)
-        @doc "Insert an item at the left of the list"
-        (+ [item] in)
-    )
-    (defun LIST|UC_AppendLast:list (in:list item)
-        @doc "Append an item at the end of the list"
-        (+ in [item])
-    )
-    (defun LIST|X_EnforceNotEmpty:bool (x:list)
-        @doc "Verify and Enforces that a list is not empty"
-        (enforce (LIST|X_IsNotEmpty x) "List cannot be empty")
-    )
-    (defun LIST|X_IsNotEmpty:bool (x:list)
-        @doc "Return true if the list is not empty"
-        (< 0 (length x))
-    )
-    (defun LIST|UC_ReplaceAt:list (in:list idx:integer item)
-        @doc "Replace the item at position idx"
-        (enforce (and? (<= 0) (> (length in)) idx) "Index out of bounds")
-        (LIST|X_Chain [(take idx in),
-                [item],
-                (drop (+ 1 idx) in)])
-    )
-    (defun LIST|X_Chain:list (in:list)
-        @doc "Chain list of lists"
-        (fold (+) [] in)
-    )
-    (defun UV_EnforceListBounds:bool (x:list idx:integer)
-        @doc "Verify and ENFORCES that idx is in list bounds"
-        (enforce (and? (<= 0) (> (length x)) idx) "Index out of bounds")
-    )
-    ;;
-    (defun UTILS|UC_TripleAnd:bool (b1:bool b2:bool b3:bool)
-        (and (and b1 b2) b3)
-    )
-    (defun UTILS|UC_QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool)
-        (and (and b1 b2) (and b3 b4))
-    )
-    (defun UTILS|UC_Percent:decimal (x:decimal percent:decimal precision:integer)
-        (enforce (and (> percent 0.0)(<= percent 100.0)) "P is not a valid percent amount")
-        (floor (/ (* x percent) 100.0) precision)
-    )
-    (defun UTILS|UC_MaxInteger:integer (lst:[integer])
-        (fold
-            (lambda
-                (acc:integer element:integer)
-                (if (> element acc) element acc)
-            )
-            (at 0 lst)
-            (drop 1 lst)
-        )
-    )
-    ;;
-    (defun DALOS|UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)
-        @doc "Checks if a string is alphanumeric with or without Uppercase Only \
-        \ Uppercase Only toggle is used by setting the capital boolean to true"
-        (fold
-            (lambda
-                (acc:bool c:string)
-                (and acc (DALOS|UC_IzCharacterANC c capital iz-lp))
-            )
-            true
-            (str-to-list s)
-        )
-    )
-    (defun DALOS|UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool)
-        @doc "Checks if a character is alphanumeric with or without Uppercase Only"
-        (let*
-            (
-                (c1:bool (or (contains c CAPITAL_LETTERS)(contains c NUMBERS)))
-                (c2:bool (or c1 (contains c NON_CAPITAL_LETTERS) ))
-                (c3:bool (or c1 (contains c SPECIAL) ))
-                (c4:bool (or c3 (contains c NON_CAPITAL_LETTERS) ))
-            )
-            (if iz-lp
-                (if capital c3 c4)
-                (if capital c1 c2)    
-            )
-        )
-    )
-    ;;
+    ;;{11}
     (defun ATS|UC_UnlockPrice:[decimal] (unlocks:integer)
         @doc "Computes the <parameter-lock> unlock price for a ATS <id> \
             \ Outputs [virtual-gas-costs native-gas-cost] \
@@ -833,7 +616,33 @@
             [remainder fee]
         )
     )
-    ;;
+    (defun DALOS|UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)
+        @doc "Checks if a string is alphanumeric with or without Uppercase Only \
+        \ Uppercase Only toggle is used by setting the capital boolean to true"
+        (fold
+            (lambda
+                (acc:bool c:string)
+                (and acc (DALOS|UC_IzCharacterANC c capital iz-lp))
+            )
+            true
+            (str-to-list s)
+        )
+    )
+    (defun DALOS|UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool)
+        @doc "Checks if a character is alphanumeric with or without Uppercase Only"
+        (let*
+            (
+                (c1:bool (or (contains c CAPITAL_LETTERS)(contains c NUMBERS)))
+                (c2:bool (or c1 (contains c NON_CAPITAL_LETTERS) ))
+                (c3:bool (or c1 (contains c SPECIAL) ))
+                (c4:bool (or c3 (contains c NON_CAPITAL_LETTERS) ))
+            )
+            (if iz-lp
+                (if capital c3 c4)
+                (if capital c1 c2)    
+            )
+        )
+    )
     (defun DALOS|UC_Filterid:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let 
@@ -855,7 +664,18 @@
             result
         )
     )
-    ;;
+    (defun DALOS|UC_GasCost (base-cost:decimal major:integer minor:integer native:bool)
+        (* (/ (- 100.0 (DALOS|UCX_GasDiscount major minor native)) 100.0) base-cost)
+    )
+    (defun DALOS|UCX_GasDiscount (major:integer minor:integer native:bool)
+        (if (= major 0)
+            0.0
+            (if native
+                (* 0.5 (+ (* 7.0 (- (dec major) 1.0)) (dec minor)))
+                (+ (* 7.0 (- (dec major) 1.0)) (dec minor))
+            )
+        )
+    )
     (defun DPTF|UC_VolumetricTax (precision:integer amount:decimal)
         @doc "Computes Volumetric-Transaction-Tax (VTT) value, given an Input Decimal <amount>"
         (let*
@@ -911,7 +731,216 @@
             [five fifteen rest]
         )
     )
-    ;;
+    (defun GUARD|UC_Try (g:guard)
+        @doc "Helper function used in <GUARD|UEV_Any>"
+        (try false (enforce-guard g))
+    )
+    (defun LIST|UC_SplitString:[string] (splitter:string splitee:string)
+        @doc "Splits a string using a single string as splitter"
+        (if (= 0 (length splitee))
+            [] ;If the string is empty return a zero length list
+            (let* 
+                (
+                    (sep-pos (LIST|UC_Search (str-to-list splitee) splitter))
+                    (substart (map (+ 1) (LIST|UC_InsertFirst sep-pos -1)))
+                    (sublen  (zip (-) (LIST|UC_AppendLast sep-pos 10000000) substart))
+                    (cut (lambda (start len) (take len (drop start splitee))))
+                )
+                (zip (cut) substart sublen)
+            )
+        )
+    )
+    (defun LIST|UC_Search:[integer] (searchee:list item)
+        @doc "Search an item into the list and returns a list of index"
+        (if (contains item searchee)
+            (let 
+                (
+                    (indexes (enumerate 0 (length searchee)))
+                    (match (lambda (v i) (if (= item v) i -1)))
+                )
+                (LIST|UC_RemoveItem (zip (match) searchee indexes) -1)
+            )
+            []
+        )
+    )
+    (defun LIST|UC_ReplaceItem:list (in:list old-item new-item)
+        @doc "Replace each occurrence of old-item by new-item"
+        (map (lambda (x) (if (= x old-item) new-item x)) in)
+    )
+    (defun LIST|UC_RemoveItemAt:list (in:list position:integer)
+        @doc "Removes and item from a list existing at a given position"
+        (enforce (and (>= position 0) (< position (length in)) )"Position must be non-negative and within the bounds of the list")
+        (let
+            (
+                (before (take position in))
+                (after (drop (+ position 1) in))
+            )
+            (+ before after)
+        )
+    )
+    (defun LIST|UC_IzUnique (lst:[string])
+        @doc "Ensures List is composed of unique elements"
+        (let
+            (
+                (unique-set 
+                    (fold 
+                        (lambda 
+                            (acc:[string] item:string)
+                            (enforce 
+                                (not (contains item acc)) 
+                                (format "Unique Items Required, duplicate item found: {}" [item])
+                            )
+                            (LIST|UC_AppendLast acc item)
+                        )
+                        [] 
+                        lst
+                    )
+                )
+            )
+            true  ; If all items are unique, the function returns true
+        )
+    )
+    (defun LIST|UC_RemoveItem:list (in:list item)
+        @doc "Remove an item from a list"
+        (filter (!= item) in)
+    )
+    (defun LIST|UC_FirstListElement (in:list)
+        @doc "Returns the first item of a list"
+        (LIST|X_EnforceNotEmpty in)
+        (at 0 in)
+    )
+    (defun LIST|UC_SecondListElement (in:list)
+        @doc "Returns the second item of a list"
+        (LIST|X_EnforceNotEmpty in)
+        (at 1 in)
+    )
+    (defun LIST|UC_LastListElement (in:list)
+        @doc "Returns the last item of the list"
+        (LIST|X_EnforceNotEmpty in)
+        (at (- (length in) 1) in)
+    )
+    (defun LIST|UC_InsertFirst:list (in:list item)
+        @doc "Insert an item at the left of the list"
+        (+ [item] in)
+    )
+    (defun LIST|UC_AppendLast:list (in:list item)
+        @doc "Append an item at the end of the list"
+        (+ in [item])
+    )
+    (defun LIST|X_EnforceNotEmpty:bool (x:list)
+        @doc "Verify and Enforces that a list is not empty"
+        (enforce (LIST|X_IsNotEmpty x) "List cannot be empty")
+    )
+    (defun LIST|X_IsNotEmpty:bool (x:list)
+        @doc "Return true if the list is not empty"
+        (< 0 (length x))
+    )
+    (defun LIST|UC_ReplaceAt:list (in:list idx:integer item)
+        @doc "Replace the item at position idx"
+        (enforce (and? (<= 0) (> (length in)) idx) "Index out of bounds")
+        (LIST|X_Chain [(take idx in),
+                [item],
+                (drop (+ 1 idx) in)])
+    )
+    (defun LIST|X_Chain:list (in:list)
+        @doc "Chain list of lists"
+        (fold (+) [] in)
+    )
+    (defun UTILS|UC_Max (x y)
+        (if (> x y) x y)
+    )
+    (defun UTILS|UC_ContainsAll (l1:[integer] l2:[integer])
+        @doc "Enforce l1 is included in l2"
+        (let*
+            (
+                (tl:[bool]
+                    (fold
+                        (lambda
+                            (acc:[bool] item:integer)
+                            (LIST|UC_AppendLast acc (contains item l2))
+                        )
+                        []
+                        l1
+                    )
+                )
+                (sl:[integer] (LIST|UC_Search tl true))
+                (tl2:integer (length sl))
+            )
+            (if (= tl2 (length l1))
+                true
+                false
+            )
+        )
+    )
+    (defun UTILS|UC_AddArray:[decimal] (array:[[decimal]])
+        @doc "Adds all column elements in an array of decimal elements, while ensuring all rows are of equal length"
+        (UTILS|UEV_DecimalArray array)
+        (fold
+            (lambda
+                (acc:[decimal] item:[decimal])
+                (zip (+) acc item)
+            )
+            (make-list (length (at 0 array)) 0.0)
+            array
+        )
+    )
+    (defun UTILS|UC_AddHybridArray (lists)
+        @doc "Adds all column elements in an array of numbers (decimals or integers), even if the inner lists are of unequal lengths"
+        (let 
+            (
+                (maxl 
+                    (fold 
+                        (lambda 
+                            (acc lst) 
+                            (UTILS|UC_Max acc (length lst))
+                        )
+                        0
+                        lists
+                    )
+                )
+            )
+            (map 
+                (lambda 
+                    (i)
+                    (fold 
+                        (+) 
+                        0.0
+                        (map 
+                            (lambda 
+                                (inner-lst)
+                                (if (< i (length inner-lst))
+                                    (at i inner-lst)
+                                    0.0
+                                )
+                            )
+                            lists
+                        )
+                    )
+                )
+                (enumerate 0 (- maxl 1))
+            )
+        )
+    )
+    (defun UTILS|UC_TripleAnd:bool (b1:bool b2:bool b3:bool)
+        (and (and b1 b2) b3)
+    )
+    (defun UTILS|UC_QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool)
+        (and (and b1 b2) (and b3 b4))
+    )
+    (defun UTILS|UC_Percent:decimal (x:decimal percent:decimal precision:integer)
+        (enforce (and (> percent 0.0)(<= percent 100.0)) "P is not a valid percent amount")
+        (floor (/ (* x percent) 100.0) precision)
+    )
+    (defun UTILS|UC_MaxInteger:integer (lst:[integer])
+        (fold
+            (lambda
+                (acc:integer element:integer)
+                (if (> element acc) element acc)
+            )
+            (at 0 lst)
+            (drop 1 lst)
+        )
+    )
     (defun VST|UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)
         @doc "Splits an Amount according to vesting parameters"
         (VST|UEV_Milestone milestones)
@@ -956,382 +985,10 @@
             )
         )
     )
-    ;;            Data Creation|Composition Functions   [UCC]
-    (defun DALOS|UCC_GasDiscount (major:integer minor:integer native:bool)
-        (if (= major 0)
-            0.0
-            (if native
-                (* 0.5 (+ (* 7.0 (- (dec major) 1.0)) (dec minor)))
-                (+ (* 7.0 (- (dec major) 1.0)) (dec minor))
-            )
-        )
-    )
-    (defun DALOS|UC_GasCost (base-cost:decimal major:integer minor:integer native:bool)
-        (* (/ (- 100.0 (DALOS|UCC_GasDiscount major minor native)) 100.0) base-cost)
-    )
-    (defun ATS|UCC_Elite (x:decimal)
-        @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
-        (cond
-            ;;Class Novice
-            ((<= x (at 0 ET)) { "class": C1, "name": N00, "tier": "0.0", "deb": (at 0 DEB)})
-            ((and (> x (at 0 ET))(< x (at 1 ET))) { "class": C1, "name": N01, "tier": "0.1", "deb": (at 0 DEB)})
-            ((and (>= x (at 1 ET))(< x (at 2 ET))) { "class": C1, "name": N11, "tier": "1.1", "deb": (at 1 DEB)})
-            ((and (>= x (at 2 ET))(< x (at 3 ET))) { "class": C1, "name": N12, "tier": "1.2", "deb": (at 2 DEB)})
-            ((and (>= x (at 3 ET))(< x (at 4 ET))) { "class": C1, "name": N13, "tier": "1.3", "deb": (at 3 DEB)})
-            ((and (>= x (at 4 ET))(< x (at 5 ET))) { "class": C1, "name": N14, "tier": "1.4", "deb": (at 4 DEB)})
-            ((and (>= x (at 5 ET))(< x (at 6 ET))) { "class": C1, "name": N15, "tier": "1.5", "deb": (at 5 DEB)})
-            ((and (>= x (at 6 ET))(< x (at 7 ET))) { "class": C1, "name": N16, "tier": "1.6", "deb": (at 6 DEB)})
-            ((and (>= x (at 7 ET))(< x (at 8 ET))) { "class": C1, "name": N17, "tier": "1.7", "deb": (at 7 DEB)})
-            ;;Class INVESTOR
-            ((and (>= x (at 8 ET))(< x (at 9 ET))) { "class": C2, "name": N21, "tier": "2.1", "deb": (at 8 DEB)})
-            ((and (>= x (at 9 ET))(< x (at 10 ET))) { "class": C2, "name": N22, "tier": "2.2", "deb": (at 9 DEB)})
-            ((and (>= x (at 10 ET))(< x (at 11 ET))) { "class": C2, "name": N23, "tier": "2.3", "deb": (at 10 DEB)})
-            ((and (>= x (at 11 ET))(< x (at 12 ET))) { "class": C2, "name": N24, "tier": "2.4", "deb": (at 11 DEB)})
-            ((and (>= x (at 12 ET))(< x (at 13 ET))) { "class": C2, "name": N25, "tier": "2.5", "deb": (at 12 DEB)})
-            ((and (>= x (at 13 ET))(< x (at 14 ET))) { "class": C2, "name": N26, "tier": "2.6", "deb": (at 13 DEB)})
-            ((and (>= x (at 14 ET))(< x (at 15 ET))) { "class": C2, "name": N27, "tier": "2.7", "deb": (at 14 DEB)})
-            ;;Class ENTREPRENEUR
-            ((and (>= x (at 15 ET))(< x (at 16 ET))) { "class": C3, "name": N31, "tier": "3.1", "deb": (at 15 DEB)})
-            ((and (>= x (at 16 ET))(< x (at 17 ET))) { "class": C3, "name": N32, "tier": "3.2", "deb": (at 16 DEB)})
-            ((and (>= x (at 17 ET))(< x (at 18 ET))) { "class": C3, "name": N33, "tier": "3.3", "deb": (at 17 DEB)})
-            ((and (>= x (at 18 ET))(< x (at 19 ET))) { "class": C3, "name": N34, "tier": "3.4", "deb": (at 18 DEB)})
-            ((and (>= x (at 19 ET))(< x (at 20 ET))) { "class": C3, "name": N35, "tier": "3.5", "deb": (at 19 DEB)})
-            ((and (>= x (at 20 ET))(< x (at 21 ET))) { "class": C3, "name": N36, "tier": "3.6", "deb": (at 20 DEB)})
-            ((and (>= x (at 21 ET))(< x (at 22 ET))) { "class": C3, "name": N37, "tier": "3.7", "deb": (at 21 DEB)})
-            ;;Class MOGUL
-            ((and (>= x (at 22 ET))(< x (at 23 ET))) { "class": C4, "name": N41, "tier": "4.1", "deb": (at 22 DEB)})
-            ((and (>= x (at 23 ET))(< x (at 24 ET))) { "class": C4, "name": N42, "tier": "4.2", "deb": (at 23 DEB)})
-            ((and (>= x (at 24 ET))(< x (at 25 ET))) { "class": C4, "name": N43, "tier": "4.3", "deb": (at 24 DEB)})
-            ((and (>= x (at 25 ET))(< x (at 26 ET))) { "class": C4, "name": N44, "tier": "4.4", "deb": (at 25 DEB)})
-            ((and (>= x (at 26 ET))(< x (at 27 ET))) { "class": C4, "name": N45, "tier": "4.5", "deb": (at 26 DEB)})
-            ((and (>= x (at 27 ET))(< x (at 28 ET))) { "class": C4, "name": N46, "tier": "4.6", "deb": (at 27 DEB)})
-            ((and (>= x (at 28 ET))(< x (at 29 ET))) { "class": C4, "name": N47, "tier": "4.7", "deb": (at 28 DEB)})
-            ;;Class MAGNATE
-            ((and (>= x (at 29 ET))(< x (at 30 ET))) { "class": C5, "name": N51, "tier": "5.1", "deb": (at 29 DEB)})
-            ((and (>= x (at 30 ET))(< x (at 31 ET))) { "class": C5, "name": N52, "tier": "5.2", "deb": (at 30 DEB)})
-            ((and (>= x (at 31 ET))(< x (at 32 ET))) { "class": C5, "name": N53, "tier": "5.3", "deb": (at 31 DEB)})
-            ((and (>= x (at 32 ET))(< x (at 33 ET))) { "class": C5, "name": N54, "tier": "5.4", "deb": (at 32 DEB)})
-            ((and (>= x (at 33 ET))(< x (at 34 ET))) { "class": C5, "name": N55, "tier": "5.5", "deb": (at 33 DEB)})
-            ((and (>= x (at 34 ET))(< x (at 35 ET))) { "class": C5, "name": N56, "tier": "5.6", "deb": (at 34 DEB)})
-            ((and (>= x (at 35 ET))(< x (at 36 ET))) { "class": C5, "name": N57, "tier": "5.7", "deb": (at 35 DEB)})
-            ;;Class TYCOON
-            ((and (>= x (at 36 ET))(< x (at 37 ET))) { "class": C6, "name": N61, "tier": "6.1", "deb": (at 36 DEB)})
-            ((and (>= x (at 37 ET))(< x (at 38 ET))) { "class": C6, "name": N62, "tier": "6.2", "deb": (at 37 DEB)})
-            ((and (>= x (at 38 ET))(< x (at 39 ET))) { "class": C6, "name": N63, "tier": "6.3", "deb": (at 38 DEB)})
-            ((and (>= x (at 39 ET))(< x (at 40 ET))) { "class": C6, "name": N64, "tier": "6.4", "deb": (at 39 DEB)})
-            ((and (>= x (at 40 ET))(< x (at 41 ET))) { "class": C6, "name": N65, "tier": "6.5", "deb": (at 40 DEB)})
-            ((and (>= x (at 41 ET))(< x (at 42 ET))) { "class": C6, "name": N66, "tier": "6.6", "deb": (at 41 DEB)})
-            ((and (>= x (at 42 ET))(< x (at 43 ET))) { "class": C6, "name": N67, "tier": "6.7", "deb": (at 42 DEB)})
-            ;;Class DEMIURG
-            ((and (>= x (at 43 ET))(< x (at 44 ET))) { "class": C7, "name": N71, "tier": "7.1", "deb": (at 43 DEB)})
-            ((and (>= x (at 44 ET))(< x (at 45 ET))) { "class": C7, "name": N72, "tier": "7.2", "deb": (at 44 DEB)})
-            ((and (>= x (at 45 ET))(< x (at 46 ET))) { "class": C7, "name": N73, "tier": "7.3", "deb": (at 45 DEB)})
-            ((and (>= x (at 46 ET))(< x (at 47 ET))) { "class": C7, "name": N74, "tier": "7.4", "deb": (at 46 DEB)})
-            ((and (>= x (at 47 ET))(< x (at 48 ET))) { "class": C7, "name": N75, "tier": "7.5", "deb": (at 47 DEB)})
-            ((and (>= x (at 48 ET))(< x (at 49 ET))) { "class": C7, "name": N76, "tier": "7.6", "deb": (at 48 DEB)})
-            { "class": C7, "name": N77, "tier": "7.7", "deb": (at 49 DEB)}
-        )
-    )
+    ;;{12}
+    ;;{13}
     ;;
-    (defun DALOS|UCC_Makeid:string (ticker:string)
-        @doc "Creates a DPTF id \ 
-            \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
-        (let
-            (
-                (dash "-")
-                (twelve (take 12 (at "prev-block-hash" (chain-data))))
-            )
-            (concat [ticker dash twelve])
-        )
-    )
-    (defun DALOS|UCX_MakeMVXNonce:string (nonce:integer)
-        @doc "Creates a MultiversX specific NFT nonce from an integer"
-        (let*
-            (
-                (hexa:string (int-to-str 16 nonce))
-                (hexalength:integer (length hexa))
-            )
-            (if (= (mod hexalength 2) 1 )
-                (concat ["0" hexa])
-                hexa
-            )
-        )
-    )
-    ;;
-    (defun SWP|UCC_ComputeP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec)
-        (let*
-            (
-                (pool-product:decimal (floor (fold (*) 1.0 X) 24))
-                (l1:integer (length X))
-                (new-supplies:[decimal] (SWP|UCC_NewSupply X input-amounts ip))
-                (new-supplies-rem:[decimal] (LIST|UC_RemoveItemAt new-supplies op))
-                (new-supplies-product:decimal (floor (fold (*) 1.0 new-supplies-rem) 24))
-                (output:decimal (floor (/ pool-product new-supplies-product) o-prec))
-            )
-            (- (at op X) output)
-        )
-    )
-    (defun SWP|UCC_NewSupply (X:[decimal] input-amounts:[decimal] ip:[integer])
-        (fold
-            (lambda
-                (acc:[decimal] idx:integer)
-                (LIST|UC_AppendLast 
-                    acc 
-                    (+ 
-                        (if (contains idx ip)
-                            (at (at 0 (LIST|UC_Search ip idx)) input-amounts)
-                            0.0
-                        )
-                        (at idx X)
-                    )
-                )
-            )
-            []
-            (enumerate 0 (- (length X) 1))
-        )
-    )
-    ;;
-    (defun SWP|UCC_ComputeYD (A:decimal X:[decimal] NewD:decimal op:integer)
-        (let*
-            (
-                (d0:decimal (SWP|UCC_ComputeD A X))
-                (percent:decimal (floor (/ NewD d0) 24))
-                (y0:decimal (floor (* percent (at op X)) 24))
-
-                (output-lst:[decimal]
-                    (fold
-                        (lambda
-                            (y-values:[decimal] idx:integer)
-                            (let*
-                                (
-                                    (prev-y:decimal (at idx y-values))
-                                    (y-value:decimal (SWP|UCC_YNext prev-y NewD A X op))
-                                )
-                                (LIST|UC_AppendLast y-values y-value)
-                            )
-                        )
-                        [y0]
-                        (enumerate 0 20)
-                    )
-                )
-            )
-            (LIST|UC_LastListElement output-lst)
-        )
-    )
-    (defun SWP|UCC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer)
-        (let*
-            (
-                (xi:decimal (at ip X))
-                (xn:decimal (+ xi input-amount))
-                (XX:[decimal] (LIST|UC_ReplaceAt X ip xn))
-                (NewD:decimal (SWP|UCC_ComputeD A XX))
-                (y0:decimal (+ (at op X) input-amount))
-                (output-lst:[decimal]
-                    (fold
-                        (lambda
-                            (y-values:[decimal] idx:integer)
-                            (let*
-                                (
-                                    (prev-y:decimal (at idx y-values))
-                                    (y-value:decimal (SWP|UCC_YNext prev-y NewD A X op))
-                                )
-                                (LIST|UC_AppendLast y-values y-value)
-                            )
-                        )
-                        [y0]
-                        (enumerate 0 10)
-                    )
-                )
-            )
-            (- (LIST|UC_LastListElement output-lst) (at op X))
-        )
-    )
-    (defun SWP|UCC_ComputeD:decimal (A:decimal X:[decimal])
-        (let*
-            (
-                (output-lst:[decimal]
-                    (fold
-                        (lambda
-                            (d-values:[decimal] idx:integer)
-                            (let*
-                                (
-                                    (prev-d:decimal (at idx d-values))
-                                    (d-value:decimal (SWP|UCC_DNext prev-d A X))
-                                )
-                                (LIST|UC_AppendLast d-values d-value)
-                            )
-                        )
-                        [(fold (+) 0.0 X)]
-                        (enumerate 0 5)
-                    )
-                )
-            )
-            (LIST|UC_LastListElement output-lst)
-        )
-    )
-    (defun SWP|UCC_DNext (D:decimal A:decimal X:[decimal])
-        @doc "Computes Dnext: \
-        \ n = (length X) \
-        \ S=x1+x2+x3+... \
-        \ P=x1*x2*x3*... \
-        \ Dp = (D^(n+1))/(P*n^n) \
-        \ Numerator = (A*n^n*S + Dp*n)*D \
-        \ Denominator = (A*n^n-1)*D + (n+1)*Dp \
-        \ DNext = Numerator / Denominator"
-        ;;
-        (let*
-            (
-                (prec:integer 24)
-                (n:decimal (dec (length X)))
-                (S:decimal (fold (+) 0.0 X))
-                (P:decimal (floor (fold (*) 1.0 X) prec))
-                (n1:decimal (+ 1.0 n))
-                (nn:decimal (^ n n))
-                (Dp:decimal (floor (/ (^ D n1) (* nn P)) prec))
-
-                (v1:decimal (floor (fold (*) 1.0 [A nn S]) prec))
-                (v2:decimal (* Dp n))
-                (v3:decimal (+ v1 v2))
-                (numerator:decimal (floor (* v3 D) prec))
-
-                (v4:decimal (- (* A nn) 1.0))
-                (v5:decimal (* v4 D))
-                (v6:decimal (floor (* n1 Dp) prec))
-                (denominator:decimal (+ v5 v6))
-            )
-            (floor (/ numerator denominator) prec)
-        )
-    )
-    (defun SWP|UCC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer)
-        @doc "Computes Y such that the invariant remains satisfied \
-        \ Sp = x1+x2+x3+ ... without the term to be computed, containing the modified input token amount \
-        \ Pp = x1*x2*x3* ... without the term to be computed, containing the modified input token amount \
-        \ c = (D^(n+1))/(n^n*Pp*A*n^n) \
-        \ b = Sp + (D/A*n^n) \
-        \ Numerator = y^2 + c \
-        \ Denominator = 2*y + b - D \
-        \ YNext = Numerator / Denominator "
-        (let*
-            (
-                (prec:integer 24)
-                (n:decimal (dec (length X)))
-                (XXX:[decimal] (LIST|UC_RemoveItem X (at op X)))
-                (Sp:decimal (fold (+) 0.0 XXX))
-                (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
-                (n1:decimal (+ 1.0 n))
-                (nn:decimal (^ n n))
-                (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
-                (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
-                (Ysq:decimal (^ Y 2.0))
-                (numerator:decimal (floor (+ Ysq c) prec))
-                (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
-            )
-            (floor (/ numerator denominator) prec)
-        )
-    )
-    ;;
-    (defun SWP|UC_LP:[string] (token-names:[string] token-tickers:[string] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_LpIDs token-names token-tickers true)
-            (SWP|UC_LpIDs token-names token-tickers false)
-        )
-    )
-    (defun SWP|UC_LpIDs:[string] (token-names:[string] token-tickers:[string] p-or-s:bool)
-        (let*
-            (
-                (l1:integer (length token-names))
-                (l2:integer (length token-tickers))
-                (lengths:[integer] [l1 l2])
-                (prefix:string (if p-or-s "P" "S"))
-                (minus:string "-")
-                (caron:string "^")
-            )
-            (UTILS|UEV_EnforceUniformIntegerList lengths)
-            (let*
-                (
-                    (lp-name-elements:[string]
-                        (fold
-                            (lambda
-                                (acc:[string] idx:integer)
-                                (if (!= idx (- l1 1))
-                                    (LIST|UC_AppendLast acc (+ (at idx token-names) caron))
-                                    (LIST|UC_AppendLast acc (at idx token-names))
-                                )
-                            )
-                            []
-                            (enumerate 0 (- l1 1))
-                        )
-                    )
-                    (lp-ticker-elements:[string]
-                        (fold
-                            (lambda
-                                (acc:[string] idx:integer)
-                                (if (!= idx (- l1 1))
-                                    (LIST|UC_AppendLast acc (+ (at idx token-tickers) minus))
-                                    (LIST|UC_AppendLast acc (at idx token-tickers))
-                                )
-                            )
-                            []
-                            (enumerate 0 (- l1 1))
-                        )
-                    )
-                    (lp-name:string (concat [prefix BAR (concat lp-name-elements)]))
-                    (lp-ticker:string (concat [prefix BAR (concat lp-ticker-elements) BAR "LP"]))
-                )
-                [lp-name lp-ticker]
-            )
-        )
-    )
-    (defun SWP|UC_Swpair:string (token-ids:[string] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_PoolID token-ids true)
-            (SWP|UC_PoolID token-ids false)
-        )
-    )
-    (defun SWP|UC_PoolID:string (token-ids:[string] p-or-s:bool)
-        (let*
-            (
-                (prefix:string (if p-or-s "P" "S"))
-                (swpair-elements:[string]
-                    (fold
-                        (lambda
-                            (acc:[string] idx:integer)
-                            (if (!= idx (- (length token-ids) 1))
-                                (LIST|UC_AppendLast acc (+ (at idx token-ids) BAR))
-                                (LIST|UC_AppendLast acc (at idx token-ids))
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length token-ids) 1))
-                    )
-                )
-            )
-            (concat [prefix BAR (concat swpair-elements)])
-        )
-    )
-    ;;
-    (defun SWP|UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
-        (let*
-            (
-                (ratio:decimal (floor (/ ia (at ip X)) i-prec))
-                (output:[decimal]
-                    (fold
-                        (lambda
-                            (acc:[decimal] idx:integer)
-                            (UTILS.LIST|UC_AppendLast 
-                                acc 
-                                (if (= idx ip)
-                                    ia
-                                    (floor (* ratio (at idx X)) (at idx Xp))
-                                )
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length X) 1))
-                    )
-                )
-            )
-            output
-        )
-    )
+    ;;{14}
+    ;;{15}
+    ;;{16}
 )

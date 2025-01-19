@@ -55,8 +55,50 @@
             (DALOS.IGNIS|C_Collect patron (SWP.SWP|UR_OwnerKonto swpair) (DALOS.DALOS|UR_UsagePrice "ignis|biggest"))
         )
     )
-    (defun SWPM|C_ToggleAddorSwap (patron:string swpair:string toggle:bool add-or-swap:bool)
+    (defun SWPM|C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool)
+        @doc "When Toggle is true, ensure required Mint, Burn, Transfer Roles are set, if not, set them \
+        \ Mint and Burn Roles for LP Token (requires LP Token Ownership) \
+        \ Fee Exemption Roles for all Tokens of a Stable Pool, or \
+        \ for all Tokens of a Product Pool, except its first Token (which is principal) \
+        \ Roles are needed to SWP.SWP|SC_NAME"
         (with-capability (P|SWPM|CALLER)
+            (if toggle
+                (let*
+                    (
+                        (pt-ids:[string] (SWP.SWP|UR_PoolTokens swpair))
+                        (amp:decimal (SWP.SWP|UR_Amplifier swpair))
+                        (ptts:[string]
+                            (if (= amp -1.0)
+                                (drop 1 pt-ids)
+                                pt-ids
+                            )
+                        )
+                        (swp:string SWP.SWP|SC_NAME)
+                        (lp-id:string (SWP.SWP|UR_TokenLP swpair))
+                        (lp-burn-role:bool (BASIS.DPTF-DPMF|UR_AccountRoleBurn lp-id swp true))
+                        (lp-mint-role:bool (BASIS.DPTF|UR_AccountRoleMint lp-id swp))
+                    )
+                    (if (not lp-burn-role)
+                        (ATSI.DPTF-DPMF|C_ToggleBurnRole patron lp-id swp true true)
+                        true
+                    )
+                    (if (not lp-mint-role)
+                        (ATSI.DPTF|C_ToggleMintRole patron lp-id swp true)
+                        true
+                    )
+                    (map
+                        (lambda
+                            (idx:integer)
+                            (if (not (BASIS.DPTF|UR_AccountRoleFeeExemption (at idx ptts) swp))
+                                (ATSI.DPTF|C_ToggleFeeExemptionRole patron (at idx ptts) swp true)
+                                true
+                            )
+                        )
+                        (enumerate 0 (- (length ptts) 1))
+                    )
+                )
+                true
+            )
             (SWP.SWP|X_CanAddOrSwapToggle swpair toggle add-or-swap)
             (DALOS.IGNIS|C_Collect patron (SWP.SWP|UR_OwnerKonto swpair) (DALOS.DALOS|UR_UsagePrice "ignis|medium"))
         )

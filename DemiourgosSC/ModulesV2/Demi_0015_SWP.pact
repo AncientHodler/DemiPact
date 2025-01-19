@@ -83,7 +83,7 @@
         principals:[string]
         liquid-boost:bool
     )
-    
+    ;;
     (defschema SWP|Schema
         @doc "Key = <token-a-id> + UTILS.BAR + <token-b-id>"
         owner-konto:string
@@ -125,7 +125,6 @@
     (deftable SWP|Properties:{SWP|PropertiesSchema})
     (deftable SWP|Pairs:{SWP|Schema})
     (deftable SWP|Pools:{SWP|PoolsSchema})
-    
     ;;
     (defun SWP|UR_Principals:[string] ()
         (at "principals" (read SWP|Properties SWP|INFO ["principals"]))
@@ -202,13 +201,6 @@
             )
             Xp
         )
-    )
-    ;;
-    (defun SWP|UR_AInit:decimal (swpair:string)
-        (at "a-init" (read SWP|Pairs swpair ["a-init"]))
-    )
-    (defun SWP|UR_BInit:decimal (swpair:string)
-        (at "b-init" (read SWP|Pairs swpair ["b-init"]))
     )
     ;;
     (defun SWP|UR_FeeLP:decimal (swpair:string)
@@ -549,8 +541,8 @@
             (
                 (e0:string (at 0 token-ids))
                 (e1:string (at 1 token-ids))
-                (swp1:string (UTILS.SWP|UC_Swpair token-ids amp))
-                (swp2:string (UTILS.SWP|UC_Swpair [e1 e0] amp))
+                (swp1:string (SUT.SWP|UC_Swpair token-ids amp))
+                (swp2:string (SUT.SWP|UC_Swpair [e1 e0] amp))
                 (t1:bool (SWP|UEV_CheckID swp1))
                 (t2:bool (SWP|UEV_CheckID swp2))
             )
@@ -636,6 +628,27 @@
                     )
                 )
             )
+        )
+    )
+    (defun SWP|URC_Swpairs:[string] ()
+        @doc "Outputs all current Existing Swpairs. Cheaper than <keys SWP|Pairs>"
+        (let
+            (
+                (p2:[string] (SWP|UR_Pools SWP.P2))
+                (p3:[string] (SWP|UR_Pools SWP.P3))
+                (p4:[string] (SWP|UR_Pools SWP.P4))
+                (p5:[string] (SWP|UR_Pools SWP.P5))
+                (p6:[string] (SWP|UR_Pools SWP.P6))
+                (p7:[string] (SWP|UR_Pools SWP.P7))
+
+                (s2:[string] (SWP|UR_Pools SWP.S2))
+                (s3:[string] (SWP|UR_Pools SWP.S3))
+                (s4:[string] (SWP|UR_Pools SWP.S4))
+                (s5:[string] (SWP|UR_Pools SWP.S5))
+                (s6:[string] (SWP|UR_Pools SWP.S6))
+                (s7:[string] (SWP|UR_Pools SWP.S7))
+            )
+            (fold (+) [] (UTILS.LIST|UC_RemoveItem [p2 p3 p4 p5 p6 p7 s2 s3 s4 s5 s6 s7] [UTILS.BAR]))
         )
     )
     ;;
@@ -832,7 +845,7 @@
                 (n:integer (length pool-tokens))
                 (what:bool (if (= amp -1.0) true false))
                 (pool-token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
-                (swpair:string (UTILS.SWP|UC_Swpair pool-token-ids amp))
+                (swpair:string (SUT.SWP|UC_Swpair pool-token-ids amp))
             )
             (with-capability (SECURE)
                 (SWP|X_SavePool n what swpair)
@@ -861,8 +874,11 @@
             )
         )
     )
-)
+    
+    
 
+
+)
 
 (create-table PoliciesTable)
 (create-table SWP|Properties)

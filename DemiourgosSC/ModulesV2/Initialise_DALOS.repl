@@ -251,6 +251,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 03b - Load Swapt UTILS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0000_UTILSb.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 04 - Load DALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -356,70 +363,77 @@
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 19 - Load SWPI Swapper-Issue Module")
+(begin-tx "InitSnake 19 - Load SWPM Swapper Tracer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPI.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0016_SWPT.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 20 - Load SWPM Swapper Manager Module")
+(begin-tx "InitSnake 20 - Load SWPI Swapper-Issue Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0017_SWPM.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0017_SWPI.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWPLC Swapper Liquidity Computer Module")
+(begin-tx "InitSnake 21 - Load SWPM Swapper Manager Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0018_SWPLC.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0018_SWPM.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWPSC Swapper Swap Computer Module")
+(begin-tx "InitSnake 22 - Load SWPLC Swapper Liquidity Computer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0019_SWPSC.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0019_SWPLC.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWPL Swapper Liquidity Module")
+(begin-tx "InitSnake 23 - Load SWPSC Swapper Swap Computer Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0020_SWPL.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0020_SWPSC.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 17 - Load SWPS Swapper Swap Module")
+(begin-tx "InitSnake 24 - Load SWPL Swapper Liquidity Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0021_SWPS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0021_SWPL.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 18 - Load TALOS Module")
+(begin-tx "InitSnake 25 - Load SWPS Swapper Swap Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0022_SWPS.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "InitSnake 26 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_01_TALOS-01.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 19 - Load TALOS Module")
+(begin-tx "InitSnake 27 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_02_TALOS-02.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 19 - Load TALOS Module")
+(begin-tx "InitSnake 28 - Load TALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi-Client_03_TALOS-03.pact")
 (env-gas)
 (commit-tx)
 
-(begin-tx "InitSnake 20 - Load DEPLOYER Module")
+(begin-tx "InitSnake 29 - Load DEPLOYER Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_xxxx_DEPLOYER.pact")
@@ -427,13 +441,15 @@
 (commit-tx)
 ;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_xxxx_DEPLOYER-Barebone.pact")
 
-(begin-tx "InitSnake 10 - Use Modules")
+(begin-tx "InitSnake 30 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 
-(use free.UTILS)            ;; 89.915
+(use free.UTILS)            ;; 84.502
+(use free.SUT)              ;; 80.238
 (use free.DALOS)            ;;107.749
 (use free.BASIS)            ;;143.815
+
 (use free.ATS)              ;;142.885
 (use free.ATSI)             ;;136.929
 (use free.TFT)              ;;139.755
@@ -441,15 +457,17 @@
 (use free.ATSH)             ;;137.855
 (use free.ATSM)             ;;143.478
 (use free.ATSF)             ;;135.331
+
 (use free.VESTING)          ;;142.180
 (use free.LIQUID)           ;;136.208
 (use free.LIQUIDFUEL)       ;;136.857
 (use free.OUROBOROS)        ;;140.094
 (use free.BRANDING)         ;;121.775
+
 (use free.SWP)              ;;131.990
+(use free.SWPT)             ;;146.990
 (use free.SWPI)             ;;146.990
 (use free.SWPM)             ;;125.638
-
 (use free.SWPLC)             ;;125.638
 ;(use free.SWPSC)             ;;
 (use free.SWPL)             ;;125.638

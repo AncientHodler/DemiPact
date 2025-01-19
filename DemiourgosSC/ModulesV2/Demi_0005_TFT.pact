@@ -611,7 +611,7 @@
         (let*
             (
                 (account-nonces:[integer] (BASIS.DPMF|UR_AccountNonces id sender))
-                (contains-all:bool (UTILS.UTILS|UEV_ContainsAll account-nonces nonces))
+                (contains-all:bool (UTILS.UTILS|UC_ContainsAll account-nonces nonces))
             )
             (enforce contains-all "Invalid Nonce List for DPTf Multi Batch Transfer")
             (map

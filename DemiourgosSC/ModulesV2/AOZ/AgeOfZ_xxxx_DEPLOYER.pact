@@ -454,21 +454,21 @@
                 patron
                 PrimordialKosonID
                 patron
-                10000.0
+                50000.0
                 true
             )
             (BASIS.DPTF|C_Mint
                 patron
                 EsothericKosonID
                 patron
-                10000.0
+                50000.0
                 true
             )
             (BASIS.DPTF|C_Mint
                 patron
                 AncientKosonID
                 patron
-                10000.0
+                50000.0
                 true
             )
         )

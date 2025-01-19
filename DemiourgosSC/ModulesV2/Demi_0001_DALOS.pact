@@ -788,7 +788,7 @@
     )
     ;;[UC] & [URC]
     (defun DALOS|UC_Makeid:string (ticker:string)
-        (UTILS.DALOS|UCC_Makeid ticker)
+        (UTILS.DALOS|UDC_Makeid ticker)
     )
     (defun DALOS|URC_Transferability:bool (sender:string receiver:string method:bool)
         (DALOS|UEV_SenderWithReceiver sender receiver)
@@ -1045,7 +1045,7 @@
         )
         (if (= (DALOS|UR_AccountType account) false)
             (update DALOS|AccountTable account
-                { "elite" : (UTILS.ATS|UCC_Elite amount)}
+                { "elite" : (UTILS.ATS|UDC_Elite amount)}
             )
             true
         )
