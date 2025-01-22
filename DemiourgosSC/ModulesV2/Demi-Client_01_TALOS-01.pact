@@ -1,44 +1,74 @@
-(module TALOS-01 GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (TALOS-ADMIN))
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(module TALOS-01 GOV
+    ;;  
+    ;;{G1}
+    (defconst G-MD_TALOS            (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst DALOS|SC_NAME         DALOS.DALOS|SC_NAME)
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|TALOS_ADMIN))
     )
-    (defcap TALOS-ADMIN ()
+    (defcap GOV|TALOS_ADMIN ()
         (enforce-guard G-MD_TALOS)
     )
-    (defconst G-MD_TALOS (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst DALOS|SC_NAME DALOS.DALOS|SC_NAME)
-
-    ;;Policies
-    (defcap S ()
-        true
-    )
-    (defun DefinePolicies ()
-        (DALOS.A_AddPolicy
+    ;;{G3}
+    ;;
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    (defun P|A_Define ()
+        (DALOS.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
-        (BASIS.A_AddPolicy
+        (DPTF.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
-        (ATSI.A_AddPolicy
+        (DPMF.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
-        (ATSM.A_AddPolicy
+        (ATSI.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
-        (VESTING.A_AddPolicy
+        (ATSM.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
-        (BRANDING.A_AddPolicy
+        (VESTING.P|A_Add
+            "TALOS|Summoner"
+            (create-capability-guard (S))
+        )
+        (BRANDING.P|A_Add
             "TALOS|Summoner"
             (create-capability-guard (S))
         )
     )
     ;;
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;{4}
+    (defcap S ()
+        true
+    )
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    ;;
+    ;;{8}
+    ;;{9}
+    ;;{10}
+    ;;{11}
+    ;;{12}
+    ;;{13}
+    ;;
+    ;;{14}
+    ;;{15}
     (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (with-capability (S)
             (DALOS.DALOS|C_DeployStandardAccount account guard kadena public)
@@ -55,7 +85,7 @@
         (with-capability (S)
             (let
                 (
-                    (output:[string] (BASIS.DPTF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
+                    (output:[string] (DPTF.DPTF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
                 )
                 (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
@@ -64,13 +94,13 @@
     )
     (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
         (with-capability (S)
-            (BASIS.DPTF|C_ToggleFeeLock patron id toggle)
+            (DPTF.DPTF|C_ToggleFeeLock patron id toggle)
             (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
     (defun DPTF|C_UpgradeBranding (patron:string id:string months:integer)
         (with-capability (S)
-            (BRANDING.BRD|C_UpgradeBranding patron id true months)
+            (BRANDING.BRD|C_Upgrade patron id true months)
             (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
@@ -78,7 +108,7 @@
         (with-capability (S)
             (let
                 (
-                    (output:[string] (BASIS.DPMF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role))
+                    (output:[string] (DPMF.DPMF|C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role))
                 )
                 (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output
@@ -87,7 +117,7 @@
     )
     (defun DPMF|C_UpgradeBranding (patron:string id:string months:integer)
         (with-capability (S)
-            (BRANDING.BRD|C_UpgradeBranding patron id false months)
+            (BRANDING.BRD|C_Upgrade patron id false months)
             (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
         )
     )
@@ -123,7 +153,7 @@
         (let
             (
                 (c-rbt:string (ATS.ATS|UR_ColdRewardBearingToken atspair))
-                (c-rbt-amount:decimal (ATS.ATS|UC_RBT atspair coil-token amount))
+                (c-rbt-amount:decimal (ATS.ATS|URC_RBT atspair coil-token amount))
             )
             (ATSM.ATSM|C_Coil patron coiler-vester atspair coil-token amount)
             (VESTING.VST|C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
@@ -134,13 +164,15 @@
         (let*
             (
                 (c-rbt1:string (ATS.ATS|UR_ColdRewardBearingToken atspair1))
-                (c-rbt1-amount:decimal (ATS.ATS|UC_RBT atspair1 curl-token amount))
+                (c-rbt1-amount:decimal (ATS.ATS|URC_RBT atspair1 curl-token amount))
                 (c-rbt2:string (ATS.ATS|UR_ColdRewardBearingToken atspair2))
-                (c-rbt2-amount:decimal (ATS.ATS|UC_RBT atspair2 c-rbt1 c-rbt1-amount))
+                (c-rbt2-amount:decimal (ATS.ATS|URC_RBT atspair2 c-rbt1 c-rbt1-amount))
             )
             (ATSM.ATSM|C_Curl patron curler-vester atspair1 atspair2 curl-token amount)
             (VESTING.VST|C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
             c-rbt2-amount
         )
     )
+    ;;{16}
+    ;;
 )

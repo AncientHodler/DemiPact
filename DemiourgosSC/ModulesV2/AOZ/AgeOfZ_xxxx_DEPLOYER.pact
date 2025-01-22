@@ -98,7 +98,7 @@
         )
     )
     (defun AOZ|A_AddPrimalTrueFungible (tf:string)
-        (BASIS.DPTF-DPMF|UEV_id tf true)
+        (DPTF.DPTF|UEV_id tf)
         (require-capability (ADD_ASSET))
         (with-read AOZ|Assets AOZ|INFO
             { "primal-tf-ids" := pti }
@@ -113,7 +113,7 @@
         )
     )
     (defun AOZ|A_AddPrimalMetaFungible (mf:string)
-        (BASIS.DPTF-DPMF|UEV_id mf false)
+        (DPMF.DPMF|UEV_id mf)
         (require-capability (ADD_ASSET))
         (with-read AOZ|Assets AOZ|INFO
             { "primal-mf-ids" := pmi }
@@ -143,7 +143,7 @@
         )
     )
     (defun AOZ|A_AddTrueFungibleGameAsset (tf:string)
-        (BASIS.DPTF-DPMF|UEV_id tf true)
+        (DPTF.DPTF|UEV_id tf)
         (require-capability (ADD_ASSET))
         (with-read AOZ|Assets AOZ|INFO
             { "tf-game-assets" := tga }
@@ -158,7 +158,7 @@
         )
     )
     (defun AOZ|A_AddMetaFungibleGameAsset (mf:string)
-        (BASIS.DPTF-DPMF|UEV_id mf false)
+        (DPMF.DPMF|UEV_id mf)
         (require-capability (ADD_ASSET))
         (with-read AOZ|Assets AOZ|INFO
             { "mf-game-assets" := mga }
@@ -257,28 +257,28 @@
                 (BasileonAsID:string (AOZ|UR_Assets 1 8))
             )
             ;;Set Transaction Fees for Minor Solid Kosonic Currencies
-            (BASIS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
-            (BASIS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
+            (DPTF.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
+            (DPTF.DPTF|C_ToggleFee patron PlebiumDenariusID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
-            (BASIS.DPTF|C_SetFee patron ComatusAureusID 20.0)
-            (BASIS.DPTF|C_ToggleFee patron ComatusAureusID true)
+            (DPTF.DPTF|C_SetFee patron ComatusAureusID 20.0)
+            (DPTF.DPTF|C_ToggleFee patron ComatusAureusID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
-            (BASIS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
-            (BASIS.DPTF|C_ToggleFee patron PileatusSolidusID true)
+            (DPTF.DPTF|C_SetFee patron PileatusSolidusID 30.0)
+            (DPTF.DPTF|C_ToggleFee patron PileatusSolidusID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
-            (BASIS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
-            (BASIS.DPTF|C_ToggleFee patron TarabostesStaterID true)
+            (DPTF.DPTF|C_SetFee patron TarabostesStaterID 40.0)
+            (DPTF.DPTF|C_ToggleFee patron TarabostesStaterID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
-            (BASIS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
-            (BASIS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
+            (DPTF.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
+            (DPTF.DPTF|C_ToggleFee patron StrategonDrachmaID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
-            (BASIS.DPTF|C_SetFee patron BasileonAsID 60.0)
-            (BASIS.DPTF|C_ToggleFee patron BasileonAsID true)
+            (DPTF.DPTF|C_SetFee patron BasileonAsID 60.0)
+            (DPTF.DPTF|C_ToggleFee patron BasileonAsID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
@@ -450,21 +450,21 @@
                 (EsothericKosonID:string (AOZ|UR_Assets 1 1))
                 (AncientKosonID:string (AOZ|UR_Assets 1 2))
             )
-            (BASIS.DPTF|C_Mint
+            (DPTF.DPTF|C_Mint
                 patron
                 PrimordialKosonID
                 patron
                 50000.0
                 true
             )
-            (BASIS.DPTF|C_Mint
+            (DPTF.DPTF|C_Mint
                 patron
                 EsothericKosonID
                 patron
                 50000.0
                 true
             )
-            (BASIS.DPTF|C_Mint
+            (DPTF.DPTF|C_Mint
                 patron
                 AncientKosonID
                 patron

@@ -15,6 +15,7 @@
     ;;{P1}
     ;;{P2}
     ;;{P3}
+    ;;{P4}
     ;;
     ;;{1}
     ;;{2}
@@ -61,7 +62,7 @@
             (enumerate 0 (- (length X) 1))
         )
     )
-    (defun SWP|UC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer)
+    (defun SWP|UC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer o-prec:integer)
         (let*
             (
                 (xi:decimal (at ip X))
@@ -86,7 +87,7 @@
                     )
                 )
             )
-            (- (UTILS.LIST|UC_LastListElement output-lst) (at op X))
+            (- (floor (UTILS.LIST|UC_LastListElement output-lst) o-prec) (at op X))
         )
     )
     (defun SUT|UC_ComputeD:decimal (A:decimal X:[decimal])

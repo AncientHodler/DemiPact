@@ -89,19 +89,19 @@
 (free.ATSM.ATSM|C_Coil
     KC.ANHD
     KC.ANHD
-    (at 0 (free.BASIS.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
+    (at 0 (free.DPTF.DPTF|UR_RewardBearingToken (free.DALOS.DALOS|UR_LiquidKadenaID)))
     (free.DALOS.DALOS|UR_WrappedKadenaID)
     5000.0
 )
 
-(format "AH has {} DWK" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD true)])
-(format "AH has {} DLK" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD true)])
-(format "AH has {} GAS" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD true)])
+(format "AH has {} DWK" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD)])
+(format "AH has {} DLK" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD)])
+(format "AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
 
 (format "AH Elite is {}" [(free.DALOS.DALOS|UR_Elite KC.ANHD)])
 
-(format "AH Elite Auryn is {}" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_EliteAurynID) KC.ANHD true)])
-(format "AH Vested Elite Auryn is {}" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.BASIS.DPTF-DPMF|UR_Vesting (free.DALOS.DALOS|UR_EliteAurynID) true) KC.ANHD false)])
+(format "AH Elite Auryn is {}" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_EliteAurynID) KC.ANHD)])
+(format "AH Vested Elite Auryn is {}" [(free.DPMF.DPMF|UR_AccountSupply (free.DPTF.DPTF|UR_Vesting (free.DALOS.DALOS|UR_EliteAurynID)) KC.ANHD)])
 
 (env-gas)
 (commit-tx)
@@ -325,10 +325,10 @@
     ]
 )
 
-(format "AH has {} DLK " [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD true)])
-(format "AH has {} OURO" [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_OuroborosID) KC.ANHD true)])
-(format "AH has {} DWK " [(free.BASIS.DPTF-DPMF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD true)])
-(format "LiquidKadenaIndex is {}" [(free.ATS.ATS|UC_Index "KdaLiquindex-98c486052a51")])
+(format "AH has {} DLK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD)])
+(format "AH has {} OURO" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_OuroborosID) KC.ANHD)])
+(format "AH has {} DWK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD)])
+(format "LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
 
 (env-gas)
 (commit-tx)
@@ -456,7 +456,7 @@
 ;;1000.0 * 10000.0 * 1000.0 = 1025.0 * x * 1025.0
 ;;x = 9518,143 aprox => value = 481.856 aprox
 (print "Swapping 25 DLK and 25 DWK to OURO in a constant product pool:")
-(free.SWPSC.SWPSC|UC_Swap
+(free.SWPSC.SWPSC|URC_Swap
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51" "DWK-98c486052a51"]
     [25.0 25.0]
@@ -473,7 +473,7 @@
 (print "==============")
 ;;
 (print "Swapping 50 DLK to OURO in a constant product pool:")
-(free.SWPSC.SWPSC|UC_Swap
+(free.SWPSC.SWPSC|URC_Swap
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51"]
     [50.0]
@@ -489,7 +489,7 @@
 )
 (print "==============")
 (print "Swapping 50 DLK to OURO in a stable swap pool:")
-(free.SWPSC.SWPSC|UC_Swap
+(free.SWPSC.SWPSC|URC_Swap
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     ["DLK-98c486052a51"]
     [50.0]
@@ -509,7 +509,7 @@
     ]
 )
 
-(free.SWPLC.SWPLC|UC_BalancedLiquidity
+(free.SWPLC.SWPLC|URC_BalancedLiquidity
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "OURO-98c486052a51"
     2000.0
@@ -526,7 +526,7 @@
     ]
 )
 
-(free.SWPLC.SWPLC|UC_LpCapacity
+(free.SWPLC.SWPLC|URC_LpCapacity
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
 )
 
@@ -541,7 +541,7 @@
     ]
 )
 
-(free.SWPLC.SWPLC|UC_SymetricLpAmount
+(free.SWPLC.SWPLC|URC_SymetricLpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "OURO-98c486052a51"
     2000.0
@@ -562,62 +562,62 @@
 
 (print "=======================ADD-STABLE-LIQUIDTY-TEST=================================")
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [100.0 100.0 100.0]
 )
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [300.0 0.0 0.0]
 )
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [200.0 200.0 200.0]
 )
 
 (print "Are Amounts balanced:")
-(free.SWPLC.SWPLC|UC_AreAmountsBalanced
+(free.SWPLC.SWPLC|URC_AreAmountsBalanced
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
 
 (print "=======================ADD-CONSTANT-PRODUCT-TEST=================================")
 
-(free.SWPLC.SWPLC|UC_P_LpAmount 
+(free.SWPLC.SWPLC|URC_P_LpAmount 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 2500.0 250.0]
 )
 
-(free.SWPLC.SWPLC|UC_SymetricLpAmount
+(free.SWPLC.SWPLC|URC_SymetricLpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     "DLK-98c486052a51"
     250.0
 )
 
-(free.SWPLC.SWPLC|UC_P_LpAmount 
+(free.SWPLC.SWPLC|URC_P_LpAmount 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 10000.0 500.0]
 )
 
-(free.SWPLC.SWPLC|UC_LpAmount
+(free.SWPLC.SWPLC|URC_LpAmount
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [250.0 10000.0 500.0]
 )
 
 (print "=======================Compute LP Removal Amounts=================================")
 
-(free.SWPLC.SWPLC|UC_LpBreakAmounts 
+(free.SWPLC.SWPLC|URC_LpBreakAmounts 
     "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     1000000.0
 )
-(free.SWPLC.SWPLC|UC_LpBreakAmounts 
+(free.SWPLC.SWPLC|URC_LpBreakAmounts 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     1000000.0
 )
@@ -635,7 +635,7 @@
     ]
 )
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [20.0 200.0 20.0]
 )
@@ -651,7 +651,7 @@
     ]
 )
 
-(free.SWPLC.SWPLC|UC_S_LpAmount 
+(free.SWPLC.SWPLC|URC_S_LpAmount 
     "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
     [100.0 250.0 770.0]
 )
@@ -680,17 +680,16 @@
 
 (format "Ancient Holder has after adding Liquidity {} LP Token" 
     [
-        (free.BASIS.DPTF-DPMF|UR_Supply 
+        (free.DPTF.DPTF|UR_Supply 
             (free.SWP.SWP|UR_TokenLP "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51") 
-            true
         )
     ]
 )
 
 (print "Liquidty Fee Pool P")
-(free.SWP.SWP|UC_LiquidityFee "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+(free.SWP.SWP|URC_LiquidityFee "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
 (print "Liquidty Fee Pool S")
-(free.SWP.SWP|UC_LiquidityFee "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+(free.SWP.SWP|URC_LiquidityFee "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
 
 (env-gas)
 (commit-tx)
@@ -717,9 +716,8 @@
 
 (format "Ancient Holder has after removal of Liquidity {} LP Token" 
     [
-        (free.BASIS.DPTF-DPMF|UR_Supply 
+        (free.DPTF.DPTF|UR_Supply 
             (free.SWP.SWP|UR_TokenLP "P|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51") 
-            true
         )
     ]
 )

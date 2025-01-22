@@ -1,49 +1,55 @@
-(module SWPI GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (SWPI-ADMIN))
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(module SWPI GOV
+    ;;  
+    ;;{G1}
+    (defconst GOV|MD_SWPI           (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst GOV|SC_SWPI           (keyset-ref-guard SWP.SWP|SC_KEY))
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|SWPI_ADMIN))
     )
-    (defcap SWPI-ADMIN ()
+    (defcap GOV|SWPI_ADMIN ()
         (enforce-one
             "SWPI Swapper Admin not satisfed"
             [
-                (enforce-guard G-MD_SWPI)
-                (enforce-guard G-SC_SWPI)
+                (enforce-guard GOV|MD_SWPI)
+                (enforce-guard GOV|SC_SWPI)
             ]
         )
     )
-
-    (defconst G-MD_SWPI   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_SWPI   (keyset-ref-guard SWP.SWP|SC_KEY))
-
-    (defcap COMPOSE ()
-        true
-    )
-    (defcap SECURE ()
-        true
-    )
+    ;;{G3}
+    ;;
+    ;;{P1}
+    ;;{P2}
+    (deftable P|T:{DALOS.P|S})
+    ;;{P3}
     (defcap P|SWPI|CALLER ()
         true
     )
     (defcap P|SWPI|REMOTE-GOV ()
         true
     )
-    ;;
-    (defun A_AddPolicy (policy-name:string policy-guard:guard)
-        (with-capability (SWPI-ADMIN)
-            (write PoliciesTable policy-name
+    ;;{P4}
+    (defun P|UR:guard (policy-name:string)
+        (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|A_Add (policy-name:string policy-guard:guard)
+        (with-capability (GOV|SWPI_ADMIN)
+            (write P|T policy-name
                 {"policy" : policy-guard}
             )
         )
     )
-    (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read PoliciesTable policy-name ["policy"]))
-    )
-    (defun DefinePolicies ()
-        (BASIS.A_AddPolicy
+    (defun P|A_Define ()
+        (DPTF.P|A_Add
             "SWPI|Caller"
             (create-capability-guard (P|SWPI|CALLER))
         )
-        (SWP.A_AddPolicy
+        (SWP.P|A_Add
+            "SWPI|RemoteSwapGovernor"
+            (create-capability-guard (P|SWPI|REMOTE-GOV))
+        )
+        (SWP.P|A_Add
             "SWPI|Caller"
             (create-capability-guard (P|SWPI|CALLER))
         )
@@ -51,52 +57,59 @@
             "SWPI|Caller"
             (create-capability-guard (P|SWPI|CALLER))
         )
-        (SWP.A_AddPolicy
-            "SWPI|RemoteSwapGovernor"
-            (create-capability-guard (P|SWPI|REMOTE-GOV))
-        )
+        
     )
-    (deftable PoliciesTable:{DALOS.PolicySchema})
     ;;
-    (defcap SWPI|ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;{4}
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+        @event
         (let*
             (
                 (l:integer (length pool-tokens))
                 (principals:[string] (SWP.SWP|UR_Principals))
                 (pt-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                 (ptte:[string]
-                    (if (= amp -1)
+                    (if (= amp -1.0)
                         (drop 1 pt-ids)
                         pt-ids
                     )
                 )
                 (iz-principal:bool (contains (at 0 pt-ids) principals))
             )
-            (compose-capability (P|SWPI|REMOTE-GOV))
-            (compose-capability (P|SWPI|CALLER))
-            ;;
             (SWP.SWP|UEV_PoolFee fee-lp)
             (SWP.SWP|UEV_New pt-ids amp)
             (map
                 (lambda
                     (id:string)
-                    (BASIS.DPTF-DPMF|CAP_Owner id true)
+                    (DPTF.DPTF|CAP_Owner id)
                 )
                 ptte
             )
-            ;;
             (if (= amp -1.0)
-                (enforce iz-principal "First Token is not a principal Token")
+                (enforce iz-principal "1st Token is not a Principal")
                 true
             )
-            (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid Amplifier value")
-            (enforce (and (>= l 2) (<= l 7)) "A min of 2 and a max of 7 Tokens can be used to create a Swap Pair")
+            (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid amp value")
+            (enforce (and (>= l 2) (<= l 7)) "2 - 7 Tokens can be used to create a Swap Pair")   
         )
+        (compose-capability (P|SWPI|REMOTE-GOV))
+        (compose-capability (P|SWPI|CALLER))
     )
-    (defun SWPI|C_IssueStandard:string (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
-        (SWPI|C_IssueStable patron account pool-tokens fee-lp -1.0)
-    )
-    (defun SWPI|UC_LpComposer:[string] (pool-tokens:[object{SWP.SWP|PoolTokens}] amp:decimal)
+    ;;
+    ;;{8}
+    ;;{9}
+    ;;{10}
+    ;;{11}
+    ;;{12}
+    ;;{13}
+    (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{SWP.SWP|PoolTokens}] amp:decimal)
         (let*
             (
                 (pool-token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
@@ -107,7 +120,7 @@
                             (acc:[string] idx:integer)
                             (UTILS.LIST|UC_AppendLast 
                                 acc 
-                                (BASIS.DPTF-DPMF|UR_Name (at idx pool-token-ids) true)
+                                (DPTF.DPTF|UR_Name (at idx pool-token-ids))
                             )
                         )
                         []
@@ -120,7 +133,7 @@
                             (acc:[string] idx:integer)
                             (UTILS.LIST|UC_AppendLast 
                                 acc 
-                                (BASIS.DPTF-DPMF|UR_Ticker (at idx pool-token-ids) true)
+                                (DPTF.DPTF|UR_Ticker (at idx pool-token-ids))
                             )
                         )
                         []
@@ -131,8 +144,11 @@
             (SUT.SWP|UC_LP pool-token-names pool-token-tickers amp)
         )
     )
+    ;;
+    ;;{14}
+    ;;{15}
     (defun SWPI|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
-        (with-capability (SWPI|ISSUE account pool-tokens fee-lp amp)
+        (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp amp)
             (let*
                 (
                     (kda-dptf-cost:decimal (DALOS.DALOS|UR_UsagePrice "dptf"))
@@ -141,37 +157,33 @@
                     (gas-swp-cost:decimal (DALOS.DALOS|UR_UsagePrice "ignis|swp-issue"))
                     (pool-token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (SWP.SWP|UC_ExtractTokenSupplies pool-tokens))
-                    (lp-name-ticker:[string] (SWPI|UC_LpComposer pool-tokens amp))
-                    (token-lp:string (BASIS.DPTF|C_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
+                    (lp-name-ticker:[string] (SWPI|URC_LpComposer pool-tokens amp))
+                    (token-lp:string (DPTF.DPTF|C_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
                     (swpair:string (SWPI|X_Issue account pool-tokens token-lp fee-lp amp))
                 )
-                ;;Transfer All Tokens to SWP.SWP|SC_NAME and get 10 million Token-LP in return, minted in origin mode.
                 (TFT.DPTF|C_MultiTransfer patron pool-token-ids account SWP.SWP|SC_NAME pool-token-amounts true)
-                (BASIS.DPTF|C_Mint patron token-lp SWP.SWP|SC_NAME 10000000.0 true)
+                (DPTF.DPTF|C_Mint patron token-lp SWP.SWP|SC_NAME 10000000.0 true)
                 (TFT.DPTF|C_Transfer patron token-lp SWP.SWP|SC_NAME account 10000000.0 true)
-                ;;Collect IGNIS for Operation
                 (DALOS.IGNIS|C_Collect patron account gas-swp-cost)
-                ;;Collect all due KDA for Operation
                 (DALOS.KDA|C_Collect patron kda-costs)
-                ;;Return Pair ID
                 (SWPT.SWPT|X_MultiPathTracer swpair)
                 [swpair token-lp]
             )
         )
     )
-    ;;
+    ;;{16}
     (defun SWPI|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
         (let
             (
                 (token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
             )
             (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp amp)
-            (BASIS.DPTF-DPMF|C_DeployAccount token-lp account true)
-            (BASIS.DPTF-DPMF|C_DeployAccount token-lp SWP.SWP|SC_NAME true)
+            (DPTF.DPTF|C_DeployAccount token-lp account)
+            (DPTF.DPTF|C_DeployAccount token-lp SWP.SWP|SC_NAME)
             (map
                 (lambda
                     (id:string)
-                    (BASIS.DPTF-DPMF|C_DeployAccount id SWP.SWP|SC_NAME true)
+                    (DPTF.DPTF|C_DeployAccount id SWP.SWP|SC_NAME)
                 )
                 (drop 1 token-ids)
             )
@@ -180,4 +192,4 @@
     )
 )
 
-(create-table PoliciesTable)
+(create-table P|T)

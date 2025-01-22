@@ -115,31 +115,32 @@
         )
     )
     (defun A_Step006 ()
-        (BASIS.DefinePolicies)
-        (ATS.DefinePolicies)
+        (DPTF.P|A_Define)
+        (DPMF.P|A_Define)
+        (ATS.P|A_Define)
 
-        (ATSI.DefinePolicies)
-        (TFT.DefinePolicies)
+        (ATSI.P|A_Define)
+        (TFT.P|A_Define)
 
-        (ATSC.DefinePolicies)
-        (ATSH.DefinePolicies)
+        (ATSC.P|A_Define)
+        (ATSH.P|A_Define)
 
-        (ATSM.DefinePolicies)
-        (ATSF.DefinePolicies)
+        (ATSM.P|A_Define)
+        (ATSF.P|A_Define)
 
-        (VESTING.DefinePolicies)
-        (OUROBOROS.DefinePolicies)
-        (BRANDING.DefinePolicies)
+        (VESTING.P|A_Define)
+        (OUROBOROS.P|A_Define)
+        (BRANDING.P|A_Define)
 
-        (SWPM.DefinePolicies)
-        (SWPI.DefinePolicies)
-        
-        (SWPL.DefinePolicies)
-        (SWPS.DefinePolicies)
+        (SWPM.P|A_Define)
+        (SWPI.P|A_Define)
 
-        (TALOS-01.DefinePolicies)
-        (TALOS-02.DefinePolicies)
-        (TALOS-03.DefinePolicies)
+        (SWPL.P|A_Define)
+        (SWPS.P|A_Define)
+
+        (TALOS-01.P|A_Define)
+        (TALOS-02.P|A_Define)
+        (TALOS-03.P|A_Define)
     )
     (defun A_Step007 ()
         ;;Kadena Prices
@@ -259,10 +260,10 @@
                 , "liquid-kda-id"           : StakedKadenaID
                 }
             )
-            (BASIS.DPTF-DPMF|C_DeployAccount AurynID ATS.ATS|SC_NAME true)
-            (BASIS.DPTF-DPMF|C_DeployAccount EliteAurynID ATS.ATS|SC_NAME true)
-            (BASIS.DPTF-DPMF|C_DeployAccount WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
-            (BASIS.DPTF-DPMF|C_DeployAccount StakedKadenaID LIQUID.LIQUID|SC_NAME true)
+            (DPTF.DPTF|C_DeployAccount AurynID ATS.ATS|SC_NAME)
+            (DPTF.DPTF|C_DeployAccount EliteAurynID ATS.ATS|SC_NAME)
+            (DPTF.DPTF|C_DeployAccount WrappedKadenaID LIQUID.LIQUID|SC_NAME)
+            (DPTF.DPTF|C_DeployAccount StakedKadenaID LIQUID.LIQUID|SC_NAME)
         )
     )
     (defun A_Step013 ()
@@ -272,10 +273,10 @@
                 (AurynID:string (DALOS.DALOS|UR_AurynID))
                 (EliteAurynID:string (DALOS.DALOS|UR_EliteAurynID))
             )
-            (BASIS.DPTF|C_SetFee patron AurynID UTILS.AURYN_FEE)
-            (BASIS.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
-            (BASIS.DPTF|C_ToggleFee patron AurynID true)
-            (BASIS.DPTF|C_ToggleFee patron EliteAurynID true)
+            (DPTF.DPTF|C_SetFee patron AurynID UTILS.AURYN_FEE)
+            (DPTF.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
+            (DPTF.DPTF|C_ToggleFee patron AurynID true)
+            (DPTF.DPTF|C_ToggleFee patron EliteAurynID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron AurynID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron EliteAurynID true)
         )
@@ -287,15 +288,15 @@
                 (OuroID:string (DALOS.DALOS|UR_OuroborosID))
                 (GasID:string (DALOS.DALOS|UR_IgnisID))
             )
-            (BASIS.DPTF|C_SetMinMove patron GasID 1000.0)
-            (BASIS.DPTF|C_SetFee patron GasID -1.0)
-            (BASIS.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
-            (BASIS.DPTF|C_ToggleFee patron GasID true)
+            (DPTF.DPTF|C_SetMinMove patron GasID 1000.0)
+            (DPTF.DPTF|C_SetFee patron GasID -1.0)
+            (DPTF.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
+            (DPTF.DPTF|C_ToggleFee patron GasID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron GasID true)
-            (ATSI.DPTF-DPMF|C_ToggleBurnRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true true)
-            (ATSI.DPTF-DPMF|C_ToggleBurnRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true true)
-            (ATSI.DPTF|C_ToggleMintRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
-            (ATSI.DPTF|C_ToggleMintRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+            (ATSI.DPTF|C_TgBurnR patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+            (ATSI.DPTF|C_TgBurnR patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+            (ATSI.DPTF|C_TgMintR patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+            (ATSI.DPTF|C_TgMintR patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
         )
     )
     (defun A_Step015 ()
@@ -305,11 +306,11 @@
                 (WrappedKadenaID:string (DALOS.DALOS|UR_WrappedKadenaID))
                 (StakedKadenaID:string (DALOS.DALOS|UR_LiquidKadenaID))
             )
-            (BASIS.DPTF|C_SetFee patron StakedKadenaID -1.0)
-            (BASIS.DPTF|C_ToggleFee patron StakedKadenaID true)
+            (DPTF.DPTF|C_SetFee patron StakedKadenaID -1.0)
+            (DPTF.DPTF|C_ToggleFee patron StakedKadenaID true)
             (TALOS-01.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
-            (ATSI.DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true true)
-            (ATSI.DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+            (ATSI.DPTF|C_TgBurnR patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+            (ATSI.DPTF|C_TgMintR patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
         )
     )
     (defun A_Step016 ()
@@ -356,9 +357,9 @@
         (let
             (
                 (patron:string DEMIURGOI|AH_NAME)
-                (Auryndex:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
-                (Elite-Auryndex:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
-                (Kadena-Liquid-Index:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID))))
+                (Auryndex:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
+                (Elite-Auryndex:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
+                (Kadena-Liquid-Index:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID))))
             )
             (ATSM.ATSM|C_SetColdFee patron Auryndex
                 7
@@ -401,7 +402,7 @@
             (ATSM.ATSM|C_Coil
                 patron
                 patron
-                (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID)))
+                (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID)))
                 (DALOS.DALOS|UR_WrappedKadenaID)
                 1.0
             )
@@ -413,7 +414,7 @@
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-amount:decimal 10000000.0)
             )
-            (BASIS.DPTF|C_Mint
+            (DPTF.DPTF|C_Mint
                 patron
                 (DALOS.DALOS|UR_OuroborosID)
                 patron
@@ -426,7 +427,7 @@
         (let
             (
                 (patron:string DEMIURGOI|AH_NAME)
-                (atspair:string  (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
+                (atspair:string  (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
                 (rt-amounts:[decimal] [372911.1318])
                 (rbt-request-amount:decimal 144412.0)
             )
@@ -437,7 +438,7 @@
         (let*
             (
                 (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
-                (atspair:string  (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
+                (atspair:string  (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
                 (rt-amounts:[decimal] [102929.0])
                 (rbt-request-amount:decimal (at 0 rt-amounts))
             )
@@ -533,11 +534,11 @@
                 (p1:string (DALOS.DALOS|UR_LiquidKadenaID))
                 (p2:string (DALOS.DALOS|UR_OuroborosID))
             )
-            (BASIS.DPTF-DPMF|C_DeployAccount p1 SWP.SWP|SC_NAME true)
-            (ATSI.DPTF|C_ToggleFeeExemptionRole patron p1 SWP.SWP|SC_NAME true)
+            (DPTF.DPTF|C_DeployAccount p1 SWP.SWP|SC_NAME)
+            (ATSI.DPTF|C_TgFeeExemptionR patron p1 SWP.SWP|SC_NAME true)
 
-            (BASIS.DPTF-DPMF|C_DeployAccount p2 SWP.SWP|SC_NAME true)
-            (ATSI.DPTF|C_ToggleFeeExemptionRole patron p2 SWP.SWP|SC_NAME true)
+            (DPTF.DPTF|C_DeployAccount p2 SWP.SWP|SC_NAME)
+            (ATSI.DPTF|C_TgFeeExemptionR patron p2 SWP.SWP|SC_NAME true)
         )
     )
     ;;========[P] PRINT-FUNCTIONS==============================================;;

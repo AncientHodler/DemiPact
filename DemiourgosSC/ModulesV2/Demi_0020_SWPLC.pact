@@ -1,21 +1,45 @@
-(module SWPLC GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (SWPLC-ADMIN))
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(module SWPLC GOV
+    ;;  
+    ;;{G1}
+    (defconst GOV|MD_SWPLC          (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst GOV|SC_SWPLC          (keyset-ref-guard SWP.SWP|SC_KEY))
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|SWPLC_ADMIN))
     )
-    (defcap SWPLC-ADMIN ()
+    (defcap GOV|SWPLC_ADMIN ()
         (enforce-one
             "SWPLC Swapper Admin not satisfed"
             [
-                (enforce-guard G-MD_SWPLC)
-                (enforce-guard G-SC_SWPLC)
+                (enforce-guard GOV|MD_SWPLC)
+                (enforce-guard GOV|SC_SWPLC)
             ]
         )
     )
-
-    (defconst G-MD_SWPLC    (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_SWPLC    (keyset-ref-guard SWP.SWP|SC_KEY))
+    ;;{G3}
     ;;
-    (defun SWPLC|UC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal])
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;{4}
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    ;;
+    ;;{8}
+    ;;{9}
+    ;;{10}
+    ;;{11}
+    ;;{12}
+    ;;{13}
+    (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal])
         (let*
             (
                 (sum:decimal (fold (+) 0.0 input-amounts))
@@ -28,7 +52,7 @@
                     (positive-amounts-positions:[integer] (UTILS.LIST|UC_Search input-amounts first-positive-amount))
                     (first-positive-position:integer (at 0 positive-amounts-positions))
                     (first-positive-id:string (at first-positive-position (SWP.SWP|UR_PoolTokens swpair)))
-                    (balanced-amounts:[decimal] (SWPLC|UC_BalancedLiquidity swpair first-positive-id first-positive-amount))
+                    (balanced-amounts:[decimal] (SWPLC|URC_BalancedLiquidity swpair first-positive-id first-positive-amount))
                 )
                 (if (= balanced-amounts input-amounts)
                     true
@@ -37,13 +61,13 @@
             )
         )
     )
-    (defun SWPLC|UC_LpCapacity:decimal (swpair:string)
+    (defun SWPLC|URC_LpCapacity:decimal (swpair:string)
         @doc "Computes the LP Capacity of a Given Swap Pair"
         (let*
             (
                 (token-lp:string (SWP.SWP|UR_TokenLP swpair))
                 (token-lps:[string] (SWP.SWP|UR_TokenLPS swpair))
-                (token-lp-supply:decimal (BASIS.DPTF-DPMF|UR_Supply token-lp true))
+                (token-lp-supply:decimal (DPTF.DPTF|UR_Supply token-lp))
             )
             (SWP.SWP|UEV_id swpair)
             (if (= token-lps [UTILS.BAR])
@@ -56,7 +80,7 @@
                                     (acc:[decimal] idx:integer)
                                     (UTILS.LIST|UC_AppendLast 
                                         acc 
-                                        (BASIS.DPTF-DPMF|UR_Supply (at idx token-lps) true)
+                                        (DPTF.DPTF|UR_Supply (at idx token-lps))
                                     )
                                 )
                                 []
@@ -70,7 +94,7 @@
             )
         )
     )
-    (defun SWPLC|UC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal)
+    (defun SWPLC|URC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal)
         @doc "Outputs the amount of tokens, for given <input-id> and <input-amount> that are needed to add Balanced Liquidity"
         (let*
             (
@@ -78,15 +102,15 @@
                 (iz-on-pool:bool (SWP.SWP|UEV_CheckAgainst [input-id] pool-token-ids))
             )
             (SWP.SWP|UEV_id swpair)
-            (BASIS.DPTF-DPMF|UEV_Amount input-id input-amount true)
+            (DPTF.DPTF|UEV_Amount input-id input-amount)
             (enforce iz-on-pool (format "Input Token {} is not part of the Pool {} Tokens" [input-id swpair]))
             (let
                 (
                     (input-position:integer (SWP.SWP|UR_PoolTokenPosition swpair input-id))
-                    (input-precision:integer (BASIS.DPTF-DPMF|UR_Decimals input-id true))
+                    (input-precision:integer (DPTF.DPTF|UR_Decimals input-id))
                     (X:[decimal]
-                        (if (= (SWPLC|UC_LpCapacity swpair) 0.0)
-                            (SWP.SWP|UR_PoolGenesisSupply swpair)
+                        (if (= (SWPLC|URC_LpCapacity swpair) 0.0)
+                            (SWP.SWP|UR_PoolGenesisSupplies swpair)
                             (SWP.SWP|UR_PoolTokenSupplies swpair)
                         )
                     )
@@ -96,20 +120,19 @@
             )
         )
     )
-    (defun SWPLC|UC_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal)
+    (defun SWPLC|URC_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal)
         @doc "Computes the Amount of LP resulted, if balanced Liquidity (derived from <input-id> and <input-amount>) \
         \ were to be added to a Constant Product Pool"
         (if (= (take 1 swpair) "P")
-            (SWPLC|UC_P_LpAmount swpair (SWPLC|UC_BalancedLiquidity swpair input-id input-amount))
-            (SWPLC|UC_S_LpAmount swpair (SWPLC|UC_BalancedLiquidity swpair input-id input-amount))
+            (SWPLC|URC_P_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
+            (SWPLC|URC_S_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
         )
     )
-    ;;
-    (defun SWPLC|UC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal)
+    (defun SWPLC|URC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal)
         @doc "Computes the Pool Token Amounts that result from removing <input-lp-amount> of LP Token"
         (let*
             (
-                (lp-supply:decimal (SWPLC|UC_LpCapacity swpair))
+                (lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                 (ratio:decimal (floor (/ input-lp-amount lp-supply) 24))
                 (pool-token-supplies:[decimal] (SWP.SWP|UR_PoolTokenSupplies swpair))
                 (pool-token-precisions:[integer] (SWP.SWP|UR_PoolTokenPrecisions swpair))
@@ -130,23 +153,22 @@
             )
         )
     )
-    ;;
-    (defun SWPLC|UC_LpAmount:decimal (swpair:string input-amounts:[decimal])
+    (defun SWPLC|URC_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount resulting from adding Liquidity with <input-amount> Tokens on <swpair> Pool"
         (if (= (take 1 swpair) "P")
-            (SWPLC|UC_P_LpAmount swpair input-amounts)
-            (SWPLC|UC_S_LpAmount swpair input-amounts)
+            (SWPLC|URC_P_LpAmount swpair input-amounts)
+            (SWPLC|URC_S_LpAmount swpair input-amounts)
         )
     )
-    (defun SWPLC|UC_P_LpAmount:decimal (swpair:string input-amounts:[decimal])
+    (defun SWPLC|URC_P_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount you get on a Constant Product Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
         \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
         \ The pool token order is used for the <input-amounts> variable; \
         \ There is no Liquidity fee when computing the amount for a Constant Product Pool, since it has no concept of balance."
         (let*
             (
-                (lp-prec:integer (BASIS.DPTF-DPMF|UR_Decimals (SWP.SWP|UR_TokenLP swpair) true))
-                (read-lp-supply:decimal (SWPLC|UC_LpCapacity swpair))
+                (lp-prec:integer (DPTF.DPTF|UR_Decimals (SWP.SWP|UR_TokenLP swpair)))
+                (read-lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                 (lp-supply:decimal 
                     (if (= read-lp-supply 0.0)
                         10000000.0
@@ -155,13 +177,13 @@
                 )
                 (pool-token-supplies:[decimal] 
                     (if (= read-lp-supply 0.0)
-                        (SWP.SWP|UR_PoolGenesisSupply swpair)
+                        (SWP.SWP|UR_PoolGenesisSupplies swpair)
                         (SWP.SWP|UR_PoolTokenSupplies swpair)
                     )
                 )
                 (li:integer (length input-amounts))
                 (lc:integer (length pool-token-supplies))
-                (iz-balanced:bool (SWPLC|UC_AreAmountsBalanced swpair input-amounts))
+                (iz-balanced:bool (SWPLC|URC_AreAmountsBalanced swpair input-amounts))
             )
             (enforce (= li lc) "Incorrect Pool Token Ammounts")
             (SWP.SWP|UEV_id swpair)
@@ -195,15 +217,15 @@
             )
         )
     )
-    (defun SWPLC|UC_S_LpAmount:decimal (swpair:string input-amounts:[decimal])
+    (defun SWPLC|URC_S_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount you get on a Stable Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
         \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
         \ The pool token order is used for the <input-amounts> variable; \
         \ Liquidity Fee is hardcoded at 1%."
         (let*
             (
-                (lp-prec:integer (BASIS.DPTF-DPMF|UR_Decimals (SWP.SWP|UR_TokenLP swpair) true))
-                (read-lp-supply:decimal (SWPLC|UC_LpCapacity swpair))
+                (lp-prec:integer (DPTF.DPTF|UR_Decimals (SWP.SWP|UR_TokenLP swpair)))
+                (read-lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                 (lp-supply:decimal 
                     (if (= read-lp-supply 0.0)
                         10000000.0
@@ -212,15 +234,15 @@
                 )
                 (pool-token-supplies:[decimal] 
                     (if (= read-lp-supply 0.0)
-                        (SWP.SWP|UR_PoolGenesisSupply swpair)
+                        (SWP.SWP|UR_PoolGenesisSupplies swpair)
                         (SWP.SWP|UR_PoolTokenSupplies swpair)
                     )
                 )
-                (liquidity-fee:decimal (/ (SWP.SWP|UC_LiquidityFee swpair) 1000.0))
+                (liquidity-fee:decimal (/ (SWP.SWP|URC_LiquidityFee swpair) 1000.0))
                 (pool-token-supplies:[decimal] (SWP.SWP|UR_PoolTokenSupplies swpair))
                 (li:integer (length input-amounts))
                 (lc:integer (length pool-token-supplies))
-                (iz-balanced:bool (SWPLC|UC_AreAmountsBalanced swpair input-amounts))
+                (iz-balanced:bool (SWPLC|URC_AreAmountsBalanced swpair input-amounts))
             )
             (enforce (= li lc) "Incorrect Pool Token Ammounts")
             (SWP.SWP|UEV_id swpair)
@@ -261,4 +283,8 @@
             )
         )
     )
+    ;;
+    ;;{14}
+    ;;{15}
+    ;;{16}
 )

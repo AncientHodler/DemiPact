@@ -1,71 +1,122 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-(module BRANDING GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (BRANDING-ADMIN))
+(module BRANDING GOV
+    ;;  
+    ;;{G1}
+    (defconst GOV|MD_BRANDING       (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|BRANDING_ADMIN))
     )
-    (defcap BRANDING-ADMIN ()
-        (enforce-guard G-MD_BRANDING)
+    (defcap GOV|BRANDING_ADMIN ()
+        (enforce-guard GOV|MD_BRANDING)
     )
-    (defconst G-MD_BRANDING   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-
-    (defcap COMPOSE ()
-        true
-    )
-    (defcap SECURE ()
-        true
-    )
+    ;;{G3}
+    ;;
+    ;;{P1}
+    (deftable P|T:{DALOS.P|S})
+    ;;{P2}
+    ;;{P3}
     (defcap P|BU ()
         true
     )
-
-    (defun A_AddPolicy (policy-name:string policy-guard:guard)
-        (with-capability (BRANDING-ADMIN)
-            (write BRD|PoliciesTable policy-name
+    ;;{P4}
+    (defun P|UR:guard (policy-name:string)
+        (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|A_Add (policy-name:string policy-guard:guard)
+        (with-capability (GOV|BRANDING_ADMIN)
+            (write P|T policy-name
                 {"policy" : policy-guard}
             )
         )
     )
-    (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read BRD|PoliciesTable policy-name ["policy"]))
-    )
-    (defun DefinePolicies ()
-        (BASIS.A_AddPolicy
+    (defun P|A_Define ()
+        (DPTF.P|A_Add
+            "BRD|Update"
+            (create-capability-guard (P|BU))
+        )
+        (DPMF.P|A_Add
             "BRD|Update"
             (create-capability-guard (P|BU))
         )
     )
-
     ;;
-    (defschema BRD|PolicySchema
-        policy:guard
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;{4}
+    (defcap COMPOSE ()
+        true
     )
-    (deftable BRD|PoliciesTable:{BRD|PolicySchema})
-
-    ;;[CAP]
-    (defcap BRD|UPGRADE_BRANDING (id:string token-type:bool)
-        (BASIS.DPTF-DPMF|UEV_id id token-type)
-        (BASIS.DPTF-DPMF|CAP_Owner id token-type)
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    (defcap BRD|C>ADMIN_EXT ()
+        (compose-capability (GOV|BRANDING_ADMIN))
+        (compose-capability (P|BU))
+    )
+    (defcap BRD|C>ADMIN_SET ()
+        @event
+        (compose-capability (BRD|C>ADMIN_EXT))
+    )
+    (defcap BRD|C>LIVE ()
+        @event
+        (compose-capability (BRD|C>ADMIN_EXT))
+    )
+    (defcap BRD|C>UPGRADE (id:string tt:bool)
+        @event
+        (BRD|CAP_Vieo id tt)
         (let
             (
-                (current-flag:integer (BASIS.BASIS|URB_Flag id token-type false))
+                (cf:integer
+                    (if tt
+                        (DPTF.DPTF|URB_Flag id false)
+                        (DPTF.DPTF|URB_Flag id false)
+                    )
+                )
             )
-            (enforce (>= current-flag 1) "Golden Flag cannot be upgraded")
+            (enforce (>= cf 1) "Golden Flag cannot be upgraded")
             (let*
                 (
-                    (premium:time (BASIS.BASIS|URB_PremiumUntil id token-type false))
+                    (premium:time 
+                        (if tt
+                            (DPTF.DPTF|URB_PremiumUntil id false)
+                            (DPMF.DPMF|URB_PremiumUntil id false)
+                        )
+                    )
                     (current:time (at "block-time" (chain-data)))
                     (remaining:decimal (diff-time premium current))
                 )
                 (enforce (< remaining 1296000.0) "Blue Flag has more than 15 days remainig!")
             )
         )
+        (compose-capability (P|BU))
     )
-    (defcap BRD|BRANDING (id:string token-type:bool)
+    (defcap BRD|C>BRANDING (id:string tt:bool)
         @event
-        (BASIS.DPTF-DPMF|UEV_id id token-type)
-        (BASIS.DPTF-DPMF|CAP_Owner id token-type)
+        (BRD|CAP_Vieo id tt)
+        (compose-capability (P|BU))
     )
-    ;;[URC]& [UC]
+    ;;
+    ;;{8}
+    (defun BRD|CAP_Vieo (id:string tt:bool)
+        (if tt
+            (BRD|CAP_VieoDPTF id)
+            (BRD|CAP_VieoDPMF id)
+        )
+    )
+    (defun BRD|CAP_VieoDPTF (id:string)
+        (DPTF.DPTF|UEV_id id)
+        (DPTF.DPTF|CAP_Owner id)
+    )
+    (defun BRD|CAP_VieoDPMF (id:string)
+        (DPMF.DPMF|UEV_id id)
+        (DPMF.DPMF|CAP_Owner id)
+    )
+    ;;{9}
+    ;;{10}
+    ;;{11}
     (defun BRD|UC_BrandingLogo:object{DALOS.BrandingSchema} (input:object{DALOS.BrandingSchema} logo:string)
         {"logo"             : logo
         ,"description"      : (at "description" input)
@@ -121,7 +172,9 @@
         ,"genesis"          : (at "genesis" input)
         ,"premium-until"    : premium}
     )
-    (defun BRD|UC_MaxBluePayment (account:string)
+    ;;{12}
+    ;;{13}
+    (defun BRD|URC_MaxBluePayment (account:string)
         (let
             (
                 (mt:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
@@ -135,73 +188,69 @@
             )
         )
     )
-    ;;[A]
-    (defun BRD|A_SetBrandingFlag (id:string token-type:bool flag:integer)
-        (enforce-one
-            "Setting Branding Flag not allowed"
-            [
-                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
-            ]
-        )
-        (with-capability (BRANDING-ADMIN)
-            (BASIS.DPTF-DPMF|UEV_id id token-type)
+    ;;
+    ;;{14}
+    (defun BRD|A_Set (id:string tt:bool flag:integer)
+        (with-capability (BRD|C>ADMIN_SET)
+            (if tt
+                (DPTF.DPTF|UEV_id id)
+                (DPMF.DPMF|UEV_id id)
+            )
             (enforce (contains flag (enumerate 0 4)) "Invalid Integer Flag")
             (let*
                 (
-                    (existing-branding:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type false))
+                    (existing-branding:object{DALOS.BrandingSchema} 
+                        (if tt
+                            (DPTF.DPTF|UR_Branding id false)
+                            (DPMF.DPMF|UR_Branding id false)
+                        )
+                    )
                     (modified-branding:object{DALOS.BrandingSchema} (BRD|UC_BrandingFlag existing-branding flag))
                 )
-                (with-capability (P|BU)
-                    (BASIS.DPTF-DPMF|X_UpdateBranding id token-type false modified-branding)
+                (if tt
+                    (DPTF.DPTF|X_UpdateBranding id false modified-branding)
+                    (DPMF.DPMF|X_UpdateBranding id false modified-branding)
                 )
             )
         )
     )
-    (defun BRD|A_SetBrandingLive (id:string token-type:bool)
-        (enforce-one
-            "Setting Branding Live not allowed"
-            [
-                (enforce-guard (C_ReadPolicy "TALOS|T|Summoner"))
-                (enforce-guard (C_ReadPolicy "TALOS|M|Summoner"))
-            ]
-        )
-        (with-capability (BRANDING-ADMIN)
+    (defun BRD|A_Live (id:string tt:bool)
+        (with-capability (BRD|C>LIVE)
             (let*
                 (
-                    (pending:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type true))
-                    (flag:integer (BASIS.BASIS|URB_Flag id token-type false))
-                    (updated-flag:integer
-                        (if (<= flag 1)
-                            flag
-                            2
-                        )
-                    )
+                    (pending:object{DALOS.BrandingSchema} (if tt (DPTF.DPTF|UR_Branding id true) (DPMF.DPMF|UR_Branding id true)))
+                    (flag:integer (if tt (DPTF.DPTF|URB_Flag id false) (DPMF.DPMF|URB_Flag id false)))
+                    (updated-flag:integer (if (<= flag 1) flag 2))
                     (updated-branding:object{DALOS.BrandingSchema} (BRD|UC_BrandingFlag pending updated-flag))
                     (np1:object{DALOS.BrandingSchema} (BRD|UC_BrandingLogo pending UTILS.BAR))
                     (np2:object{DALOS.BrandingSchema} (BRD|UC_BrandingDescription np1 UTILS.BAR))
                     (np3:object{DALOS.BrandingSchema} (BRD|UC_BrandingWebsite np2 UTILS.BAR))
                     (np4:object{DALOS.BrandingSchema} (BRD|UC_BrandingSocial np3 [DALOS.SOCIAL|EMPTY]))
                 )
-                ;;to make functions in basis
-                (with-capability (P|BU)
-                    (BASIS.DPTF-DPMF|X_UpdateBranding id token-type false updated-branding)
-                    (BASIS.DPTF-DPMF|X_UpdateBranding id token-type true np4)
+                (if tt
+                    (with-capability (COMPOSE)
+                        (DPTF.DPTF|X_UpdateBranding id false updated-branding)
+                        (DPTF.DPTF|X_UpdateBranding id true np4)
+                    )
+                    (with-capability (COMPOSE)
+                        (DPMF.DPMF|X_UpdateBranding id false updated-branding)
+                        (DPMF.DPMF|X_UpdateBranding id true np4)
+                    )
                 )
             )
         )
     )
-    ;;[C]
-    (defun BRD|C_UpgradeBranding (patron:string id:string token-type:bool months:integer)
-        (enforce-guard (C_ReadPolicy "TALOS|Summoner"))
-        (with-capability (BRD|UPGRADE_BRANDING id token-type)
+    ;;{15}
+    (defun BRD|C_Upgrade (patron:string id:string tt:bool months:integer)
+        (enforce-guard (P|UR "TALOS|Summoner"))
+        (with-capability (BRD|C>UPGRADE id tt)
             (let*
                 (
-                    (owner:string (BASIS.DPTF-DPMF|UR_Konto id token-type))
-                    (mp:integer (BRD|UC_MaxBluePayment owner))
+                    (owner:string (if tt (DPTF.DPTF|UR_Konto id) (DPMF.DPMF|UR_Konto id)))
+                    (mp:integer (BRD|URC_MaxBluePayment owner))
                     (blue:decimal (DALOS.DALOS|UR_UsagePrice "blue"))
-                    (current-branding:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type false))
-                    (premium:time (BASIS.BASIS|URB_PremiumUntil id token-type false))
+                    (current-branding:object{DALOS.BrandingSchema} (if tt (DPTF.DPTF|UR_Branding id false) (DPMF.DPMF|UR_Branding id false)))
+                    (premium:time (if tt (DPTF.DPTF|URB_PremiumUntil id false) (DPMF.DPMF|URB_PremiumUntil id false)))
                 )
                 (enforce (<= months mp) "Invalid Months Integer")
                 (let*
@@ -214,36 +263,39 @@
                         (ub1:object{DALOS.BrandingSchema} (BRD|UC_BrandingFlag current-branding 1))
                         (ub2:object{DALOS.BrandingSchema} (BRD|UC_BrandingPremium ub1 premium-until))
                     )
-                    (with-capability (P|BU)
-                        (BASIS.DPTF-DPMF|X_UpdateBranding id token-type false ub2)
+                    (if tt
+                        (DPTF.DPTF|X_UpdateBranding id false ub2)
+                        (DPMF.DPMF|X_UpdateBranding id false ub2)
                     )
                     (DALOS.KDA|C_CollectWT patron payment false)
                 )
             )
         )
     )
-    (defun DPTF-DPMF|C_UpdateBranding (patron:string id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        (with-capability (BRD|BRANDING id token-type)
-            (DPTF-DPMF|X_UpdatePendingBranding id token-type logo description website social)
-            (DALOS.IGNIS|C_Collect patron (BASIS.DPTF-DPMF|UR_Konto id token-type) (DALOS.DALOS|UR_UsagePrice "ignis|branding"))
+    (defun BRD|C_Update (patron:string id:string tt:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
+        (with-capability (BRD|C>BRANDING id tt)
+            (BRD|X_UpdatePendingBranding id tt logo description website social)
+            (DALOS.IGNIS|C_Collect patron (if tt (DPTF.DPTF|UR_Konto id) (DPMF.DPMF|UR_Konto id)) (DALOS.DALOS|UR_UsagePrice "ignis|branding"))
         )
     )
-    ;;[X]
-    (defun DPTF-DPMF|X_UpdatePendingBranding (id:string token-type:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
-        (require-capability (BRD|BRANDING id token-type))
+    ;;{16}
+    (defun BRD|X_UpdatePendingBranding (id:string tt:bool logo:string description:string website:string social:[object{DALOS.SocialSchema}])
+        (require-capability (BRD|C>BRANDING id tt))
         (let*
             (
-                (pending:object{DALOS.BrandingSchema} (BASIS.BASIS|UR_Branding id token-type true))
+                (pending:object{DALOS.BrandingSchema} (if tt (DPTF.DPTF|UR_Branding id true) (DPMF.DPMF|UR_Branding id true)))
                 (p1:object{DALOS.BrandingSchema} (BRD|UC_BrandingLogo pending logo))
                 (p2:object{DALOS.BrandingSchema} (BRD|UC_BrandingDescription p1 description))
                 (p3:object{DALOS.BrandingSchema} (BRD|UC_BrandingWebsite p2 website))
                 (p4:object{DALOS.BrandingSchema} (BRD|UC_BrandingSocial p3 social))
             )
-            (with-capability (P|BU)
-                (BASIS.DPTF-DPMF|X_UpdateBranding id token-type true p4)
+            (if tt
+                (DPTF.DPTF|X_UpdateBranding id true p4)
+                (DPMF.DPMF|X_UpdateBranding id true p4)
             )
+            
         )
     )
 )
 
-(create-table BRD|PoliciesTable)
+(create-table P|T)

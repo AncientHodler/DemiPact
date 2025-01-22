@@ -1,37 +1,62 @@
-(module SWPSC GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (SWPSC-ADMIN))
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(module SWPSC GOV
+    ;;  
+    ;;{G1}
+    (defconst GOV|MD_SWPSC          (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst GOV|SC_SWPSC          (keyset-ref-guard SWP.SWP|SC_KEY))
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|SWPSC_ADMIN))
     )
-    (defcap SWPSC-ADMIN ()
+    (defcap GOV|SWPSC_ADMIN ()
         (enforce-one
             "SWPSC Swapper Admin not satisfed"
             [
-                (enforce-guard G-MD_SWPSC)
-                (enforce-guard G-SC_SWPSC)
+                (enforce-guard GOV|MD_SWPSC)
+                (enforce-guard GOV|SC_SWPSC)
             ]
         )
     )
-    (defconst G-MD_SWPSC    (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_SWPSC    (keyset-ref-guard SWP.SWP|SC_KEY))
+    ;;{G3}
     ;;
-    (defun SWPSC|UC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;{4}
+    ;;{5}
+    ;;{6}
+    ;;{7}
+    ;;
+    ;;{8}
+    ;;{9}
+    ;;{10}
+    ;;{11}
+    ;;{12}
+    ;;{13}
+    (defun SWPSC|URC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
         (let
             (
                 (A:decimal (SWP.SWP|UR_Amplifier swpair))
             )
             (if (= A -1.0)
-                (SWPSC|UC_ProductSwap swpair input-ids input-amounts output-id)
-                (SWPSC|UC_StableSwap swpair input-ids input-amounts output-id)
+                (SWPSC|URC_ProductSwap swpair input-ids input-amounts output-id)
+                (SWPSC|URC_StableSwap swpair input-ids input-amounts output-id)
             )
         )
     )
-    (defun SWPSC|UC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+    (defun SWPSC|URC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
         (let*
             (
                 
                 (X:[decimal] (SWP.SWP|UR_PoolTokenSupplies swpair))
                 (op:integer (SWP.SWP|UR_PoolTokenPosition swpair output-id))
-                (o-prec:integer (BASIS.DPTF-DPMF|UR_Decimals output-id true))
+                (o-prec:integer (DPTF.DPTF|UR_Decimals output-id))
                 (pool-tokens:[string] (SWP.SWP|UR_PoolTokens swpair))
                 (l1:integer (length input-ids))
                 (l2:integer (length input-amounts))
@@ -62,14 +87,14 @@
             (map
                 (lambda
                     (idx:integer)
-                    (BASIS.DPTF-DPMF|UEV_Amount (at idx input-ids) (at idx input-amounts) true)
+                    (DPTF.DPTF|UEV_Amount (at idx input-ids) (at idx input-amounts))
                 )
                 (enumerate 0 (- l1 1))
             )
             (SUT.SWP|UC_ComputeP X input-amounts ip op o-prec)
         )
     )
-    (defun SWPSC|UC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+    (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
         (let*
             (
                 (A:decimal (SWP.SWP|UR_Amplifier swpair))
@@ -93,11 +118,21 @@
                     (input-id:string (at 0 input-ids))
                     (ip:integer (SWP.SWP|UR_PoolTokenPosition swpair input-id))
                     (op:integer (SWP.SWP|UR_PoolTokenPosition swpair output-id))
+                    (o-prec:integer (DPTF.DPTF|UR_Decimals output-id))
                 )
-                (SUT.SWP|UC_ComputeY A X input-amount ip op)
+                (SUT.SWP|UC_ComputeY A X input-amount ip op o-prec)
             )
         ) 
     )
+    ;;
+    ;;{14}
+    ;;{15}
+    ;;{16}
+    
+    
+    ;;
+    
+    
     ;;
     ;;
     ;;

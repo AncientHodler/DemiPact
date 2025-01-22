@@ -1,96 +1,32 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-(module ATS GOVERNANCE
-    (defcap GOVERNANCE ()
-        (compose-capability (ATS-ADMIN))
+(module ATS GOV
+    ;;  
+    ;;{G1}
+    (defconst GOV|MD_ATS            (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
+    (defconst GOV|SC_ATS            (keyset-ref-guard ATS|SC_KEY))
+    (defconst ATS|SC_KEY            (+ UTILS.NS_USE ".dh_sc_autostake-keyset"))
+
+    (defconst ATS|SC_NAME           "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")     ;;Former DalosAutostake
+    (defconst ATS|SC_KDA-NAME       "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
+    
+    ;;{G2}
+    (defcap GOV ()
+        (compose-capability (GOV|ATS_ADMIN))
     )
-    (defcap ATS-ADMIN ()
+    (defcap GOV|ATS_ADMIN ()
         (enforce-one
             "ATS Autostake Admin not satisfed"
             [
-                (enforce-guard G-MD_ATS)
-                (enforce-guard G-SC_ATS)
+                (enforce-guard GOV|MD_ATS)
+                (enforce-guard GOV|SC_ATS)
             ]
         )
     )
-
-    (defconst G-MD_ATS   (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
-    (defconst G-SC_ATS   (keyset-ref-guard ATS|SC_KEY))
-    
-    (defconst ATS|SC_KEY 
-        (+ UTILS.NS_USE ".dh_sc_autostake-keyset")
-    )
-    (defconst ATS|SC_NAME "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")     ;;Former DalosAutostake
-    (defconst ATS|SC_KDA-NAME "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12")
-    
-    (defcap COMPOSE ()
-        true
-    )
-    (defcap SECURE ()
-        true
-    )
-    (defcap ATS|RESHAPE ()
-        true
-    )
-    (defcap ATS|RM_SECONDARY_RT ()
-        true
-    )
-    (defcap ATS|UPDATE_ROU ()
-        true
-    )
-    (defcap DALOS|EXECUTOR ()
-        true
-    )
-    (defcap SUMMONER ()
-        true
-    )
-    
-    (defcap P|DIN ()
-        true
-    )
-    (defcap P|IC ()
-        true
-    )
-    
-    (defcap P|DINIC ()
-        (compose-capability (P|DIN))
-        (compose-capability (P|IC))
-    )
-    ;;P
-    (defun A_AddPolicy (policy-name:string policy-guard:guard)
-        (with-capability (ATS-ADMIN)
-            (write PoliciesTable policy-name
-                {"policy" : policy-guard}
-            )
-        )
-    )
-    (defun C_ReadPolicy:guard (policy-name:string)
-        (at "policy" (read PoliciesTable policy-name ["policy"]))
-    )
-    (deftable PoliciesTable:{DALOS.PolicySchema})
-    (defun DefinePolicies ()             
-        (DALOS.A_AddPolicy
-            "ATS|PlusDalosNonce"
-            (create-capability-guard (P|DIN))
-        )
-        (DALOS.A_AddPolicy 
-            "ATS|Summoner"
-            (create-capability-guard (SUMMONER))
-        )
-        (DALOS.A_AddPolicy
-            "ATS|GasCol"
-            (create-capability-guard (P|IC))
-        )
-        ;;
-        (BASIS.A_AddPolicy
-            "ATS|Sum"
-            (create-capability-guard (SUMMONER))
-        )
-    )
-    ;;G
     (defcap ATS|GOV ()
-        @doc "Autostake Module Governor Capability"
+        @doc "Governor Capability for the Autostake Smart DALOS Account"
         true
     )
+    ;;{G3}
     (defun ATS|SetGovernor (patron:string)
         (DALOS.DALOS|C_RotateGovernor
             patron
@@ -98,30 +34,45 @@
             (UTILS.GUARD|UEV_Any
                 [
                     (create-capability-guard (ATS|GOV))
-                    (C_ReadPolicy "ATSC|RemoteAutostakeGovernor")
-                    (C_ReadPolicy "ATSH|RemoteAutostakeGovernor")
-                    (C_ReadPolicy "ATSM|RemoteAutostakeGovernor")
-                    (C_ReadPolicy "ATSF|RemoteAutostakeGovernor")
+                    (P|UR "ATSC|RemoteAtsGov")
+                    (P|UR "ATSH|RemoteAtsGov")
+                    (P|UR "ATSM|RemoteAtsGov")
+                    (P|UR "ATSF|RemoteAtsGov")
                 ]
             )
         )
     )
     ;;
-    (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
-    (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
+    ;;{P1}
+    ;;{P2}
+    (deftable P|T:{DALOS.P|S})
+    ;;{P3}
+    ;;{P4}
+    (defun P|UR:guard (policy-name:string)
+        (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|A_Add (policy-name:string policy-guard:guard)
+        (with-capability (GOV|ATS_ADMIN)
+            (write P|T policy-name
+                {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_Define ()
+        true
+    )
+    ;;
+    ;;{1}
     (defschema ATS|PropertiesSchema
         owner-konto:string
         can-change-owner:bool
         parameter-lock:bool
         unlocks:integer
-
         pair-index-name:string
         index-decimals:integer
         syphon:decimal
         syphoning:bool
-
         reward-tokens:[object{ATS|RewardTokenSchema}]
-
         c-rbt:string
         c-nfr:bool
         c-positions:integer
@@ -130,12 +81,10 @@
         c-fr:bool
         c-duration:[integer]
         c-elite-mode:bool
-
         h-rbt:string
         h-promile:decimal
         h-decay:integer
         h-fr:bool
-
         cold-recovery:bool
         hot-recovery:bool
     )
@@ -145,7 +94,6 @@
         resident:decimal
         unbonding:decimal
     )
-
     (defschema ATS|BalanceSchema
         @doc "Key = <ATS-Pair> + UTILS.BAR + <account>"
         P0:[object{Awo}]
@@ -157,7 +105,6 @@
         P6:object{Awo}
         P7:object{Awo}
     )
-    ;;Awo - Schema for Autostake withdraw Object
     (defschema Awo
         reward-tokens:[decimal]
         cull-time:time
@@ -165,15 +112,281 @@
     (defschema ATS|Hot
         mint-time:time
     )
+    ;;{2}
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
-    ;;ATS
+    ;;{3}
+    (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
+    (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
+    ;;
+    ;;{4}
+    (defcap COMPOSE ()
+        true
+    )
+    (defcap SECURE ()
+        true
+    )
+    ;;{5}
+    (defcap ATS|S>RT_OWN (atspair:string new-owner:string)
+        @event
+        (DALOS.DALOS|UEV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
+        (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_CanChangeOwnerON atspair)
+    )
+    (defcap ATS|S>RT_CAN-CHANGE (atspair:string new-boolean:bool)
+        @event
+        (let
+            (
+                (current:bool (ATS|UR_CanChangeOwner atspair))
+            )
+            (enforce (!= current new-boolean) "Similar boolean cannot be used for this function")
+            (ATS|CAP_Owner atspair)
+        )
+    )
+    (defcap ATS|S>TG_PRM-LOCK (atspair:string toggle:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair (not toggle))
+        (let
+            (
+                (x:bool (ATS|UR_ToggleColdRecovery atspair))
+                (y:bool (ATS|UR_ToggleHotRecovery atspair))
+            )
+            (enforce-one
+                (format "ATS <parameter-lock> cannot be toggled when both <cold-recovery> and <hot-recovery> are set to false")
+                [
+                    (enforce (= x true) (format "Cold-recovery for ATS Pair {} must be set to <true> for this operation" [atspair]))
+                    (enforce (= y true) (format "Hot-recovery for ATS Pair {} must be set to <true> for this operation" [atspair]))
+                ]
+            )
+        )
+    )
+    (defcap ATS|S>SYPHON (atspair:string syphon:decimal)
+        @event
+        (enforce (>= syphon 0.1) "Syphon cannot be set lower than 0.1")
+        (ATS|CAP_Owner atspair)
+        (let
+            (
+                (precision:integer (ATS|UR_IndexDecimals atspair))
+            )
+            (enforce
+                (= (floor syphon precision) syphon)
+                (format "The syphon value of {} is not a valid Index Value for the {} ATS Pair" [syphon atspair])
+            )
+        )
+    )
+    (defcap ATS|S>SYPHONING (atspair:string toggle:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_SyphoningState atspair (not toggle))
+        (ATS|UEV_ParameterLockState atspair false)
+    )
+    (defcap ATS|S>TG_FEE (atspair:string toggle:bool fee-switch:integer)
+        @event
+        (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_FeeState atspair (not toggle) fee-switch)
+        (ATS|UEV_ParameterLockState atspair false)
+        (if (or (= fee-switch 0)(= fee-switch 1))
+            (ATS|UEV_UpdateColdOrHot atspair true)
+            (ATS|UEV_UpdateColdOrHot atspair false)
+        )
+    )
+    (defcap ATS|S>SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
+        (ATS|UEV_ParameterLockState atspair false)
+        (if (= soft-or-hard true)
+            (enforce 
+                (and 
+                    (= (mod base growth) 0)
+                    (= (mod growth 3) 0)
+                ) 
+                (format "{} as base and {} as growth are incompatible with the Soft Method for generation of CRD" [base growth])
+            )
+            (enforce 
+                (= (mod base growth) 0)
+                (format "{} as base and {} as growth are incompatible with the Hard Method for generation of CRD" [base growth])    
+            )
+        )
+    )
+    (defcap ATS|S>SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
+        (ATS|UEV_ParameterLockState atspair false)
+        (enforce 
+            (or 
+                (= fee-positions -1)
+                (contains fee-positions (enumerate 1 7))
+            )
+            "The Number of Fee Positions must be either -1 or between 1 and 7"
+        )
+        (enforce 
+            (and
+                (>= (length fee-thresholds) 1)
+                (<= (length fee-thresholds) 100)
+            )
+            "No More than 100 Fee Threhsolds can be set"
+        )
+        (fold
+            (lambda
+                (acc:bool idx:integer)
+                (let*
+                    (
+                        (current:decimal (at idx fee-thresholds))
+                        (precision:integer (DPTF.DPTF|UR_Decimals (ATS|UR_ColdRewardBearingToken atspair)))
+                    )
+                    (if (<= idx (- (length fee-thresholds) 2))
+                        (let
+                            (
+                                (next:decimal (at (+ idx 1) fee-thresholds))
+                            )
+                            (enforce 
+                                (< current next)
+                                (format "Current Amount {} must be smaller than the next Amount in the Threhsold List" [current next])
+                            )
+                        )
+                        true
+                    )
+                    (enforce
+                        (= (floor current precision) current)
+                        (format "The Amount of {} does not conform with the CRBT decimals number" [current])
+                    )
+                    acc
+                )
+            )
+            true
+            (enumerate 0 (- (length fee-thresholds) 1))
+        )
+        (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
+            (if (= fee-positions -1)
+                (enforce (= (length fee-array) 1) "The input <fee-array> must be of length 1")
+                (enforce (= (length fee-array) fee-positions) (format "The input <fee-array> must be of length {}" [fee-positions]))
+            )
+            true
+        )
+        (UTILS.UTILS|UEV_DecimalArray fee-array)
+        (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
+            (enforce
+                (= (length (at 0 fee-array)) (+ (length fee-thresholds) 1))
+                "Inner Lists of the <fee-array> are incompatible with the <fee-thresholds> length"
+            )
+            true
+        )
+        (map
+            (lambda 
+                (inner-lst:[decimal])
+                (map
+                    (lambda 
+                        (fee:decimal)
+                        (UTILS.DALOS|UEV_Fee fee)
+                    )
+                    inner-lst
+                )
+            )
+            fee-array
+        )
+    )
+    (defcap ATS|S>SET_HOT_FEE (atspair:string promile:decimal decay:integer)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair false)
+        (ATS|UEV_ParameterLockState atspair false)
+        (UTILS.DALOS|UEV_Fee promile)
+        (enforce 
+            (and
+                (>= decay 1)
+                (<= decay 9125)
+            )
+            "No More than 25 years (9125 days) can be set for Decay Period"
+        )
+    )
+    (defcap ATS|S>TOGGLE_ELITE (atspair:string toggle:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdOrHot atspair true)
+        (ATS|UEV_EliteState atspair (not toggle))
+        (ATS|UEV_ParameterLockState atspair false)
+        (if (= toggle true)
+            (let
+                (
+                    (x:integer (ATS|UR_ColdRecoveryPositions atspair))
+                )
+                (enforce (= x 7) (format "Cold Recovery Positions for ATS Pair {} must be set to 7 for this operation" [atspair]))
+            )
+            true
+        )
+    )
+    (defcap ATS|S>RECOVERY-ON (atspair:string cold-or-hot:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair false)
+        (ATS|UEV_RecoveryState atspair false cold-or-hot)
+    )
+    (defcap ATS|S>RECOVERY-OFF (atspair:string cold-or-hot:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_ParameterLockState atspair false)
+        (ATS|UEV_RecoveryState atspair true cold-or-hot)
+    )
+    (defcap ATS|S>ADD_SEC_RT (atspair:string reward-token:string)
+        @event
+        (ATS|UEV_IzTokenUnique atspair reward-token)
+        (ATS|UEV_RewardTokenExistance atspair reward-token false)
+        (DPTF.DPTF|CAP_Owner reward-token)
+    )
+    (defcap ATS|S>ADD_SEC_RBT (atspair:string hot-rbt:string)
+        @event
+        (ATS|UEV_HotRewardBearingTokenPresence atspair false)
+        (DPMF.DPMF|CAP_Owner hot-rbt)
+        (DPMF.DPMF|UEV_Vesting hot-rbt false)
+    )
+    ;;{6}
+    (defcap ATS|F>OWNER (atspair:string)
+        (ATS|CAP_Owner atspair)
+    )
+    ;;{7}
+    (defcap ATS|C>ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
+        @event
+        (ATS|CAP_Owner atspair)
+        (ATS|UEV_UpdateColdAndHot atspair)
+        (ATS|UEV_ParameterLockState atspair false)
+        (if (= token-type true)
+            (compose-capability (ATS|S>ADD_SEC_RT atspair reward-token))
+            (compose-capability (ATS|S>ADD_SEC_RBT atspair reward-token))
+        )
+    )
+    ;;
+    ;;{8}
     (defun ATS|CAP_Owner (atspair:string)
         (DALOS.DALOS|CAP_EnforceAccountOwnership (ATS|UR_OwnerKonto atspair))
     )
-    (defcap ATS|CF|OWNER (atspair:string)
-        (ATS|CAP_Owner atspair)
+    ;;{9}
+    (defun ATS|UDC_MakeUnstakeObject:object{Awo} (atspair:string time:time)
+        { "reward-tokens"   : (make-list (length (ATS|UR_RewardTokenList atspair)) 0.0)
+        , "cull-time"       : time}
     )
+    (defun ATS|UDC_MakeZeroUnstakeObject:object{Awo} (atspair:string)
+        (ATS|UDC_MakeUnstakeObject atspair NULLTIME)
+    )
+    (defun ATS|UDC_MakeNegativeUnstakeObject:object{Awo} (atspair:string)
+        (ATS|UDC_MakeUnstakeObject atspair ANTITIME)
+    )
+    (defun ATS|UDC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
+        (ATS|UDC_RT token nfr 0.0 0.0)
+    )
+    (defun ATS|UDC_RT:object{ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
+        (enforce (>= r 0.0) "Negative Resident not allowed")
+        (enforce (>= u 0.0) "Negative Unbonding not allowed")
+        {"token"                    : token
+        ,"nfr"                      : nfr
+        ,"resident"                 : r
+        ,"unbonding"                : u}
+    )
+    ;;{10}
     (defun ATS|UEV_CanChangeOwnerON (atspair:string)
         (ATS|UEV_id atspair)
         (let
@@ -186,7 +399,7 @@
     (defun ATS|UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool)
         (let
             (
-                (existance-check:bool (BASIS.ATS|UC_IzRTg atspair reward-token))
+                (existance-check:bool (DPTF.DPTF|URC_IzRTg atspair reward-token))
             )
             (enforce (= existance-check existance) (format "{} Existance isnt verified for Token {} as RT with ATS Pair {}" [existance reward-token atspair]))
         )
@@ -194,7 +407,12 @@
     (defun ATS|UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool)
         (let
             (
-                (existance-check:bool (BASIS.ATS|UC_IzRBTg atspair reward-bearing-token cold-or-hot))
+                (existance-check:bool 
+                    (if cold-or-hot
+                        (DPTF.DPTF|URC_IzRBTg atspair reward-bearing-token)
+                        (DPMF.DPMF|URC_IzRBTg atspair reward-bearing-token)
+                    ) 
+                )
             )
             (enforce (= existance-check existance) (format "{} Existance isnt verified for Token {} as RBT with ATS Pair {}" [existance reward-bearing-token atspair]))
         )
@@ -202,7 +420,7 @@
     (defun ATS|UEV_HotRewardBearingTokenPresence (atspair:string enforced-presence:bool)
         (let
             (
-                (presence-check:bool (ATS|UC_IzPresentHotRBT atspair))
+                (presence-check:bool (ATS|URC_IzPresentHotRBT atspair))
             )
             (enforce (= presence-check enforced-presence) (format "ATS Pair {} cant verfiy {} presence for a Hot RBT Token" [atspair enforced-presence]))
         )
@@ -283,7 +501,7 @@
         )
     )
     (defun ATS|UEV_IzTokenUnique (atspair:string reward-token:string)
-        (BASIS.DPTF-DPMF|UEV_id reward-token true)
+        (DPTF.DPTF|UEV_id reward-token)
         (let
             (
                 (rtl:[string] (ATS|UR_RewardTokenList atspair))
@@ -293,230 +511,107 @@
                 (format "Token {} already exists as Reward Token for the ATS Pair {}" [reward-token atspair]))     
         )
     )
-    
-    (defcap ATS|X_OWNERSHIP_CHANGE (atspair:string new-owner:string)
-        (DALOS.DALOS|UEV_SenderWithReceiver (ATS|UR_OwnerKonto atspair) new-owner)
-        (DALOS.DALOS|UEV_EnforceAccountExists new-owner)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_CanChangeOwnerON atspair)
+    ;;{11}
+    (defun ATS|UC_IzCullable:bool (input:object{Awo})
+        (let*
+            (
+                (present-time:time (at "block-time" (chain-data)))
+                (stored-time:time (at "cull-time" input))
+                (diff:decimal (diff-time present-time stored-time))
+            )
+            (if (>= diff 0.0)
+                true
+                false
+            )
+        )
     )
-    (defcap ATS|X_MODIFY_CAN_CHANGE (atspair:string new-boolean:bool)
+    (defun ATS|UC_PosObjSt:integer (atspair:string input-obj:object{Awo})
+        @doc "occupied(0), opened(1), closed (-1)"
         (let
             (
-                (current:bool (ATS|UR_CanChangeOwner atspair))
+                (zero:object{Awo} (ATS|UDC_MakeZeroUnstakeObject atspair))
+                (negative:object{Awo} (ATS|UDC_MakeNegativeUnstakeObject atspair))
             )
-            (enforce (!= current new-boolean) "Similar boolean cannot be used for this function")
-            (ATS|CAP_Owner atspair)
+            (if (= input-obj zero)
+                1
+                (if (= input-obj negative)
+                    -1
+                    0
+                )
+            )
         )
     )
-    (defcap ATS|X_TOGGLE_PARAMETER-LOCK (atspair:string toggle:bool)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_ParameterLockState atspair (not toggle))
+    (defun ATS|UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
+        (not 
+            (UTILS.UTILS|UC_TripleAnd
+                (= (length fee-thresholds) 1)
+                (= (at 0 fee-thresholds) 0.0)
+                (UTILS.UTILS|UC_TripleAnd
+                    (= (length fee-array) 1)
+                    (= (length (at 0 fee-array)) 1)
+                    (= (at 0 (at 0 fee-array)) 0.0)
+                )
+            )
+        )
+    )
+    (defun ATS|UC_SolidifyUO:object{Awo} (input:object{Awo} remove-position:integer)
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (cull-time:time (at "cull-time" input))
+                (how-many-rts:integer (length values))
+            )
+            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
+            (let*
+                (
+                    (primal:decimal (at 0 (at "reward-tokens" input)))
+                    (removee:decimal (at remove-position (at "reward-tokens" input)))
+                    (remove-lst:[decimal] (UTILS.LIST|UC_RemoveItemAt values remove-position))
+                    (new-values:[decimal] (UTILS.LIST|UC_ReplaceAt remove-lst 0 (+ primal removee)))
+                )
+                { "reward-tokens"   : new-values
+                , "cull-time"       : cull-time}
+            )
+        )
+    )
+    (defun ATS|UC_IzUnstakeObjectValid:bool (input:object{Awo})
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (sum-values:decimal (fold (+) 0.0 values))
+            )
+            (if (> sum-values 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun ATS|UC_ReshapeUO:object{Awo} (input:object{Awo} remove-position:integer)
         (let
             (
-                (x:bool (ATS|UR_ToggleColdRecovery atspair))
-                (y:bool (ATS|UR_ToggleHotRecovery atspair))
+                (is-valid:bool (ATS|UC_IzUnstakeObjectValid input))
             )
-            (enforce-one
-                (format "ATS <parameter-lock> cannot be toggled when both <cold-recovery> and <hot-recovery> are set to false")
-                [
-                    (enforce (= x true) (format "Cold-recovery for ATS Pair {} must be set to <true> for this operation" [atspair]))
-                    (enforce (= y true) (format "Hot-recovery for ATS Pair {} must be set to <true> for this operation" [atspair]))
-                ]
+            (if is-valid
+                (ATS|UC_SolidifyUO input remove-position)
+                input
             )
         )
     )
-    (defcap ATS|X_SYPHON (atspair:string syphon:decimal)
-        (enforce (>= syphon 0.1) "Syphon cannot be set lower than 0.1")
-        (ATS|CAP_Owner atspair)
-        (let
-            (
-                (precision:integer (ATS|UR_IndexDecimals atspair))
-            )
-            (enforce
-                (= (floor syphon precision) syphon)
-                (format "The syphon value of {} is not a valid Index Value for the {} ATS Pair" [syphon atspair])
-            )
-        )
-    )
-    (defcap ATS|X_SYPHONING (atspair:string toggle:bool)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_SyphoningState atspair (not toggle))
-        (ATS|UEV_ParameterLockState atspair false)
-    )
-    (defcap ATS|X_TOGGLE_FEE (atspair:string toggle:bool fee-switch:integer)
-        (enforce (contains fee-switch (enumerate 0 2)) "Integer not a valid fee-switch integer")
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_FeeState atspair (not toggle) fee-switch)
-        (ATS|UEV_ParameterLockState atspair false)
-        (if (or (= fee-switch 0)(= fee-switch 1))
-            (ATS|UEV_UpdateColdOrHot atspair true)
-            (ATS|UEV_UpdateColdOrHot atspair false)
-        )
-    )
-    (defcap ATS|X_SET_CRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdOrHot atspair true)
-        (ATS|UEV_ParameterLockState atspair false)
-        (if (= soft-or-hard true)
-            (enforce 
-                (and 
-                    (= (mod base growth) 0)
-                    (= (mod growth 3) 0)
-                ) 
-                (format "{} as base and {} as growth are incompatible with the Soft Method for generation of CRD" [base growth])
-            )
-            (enforce 
-                (= (mod base growth) 0)
-                (format "{} as base and {} as growth are incompatible with the Hard Method for generation of CRD" [base growth])    
-            )
-        )
-    )
-    (defcap ATS|X_SET_COLD_FEE (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdOrHot atspair true)
-        (ATS|UEV_ParameterLockState atspair false)
-        (enforce 
-            (or 
-                (= fee-positions -1)
-                (contains fee-positions (enumerate 1 7))
-            )
-            "The Number of Fee Positions must be either -1 or between 1 and 7"
-        )
-        (enforce 
-            (and
-                (>= (length fee-thresholds) 1)
-                (<= (length fee-thresholds) 100)
-            )
-            "No More than 100 Fee Threhsolds can be set"
-        )
+    (defun ATS|UC_MultiReshapeUO:[object{Awo}] (input:[object{Awo}] remove-position:integer)
         (fold
             (lambda
-                (acc:bool idx:integer)
-                (let*
-                    (
-                        (current:decimal (at idx fee-thresholds))
-                        (precision:integer (BASIS.DPTF-DPMF|UR_Decimals (ATS|UR_ColdRewardBearingToken atspair) true))
-                    )
-                    (if (<= idx (- (length fee-thresholds) 2))
-                        (let
-                            (
-                                (next:decimal (at (+ idx 1) fee-thresholds))
-                            )
-                            (enforce 
-                                (< current next)
-                                (format "Current Amount {} must be smaller than the next Amount in the Threhsold List" [current next])
-                            )
-                        )
-                        true
-                    )
-                    (enforce
-                        (= (floor current precision) current)
-                        (format "The Amount of {} does not conform with the CRBT decimals number" [current])
-                    )
-                    acc
-                )
+                (acc:[object{Awo}] item:object{Awo})
+                (UTILS.LIST|UC_AppendLast acc (ATS|UC_ReshapeUO item remove-position))
             )
-            true
-            (enumerate 0 (- (length fee-thresholds) 1))
-        )
-        (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
-            (if (= fee-positions -1)
-                (enforce (= (length fee-array) 1) "The input <fee-array> must be of length 1")
-                (enforce (= (length fee-array) fee-positions) (format "The input <fee-array> must be of length {}" [fee-positions]))
-            )
-            true
-        )
-        (UTILS.UTILS|UEV_DecimalArray fee-array)
-        (if (= (ATS|UC_ZeroColdFeeExceptionBoolean fee-thresholds fee-array) true)
-            (enforce
-                (= (length (at 0 fee-array)) (+ (length fee-thresholds) 1))
-                "Inner Lists of the <fee-array> are incompatible with the <fee-thresholds> length"
-            )
-            true
-        )
-        (map
-            (lambda 
-                (inner-lst:[decimal])
-                (map
-                    (lambda 
-                        (fee:decimal)
-                        (UTILS.DALOS|UEV_Fee fee)
-                    )
-                    inner-lst
-                )
-            )
-            fee-array
+            []
+            input
         )
     )
-    (defcap ATS|X_SET_HOT_FEE (atspair:string promile:decimal decay:integer)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdOrHot atspair false)
-        (ATS|UEV_ParameterLockState atspair false)
-        (UTILS.DALOS|UEV_Fee promile)
-        (enforce 
-            (and
-                (>= decay 1)
-                (<= decay 9125)
-            )
-            "No More than 25 years (9125 days) can be set for Decay Period"
-        )
-    )
-    (defcap ATS|X_TOGGLE_ELITE (atspair:string toggle:bool)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdOrHot atspair true)
-        (ATS|UEV_EliteState atspair (not toggle))
-        (ATS|UEV_ParameterLockState atspair false)
-        (if (= toggle true)
-            (let
-                (
-                    (x:integer (ATS|UR_ColdRecoveryPositions atspair))
-                )
-                (enforce (= x 7) (format "Cold Recovery Positions for ATS Pair {} must be set to 7 for this operation" [atspair]))
-            )
-            true
-        )
-    )
-    (defcap ATS|X_RECOVERY-ON (atspair:string cold-or-hot:bool)
-        @event
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_ParameterLockState atspair false)
-        (ATS|UEV_RecoveryState atspair false cold-or-hot)
-    )
-    (defcap ATS|X_RECOVERY-OFF (atspair:string cold-or-hot:bool)
-        @event
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_ParameterLockState atspair false)
-        (ATS|UEV_RecoveryState atspair true cold-or-hot)
-    )
-    
-    (defcap ATS|X_ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
-        (BASIS.DPTF-DPMF|CAP_Owner reward-token token-type)
-        (ATS|CAP_Owner atspair)
-        (ATS|UEV_UpdateColdAndHot atspair)
-        (ATS|UEV_ParameterLockState atspair false)
-        (if (= token-type true)
-            (compose-capability (ATS|ADD_SECONDARY_RT atspair reward-token))
-            (compose-capability (ATS|ADD_SECONDARY_RBT atspair reward-token))
-        )
-    )
-    (defcap ATS|ADD_SECONDARY_RT (atspair:string reward-token:string)
-        @event
-        (ATS|UEV_IzTokenUnique atspair reward-token)
-        (ATS|UEV_RewardTokenExistance atspair reward-token false)
-        (compose-capability (SUMMONER))
-    )
-    (defcap ATS|ADD_SECONDARY_RBT (atspair:string hot-rbt:string)
-        @event
-        (ATS|UEV_HotRewardBearingTokenPresence atspair false)   
-        (compose-capability (SUMMONER))
-        (BASIS.VST|UEV_Existance hot-rbt false false)
-    )
-    ;;
-    (defun ATS|P-KEYS:[string] ()
+    ;;{12}
+    (defun ATS|UR_P-KEYS:[string] ()
         (keys ATS|Pairs)
     )
-    (defun ATS|KEYS:[string] ()
+    (defun ATS|UR_KEYS:[string] ()
         (keys ATS|Ledger)
     )
     (defun ATS|UR_OwnerKonto:string (atspair:string)
@@ -617,7 +712,7 @@
         (let*
             (
                 (rt:[object{ATS|RewardTokenSchema}] (ATS|UR_RewardTokens atspair))
-                (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
+                (rtp:integer (ATS|URC_RewardTokenPosition atspair reward-token))
                 (rto:object{ATS|RewardTokenSchema} (at rtp rt))
             )
             (cond
@@ -632,7 +727,7 @@
         (fold
             (lambda
                 (acc:[integer] rt:string)
-                (UTILS.LIST|UC_AppendLast acc (BASIS.DPTF-DPMF|UR_Decimals rt true))
+                (UTILS.LIST|UC_AppendLast acc (DPTF.DPTF|UR_Decimals rt))
             )
             []
             (ATS|UR_RewardTokenList atspair)
@@ -654,17 +749,17 @@
             true
         )
     )
-    ;;
+    ;;{13}
     (defun ATS|URC_MaxSyphon:[decimal] (atspair:string)
         (let*
             (
-                (index:decimal (ATS|UC_Index atspair))
+                (index:decimal (ATS|URC_Index atspair))
                 (syphon:decimal (ATS|UR_Syphon atspair))
                 (resident-rt-amounts:[decimal] (ATS|UR_RoUAmountList atspair true))
                 (precisions:[integer] (ATS|UR_RtPrecisions atspair))
                 (max-precision:integer (UTILS.UTILS|UC_MaxInteger precisions))
                 (max-pp:integer (at 0 (UTILS.LIST|UC_Search precisions max-precision)))
-                (pair-rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
+                (pair-rbt-supply:decimal (ATS|URC_PairRBTSupply atspair))
             )
             (if (<= index syphon)
                 (make-list (length precisions) 0.0)
@@ -672,7 +767,7 @@
                     (
                         (index-diff:decimal (- index syphon))
                         (rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                        (rbt-precision:integer (BASIS.DPTF-DPMF|UR_Decimals rbt true))
+                        (rbt-precision:integer (DPTF.DPTF|UR_Decimals rbt))
                         (max-sum:decimal (floor (* pair-rbt-supply index-diff) rbt-precision))
                         (prelim:[decimal]
                             (fold
@@ -697,20 +792,7 @@
             )
         )
     )
-    (defun ATS|UC_IzCullable:bool (input:object{Awo})
-        (let*
-            (
-                (present-time:time (at "block-time" (chain-data)))
-                (stored-time:time (at "cull-time" input))
-                (diff:decimal (diff-time present-time stored-time))
-            )
-            (if (>= diff 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun ATS|UC_CullValue:[decimal] (atspair:string input:object{Awo})
+    (defun ATS|URC_CullValue:[decimal] (atspair:string input:object{Awo})
         (let*
             (
                 (rt-lst:[string] (ATS|UR_RewardTokenList atspair))
@@ -724,12 +806,12 @@
             )
         )
     )
-    (defun ATS|UC_AccountUnbondingBalance (atspair:string account:string reward-token:string)
+    (defun ATS|URC_AccountUnbondingBalance (atspair:string account:string reward-token:string)
         (+
             (fold
                 (lambda
                     (acc:decimal item:object{Awo})
-                    (+ acc (ATS|UCX_UnstakeObjectUnbondingValue atspair reward-token item))
+                    (+ acc (ATS|URC_UnstakeObjectUnbondingValue atspair reward-token item))
                 )
                 0.0
                 (ATS|UR_P0 atspair account)
@@ -737,17 +819,17 @@
             (fold
                 (lambda
                     (acc:decimal item:integer)
-                    (+ acc (ATS|UCX_UnstakeObjectUnbondingValue atspair reward-token (ATS|UR_P1-7 atspair account item)))
+                    (+ acc (ATS|URC_UnstakeObjectUnbondingValue atspair reward-token (ATS|UR_P1-7 atspair account item)))
                 )
                 0.0
                 (enumerate 1 7)
             )
         )
     )
-    (defun ATS|UCX_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{Awo})
+    (defun ATS|URC_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{Awo})
         (let*
             (
-                (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
+                (rtp:integer (ATS|URC_RewardTokenPosition atspair reward-token))
                 (rt:[decimal] (at "reward-tokens" io))
                 (rb:decimal (at rtp rt))
             )
@@ -757,18 +839,18 @@
             )
         )
     )
-    (defun ATS|UC_WhichPosition:integer (atspair:string c-rbt-amount:decimal account:string)
+    (defun ATS|URC_WhichPosition:integer (atspair:string c-rbt-amount:decimal account:string)
         (let
             (
                 (elite:bool (ATS|UR_EliteMode atspair))
             )
             (if elite
-                (ATS|UC_ElitePosition atspair c-rbt-amount account)
-                (ATS|UC_NonElitePosition atspair account)
+                (ATS|URC_ElitePosition atspair c-rbt-amount account)
+                (ATS|URC_NonElitePosition atspair account)
             )
         )
     )
-    (defun ATS|UC_ElitePosition:integer (atspair:string c-rbt-amount:decimal account:string)
+    (defun ATS|URC_ElitePosition:integer (atspair:string c-rbt-amount:decimal account:string)
         (let
             (
                 (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -779,10 +861,10 @@
                 (let*
                     (
                         (iz-ea-id:bool (if (= ea-id c-rbt) true false))
-                        (pstate:[integer] (ATS|UC_PSL atspair account))
+                        (pstate:[integer] (ATS|URC_PSL atspair account))
                         (met:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
-                        (ea-supply:decimal (BASIS.DPTF-DPMF|UR_AccountSupply ea-id account true))
-                        (t-ea-supply:decimal (BASIS.DALOS|URC_EliteAurynzSupply account))
+                        (ea-supply:decimal (DPTF.DPTF|UR_AccountSupply ea-id account))
+                        (t-ea-supply:decimal (DPMF.DALOS|URC_EliteAurynzSupply account))
                         (virtual-met:integer (str-to-int (take 1 (at "tier" (UTILS.ATS|UDC_Elite (- t-ea-supply c-rbt-amount))))))
                         (available:[integer] (if iz-ea-id (take virtual-met pstate) (take met pstate)))
                         (search-res:[integer] (UTILS.LIST|UC_Search available 1))
@@ -796,11 +878,11 @@
                         (+ (at 0 search-res) 1)
                     )
                 )
-                (ATS|UC_NonElitePosition atspair account)
+                (ATS|URC_NonElitePosition atspair account)
             )
         )
     )
-    (defun ATS|UC_NonElitePosition:integer (atspair:string account:string)
+    (defun ATS|URC_NonElitePosition:integer (atspair:string account:string)
         (let
             (
                 (positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -809,7 +891,7 @@
                 -1
                 (let*
                     (
-                        (pstate:[integer] (ATS|UC_PSL atspair account))
+                        (pstate:[integer] (ATS|URC_PSL atspair account))
                         (available:[integer] (take positions pstate))
                         (search-res:[integer] (UTILS.LIST|UC_Search available 1))
                     )
@@ -821,33 +903,33 @@
             )
         )
     )
-    (defun ATS|UC_PSL:[integer] (atspair:string account:string)
+    (defun ATS|URC_PSL:[integer] (atspair:string account:string)
         (let
             (
-                (p1s:integer (ATS|UC_PositionState atspair account 1))
-                (p2s:integer (ATS|UC_PositionState atspair account 2))
-                (p3s:integer (ATS|UC_PositionState atspair account 3))
-                (p4s:integer (ATS|UC_PositionState atspair account 4))
-                (p5s:integer (ATS|UC_PositionState atspair account 5))
-                (p6s:integer (ATS|UC_PositionState atspair account 6))
-                (p7s:integer (ATS|UC_PositionState atspair account 7))
+                (p1s:integer (ATS|URC_PosSt atspair account 1))
+                (p2s:integer (ATS|URC_PosSt atspair account 2))
+                (p3s:integer (ATS|URC_PosSt atspair account 3))
+                (p4s:integer (ATS|URC_PosSt atspair account 4))
+                (p5s:integer (ATS|URC_PosSt atspair account 5))
+                (p6s:integer (ATS|URC_PosSt atspair account 6))
+                (p7s:integer (ATS|URC_PosSt atspair account 7))
             )
             [p1s p2s p3s p4s p5s p6s p7s]
         )
     )
-    (defun ATS|UC_PositionState:integer (atspair:string account:string position:integer)
+    (defun ATS|URC_PosSt:integer (atspair:string account:string position:integer)
         (UTILS.UTILS|UEV_PositionalVariable position 7 "Input Position out of bounds")
         (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P1"  := p1 , "P2"  := p2 , "P3"  := p3, "P4"  := p4, "P5"  := p5, "P6"  := p6, "P7"  := p7 }
             (let
                 (
-                    (ps1:integer (ATS|UC_PositionalObjectState atspair p1))
-                    (ps2:integer (ATS|UC_PositionalObjectState atspair p2))
-                    (ps3:integer (ATS|UC_PositionalObjectState atspair p3))
-                    (ps4:integer (ATS|UC_PositionalObjectState atspair p4))
-                    (ps5:integer (ATS|UC_PositionalObjectState atspair p5))
-                    (ps6:integer (ATS|UC_PositionalObjectState atspair p6))
-                    (ps7:integer (ATS|UC_PositionalObjectState atspair p7))
+                    (ps1:integer (ATS|UC_PosObjSt atspair p1))
+                    (ps2:integer (ATS|UC_PosObjSt atspair p2))
+                    (ps3:integer (ATS|UC_PosObjSt atspair p3))
+                    (ps4:integer (ATS|UC_PosObjSt atspair p4))
+                    (ps5:integer (ATS|UC_PosObjSt atspair p5))
+                    (ps6:integer (ATS|UC_PosObjSt atspair p6))
+                    (ps7:integer (ATS|UC_PosObjSt atspair p7))
                 )
                 (cond
                     ((= position 1) ps1)
@@ -861,23 +943,7 @@
             )
         )
     )
-    (defun ATS|UC_PositionalObjectState:integer (atspair:string input-obj:object{Awo})
-        @doc "occupied(0), opened(1), closed (-1)"
-        (let
-            (
-                (zero:object{Awo} (ATS|UCC_MakeZeroUnstakeObject atspair))
-                (negative:object{Awo} (ATS|UCC_MakeNegativeUnstakeObject atspair))
-            )
-            (if (= input-obj zero)
-                1
-                (if (= input-obj negative)
-                    -1
-                    0
-                )
-            )
-        )
-    )
-    (defun ATS|UC_ColdRecoveryFee (atspair:string c-rbt-amount:decimal input-position:integer)
+    (defun ATS|URC_ColdRecoveryFee (atspair:string c-rbt-amount:decimal input-position:integer)
         (let*
             (
                 (ats-positions:integer (ATS|UR_ColdRecoveryPositions atspair))
@@ -926,7 +992,7 @@
             )
         )
     )
-    (defun ATS|UC_CullColdRecoveryTime:time (atspair:string account:string)
+    (defun ATS|URC_CullColdRecoveryTime:time (atspair:string account:string)
         (let*
             (
                 (major:integer (DALOS.DALOS|UR_Elite-Tier-Major account))
@@ -944,11 +1010,11 @@
             (add-time present-time (hours h))
         )
     )
-    (defun ATS|UC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
+    (defun ATS|URC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
         (let
             (
-                (rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
-                (index:decimal (ATS|UC_Index atspair))
+                (rbt-supply:decimal (ATS|URC_PairRBTSupply atspair))
+                (index:decimal (ATS|URC_Index atspair))
                 (resident-amounts:[decimal] (ATS|UR_RoUAmountList atspair true))
                 (rt-precision-lst:[integer] (ATS|UR_RtPrecisions atspair))
             )
@@ -956,12 +1022,12 @@
             (UTILS.ATS|UC_SplitByIndexedRBT rbt-amount rbt-supply index resident-amounts rt-precision-lst)
         )
     )
-    (defun ATS|UC_Index (atspair:string)
+    (defun ATS|URC_Index (atspair:string)
         (let
             (
                 (p:integer (ATS|UR_IndexDecimals atspair))
-                (rs:decimal (ATS|UC_ResidentSum atspair))
-                (rbt-supply:decimal (ATS|UCX_PairRBTSupply atspair))
+                (rs:decimal (ATS|URC_ResidentSum atspair))
+                (rbt-supply:decimal (ATS|URC_PairRBTSupply atspair))
             )
             (if
                 (= rbt-supply 0.0)
@@ -970,30 +1036,30 @@
             )
         )
     )
-    (defun ATS|UCX_PairRBTSupply:decimal (atspair:string)
+    (defun ATS|URC_PairRBTSupply:decimal (atspair:string)
         (let*
             (
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                (c-rbt-supply:decimal (BASIS.DPTF-DPMF|UR_Supply c-rbt true))
+                (c-rbt-supply:decimal (DPTF.DPTF|UR_Supply c-rbt))
             )
-            (if (= (ATS|UC_IzPresentHotRBT atspair) false)
+            (if (= (ATS|URC_IzPresentHotRBT atspair) false)
                 c-rbt-supply
                 (let*
                     (
                         (h-rbt:string (ATS|UR_HotRewardBearingToken atspair))
-                        (h-rbt-supply:decimal (BASIS.DPTF-DPMF|UR_Supply h-rbt false))
+                        (h-rbt-supply:decimal (DPMF.DPMF|UR_Supply h-rbt))
                     )
                     (+ c-rbt-supply h-rbt-supply)
                 )
             )
         )
     )
-    (defun ATS|UC_RBT:decimal (atspair:string rt:string rt-amount:decimal)
+    (defun ATS|URC_RBT:decimal (atspair:string rt:string rt-amount:decimal)
         (let*
             (
-                (index:decimal (abs (ATS|UC_Index atspair)))
+                (index:decimal (abs (ATS|URC_Index atspair)))
                 (c-rbt:string (ATS|UR_ColdRewardBearingToken atspair))
-                (p-rbt:integer (BASIS.DPTF-DPMF|UR_Decimals c-rbt true))
+                (p-rbt:integer (DPTF.DPTF|UR_Decimals c-rbt))
             )
             (enforce
                 (= (floor rt-amount p-rbt) rt-amount)
@@ -1002,133 +1068,47 @@
             (floor (/ rt-amount index) p-rbt)
         )
     )
-    (defun ATS|UC_ResidentSum:decimal (atspair:string)
+    (defun ATS|URC_ResidentSum:decimal (atspair:string)
         (fold (+) 0.0 (ATS|UR_RoUAmountList atspair true)) 
     )
-    (defun ATS|UC_IzPresentHotRBT:bool (atspair:string)
+    (defun ATS|URC_IzPresentHotRBT:bool (atspair:string)
         (if (= (ATS|UR_HotRewardBearingToken atspair) UTILS.BAR)
             false
             true
         )
     )
-    (defun ATS|UC_RewardTokenPosition:integer (atspair:string reward-token:string)
+    (defun ATS|URC_RewardTokenPosition:integer (atspair:string reward-token:string)
         (let
             (
-                (existance-check:bool (BASIS.ATS|UC_IzRTg atspair reward-token))
+                (existance-check:bool (DPTF.DPTF|URC_IzRTg atspair reward-token))
             )
             (enforce (= existance-check true) (format "{} Existance isnt verified for Token {} as RT with ATS Pair {}" [true reward-token atspair]))
             (at 0 (UTILS.LIST|UC_Search (ATS|UR_RewardTokenList atspair) reward-token))
         )
     )
-    (defun ATS|UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
-        (not 
-            (UTILS.UTILS|UC_TripleAnd
-                (= (length fee-thresholds) 1)
-                (= (at 0 fee-thresholds) 0.0)
-                (UTILS.UTILS|UC_TripleAnd
-                    (= (length fee-array) 1)
-                    (= (length (at 0 fee-array)) 1)
-                    (= (at 0 (at 0 fee-array)) 0.0)
-                )
-            )
-        )
-    )
     ;;
-    (defun ATS|UC_SolidifyUO:object{Awo} (input:object{Awo} remove-position:integer)
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (cull-time:time (at "cull-time" input))
-                (how-many-rts:integer (length values))
-            )
-            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
-            (let*
-                (
-                    (primal:decimal (at 0 (at "reward-tokens" input)))
-                    (removee:decimal (at remove-position (at "reward-tokens" input)))
-                    (remove-lst:[decimal] (UTILS.LIST|UC_RemoveItemAt values remove-position))
-                    (new-values:[decimal] (UTILS.LIST|UC_ReplaceAt remove-lst 0 (+ primal removee)))
-                )
-                { "reward-tokens"   : new-values
-                , "cull-time"       : cull-time}
-            )
-        )
-    )
-    (defun ATS|UC_IzUnstakeObjectValid:bool (input:object{Awo})
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (sum-values:decimal (fold (+) 0.0 values))
-            )
-            (if (> sum-values 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun ATS|UC_ReshapeUO:object{Awo} (input:object{Awo} remove-position:integer)
-        (let
-            (
-                (is-valid:bool (ATS|UC_IzUnstakeObjectValid input))
-            )
-            (if is-valid
-                (ATS|UC_SolidifyUO input remove-position)
-                input
-            )
-        )
-    )
-    (defun ATS|UC_MultiReshapeUO:[object{Awo}] (input:[object{Awo}] remove-position:integer)
-        (fold
-            (lambda
-                (acc:[object{Awo}] item:object{Awo})
-                (UTILS.LIST|UC_AppendLast acc (ATS|UC_ReshapeUO item remove-position))
-            )
-            []
-            input
-        )
-    )
-    ;;
-    (defun ATS|UCC_MakeUnstakeObject:object{Awo} (atspair:string time:time)
-        { "reward-tokens"   : (make-list (length (ATS|UR_RewardTokenList atspair)) 0.0)
-        , "cull-time"       : time}
-    )
-    (defun ATS|UCC_MakeZeroUnstakeObject:object{Awo} (atspair:string)
-        (ATS|UCC_MakeUnstakeObject atspair NULLTIME)
-    )
-    (defun ATS|UCC_MakeNegativeUnstakeObject:object{Awo} (atspair:string)
-        (ATS|UCC_MakeUnstakeObject atspair ANTITIME)
-    )
-    (defun ATS|UCC_ComposePrimaryRewardToken:object{ATS|RewardTokenSchema} (token:string nfr:bool)
-        (ATS|UCC_RT token nfr 0.0 0.0)
-    )
-    (defun ATS|UCC_RT:object{ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
-        (enforce (>= r 0.0) "Negative Resident not allowed")
-        (enforce (>= u 0.0) "Negative Unbonding not allowed")
-        {"token"                    : token
-        ,"nfr"                      : nfr
-        ,"resident"                 : r
-        ,"unbonding"                : u}
-    )
-    ;;[X]
+    ;;{14}
+    ;;{15}
+    ;;{16}
     (defun ATS|X_ChangeOwnership (atspair:string new-owner:string)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_OWNERSHIP_CHANGE atspair new-owner)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>RT_OWN atspair new-owner)
             (update ATS|Pairs atspair
                 {"owner-konto"                      : new-owner}
             )
         )
     )
     (defun ATS|X_ModifyCanChangeOwner (atspair:string new-boolean:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_MODIFY_CAN_CHANGE atspair new-boolean)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>RT_CAN-CHANGE atspair new-boolean)
             (update ATS|Pairs atspair
                 {"can-change-owner"                 : new-boolean}
             )
         )    
     )
     (defun ATS|X_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_TOGGLE_PARAMETER-LOCK atspair toggle)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>TG_PRM-LOCK atspair toggle)
             (update ATS|Pairs atspair
                 { "parameter-lock" : toggle}
             )
@@ -1139,7 +1119,7 @@
         )
     )
     (defun ATS|X_IncrementParameterUnlocks (atspair:string)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSM|Caller"))
         (with-read ATS|Pairs atspair
             { "unlocks" := u }
             (update ATS|Pairs atspair
@@ -1148,24 +1128,24 @@
         )
     )
     (defun ATS|X_UpdateSyphon (atspair:string syphon:decimal)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_SYPHON atspair syphon)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>SYPHON atspair syphon)
             (update ATS|Pairs atspair
                 {"syphon"                           : syphon}
             )
         )
     )
     (defun ATS|X_ToggleSyphoning (atspair:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_SYPHONING atspair toggle)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>SYPHONING atspair toggle)
             (update ATS|Pairs atspair
                 {"syphoning"                        : toggle}
             )
         )
     )
     (defun ATS|X_ToggleFeeSettings (atspair:string toggle:bool fee-switch:integer)
-        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
-        (with-capability (ATS|X_TOGGLE_FEE atspair toggle fee-switch)
+        (enforce-guard (P|UR "ATSI|Caller"))
+        (with-capability (ATS|S>TG_FEE atspair toggle fee-switch)
             (if (= fee-switch 0)
                 (update ATS|Pairs atspair
                     { "c-nfr" : toggle}
@@ -1180,11 +1160,10 @@
                 )
             )
         )
-        
     )
     (defun ATS|X_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_SET_CRD atspair soft-or-hard base growth)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>SET_CRD atspair soft-or-hard base growth)
             (if (= soft-or-hard true)
                 (update ATS|Pairs atspair
                     { "c-duration" : (UTILS.ATS|UC_MakeSoftIntervals base growth)}
@@ -1196,8 +1175,8 @@
         )
     )
     (defun ATS|X_SetColdFee (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
             (update ATS|Pairs atspair
                 { "c-positions"     : fee-positions
                 , "c-limits"        : fee-thresholds 
@@ -1206,8 +1185,8 @@
         )
     )
     (defun ATS|X_SetHotFee (atspair:string promile:decimal decay:integer)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_SET_HOT_FEE atspair promile decay)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>SET_HOT_FEE atspair promile decay)
             (update ATS|Pairs atspair
                 { "h-promile"       : promile
                 , "h-decay"         : decay}
@@ -1215,16 +1194,16 @@
         )
     )
     (defun ATS|X_ToggleElite (atspair:string toggle:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_TOGGLE_ELITE atspair toggle)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>TOGGLE_ELITE atspair toggle)
             (update ATS|Pairs atspair
                 { "c-elite-mode" : toggle}
             )
         )
     )
     (defun ATS|X_TurnRecoveryOn (atspair:string cold-or-hot:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_RECOVERY-ON atspair cold-or-hot)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|S>RECOVERY-ON atspair cold-or-hot)
             (if (= cold-or-hot true)
                 (update ATS|Pairs atspair
                     { "cold-recovery" : true}
@@ -1236,8 +1215,8 @@
         )
     )
     (defun ATS|X_TurnRecoveryOff (atspair:string cold-or-hot:bool)
-        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
-        (with-capability (ATS|X_RECOVERY-OFF atspair cold-or-hot)
+        (enforce-guard (P|UR "ATSI|Caller"))
+        (with-capability (ATS|S>RECOVERY-OFF atspair cold-or-hot)
             (if (= cold-or-hot true)
                 (update ATS|Pairs atspair
                     { "cold-recovery" : false}
@@ -1247,10 +1226,9 @@
                 )
             )
         )
-        
     )
     (defun ATS|X_InsertNewATSPair (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
-        (enforce-guard (C_ReadPolicy "ATSI|Caller"))
+        (enforce-guard (P|UR "ATSI|Caller"))
         (insert ATS|Pairs (UTILS.DALOS|UDC_Makeid atspair)
             {"owner-konto"                          : account
             ,"can-change-owner"                     : true
@@ -1262,7 +1240,7 @@
             ,"syphon"                               : 1.0
             ,"syphoning"                            : false
 
-            ,"reward-tokens"                        : [(ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr)]
+            ,"reward-tokens"                        : [(ATS|UDC_ComposePrimaryRewardToken reward-token rt-nfr)]
 
             ,"c-rbt"                                : reward-bearing-token
             ,"c-nfr"                                : rbt-nfr
@@ -1284,32 +1262,26 @@
         )
     )
     (defun ATS|X_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_ADD_SECONDARY atspair reward-token true)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|C>ADD_SECONDARY atspair reward-token true)
             (with-read ATS|Pairs atspair
                 { "reward-tokens" := rt }
                 (update ATS|Pairs atspair
-                    {"reward-tokens" : (UTILS.LIST|UC_AppendLast rt (ATS|UCC_ComposePrimaryRewardToken reward-token rt-nfr))}
+                    {"reward-tokens" : (UTILS.LIST|UC_AppendLast rt (ATS|UDC_ComposePrimaryRewardToken reward-token rt-nfr))}
                 )
             )
         )
     )
     (defun ATS|X_AddHotRBT (atspair:string hot-rbt:string)
-        (enforce-guard (C_ReadPolicy "ATSM|Caller"))
-        (with-capability (ATS|X_ADD_SECONDARY atspair hot-rbt false)
+        (enforce-guard (P|UR "ATSM|Caller"))
+        (with-capability (ATS|C>ADD_SECONDARY atspair hot-rbt false)
             (update ATS|Pairs atspair
                 {"h-rbt" : hot-rbt}
             )
         )
     )
-    (defun ATS|XO_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (enforce-guard (C_ReadPolicy "ATSM|ReshapeUnstakeAccount"))
-        (with-capability (ATS|RESHAPE)
-            (ATS|XP_ReshapeUnstakeAccount atspair account rp)
-        )
-    )
-    (defun ATS|XP_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (require-capability (ATS|RESHAPE))
+    (defun ATS|X_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
+        (enforce-guard (P|UR "ATSM|ReshapeUnstakeAccount"))
         (with-read ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0"      := p0 
             , "P1"      := p1
@@ -1331,50 +1303,43 @@
             )
         )
     )
-    (defun ATS|XO_RemoveSecondary (atspair:string reward-token:string)
-        (enforce-guard (C_ReadPolicy "ATSM|RemoveSecondaryRT"))
-        (with-capability (ATS|RM_SECONDARY_RT)
-            (ATS|XP_RemoveSecondary atspair reward-token)
-        )
-    )
-    (defun ATS|XP_RemoveSecondary (atspair:string reward-token:string)
-        (require-capability (ATS|RM_SECONDARY_RT))
+    (defun ATS|X_RemoveSecondary (atspair:string reward-token:string)
+        (enforce-guard (P|UR "ATSM|RemoveSecondaryRT"))
         (with-read ATS|Pairs atspair
             { "reward-tokens" := rt }
             (update ATS|Pairs atspair
                 {"reward-tokens" : 
-                    (UTILS.LIST|UC_RemoveItem  rt (at (ATS|UC_RewardTokenPosition atspair reward-token) rt))
+                    (UTILS.LIST|UC_RemoveItem  rt (at (ATS|URC_RewardTokenPosition atspair reward-token) rt))
                 }
             )
         )
     )
-    (defun ATS|XO_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
+    (defun ATS|X_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
         (enforce-one
             "Update RoU not allowed"
             [
-                (enforce-guard (create-capability-guard (ATS|UPDATE_ROU)))
-                (enforce-guard (C_ReadPolicy "TFT|UpdateROU"))
-                (enforce-guard (C_ReadPolicy "ATSC|UpdateROU"))
-                (enforce-guard (C_ReadPolicy "ATSH|UpdateROU"))
-                (enforce-guard (C_ReadPolicy "ATSM|UpdateROU"))
-                (enforce-guard (C_ReadPolicy "ATSF|UpdateROU"))
+                (enforce-guard (P|UR "TFT|UpdateROU"))
+                (enforce-guard (P|UR "ATSC|UpdateROU"))
+                (enforce-guard (P|UR "ATSH|UpdateROU"))
+                (enforce-guard (P|UR "ATSM|UpdateROU"))
+                (enforce-guard (P|UR "ATSF|UpdateROU"))
             ]
         )
         (let*
             (
-                (rtp:integer (ATS|UC_RewardTokenPosition atspair reward-token))
+                (rtp:integer (ATS|URC_RewardTokenPosition atspair reward-token))
                 (nfr:bool (ATS|UR_RT-Data atspair reward-token 1))
                 (resident:decimal (ATS|UR_RT-Data atspair reward-token 2))
                 (unbonding:decimal (ATS|UR_RT-Data atspair reward-token 3))
                 (new-rt:object{ATS|RewardTokenSchema} 
                     (if (= rou true)
                         (if (= direction true)
-                            (ATS|UCC_RT reward-token nfr (+ resident amount) unbonding)
-                            (ATS|UCC_RT reward-token nfr (- resident amount) unbonding)
+                            (ATS|UDC_RT reward-token nfr (+ resident amount) unbonding)
+                            (ATS|UDC_RT reward-token nfr (- resident amount) unbonding)
                         )
                         (if (= direction true)
-                            (ATS|UCC_RT reward-token nfr resident (+ unbonding amount))
-                            (ATS|UCC_RT reward-token nfr resident (- unbonding amount))
+                            (ATS|UDC_RT reward-token nfr resident (+ unbonding amount))
+                            (ATS|UDC_RT reward-token nfr resident (- unbonding amount))
                         )
                     )
                 )
@@ -1388,59 +1353,59 @@
         )
     )
     (defun X_UpP0 (atspair:string account:string obj:[object{Awo}])
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P0" : obj}
         )
     )
     (defun X_UpP1 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P1"  : obj}
         )
     )
     (defun X_UpP2 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P2"  : obj}
         )
     )
     (defun X_UpP3 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P3"  : obj}
         )
     )
     (defun X_UpP4 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P4"  : obj}
         )
     )
     (defun X_UpP5 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P5"  : obj}
         )
     )
     (defun X_UpP6 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P6"  : obj}
         )
     )
     (defun X_UpP7 (atspair:string account:string obj:object{Awo})
-        (enforce-guard (C_ReadPolicy "ATSC|UpUnsPos"))
+        (enforce-guard (P|UR "ATSC|UpUnsPos"))
         (update ATS|Ledger (concat [atspair UTILS.BAR account])
             { "P7"  : obj}
         )
     )
     (defun ATS|X_SpawnAutostakeAccount (atspair:string account:string)
-        (enforce-guard (C_ReadPolicy "ATSC|Caller"))
+        (enforce-guard (P|UR "ATSC|Caller"))
         (let
             (
-                (zero:object{Awo} (ATS|UCC_MakeZeroUnstakeObject atspair))
-                (negative:object{Awo} (ATS|UCC_MakeNegativeUnstakeObject atspair))
+                (zero:object{Awo} (ATS|UDC_MakeZeroUnstakeObject atspair))
+                (negative:object{Awo} (ATS|UDC_MakeNegativeUnstakeObject atspair))
             )
             (with-default-read ATS|Ledger (concat [atspair UTILS.BAR account])
                 { "P0"  : [zero]
@@ -1477,6 +1442,6 @@
     )
 )
 
-(create-table PoliciesTable)
+(create-table P|T)
 (create-table ATS|Pairs)
 (create-table ATS|Ledger)

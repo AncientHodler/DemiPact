@@ -20,8 +20,9 @@
     ;;
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{DALOS.PolicySchema})
+    (deftable P|T:{DALOS.P|S})
     ;;{P3}
+    ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -361,7 +362,7 @@
             (fold (+) [] swpairs-array)
         )
     )
-    (defun GRPH|URC_Nodes (input-id:string output-id:string)
+    (defun GRPH|URC_Nodes:[string] (input-id:string output-id:string)
         @doc "Given an <input-id> and <output-id>, creates a list of ids: \
             \ The nodes from the graph that would be created, representing all paths between these two ids \
             \ Uses 2 Steps: \

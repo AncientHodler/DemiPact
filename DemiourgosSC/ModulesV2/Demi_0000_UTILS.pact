@@ -5,10 +5,8 @@
     (defconst NS_TEST "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
     (defconst NS_MAIN "")
     (defconst NS_USE "free")
-    (defconst GOV|MD_UTILS   (keyset-ref-guard GOV|DEMIURGOI))
-    (defconst GOV|DEMIURGOI 
-        (+ NS_USE ".dh_master-keyset")
-    )
+    (defconst GOV|MD_UTILS          (keyset-ref-guard GOV|DEMIURGOI))
+    (defconst GOV|DEMIURGOI         (+ NS_USE ".dh_master-keyset"))
     ;;{G2}
     (defcap GOV ()
         (compose-capability (GOV|UTILS_ADMIN))
@@ -21,6 +19,7 @@
     ;;{P1}
     ;;{P2}
     ;;{P3}
+    ;;{P4}
     ;;
     ;;{1}
     ;;{2}
@@ -614,6 +613,20 @@
                 (remainder:decimal (- input fee))
             )
             [remainder fee]
+        )
+    )
+    (defun BASIS|UC_NewRoleList (current-lst:[string] account:string direction:bool)
+        (if direction
+            (if 
+                (= current-lst [BAR])
+                [account]
+                (LIST|UC_AppendLast current-lst account)
+            )
+            (if
+                (= current-lst [BAR])
+                [BAR]
+                (LIST|UC_RemoveItem current-lst account)
+            )
         )
     )
     (defun DALOS|UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)

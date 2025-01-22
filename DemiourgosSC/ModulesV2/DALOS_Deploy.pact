@@ -91,35 +91,36 @@
 )
 
 ;;STEP 006 - Define Policies for intermodule communication
-(BASIS.DefinePolicies)
-(ATS.DefinePolicies)
+(DPTF.P|A_Define)
+(DPMF.P|A_Define)
+(ATS.P|A_Define)
 
-(ATSI.DefinePolicies)
-(TFT.DefinePolicies)
+(ATSI.P|A_Define)
+(TFT.P|A_Define)
 
-(ATSC.DefinePolicies)
-(ATSH.DefinePolicies)
+(ATSC.P|A_Define)
+(ATSH.P|A_Define)
 
-(ATSM.DefinePolicies)
-(ATSF.DefinePolicies)
+(ATSM.P|A_Define)
+(ATSF.P|A_Define)
 
-(VESTING.DefinePolicies)
-(OUROBOROS.DefinePolicies)
-(BRANDING.DefinePolicies)
+(VESTING.P|A_Define)
+(OUROBOROS.P|A_Define)
+(BRANDING.P|A_Define)
 
-(SWPM.DefinePolicies)
-(SWPI.DefinePolicies)
+(SWPM.P|A_Define)
+(SWPI.P|A_Define)
 
-(SWPL.DefinePolicies)
-(SWPC.DefinePolicies)
+(SWPL.P|A_Define)
+(SWPC.P|A_Define)
 
-(TALOS-01.DefinePolicies)
-(TALOS-02.DefinePolicies)
-(TALOS-03.DefinePolicies)
+(TALOS-01.P|A_Define)
+(TALOS-02.P|A_Define)
+(TALOS-03.P|A_Define)
 
-;(DEPLOYER.DefinePolicies)  || EMPTY
-;(LIQUID.DefinePolicies)    || EMPTY
-;(OUROBOROS.DefinePolicies) || EMPTY
+;(DEPLOYER.P|A_Define)  || EMPTY
+;(LIQUID.P|A_Define)    || EMPTY
+;(OUROBOROS.P|A_Define) || EMPTY
 
 ;;STEP 007 - Set Up Virtual Blockhain KDA Prices; Live prices are 1000x these values
 ;;Kadena Prices
@@ -234,10 +235,10 @@
         , "liquid-kda-id"           : StakedKadenaID
         }
     )
-    (BASIS.DPTF-DPMF|C_DeployAccount AurynID ATS.ATS|SC_NAME true)
-    (BASIS.DPTF-DPMF|C_DeployAccount EliteAurynID ATS.ATS|SC_NAME true)
-    (BASIS.DPTF-DPMF|C_DeployAccount WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
-    (BASIS.DPTF-DPMF|C_DeployAccount StakedKadenaID LIQUID.LIQUID|SC_NAME true)
+    (DPTF.DPTF|C_DeployAccount AurynID ATS.ATS|SC_NAME)
+    (DPTF.DPTF|C_DeployAccount EliteAurynID ATS.ATS|SC_NAME)
+    (DPTF.DPTF|C_DeployAccount WrappedKadenaID LIQUID.LIQUID|SC_NAME)
+    (DPTF.DPTF|C_DeployAccount StakedKadenaID LIQUID.LIQUID|SC_NAME)
 )
 
 ;;STEP 013 - Setup Elite Auryns
@@ -247,10 +248,10 @@
         (AurynID:string (DALOS.DALOS|UR_AurynID))
         (EliteAurynID:string (DALOS.DALOS|UR_EliteAurynID))
     )
-    (BASIS.DPTF|C_SetFee patron AurynID UTILS.AURYN_FEE)
-    (BASIS.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
-    (BASIS.DPTF|C_ToggleFee patron AurynID true)
-    (BASIS.DPTF|C_ToggleFee patron EliteAurynID true)
+    (DPTF.DPTF|C_SetFee patron AurynID UTILS.AURYN_FEE)
+    (DPTF.DPTF|C_SetFee patron EliteAurynID UTILS.ELITE-AURYN_FEE)
+    (DPTF.DPTF|C_ToggleFee patron AurynID true)
+    (DPTF.DPTF|C_ToggleFee patron EliteAurynID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron AurynID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron EliteAurynID true)
 )
@@ -262,15 +263,15 @@
         (OuroID:string (DALOS.DALOS|UR_OuroborosID))
         (GasID:string (DALOS.DALOS|UR_IgnisID))
     )
-    (BASIS.DPTF|C_SetMinMove patron GasID 1000.0)
-    (BASIS.DPTF|C_SetFee patron GasID -1.0)
-    (BASIS.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
-    (BASIS.DPTF|C_ToggleFee patron GasID true)
+    (DPTF.DPTF|C_SetMinMove patron GasID 1000.0)
+    (DPTF.DPTF|C_SetFee patron GasID -1.0)
+    (DPTF.DPTF|C_SetFeeTarget patron GasID DALOS.DALOS|SC_NAME)
+    (DPTF.DPTF|C_ToggleFee patron GasID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron GasID true)
-    (ATSI.DPTF-DPMF|C_ToggleBurnRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true true)
-    (ATSI.DPTF-DPMF|C_ToggleBurnRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true true)
-    (ATSI.DPTF|C_ToggleMintRole patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
-    (ATSI.DPTF|C_ToggleMintRole patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+    (ATSI.DPTF|C_TgBurnR patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+    (ATSI.DPTF|C_TgBurnR patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
+    (ATSI.DPTF|C_TgMintR patron GasID OUROBOROS.OUROBOROS|SC_NAME true)
+    (ATSI.DPTF|C_TgMintR patron OuroID OUROBOROS.OUROBOROS|SC_NAME true)
 )
 
 ;:STEP 015 - Setup Wrapped and Liquid Kadena
@@ -280,11 +281,11 @@
         (WrappedKadenaID:string (DALOS.DALOS|UR_WrappedKadenaID))
         (StakedKadenaID:string (DALOS.DALOS|UR_LiquidKadenaID))
     )
-    (BASIS.DPTF|C_SetFee patron StakedKadenaID -1.0)
-    (BASIS.DPTF|C_ToggleFee patron StakedKadenaID true)
+    (DPTF.DPTF|C_SetFee patron StakedKadenaID -1.0)
+    (DPTF.DPTF|C_ToggleFee patron StakedKadenaID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron StakedKadenaID true)
-    (ATSI.DPTF-DPMF|C_ToggleBurnRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true true)
-    (ATSI.DPTF|C_ToggleMintRole patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+    (ATSI.DPTF|C_TgBurnR patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
+    (ATSI.DPTF|C_TgMintR patron WrappedKadenaID LIQUID.LIQUID|SC_NAME true)
 )
 
 ;;STEP 016 - Created Vested Snake Tokens
@@ -331,9 +332,9 @@
 (let
     (
         (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
-        (Auryndex:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
-        (Elite-Auryndex:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
-        (Kadena-Liquid-Index:string (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID))))
+        (Auryndex:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
+        (Elite-Auryndex:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
+        (Kadena-Liquid-Index:string (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID))))
     )
     (ATSM.ATSM|C_SetColdFee patron Auryndex
         7
@@ -378,7 +379,7 @@
     (ATSM.ATSM|C_Coil
         patron
         patron
-        (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID)))
+        (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_LiquidKadenaID)))
         (DALOS.DALOS|UR_WrappedKadenaID)
         1.0
     )
@@ -391,7 +392,7 @@
         (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
         (ouro-amount:decimal 10000000.0)
     )
-    (BASIS.DPTF|C_Mint
+    (DPTF.DPTF|C_Mint
         patron
         (DALOS.DALOS|UR_OuroborosID)
         patron
@@ -406,7 +407,7 @@
 (let
     (
         (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
-        (atspair:string  (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
+        (atspair:string  (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_AurynID))))
         (rt-amounts:[decimal] [372911.1318])
         (rbt-request-amount:decimal 144412.0)
     )
@@ -420,7 +421,7 @@
 (let*
     (
         (patron:string DEPLOYER.DEMIURGOI|AH_NAME)
-        (atspair:string  (at 0 (BASIS.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
+        (atspair:string  (at 0 (DPTF.DPTF|UR_RewardBearingToken (DALOS.DALOS|UR_EliteAurynID))))
         (rt-amounts:[decimal] [102929.0])
         (rbt-request-amount:decimal (at 0 rt-amounts))
     )
@@ -511,8 +512,8 @@
         (p:string (DALOS.DALOS|UR_LiquidKadenaID))
     )
     (SWP.SWP|A_UpdatePrincipal p true)
-    (BASIS.DPTF-DPMF|C_DeployAccount p SWP.SWP|SC_NAME true)
-    (ATSI.DPTF|C_ToggleFeeExemptionRole patron p SWP.SWP|SC_NAME true)
+    (DPTF.DPTF|C_DeployAccount p SWP.SWP|SC_NAME)
+    (ATSI.DPTF|C_TgFeeExemptionR patron p SWP.SWP|SC_NAME true)
 )
 
 
@@ -523,8 +524,8 @@
         (p:string (DALOS.DALOS|UR_OuroborosID))
     )
     (SWP.SWP|A_UpdatePrincipal p true)
-    (BASIS.DPTF-DPMF|C_DeployAccount p SWP.SWP|SC_NAME true)
-    (ATSI.DPTF|C_ToggleFeeExemptionRole patron p SWP.SWP|SC_NAME true)
+    (DPTF.DPTF|C_DeployAccount p SWP.SWP|SC_NAME)
+    (ATSI.DPTF|C_TgFeeExemptionR patron p SWP.SWP|SC_NAME true)
 )
 
 ;;AGE OF ZALMOXIS Deploy
@@ -583,28 +584,28 @@
         (BasileonAsID:string (AOZ.AOZ|UR_Assets 1 8))
     )
     
-    (BASIS.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
-    (BASIS.DPTF|C_ToggleFee patron PlebiumDenariusID true)
+    (DPTF.DPTF|C_SetFee patron PlebiumDenariusID 10.0)
+    (DPTF.DPTF|C_ToggleFee patron PlebiumDenariusID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
-    (BASIS.DPTF|C_SetFee patron ComatusAureusID 20.0)
-    (BASIS.DPTF|C_ToggleFee patron ComatusAureusID true)
+    (DPTF.DPTF|C_SetFee patron ComatusAureusID 20.0)
+    (DPTF.DPTF|C_ToggleFee patron ComatusAureusID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
-    (BASIS.DPTF|C_SetFee patron PileatusSolidusID 30.0)
-    (BASIS.DPTF|C_ToggleFee patron PileatusSolidusID true)
+    (DPTF.DPTF|C_SetFee patron PileatusSolidusID 30.0)
+    (DPTF.DPTF|C_ToggleFee patron PileatusSolidusID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
-    (BASIS.DPTF|C_SetFee patron TarabostesStaterID 40.0)
-    (BASIS.DPTF|C_ToggleFee patron TarabostesStaterID true)
+    (DPTF.DPTF|C_SetFee patron TarabostesStaterID 40.0)
+    (DPTF.DPTF|C_ToggleFee patron TarabostesStaterID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
-    (BASIS.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
-    (BASIS.DPTF|C_ToggleFee patron StrategonDrachmaID true)
+    (DPTF.DPTF|C_SetFee patron StrategonDrachmaID 50.0)
+    (DPTF.DPTF|C_ToggleFee patron StrategonDrachmaID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
-    (BASIS.DPTF|C_SetFee patron BasileonAsID 60.0)
-    (BASIS.DPTF|C_ToggleFee patron BasileonAsID true)
+    (DPTF.DPTF|C_SetFee patron BasileonAsID 60.0)
+    (DPTF.DPTF|C_ToggleFee patron BasileonAsID true)
     (TALOS-01.DPTF|C_ToggleFeeLock patron BasileonAsID true)
 )
 
@@ -776,21 +777,21 @@
         (EsothericKosonID:string (AOZ.AOZ|UR_Assets 1 1))
         (AncientKosonID:string (AOZ.AOZ|UR_Assets 1 2))
     )
-    (BASIS.DPTF|C_Mint
+    (DPTF.DPTF|C_Mint
         patron
         PrimordialKosonID
         patron
         10000.0
         true
     )
-    (BASIS.DPTF|C_Mint
+    (DPTF.DPTF|C_Mint
         patron
         EsothericKosonID
         patron
         10000.0
         true
     )
-    (BASIS.DPTF|C_Mint
+    (DPTF.DPTF|C_Mint
         patron
         AncientKosonID
         patron
