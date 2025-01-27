@@ -68,11 +68,13 @@
     ;;{5}
     ;;{6}
     ;;{7}
-    (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
+    (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal)
         @event
         (let*
             (
-                (l:integer (length pool-tokens))
+                (l1:integer (length pool-tokens))
+                (l2:integer (length weights))
+                (ws:decimal (fold (+) 0.0 weights))
                 (principals:[string] (SWP.SWP|UR_Principals))
                 (pt-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                 (ptte:[string]
@@ -84,7 +86,7 @@
                 (iz-principal:bool (contains (at 0 pt-ids) principals))
             )
             (SWP.SWP|UEV_PoolFee fee-lp)
-            (SWP.SWP|UEV_New pt-ids amp)
+            (SWP.SWP|UEV_New pt-ids weights amp)
             (map
                 (lambda
                     (id:string)
@@ -92,12 +94,28 @@
                 )
                 ptte
             )
+            (map
+                (lambda
+                    (w:decimal)
+                    (= (floor w UTILS.FEE_PRECISION) w)
+                )
+                weights
+            )
+            (enforce-one
+                "Invalid Weight Values"
+                [
+                    (enforce (= ws 1.0) "Weights must add to exactly 1.0")
+                    (enforce (= ws (dec l1)) "Weights must all be 1.0")
+                ]
+            )
             (if (= amp -1.0)
                 (enforce iz-principal "1st Token is not a Principal")
                 true
             )
             (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid amp value")
-            (enforce (and (>= l 2) (<= l 7)) "2 - 7 Tokens can be used to create a Swap Pair")   
+            (enforce (and (>= l1 2) (<= l1 7)) "2 - 7 Tokens can be used to create a Swap Pair")
+            (enforce (= l1 l2) "Number of weigths does not concide with the pool-tokens Number")
+
         )
         (compose-capability (P|SWPI|REMOTE-GOV))
         (compose-capability (P|SWPI|CALLER))
@@ -109,7 +127,7 @@
     ;;{11}
     ;;{12}
     ;;{13}
-    (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{SWP.SWP|PoolTokens}] amp:decimal)
+    (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{SWP.SWP|PoolTokens}] weights:[decimal] amp:decimal)
         (let*
             (
                 (pool-token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
@@ -141,14 +159,14 @@
                     )
                 )
             )
-            (SUT.SWP|UC_LP pool-token-names pool-token-tickers amp)
+            (SUT.SWP|UC_LpID pool-token-names pool-token-tickers weights amp)
         )
     )
     ;;
     ;;{14}
     ;;{15}
-    (defun SWPI|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
-        (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp amp)
+    (defun SWPI|C_Issue:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal)
+        (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp)
             (let*
                 (
                     (kda-dptf-cost:decimal (DALOS.DALOS|UR_UsagePrice "dptf"))
@@ -157,9 +175,9 @@
                     (gas-swp-cost:decimal (DALOS.DALOS|UR_UsagePrice "ignis|swp-issue"))
                     (pool-token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (SWP.SWP|UC_ExtractTokenSupplies pool-tokens))
-                    (lp-name-ticker:[string] (SWPI|URC_LpComposer pool-tokens amp))
+                    (lp-name-ticker:[string] (SWPI|URC_LpComposer pool-tokens weights amp))
                     (token-lp:string (DPTF.DPTF|C_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
-                    (swpair:string (SWPI|X_Issue account pool-tokens token-lp fee-lp amp))
+                    (swpair:string (SWPI|X_Issue account pool-tokens token-lp fee-lp weights amp))
                 )
                 (TFT.DPTF|C_MultiTransfer patron pool-token-ids account SWP.SWP|SC_NAME pool-token-amounts true)
                 (DPTF.DPTF|C_Mint patron token-lp SWP.SWP|SC_NAME 10000000.0 true)
@@ -172,12 +190,12 @@
         )
     )
     ;;{16}
-    (defun SWPI|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
+    (defun SWPI|X_Issue:string (account:string pool-tokens:[object{SWP.SWP|PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal)
         (let
             (
                 (token-ids:[string] (SWP.SWP|UC_ExtractTokens pool-tokens))
             )
-            (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp amp)
+            (SWP.SWP|X_InsertNew account pool-tokens token-lp fee-lp weights amp)
             (DPTF.DPTF|C_DeployAccount token-lp account)
             (DPTF.DPTF|C_DeployAccount token-lp SWP.SWP|SC_NAME)
             (map
@@ -187,7 +205,7 @@
                 )
                 (drop 1 token-ids)
             )
-            (SUT.SWP|UC_Swpair token-ids amp)
+            (SUT.SWP|UC_PoolID token-ids weights amp)
         )
     )
 )

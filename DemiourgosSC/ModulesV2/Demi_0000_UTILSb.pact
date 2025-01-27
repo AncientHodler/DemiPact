@@ -18,8 +18,36 @@
     ;;{P4}
     ;;
     ;;{1}
+    (defschema GraphNode
+        node:string
+        links:[string]
+    )
+    (defschema BFS
+        visited:[string]
+        que:[object{QE}]
+        chains:[[string]]
+    )
+    (defschema QE
+        node:string
+        chain:[string]
+    )
     ;;{2}
     ;;{3}
+    (defconst EQE
+        [
+            {
+                "node":     UTILS.BAR,
+                "chain":    [UTILS.BAR]
+            }
+        ]
+    )
+    (defconst EBFS
+        {
+            "visited":  [UTILS.BAR],
+            "que":      EQE,
+            "chains":   [[UTILS.BAR]]
+        }
+    )
     ;;
     ;;{4}
     ;;{5}
@@ -28,22 +56,55 @@
     ;;
     ;;{8}
     ;;{9}
+    (defun GRPH|UDC_AddVisited:object{BFS} (input:object{BFS} visited:[string])
+        {
+            "visited":  (SUT|UC_ExStrLst (at "visited" input) visited),
+            "que":      (at "que" input),
+            "chains":   (at "chains" input)
+        }
+    )
+    (defun GRPH|UDC_AddToQue:object{BFS} (input:object{BFS} que:[object{QE}])
+        {
+            "visited":  (at "visited" input),
+            "que":      (SUT|UC_ExQeLst (at "que" input) que),
+            "chains":   (at "chains" input)
+        }
+    )
+    (defun GRPH|UDC_RmFromQue:object{BFS} (input:object{BFS})
+        {
+            "visited":  (at "visited" input),
+            "que":      (SUT|UC_RmFirstQeList (at "que" input)),
+            "chains":   (at "chains" input)
+        }
+    )
+    (defun GRPH|UDC_AddChains:object{BFS} (input:object{BFS} chains-to-add:[[string]])
+        {
+            "visited":  (at "visited" input),
+            "que":      (at "que" input),
+            "chains":   (SUT|UC_ExStrArrLst (at "chains" input) chains-to-add)  
+        }
+    )
     ;;{10}
     ;;{11}
-    (defun SWP|UC_ComputeP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec)
+    (defun SWP|UC_ComputeWP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec w:[decimal])
         (let*
             (
-                (pool-product:decimal (floor (fold (*) 1.0 X) 24))
-                (l1:integer (length X))
-                (new-supplies:[decimal] (SUT|UC_NewSupply X input-amounts ip))
+                (raised:[decimal] (zip (lambda (x:decimal y:decimal) (^ x y)) X w))
+                (pool-product:decimal (floor (fold (*) 1.0 raised) 24))
+                (new-supplies:[decimal] (SWP|UC_NewSupply X input-amounts ip))
                 (new-supplies-rem:[decimal] (UTILS.LIST|UC_RemoveItemAt new-supplies op))
-                (new-supplies-product:decimal (floor (fold (*) 1.0 new-supplies-rem) 24))
-                (output:decimal (floor (/ pool-product new-supplies-product) o-prec))
+                (rw:[decimal] (UTILS.LIST|UC_RemoveItemAt w op))
+                (nsr:[decimal] (zip (lambda (x:decimal y:decimal) (^ x y)) new-supplies-rem rw))
+                (nsrm:decimal (floor (fold (*) 1.0 nsr) 24))
+                (ow:decimal (at op w))
+                (iow:decimal (floor (/ 1.0 ow) 24))
+                (rest:decimal (floor (/ pool-product nsrm) 24))
+                (output:decimal (floor (^ rest iow) o-prec))
             )
             (- (at op X) output)
         )
     )
-    (defun SUT|UC_NewSupply (X:[decimal] input-amounts:[decimal] ip:[integer])
+    (defun SWP|UC_NewSupply (X:[decimal] input-amounts:[decimal] ip:[integer])
         (fold
             (lambda
                 (acc:[decimal] idx:integer)
@@ -68,7 +129,7 @@
                 (xi:decimal (at ip X))
                 (xn:decimal (+ xi input-amount))
                 (XX:[decimal] (UTILS.LIST|UC_ReplaceAt X ip xn))
-                (NewD:decimal (SUT|UC_ComputeD A XX))
+                (NewD:decimal (SWP|UC_ComputeD A XX))
                 (y0:decimal (+ (at op X) input-amount))
                 (output-lst:[decimal]
                     (fold
@@ -90,7 +151,7 @@
             (- (floor (UTILS.LIST|UC_LastListElement output-lst) o-prec) (at op X))
         )
     )
-    (defun SUT|UC_ComputeD:decimal (A:decimal X:[decimal])
+    (defun SWP|UC_ComputeD:decimal (A:decimal X:[decimal])
         (let*
             (
                 (output-lst:[decimal]
@@ -100,7 +161,7 @@
                             (let*
                                 (
                                     (prev-d:decimal (at idx d-values))
-                                    (d-value:decimal (SUT|UC_DNext prev-d A X))
+                                    (d-value:decimal (SWP|UC_DNext prev-d A X))
                                 )
                                 (UTILS.LIST|UC_AppendLast d-values d-value)
                             )
@@ -113,7 +174,7 @@
             (UTILS.LIST|UC_LastListElement output-lst)
         )
     )
-    (defun SUT|UC_DNext (D:decimal A:decimal X:[decimal])
+    (defun SWP|UC_DNext (D:decimal A:decimal X:[decimal])
         @doc "Computes Dnext: \
         \ n = (length X) \
         \ S=x1+x2+x3+... \
@@ -173,20 +234,27 @@
             (floor (/ numerator denominator) prec)
         )
     )
-    ;;
-    (defun SWP|UC_LP:[string] (token-names:[string] token-tickers:[string] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_LpIDs token-names token-tickers true)
-            (SWP|UC_LpIDs token-names token-tickers false)
+    (defun SWP|UC_Prefix:string (weights:[decimal] amp:decimal)
+        (let
+            (
+                (ws:decimal (fold (+) 0.0 weights))
+            )
+            (if (= amp -1.0)
+                (if (= ws 1.0)
+                    "W"
+                    "P"
+                )
+                "S"
+            )
         )
     )
-    (defun SWP|UC_LpIDs:[string] (token-names:[string] token-tickers:[string] p-or-s:bool)
+    (defun SWP|UC_LpID:[string] (token-names:[string] token-tickers:[string] weights:[decimal] amp:decimal)
         (let*
             (
+                (prefix:string (SWP|UC_Prefix weights amp))
                 (l1:integer (length token-names))
                 (l2:integer (length token-tickers))
                 (lengths:[integer] [l1 l2])
-                (prefix:string (if p-or-s "P" "S"))
                 (minus:string "-")
                 (caron:string "^")
             )
@@ -226,16 +294,10 @@
             )
         )
     )
-    (defun SWP|UC_Swpair:string (token-ids:[string] amp:decimal)
-        (if (= amp -1.0)
-            (SWP|UC_PoolID token-ids true)
-            (SWP|UC_PoolID token-ids false)
-        )
-    )
-    (defun SWP|UC_PoolID:string (token-ids:[string] p-or-s:bool)
+    (defun SWP|UC_PoolID:string (token-ids:[string] weights:[decimal] amp:decimal)
         (let*
             (
-                (prefix:string (if p-or-s "P" "S"))
+                (prefix:string (SWP|UC_Prefix weights amp))
                 (swpair-elements:[string]
                     (fold
                         (lambda
@@ -277,10 +339,192 @@
             output
         )
     )
+    (defun GRPH|UC_BFS:object{BFS} (graph:[object{GraphNode}] in:string)
+        (fold
+            (lambda
+                (acc:object{BFS} idx:integer)
+                (if (= idx 0)
+                    (let*
+                        (
+                            (links:[string] (GRPH|UC_GraphNodeLinks graph in))
+                            (primal-que:[object{QE}] (GRPH|UC_PrimalQE graph in))
+                            (chains-to-add:[[string]] (GRPH|UC_GetChains primal-que))
+                            (acc1-visited:object{BFS} (GRPH|UDC_AddVisited acc (+ [in] links)))
+                            (acc2-que:object{BFS} (GRPH|UDC_AddToQue acc1-visited primal-que))
+                            (acc3-chains:object{BFS} (GRPH|UDC_AddChains acc2-que chains-to-add))
+                        )
+                        acc3-chains
+                    )
+                    (let*
+                        (
+                            (first-qe:object{QE} (at 0 (at "que" acc)))
+                            (first-qe-node:string (at "node" first-qe))  
+                        )
+                        (if (!= first-qe-node UTILS.BAR)
+                            (let*
+                                (
+                                    (first-qe-node-links:[string] (GRPH|UC_GraphNodeLinks graph first-qe-node))
+                                    (visited:[string] (at "visited" acc))
+                                    (not-visited:[string] (GRPH|UC_FilterVisited visited first-qe-node-links))
+                                    (lnv:integer (length not-visited))
+                                    (acc0-rm:object{BFS} (GRPH|UDC_RmFromQue acc))
+                                    (new-que:[object{QE}]
+                                        (if (= lnv 0)
+                                            EQE
+                                            (fold
+                                                (lambda
+                                                    (acc:[object{QE}] idx2:integer)
+                                                    (UTILS.LIST|UC_AppendLast 
+                                                        acc
+                                                        (GRPH|UC_ExtendChain first-qe (at idx2 not-visited))
+                                                    )
+                                                )
+                                                []
+                                                (enumerate 0 (- (length not-visited) 1))
+                                            )
+                                        )
+                                    )
+                                    (chains-to-add:[[string]] (GRPH|UC_GetChains new-que))
+                                    (acc1-visited:object{BFS} (GRPH|UDC_AddVisited acc0-rm not-visited))
+                                    (acc2-que:object{BFS} 
+                                        (if (!= chains-to-add [[UTILS.BAR]])
+                                            (GRPH|UDC_AddToQue acc1-visited new-que)
+                                            acc1-visited
+                                        )
+                                    )
+                                    (acc3-chains:object{BFS} 
+                                        (if (!= chains-to-add [[UTILS.BAR]])
+                                            (GRPH|UDC_AddChains acc2-que chains-to-add)
+                                            acc2-que
+                                        )
+                                    )
+                                )
+                                acc3-chains
+                            )
+                            acc
+                        )
+                    )
+                )
+            )
+            EBFS
+            (enumerate 0 (- (length graph) 1))
+        )
+    )
+    (defun GRPH|UC_GraphNodeLinks:[string] (graph:[object{GraphNode}] node:string)
+        (at "links" (at (at 0 (UTILS.LIST|UC_Search (GRPH|UC_GraphNodes graph) node)) graph))
+    )
+    (defun GRPH|UC_GraphNodes:[string] (graph:[object{GraphNode}])
+        (fold
+            (lambda
+                (acc:[string] idx:integer)
+                (UTILS.LIST|UC_AppendLast 
+                    acc
+                    (at "node" (at idx graph))
+                )
+            )
+            []
+            (enumerate 0 (- (length graph) 1))
+        )
+    )
+    (defun GRPH|UC_PrimalQE:[object{QE}] (graph:[object{GraphNode}] node:string)
+        (let*
+            (
+                (links:[string] (GRPH|UC_GraphNodeLinks graph node))
+            )
+            (fold
+                (lambda
+                    (acc:[object{QE}] idx:integer)
+                    (UTILS.LIST|UC_AppendLast 
+                        acc
+                        {
+                            "node":     (at idx links),
+                            "chain":    [node, (at idx links)]
+                        }
+                    )
+                )
+                []
+                (enumerate 0 (- (length links) 1))
+            )
+        )
+    )
+    (defun GRPH|UC_GetChains:[[string]] (input:[object{QE}])
+        (fold
+            (lambda
+                (acc:[[string]] idx:integer)
+                (UTILS.LIST|UC_AppendLast 
+                    acc
+                    (at "chain" (at idx input))
+                )
+            )
+            []
+            (enumerate 0 (- (length input) 1))
+        )
+    )
+    (defun GRPH|UC_FilterVisited (visited:[string] new-nodes:[string])
+        (fold
+            (lambda
+                (acc:[string] idx:integer)
+                (let*
+                    (
+                        (elem:string (at idx new-nodes))
+                        (iz-visited:bool (contains elem visited))
+                    )
+                    (if iz-visited
+                        (UTILS.LIST|UC_RemoveItem acc elem)
+                        acc
+                    )
+                )
+            )
+            new-nodes
+            (enumerate 0 (- (length new-nodes) 1))
+        )
+    )
+    (defun GRPH|UC_ExtendChain:object{QE} (input:object{QE} element:string)
+        {
+            "node": element,
+            "chain": (UTILS.LIST|UC_AppendLast (at "chain" input) element)
+        }
+    )
+    (defun SUT|UC_ExStrLst:[string] (to-extend:[string] elements:[string])
+        (if (= [UTILS.BAR] to-extend)
+            elements
+            (+ to-extend elements)
+        )
+    )
+    (defun SUT|UC_ExQeLst:[object{QE}] (input:[object{QE}] que-element:[object{QE}])
+        (if (and (= (at 0 EQE) (at 0 input)) (= (length input) 1))
+            que-element
+            (+ input que-element)
+        )
+    )
+    (defun SUT|UC_RmFirstQeList:[object{QE}] (input:[object{QE}])
+        (if (> (length input) 1)
+            (drop 1 input)
+            EQE
+        )
+        
+    )
+    (defun SUT|UC_ExStrArrLst:[[string]] (to-extend:[[string]] elements:[[string]])
+        (if (= [[UTILS.BAR]] to-extend)
+            elements
+            (+ to-extend elements)
+        )
+    )
+    (defun SUT|UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer)
+        (let*
+            (
+                (nz:[decimal] (UTILS.LIST|UC_RemoveItem input-amounts 0.0))
+                (fnz:decimal (at 0 nz))
+                (fnzp:integer (at 0 (UTILS.LIST|UC_Search input-amounts fnz)))
+            )
+            (floor (* (/ (at fnzp input-amounts) (at fnzp pts)) lps) lpp)
+        )
+    )
     ;;{12}
     ;;{13}
     ;;
     ;;{14}
     ;;{15}
     ;;{16}
+    ;;
 )

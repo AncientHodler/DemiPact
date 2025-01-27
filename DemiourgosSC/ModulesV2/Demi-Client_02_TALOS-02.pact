@@ -48,11 +48,23 @@
     (defun SWP|C_IssueStandard:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal)
         (SWP|C_IssueStable patron account pool-tokens fee-lp -1.0)
     )
+    (defun SWP|C_IssueWeighted:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal weights:[decimal])
+        (with-capability (S)
+            (let
+                (
+                    (output:[string] (SWPI.SWPI|C_Issue patron account pool-tokens fee-lp weights -1.0))
+                )
+                (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
+                output
+            )
+        )
+    )
     (defun SWP|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{SWP.SWP|PoolTokens}] fee-lp:decimal amp:decimal)
         (with-capability (S)
             (let*
                 (
-                    (output:[string] (SWPI.SWPI|C_IssueStable patron account pool-tokens fee-lp amp))
+                    (weights:[decimal] (make-list (length pool-tokens) 1.0))
+                    (output:[string] (SWPI.SWPI|C_Issue patron account pool-tokens fee-lp weights amp))
                 )
                 (LIQUIDFUEL.C_Fuel DALOS|SC_NAME)
                 output

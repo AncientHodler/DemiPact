@@ -514,6 +514,7 @@
     (SWP.SWP|A_UpdatePrincipal p true)
     (DPTF.DPTF|C_DeployAccount p SWP.SWP|SC_NAME)
     (ATSI.DPTF|C_TgFeeExemptionR patron p SWP.SWP|SC_NAME true)
+    (ATSI.DPTF|C_TgBurnR patron p SWP.SWP|SC_NAME true)
 )
 
 

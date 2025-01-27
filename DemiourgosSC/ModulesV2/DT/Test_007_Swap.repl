@@ -329,6 +329,7 @@
 (format "AH has {} DLK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD)])
 (format "AH has {} OURO" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_OuroborosID) KC.ANHD)])
 (format "AH has {} DWK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD)])
+(format "AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
 (format "LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
 
 (env-gas)
@@ -409,6 +410,36 @@
     true
     true
 )
+;;Toggle Swap Functionality
+(free.SWPM.SWPM|C_ToggleAddOrSwap 
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    true
+    false
+)
+
+;;Add Fee Targets
+(free.SWPM.SWPM|C_UpdateSpecialFeeTargets
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    [
+        {"target":KC.BYTA, "value":15}
+        {"target":KC.LUMY, "value":125}
+        {"target":KC.COCA, "value":35}
+        {"target":KC.KISS, "value":35}
+        {"target":KC.PLCS, "value":50}
+        {"target":KC.NANI, "value":60}
+        {"target":KC.AOZT, "value":10}
+    ]
+)
+;;Add Special Fee
+(free.SWPM.SWPM|C_UpdateFee
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    20.0
+    false
+)
+
 ;;Toggle Add Liquidity
 (free.SWPM.SWPM|C_ToggleAddOrSwap 
     KC.ANHD
@@ -445,367 +476,10 @@
 (env-gas)
 (commit-tx)
 
-(print "=======================================SWAP-COMP-TX1=================================")
-(begin-tx "COMPUTATION TXes")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-;;1000.0 * 10000.0 * 1000.0 = 1025.0 * x * 1025.0
-;;x = 9518,143 aprox => value = 481.856 aprox
-(print "Swapping 25 DLK and 25 DWK to OURO in a constant product pool:")
-(free.SWPSC.SWPSC|URC_Swap
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    ["DLK-98c486052a51" "DWK-98c486052a51"]
-    [25.0 25.0]
-    "OURO-98c486052a51"
-)
-(print "REDONE ONE")
-(free.SUT.SWP|UC_ComputeWP
-    [200.0 5000.0 300.0]
-    [25.0 25.0]
-    [0 2]
-    1
-    24
-    [0.2 0.5 0.3]
-)
-(print "==============")
-;;
-(print "Swapping 50 DLK to OURO in a constant product pool:")
-(free.SWPSC.SWPSC|URC_Swap
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    ["DLK-98c486052a51"]
-    [50.0]
-    "OURO-98c486052a51"
-)
-(print "REDONE TWO")
-(free.SUT.SWP|UC_ComputeWP
-    [200.0 5000.0 300.0]
-    [50.0]
-    [0]
-    1
-    24
-    [0.2 0.5 0.3]
-)
-(print "==============")
-(print "Swapping 50 DLK to OURO in a stable swap pool:")
-(free.SWPSC.SWPSC|URC_Swap
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    ["DLK-98c486052a51"]
-    [50.0]
-    "OURO-98c486052a51"
-)
-
-(print "=======================================SWAP-COMP-TX1=================================")
-(env-gas)
-(commit-tx)
-
-(print "=======================================LP-COMP-TXess=================================")
-(begin-tx "LP value Computation")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPLC.SWPLC|URC_BalancedLiquidity
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    "OURO-98c486052a51"
-    2000.0
-)
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "LP value Computation")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPLC.SWPLC|URC_LpCapacity
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-)
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "Symetric LP Computation")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPLC.SWPLC|URC_SymetricLpAmount
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    "OURO-98c486052a51"
-    2000.0
-)
-
-(env-gas)
-(commit-tx)
-(print "=======================================LP-COMP-TXess=================================")
 
 
-(begin-tx "Add Stable Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
 
-(print "=======================ADD-STABLE-LIQUIDTY-TEST=================================")
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [20.0 200.0 20.0]
-)
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [100.0 100.0 100.0]
-)
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [300.0 0.0 0.0]
-)
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [200.0 200.0 200.0]
-)
-
-(print "Are Amounts balanced:")
-(free.SWPLC.SWPLC|URC_AreAmountsBalanced
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [20.0 200.0 20.0]
-)
-
-(print "=======================ADD-CONSTANT-PRODUCT-TEST=================================")
-
-(free.SWPLC.SWPLC|URC_WP_LpAmount 
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [250.0 2500.0 250.0]
-)
-
-(free.SWPLC.SWPLC|URC_SymetricLpAmount
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    "DLK-98c486052a51"
-    250.0
-)
-
-(free.SWPLC.SWPLC|URC_WP_LpAmount 
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [250.0 10000.0 500.0]
-)
-
-(free.SWPLC.SWPLC|URC_LpAmount
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [250.0 10000.0 500.0]
-)
-
-(print "=======================Compute LP Removal Amounts=================================")
-
-(free.SWPLC.SWPLC|URC_LpBreakAmounts 
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    1000000.0
-)
-(free.SWPLC.SWPLC|URC_LpBreakAmounts 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    1000000.0
-)
-
-
-(env-gas)
-(commit-tx)
-
-(print "=======================LIQUIDTY COMPUTATION=================================")
-(begin-tx "Add balanced Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [20.0 200.0 20.0]
-)
-
-(env-gas)
-(commit-tx)
-
-(begin-tx "Add UNbalanced Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPLC.SWPLC|URC_S_LpAmount 
-    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [100.0 250.0 770.0]
-)
-
-(env-gas)
-(commit-tx)
-(print "=======================LIQUIDTY COMPUTATION=================================")
-(print "")
-(print "=======================ADD-LIQ-TESTS=================================")
-
-
-(begin-tx "Add single Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPL.SWPL|C_AddLiquidity
-    KC.ANHD
-    KC.ANHD
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [0.0 50.0 25.0]
-)
-
-(format "Ancient Holder has after adding Liquidity {} LP Token" 
-    [
-        (free.DPTF.DPTF|UR_Supply 
-            (free.SWP.SWP|UR_TokenLP "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51") 
-        )
-    ]
-)
-
-(print "Liquidty Fee Pool P")
-(free.SWP.SWP|URC_LiquidityFee "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-(print "Liquidty Fee Pool S")
-(free.SWP.SWP|URC_LiquidityFee "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-
-(env-gas)
-(commit-tx)
-
-(print "=======================ADD-LIQ-TESTS=================================")
-(print "")
-(print "=======================REMOVE-LIQ-TESTS=================================")
-(begin-tx "Remove Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(print "Remove Liq Test")
-
-(free.SWPL.SWPL|C_RemoveLiquidity
-    KC.ANHD
-    KC.ANHD
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    10000000.0
-)
-
-(format "Ancient Holder has after removal of Liquidity {} LP Token" 
-    [
-        (free.DPTF.DPTF|UR_Supply 
-            (free.SWP.SWP|UR_TokenLP "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51") 
-        )
-    ]
-)
-
-(env-gas)
-(commit-tx)
-(print "=======================REMOVE-LIQ-TESTS=================================")
-(print "")
-
-(print "=======================ADD-NAKED-LIQ-TESTS=================================")
-(begin-tx "Add naked Liqudity Liquidity")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(free.SWPL.SWPL|C_AddLiquidity
-    KC.ANHD
-    KC.ANHD
-    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-    [1000.0 10000.0 500.0]
-)
-
-(env-gas)
-(commit-tx)
-(print "=======================ADD-NAKED-LIQ-TESTS=================================")
-
-(print "=======================PathTracer=================================")
-(begin-tx "Path Tracer Test")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-    ]
-)
-
-(print "Path Tracer Object Test")
-
-(let*
-    (
-        (empty free.SWPT.NLE)
-        (trace1:[object{free.SWPT.SWPT|Edges}]
-            (free.SWPT.SWPT|URC_PathTracer
-                empty
-                "DLK-98c486052a51"
-                "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-            )
-        )
-        (trace2:[object{free.SWPT.SWPT|Edges}]
-            (free.SWPT.SWPT|URC_PathTracer
-                trace1
-                "DLK-98c486052a51"
-                "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
-            )
-        )
-    )
-    [empty "|" trace1 "|" trace2]
-)
-
-(print "==================>>>>>>>>DLK")
-(free.SWPT.SWPT|UR_PathTrace "DLK-98c486052a51")
-
-(print "==================>>>>>>>>OURO")
-(free.SWPT.SWPT|UR_PathTrace "OURO-98c486052a51")
-
-(print "==================>>>>>>>>DWK")
-(free.SWPT.SWPT|UR_PathTrace "DWK-98c486052a51")
-
-
-(print "==================>>>>>>>>PKOSON")
-(free.SWPT.SWPT|UR_PathTrace "PKOSON-98c486052a51")
-
-(print "==================>>>>>>>>AKOSON")
-(free.SWPT.SWPT|UR_PathTrace "AKOSON-98c486052a51")
-
-(print "==================>>>>>>>>EKOSON")
-(free.SWPT.SWPT|UR_PathTrace "EKOSON-98c486052a51")
-
-(env-gas)
-(commit-tx)
-
-
-(print "=======================SWAP TESTER=================================")
+(print "=======================INITIAL=================================")
 (begin-tx "Path Tracer Test")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -815,6 +489,134 @@
 )
 
 (print "Last Tx")
+(format "AH has {} DLK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_LiquidKadenaID) KC.ANHD)])
+(format "AH has {} OURO" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_OuroborosID) KC.ANHD)])
+(format "AH has {} DWK " [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_WrappedKadenaID) KC.ANHD)])
+(format "AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
+(format "LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
+
+(env-gas)
+(commit-tx)
+
+(print "=======================1stSWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+;(print "Pre Computation to see difference")
+;(free.SWPSC.SWPSC|URC_Swap
+;    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+;    ["DWK-98c486052a51" "DLK-98c486052a51"]
+;    [9.947 9.947]
+;    "OURO-98c486052a51"
+;)
+;(print "Swap Test")
+(free.SWPS.SWPS|C_SimpleSwap
+    KC.ANHD 
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    ["DWK-98c486052a51" "DLK-98c486052a51"]
+    [10.0 10.0]
+    "OURO-98c486052a51"
+)
+
+
+
+(env-gas)
+(commit-tx)
+
+
+(print "=======================AFTER-1st-SWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(format "AfterSwap LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
+(format "AfterSwap AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
+
+(env-gas)
+(commit-tx)
+
+(print "=======================2ndSWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.SWPS.SWPS|C_SimpleSwap
+    KC.ANHD 
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    ["OURO-98c486052a51"]
+    [250.0]
+    "DLK-98c486052a51"
+)
+
+
+
+(env-gas)
+(commit-tx)
+
+(print "=======================AFTER-2nd-SWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(format "After 2nd Swap LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
+(format "After 2nd Swap AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
+
+(env-gas)
+(commit-tx)
+
+(print "=======================3rdSWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.SWPS.SWPS|C_SimpleSwap
+    KC.ANHD 
+    KC.ANHD
+    "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    ["DWK-98c486052a51"]
+    [250.0]
+    "OURO-98c486052a51"
+)
+
+
+
+(env-gas)
+(commit-tx)
+
+(print "=======================AFTER-3nd-SWAP=================================")
+(begin-tx "Path Tracer Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(format "After 2nd Swap LiquidKadenaIndex is {}" [(free.ATS.ATS|URC_Index "KdaLiquindex-98c486052a51")])
+(format "After 2nd Swap AH has {} GAS" [(free.DPTF.DPTF|UR_AccountSupply (free.DALOS.DALOS|UR_IgnisID) KC.ANHD)])
 
 (env-gas)
 (commit-tx)

@@ -536,6 +536,8 @@
             )
             (DPTF.DPTF|C_DeployAccount p1 SWP.SWP|SC_NAME)
             (ATSI.DPTF|C_TgFeeExemptionR patron p1 SWP.SWP|SC_NAME true)
+            (ATSI.DPTF|C_TgBurnR patron p1 SWP.SWP|SC_NAME true)
+
 
             (DPTF.DPTF|C_DeployAccount p2 SWP.SWP|SC_NAME)
             (ATSI.DPTF|C_TgFeeExemptionR patron p2 SWP.SWP|SC_NAME true)

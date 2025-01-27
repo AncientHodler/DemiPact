@@ -249,6 +249,13 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "InitSnake 03 - Load UTILS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0000_UTILSb.pact")
+(env-gas)
+(commit-tx)
+
 (begin-tx "InitSnake 04 - Load DALOS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -271,6 +278,7 @@
 (namespace "free")
 
 (use free.UTILS)
+(use free.SUT)
 (use free.DALOS)
 (use free.TEST)
 

@@ -66,9 +66,6 @@
     ;;{9}
     ;;{10}
     (defun SWPT|UEV_IdAsPrincipal (id:string for-trace:bool)
-        @doc "Validates an ID as principal. \
-        \ The boolean <for-trace> when true, allows UTILS.BAR to be validates as a principal \
-        \ UTILS.BAR is considered a Principal in the context of a trace object."
         (let
             (
                 (iz-principal:bool (SWPT|URC_IzPrincipal id))
@@ -81,15 +78,12 @@
     )
     ;;{11}
     (defun SWPT|UC_PoolTokens:[string] (swpair:string)
-        @doc "Outputs Swpair Pool Tokens, by parsing the swpair string, instead of reading swpair data"
         (drop 1 (UTILS.LIST|UC_SplitString UTILS.BAR swpair))
     )
     (defun SWPT|UC_UniqueTokens:[string] (swpairs:[string])
-        @doc "Outputs all unique Tokens from a list of swpairs"
         (distinct (fold (+) [] (SWPT|UC_PoolTokensFromPairs swpairs)))
     )
     (defun SWPT|UC_PoolTokensFromPairs:[[string]] (swpairs:[string])
-        @doc "Outputs an array (list of lists) containing the pool tokens of the swpairs"
         (fold
             (lambda
                 (acc:[[string]] idx:integer)
@@ -103,11 +97,9 @@
         )
     )
     (defun SWPT|UC_IzOnPool:bool (id:string swpair:string)
-        @doc "Ouputs a boolean, true if the <id> is part of the <swpair> and false, if not"
         (contains id (SWPT|UC_PoolTokens swpair))
     )
     (defun SWPT|UC_IzOnPools:[bool] (id:string swpairs:[string])
-        @doc "Checks if the <id> exists on <swpairs>, outputing a boolean list"
         (fold
             (lambda
                 (acc:[bool] idx:integer)
@@ -121,7 +113,6 @@
         )
     )
     (defun SWPT|UC_AreOnPools:[bool] (id1:string id2:string swpairs:[string])
-    @doc "Checks if <id1> and <id2> exists on <swpairs>, outputing a boolean list"
         (fold
             (lambda
                 (acc:[bool] idx:integer)
@@ -142,7 +133,6 @@
         )
     )
     (defun SWPT|UC_FilterOne:[string] (swpairs:[string] id:string)
-        @doc "Filters <swpairs>, removing those that dont contain the <id>"
         (let*
             (
                 (l1:[bool] (SWPT|UC_IzOnPools id swpairs))
@@ -180,7 +170,6 @@
         )
     )
     (defun SWPT|UC_PrincipalsFromTraces:[string] (traces:[object{SWPT|Edges}])
-        @doc "Computes Principals from a Trace object, extracting them"
         (fold
             (lambda
                 (acc:[string] idx:integer)
@@ -198,22 +187,128 @@
         (at "links" (read SWPT|T|Tracer id ["links"]))
     )
     (defun SWPT|UR_PrincipalSwpairs:[string] (id:string principal:string)
-        @doc "Extract swpairs that are available for ID and Principal \
-            \ Reads Existing Table Data"
         (SWPT|UC_PSwpairsFTO (SWPT|UR_PathTrace id) id principal)
     )
     ;;{13}
-    (defun SWPT|URC_HasPrincipalConnection:bool (id:string principal:string)
-        @doc "NOT in use"
+    (defun SWPT|URC_TokenNeighbours:[string] (token-id:string)
+        (UTILS.LIST|UC_RemoveItem (SWPT|UC_UniqueTokens (SWPT|URC_TokenSwpairs token-id)) token-id)
+    )
+    (defun SWPT|URC_TokenSwpairs:[string] (token-id:string)
+        @doc "Reads all swpairs attached to the <token-id> and outputs them into a string list"
+        (let*
+            (
+                (cp:[string] (UTILS.LIST|UC_InsertFirst (SWP.SWP|UR_Principals) UTILS.BAR))
+                (swpairs-array:[[string]]
+                    (fold
+                        (lambda
+                            (acc:[[string]] idx:integer)
+                            (let
+                                (
+                                    (swpairs:[string] (SWPT|UR_PrincipalSwpairs token-id (at idx cp)))
+                                    (u2:[string] [UTILS.BAR])
+                                )
+                                (if (!= swpairs u2)
+                                    (UTILS.LIST|UC_AppendLast 
+                                        acc
+                                        swpairs
+                                    )
+                                    acc
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length cp) 1))
+                    )
+                )
+
+            )
+            (fold (+) [] swpairs-array)
+        )
+    )
+    (defun SWPT|URC_Edges:[string] (t1:string t2:string)
+        (let*
+            (
+                (swp1:[string] (SWPT|URC_TokenSwpairs t1))
+                (swp2:[string] (SWPT|URC_TokenSwpairs t2))
+                (swps:[string] (+ swp1 swp2))
+                (d:[string] (distinct swps))
+            )
+            (SWPT|UC_FilterTwo d t1 t2)
+        )
+    )
+    (defun GRPH|URC_ComputePath:[string] (input:string output:string)
+        (let*
+            (
+                (all-paths:[[string]] (GRPH|URC_AllPaths input output))
+                (fp:[[string]]
+                    (fold
+                        (lambda
+                            (acc:[[string]] idx:integer)
+                            (let*
+                                (
+                                    (e:[string] (at idx all-paths))
+                                    (l:string (at 0 (take -1 e)))
+                                    (check:bool (= l output))
+                                )
+                                (if (not check)
+                                    (UTILS.LIST|UC_RemoveItem acc e)
+                                    acc
+                                )
+                            )
+                        )
+                        all-paths
+                        (enumerate 0 (- (length all-paths) 1))
+                    )
+                )
+            )
+            (at 0 fp)
+        )
+    )
+    (defun GRPH|URC_AllPaths:[[string]] (input:string output:string)
+        (at "chains" (SUT.GRPH|UC_BFS (GRPH|URC_Make input output) input))
+    )
+    (defun GRPH|URC_Make:[object{SUT.GraphNode}] (input:string output:string)
         (let
             (
-                (swpairs:[string] (SWPT|UR_PrincipalSwpairs id principal))
-                (u2:[string] [UTILS.BAR])
+                (nodes:[string] (GRPH|URC_Nodes input output))
             )
-            (if (= swpairs u2)
-                false
-                true
+            (fold
+                (lambda
+                    (acc:[object{SUT.GraphNode}] idx:integer)
+                    (UTILS.LIST|UC_AppendLast 
+                        acc
+                        {
+                            "node": (at idx nodes),
+                            "links": (SWPT|URC_TokenNeighbours (at idx nodes))
+                        }
+                    )
+                )
+                []
+                (enumerate 0 (- (length nodes) 1))
             )
+        )
+    )
+    (defun GRPH|URC_Nodes:[string] (input-id:string output-id:string)
+        @doc "Given an <input-id> and <output-id>, creates a list of ids: \
+            \ Representing the nodes of the graph. \
+            \ Uses 2 Steps: \
+            \ \
+            \ Step1 = Filter All Existing <swpairs>, to those containing <input-id> and <output-id> = select-swpairs\
+            \ Step2 = Extract all Tokens from relevant pairs => these are the nodes = nodes \
+            \ \
+            \ Uses p2-p7 s2-s7 Swpair Information Data"
+        (let*
+            (
+                (swpairs:[string] (SWP.SWP|URC_Swpairs))
+                (in:[string] (SWPT|UC_FilterOne swpairs input-id))
+                (out:[string] (SWPT|UC_FilterOne swpairs output-id))
+                (l0:[string] (+ in out))
+                (select-swpairs:[string] (distinct l0))
+
+                (non-distinct-nodes-array:[[string]] (SWPT|UC_PoolTokensFromPairs select-swpairs))
+                (non-distinct-nodes:[string] (fold (+) [] non-distinct-nodes-array))
+            )
+            (distinct non-distinct-nodes)
         )
     )
     (defun SWPT|URC_PathTracer:[object{SWPT|Edges}] (old-path-tracer:[object{SWPT|Edges}] id:string swpair:string)
@@ -287,25 +382,7 @@
             )
         )
     )
-    (defun SWPT|URC_TokenNeighbours:[string] (token-id:string)
-        @doc "Computes Token-id neighbours"
-        (UTILS.LIST|UC_RemoveItem (SWPT|UC_UniqueTokens (SWPT|URC_TokenSwpairs token-id)) token-id)
-    )
-    (defun SWPT|URC_Edges (t1:string t2:string)
-        @doc "Outputs a list of Swpairs, representing the connections between 2 Tokens \
-        \ Uses PathTracer Information Data"
-        (let*
-            (
-                (swp1:[string] (SWPT|URC_TokenSwpairs t1))
-                (swp2:[string] (SWPT|URC_TokenSwpairs t2))
-                (swps:[string] (+ swp1 swp2))
-                (d:[string] (distinct swps))
-            )
-            (SWPT|UC_FilterTwo d t1 t2)
-        )
-    )
     (defun SWPT|URC_ContainsPrincipals:bool (swpair:string)
-        @doc "Checks if an swpair contains principals"
         (let
             (
                 (swpair-tokens:[string] (SWPT|UC_PoolTokens swpair))
@@ -328,61 +405,6 @@
         (if (contains id (SWP.SWP|UR_Principals))
             true
             false
-        )
-    )
-    (defun SWPT|URC_TokenSwpairs:[string] (token-id:string)
-        @doc "Reads all swpairs attached to the <token-id> and outputs them into a string list"
-        (let*
-            (
-                (cp:[string] (UTILS.LIST|UC_InsertFirst (SWP.SWP|UR_Principals) UTILS.BAR))
-                (swpairs-array:[[string]]
-                    (fold
-                        (lambda
-                            (acc:[[string]] idx:integer)
-                            (let
-                                (
-                                    (swpairs:[string] (SWPT|UR_PrincipalSwpairs token-id (at idx cp)))
-                                    (u2:[string] [UTILS.BAR])
-                                )
-                                (if (!= swpairs u2)
-                                    (UTILS.LIST|UC_AppendLast 
-                                        acc
-                                        swpairs
-                                    )
-                                    acc
-                                )
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length cp) 1))
-                    )
-                )
-
-            )
-            (fold (+) [] swpairs-array)
-        )
-    )
-    (defun GRPH|URC_Nodes:[string] (input-id:string output-id:string)
-        @doc "Given an <input-id> and <output-id>, creates a list of ids: \
-            \ The nodes from the graph that would be created, representing all paths between these two ids \
-            \ Uses 2 Steps: \
-            \ \
-            \ Step1 = Filter All Existing <swpairs>, to those containing <input-id> and <output-id> = select-swpairs\
-            \ Step2 = Extract all Tokens from relevant pairs => these are the nodes = nodes \
-            \ \
-            \ Uses p2-p7 s2-s7 Swpair Information Data"
-        (let*
-            (
-                (swpairs:[string] (SWP.SWP|URC_Swpairs))
-                (in:[string] (SWPT|UC_FilterOne swpairs input-id))
-                (out:[string] (SWPT|UC_FilterOne swpairs output-id))
-                (l0:[string] (+ in out))
-                (select-swpairs:[string] (distinct l0))
-
-                (non-distinct-nodes-array:[[string]] (SWPT|UC_PoolTokensFromPairs select-swpairs))
-                (non-distinct-nodes:[string] (fold (+) [] non-distinct-nodes-array))
-            )
-            (distinct non-distinct-nodes)
         )
     )
     ;;

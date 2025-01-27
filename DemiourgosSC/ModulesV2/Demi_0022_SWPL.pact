@@ -139,28 +139,45 @@
         (with-capability (SWPL|C>ADD_LQ swpair input-amounts)
             (let*
                 (
+                    (read-lp-supply:decimal (SWPLC.SWPLC|URC_LpCapacity swpair))
                     (ignis-cost:decimal (SWPL|URC_AddLiquidityIgnisCost swpair input-amounts))
-                    (pool-token-ids:[string] (SWP.SWP|UR_PoolTokens swpair))
-                    (lp-id:string (SWP.SWP|UR_TokenLP swpair))
-                    (lp-amount:decimal (SWPLC.SWPLC|URC_LpAmount swpair input-amounts))
-                    (pt-current-amounts:[decimal] (SWP.SWP|UR_PoolTokenSupplies swpair))
-                    (pt-new-amounts:[decimal] (zip (+) pt-current-amounts input-amounts))
-                )
-                (DALOS.IGNIS|C_Collect patron patron ignis-cost)
-                (map
-                    (lambda 
-                        (idx:integer)
-                        (if (> (at idx input-amounts) 0.0)
-                            (TFT.DPTF|C_Transfer patron (at idx pool-token-ids) account SWP.SWP|SC_NAME (at idx input-amounts) true)
-                            true
+                    (additional-ignis-cost:decimal
+                        (if (= read-lp-supply 0.0)
+                            (DALOS.DALOS|UR_UsagePrice "ignis|biggest")
+                            0.0
                         )
                     )
-                    (enumerate 0 (- (length input-amounts) 1))
+                    (final-ignis-cost:decimal (+ ignis-cost additional-ignis-cost))
+                    (gw:[decimal] (SWP.SWP|UR_GenesisWeigths swpair))
                 )
-                (SWP.SWP|X_UpdateSupplies swpair pt-new-amounts)
-                (DPTF.DPTF|C_Mint patron lp-id SWP.SWP|SC_NAME lp-amount false)
-                (TFT.DPTF|C_Transfer patron lp-id SWP.SWP|SC_NAME account lp-amount true)
-                lp-amount
+                (DALOS.IGNIS|C_Collect patron patron final-ignis-cost)
+                (if (= read-lp-supply 0.0)
+                    (SWP.SWP|X_ModifyWeights swpair gw)
+                    true
+                )
+                (let*
+                    (
+                        (pool-token-ids:[string] (SWP.SWP|UR_PoolTokens swpair))
+                        (lp-id:string (SWP.SWP|UR_TokenLP swpair))
+                        (lp-amount:decimal (SWPLC.SWPLC|URC_LpAmount swpair input-amounts))
+                        (pt-current-amounts:[decimal] (SWP.SWP|UR_PoolTokenSupplies swpair))
+                        (pt-new-amounts:[decimal] (zip (+) pt-current-amounts input-amounts))
+                    )
+                    (map
+                        (lambda 
+                            (idx:integer)
+                            (if (> (at idx input-amounts) 0.0)
+                                (TFT.DPTF|C_Transfer patron (at idx pool-token-ids) account SWP.SWP|SC_NAME (at idx input-amounts) true)
+                                true
+                            )
+                        )
+                        (enumerate 0 (- (length input-amounts) 1))
+                    )
+                    (SWP.SWP|X_UpdateSupplies swpair pt-new-amounts)
+                    (DPTF.DPTF|C_Mint patron lp-id SWP.SWP|SC_NAME lp-amount false)
+                    (TFT.DPTF|C_Transfer patron lp-id SWP.SWP|SC_NAME account lp-amount true)
+                    lp-amount
+                )
             )
         )
     )

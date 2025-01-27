@@ -123,10 +123,15 @@
     (defun SWPLC|URC_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal)
         @doc "Computes the Amount of LP resulted, if balanced Liquidity (derived from <input-id> and <input-amount>) \
         \ were to be added to a Constant Product Pool"
-        (if (= (take 1 swpair) "P")
-            (SWPLC|URC_P_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
-            (SWPLC|URC_S_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
-        )
+        (let
+            (
+                (pt:string (take 1 swpair))
+            )
+            (if (or (= pt "W")(= pt "P"))
+                (SWPLC|URC_WP_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
+                (SWPLC|URC_S_LpAmount swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))
+            )
+        )   
     )
     (defun SWPLC|URC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal)
         @doc "Computes the Pool Token Amounts that result from removing <input-lp-amount> of LP Token"
@@ -155,18 +160,24 @@
     )
     (defun SWPLC|URC_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount resulting from adding Liquidity with <input-amount> Tokens on <swpair> Pool"
-        (if (= (take 1 swpair) "P")
-            (SWPLC|URC_P_LpAmount swpair input-amounts)
-            (SWPLC|URC_S_LpAmount swpair input-amounts)
+        (let
+            (
+                (pt:string (take 1 swpair))
+            )
+            (if (or (= pt "W")(= pt "P"))
+                (SWPLC|URC_WP_LpAmount swpair input-amounts)
+                (SWPLC|URC_S_LpAmount swpair input-amounts)
+            )
         )
     )
-    (defun SWPLC|URC_P_LpAmount:decimal (swpair:string input-amounts:[decimal])
-        @doc "Computes the LP Amount you get on a Constant Product Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
+    (defun SWPLC|URC_WP_LpAmount:decimal (swpair:string input-amounts:[decimal])
+        @doc "Computes the LP Amount you get on a Constant Product Weigthed or non-Weigthed Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
         \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
         \ The pool token order is used for the <input-amounts> variable; \
-        \ There is no Liquidity fee when computing the amount for a Constant Product Pool, since it has no concept of balance."
+        \ There is no Liquidity fee when computing the amount for a Constant Product Weigthed Pool, since it has no concept of balance."
         (let*
             (
+                (pt:string (take 1 swpair))
                 (lp-prec:integer (DPTF.DPTF|UR_Decimals (SWP.SWP|UR_TokenLP swpair)))
                 (read-lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                 (lp-supply:decimal 
@@ -185,13 +196,22 @@
                 (lc:integer (length pool-token-supplies))
                 (iz-balanced:bool (SWPLC|URC_AreAmountsBalanced swpair input-amounts))
             )
+            (enforce (or (= pt "W")(= pt "P")) "Only for W or P Pools")
             (enforce (= li lc) "Incorrect Pool Token Ammounts")
             (SWP.SWP|UEV_id swpair)
             (if iz-balanced
-                (floor (* (/ (at 0 input-amounts) (at 0 pool-token-supplies)) lp-supply) lp-prec)
+                (SUT.SUT|UC_LP input-amounts pool-token-supplies lp-supply lp-prec)
                 (let*
                     (
-                        (percent-lst:[decimal] (UTILS.VST|UC_SplitBalanceForVesting 24 1.0 li))
+                        (percent-lst:[decimal]
+                            (if (= pt "W")
+                                (if (= read-lp-supply 0.0)
+                                    (SWP.SWP|UR_GenesisWeigths swpair)
+                                    (SWP.SWP|UR_Weigths swpair)
+                                )
+                                (UTILS.VST|UC_SplitBalanceForVesting 24 1.0 li)
+                            )
+                        )
                         (lp-amounts:[decimal]
                             (fold
                                 (lambda
@@ -224,6 +244,7 @@
         \ Liquidity Fee is hardcoded at 1%."
         (let*
             (
+                (pt:string (take 1 swpair))
                 (lp-prec:integer (DPTF.DPTF|UR_Decimals (SWP.SWP|UR_TokenLP swpair)))
                 (read-lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                 (lp-supply:decimal 
@@ -244,16 +265,17 @@
                 (lc:integer (length pool-token-supplies))
                 (iz-balanced:bool (SWPLC|URC_AreAmountsBalanced swpair input-amounts))
             )
+            (enforce (= pt "S") "Only for S Pools")
             (enforce (= li lc) "Incorrect Pool Token Ammounts")
             (SWP.SWP|UEV_id swpair)
             (if iz-balanced
-                (floor (* (/ (at 0 input-amounts) (at 0 pool-token-supplies)) lp-supply) lp-prec)
+                (SUT.SUT|UC_LP input-amounts pool-token-supplies lp-supply lp-prec)
                 (let*
                     (
                         (amp:decimal (SWP.SWP|UR_Amplifier swpair))
                         (new-balances:[decimal] (zip (+) pool-token-supplies input-amounts))
-                        (d0:decimal (SUT.SUT|UC_ComputeD amp pool-token-supplies))
-                        (d1:decimal (SUT.SUT|UC_ComputeD amp new-balances))
+                        (d0:decimal (SUT.SWP|UC_ComputeD amp pool-token-supplies))
+                        (d1:decimal (SUT.SWP|UC_ComputeD amp new-balances))
                         (dr:decimal (floor (/ d1 d0) 24))
                         (Xp:[integer] (SWP.SWP|UR_PoolTokenPrecisions swpair))
                         (adjusted-balances:[decimal]
@@ -278,7 +300,7 @@
                             )
                         )
                     )
-                    (floor (/ (* (- (SUT.SUT|UC_ComputeD amp adjusted-balances) d0) lp-supply) d0) lp-prec)
+                    (floor (/ (* (- (SUT.SWP|UC_ComputeD amp adjusted-balances) d0) lp-supply) d0) lp-prec)
                 )
             )
         )

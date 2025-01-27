@@ -78,6 +78,7 @@
                         (enumerate 0 (- l1 1))
                     )
                 )
+                (w:[decimal] (SWP.SWP|UR_Weigths swpair))
             )
             (UTILS.UTILS|UEV_EnforceUniformIntegerList lengths)
             (enforce iz-on-pool "Input Tokens are not part of the pool")
@@ -91,7 +92,7 @@
                 )
                 (enumerate 0 (- l1 1))
             )
-            (SUT.SWP|UC_ComputeP X input-amounts ip op o-prec)
+            (SUT.SWP|UC_ComputeWP X input-amounts ip op o-prec w)
         )
     )
     (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
@@ -128,12 +129,4 @@
     ;;{14}
     ;;{15}
     ;;{16}
-    
-    
-    ;;
-    
-    
-    ;;
-    ;;
-    ;;
 )

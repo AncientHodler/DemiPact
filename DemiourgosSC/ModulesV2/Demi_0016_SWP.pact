@@ -77,6 +77,8 @@
         can-change-owner:bool
         can-add:bool
         can-swap:bool
+        genesis-weights:[decimal]
+        weights:[decimal]
         genesis-ratio:[object{SWP|PoolTokens}]
         pool-tokens:[object{SWP|PoolTokens}]
         token-lp:string
@@ -96,7 +98,7 @@
     )
     (defschema SWP|FeeSplit
         target:string
-        value:decimal
+        value:integer
     )
     (defschema SWP|PoolsSchema
         pools:[string]
@@ -121,7 +123,7 @@
     (defconst S7 "S7")
     (defconst SWP|EMPTY-TARGET
         { "target": UTILS.BAR
-        , "value": 1.0 }
+        , "value": 1 }
     )
     ;;
     ;;{4}
@@ -158,6 +160,24 @@
                 (enforce (!= swap toggle) "Similar boolean cannot be used for <can-add> or <can-swap>")
             )
             (SWP|CAP_Owner swpair)
+        )
+    )
+    (defcap SWP|S>WEIGHTS (swpair:string new-weights:[decimal])
+        @event
+        (let
+            (
+                (pp:string (take 1 swpair))
+                (ws:decimal (fold (+) 0.0 new-weights))
+            )
+            (map
+                (lambda
+                    (w:decimal)
+                    (= (floor w UTILS.FEE_PRECISION) w)
+                )
+                new-weights
+            )
+            (enforce (= pp "W") "Changing weights available only for weighted Pools")
+            (enforce (= ws 1.0) "All weights must add to exactl 1.0")
         )
     )
     (defcap SWP|S>TG_FEE-LOCK (swpair:string toggle:bool)
@@ -200,31 +220,11 @@
         (DPTF.DPTF|UEV_Amount id new-supply)
         (SWP|UEV_id swpair)
     )
-    (defcap SWP|S>UPDATE-FEE (swpair:string new-fee:decimal lp-or-special:bool)
+    (defcap SWP|S>UPDATE-FEE (swpair:string new-fee:decimal )
         @event
-        (let*
-            (
-                (lb:bool (SWP|UR_LiquidBoost))
-                (current-fee-lp:decimal (SWP|UR_FeeLP swpair))
-                (current-fee-special:decimal (SWP|UR_FeeSP swpair))
-                (tf1:decimal (+ new-fee current-fee-lp))
-                (tf2:decimal (+ new-fee current-fee-special))
-                (tf3:decimal (+ tf1 current-fee-lp))
-                (tf4:decimal (+ tf2 new-fee))
-            )
-            (SWP|CAP_Owner swpair)
-            (SWP|UEV_FeeLockState swpair false)
-            (if lb
-                (if lp-or-special
-                    (SWP|UEV_PoolFee tf4)
-                    (SWP|UEV_PoolFee tf3)
-                )
-                (if lp-or-special
-                    (SWP|UEV_PoolFee tf2)
-                    (SWP|UEV_PoolFee tf1)
-                )
-            )
-        )
+        (SWP|CAP_Owner swpair)
+        (SWP|UEV_FeeLockState swpair false)
+        (SWP|UEV_PoolFee new-fee)
     )
     (defcap SWP|S>UPDATE-AMPLIFIER (swpair:string new-amplifier:decimal)
         @event
@@ -260,17 +260,24 @@
         )
         (compose-capability (GOV|SWP_ADMIN))
     )
-    (defcap SPW|C>UPDATE_SPECIAL-FEE-TARGETS ()
+    (defcap SPW|C>UPDATE_SPECIAL-FEE-TARGETS (swpair:string targets:[object{SWP|FeeSplit}])
         @event
-        (compose-capability (SWP|F>OWNER))
+        (compose-capability (SWP|F>OWNER swpair))
+        (map
+            (lambda
+                (obj:object{SWP|FeeSplit})
+                (SWP|UEV_FeeSplit obj)
+            )
+            targets
+        )
     )
-    (defcap SPW|C>TG_SPECIAL-MODE ()
+    (defcap SPW|C>TG_SPECIAL-MODE (swpair:string)
         @event
-        (compose-capability (SWP|F>OWNER))
+        (compose-capability (SWP|F>OWNER swpair))
     )
-    (defcap SPW|C>RT_GOV ()
+    (defcap SPW|C>RT_GOV (swpair:string)
         @event
-        (compose-capability (SWP|F>OWNER))
+        (compose-capability (SWP|F>OWNER swpair))
     )
     ;;
     ;;{8}
@@ -279,6 +286,16 @@
     )
     ;;{9}
     ;;{10}
+    (defun SWP|UEV_FeeSplit (input:object{SWP|FeeSplit})
+        (let
+            (
+                (tg:string (at "target" input))
+                (v:integer (at "value" input))
+            )
+            (DALOS.DALOS|UEV_EnforceAccountExists tg)
+            (enforce (and (>= v 1)(<= v 100000)) "Invalid Splitting Value in Split Object")
+        )
+    )
     (defun SWP|UEV_id (swpair:string)
         (with-default-read SWP|Pairs swpair
             { "unlocks" : -1 }
@@ -320,9 +337,9 @@
             (= (floor fee UTILS.FEE_PRECISION) fee)
             (format "SWP Pool Fee amount of {} is invalid decimal wise" [fee])
         )
-        (enforce (and (>= fee 0.0001) (<= fee 999.9999)) (format "SWP Pool Fee amount of {} is invalid size wise" [fee]))
+        (enforce (and (>= fee 0.0001) (<= fee 320.0)) (format "SWP Pool Fee amount of {} is invalid size wise" [fee]))
     )
-    (defun SWP|UEV_New (t-ids:[string] amp:decimal)
+    (defun SWP|UEV_New (t-ids:[string] w:[decimal] amp:decimal)
         (let
             (
                 (n:integer (length t-ids))
@@ -334,7 +351,7 @@
                 (msg:string "Pool already exists for given Tokens!")
             )
             (cond
-                ((= n 2) (SWP|UEV_CheckTwo t-ids amp))
+                ((= n 2) (SWP|UEV_CheckTwo t-ids w amp))
                 ((= n 3) (enforce (not (SWP|UEV_CheckAgainstMass t-ids SP3)) msg))
                 ((= n 4) (enforce (not (SWP|UEV_CheckAgainstMass t-ids SP4)) msg))
                 ((= n 5) (enforce (not (SWP|UEV_CheckAgainstMass t-ids SP5)) msg))
@@ -344,13 +361,13 @@
             )
         )
     )
-    (defun SWP|UEV_CheckTwo (token-ids:[string] amp:decimal)
+    (defun SWP|UEV_CheckTwo (token-ids:[string] w:[decimal] amp:decimal)
         (let*
             (
                 (e0:string (at 0 token-ids))
                 (e1:string (at 1 token-ids))
-                (swp1:string (SUT.SWP|UC_Swpair token-ids amp))
-                (swp2:string (SUT.SWP|UC_Swpair [e1 e0] amp))
+                (swp1:string (SUT.SWP|UC_PoolID token-ids w amp))
+                (swp2:string (SUT.SWP|UC_PoolID [e1 e0] w amp))
                 (t1:bool (SWP|URC_CheckID swp1))
                 (t2:bool (SWP|URC_CheckID swp2))
             )
@@ -476,7 +493,12 @@
     (defun SWP|UR_CanSwap:bool (swpair:string)
         (at "can-swap" (read SWP|Pairs swpair ["can-swap"]))
     )
-    ;;
+    (defun SWP|UR_GenesisWeigths:[decimal] (swpair:string)
+        (at "genesis-weights" (read SWP|Pairs swpair ["genesis-weights"]))
+    )
+    (defun SWP|UR_Weigths:[decimal] (swpair:string)
+        (at "weights" (read SWP|Pairs swpair ["weights"]))
+    )
     (defun SWP|UR_GenesisRatio:[object{SWP|PoolTokens}] (swpair:string)
         (at "genesis-ratio" (read SWP|Pairs swpair ["genesis-ratio"]))
     )
@@ -559,6 +581,38 @@
                 )
             )
             Xp
+        )
+    )
+    (defun SWP|UR_SpecialFeeTargets:[string] (swpair:string)
+        (SWP|UC_CustomSpecialFeeTargets (SWP|UR_FeeSPT swpair))
+    )
+    (defun SWP|UR_SpecialFeeTargetsProportions:[decimal] (swpair:string)
+        (SWP|UC_CustomSpecialFeeTargetsProportions (SWP|UR_FeeSPT swpair))
+    )
+    (defun SWP|UC_CustomSpecialFeeTargets:[string] (io:[object{SWP|FeeSplit}])
+        (fold
+            (lambda
+                (acc:[string] idx:integer)
+                (UTILS.LIST|UC_AppendLast 
+                    acc
+                    (at "target" (at idx io))
+                )
+            )
+            []
+            (enumerate 0 (- (length io) 1))
+        )
+    )
+    (defun SWP|UC_CustomSpecialFeeTargetsProportions:[decimal] (io:[object{SWP|FeeSplit}])
+        (fold
+            (lambda
+                (acc:[decimal] idx:integer)
+                (UTILS.LIST|UC_AppendLast 
+                    acc
+                    (dec (at "value" (at idx io)))
+                )
+            )
+            []
+            (enumerate 0 (- (length io) 1))
         )
     )
     ;;{13}
@@ -695,6 +749,20 @@
             )
         )
     )
+    (defun SWP|X_ModifyWeights (swpair:string new-weights:[decimal])
+        (enforce-one
+            "Modifying weights not allowed"
+            [
+                (enforce-guard (P|UR "SWPM|Caller"))
+                (enforce-guard (P|UR "SWPL|Caller"))
+            ]
+        )
+        (with-capability (SWP|S>WEIGHTS swpair new-weights)
+            (update SWP|Pairs swpair
+                {"weights"                          : new-weights}
+            )
+        )
+    )
     (defun SWP|X_ToggleFeeLock:[decimal] (swpair:string toggle:bool)
         (enforce-guard (P|UR "SWPM|Caller"))
         (with-capability (SWP|S>TG_FEE-LOCK swpair toggle)
@@ -748,7 +816,14 @@
         )
     )
     (defun SWP|X_UpdateSupplies (swpair:string new-supplies:[decimal])
-        (enforce-guard (P|UR "SWPL|Caller"))
+        (enforce-one
+            "Updating Pool Supplies not allowed"
+            [
+                
+                (enforce-guard (P|UR "SWPL|Caller"))
+                (enforce-guard (P|UR "SWPS|Caller"))
+            ]
+        )
         (with-capability (SWP|S>UPDATE-SUPPLIES swpair new-supplies)
             (let*
                 (
@@ -764,11 +839,11 @@
         )
     )
     (defun SWP|X_UpdateSupply (swpair:string id:string new-supply:decimal)
-        ;(enforce-guard (P|UR "SWPM|Caller"))
+        (enforce-guard (P|UR "SWPS|Caller"))
         (with-capability (SWP|S>UPDATE-SUPPLY swpair id new-supply)
             (let*
                 (
-                    (current-pool-tokens:[object{SWP|PoolTokens}] (SWP|UR_PoolTokens swpair))
+                    (current-pool-tokens:[object{SWP|PoolTokens}] (SWP|UR_PoolTokenObject swpair))
                     (pool-tokens:[string] (SWP|UC_ExtractTokens current-pool-tokens))
                     (pool-token-supplies:[decimal] (SWP|UC_ExtractTokenSupplies current-pool-tokens))
                     (id-pos:integer (at 0 (UTILS.LIST|UC_Search pool-tokens id)))
@@ -785,7 +860,7 @@
     )
     (defun SWP|X_UpdateFee (swpair:string new-fee:decimal lp-or-special:bool)
         (enforce-guard (P|UR "SWPM|Caller"))
-        (with-capability (SWP|S>UPDATE-FEE swpair new-fee lp-or-special)
+        (with-capability (SWP|S>UPDATE-FEE swpair new-fee)
             (if lp-or-special
                 (update SWP|Pairs swpair
                     {"fee-lp"                         : new-fee}
@@ -798,7 +873,7 @@
     )
     (defun SWP|X_UpdateSpecialFeeTargets (swpair:string targets:[object{SWP|FeeSplit}])
         (enforce-guard (P|UR "SWPM|Caller"))
-        (with-capability (SPW|C>UPDATE_SPECIAL-FEE-TARGETS swpair)
+        (with-capability (SPW|C>UPDATE_SPECIAL-FEE-TARGETS swpair targets)
             (update SWP|Pairs swpair
                 {"fee-special-targets"                : targets}
             )
@@ -850,14 +925,14 @@
             )
         )
     )
-    (defun SWP|X_InsertNew (account:string pool-tokens:[object{SWP|PoolTokens}] token-lp:string fee-lp:decimal amp:decimal)
+    (defun SWP|X_InsertNew (account:string pool-tokens:[object{SWP|PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal)
         (enforce-guard (P|UR "SWPI|Caller"))
         (let*
             (
                 (n:integer (length pool-tokens))
                 (what:bool (if (= amp -1.0) true false))
                 (pool-token-ids:[string] (SWP|UC_ExtractTokens pool-tokens))
-                (swpair:string (SUT.SWP|UC_Swpair pool-token-ids amp))
+                (swpair:string (SUT.SWP|UC_PoolID pool-token-ids weights amp))
             )
             (with-capability (SECURE)
                 (SWP|X_SavePool n what swpair)
@@ -868,6 +943,8 @@
                 ,"can-add"                              : false
                 ,"can-swap"                             : false
 
+                ,"genesis-weights"                      : weights
+                ,"weights"                              : weights
                 ,"genesis-ratio"                        : pool-tokens
                 ,"pool-tokens"                          : pool-tokens
                 ,"token-lp"                             : token-lp

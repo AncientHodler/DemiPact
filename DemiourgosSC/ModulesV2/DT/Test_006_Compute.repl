@@ -31,6 +31,51 @@
     (defconst LIQST "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
     (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
     (defconst SWAPR "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
+
+    (defconst TG
+        [
+            {"node": "OURO", "links":["PK" "DLK" "DWK"]}
+            {"node": "PK", "links":["OURO" "EK" "AK"]}
+            {"node": "EK", "links":["PK" "AK"]}
+            {"node": "AK", "links":["PK" "EK"]}
+            {"node": "DLK", "links":["OURO" "DWK"]}
+            {"node": "DWK", "links":["DLK" "OURO"]}
+        ]
+    )
+    (defconst TG2
+        [
+            {"node": "OURO", "links":["PK" "DLK" "DWK" "VST" "ESTAR"]}
+            {"node": "PK", "links":["OURO" "EK" "AK"]}
+            {"node": "EK", "links":["PK" "AK" "ESTAR"]}
+            {"node": "AK", "links":["PK" "EK" "VST"]}
+            {"node": "DLK", "links":["OURO" "DWK" "ESTAR"]}
+            {"node": "DWK", "links":["DLK" "OURO" "VST"]}
+            {"node": "VST", "links":["DWK" "OURO" "AK"]}
+            {"node": "ESTAR", "links":["DLK" "OURO" "EK"]}
+        ]
+    )
+    (defconst TG3
+        [
+            {"node": "OURO", "links":["DWK" "DLK" "ESTAR" "VST" "XLH" "PK"]}
+            {"node": "DWK", "links":["OURO" "DLK"]}
+            {"node": "DLK", "links":["DWK" "OURO" "ESTAR" "VST" "XLH" "PK"]}
+            {"node": "PK", "links":["OURO" "DLK" "AK" "EK"]}
+            {"node": "AK", "links":["PK" "EK"]}
+            {"node": "EK", "links":["PK" "AK"]}
+            {"node": "ESTAR", "links":["OURO" "DLK"]}
+            {"node": "VST", "links":["OURO" "DLK"]}
+            {"node": "XLH", "links":["OURO" "DLK"]}
+        ]
+    )
+
+    (defconst TG4
+        [
+            {"node": "OURO-98c486052a51","links": ["DLK-98c486052a51" "DWK-98c486052a51"]}
+            {"node": "PKOSON-98c486052a51","links": ["EKOSON-98c486052a51" "AKOSON-98c486052a51" "OURO-98c486052a51"]}
+            {"node": "DLK-98c486052a51","links": ["OURO-98c486052a51" "DWK-98c486052a51"]}
+            {"node": "DWK-98c486052a51","links": ["DLK-98c486052a51" "OURO-98c486052a51"]}
+        ]
+    )
 )
 
 (env-gas)
@@ -56,7 +101,7 @@
         (xi:decimal (at ip X))
         (xn:decimal (+ xi input-amount))
         (XX:[decimal] (free.UTILS.LIST|UC_ReplaceAt X ip xn))
-        (NewD:decimal (free.UTILS.SWP|UCC_ComputeD A XX))
+        (NewD:decimal (free.SUT.SWP|UC_ComputeD A XX))
         (y0:decimal (+ (at op X) input-amount))
         (output-lst:[decimal]
             (fold
@@ -65,7 +110,7 @@
                     (let*
                         (
                             (prev-y:decimal (at idx y-values))
-                            (y-value:decimal (free.UTILS.SWP|UCC_YNext prev-y NewD A X op))
+                            (y-value:decimal (free.SUT.SWP|UC_YNext prev-y NewD A X op))
                         )
                         (free.UTILS.LIST|UC_AppendLast y-values y-value)
                     )
@@ -87,52 +132,9 @@
     ]
 )
 
-(print "YCompute manual")
-(let*
-    (
-        (Y:decimal 1050.0)
-        (D:decimal 3049.998940783501587705216737)
-        (A:decimal 85.0)
-        (X:[decimal] [1000.0 1000.0 1000.0])
-        (op:integer 1)
-
-        (prec:integer 24)
-        (n:decimal (dec (length X)))
-
-        ;(XXX:[decimal] (free.UTILS.LIST|UC_RemoveItem X (at op X)))
-        (XX:[decimal] (free.UTILS.LIST|UC_ReplaceAt X op -1.0))
-        (XXX:[decimal] (free.UTILS.LIST|UC_RemoveItem XX -1.0))
-
-
-        (Sp:decimal (fold (+) 0.0 XXX))
-        (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
-        (n1:decimal (+ 1.0 n))
-        (nn:decimal (^ n n))
-        (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
-        (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
-        (Ysq:decimal (^ Y 2.0))
-        (numerator:decimal (floor (+ Ysq c) prec))
-        (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
-        (output:decimal (floor (/ numerator denominator) prec))
-    )
-    [
-        n
-        XXX
-        Sp
-        Pp
-        n1
-        nn
-        c
-        b
-        Ysq
-        numerator
-        denominator
-        output
-    ]
-)
 
 (print "YCompute")
-(free.UTILS.SWP|UCC_YNext 
+(free.SUT.SWP|UC_YNext 
     1050.0
     3049.998940783501587705216737
     85.0
@@ -144,9 +146,166 @@
 (env-gas)
 (commit-tx)
 
+(begin-tx "Compute D1")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(free.SUT.GRPH|UC_PrimalQE KC.TG "OURO")
+(let*
+    (
+        (qe:[object{free.SUT.QE}] (free.SUT.GRPH|UC_PrimalQE KC.TG "OURO"))
+        (e1:object{free.SUT.QE} (at 0 qe))
+        (ex:object{free.SUT.QE} (free.SUT.GRPH|UC_ExtendChain e1 "EK"))
+    )
+    ex
+)
+
+(print "EQE is")
+free.SUT.EQE
+
+(print "EBFS is")
+free.SUT.EBFS
+
+(print "ExtendTest")
+
+(free.SUT.SUT|UC_ExStrLst ["c"] ["a" "b"])
+(free.SUT.SUT|UC_ExStrArrLst [["fe"]] [["a" "b"] ["c" "d"]]) 
+
+
+(print "Modify BFS")
+(free.SUT.GRPH|UDC_AddVisited free.SUT.EBFS ["ouro"])
+(free.SUT.GRPH|UDC_AddChains free.SUT.EBFS [["ouro" "pk"]])
+
+(print "Modify BFS 2")
+(let*
+    (
+        (x1:object{free.SUT.BFS} (free.SUT.GRPH|UDC_AddToQue free.SUT.EBFS [{"node":"PK", "chain":["AK" "EK"]}]))
+        (x2:object{free.SUT.BFS} (free.SUT.GRPH|UDC_AddToQue x1 [{"node":"OURO", "chain":["DWK" "DLK"]}]))
+        (x3:object{free.SUT.BFS} (free.SUT.GRPH|UDC_RmFromQue x2))
+    )
+    x3
+)
+;(free.SUT.SUT|UDC_AddToQue free.SUT.EBFS {"node":"PK", "chain":["AK" "EK"]})
+
+(env-gas)
+(commit-tx)
 
 
 
+
+(begin-tx "Compute WP")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(print "Test Weighted Swap")
+(free.SUT.SWP|UC_ComputeWP
+    [500.0 300.0 200.0]
+    [40.0 30.0]
+    [0 1]
+    2
+    24
+    [0.5 0.3 0.2]
+)
+
+(print "P Probe with weigths")
+(free.SUT.SWP|UC_ComputeWP
+    [500.0 300.0 200.0]
+    [40.0 30.0]
+    [0 1]
+    2
+    24
+    [1.0 1.0 1.0]
+)
+
+
+
+(env-gas)
+(commit-tx)
+
+(print "==================================================================")
+(begin-tx "Compute BFS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let*
+    (
+        (x1:[string] (free.SUT.GRPH|UC_GraphNodes KC.TG4))
+        (x2:[integer] (free.UTILS.LIST|UC_Search x1 "OURO-98c486052a51"))
+    )
+    x1
+)
+
+(print "Working")
+(free.SUT.GRPH|UC_GraphNodeLinks KC.TG4 "OURO-98c486052a51")
+
+(print "Filter")
+;(filter (lambda (x:[string]) (!= (take -1 x) "DLK-98c486052a51")) (at "chains" (free.SUT.GRPH|UC_BFS KC.TG4 "OURO-98c486052a51")))
+
+(print "Not Working")
+
+;(print "Remove Visited Test")
+
+(let*
+    (
+        (dlk:string "DLK-98c486052a51")
+        (x:[[string]] (at "chains" (free.SUT.GRPH|UC_BFS KC.TG4 "OURO-98c486052a51")))
+        (fx:[[string]]
+            (fold
+                (lambda
+                    (acc:[[string]] idx:integer)
+                    (let*
+                        (
+                            (e:[string] (at idx x))
+                            (l:string (at 0 (take -1 e)))
+                            (check:bool (= l dlk))
+                        )
+                        (if (not check)
+                            (free.UTILS.LIST|UC_RemoveItem acc e)
+                            acc
+                        )
+                    )
+                )
+                x
+                (enumerate 0 (- (length x) 1))
+            )
+        )
+        (svl:[decimal] [1.2 0.2 33.2 0.98 0.7 2.3 2.1 0.69 0.87 0.99])
+        (sp:integer
+            (fold
+                (lambda
+                    (acc:integer idx:integer)
+                    (if (= idx 0)
+                        acc
+                        (if (< (at idx svl) (at acc svl))
+                            idx
+                            acc
+                        )
+
+                    )
+                )
+                0
+                (enumerate 0 (- (length svl) 1))
+            )
+        )
+
+    )
+    sp
+)
+
+(env-gas)
+(commit-tx)
 
 
 ;82499.308365845512581303649233
