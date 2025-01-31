@@ -405,17 +405,24 @@
 (env-gas)
 (commit-tx)
 
+;(begin-tx "InitSnake 24 - Load SWPSC Swapper Swap Computer Module")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0022_SWPST.pact")
+;(env-gas)
+;(commit-tx)
+
 (begin-tx "InitSnake 25 - Load SWPL Swapper Liquidity Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0022_SWPL.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0023_SWPL.pact")
 (env-gas)
 (commit-tx)
 
 (begin-tx "InitSnake 26 - Load SWPS Swapper Swap Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0023_SWPS.pact")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV2/Demi_0024_SWPS.pact")
 (env-gas)
 (commit-tx)
 
@@ -451,39 +458,39 @@
 (begin-tx "InitSnake 31 - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
+                            ;; PACT 4| PACT 5
+(use free.UTILS)            ;; 84.674| 61.907
+(use free.SUT)              ;; 84.341| 59.015
+(use free.DALOS)            ;;103.179|116.631
+(use free.DPTF)             ;;116.464|163.147
+(use free.DPMF)             ;;129.254|214.651
 
-(use free.UTILS)            ;; 84.674
-(use free.SUT)              ;; 80.341
-(use free.DALOS)            ;;103.201
-(use free.DPTF)             ;;116.486
-(use free.DPMF)             ;;129.277
+(use free.ATS)              ;;140.086|256.550
+(use free.ATSI)             ;;134.689|253.034
+(use free.TFT)              ;;136.677|258.900
+(use free.ATSC)             ;;141.827|233.005
+(use free.ATSH)             ;;135.235|233.999
+(use free.ATSM)             ;;140.931|306.567
+(use free.ATSF)             ;;132.692|121.112
 
-(use free.ATS)              ;;140.108
-(use free.ATSI)             ;;134.705
-(use free.TFT)              ;;136.700
-(use free.ATSC)             ;;141.849
-(use free.ATSH)             ;;135.258
-(use free.ATSM)             ;;140.952
-(use free.ATSF)             ;;132.715
+(use free.VESTING)          ;;139.269|249.796
+(use free.LIQUID)           ;;133.616|159.564
+(use free.LIQUIDFUEL)       ;;134.257|160.387
+(use free.OUROBOROS)        ;;137.343|286.138
+(use free.BRANDING)         ;;119.997|203.523
 
-(use free.VESTING)          ;;139.290
-(use free.LIQUID)           ;;133.602
-(use free.LIQUIDFUEL)       ;;134.210
-(use free.OUROBOROS)        ;;137.326
-(use free.BRANDING)         ;;120.020
+(use free.SWP)              ;;124.118|194.569
+(use free.SWPT)             ;;122.008|145.864
+(use free.SWPI)             ;;150.153|238.888
+(use free.SWPM)             ;;146.416|169.124
+(use free.SWPLC)            ;;120.785|196.039
+(use free.SWPSC)            ;;117.530|188.548
+(use free.SWPL)             ;;149.856|225.433
+(use free.SWPS)             ;;155.153|247.331
 
-(use free.SWP)              ;;120.377
-(use free.SWPT)             ;;118.692
-(use free.SWPI)             ;;146.442
-(use free.SWPM)             ;;143.293
-(use free.SWPLC)            ;;117.440
-(use free.SWPSC)            ;;114.494
-(use free.SWPL)             ;;146.364
-(use free.SWPS)             ;;113.440
-
-(use free.TALOS-01)         ;;145.059
-(use free.TALOS-02)         ;;146.884
-(use free.TALOS-03)         ;;147.228
+(use free.TALOS-01)         ;;145.078|329.379
+(use free.TALOS-02)         ;;150.641|113.504
+(use free.TALOS-03)         ;;150.327| 70.783
 
 (use free.DEPLOYER)         ;;N/A
 
@@ -525,13 +532,15 @@
     }
 )
 (env-sigs   
-    [{  "key": "alice-key", 
-        "caps": 
-            [
-                (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
-                (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
-                (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
-            ]
+    [
+        {  
+            "key": "alice-key", 
+            "caps":
+                [
+                    (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
+                    (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
+                    (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
+                ]
         }
     ]
 )
@@ -838,12 +847,13 @@
 (env-sigs
     [   
         { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
-          "caps": [
-                    (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                    1.0)
-                  ]
+          "caps": 
+            [
+                (coin.TRANSFER 
+                "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                1.0)
+            ]
         }
     ]
 )

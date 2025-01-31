@@ -1,0 +1,238 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
+(load "../Initialise_DALOS.repl")
+(print "LOADED ALL ENV MODULES")
+
+;;Entering Namespace Free
+(namespace "free")
+
+(begin-tx "Constant Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    (defconst BM "Ѻ.üĘИĞαλźĚ₿5ûŤgÂБšΦяĞηчĚłæõЭwъμŞщЯžŠЦэÒËfχтĞx₳UÁùИ6ÄŚЦ¢ЫřзÍэЗ₳Nλțí₱ΘθΞÁŠлτâΓЧЙéλŞк9ЧEř2Ș4ÿp∇REДyEчé¥2rþÉJQełc2þ₱doиãKóйšщÑΔπÊOκïΨЩψÏŞ1vìQÊнз$èČtÄë₿FИΔÚțΔOșчÑĘşнÌ¢")
+    (defconst EMMA "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+    (defconst OURBR "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+)
+
+
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init Custom Smart Contract - Load Banana Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/BananaJuicer/GoodBanana.pact")
+(env-gas)
+(commit-tx)
+
+(begin-tx "Init Bad-Actor Smart Contract - Load Evil Banana Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/Modules/BananaJuicer/BadBanana.pact")
+(env-gas)
+(commit-tx)
+
+(use free.BANANA)
+(use free.BYTA)
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_BM", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (print "Create Kadena Account for the Banana Juicer - Smart Dalos Account")
+    (coin.create-account free.BANANA.BANANA|SC_KDA-NAME free.BANANA.BANANA|GUARD)
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_BM", "caps": [] }
+        { "key": "PK_BJ", "caps": [] }
+    ]
+)
+
+    (print "Init Banana")
+    (free.BANANA.BANANA|A_Init KC.BM)
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;001]Test Autostake AUryn P1
+(begin-tx "Banana01 - Issue Tokens")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+;;One DPTF issuance is 200 KDA, issuaing 2 DPTFs costs 400 KDA
+;;5%|5%|15%|75% Split is 20|20|60|300
+(env-sigs
+    [   
+        { "key": "PK_BM", "caps": [] }
+        { "key": "59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    20.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    20.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "c:WIhovAeTvZJFaMyUjb0wJtQ5NR77LFSrSFY5GapSYyg"
+                    60.0
+                )
+                (coin.TRANSFER 
+                    "k:59e0417d779c90651e5cd9ca98736362f0262a80b8cdfd300f9f4c977b23c77a" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    300.0
+                )
+                ;(free.OUROBOROS.DPTF-DPMF|ISSUE "BananaMaker" "BananaJuicer" true 2)
+            ] 
+        }
+        
+    ]
+)
+    
+    (free.BANANA.BANANA|A_IssueTrueFungibles KC.BM)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana01 - Setup Primal True Fungibles")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_BM", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (print "Setting up True Fungibles")
+    (free.BANANA.BANANA|A_SetupTrueFungibles KC.BM)
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana02 - Sending Banana Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [
+        { "key": "PK_BM", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (print "Sending Some Bananas to Emma")
+    (free.TALOS.DPTF|C_Transfer KC.BM "BANANA-98c486052a51" KC.BM KC.EMMA 10.0)
+    (format "Emma has {} BANANA" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "BANANA-98c486052a51" KC.EMMA true)])
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana03 - Juice Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_Emma", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (format "Emma has {} IGNIS before Juicing" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.EMMA true)])
+    (print "Juicing Some Bananas")
+    (free.BANANA.BANANA|C_MakeJuice KC.EMMA KC.EMMA KC.EMMA 2.0)
+    (format "Emma has {} JUICE" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" KC.EMMA true)])
+    (format "Emma has {} IGNIS after Juicing" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "GAS-98c486052a51" KC.EMMA true)])
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+;;==============================================================================
+(begin-tx "Banana03 - Juice Tester")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_Emma", "caps": [] }
+        ;{ "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (format "Emma has {} JUICE before Clandestine Attempt" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" KC.EMMA true)])
+    (expect-failure "None of the guards passed" (free.BYTA.ClandestineMint KC.EMMA))
+    (format "Emma has {} JUICE after Clandestine Attempt" [(free.BASIS.DPTF-DPMF|UR_AccountSupply "JUICE-98c486052a51" KC.EMMA true)])
+
+
+(env-sigs [])    
+(env-gas)
+(commit-tx)
+
+(begin-tx "Test Gas Compression")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+    ]
+)
+
+
+    (print "VERIFICATION===========================================")
+    (format "KDIndex is is BEFORE {};"
+        [
+            (free.AUTOSTAKE.ATS|UC_Index "Kadindex-98c486052a51")
+        ]
+    )
+    (format "AUTOSTAKE has Resident DWK {}" 
+        [
+            (at "resident" (at 0 (free.AUTOSTAKE.ATS|UR_RewardTokens "Kadindex-98c486052a51")))
+        ]
+    )
+    (format "Ouroboros has as RT AFTER Removal of RT {} DWK" 
+        [
+            (free.BASIS.DPTF-DPMF|UR_AccountSupply "DWK-98c486052a51" KC.OURBR true)
+
+        ]
+    )
+
+    (format "Kadena in Ouroboros is {}"
+        [
+            (at "balance" (coin.details (free.DALOS.DALOS|UR_AccountKadena free.OUROBOROS.OUROBOROS|SC_NAME)))
+        ]
+    )
+    (free.TALOS.OUROBOROS|C_FuelLiquidStakingFromReserves KC.EMMA)
+    (format "KDIndex is is AFTER {};"
+        [
+            (free.AUTOSTAKE.ATS|UC_Index "Kadindex-98c486052a51")
+        ]
+    )
+
+(env-gas)
+(commit-tx)

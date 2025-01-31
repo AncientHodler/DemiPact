@@ -238,12 +238,12 @@
                         (DPTF.DPTF|C_Burn patron output-id SWP.SWP|SC_NAME boost-output)
                         (let*
                             (
-                                (path-to-dlk:[string] (SWPT.GRPH|URC_ComputePath output-id dlk))
-                                (ewo:object{EWO} (SWPS|URC_NodesToEdges path-to-dlk boost-output))
+                                (ewo:object{NEOV} (SWPS|URC_Neov output-id boost-output dlk))
+                                (path-to-dlk:[string] (at "nodes" ewo))
                                 (edges:[string] (at "edges" ewo))
                                 (ovs:[decimal] (at "output-values" ewo))
                                 (final-boost-output:decimal (at 0 (take -1 ovs)))
-                            )
+                            )                            
                             (DPTF.DPTF|C_Burn patron dlk SWP.SWP|SC_NAME final-boost-output)
                             ;;Update Edges Supplies
                             (map
@@ -278,138 +278,96 @@
             )
         )
     )
-    (defschema EWO
+    ;;
+    (defconst EMPTY_NEOV
+        [
+            {
+                "nodes" : [],
+                "edges" : [],
+                "output-values" : []
+            }
+        ]
+    )
+    (defschema NEOV
+        nodes:[string]
         edges:[string]
         output-values:[decimal]
     )
-    (defschema NTE
-        edge:string
-        output-with-edge:decimal
-    )
-    
-    (defun SWPS|URC_NodesToEdges:object{EWO} (nodes:[string] ia:decimal)
-        (if (= (length nodes) 2)
-            (let*
-                (
-                    (i-id:string (at 0 nodes))
-                    (o-id:string (at 1 nodes))
-                    (edge:string (SWPS|URC_BestEdge ia i-id o-id))
-                    (output:decimal (SWPSC.SWPSC|URC_Swap edge [i-id] [ia] o-id))
-                )
-                {
-                    "edges"         : [edge],
-                    "output-values" : [output]
-                }
-            )
-            (let*
-                (
-                    (fl:[object{NTE}]
-                        (fold
-                            (lambda
-                                (acc:[object{NTE}] idx:integer)
-                                (UTILS.LIST|UC_AppendLast 
-                                    acc
-                                    (let*
-                                        (
-                                            (input:decimal
-                                                (if (= idx 0)
-                                                    ia
-                                                    (at "output-with-edge" (at (- idx 1) acc))
-                                                )
+    (defun SWPS|URC_Neov:object{NEOV} (id:string ia:decimal vid:string)
+        (let*
+            (
+                (nodes:[string] (SWPT.GRPH|URC_ComputePath id vid))
+                (fl:[object{NEOV}]
+                    (fold
+                        (lambda
+                            (acc:[object{NEOV}] idx:integer)
+                            (UTILS.LIST|UC_ReplaceAt
+                                acc
+                                0
+                                (let*
+                                    (
+                                        (input:decimal
+                                            (if (= idx 0)
+                                                ia
+                                                (at 0 (take -1 (at "output-values" (at 0 acc))))
                                             )
-                                            (i-id:string (at idx nodes))
-                                            (o-id:string (at (+ idx 1) nodes))
-                                            (best-edge:string (SWPS|URC_BestEdge input i-id o-id))
-                                            (output:decimal (SWPSC.SWPSC|URC_Swap best-edge [i-id] [input] o-id))
                                         )
-                                        {
-                                            "edge"              : best-edge,
-                                            "output-with-edge"  : output
-                                        }
+                                        (i-id:string (at idx nodes))
+                                        (o-id:string (at (+ idx 1) nodes))
+                                        (best-edge:string (SWPS|URC_BestEdge input i-id o-id))
+                                        (output:decimal (SWPSC.SWPSC|URC_Swap best-edge [i-id] [input] o-id))
                                     )
+                                    {
+                                        "nodes"         : nodes,
+                                        "edges"         : (UTILS.LIST|UC_AppendLast (at "edges" (at 0 acc)) best-edge),
+                                        "output-values" : (UTILS.LIST|UC_AppendLast (at "output-values" (at 0 acc)) output)
+                                    }
                                 )
                             )
-                            []
-                            (enumerate 0 (- (length nodes) 2))
                         )
+                        EMPTY_NEOV
+                        (enumerate 0 (- (length nodes) 2))
                     )
                 )
-                {
-                    "edges"         : (SWPS|UC_EdgesFromNTEObj fl),
-                    "output-values" : (SWPS|UC_OVsFromNTEObj fl)
-                }
             )
-        )
-    )
-    (defun SWPS|UC_EdgesFromNTEObj:[string] (input:[object{NTE}])
-        (fold
-            (lambda
-                (acc:[string] idx:integer)
-                (UTILS.LIST|UC_AppendLast 
-                    acc
-                    (at "edges" (at idx input))
-                )
-            )
-            []
-            (enumerate 0 (- (length input) 1))
-        )
-    )
-    (defun SWPS|UC_OVsFromNTEObj:[decimal] (input:[object{NTE}])
-        (fold
-            (lambda
-                (acc:[decimal] idx:integer)
-                (UTILS.LIST|UC_AppendLast 
-                    acc
-                    (at "output-values" (at idx input))
-                )
-            )
-            []
-            (enumerate 0 (- (length input) 1))
+            (at 0 fl)
         )
     )
     (defun SWPS|URC_BestEdge:string (ia:decimal i:string o:string)
         (let*
             (
                 (edges:[string] (SWPT.SWPT|URC_Edges i o))
-                (l:integer (length edges))
-            )
-            (if (= l 1)
-                (at o edges)
-                (let*
-                    (
-                        (svl:[decimal]
-                            (fold
-                                (lambda
-                                    (acc:[decimal] idx:integer)
-                                    (UTILS.LIST|UC_AppendLast 
-                                        acc
-                                        (SWPSC.SWPSC|URC_Swap (at idx edges) [i] [ia] o)
-                                    )
-                                )
-                                []
-                                (enumerate 0 (- (length edges) 1))
+                (svl:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (UTILS.LIST|UC_AppendLast 
+                                acc
+                                (SWPSC.SWPSC|URC_Swap (at idx edges) [i] [ia] o)
                             )
                         )
-                        (sp:integer
-                            (fold
-                                (lambda
-                                    (acc:integer idx:integer)
-                                    (if (= idx 0)
-                                        acc
-                                        (if (< (at idx svl) (at acc svl))
-                                            idx
-                                            acc
-                                        )
-                                    )
-                                )
-                                0
-                                (enumerate 0 (- (length svl) 1))
-                            )
-                        )
+                        []
+                        (enumerate 0 (- (length edges) 1))
                     )
-                    (at sp edges)
+                )
+                (sp:integer
+                    (fold
+                        (lambda
+                            (acc:integer idx:integer)
+                            (if (= idx 0)
+                                acc
+                                (if (< (at idx svl) (at acc svl))
+                                    idx
+                                    acc
+                                )
+                            )
+                        )
+                        0
+                        (enumerate 0 (- (length svl) 1))
+                    )
                 )
             )
+            (at sp edges)
         )
     )
 )

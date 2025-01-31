@@ -379,7 +379,7 @@
     ;;
     ;;{8}
     (defun DALOS|CAP_EnforceAccountOwnership (account:string)
-        (let*
+        (let
             (
                 (type:bool (DALOS|UR_AccountType account))
             )
@@ -962,7 +962,7 @@
         )
     )
     (defun DALOS|C_TransferDalosFuel (sender:string receiver:string amount:decimal)
-        (install-capability (coin.TRANSFER sender receiver amount))
+        ;(install-capability (coin.TRANSFER sender receiver amount))
         (coin.transfer sender receiver amount)
     )
     (defun IGNIS|C_Collect (patron:string active-account:string amount:decimal)

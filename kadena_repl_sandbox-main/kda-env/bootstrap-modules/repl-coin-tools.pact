@@ -6,10 +6,23 @@
     "Fund a coin account from nothing"
     (env-data { "k": [key]})
     (with-applied-env
-      (let ((ks:guard (read-keyset 'k)))
+      (let 
+        (
+          (ks:guard (read-keyset 'k))
+        )
         (create-account account-name ks)
         (test-capability (CREDIT account-name))
-        (credit account-name ks amount)))
+        (credit account-name ks amount)
+      )
+    )
+    ;(let 
+    ;  (
+    ;    (ks:guard (read-keyset 'k))
+    ;  )
+    ;  (create-account account-name ks)
+    ;  (install-capability (CREDIT account-name))
+    ;  (credit account-name ks amount)
+    ;)
   )
 
   (defun fund-accounts (account-names:[string] amount:decimal)

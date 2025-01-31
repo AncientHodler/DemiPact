@@ -1,5 +1,6 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module LIQUIDFUEL GOV
+    (use coin)
     ;;  
     ;;{G1}
     (defconst GOV|MD_LIQUIDFUEL     (keyset-ref-guard DALOS.DALOS|DEMIURGOI))
@@ -104,6 +105,7 @@
                         )
                         (if (> present-kda-balance 0.0)
                             (with-capability (COMPOSE)
+                                (install-capability (coin.TRANSFER OUROBOROS|SC_KDA-NAME LIQUID.LIQUID|SC_KDA-NAME present-kda-balance))
                                 (LIQUID.LIQUID|C_WrapKadena patron OUROBOROS|SC_NAME present-kda-balance)
                                 (ATSF.ATSF|C_Fuel patron OUROBOROS|SC_NAME liquid-idx w-kda present-kda-balance)
                             )

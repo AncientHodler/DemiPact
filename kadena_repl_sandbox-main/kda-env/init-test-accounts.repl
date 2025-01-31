@@ -1,13 +1,27 @@
-(env-enable-repl-natives true)
+;(env-enable-repl-natives true)
+
+;(begin-tx)
+;(load "./bootstrap-modules/repl-coin-tools.pact")
+;(commit-tx)
+
 
 (begin-tx)
-(load "./bootstrap-modules/repl-coin-tools.pact")
+;(use repl-coin-tools)
+(env-data
+    {
+        "a" : ["alice-key"]
+    }
+)
+(let
+    (
+        (ks-a:guard (read-keyset 'a))
+    )
+    (coin.create-account "alice" ks-a)
+    (test-capability (coin.CREDIT "alice"))
+    (coin.credit "alice" ks-a 100000.0)
+)
+
+;(fund-accounts ["alice", "bob", "carol", "dave"] 100000.0)
 (commit-tx)
 
-
-(begin-tx)
-(use repl-coin-tools)
-(fund-accounts ["alice", "bob", "carol", "dave"] 100000.0)
-(commit-tx)
-
-(env-enable-repl-natives false)
+;(env-enable-repl-natives false)

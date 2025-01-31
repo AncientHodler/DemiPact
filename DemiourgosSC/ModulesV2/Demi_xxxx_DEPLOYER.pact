@@ -167,6 +167,7 @@
         (DALOS.DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
     )
     (defun A_Step008 ()
+        ;(acquire-module-admin free.DALOS)
         (insert DALOS.DALOS|PropertiesTable DALOS.DALOS|INFO
             {"demiurgoi"                : 
                 [
@@ -241,6 +242,7 @@
     ;;S|DLK-abcde|DWK-abcde
     ;;
     (defun A_Step012 ()
+        ;(acquire-module-admin free.DALOS)
         (let
             (
                 (patron:string DEMIURGOI|AH_NAME)
@@ -478,13 +480,16 @@
     )
     ;;========SWP-Initialisations==============================================;;
     (defun A_Step27 ()
+        ;(acquire-module-admin free.SWP)
         (let
             (
                 (u:[string] [UTILS.BAR])
             )
             (insert SWP.SWP|Properties SWP.SWP|INFO
                 {"principals"           : u
-                ,"liquid-boost"         : true}
+                ,"liquid-boost"         : true
+                ,"spawn-limit"          : 1000.0
+                ,"inactive-limit"       : 100.0}
             )
             (insert SWP.SWP|Pools SWP.P2
                 {"pools"                : u}
