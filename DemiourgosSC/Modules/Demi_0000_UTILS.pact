@@ -29,7 +29,7 @@
 
     ;;Used for validation of an ATS Index Name
     (defconst ACCOUNT_ID_CHARSET CHARSET_LATIN1 "Allowed character set for account IDs.");
-    (defconst ACCOUNT_ID_PROHIBITED_CHARACTER ["$" "¢" "£"])
+    (defconst ACCOUNT_ID_PROH-CHAR ["$" "¢" "£"])
     (defconst ACCOUNT_ID_MAX_LENGTH 256 " Maximum character length for account IDs. ")
     (defconst BAR "|")
     (defconst NUMBERS ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"])
@@ -430,7 +430,7 @@
             (format "Account ID does not conform to the required charset: {}" [index-name])
         )
         (enforce
-            (not (contains index-name ACCOUNT_ID_PROHIBITED_CHARACTER))
+            (not (contains index-name ACCOUNT_ID_PROH-CHAR))
             (format "Account ID contained a prohibited character: {}" [index-name])
         )
         (let 

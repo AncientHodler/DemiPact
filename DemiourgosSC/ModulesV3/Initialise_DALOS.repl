@@ -405,12 +405,12 @@
 (env-gas)
 (commit-tx)
 
-;(begin-tx "InitSnake 24 - Load SWPSC Swapper Swap Computer Module")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-;(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV3/Demi_0022_SWPST.pact")
-;(env-gas)
-;(commit-tx)
+(begin-tx "InitSnake 24 - Load SWPSC Swapper Swap Computer Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "/home/bytales/PactLanguage/DH_Pact/DemiourgosSC/ModulesV3/Demi_0022_SWPST.pact")
+(env-gas)
+(commit-tx)
 
 (begin-tx "InitSnake 25 - Load SWPL Swapper Liquidity Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -485,6 +485,7 @@
 (use free.SWPM)             ;;146.416|168.454
 (use free.SWPLC)            ;;120.785|195.623
 (use free.SWPSC)            ;;117.530|188.131
+(use free.SWPST)            ;;
 (use free.SWPL)             ;;149.856|224.587
 (use free.SWPS)             ;;155.153|244.408
 

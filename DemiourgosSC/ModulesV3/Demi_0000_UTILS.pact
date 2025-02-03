@@ -483,16 +483,16 @@
             (
                 (small:integer (/ growth 3))
                 (medium:integer (* small 2))
-                (chain1:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) [start] (make-list 6 growth)))
-                (chain2:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain1 (+ (make-list 5 medium) (make-list 2 small))))
-                (chain3:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain2 (+ (make-list 5 medium) (make-list 2 small))))
-                (chain4:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain3 (+ (make-list 5 medium) (make-list 2 small))))
-                (chain5:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain4 (+ (make-list 5 medium) (make-list 2 small))))
-                (chain6:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain5 (+ (make-list 5 medium) (make-list 2 small))))
-                (chain7:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))) chain6 (+ (make-list 5 medium) (make-list 2 small))))
-                (last:integer (LIST|UC_LastListElement chain7))
+                (chain1:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) [start] (make-list 6 growth)))
+                (chain2:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain1 (+ (make-list 5 medium) (make-list 2 small))))
+                (chain3:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain2 (+ (make-list 5 medium) (make-list 2 small))))
+                (chain4:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain3 (+ (make-list 5 medium) (make-list 2 small))))
+                (chain5:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain4 (+ (make-list 5 medium) (make-list 2 small))))
+                (chain6:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain5 (+ (make-list 5 medium) (make-list 2 small))))
+                (chain7:[integer] (fold (lambda (acc:[integer] item:integer) (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))) chain6 (+ (make-list 5 medium) (make-list 2 small))))
+                (last:integer (LIST|UC_LE chain7))
                 (very-last:integer (+ last 24))
-                (final-lst:[integer] (LIST|UC_AppendLast chain7 very-last))
+                (final-lst:[integer] (LIST|UC_AppL chain7 very-last))
             )
             (reverse final-lst)
         )
@@ -506,16 +506,16 @@
                     (fold 
                         (lambda 
                             (acc:[integer] item:integer) 
-                            (LIST|UC_AppendLast acc (+ (LIST|UC_LastListElement acc) item))
+                            (LIST|UC_AppL acc (+ (LIST|UC_LE acc) item))
                         ) 
                         [start] 
                         (make-list 48 growth)
                     )
                 )
                 (big:integer (* 7 growth))
-                (last:integer (LIST|UC_LastListElement chain))
+                (last:integer (LIST|UC_LE chain))
                 (very-last:integer (+ last big))
-                (final-lst:[integer] (LIST|UC_AppendLast chain very-last))
+                (final-lst:[integer] (LIST|UC_AppL chain very-last))
             )
             (reverse final-lst)
         )
@@ -545,8 +545,8 @@
                                 (lambda
                                     (acc:[decimal] truth:bool)
                                     (if truth
-                                        (LIST|UC_AppendLast acc split)
-                                        (LIST|UC_AppendLast acc 0.0)
+                                        (LIST|UC_AppL acc split)
+                                        (LIST|UC_AppL acc 0.0)
                                     )
                                 )
                                 []
@@ -590,7 +590,7 @@
                         (fold
                             (lambda
                                 (acc:[decimal] index:integer)
-                                (LIST|UC_AppendLast acc (floor (* (/ (at index resident-amounts) resident-sum) indexed-rbt) (at index rt-precisions)))
+                                (LIST|UC_AppL acc (floor (* (/ (at index resident-amounts) resident-sum) indexed-rbt) (at index rt-precisions)))
                             )
                             []
                             (enumerate 0 (- (length resident-amounts) 1))
@@ -620,7 +620,7 @@
             (if 
                 (= current-lst [BAR])
                 [account]
-                (LIST|UC_AppendLast current-lst account)
+                (LIST|UC_AppL current-lst account)
             )
             (if
                 (= current-lst [BAR])
@@ -665,7 +665,7 @@
                         (lambda 
                             (acc:[string] item:[string])
                             (if (= (LIST|UC_FirstListElement item) account)
-                                (LIST|UC_AppendLast acc (LIST|UC_LastListElement item))
+                                (LIST|UC_AppL acc (LIST|UC_LE item))
                                 acc
                             )
                         )
@@ -756,7 +756,7 @@
                 (
                     (sep-pos (LIST|UC_Search (str-to-list splitee) splitter))
                     (substart (map (+ 1) (LIST|UC_InsertFirst sep-pos -1)))
-                    (sublen  (zip (-) (LIST|UC_AppendLast sep-pos 10000000) substart))
+                    (sublen  (zip (-) (LIST|UC_AppL sep-pos 10000000) substart))
                     (cut (lambda (start len) (take len (drop start splitee))))
                 )
                 (zip (cut) substart sublen)
@@ -803,7 +803,7 @@
                                 (not (contains item acc)) 
                                 (format "Unique Items Required, duplicate item found: {}" [item])
                             )
-                            (LIST|UC_AppendLast acc item)
+                            (LIST|UC_AppL acc item)
                         )
                         [] 
                         lst
@@ -827,7 +827,7 @@
         (LIST|X_EnforceNotEmpty in)
         (at 1 in)
     )
-    (defun LIST|UC_LastListElement (in:list)
+    (defun LIST|UC_LE (in:list)
         @doc "Returns the last item of the list"
         (LIST|X_EnforceNotEmpty in)
         (at (- (length in) 1) in)
@@ -836,7 +836,7 @@
         @doc "Insert an item at the left of the list"
         (+ [item] in)
     )
-    (defun LIST|UC_AppendLast:list (in:list item)
+    (defun LIST|UC_AppL:list (in:list item)
         @doc "Append an item at the end of the list"
         (+ in [item])
     )
@@ -870,7 +870,7 @@
                     (fold
                         (lambda
                             (acc:[bool] item:integer)
-                            (LIST|UC_AppendLast acc (contains item l2))
+                            (LIST|UC_AppL acc (contains item l2))
                         )
                         []
                         l1

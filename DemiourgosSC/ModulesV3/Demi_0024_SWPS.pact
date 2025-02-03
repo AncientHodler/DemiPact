@@ -234,47 +234,54 @@
                 (SWP.SWP|X_UpdateSupplies swpair updated-supplies)
                 ;;Burn the DLK Amount to pump Liquid Index, and update Required Pools.
                 (if (!= boost-output 0.0)
-                    (if (= output-id dlk)
-                        (DPTF.DPTF|C_Burn patron output-id SWP.SWP|SC_NAME boost-output)
-                        (let*
-                            (
-                                (ewo:object{NEOV} (SWPS|URC_Neov output-id boost-output dlk))
-                                (path-to-dlk:[string] (at "nodes" ewo))
-                                (edges:[string] (at "edges" ewo))
-                                (ovs:[decimal] (at "output-values" ewo))
-                                (final-boost-output:decimal (at 0 (take -1 ovs)))
-                            )                            
-                            (DPTF.DPTF|C_Burn patron dlk SWP.SWP|SC_NAME final-boost-output)
-                            ;;Update Edges Supplies
-                            (map
-                                (lambda 
-                                    (idx:integer)
-                                    (let*
-                                        (
-                                            (first-id:string (at idx path-to-dlk))
-                                            (second-id:string (at (+ idx 1) path-to-dlk))
-                                            (hop:string (at idx edges))
-                                            (first-amount:decimal 
-                                                (if (= idx 0)
-                                                    boost-output
-                                                    (at (- idx 1) ovs)
-                                                )
-                                            )
-                                            (second-amount:decimal (at idx ovs))
-                                            (f-id-hop-a:decimal (SWP.SWP|UR_PoolTokenSupply hop first-id))
-                                            (s-id-hop-a:decimal (SWP.SWP|UR_PoolTokenSupply hop second-id))
-                                        )
-                                        (SWP.SWP|X_UpdateSupply hop first-id (+ f-id-hop-a first-amount))
-                                        (SWP.SWP|X_UpdateSupply hop second-id (- s-id-hop-a second-amount))
-                                    )
-                                )
-                                (enumerate 0 (- (length edges) 1))
-                            )
-                        )
-                    )
+                    (SPWS|X_PumpLiquidIndex patron output-id boost-output)
                     true
                 )
                 [boost-output special-output rest-output]
+            )
+        )
+    )
+    (defun SPWS|X_PumpLiquidIndex (patron:string id:string amount:decimal)
+        (let
+            (
+                (dlk:string (DALOS.DALOS|UR_LiquidKadenaID))
+            )
+            (if (= id dlk)
+                (DPTF.DPTF|C_Burn patron id SWP.SWP|SC_NAME amount)
+                (let
+                    (
+                        (ewo:object{NEOV} (SWPS|URC_Neov id amount dlk))
+                        (path-to-dlk:[string] (at "nodes" ewo))
+                        (edges:[string] (at "edges" ewo))
+                        (ovs:[decimal] (at "output-values" ewo))
+                        (final-boost-output:decimal (at 0 (take -1 ovs)))
+                    )
+                    (DPTF.DPTF|C_Burn patron dlk SWP.SWP|SC_NAME final-boost-output)
+                    (map
+                        (lambda 
+                            (idx:integer)
+                            (let*
+                                (
+                                    (first-id:string (at idx path-to-dlk))
+                                    (second-id:string (at (+ idx 1) path-to-dlk))
+                                    (hop:string (at idx edges))
+                                    (first-amount:decimal 
+                                        (if (= idx 0)
+                                            amount
+                                            (at (- idx 1) ovs)
+                                        )
+                                    )
+                                    (second-amount:decimal (at idx ovs))
+                                    (f-id-hop-a:decimal (SWP.SWP|UR_PoolTokenSupply hop first-id))
+                                    (s-id-hop-a:decimal (SWP.SWP|UR_PoolTokenSupply hop second-id))
+                                )
+                                (SWP.SWP|X_UpdateSupply hop first-id (+ f-id-hop-a first-amount))
+                                (SWP.SWP|X_UpdateSupply hop second-id (- s-id-hop-a second-amount))
+                            )
+                        )
+                        (enumerate 0 (- (length edges) 1))
+                    )
+                )
             )
         )
     )
