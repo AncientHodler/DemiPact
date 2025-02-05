@@ -386,37 +386,91 @@
 (print "")
 
 (print "")
-(begin-tx "INIT TX 017 - 002_DPTF.pact")
+(begin-tx "INIT TX 017 - 002_BRANDING.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/002_DPTF.pact")
+(load "Ouronet/002_BRANDING.pact")
 (env-gas)
 (commit-tx)
 (print "")
 
 (print "")
-(begin-tx "INIT TX 018 - 003_DPMF.pact")
+(begin-tx "INIT TX 018 - 003_DPTF.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/003_DPMF.pact")
+(load "Ouronet/003_DPTF.pact")
 (env-gas)
 (commit-tx)
 (print "")
 
 (print "")
-(begin-tx "INIT TX 019 - 004_AUTOSTAKE.pact")
+(begin-tx "INIT TX 019 - 004_DPMF.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/004_AUTOSTAKE.pact")
+(load "Ouronet/004_DPMF.pact")
 (env-gas)
 (commit-tx)
 (print "")
 
 (print "")
-(begin-tx "INIT TX 020 - 005_TFT.pact")
+(begin-tx "INIT TX 020 - 005_AUTOSTAKE.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/005_TFT.pact")
+(load "Ouronet/005_AUTOSTAKE.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 021 - 006_TFT.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/006_TFT.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 022 - 007_ATSU.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/007_ATSU.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 023 - 008_VST.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/008_VST.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 024 - 009_LIQUID.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/009_LIQUID.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 025 - 010_OUROBOROS.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/010_OUROBOROS.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 026 - 011_SWP.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/011_SWP.pact")
 (env-gas)
 (commit-tx)
 (print "")
@@ -427,26 +481,33 @@
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-;(use U|I)          ;; 38.466
-(use U|CT)          ;;  9.068
-(use U|G)           ;;  2.021
-(use U|ST)          ;;  3.438
-(use U|RS)          ;;  1.723
-(use U|LST)         ;;  5.656
-(use U|INT)         ;;  2.731
-(use U|DEC)         ;;  4.126
-(use U|DALOS)       ;;  9.955
-(use U|ATS)         ;; 36.341
-(use U|DPTF)        ;;  3.197
-(use U|VST)         ;;  3.780
-(use U|SWP)         ;; 14.943
-(use U|BFS)         ;; 14.767
+;(use U|I)          ;; 44.597
+(use U|CT)          ;;  9.016
+(use U|G)           ;;  2.017
+(use U|ST)          ;;  3.491
+(use U|RS)          ;;  1.719
+(use U|LST)         ;;  6.164
+(use U|INT)         ;;  2.723
+(use U|DEC)         ;;  4.122
+(use U|DALOS)       ;;  9.936
+(use U|ATS)         ;; 36.435
+(use U|DPTF)        ;;  3.192
+(use U|VST)         ;;  4.706
+(use U|SWP)         ;; 14.946
+(use U|BFS)         ;; 14.770
 (print "")
-(use DALOS)         ;; 84.534
-(use DPTF)          ;; 98.691
-(use DPMF)          ;;101.583
-(use ATS)           ;;115.769
-(use TFT)           ;; 46.676
+(use DALOS)         ;; 84.655
+(use BRD)           ;; 29.049
+(use DPTF)          ;; 96.228
+(use DPMF)          ;; 99.204
+(use ATS)           ;;116.494
+(use TFT)           ;; 48.578
+(use ATSU)          ;; 82.513
+(use VST)           ;; 33.074
+(use LIQUID)        ;; 15.516
+(use OUROBOROS)     ;; 27.115
+
+(use SWP)           ;; 59.981
 
 (env-gas)
 (commit-tx)

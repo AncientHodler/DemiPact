@@ -5,23 +5,13 @@
     (implements TrueFungibleTransfer)
     ;;{G1}
     (defconst GOV|MD_TFT            (keyset-ref-guard DALOS|DEMIURGOI))
+
     (defconst DALOS|DEMIURGOI       (GOV|Demiurgoi))
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|TFT_ADMIN))
-    )
-    (defcap GOV|TFT_ADMIN ()
-        (enforce-guard GOV|MD_TFT)
-    )
+    (defcap GOV ()                  (compose-capability (GOV|TFT_ADMIN)))
+    (defcap GOV|TFT_ADMIN ()        (enforce-guard GOV|MD_TFT))
     ;;{G3}
-    (defun GOV|Demiurgoi ()
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (ref-DALOS::GOV|Demiurgoi)
-        )
-    )
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;{P1}
     ;;{P2}
@@ -196,6 +186,117 @@
     )
     ;;
     ;;{F0}
+    (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string)
+        @doc "Computes the Unbonding Amount existing for a given <reward-token> of an <atspair>; \
+        \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
+        \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
+        \ and adds found balances up. \
+        \ Output of these 2 functions must match to the last decimal."
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (ref-ATS::UEV_RewardTokenExistance atspair reward-token true)
+            (fold
+                (lambda
+                    (acc:decimal account:string)
+                    (+ acc (ref-ATS::URC_AccountUnbondingBalance atspair account reward-token))
+                )
+                0.0
+                (DPTF-DPMF-ATS|UR_FilterKeysForInfo atspair 3 false)
+            )
+        )
+    )
+    (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer)
+        @doc "Returns a List of DPTF, DPMF or ATS-Unstaking-Accounts that exist for <account> \
+        \ <table-to-query>: 1 = DPTF, 2 = DPMF, 3 = ATS-Unstaking-Accounts"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Invalid Ownership Position")
+            (let
+                (
+                    (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query true))
+                    (owners-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] item:string)
+                                (ref-U|LST::UC_AppendLast 
+                                    acc
+                                    (if (= table-to-query 1)
+                                        (ref-DPTF::UR_Konto item)
+                                        (if (= table-to-query 2)
+                                            (ref-DPMF::UR_Konto item)
+                                            (ref-ATS::UR_OwnerKonto item)
+                                        )
+                                    )
+                                )
+                            )
+                            []
+                            keyz
+                        )
+                    )
+                    (owner-pos:[integer] (ref-U|LST::UC_Search owners-lst account))
+                )
+                (fold
+                    (lambda
+                        (acc:[string] idx:integer)
+                        (ref-U|LST::UC_AppendLast acc (at (at idx owner-pos) keyz))
+                    )
+                    []
+                    (enumerate 0 (- (length owner-pos) 1))
+                )
+                
+            )
+        )
+    )
+    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
+        @doc "Returns a List of either: \
+            \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
+            \                               Returns True-Fungible, Meta-Fungible IDs or ATS-Pairs held by an Accounts <account> OR \
+            \       Inverse-Mode(false):    <account-or-token-id> is DPTF|DPMF|ATS-Pair Designation Name \
+            \                               Returns Accounts that exists for a specific True-Fungible, Meta-Fungible or ATS-Pair \
+            \       MODE Boolean is only used for proper validation, to accees the needed table, use the proper integer: \
+            \ Table-to-query: \
+            \ 1 (DPTF|BalanceTable), 2(DPMF|BalanceTable), 3(ATS|Ledger)"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
+            (if mode
+                (ref-DALOS::GLYPH|UEV_DalosAccount account-or-token-id)
+                (do
+                    (if (= table-to-query 1)
+                        (ref-DPTF::UEV_id account-or-token-id)
+                        (if (= table-to-query 2)
+                            (ref-DPMF::UEV_id account-or-token-id)
+                            (ref-ATS::UEV_id account-or-token-id) 
+                        )
+                    )
+                )
+            )
+            (let
+                (
+                    (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query false))
+                    (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
+                    (output:[string] (ref-U|DALOS::UC_FilterId listoflists account-or-token-id))
+                )
+                output
+            )
+        )
+    )
     (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool)
         (let
             (
@@ -223,52 +324,9 @@
             )
         )
     )
-    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
-        @doc "Returns a List of either: \
-            \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
-            \                               Returns True-Fungible, Meta-Fungible IDs or ATS-Pairs held by an Accounts <account> OR \
-            \       Inverse-Mode(false):    <account-or-token-id> is DPTF|DPMF|ATS-Pair Designation Name \
-            \                               Returns Accounts that exists for a specific True-Fungible, Meta-Fungible or ATS-Pair \
-            \       MODE Boolean is only used for proper validation, to accees the needed table, use the proper integer: \
-            \ Table-to-query: \
-            \ 1 (DPTF|BalanceTable), 2(DPMF|BalanceTable), 3(ATS|Ledger)"
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
-            (if mode
-                (ref-DALOS::GLYPH|UEV_DalosAccount account-or-token-id)
-                (do
-                    (if (= table-to-query 1)
-                        (ref-DPTF::UEV_id account-or-token-id)
-                        (if (= table-to-query 2)
-                            (ref-DPMF::UEV_id account-or-token-id)
-                            (ref-ATS::UEV_id account-or-token-id) 
-                        )
-                    )
-                )
-            )
-            (let*
-                (
-                    (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query false))
-                    (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
-                    (output:[string] (ref-U|DALOS::UC_FilterId listoflists account-or-token-id))
-                )
-                output
-            )
-        )
-        
-    )
     ;;{F1}
     (defun URC_CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal)
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -284,7 +342,7 @@
                 (milestones:integer (+ rt-milestones rbt-milestones))
             )
             (if (!= milestones 0)
-                (let*
+                (let
                     (
                         (truths:[bool] (+ rt-boolean rbt-boolean))
                         (split-with-truths:[decimal] (URC_BooleanDecimalCombiner id native-fee-amount milestones truths))
@@ -322,7 +380,7 @@
         )
     )
     (defun URC_CPF_RBT:decimal (id:string native-fee-amount:decimal)
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -337,7 +395,7 @@
         )
     )
     (defun URC_CPF_RT:decimal (id:string native-fee-amount:decimal)
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -347,7 +405,7 @@
                 (milestones:integer (length (ref-U|LST::UC_Search ats-pairs-bool true)))  
             )
             (if (!= milestones 0)
-                (let*
+                (let
                     (
                         (rt-split-with-boolean:[decimal] (URC_BooleanDecimalCombiner id native-fee-amount milestones ats-pairs-bool))
                         (number-of-zeroes:integer (length (ref-U|LST::UC_Search rt-split-with-boolean 0.0)))
@@ -397,7 +455,7 @@
     (defun URC_BooleanDecimalCombiner:[decimal] (id:string amount:decimal milestones:integer boolean:[bool])
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (prec:integer (ref-DPTF::UR_Decimals id))
             )
@@ -406,7 +464,7 @@
     )
     ;;{F2}
     (defun UEV_AmountCheck:bool (id:string amount:decimal)
-        (let*
+        (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (decimals:integer (ref-DPTF::UR_Decimals id))
@@ -438,7 +496,7 @@
                 (fold
                     (lambda
                         (acc:bool item:object{DPTF|Receiver-Amount})
-                        (let*
+                        (let
                             (
                                 (receiver-account:string (at "receiver" item))
                                 (receiver-check:bool (ref-DALOS::GLYPH|UEV_DalosAccountCheck receiver-account))
@@ -452,7 +510,7 @@
                 (fold
                     (lambda
                         (acc:bool item:object{DPTF|Receiver-Amount})
-                        (let*
+                        (let
                             (
                                 (transfer-amount:decimal (at "amount" item))
                                 (check:bool (UEV_AmountCheck id transfer-amount))
@@ -569,7 +627,7 @@
     )
     (defun X_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (require-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method))
-        (let*
+        (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -620,7 +678,7 @@
                 (target:string (ref-DPTF::UR_FeeTarget id))
             )
             (if (and rt rbt)
-                (let*
+                (let
                     (
                         (v:[decimal] (URC_CPF_RT-RBT id pf))
                         (v1:decimal (at 0 v))
@@ -632,7 +690,7 @@
                     (X_CPF_BurnFee id target v3)
                 )
                 (if rt
-                    (let*
+                    (let
                         (
                             (v1:decimal (URC_CPF_RT id pf))
                             (v2:decimal (- pf v1))
@@ -641,7 +699,7 @@
                         (X_CPF_CreditFee id target v2)
                     )
                     (if rbt
-                        (let*
+                        (let
                             (
                                 (v1:decimal (URC_CPF_RBT id pf))
                                 (v2:decimal (- pf v1))

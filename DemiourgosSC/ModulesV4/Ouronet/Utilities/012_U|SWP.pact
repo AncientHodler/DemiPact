@@ -1,6 +1,6 @@
 (module U|SWP GOV
     ;;
-    (implements Ouronet4Swp)
+    (implements UtilitySwp)
     ;;{G1}
     ;;{G2}
     (defcap GOV ()
@@ -17,15 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
     (defun UC_ComputeWP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec w:[decimal])
         (let
             (
@@ -313,4 +309,17 @@
             (floor (* (/ (at fnzp input-amounts) (at fnzp pts)) lps) lpp)
         )
     )
+    (defun UC_TokensFromSwpairString:[string] (swpair:string)
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (bar:string (ref-U|CT::CT_BAR))
+            )
+            (drop 1 (ref-U|LST::UC_SplitString bar swpair))
+        )
+    )
+    ;;{F_UR}
+    ;;{F-UEV}
+    ;;{F-UDC}
 )

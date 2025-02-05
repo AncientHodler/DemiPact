@@ -17,15 +17,13 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
+    ;;{F_UR}
+    ;;{F-UEV}
     (defun UEV_GuardOfAll:guard (guards:[guard])
         @doc "Create a guard that only succeeds if every guard in GUARDS is successfully enforced."
         (enforce (< 0 (length guards)) "Guard list cannot be empty")
@@ -48,6 +46,7 @@
             "None of the guards passed"
         )
     )
+    ;;{F-UDC}
     (defun UC_Try (g:guard)
         @doc "Helper function used in <UEV_Any>"
         (try false (enforce-guard g))

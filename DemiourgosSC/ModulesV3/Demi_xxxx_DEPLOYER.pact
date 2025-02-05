@@ -152,7 +152,7 @@
         (DALOS.DALOS|A_UpdateUsagePrice "dpmf"           0.3)
         (DALOS.DALOS|A_UpdateUsagePrice "dpsf"           0.4)
         (DALOS.DALOS|A_UpdateUsagePrice "dpnf"           0.5)
-        (DALOS.DALOS|A_UpdateUsagePrice "blue"         0.025)
+        (DALOS.DALOS|A_UpdateUsagePrice "blue"          0.25)
 
         ;;Ignis Prices
         (DALOS.DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)

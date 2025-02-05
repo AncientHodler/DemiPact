@@ -4,19 +4,14 @@
     (implements OuronetPolicy)
     (implements Autostake)
     ;;{G1}
-    (defconst NS_USE (GOV|NS_Use))
-    (defconst GOV|MD_ATS            (keyset-ref-guard DALOS|DEMIURGOI))
+    (defconst GOV|MD_ATS            (keyset-ref-guard (GOV|Demiurgoi)))
     (defconst GOV|SC_ATS            (keyset-ref-guard ATS|SC_KEY))
-    (defconst DALOS|DEMIURGOI       (GOV|Demiurgoi))
-
-    (defconst ATS|SC_KEY            (+ NS_USE ".dh_sc_autostake-keyset"))
+    ;;
+    (defconst ATS|SC_KEY            (GOV|AutostakeKey))
     (defconst ATS|SC_NAME           (GOV|ATS|SC_NAME))
     (defconst ATS|SC_KDA-NAME       (GOV|ATS|SC_KDA-NAME))
-    
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|ATS_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|ATS_ADMIN)))
     (defcap GOV|ATS_ADMIN ()
         (enforce-one
             "ATS Autostake Admin not satisfed"
@@ -31,24 +26,10 @@
         true
     )
     ;;{G3}
-    (defun GOV|ATS|SC_NAME ()       (at 0 ["Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ"]))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
+    (defun GOV|ATS|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     (defun GOV|ATS|SC_KDA-NAME ()   (at 0 ["k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"]))
-    (defun GOV|NS_Use ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_NS_USE)
-        )
-    )
-    (defun GOV|Demiurgoi ()
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (ref-DALOS::GOV|Demiurgoi)
-        )
-    )
     (defun ATS|SetGovernor (patron:string)
         (let
             (
@@ -61,10 +42,7 @@
                 (ref-U|G::UEV_Any
                     [
                         (create-capability-guard (ATS|GOV))
-                        (P|UR "ATSC|RemoteAtsGov")
-                        (P|UR "ATSH|RemoteAtsGov")
-                        (P|UR "ATSM|RemoteAtsGov")
-                        (P|UR "ATSF|RemoteAtsGov")
+                        (P|UR "ATSU|RemoteAtsGov")
                     ]
                 )
             )
@@ -92,8 +70,13 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
+            )
+            (ref-P|BRD::P|A_Add 
+                "ATS|Caller"
+                (create-capability-guard (P|ATS|CALLER))
             )
             (ref-P|DPTF::P|A_Add
                 "ATS|Caller"
@@ -134,33 +117,23 @@
     )
     (defschema ATS|BalanceSchema
         @doc "Key = <ATS-Pair> + BAR + <account>"
-        P0:[object{Ouronet4Ats.Awo}]
-        P1:object{Ouronet4Ats.Awo}
-        P2:object{Ouronet4Ats.Awo}
-        P3:object{Ouronet4Ats.Awo}
-        P4:object{Ouronet4Ats.Awo}
-        P5:object{Ouronet4Ats.Awo}
-        P6:object{Ouronet4Ats.Awo}
-        P7:object{Ouronet4Ats.Awo}
-    )
-    (defschema ATS|Hot
-        mint-time:time
+        P0:[object{UtilityAts.Awo}]
+        P1:object{UtilityAts.Awo}
+        P2:object{UtilityAts.Awo}
+        P3:object{UtilityAts.Awo}
+        P4:object{UtilityAts.Awo}
+        P5:object{UtilityAts.Awo}
+        P6:object{UtilityAts.Awo}
+        P7:object{UtilityAts.Awo}
     )
     ;;{2}
     (deftable ATS|Pairs:{ATS|PropertiesSchema})
     (deftable ATS|Ledger:{ATS|BalanceSchema})
     ;;{3}
-    (defun CT_Bar ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_BAR)
-        )
-    )
-    (defconst BAR (CT_Bar))
-    (defconst NULLTIME (time "1984-10-11T11:10:00Z"))
-    (defconst ANTITIME (time "1983-08-07T11:10:00Z"))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defconst BAR                   (CT_Bar))
+    (defconst NULLTIME              (time "1984-10-11T11:10:00Z"))
+    (defconst ANTITIME              (time "1983-08-07T11:10:00Z"))
     ;;
     ;;{C1}
     (defcap SECURE ()
@@ -262,8 +235,8 @@
         (let
             (
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
             (UEV_UpdateColdOrHot atspair true)
@@ -286,7 +259,7 @@
             (fold
                 (lambda
                     (acc:bool idx:integer)
-                    (let*
+                    (let
                         (
                             (current:decimal (at idx fee-thresholds))
                             (precision:integer (ref-DPTF::UR_Decimals (UR_ColdRewardBearingToken atspair)))
@@ -348,7 +321,7 @@
         @event
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
             )
             (ref-U|DALOS::UEV_Fee promile)
             (UEV_UpdateColdOrHot atspair false)
@@ -419,6 +392,15 @@
         (CAP_Owner atspair)
     )
     ;;{C4}
+    (defcap ATS|C>UPDATE-BRD (atspair:string)
+        @event
+        (CAP_Owner atspair)
+        (compose-capability (P|ATS|CALLER))
+    )
+    (defcap ATS|C>UPGRADE-BRD (atspair:string)
+        @event
+        (compose-capability (P|ATS|CALLER))
+    )
     (defcap ATS|C>ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
         @event
         (UEV_UpdateColdAndHot atspair)
@@ -431,11 +413,11 @@
     )
     (defcap ATSI|C>ISSUE (account:string atspair:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string]rbt-nfr:[bool])
         @event
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (l1:integer (length atspair))
                 (l2:integer (length index-decimals))
@@ -571,7 +553,7 @@
         )
     )
     (defun UR_RT-Data (atspair:string reward-token:string data:integer)
-        (let*
+        (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (rt:[object{Autostake.ATS|RewardTokenSchema}] (UR_RewardTokens atspair))
@@ -604,10 +586,10 @@
             )
         )
     )
-    (defun UR_P0:[object{Ouronet4Ats.Awo}] (atspair:string account:string)
+    (defun UR_P0:[object{UtilityAts.Awo}] (atspair:string account:string)
         (at "P0" (read ATS|Ledger (concat [atspair BAR account]) ["P0"]))
     )
-    (defun UR_P1-7:object{Ouronet4Ats.Awo} (atspair:string account:string position:integer)
+    (defun UR_P1-7:object{UtilityAts.Awo} (atspair:string account:string position:integer)
         (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
@@ -626,12 +608,12 @@
         )
     )
     ;;{F1}
-    (defun URC_PosObjSt:integer (atspair:string input-obj:object{Ouronet4Ats.Awo})
+    (defun URC_PosObjSt:integer (atspair:string input-obj:object{UtilityAts.Awo})
         @doc "occupied(0), opened(1), closed (-1)"
         (let
             (
-                (zero:object{Ouronet4Ats.Awo} (UDC_MakeZeroUnstakeObject atspair))
-                (negative:object{Ouronet4Ats.Awo} (UDC_MakeNegativeUnstakeObject atspair))
+                (zero:object{UtilityAts.Awo} (UDC_MakeZeroUnstakeObject atspair))
+                (negative:object{UtilityAts.Awo} (UDC_MakeNegativeUnstakeObject atspair))
             )
             (if (= input-obj zero)
                 1
@@ -643,7 +625,7 @@
         )
     )
     (defun URC_MaxSyphon:[decimal] (atspair:string)
-        (let*
+        (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -658,7 +640,7 @@
             )
             (if (<= index syphon)
                 (make-list (length precisions) 0.0)
-                (let*
+                (let
                     (
                         (index-diff:decimal (- index syphon))
                         (rbt:string (UR_ColdRewardBearingToken atspair))
@@ -687,10 +669,10 @@
             )
         )
     )
-    (defun URC_CullValue:[decimal] (atspair:string input:object{Ouronet4Ats.Awo})
-        (let*
+    (defun URC_CullValue:[decimal] (atspair:string input:object{UtilityAts.Awo})
+        (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (rt-lst:[string] (UR_RewardTokenList atspair))
                 (rt-amounts:[decimal] (at "reward-tokens" input))
                 (l:integer (length rt-lst))
@@ -706,7 +688,7 @@
         (+
             (fold
                 (lambda
-                    (acc:decimal item:object{Ouronet4Ats.Awo})
+                    (acc:decimal item:object{UtilityAts.Awo})
                     (+ acc (URC_UnstakeObjectUnbondingValue atspair reward-token item))
                 )
                 0.0
@@ -722,8 +704,8 @@
             )
         )
     )
-    (defun URC_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{Ouronet4Ats.Awo})
-        (let*
+    (defun URC_UnstakeObjectUnbondingValue (atspair:string reward-token:string io:object{UtilityAts.Awo})
+        (let
             (
                 (rtp:integer (URC_RewardTokenPosition atspair reward-token))
                 (rt:[decimal] (at "reward-tokens" io))
@@ -761,7 +743,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
@@ -770,7 +752,7 @@
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
-                (let*
+                (let
                     (
                         (iz-ea-id:bool (if (= ea-id c-rbt) true false))
                         (pstate:[integer] (URC_PSL atspair account))
@@ -802,7 +784,7 @@
             )
             (if (= positions -1)
                 -1
-                (let*
+                (let
                     (
                         (pstate:[integer] (URC_PSL atspair account))
                         (available:[integer] (take positions pstate))
@@ -862,7 +844,7 @@
         )
     )
     (defun URC_ColdRecoveryFee (atspair:string c-rbt-amount:decimal input-position:integer)
-        (let*
+        (let
             (
                 (ats-positions:integer (UR_ColdRecoveryPositions atspair))
                 (ats-limit-values:[decimal] (UR_ColdRecoveryFeeThresholds atspair))
@@ -911,7 +893,7 @@
         )
     )
     (defun URC_CullColdRecoveryTime:time (atspair:string account:string)
-        (let*
+        (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (major:integer (ref-DALOS::UR_Elite-Tier-Major account))
@@ -932,7 +914,7 @@
     (defun URC_RTSplitAmounts:[decimal] (atspair:string rbt-amount:decimal)
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (rbt-supply:decimal (URC_PairRBTSupply atspair))
                 (index:decimal (URC_Index atspair))
                 (resident-amounts:[decimal] (UR_RoUAmountList atspair true))
@@ -957,7 +939,7 @@
         )
     )
     (defun URC_PairRBTSupply:decimal (atspair:string)
-        (let*
+        (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
@@ -966,7 +948,7 @@
             )
             (if (= (URC_IzPresentHotRBT atspair) false)
                 c-rbt-supply
-                (let*
+                (let
                     (
                         (h-rbt:string (UR_HotRewardBearingToken atspair))
                         (h-rbt-supply:decimal (ref-DPMF::UR_Supply h-rbt))
@@ -977,7 +959,7 @@
         )
     )
     (defun URC_RBT:decimal (atspair:string rt:string rt-amount:decimal)
-        (let*
+        (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (index:decimal (abs (URC_Index atspair)))
@@ -1109,7 +1091,7 @@
     (defun UEV_id (atspair:string)
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (ref-U|ATS::UEV_UniqueAtspair atspair)
             (with-default-read ATS|Pairs atspair
@@ -1138,7 +1120,7 @@
     (defun UEV_IssueData (atspair:string index-decimals:integer reward-token:string reward-bearing-token:string)
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
             (ref-U|DALOS::UEV_Decimals index-decimals)
@@ -1152,14 +1134,14 @@
         )
     )
     ;;{F3}
-    (defun UDC_MakeUnstakeObject:object{Ouronet4Ats.Awo} (atspair:string time:time)
+    (defun UDC_MakeUnstakeObject:object{UtilityAts.Awo} (atspair:string time:time)
         { "reward-tokens"   : (make-list (length (UR_RewardTokenList atspair)) 0.0)
         , "cull-time"       : time}
     )
-    (defun UDC_MakeZeroUnstakeObject:object{Ouronet4Ats.Awo} (atspair:string)
+    (defun UDC_MakeZeroUnstakeObject:object{UtilityAts.Awo} (atspair:string)
         (UDC_MakeUnstakeObject atspair NULLTIME)
     )
-    (defun UDC_MakeNegativeUnstakeObject:object{Ouronet4Ats.Awo} (atspair:string)
+    (defun UDC_MakeNegativeUnstakeObject:object{UtilityAts.Awo} (atspair:string)
         (UDC_MakeUnstakeObject atspair ANTITIME)
     )
     (defun UDC_ComposePrimaryRewardToken:object{Autostake.ATS|RewardTokenSchema} (token:string nfr:bool)
@@ -1186,6 +1168,40 @@
     ;;
     ;;{F5}
     ;;{F6}
+    (defun C_UpdatePendingBranding (patron:string ats:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for ATSPair <ats> costing 500 IGNIS"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_OwnerKonto ats))
+                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
+                (final-cost:decimal (* 5.0 branding-cost))
+            )
+            (with-capability (ATS|C>UPDATE-BRD)
+                (ref-BRD::X_UpdatePendingBranding ats logo description website social)
+                (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
+            )
+        )
+    )
+    (defun C_UpgradeBranding (patron:string id:string months:integer)
+        @doc "Upgrades Branding for an ATSPair, making it a premium Branding. \
+        \ Also sets pending-branding to live branding if its branding is not live yet"
+        (enforce-guard (P|UR "TALOS|Summoner"))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_OwnerKonto id))
+                (kda-payment:decimal
+                    (with-capability (ATS|C>UPGRADE-BRD)
+                        (ref-BRD::X_UpgradeBranding id owner months)
+                    )
+                )
+            )
+            (ref-DALOS::KDA|C_CollectWT patron kda-payment false)
+        )
+    )
     (defun C_Issue:[string]
         (
             patron:string
@@ -1200,7 +1216,7 @@
         @doc "Issues an Autostake Pair"
         (enforce-guard (P|UR "TALOS|Summoner"))
         (with-capability (ATSI|C>ISSUE account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
-            (let*
+            (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1380,7 +1396,7 @@
     )
     ;;{F7}
     (defun X_ChangeOwnership (atspair:string new-owner:string)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>RT_OWN atspair new-owner)
             (update ATS|Pairs atspair
                 {"owner-konto"                      : new-owner}
@@ -1388,7 +1404,7 @@
         )
     )
     (defun X_ModifyCanChangeOwner (atspair:string new-boolean:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>RT_CAN-CHANGE atspair new-boolean)
             (update ATS|Pairs atspair
                 {"can-change-owner"                 : new-boolean}
@@ -1396,10 +1412,10 @@
         )    
     )
     (defun X_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (with-capability (ATS|S>TG_PRM-LOCK atspair toggle)
                 (update ATS|Pairs atspair
@@ -1413,7 +1429,7 @@
         )
     )
     (defun X_IncrementParameterUnlocks (atspair:string)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-read ATS|Pairs atspair
             { "unlocks" := u }
             (update ATS|Pairs atspair
@@ -1422,7 +1438,7 @@
         )
     )
     (defun X_UpdateSyphon (atspair:string syphon:decimal)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>SYPHON atspair syphon)
             (update ATS|Pairs atspair
                 {"syphon"                           : syphon}
@@ -1430,7 +1446,7 @@
         )
     )
     (defun X_ToggleSyphoning (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>SYPHONING atspair toggle)
             (update ATS|Pairs atspair
                 {"syphoning"                        : toggle}
@@ -1454,10 +1470,10 @@
             )
     )
     (defun X_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (with-capability (ATS|S>SET_CRD atspair soft-or-hard base growth)
                 (if (= soft-or-hard true)
@@ -1472,7 +1488,7 @@
         )
     )
     (defun X_SetColdFee (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
             (update ATS|Pairs atspair
                 { "c-positions"     : fee-positions
@@ -1482,7 +1498,7 @@
         )
     )
     (defun X_SetHotFee (atspair:string promile:decimal decay:integer)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>SET_HOT_FEE atspair promile decay)
             (update ATS|Pairs atspair
                 { "h-promile"       : promile
@@ -1491,7 +1507,7 @@
         )
     )
     (defun X_ToggleElite (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>TOGGLE_ELITE atspair toggle)
             (update ATS|Pairs atspair
                 { "c-elite-mode" : toggle}
@@ -1499,7 +1515,7 @@
         )
     )
     (defun X_TurnRecoveryOn (atspair:string cold-or-hot:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|S>RECOVERY-ON atspair cold-or-hot)
             (if (= cold-or-hot true)
                 (update ATS|Pairs atspair
@@ -1522,28 +1538,29 @@
             )
         )
     )
-    (defun X_Issue:string (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
-        (let
-            (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (ref-U|DALOS::UDC_Makeid atspair)
-            (ref-DPTF::C_DeployAccount reward-token account)
-            (ref-DPTF::C_DeployAccount reward-bearing-token account)
-            (ref-DPTF::C_DeployAccount reward-token ATS|SC_NAME)
-            (ref-DPTF::C_DeployAccount reward-bearing-token ATS|SC_NAME)
-            (X_InsertNewATSPair account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
+    (defun X_Issue:string
+        (
+            account:string 
+            atspair:string 
+            index-decimals:integer 
+            reward-token:string 
+            rt-nfr:bool 
+            reward-bearing-token:string 
+            rbt-nfr:bool
         )
-    )
-    (defun X_InsertNewATSPair (account:string atspair:string index-decimals:integer reward-token:string rt-nfr:bool reward-bearing-token:string rbt-nfr:bool)
         (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
+                (ats-sc:string ATS|SC_NAME)
                 (id:string (ref-U|DALOS::UDC_Makeid atspair))
             )
+            (ref-U|DALOS::UEV_Decimals index-decimals)
+            (ref-U|ATS::UEV_AutostakeIndex)
+            (ref-BRD::X_Issue id)
             (insert ATS|Pairs id
                 {"owner-konto"                          : account
                 ,"can-change-owner"                     : true
@@ -1575,10 +1592,15 @@
                 ,"hot-recovery"                         : false
                 }
             )
+            (ref-DPTF::C_DeployAccount reward-token account)
+            (ref-DPTF::C_DeployAccount reward-bearing-token account)
+            (ref-DPTF::C_DeployAccount reward-token ats-sc)
+            (ref-DPTF::C_DeployAccount reward-bearing-token ats-sc)
+            id
         )
     )
     (defun X_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1594,7 +1616,7 @@
         )
     )
     (defun X_AddHotRBT (atspair:string hot-rbt:string)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (with-capability (ATS|C>ADD_SECONDARY atspair hot-rbt false)
             (update ATS|Pairs atspair
                 {"h-rbt" : hot-rbt}
@@ -1602,10 +1624,10 @@
         )
     )
     (defun X_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (enforce-guard (P|UR "ATSM|ReshapeUnstakeAccount"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (with-read ATS|Ledger (concat [atspair BAR account])
                 { "P0"      := p0 
@@ -1630,7 +1652,7 @@
         )  
     )
     (defun X_RemoveSecondary (atspair:string reward-token:string)
-        (enforce-guard (P|UR "ATSM|RemoveSecondaryRT"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1650,13 +1672,10 @@
             "Update RoU not allowed"
             [
                 (enforce-guard (P|UR "TFT|UpdateROU"))
-                (enforce-guard (P|UR "ATSC|UpdateROU"))
-                (enforce-guard (P|UR "ATSH|UpdateROU"))
-                (enforce-guard (P|UR "ATSM|UpdateROU"))
-                (enforce-guard (P|UR "ATSF|UpdateROU"))
+                (enforce-guard (P|UR "ATSU|UpdateROU"))
             ]
         )
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (rtp:integer (URC_RewardTokenPosition atspair reward-token))
@@ -1684,50 +1703,50 @@
             )
         )
     )
-    (defun X_UpP0 (atspair:string account:string obj:[object{Ouronet4Ats.Awo}])
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP0 (atspair:string account:string obj:[object{UtilityAts.Awo}])
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P0" : obj}
         )
     )
-    (defun X_UpP1 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP1 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P1"  : obj}
         )
     )
-    (defun X_UpP2 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP2 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P2"  : obj}
         )
     )
-    (defun X_UpP3 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP3 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P3"  : obj}
         )
     )
-    (defun X_UpP4 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP4 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P4"  : obj}
         )
     )
-    (defun X_UpP5 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP5 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P5"  : obj}
         )
     )
-    (defun X_UpP6 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP6 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P6"  : obj}
         )
     )
-    (defun X_UpP7 (atspair:string account:string obj:object{Ouronet4Ats.Awo})
-        (enforce-guard (P|UR "ATSC|UpUnsPos"))
+    (defun X_UpP7 (atspair:string account:string obj:object{UtilityAts.Awo})
+        (enforce-guard (P|UR "ATSU|Caller"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P7"  : obj}
         )
@@ -1736,8 +1755,8 @@
         (enforce-guard (P|UR "ATSC|Caller"))
         (let
             (
-                (zero:object{Ouronet4Ats.Awo} (UDC_MakeZeroUnstakeObject atspair))
-                (negative:object{Ouronet4Ats.Awo} (UDC_MakeNegativeUnstakeObject atspair))
+                (zero:object{UtilityAts.Awo} (UDC_MakeZeroUnstakeObject atspair))
+                (negative:object{UtilityAts.Awo} (UDC_MakeNegativeUnstakeObject atspair))
             )
             (with-default-read ATS|Ledger (concat [atspair BAR account])
                 { "P0"  : [zero]
@@ -1775,13 +1794,15 @@
     (defun XC_EnsureActivationRoles (patron:string atspair:string cold-or-hot:bool)
         @doc "Auxiliary Function that is also a Client Function; however it has no gas support \
         \ Ensures all Activation Roles such that a given ATSPair can function properly"
-        (let*
+        (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ats-sc:string ATS|SC_NAME)
+
                 (rt-lst:[string] (UR_RewardTokenList atspair))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
-                (c-rbt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption c-rbt ATS|SC_NAME))
+                (c-rbt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption c-rbt ats-sc))
                 (c-fr:bool (UR_ColdRecoveryFeeRedirection atspair))
                 
             )
@@ -1789,48 +1810,48 @@
             (if cold-or-hot
                 (let
                     (
-                        (c-rbt-burn-role:bool (ref-DPTF::UR_AccountRoleBurn c-rbt ATS|SC_NAME))
-                        (c-rbt-mint-role:bool (ref-DPTF::UR_AccountRoleMint c-rbt ATS|SC_NAME))
+                        (c-rbt-burn-role:bool (ref-DPTF::UR_AccountRoleBurn c-rbt ats-sc))
+                        (c-rbt-mint-role:bool (ref-DPTF::UR_AccountRoleMint c-rbt ats-sc))
                     )
                     (if (not c-fr)
                         (XC_SetMassRole patron atspair true)
                         true
                     )
                     (if (not c-rbt-burn-role)
-                        (DPTF|C_ToggleBurnRole patron c-rbt ATS|SC_NAME true)
+                        (DPTF|C_ToggleBurnRole patron c-rbt ats-sc true)
                         true
                     )
                     (if (not c-rbt-fer)
-                        (DPTF|C_ToggleFeeExemptionRole patron c-rbt ATS|SC_NAME true)
+                        (DPTF|C_ToggleFeeExemptionRole patron c-rbt ats-sc true)
                         true
                     )
                     (if (not c-rbt-mint-role)
-                        (DPTF|C_ToggleMintRole patron c-rbt ATS|SC_NAME true)
+                        (DPTF|C_ToggleMintRole patron c-rbt ats-sc true)
                         true
                     )
                 )
-                (let*
+                (let
                     (
                         (h-rbt:string (UR_HotRewardBearingToken atspair))
                         (h-fr:bool (UR_HotRecoveryFeeRedirection atspair))
-                        (h-rbt-burn-role:bool (ref-DPMF::UR_AccountRoleBurn h-rbt ATS|SC_NAME))
-                        (h-rbt-create-role:bool (ref-DPMF::UR_AccountRoleCreate h-rbt ATS|SC_NAME))
-                        (h-rbt-add-q-role:bool (ref-DPMF::UR_AccountRoleNFTAQ h-rbt ATS|SC_NAME))
+                        (h-rbt-burn-role:bool (ref-DPMF::UR_AccountRoleBurn h-rbt ats-sc))
+                        (h-rbt-create-role:bool (ref-DPMF::UR_AccountRoleCreate h-rbt ats-sc))
+                        (h-rbt-add-q-role:bool (ref-DPMF::UR_AccountRoleNFTAQ h-rbt ats-sc))
                     )
                     (if (not h-fr)
                         (XC_SetMassRole patron atspair true)
                         true
                     )
                     (if (not h-rbt-burn-role)
-                        (DPMF|C_ToggleBurnRole patron h-rbt ATS|SC_NAME true)
+                        (DPMF|C_ToggleBurnRole patron h-rbt ats-sc true)
                         true
                     )
                     (if (not h-rbt-create-role)
-                        (DPMF|C_MoveCreateRole patron h-rbt ATS|SC_NAME)
+                        (DPMF|C_MoveCreateRole patron h-rbt ats-sc)
                         true
                     )
                     (if (not h-rbt-add-q-role)
-                        (DPMF|C_ToggleAddQuantityRole patron h-rbt ATS|SC_NAME true)
+                        (DPMF|C_ToggleAddQuantityRole patron h-rbt ats-sc true)
                         true
                     )
                 )
@@ -1842,19 +1863,20 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-sc:string ATS|SC_NAME)
             )
             (map
                 (lambda
                     (reward-token:string)
                     (let
                         (
-                            (rt-br:bool (ref-DPTF::UR_AccountRoleBurn reward-token ATS|SC_NAME))
-                            (rt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption reward-token ATS|SC_NAME))
+                            (rt-br:bool (ref-DPTF::UR_AccountRoleBurn reward-token ats-sc))
+                            (rt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption reward-token ats-sc))
                         )
                         (if (and (= rt-br false) burn-or-exemption)
-                            (DPTF|C_ToggleBurnRole patron reward-token ATS|SC_NAME true)        
+                            (DPTF|C_ToggleBurnRole patron reward-token ats-sc true)        
                             (if (and (= rt-fer false) (= burn-or-exemption false))
-                                (DPTF|C_ToggleFeeExemptionRole patron reward-token ATS|SC_NAME true)
+                                (DPTF|C_ToggleFeeExemptionRole patron reward-token ats-sc true)
                                 true
                             )
                         )

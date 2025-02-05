@@ -2,38 +2,29 @@
 (module DPMF GOV
     ;;
     (implements OuronetPolicy)
-    (implements DalosSchemas)
     (implements DemiourgosPactMetaFungible)
     ;;{G1}
     (defconst GOV|MD_DPMF           (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|DPMF_ADMIN))
-    )
-    (defcap GOV|DPMF_ADMIN ()
-        (enforce-guard GOV|MD_DPMF)
-    )
+    (defcap GOV ()                  (compose-capability (GOV|DPMF_ADMIN)))
+    (defcap GOV|DPMF_ADMIN ()       (enforce-guard GOV|MD_DPMF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (ref-DALOS::GOV|Demiurgoi)
-        )
-    )
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S}) 
     ;;{P3}
-    (defcap P|DALOS|UP_BLC ()
-        true
-    )
     (defcap P|DALOS|UP_ELT ()
         true
     )
     (defcap P|DPTF|UP_VST ()
+        true
+    )
+    (defcap P|DPMF|BRD ()
+        true
+    )
+    (defcap P|DPMF|CALLER ()
         true
     )
     ;;{P4}
@@ -51,18 +42,27 @@
         (let
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
-            )
-            (ref-P|DALOS::P|A_Add 
-                "DPMF|UpPrBl"
-                (create-capability-guard (P|DALOS|UP_BLC))
             )
             (ref-P|DALOS::P|A_Add 
                 "DPMF|UpdateElite"
                 (create-capability-guard (P|DALOS|UP_ELT))
             )
+            (ref-P|BRD::P|A_Add 
+                "DPMF|Branding"
+                (create-capability-guard (P|DPMF|BRD))
+            )
+            (ref-P|BRD::P|A_Add 
+                "DPMF|Caller"
+                (create-capability-guard (P|DPMF|CALLER))
+            )
             (ref-P|DPTF::P|A_Add 
-                "DPMF|UpVes"
+                "DPMF|UpdateVesting"
+                (create-capability-guard (P|DPTF|UP_VST))
+            )
+            (ref-P|DPTF::P|A_Add 
+                "DPMF|UpdateVesting"
                 (create-capability-guard (P|DPTF|UP_VST))
             )
         )
@@ -70,8 +70,6 @@
     ;;
     ;;{1}
     (defschema DPMF|PropertiesSchema
-        branding:object{DalosSchemas.BrandingSchema}
-        branding-pending:object{DalosSchemas.BrandingSchema}
         owner-konto:string
         name:string
         ticker:string
@@ -112,33 +110,8 @@
     (deftable DPMF|BalanceTable:{DPMF|BalanceSchema})
     (deftable DPMF|RoleTable:{DPMF|RoleSchema})
     ;;{3}
-    (defun CT_Bar ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_BAR)
-        )
-    )
-    (defun CT_DefaultBranding ()
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (ref-DPTF::CT_DefaultBranding)
-        )
-    )
-    (defun CT_SocialEmpty ()
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (ref-DPTF::CT_SocialEmpty)
-        )
-    )
-    (defconst BAR (CT_Bar))
-    (defconst BRANDING|DEFAULT (CT_DefaultBranding))
-    (defconst SOCIAL|EMPTY (CT_SocialEmpty))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))    
+    (defconst BAR                   (CT_Bar))
     (defconst DPMF|NEUTRAL
         { "nonce": 0
         , "balance": 0.0
@@ -152,9 +125,6 @@
     ;;
     ;;{C1}
     (defcap SECURE ()
-        true
-    )
-    (defcap DALOS|EXECUTOR ()
         true
     )
     (defcap DPMF|CREDIT ()
@@ -257,10 +227,16 @@
         )
     )
     ;;{C3}
-    (defcap DPMF|F>OWNER (id:string)
-        (CAP_Owner id)
-    )
     ;;{C4}
+    (defcap DPMF|C>UPDATE-BRD (id:string)
+        @event
+        (CAP_Owner id)
+        (compose-capability (P|DPMF|CALLER))
+    )
+    (defcap DPMF|C>UPGRADE-BRD (id:string)
+        @event
+        (compose-capability (P|DPMF|CALLER))
+    )
     (defcap BASIS|C>X_WRITE-ROLES (id:string account:string rp:integer)
         (let
             (
@@ -409,40 +385,6 @@
     )
     (defun UR_KEYS:[string] ()
         (keys DPMF|BalanceTable)
-    )
-    (defun UR_Branding:object{DalosSchemas.BrandingSchema} (id:string pending:bool)
-        (UEV_id id)
-        (if pending
-            (with-read DPMF|PropertiesTable id
-                { "branding-pending" := b }
-                b
-            )
-            (with-read DPMF|PropertiesTable id
-                { "branding" := b }
-                b
-            )
-        )
-    )
-    (defun URB_Logo:string (id:string pending:bool)
-        (at "logo" (UR_Branding id pending))
-    )
-    (defun URB_Description:string (id:string pending:bool)
-        (at "description" (UR_Branding id pending))
-    )
-    (defun URB_Website:string (id:string pending:bool)
-        (at "website" (UR_Branding id pending))
-    )
-    (defun URB_Social:[object{DalosSchemas.SocialSchema}] (id:string pending:bool)
-        (at "social" (UR_Branding id pending))
-    )
-    (defun URB_Flag:integer (id:string pending:bool)
-        (at "flag" (UR_Branding id pending))
-    )
-    (defun URB_Genesis:time (id:string pending:bool)
-        (at "genesis" (UR_Branding id pending))
-    )
-    (defun URB_PremiumUntil:time (id:string pending:bool)
-        (at "premium-until" (UR_Branding id pending))
     )
     (defun UR_Konto:string (id:string)
         (at "owner-konto" (read DPMF|PropertiesTable id ["owner-konto"]))
@@ -947,6 +889,40 @@
     ;;
     ;;{F5}
     ;;{F6}
+    (defun C_UpdatePendingBranding (patron:string id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for DPMF Token <id> costing 150 IGNIS"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_Konto id))
+                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
+                (final-cost:decimal (* 1.5 branding-cost))
+            )
+            (with-capability (DPMF|C>UPDATE-BRD)
+                (ref-BRD::X_UpdatePendingBranding id logo description website social)
+                (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
+            )
+        )
+    )
+    (defun C_UpgradeBranding (patron:string id:string months:integer)
+        @doc "Upgrades Branding for DPMF Token, making it a premium Branding. \
+        \ Also sets pending-branding to live branding if its branding is not live yet"
+        (enforce-guard (P|UR "TALOS|Summoner"))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_Konto id))
+                (kda-payment:decimal
+                    (with-capability (DPMF|C>UPGRADE-BRD)
+                        (ref-BRD::X_UpgradeBranding id owner months)
+                    )
+                )
+            )
+            (ref-DALOS::KDA|C_CollectWT patron kda-payment false)
+        )
+    )
     (defun C_RotateOwnership (patron:string id:string new-owner:string)
         @doc "Rotates DPMF ID Ownership"
         (let
@@ -1195,7 +1171,7 @@
         )
     )
     (defun X_UpdateVesting (dptf:string dpmf:string)
-        (enforce-guard (P|UR "VST|UpVes"))
+        (enforce-guard (P|UR "VST|UpdateVesting"))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -1272,17 +1248,6 @@
                 folded-lst
             )
         ) 
-    )
-    (defun X_UpdateBranding (id:string pending:bool branding:object{DalosSchemas.BrandingSchema})
-        (enforce-guard (P|UR "BRD|Update"))
-        (if pending
-            (update DPMF|PropertiesTable id
-                {"branding-pending" : branding}
-            )
-            (update DPMF|PropertiesTable id
-                {"branding" : branding}
-            )
-        )
     )
     (defun X_ChangeOwnership (id:string new-owner:string)
         (require-capability (DPMF|S>RT_OWN id new-owner))
@@ -1362,7 +1327,7 @@
         )
     )
     (defun X_UpdateRewardBearingToken (atspair:string id:string)
-        (enforce-guard (P|UR "ATSM|Caller"))
+        (enforce-guard (P|UR "ATSU|Caller"))
         (UEV_UpdateRewardBearingToken id)
         (update DPMF|PropertiesTable id
             {"reward-bearing-token" : atspair}
@@ -1378,7 +1343,7 @@
         )
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
             )
             (with-capability (BASIS|C>X_WRITE-ROLES id account rp)
                 (with-default-read DPMF|RoleTable id
@@ -1676,19 +1641,19 @@
             can-pause:bool
             can-transfer-nft-create-role:bool
         )
+        (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-BRD:module{Branding} BRD)
                 (id:string (ref-U|DALOS::UDC_Makeid ticker))
             )
             (ref-U|DALOS::UEV_Decimals decimals)
             (ref-U|DALOS::UEV_NameOrTicker name true false)
             (ref-U|DALOS::UEV_NameOrTicker ticker false false)
-            (require-capability (SECURE))
+            (ref-BRD::X_Issue id)
             (insert DPMF|PropertiesTable id
-                {"branding"             : BRANDING|DEFAULT
-                ,"branding-pending"     : BRANDING|DEFAULT
-                ,"owner-konto"          : account
+                {"owner-konto"          : account
                 ,"name"                 : name
                 ,"ticker"               : ticker
                 ,"decimals"             : decimals

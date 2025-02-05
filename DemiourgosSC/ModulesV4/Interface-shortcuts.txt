@@ -5,31 +5,45 @@
 (ref-U|LST:module{StringProcessor} U|LST)
 (ref-U|INT:module{OuronetIntegers} U|INT)
 (ref-U|DEC:module{OuronetDecimals} U|DEC)
-(ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
-(ref-U|ATS:module{Ouronet4Ats} U|ATS)
-(ref-U|DPTF:module{Ouronet4Dptf} U|DPTF)
-(ref-U|VST:module{Ouronet4Vst} U|VST)
-(ref-U|BFS:module{Ouronet4Bfs} U|BFS)
+(ref-U|DALOS:module{UtilityDalos} U|DALOS)
+(ref-U|ATS:module{UtilityAts} U|ATS)
+(ref-U|DPTF:module{UtilityDptf} U|DPTF)
+(ref-U|SWP:module{UtilityVst} U|VST)
+(ref-U|VST:module{UtilitySwp} U|SWP)
+(ref-U|BFS:module{BreadthFirstSearch} U|BFS)
 
 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+(ref-P|BRD:module{OuronetPolicy} BRD)
 (ref-P|DPTF:module{OuronetPolicy} DPTF)
 (ref-P|DPMF:module{OuronetPolicy} DPMF)
 (ref-P|ATS:module{OuronetPolicy} ATS)
 (ref-P|TFT:module{OuronetPolicy} TFT)
+(ref-P|ATSU:module{OuronetPolicy} ATSU)
+(ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+(ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
 
 (ref-DALOS:module{OuronetDalos} DALOS)
+(ref-BRD:module{Branding} BRD)
 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
 (ref-ATS:module{Autostake} ATS)
-(ref-TFT:module{Autostake} TFT)
+(ref-TFT:module{TrueFungibleTransfer} TFT)
+(ref-ATSU:module{Autostake} ATSU)
+(ref-LIQUID:module{Autostake} LIQUID)
+(ref-ORBR:module{Autostake} OUROBOROS)
+
 
 ;;>>>>>>>>>>>>>
 
 ref-DALOS::
+ref-BRD::
 ref-DPTF::
 ref-DPMF::
 ref-ATS::
 ref-TFT::
+ref-ATSU::
+ref-LIQUID::
+ref-ORBR::
 
 ref-U|CT::
 ref-U|G::
@@ -42,25 +56,30 @@ ref-U|DALOS::
 ref-U|ATS::
 ref-U|DPTF::
 ref-U|VST::
+ref-U|SWP::
 ref-U|BFS::
 
 ref-P|DALOS::
+ref-P|BRD::
 ref-P|DPTF::
 ref-P|DPMF::
 ref-P|ATS::
 ref-P|TFT::
+ref-P|ATSU::
+ref-P|LIQUID::
+ref-P|ORBR::
 
 
 
 
 (bar:string (ref-U|CT::CT_BAR))
 
-    ;;{F0}
-    ;;{F1}
-    ;;{F2}
-    ;;{F3}
-    ;;{F4}
-    ;;
-    ;;{F5}
-    ;;{F6}
-    ;;{F7}
+;;{F0}
+;;{F1}
+;;{F2}
+;;{F3}
+;;{F4}
+
+;;{F5}
+;;{F6}
+;;{F7}

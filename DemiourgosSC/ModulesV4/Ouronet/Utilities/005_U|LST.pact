@@ -17,19 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
-    (defun UEV_NotEmpty:bool (x:list)
-        @doc "Verify and Enforces that a list is not empty"
-        (enforce (UC_IsNotEmpty x) "List cannot be empty")
-    )
+    ;;{F-UC}
     (defun UC_SplitString:[string] (splitter:string splitee:string)
         @doc "Splits a string using a single string as splitter"
         (if (= 0 (length splitee))
@@ -56,6 +48,26 @@
                 (UC_RemoveItem (zip (match) searchee indexes) -1)
             )
             []
+        )
+    )
+    (defun UC_KeepEndMatch:[string] (in:[string] match:string)
+        @doc "From a list of strings, keep only those that match at the end"
+        (let
+            (
+                (l:integer (length match))
+                (t:integer (- 0 l))
+            )
+            (fold 
+                (lambda 
+                    (acc:[string] item:string)
+                    (if (= (take t item) match)
+                        (UC_AppL acc item)
+                        acc
+                    )
+                )
+                [] 
+                in
+            )
         )
     )
     (defun UC_ReplaceItem:list (in:list old-item new-item)
@@ -110,7 +122,6 @@
             true  ; If all items are unique, the function returns true
         )
     )
-    
     (defun UC_FE (in:list)
         @doc "Returns the first item of a list"
         (UEV_NotEmpty in)
@@ -138,9 +149,26 @@
         @doc "Return true if the list is not empty"
         (< 0 (length x))
     )
-    
     (defun UC_Chain:list (in:list)
         @doc "Chain list of lists"
         (fold (+) [] in)
     )
+    ;;{F_UR}
+    ;;{F-UEV}
+    (defun UEV_NotEmpty:bool (x:list)
+        @doc "Verify and Enforces that a list is not empty"
+        (enforce (UC_IsNotEmpty x) "List cannot be empty")
+    )
+    (defun UEV_StringPresence (item:string item-lst:[string])
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (bar:string (ref-U|CT::CT_BAR))
+                (iz-present:bool (contains item item-lst))
+            )
+            (enforce (!= item-lst [bar]) "Empty List detected!")
+            (enforce iz-present (format "String {} is not present in list {}." [item item-lst]))
+        )
+    )
+    ;;{F-UDC}
 )

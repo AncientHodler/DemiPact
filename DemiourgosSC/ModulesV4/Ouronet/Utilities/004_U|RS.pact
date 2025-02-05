@@ -17,15 +17,13 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
+    ;;{F_UR}
+    ;;{F-UEV}
     (defun UEV_EnforceReserved:bool (account:string guard:guard)
         @doc "Enforce reserved account name protocols"
         (if 
@@ -61,4 +59,6 @@
             )
         )
     )
+    ;;{F-UDC}
+    
 )

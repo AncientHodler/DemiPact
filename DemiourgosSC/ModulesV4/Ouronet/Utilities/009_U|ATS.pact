@@ -1,6 +1,6 @@
 (module U|ATS GOV
     ;;
-    (implements Ouronet4Ats)
+    (implements UtilityAts)
     ;;{G1}
     ;;{G2}
     (defcap GOV ()
@@ -17,49 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
-    (defun UEV_UniqueAtspair (ats:string)
-        @doc "Enforces that an Unique Account designating an <ats> ID meets charset and length requirements \
-        \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
-        (UEV_AutostakeIndex (take (- (length ats) 13) ats))
-    )
-    (defun UEV_AutostakeIndex (ats:string)
-        @doc "Enforces that ATS Index Name <account> ID meets charset and length requirements"
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (aic (ref-U|CT::CT_ACCOUNT_ID_CHARSET))
-                (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
-                (min:integer (ref-U|CT::MIN_DESIGNATION_LENGTH))
-                (max:integer (ref-U|CT::ACCOUNT_ID_MAX_LENGTH))
-                (al:integer (length ats))
-            )
-            (enforce
-                (is-charset aic ats)
-                (format "Account ID does not conform to the required charset: {}" [ats])
-            )
-            (enforce
-                (not (contains ats aipc))
-                (format "Account ID contained a prohibited character: {}" [ats])
-            )
-            (enforce
-                (>= al min)
-                (format "Account ID does not conform to the min length requirement: {}" [ats])
-              )
-              (enforce
-                (<= al max)
-                (format "Account ID does not conform to the max length requirement: {}" [ats])
-              )
-        )
-    )
+    ;;{F-UC}
     (defun UC_TripleAnd:bool (b1:bool b2:bool b3:bool)
         (and (and b1 b2) b3)
     )
@@ -74,6 +36,17 @@
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
             )
             (ref-U|DEC::UC_UnlockPrice unlocks false)
+        )
+    )
+    (defun UC_PromilleSplit:[decimal] (promille:decimal input:decimal input-precision:integer)
+        @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
+        (let*
+            (
+                (ref-U|DEC:module{StringProcessor} U|DEC)
+                (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
+                (remainder:decimal (- input fee))
+            )
+            [remainder fee]
         )
     )
     (defun UC_MakeSoftIntervals:[integer] (start:integer growth:integer)
@@ -212,17 +185,134 @@
             )
         )
     )
-    (defun UC_PromilleSplit:[decimal] (promille:decimal input:decimal input-precision:integer)
-        @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
+    (defun UC_IzCullable:bool (input:object{UtilityAts.Awo})
         (let*
             (
-                (ref-U|DEC:module{StringProcessor} U|DEC)
-                (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
-                (remainder:decimal (- input fee))
+                (present-time:time (at "block-time" (chain-data)))
+                (stored-time:time (at "cull-time" input))
+                (diff:decimal (diff-time present-time stored-time))
             )
-            [remainder fee]
+            (if (>= diff 0.0)
+                true
+                false
+            )
         )
     )
+    (defun UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
+        (not 
+            (UC_TripleAnd
+                (= (length fee-thresholds) 1)
+                (= (at 0 fee-thresholds) 0.0)
+                (UC_TripleAnd
+                    (= (length fee-array) 1)
+                    (= (length (at 0 fee-array)) 1)
+                    (= (at 0 (at 0 fee-array)) 0.0)
+                )
+            )
+        )
+    )
+    (defun UC_MultiReshapeUnstakeObject:[object{UtilityAts.Awo}] (input:[object{UtilityAts.Awo}] remove-position:integer)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[object{UtilityAts.Awo}] item:object{UtilityAts.Awo})
+                    (ref-U|LST::UC_AppL 
+                        acc 
+                        (UC_ReshapeUnstakeObject item remove-position)
+                    )
+                )
+                []
+                input
+            )
+        )
+    )
+    (defun UC_ReshapeUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
+        (let
+            (
+                (is-valid:bool (UC_IzUnstakeObjectValid input))
+            )
+            (if is-valid
+                (UC_SolidifyUnstakeObject input remove-position)
+                input
+            )
+        )
+    )
+    (defun UC_IzUnstakeObjectValid:bool (input:object{UtilityAts.Awo})
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (sum-values:decimal (fold (+) 0.0 values))
+            )
+            (if (> sum-values 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun UC_SolidifyUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (cull-time:time (at "cull-time" input))
+                (how-many-rts:integer (length values))
+            )
+            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
+            (let*
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (primal:decimal (at 0 (at "reward-tokens" input)))
+                    (removee:decimal (at remove-position (at "reward-tokens" input)))
+                    (remove-lst:[decimal] (ref-U|LST::UC_RemoveItemAt values remove-position))
+                    (new-values:[decimal] (ref-U|LST::UC_ReplaceAt remove-lst 0 (+ primal removee)))
+                )
+                { "reward-tokens"   : new-values
+                , "cull-time"       : cull-time}
+            )
+        )
+    )
+    ;;{F_UR}
+    ;;{F-UEV}
+    (defun UEV_UniqueAtspair (ats:string)
+        @doc "Enforces that an Unique Account designating an <ats> ID meets charset and length requirements \
+        \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
+        (UEV_AutostakeIndex (take (- (length ats) 13) ats))
+    )
+    (defun UEV_AutostakeIndex (ats:string)
+        @doc "Enforces that ATS Index Name <account> ID meets charset and length requirements"
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
+                (min:integer (ref-U|CT::MIN_DESIGNATION_LENGTH))
+                (max:integer (ref-U|CT::ACCOUNT_ID_MAX_LENGTH))
+                (al:integer (length ats))
+            )
+            (enforce
+                (is-charset 0 ats)
+                (format "Account ID does not conform to the required charset: {}" [ats])
+            )
+            (enforce
+                (not (contains ats aipc))
+                (format "Account ID contained a prohibited character: {}" [ats])
+            )
+            (enforce
+                (ref-U|DALOS::UC_IzStringANC ats false)
+                "Atspair does not conform character-wise (Alphanumeric)"
+            )
+            (enforce
+                (and
+                    (>= al min)
+                    (<= al max)
+                )
+                "Atspair does not conform to the ATS-Pair Standards for Size!"
+            )
+        )
+    )
+    ;;{F-UDC}
     (defun UDC_Elite (x:decimal)
         @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (let
@@ -360,95 +450,4 @@
             )
         )
     )
-    ;;
-    (defun UC_IzCullable:bool (input:object{Ouronet4Ats.Awo})
-        (let*
-            (
-                (present-time:time (at "block-time" (chain-data)))
-                (stored-time:time (at "cull-time" input))
-                (diff:decimal (diff-time present-time stored-time))
-            )
-            (if (>= diff 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
-        (not 
-            (UC_TripleAnd
-                (= (length fee-thresholds) 1)
-                (= (at 0 fee-thresholds) 0.0)
-                (UC_TripleAnd
-                    (= (length fee-array) 1)
-                    (= (length (at 0 fee-array)) 1)
-                    (= (at 0 (at 0 fee-array)) 0.0)
-                )
-            )
-        )
-    )
-    (defun UC_MultiReshapeUnstakeObject:[object{Ouronet4Ats.Awo}] (input:[object{Ouronet4Ats.Awo}] remove-position:integer)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[object{Ouronet4Ats.Awo}] item:object{Ouronet4Ats.Awo})
-                    (ref-U|LST::UC_AppL 
-                        acc 
-                        (UC_ReshapeUnstakeObject item remove-position)
-                    )
-                )
-                []
-                input
-            )
-        )
-    )
-    (defun UC_ReshapeUnstakeObject:object{Ouronet4Ats.Awo} (input:object{Ouronet4Ats.Awo} remove-position:integer)
-        (let
-            (
-                (is-valid:bool (UC_IzUnstakeObjectValid input))
-            )
-            (if is-valid
-                (UC_SolidifyUnstakeObject input remove-position)
-                input
-            )
-        )
-    )
-    (defun UC_IzUnstakeObjectValid:bool (input:object{Ouronet4Ats.Awo})
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (sum-values:decimal (fold (+) 0.0 values))
-            )
-            (if (> sum-values 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun UC_SolidifyUnstakeObject:object{Ouronet4Ats.Awo} (input:object{Ouronet4Ats.Awo} remove-position:integer)
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (cull-time:time (at "cull-time" input))
-                (how-many-rts:integer (length values))
-            )
-            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
-            (let*
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (primal:decimal (at 0 (at "reward-tokens" input)))
-                    (removee:decimal (at remove-position (at "reward-tokens" input)))
-                    (remove-lst:[decimal] (ref-U|LST::UC_RemoveItemAt values remove-position))
-                    (new-values:[decimal] (ref-U|LST::UC_ReplaceAt remove-lst 0 (+ primal removee)))
-                )
-                { "reward-tokens"   : new-values
-                , "cull-time"       : cull-time}
-            )
-        )
-    )
-    
-    
 )

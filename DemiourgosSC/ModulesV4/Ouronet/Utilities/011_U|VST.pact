@@ -1,6 +1,6 @@
 (module U|VST GOV
     ;;
-    (implements Ouronet4Vst)
+    (implements UtilityVst)
     ;;{G1}
     ;;{G2}
     (defcap GOV ()
@@ -17,30 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
-    (defun UEV_Milestone (milestones:integer)
-        @doc "Restrict Milestone integer between 1 and 365 Milestones"
-        (enforce 
-            (and (>= milestones 1) (<= milestones 365)) 
-            (format "Milestone splitting number {} is out of bounds"[milestones])
-        )
-    )
-    (defun UEV_MilestoneWithTime (offset:integer duration:integer milestones:integer)
-        @doc "Validates Milestone duration to be lower than 25 years"
-        (UEV_Milestone milestones)
-        (enforce
-            (<= (+ (* milestones duration ) offset) 788400000) 
-            "Total Vesting Time cannot be greater than 25 years"
-        )
-    )
+    ;;{F-UC}
     (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)
         @doc "Splits an Amount according to vesting parameters"
         (UEV_Milestone milestones)
@@ -85,4 +66,40 @@
             )
         )
     )
+    (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (max-name:integer (ref-U|CT::CT_MAX_TOKEN_NAME_LENGTH))
+                (max-ticker:integer (ref-U|CT::CT_MAX_TOKEN_TICKER_LENGTH))
+                (s1:string "Vested")
+                (s2:string "W")
+                (l1:integer (- max-name (length s1)))
+                (l2:integer (- max-ticker (length s2)))
+                (vested-name:string (concat [s1 (take l1 dptf-name)]))
+                (vested-ticker:string (concat [s2 (take l2 dptf-ticker)]))
+            )
+            [vested-name vested-ticker]
+        )
+    )
+    ;;{F_UR}
+    ;;{F-UEV}
+    (defun UEV_Milestone (milestones:integer)
+        @doc "Restrict Milestone integer between 1 and 365 Milestones"
+        (enforce 
+            (and (>= milestones 1) (<= milestones 365)) 
+            (format "Milestone splitting number {} is out of bounds"[milestones])
+        )
+    )
+    (defun UEV_MilestoneWithTime (offset:integer duration:integer milestones:integer)
+        @doc "Validates Milestone duration to be lower than 25 years"
+        (UEV_Milestone milestones)
+        (enforce
+            (<= (+ (* milestones duration ) offset) 788400000) 
+            "Total Vesting Time cannot be greater than 25 years"
+        )
+    )
+    ;;{F-UDC}
+    
+    
 )

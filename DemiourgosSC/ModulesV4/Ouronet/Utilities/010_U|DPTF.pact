@@ -1,6 +1,6 @@
 (module U|DPTF GOV
     ;;
-    (implements Ouronet4Dptf)
+    (implements UtilityDptf)
     ;;{G1}
     ;;{G2}
     (defcap GOV ()
@@ -17,15 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
     (defun UC_UnlockPrice:[decimal] (unlocks:integer)
         @doc "Computes  ATS unlock price \
             \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"
@@ -64,4 +60,8 @@
             volumetric-permile
         )
     )
+    ;;{F_UR}
+    ;;{F-UEV}
+    ;;{F-UDC}
+    
 )

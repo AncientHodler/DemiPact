@@ -24,12 +24,9 @@
         (keyset-ref-guard GOV|DEMIURGOI)
     )
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
-    ;;{1}
+    ;{1}
+    ;{2}
+    ;{3}
     (defun CT_DPTF-FeeLock ()
         (if (or (= (CT_NS_USE) NS_TEST) (= (CT_NS_USE) "free"))
             1.0
@@ -47,7 +44,6 @@
     (defun CT_MAX_TOKEN_NAME_LENGTH () 50) 
     (defun CT_MAX_TOKEN_TICKER_LENGTH () 30)
 
-    (defun CT_ACCOUNT_ID_CHARSET () CHARSET_LATIN1)
     (defun CT_ACCOUNT_ID_PROH-CHAR () ["$" "¢" "£"])
     (defun CT_ACCOUNT_ID_MAX_LENGTH () 256)
     (defun CT_BAR () (at 0 ["|"]))
@@ -151,4 +147,8 @@
     (defun CT_N76 () (at 0 ["Master Demiurg"]))
     (defun CT_N77 () (at 0 ["Grand-Master Demiurg"]))
     ;;
+    ;;{F-UC}
+    ;;{F_UR}
+    ;;{F-UEV}
+    ;;{F-UDC}
 )

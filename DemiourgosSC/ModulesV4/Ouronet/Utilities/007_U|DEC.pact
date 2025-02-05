@@ -17,15 +17,11 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
     (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)
         (enforce (and (> percent 0.0)(<= percent 100.0)) "Invalid percent amount")
         (floor (* (/ percent 100.0) x) precision)
@@ -86,6 +82,25 @@
             )
         )
     )
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool)
+        @doc "Computes  ATS or DPTF unlock price \
+        \ Outputs [virtual-gas-costs native-gas-cost] \
+        \ Virtual Gas Token = IGNIS; Native Gas Token = KADENA"
+        (let*
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (dptf:decimal (ref-U|CT::CT_DPTF-FeeLock))
+                (ats:decimal (ref-U|CT::CT_ATS-FeeLock))
+                (multiplier:decimal (dec (+ unlocks 1)))
+                (base:decimal (if dptf-or-ats dptf ats))
+                (gas-cost:decimal (* base multiplier))
+                (gaz-cost:decimal (/ gas-cost 100.0))
+            )
+            [gas-cost gaz-cost]
+        )
+    )
+    ;;{F_UR}
+    ;;{F-UEV}
     (defun UEV_DecimalArray (array:[[decimal]])
         @doc "Enforces all inner list inside an array of decimal elements are of equal size"
         (enforce
@@ -112,22 +127,5 @@
             "All Fee-Array Lists must be of equal length !"
         )
     )
-    (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool)
-        @doc "Computes  ATS or DPTF unlock price \
-        \ Outputs [virtual-gas-costs native-gas-cost] \
-        \ Virtual Gas Token = IGNIS; Native Gas Token = KADENA"
-        (let*
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (dptf:decimal (ref-U|CT::CT_DPTF-FeeLock))
-                (ats:decimal (ref-U|CT::CT_ATS-FeeLock))
-                (multiplier:decimal (dec (+ unlocks 1)))
-                (base:decimal (if dptf-or-ats dptf ats))
-                (gas-cost:decimal (* base multiplier))
-                (gaz-cost:decimal (/ gas-cost 100.0))
-            )
-            [gas-cost gaz-cost]
-        )
-    )
-
+    ;;{F-UDC}
 )

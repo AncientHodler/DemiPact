@@ -17,15 +17,23 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
     ;;
+    ;;{F-UC}
+    (defun UC_MaxInteger:integer (lst:[integer])
+        (fold
+            (lambda
+                (acc:integer element:integer)
+                (if (> element acc) element acc)
+            )
+            (at 0 lst)
+            (drop 1 lst)
+        )
+    )
+    ;;{F_UR}
+    ;;{F-UEV}
     (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string)
         @doc "Validates a number (positions-number) as positional variable"
         (enforce (= (contains integer-to-validate (enumerate 1 positions)) true) message)
@@ -69,14 +77,6 @@
             )
         )
     )
-    (defun UC_MaxInteger:integer (lst:[integer])
-        (fold
-            (lambda
-                (acc:integer element:integer)
-                (if (> element acc) element acc)
-            )
-            (at 0 lst)
-            (drop 1 lst)
-        )
-    )
+    ;;{F-UDC}
+    
 )

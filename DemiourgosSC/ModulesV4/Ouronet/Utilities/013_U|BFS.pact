@@ -17,11 +17,6 @@
     )
     ;;{G3}
     ;;
-    ;;{P1}
-    ;;{P2}
-    ;;{P3}
-    ;;{P4}
-    ;;
     ;;{1}
     ;;{2}
     ;;{3}
@@ -50,6 +45,7 @@
         }
     )
     ;;
+    ;;{F-UC}
     (defun UC_BFS:object{BreadthFirstSearch.BFS} (graph:[object{BreadthFirstSearch.GraphNode}] in:string)
         (fold
             (lambda
@@ -244,6 +240,9 @@
             (+ to-extend elements)
         )
     )
+    ;;{F_UR}
+    ;;{F-UEV}
+    ;;{F-UDC}
     (defun UDC_ExtendChain:object{BreadthFirstSearch.QE} (input:object{BreadthFirstSearch.QE} element:string)
         @doc "Extends a Que Element with a new element"
         (let

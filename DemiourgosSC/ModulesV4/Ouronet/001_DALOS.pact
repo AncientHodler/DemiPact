@@ -3,25 +3,16 @@
     (use coin)
     ;;
     (implements OuronetPolicy)
-    (implements DalosSchemas)
     (implements OuronetDalos)
     ;;{G1}
-    (defconst NS_USE (GOV|NS_Use))
-    (defconst GOV|MD_DALOS          (keyset-ref-guard DALOS|DEMIURGOI))
+    (defconst GOV|MD_DALOS          (keyset-ref-guard (GOV|Demiurgoi)))
     (defconst GOV|SC_DALOS          (keyset-ref-guard DALOS|SC_KEY))
-    (defconst DALOS|DEMIURGOI       (GOV|Demiurgoi))
 
-    (defconst DALOS|SC_KEY          (+ NS_USE ".dh_sc_dalos-keyset"))
-    (defconst DALOS|SC_KDA-NAME     (create-principal DALOS|GUARD))
-    (defconst DALOS|GUARD           (create-capability-guard (DALOS|NATIVE-AUTOMATIC)))
-
+    (defconst DALOS|SC_KEY          (GOV|DalosKey)) 
     (defconst DALOS|SC_NAME         (GOV|DALOS|SC_NAME))
-    (defconst LIQUID|SC_NAME        (GOV|LIQUID|SC_NAME))
-    (defconst OUROBOROS|SC_NAME     (GOV|OUROBOROS|SC_NAME))
+    (defconst DALOS|SC_KDA-NAME     (GOV|DALOS|SC_KDA-NAME))
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|DALOS_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|DALOS_ADMIN)))
     (defcap GOV|DALOS_ADMIN ()
         (enforce-one
             "DALOS Admin not satisfed"
@@ -36,18 +27,30 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (+ NS_USE ".dh_master-keyset"))
+    (defun GOV|DALOS|SC_KDA-NAME () (create-principal (create-capability-guard (DALOS|NATIVE-AUTOMATIC))))
+    ;;
+    (defun GOV|NS_Use ()            (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|Demiurgoi ()         (+ (GOV|NS_Use) ".dh_master-keyset"))
+    (defun GOV|DalosKey ()          (+ (GOV|NS_Use) ".dh_sc_dalos-keyset"))
+    (defun GOV|AutostakeKey ()      (+ (GOV|NS_Use) ".dh_sc_autostake-keyset"))
+    (defun GOV|VestingKey ()        (+ (GOV|NS_Use) ".dh_sc_vesting-keyset"))
+    (defun GOV|LiquidKey ()         (+ (GOV|NS_Use) ".dh_sc_kadenaliquidstaking-keyset"))
+    (defun GOV|OuroborosKey ()      (+ (GOV|NS_Use) ".dh_sc_ouroboros-keyset"))
+    (defun GOV|SwapKey ()           (+ (GOV|NS_Use) ".dh_sc_swapper-keyset"))
+    ;;
     (defun GOV|DALOS|SC_NAME ()     (at 0 ["Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ"]))
+    (defun GOV|ATS|SC_NAME ()       (at 0 ["Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ"]))
+    (defun GOV|VST|SC_NAME ()       (at 0 ["Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ"]))
     (defun GOV|LIQUID|SC_NAME ()    (at 0 ["Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ"]))
     (defun GOV|OUROBOROS|SC_NAME () (at 0 ["Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ"]))
-    (defun GOV|NS_Use ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_NS_USE)
-        )
-    )
+    (defun GOV|SWP|SC_NAME ()       (at 0 ["Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ"]))
+    ;;
+    (defun GOV|DALOS|PBL ()         (at 0 ["9G.DwF3imJMCp4ht88DD1vx6pdjEkLM4j7Fvzso8zJF7Ixe1p2oKfGb53a5svtEF0Lz1q4MjvHaMrgqCfjlA1cBj2bzvs86EeLIMg2fmutzwbA5vI4woKoqq0acDHllAonxC4qLBulsLclMGwcw9iGxiw919t4tfD8FpcIc4MJ059ki7giFIAyCghgMwwr199v3qiDfIon426rbz1jMLmCe4jhHwD3sEarwMlmzLJ5li43J70CEDzouh7x8pu4u1GxJHa6Cabrsc147gIlzIdDmCC2j87LFpEdvqLge9o0w4av8mLr0lDAfalpnEabfkl0E6zE9KMG7LH2w7uvBIup3Hxxxu2Giwu29Cqye3fJ5ihcjacop4vtcLsi33ip742uAhGzjHaDLwAh933ntp8tEC1zkt9yi6n89JtsDLk477p80rscbGtsi14nxsMf7y0d7GxzE8FFmljElu5yE3vx25cEvc9574Hw4iIi23FFKfdhGF77LMqaBkDB9hJKmpc1B2rM1a8mfilyvLAdzpj57Ae5FG5vvm1n1nzgau373dBF7CuBAu2zbts09du55"]))
+    (defun GOV|ATS|PBL ()           (at 0 ["9H.9I8veD6Lqmcd5nKlb1vlHkg976FhdtooE3iH73h8i2Gq9tLKdclnpo07sC29i2yvMeuB0ikkKghiIgdAfkfDiM57o2phj2quCD8gutjIgDs6AlecMtw2lG6kMMBxBH4B5d1xqhpzA7AHkgEqF7Hgqwpx6E5aIMAtqxIpMhjyqziDiwLA69dKlhlwpjoze34Bwz6swBjlA880ItKfwxtulKEJG9oI3Gjmwgn6bbAgL7xy4brdbgK5DukMBHc0K1jIs1DjcDzhJz2liKultB67rKaBf3nMHMkbzhwl1hdu2wBCeHMLLphug2kE3tDtpxw6kLcj80qfBxvwmuxbeHjk349Md2B7eB4brt8fldi2CxGltfj41KA7GkgmtMa6szivDl5aCk9ozab9ohrsfBHikGL7GJ5Az4A2a8ufnIAJIz2mAgwGDmsAl7yyavbx12e5KhFFupclbKadmiFx8dvqkqwziu4vtt3AcKDhl96EzhuiKAF49vGoaAMo5vxM4h0t94nscG8IGl33De5MJGCpdf3g23D13eJ9BDi034wECutafzao4zzCe9IyvD3E"]))
+    (defun GOV|VST|PBL ()           (at 0 ["9G.5s5hoiGo96tMqyh3JBklmsvo8Lc3ol9m6zavJcCuqg4mBvkbDfcv5gEorMit8v8Mj9Jc18EI36Gq7cJ1IyA4e4wvl199KuCx3chsDKGDdfsvzk8mo317ulGk00pbxu7MLc2zw7joouaxt3Ax1KnlJz153ko0JtIxz7pqylfis45pDo2vvm1MH2kA2wmE2crxiEo6oEckuGqzz8oEaa9ez8ADLyqnj48lq4jGp4slkKo6a06ElezH619fsihIdmiMdfB036CJAr0rlzA2b5DgvEJcoyIFioru7vynBjLMLv3pvLFnbFeswrlyLjF8ry7kB52cD7bD7xaamCEjgIC2DsKMv5Mrd69BIKn2yKHC86f0hme9zs5dwMekAd6mc4wM4bDAk6Jrsl6s74ykKLF71pk45rIE1xxzFC4EjykBf6G0neBdaExI32HufaE5mEloDtvnC6vJ7HA9akkI3616MnLErA8eMIn7Kr2wI4l9CvGpKcF9HilzJmdqMa4kzJwqzuFc9LhDnrKcu0LvBHqsx2CrCM9EwHqpkkGe7w8eK8x0xK6K8drLaoBKmaB1"]))
+    (defun GOV|LIQUID|PBL ()        (at 0 ["9H.b49lfzLzvC25g87fst6MqCkfbuqq39iGu50gDqi9jBEk6Cn86w54b91zDxeGgLdCxIjJDfyi6gBBwA93lyGLcdfggf0LzwKu405piavx0nEnqpzyHK125h2BhECnobmDBAps61c7mGmw5GrczBjvBMLxHwl2avt5jwhKeGxh7Ibm1ui6wI6lpAKBMay4tvEwHK0EibhbeaA2lLqjIwqMKnldp22txeje3DFLautFC798ExbLxG7q3om8l1f9qpMJkw9f5nmHsHGJcrcIF2mou9lmpr3hbz64La6nF9w26h7osABLMLlK9Glp48yrj4h1MkI7xjftytKDnJFyqvoMFqKvA43cJ81bJCvmn63eJ9jx5n3GxFbc9H4v400iFwtyIilmhKymsa1iCnwL29g21DvkaE6JJyxl5eLCiGH3Ml1nb0jkg16zJbf9cfg41KHA0IGFIvLj9LBhj7okL6wspCEBfkc5Aui6DAM7dvAqH54LApEaAzIgyMloEmqvBgt5wF0lyd05xHxz4Mtb3ItGb5fLpzbMGqGKBffi4dElI7Hbs6Id0hCKGaeIg9JL"]))
+    (defun GOV|OUROBOROS|PBL ()     (at 0 ["9H.28jB2BBny4op601Cfqz9brFJKAEo67jbEDJi91i00pGjcD1Mpn0y0A1CxcAwGgBu35Ix3bG4e4p56Mu6x7Mmd50nKfmpDGtLy1ywyCjoDD5xiHBb0y5dAjB0fuokrqyx3ula9rtxyEHK1A4gkG4g3GEyysMtgF40IBgKjm7t8ffGshICIypFeF3gA5x0MixA0soiCx9tBnMDzI6G5xC8yIJJ3Bt2sCvJHAp7HAEA3rKK6Bgnx8hK94oDbgrpCkxw3zpo7tbeHhcakzbg0ELG3EJvk19hyd9LC73t2gizl0B6puq3Ljji5EDAhzno7K32x8vCagc5D2GLiMfdzEzsj5KEe1c2p7hxj76lMvp40r9F56vzlK8Kb7mrKt90ILEMqCghLrok7D4uH8h28EGqbK75wiyguimc1jDGxthyBJFfApClymKA57ehqbv2Lyv323w44b0kIItu35fjmhe2DCBMwjn67ffDII97b6AdyG010wvAHf55xFt25Mbm2pflsggL4D5jHtokl7qn6g4ltM5ilvHvsxn7jHe23Cfgoxn1JssdFMBpcDvB2xki7"]))
+    (defun GOV|SWP|PBL ()           (at 0 ["9G.4Bl3bJ5o1eIoBkhynF39lFdvkA3E0n8m5fBr9iG4D6Ahj3xfop72b98rr33vFFLjqaiozE1btl7lgzKcjHwjzu5GuFqvMb43v9CHHe8je3buLbHMkcAyKdEMD85yIHsb9ty58Kzyado3ho1n1mf9GzpeegMrpK9wDFteeKexdL7HHq8GF7ptD2w45IkMf2A8j4pm7E6vJ1ytCckhclD9nd3JzL2j5cyLxawnE76leKmEmFaxqnF76yyJe5Mu6yLkg2yonJa6vx6jd1kr0hdEf81o42Asr8EcCDeeqD4nAehC3w3pFDMwbln4Mbl6t55GHGephx99LJKH1ojhlMlnyC4bbJFAiyD1h6vs0o7mKAaazFG9y0vfbvM9imcs1vCMmpk2cGDAAAqH6iJe32ugHA3AECEgCvxCskw4Mfx6Cc4rx2BkmKMlxeHqyDceI6wa2qjzuyI80vKg6H6tMwEg48H0ywIMDyxteDfHav08eEJE2lljEIAc1jxLlLcosbiknAyxJvu8g7kA4oAlcio2jI8lMxp76vosd5FxpatowuFktILfyCFyHvKfcozy"]))
     ;;
     ;;{P1}
     ;(defschema P|S
@@ -108,8 +111,8 @@
 
         nonce:integer
         elite:object{DALOS|EliteSchema}
-        ouroboros:object{DalosSchemas.DPTF|BalanceSchema}
-        ignis:object{DalosSchemas.DPTF|BalanceSchema}
+        ouroboros:object{OuronetDalos.DPTF|BalanceSchema}
+        ignis:object{OuronetDalos.DPTF|BalanceSchema}
     )
     (defschema DALOS|EliteSchema
         class:string
@@ -124,15 +127,8 @@
     (deftable DALOS|PricesTable:{DALOS|PricesSchema})
     (deftable DALOS|AccountTable:{DALOS|AccountSchema})
     ;;{3}
-    (defun CT_Bar ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_BAR)
-        )
-    )
-    (defconst BAR (CT_Bar))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defconst BAR                   (CT_Bar))
     (defconst DALOS|CHR_AUX
         [ " " "!" "#" "%" "&" "'" "(" ")" "*" "+" "," "-" "." "/" ":" ";" "<" "=" ">" "?" "@" "[" "]" "^" "_" "`" "{" "|" "}" "~" "‰" ]
     )
@@ -187,9 +183,9 @@
     (defconst DALOS|VGD             "VirtualGasData")
     (defconst GAS_EXCEPTION 
         [
-            OUROBOROS|SC_NAME 
-            DALOS|SC_NAME 
-            LIQUID|SC_NAME
+            DALOS|SC_NAME
+            (GOV|OUROBOROS|SC_NAME)
+            (GOV|LIQUID|SC_NAME)
         ]
     )
     (defconst GAS_QUARTER 0.25)
@@ -495,7 +491,7 @@
     (defun UR_Elite-DEB (account:string)
         (at "deb" (UR_Elite account))
     )
-    (defun UR_TrueFungible:object{DalosSchemas.DPTF|BalanceSchema} (account:string snake-or-gas:bool)
+    (defun UR_TrueFungible:object{OuronetDalos.DPTF|BalanceSchema} (account:string snake-or-gas:bool)
         (if snake-or-gas
             (with-default-read DALOS|AccountTable account
                 { "ouroboros" : DPTF|BLANK }
@@ -964,7 +960,7 @@
     (defun IGNIS|C_CollectWT (patron:string active-account:string amount:decimal trigger:bool)
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (major:integer (UR_Elite-Tier-Major patron))
                 (minor:integer (UR_Elite-Tier-Minor patron))
                 (reduced-amount:decimal (ref-U|DALOS::UC_GasCost amount major minor false))
@@ -992,7 +988,7 @@
     (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool)
         (let
             (
-                (ref-U|DALOS:module{Ouronet4Dalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (major:integer (UR_Elite-Tier-Major sender))
                 (minor:integer (UR_Elite-Tier-Minor sender))
 
@@ -1006,7 +1002,7 @@
                 (demiurgoi:[string] (UR_DemiurgoiID))
                 (kda-cto:string (UR_AccountKadena (at 0 demiurgoi)))
                 (kda-hov:string (UR_AccountKadena (at 1 demiurgoi)))
-                (kda-ouroboros:string (UR_AccountKadena OUROBOROS|SC_NAME))
+                (kda-ouroboros:string (UR_AccountKadena (GOV|OUROBOROS|SC_NAME)))
                 (kda-dalos:string (UR_AccountKadena DALOS|SC_NAME))
             )
             (if (not trigger)
@@ -1109,7 +1105,7 @@
         )
         (let
             (
-                (ref-U|ATS:module{Ouronet4Ats} U|ATS)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (if (= (UR_AccountType account) false)
                 (update DALOS|AccountTable account
@@ -1119,7 +1115,7 @@
             )
         )
     )
-    (defun X_UpdateTF (account:string snake-or-gas:bool new-obj:object{DalosSchemas.DPTF|BalanceSchema})
+    (defun X_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalos.DPTF|BalanceSchema})
         (require-capability (SECURE))
         (if snake-or-gas
             (update DALOS|AccountTable account
@@ -1135,14 +1131,13 @@
             "Primordial Balance update not permitted"
             [
                 (enforce-guard (create-capability-guard (DALOS|UP_BLC)))
-                (enforce-guard (P|UR "DPTF|UpPrBl"))
-                (enforce-guard (P|UR "DPMF|UpPrBl"))
+                (enforce-guard (P|UR "DPTF|UpdatePrimordialBalance"))
             ]
         )
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : new-balance
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
@@ -1157,11 +1152,11 @@
         )
     )
     (defun X_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool)
-        (enforce-guard (P|UR "DPTF|UpPrDt"))
+        (enforce-guard (P|UR "DPTF|UpdatePrimordialData"))
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : (at "balance" obj)
                     ,"role-burn"            : new-burn
                     ,"role-mint"            : (at "role-mint" obj)
@@ -1176,11 +1171,11 @@
         )
     )
     (defun X_UpdateMintRole (account:string snake-or-gas:bool new-mint:bool)
-        (enforce-guard (P|UR "DPTF|UpPrDt"))
+        (enforce-guard (P|UR "DPTF|UpdatePrimordialData"))
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : new-mint
@@ -1195,11 +1190,11 @@
         )
     )
     (defun X_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool)
-        (enforce-guard (P|UR "DPTF|UpPrDt"))
+        (enforce-guard (P|UR "DPTF|UpdatePrimordialData"))
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
@@ -1214,11 +1209,11 @@
         )
     )
     (defun X_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool)
-        (enforce-guard (P|UR "DPTF|UpPrDt"))
+        (enforce-guard (P|UR "DPTF|UpdatePrimordialData"))
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
@@ -1233,11 +1228,11 @@
         )
     )
     (defun X_UpdateFreeze (account:string snake-or-gas:bool new-freeze:bool)
-        (enforce-guard (P|UR "DPTF|UpPrDt"))
+        (enforce-guard (P|UR "DPTF|UpdatePrimordialData"))
         (let
             (
-                (obj:object{DalosSchemas.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{DalosSchemas.DPTF|BalanceSchema}
+                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
                     {"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
