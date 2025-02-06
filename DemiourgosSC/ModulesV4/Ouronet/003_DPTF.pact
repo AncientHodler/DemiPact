@@ -12,9 +12,6 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;{P1}
-    ;(defschema P|S
-    ;    policy:guard
-    ;)
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S}) 
     ;;{P3}
@@ -1385,8 +1382,13 @@
             (
                 (amount-to-be-wiped:decimal (UR_AccountSupply id account-to-be-wiped))
             )
-            (X_DebitAdmin id account-to-be-wiped amount-to-be-wiped)
-            (X_UpdateSupply id amount-to-be-wiped false)
+            (if (> amount-to-be-wiped 0.0)
+                (do
+                    (X_DebitAdmin id account-to-be-wiped amount-to-be-wiped)
+                    (X_UpdateSupply id amount-to-be-wiped false)
+                )
+                "Negative Amounts cant be wiped"
+            )
         )
     )
     (defun X_ToggleBurnRole (id:string account:string toggle:bool)
@@ -1574,7 +1576,7 @@
     )
     (defun X_BurnCore (id:string account:string amount:decimal)
         (require-capability (DPTF|C>BURN id account amount))
-        (X_DebitStandard id account amount)
+        (X_DebitStandard id account amount [-1.0 -1.0 0.0 0.0])
         (X_UpdateSupply id amount false)
     )
     (defun X_Credit (id:string account:string amount:decimal)
@@ -1639,10 +1641,10 @@
         (require-capability (DPTF|DEBIT))
         (with-capability (DPTF|DEBIT_PUR)
             (CAP_Owner id)
-            (X_Debit id account amount)
+            (X_Debit id account amount [-1.0 -1.0 0.0 0.0])
         )
     )
-    (defun X_DebitStandard (id:string account:string amount:decimal)
+    (defun X_DebitStandard (id:string account:string amount:decimal dispo-data:[decimal])
         (enforce-one
             "Standard Debit Not permitted"
             [
@@ -1656,31 +1658,64 @@
             )
             (with-capability (DPTF|DEBIT_PUR)
                 (ref-DALOS::CAP_EnforceAccountOwnership account)
-                (X_Debit id account amount)
+                (X_Debit id account amount dispo-data)
             )
         )
     )
-    (defun X_Debit (id:string account:string amount:decimal)
+    (defun X_Debit (id:string account:string amount:decimal dispo-data:[decimal])
         (require-capability (DPTF|DEBIT_PUR))
         (if (URC_IzCoreDPTF id)
             (let
                 (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (snake-or-gas:bool (if (= id (ref-DALOS::UR_OuroborosID)) true false))
+                    (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                    (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                    (snake-or-gas:bool (if (= id ouro-id) true false))
                     (read-balance:decimal (ref-DALOS::UR_TF_AccountSupply account snake-or-gas))
                 )
-                (enforce (>= read-balance 0.0) "Impossible operation, negative Primordial TrueFungible amounts detected")
-                (enforce (<= amount read-balance) "Insufficient Funds for debiting")
-                (with-capability (P|DALOS|UP_BLC)
-                    (ref-DALOS::X_UpdateBalance account snake-or-gas (- read-balance amount))
+                (if snake-or-gas
+                    (if (= ea-id BAR)
+                        (with-capability (P|DALOS|UP_BLC)
+                            (enforce (<= amount read-balance) "Insufficient OURO Funds for debiting")
+                            (ref-DALOS::X_UpdateBalance account snake-or-gas (- read-balance amount))
+                        )
+                        (let
+                            (
+                                (ea-amount:decimal (UR_AccountSupply ea-id account))
+                                (o-prec:integer (UR_Decimals ouro-id))
+                                (max-dispo-ouro:decimal (ref-U|DPTF::UC_OuroLoanLimit ea-amount dispo-data o-prec))
+                            )
+                            (with-capability (P|DALOS|UP_BLC)
+                                (enforce (>= (- read-balance amount) (- 0.0 max-dispo-ouro)) "")
+                                (ref-DALOS::X_UpdateBalance account snake-or-gas (- read-balance amount))
+                            )
+                        )
+                    )
+                    (with-capability (P|DALOS|UP_BLC)
+                        (enforce (<= amount read-balance) "Insufficient IGNIS Funds for debiting")
+                        (ref-DALOS::X_UpdateBalance account snake-or-gas (- read-balance amount))
+                    )
                 )
             )
             (with-read DPTF|BalanceTable (concat [id BAR account])
                 { "balance" := balance }
                 (enforce (<= amount balance) "Insufficient Funds for debiting")
                 (update DPTF|BalanceTable (concat [id BAR account])
-                    {"balance" : (- balance amount)}    
+                    {"balance" : (- balance amount)}
                 )
+            )
+        )
+    )
+    (defun X_ClearDispo (account:string)
+        (enforce-guard (P|UR "TFT|Credit"))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+            )
+            (update DPTF|BalanceTable (concat [ouro-id BAR account])
+                {"balance" : 0.0}
             )
         )
     )

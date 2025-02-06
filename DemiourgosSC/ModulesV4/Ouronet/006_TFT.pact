@@ -4,9 +4,7 @@
     (implements OuronetPolicy)
     (implements TrueFungibleTransfer)
     ;;{G1}
-    (defconst GOV|MD_TFT            (keyset-ref-guard DALOS|DEMIURGOI))
-
-    (defconst DALOS|DEMIURGOI       (GOV|Demiurgoi))
+    (defconst GOV|MD_TFT            (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|TFT_ADMIN)))
     (defcap GOV|TFT_ADMIN ()        (enforce-guard GOV|MD_TFT))
@@ -17,6 +15,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|ATS|REMOTE-GOV ()
+        true
+    )
     (defcap P|T|UF ()
         true
     )
@@ -77,6 +78,10 @@
                 "TFT|UpdateROU"
                 (create-capability-guard (P|ATS|UP_ROU))
             )
+            (ref-P|ATS::P|A_Add
+                "TFT|RemoteAtsGov"
+                (create-capability-guard (P|ATS|REMOTE-GOV))
+            )
         )
     )
     ;;
@@ -118,8 +123,35 @@
         true
     )
     ;;{C2}
+    (defcap DPTF|S>EA-DISPO-LOCKER (id:string account:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ea-id:string (ref-DALOS::EliteAurynID))
+                (ouro-amount:string (ref-DPTF::UR_AccountSupply ouro-id account))
+            )
+            (enforce (not (and (< ouro-amount 0.0)(= id ea-id))) "When Account has negative OURO, Elite-Auryn is dispo-locked and cannot be moved")
+        )
+    )
     ;;{C3}
     ;;{C4}
+    (defcap DPTF|C>CLEAR-DISPO (account:string)
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ouro-amount:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
+            )
+            (enforce (< ouro-amount 0.0) "Dispo Clear requires Negative OURO")
+            (compose-capability (P|ATS|REMOTE-GOV))
+            (compose-capability (P|ATS|UP_ROU))
+            (compose-capability (P|DPTF|CREDIT))
+        )
+    )
     (defcap DPTF|C>TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @event
         (let
@@ -128,6 +160,7 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+                (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
             )
             (ref-DALOS::CAP_EnforceAccountOwnership sender)
             (if (and method (ref-DALOS::UR_AccountType receiver))
@@ -164,13 +197,16 @@
                 )
                 (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
             )
+            (if (!= receiver ats-sc)
+                (compose-capability (DPTF|S>EA-DISPO-LOCKER id sender))
+                true
+            )
             (compose-capability (DPTF|C>CREDIT_PRIMARY-FEE))
             (compose-capability (P|DPTF|DEBIT))
             (compose-capability (P|DPTF|CREDIT))
             (compose-capability (P|DALOS|UP_ELT))
             (compose-capability (P|T|UF))
         )
-        
     )
     (defcap DPTF|C>CREDIT_PRIMARY-FEE ()
         (compose-capability (P|ATS|UP_ROU))
@@ -180,7 +216,9 @@
         (compose-capability (P|DPTF|CREDIT))
         (compose-capability (P|DPTF|BURN))
     )
-    (defcap DPTF|C>TRANSMUTE ()
+    (defcap DPTF|C>TRANSMUTE (id:string transmuter:string)
+        @event
+        (compose-capability (DPTF|S>EA-DISPO-LOCKER id transmuter))
         (compose-capability (P|DPTF|DEBIT))
         (compose-capability (DPTF|C>CREDIT_PRIMARY-FEE))
     )
@@ -525,6 +563,24 @@
         )
     )
     ;;{F3}
+    (defun UDC_GetDispoData:[decimal] (account:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-ATS:module{Autostake} ATS)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (a-id:string (ref-DALOS::AurynID))
+                (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
+                (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+                (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
+                (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
+                (major-tier:decimal (dec (ref-DALOS::UR_Elite-Tier-Major account)))
+                (minor-tier:decimal (dec (ref-DALOS::UR_Elite-Tier-Minor account)))
+            )
+            [auryndex-value elite-auryndex-value major-tier minor-tier]
+        )
+    )
     (defun UDC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal])
         (let
             (
@@ -549,6 +605,50 @@
     ;;
     ;;{F5}
     ;;{F6}
+    (defun C_ClearDispo (patron:string account:string)
+        @doc "Clears OURO Dispo by levereging existing Elite-Auryn"
+        (with-capability (DPTF|C>CLEAR-DISPO account)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-ATS:module{Autostake} ATS)
+                    (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                    (a-id:string (ref-DALOS::AurynID))
+                    (ea-id:string (ref-DALOS::EliteAurynID))
+                    (ouro-amount:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
+
+                    (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
+                    (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+                    (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
+                    (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
+
+                    (o-prec:integer (ref-DPTF::UR_Decimals ouro-id))
+                    (a-prec:integer (ref-DPTF::UR_Decimals a-id))
+                    (ea-prec:integer (ref-DPTF::UR_Decimals ea-id))
+
+                    (burn-auryn-amount:decimal (floor (/ ouro-amount auryndex-value) a-prec))
+                    (burn-elite-auryn-amount:decimal (floor (/ burn-auryn-amount elite-auryndex-value) a-prec))
+                    (total-ea:decimal (* burn-elite-auryn-amount 2.5))
+                    (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
+                )
+                
+            ;;1] Account sends <total-ea> EliteAuryn to <ATS|SC-NAME>
+                (C_Transfer patron ea-id account ats-sc total-ea true)
+            ;;2] <ATS|SC-NAME> burns all <total-ea> EliteAuryn amount
+                (ref-DPTF::C_Burn patron ea-id ats-sc total-ea)
+            ;;3] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
+                (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
+                (ref-ATS::X_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
+            ;;4] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
+                (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
+                (ref-ATS::X_UpdateRoU auryndex ouro-id true false ouro-amount)
+            ;;5] Finally clears dispo setting OURO <acount> amount to zero
+                (ref-DPTF::X_ClearDispo account)
+            ;;6] Pleasure doing business with you !
+            )
+        )
+    )
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         @doc "Transmutes a DPTF Token. Transmuting behaves as fee collection, without counting as such \
             \ Therefore Transmuting, pumps the Index of all ATS Pair the Token is Part of, if proper fee settings are set up in said ATSPairs"
@@ -556,7 +656,7 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (with-capability (DPTF|C>TRANSMUTE)
+            (with-capability (DPTF|C>TRANSMUTE id transmuter)
                 (X_Transmute id transmuter transmute-amount)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transmute-amount 10)))
                     (ref-DALOS::IGNIS|C_CollectWT patron transmuter (ref-DALOS::DALOS|UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAS id transmuter))
@@ -620,8 +720,9 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (dispo-data:[decimal] (UDC_GetDispoData transmuter))
             )
-            (ref-DPTF::X_DebitStandard id transmuter transmute-amount)
+            (ref-DPTF::X_DebitStandard id transmuter transmute-amount dispo-data)
             (X_CreditPrimaryFee id transmute-amount false)
         )
     )
@@ -645,12 +746,13 @@
                         (or 
                             (= fee-toggle false) 
                             (= iz-exception true)
-                        ) 
+                        )
                         (= primary-fee 0.0)
                     )
                 )
+                (dispo-data:[decimal] (UDC_GetDispoData sender))
             )
-            (ref-DPTF::X_DebitStandard id sender transfer-amount)
+            (ref-DPTF::X_DebitStandard id sender transfer-amount dispo-data)
             (if iz-full-credit
                 (ref-DPTF::X_Credit id receiver transfer-amount)
                 (if (= secondary-fee 0.0)

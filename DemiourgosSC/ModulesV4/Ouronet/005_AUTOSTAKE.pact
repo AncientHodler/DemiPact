@@ -42,7 +42,7 @@
                 (ref-U|G::UEV_Any
                     [
                         (create-capability-guard (ATS|GOV))
-                        (P|UR "ATSU|RemoteAtsGov")
+                        (P|UR "TFT|RemoteAtsGov")
                     ]
                 )
             )

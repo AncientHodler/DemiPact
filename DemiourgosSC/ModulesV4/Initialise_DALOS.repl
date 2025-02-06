@@ -476,6 +476,15 @@
 (print "")
 
 (print "")
+(begin-tx "INIT TX 027 - 012_SWP.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/012_SWPU.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
 (print "===================Initialise Ouronet_TX-xxx-...========================")
 (begin-tx "INIT TX xxx - Use Modules")
 (namespace "free")
@@ -507,7 +516,8 @@
 (use LIQUID)        ;; 15.516
 (use OUROBOROS)     ;; 27.115
 
-(use SWP)           ;; 59.981
+(use SWP)           ;; 88.667
+(use SWPU)          ;; 59.981
 
 (env-gas)
 (commit-tx)

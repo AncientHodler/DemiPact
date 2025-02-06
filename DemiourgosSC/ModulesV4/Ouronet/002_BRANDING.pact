@@ -11,9 +11,6 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;{P1}
-    ;(defschema P|S
-    ;    policy:guard
-    ;)
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S}) 
     ;;{P3}

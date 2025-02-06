@@ -22,6 +22,27 @@
     ;;{3}
     ;;
     ;;{F-UC}
+    (defun UC_OuroLoanLimit (elite-auryn-amount:decimal dispo-data:[decimal] ouro-precision:integer)
+        (let
+            (
+                (a-idx:decimal (at 0 dispo-data))
+                (ea-idx:decimal (at 1 dispo-data))
+                (major:decimal (at 2 dispo-data))
+                (minor:decimal (at 3 dispo-data))
+                (olp:decimal
+                    (if (< major 3.0)
+                        0.0
+                        (floor (+ (/ (- (+ (* (- major 1) 7.0) minor) 15.0) 10.0) 11.5) 1)
+                    )
+                )
+                (olpd:decimal (floor (/ olp 100.0) 3))
+            )
+            (if (or (= -1.0 a-idx) (= -1.0 ea-idx))
+                0.0
+                (floor (fold (*) 1.0 [a-idx ea-idx elite-auryn-amount olpd]) ouro-precision)
+            )
+        )
+    )
     (defun UC_UnlockPrice:[decimal] (unlocks:integer)
         @doc "Computes  ATS unlock price \
             \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"

@@ -129,18 +129,18 @@
 ;;005_U|LST
 (interface StringProcessor
     (defun UC_SplitString:[string] (splitter:string splitee:string)) ;;1
-    (defun UC_Search:[integer] (searchee:list item)) ;;29
+    (defun UC_Search:[integer] (searchee:list item)) ;;30
     (defun UC_KeepEndMatch:[string] (in:[string] match:string)) ;;1
     (defun UC_ReplaceItem:list (in:list old-item new-item)) ;;4
     (defun UC_ReplaceAt:list (in:list idx:integer item)) ;;7
-    (defun UC_RemoveItem:list (in:list item)) ;;10
+    (defun UC_RemoveItem:list (in:list item)) ;;11
     (defun UC_RemoveItemAt:list (in:list position:integer)) ;;3
     (defun UC_IzUnique (lst:[string])) ;;5
     (defun UC_FE (in:list)) ;;1
     (defun UC_SecondListElement (in:list))
     (defun UC_LE (in:list)) ;;13
     (defun UC_InsertFirst:list (in:list item))
-    (defun UC_AppL:list (in:list item)) ;;77
+    (defun UC_AppL:list (in:list item)) ;;81
     (defun UC_IsNotEmpty:bool (x:list))
     (defun UC_Chain:list (in:list))
 
@@ -220,6 +220,7 @@
 
 ;;010_U|DPTF
 (interface UtilityDptf
+    (defun UC_OuroLoanLimit (elite-auryn-amount:decimal dispo-data:[decimal] ouro-precision:integer))
     (defun UC_UnlockPrice:[decimal] (unlocks:integer)) ;;1
     (defun UC_VolumetricTax (precision:integer amount:decimal)) ;;1
     ;(defun UCX_VolumetricPermile:decimal (precision:integer unit:integer))
@@ -227,7 +228,7 @@
 
 ;;011_U|VST
 (interface UtilityVst
-    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)) ;;1
+    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)) ;;2
     (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)) ;;1
     (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)) ;;1
 
@@ -240,14 +241,14 @@
     (defun UC_ComputeWP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec w:[decimal]))
     (defun UC_NewSupply:[decimal] (X:[decimal] input-amounts:[decimal] ip:[integer]))
     (defun UC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer o-prec:integer))
-    (defun UC_ComputeD:decimal (A:decimal X:[decimal]))
+    (defun UC_ComputeD:decimal (A:decimal X:[decimal])) ;;3
     (defun UC_DNext (D:decimal A:decimal X:[decimal]))
     (defun UC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer))
     (defun UC_Prefix:string (weights:[decimal] amp:decimal))
     (defun UC_LpID:[string] (token-names:[string] token-tickers:[string] weights:[decimal] amp:decimal)) ;;1
     (defun UC_PoolID:string (token-ids:[string] weights:[decimal] amp:decimal)) ;;3
-    (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer]))
-    (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer))
+    (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])) ;;1
+    (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer)) ;;2
     (defun UC_TokensFromSwpairString:[string] (swpair:string)) ;;1
 )
 
@@ -496,7 +497,7 @@
     (defun UR_Konto:string (id:string)) ;;3
     (defun UR_Name:string (id:string)) ;;2
     (defun UR_Ticker:string (id:string)) ;;2
-    (defun UR_Decimals:integer (id:string)) ;;13
+    (defun UR_Decimals:integer (id:string)) ;;15
     (defun UR_CanChangeOwner:bool (id:string))
     (defun UR_CanUpgrade:bool (id:string))
     (defun UR_CanAddSpecialRole:bool (id:string))
@@ -504,7 +505,7 @@
     (defun UR_CanWipe:bool (id:string))
     (defun UR_CanPause:bool (id:string))
     (defun UR_Paused:bool (id:string))
-    (defun UR_Supply:decimal (id:string)) ;;1
+    (defun UR_Supply:decimal (id:string)) ;;2
     (defun UR_OriginMint:bool (id:string))
     (defun UR_OriginAmount:decimal (id:string))
     (defun UR_TransferRoleAmount:integer (id:string))
@@ -547,7 +548,7 @@
     (defun UEV_AccountBurnState (id:string account:string state:bool))
     (defun UEV_AccountTransferState (id:string account:string state:bool))
     (defun UEV_AccountFreezeState (id:string account:string state:bool)) ;;2
-    (defun UEV_Amount (id:string amount:decimal)) ;;6
+    (defun UEV_Amount (id:string amount:decimal)) ;;7
     (defun UEV_CheckID:bool (id:string))
     (defun UEV_id (id:string)) ;;7
     (defun UEV_Virgin (id:string))
@@ -601,8 +602,8 @@
     ;(defun X_BurnCore (id:string account:string amount:decimal))
     (defun X_Credit (id:string account:string amount:decimal)) ;;8
     ;(defun X_DebitAdmin (id:string account:string amount:decimal))
-    (defun X_DebitStandard (id:string account:string amount:decimal)) ;;2
-    ;(defun X_Debit (id:string account:string amount:decimal))
+    (defun X_DebitStandard (id:string account:string amount:decimal dispo-data:[decimal])) ;;2
+    ;(defun X_Debit (id:string account:string amount:decimal dispo-data:[decimal]))
     (defun X_ToggleFeeExemptionRole (id:string account:string toggle:bool)) ;;1
     (defun X_ToggleMintRole (id:string account:string toggle:bool)) ;;1
     (defun X_UpdateFeeVolume (id:string amount:decimal primary:bool)) ;;2
@@ -883,9 +884,11 @@
     ;(defun UEV_Pair_ID-Amount:bool (id-lst:[string] transfer-amount-lst:[decimal]))
     ;(defun UEV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal]))
 
+    (defun UDC_GetDispoData:[decimal] (account:string))
     ;(defun UDC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal]))
     ;(defun UDC_Pair_Receiver-Amount:[object{DPTF|Receiver-Amount}] (receiver-lst:[string] transfer-amount-lst:[decimal]))
 
+    (defun C_ClearDispo (patron:string account:string))
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)) ;;2
     (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)) ;;25
     (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)) ;;2
@@ -1014,8 +1017,8 @@
     (defun UR_Weigths:[decimal] (swpair:string))
     (defun UR_GenesisRatio:[object{PoolTokens}] (swpair:string))
     (defun UR_PoolTokenObject:[object{PoolTokens}] (swpair:string))
-    (defun UR_TokenLP:string (swpair:string))
-    (defun UR_TokenLPS:[string] (swpair:string))
+    (defun UR_TokenLP:string (swpair:string)) ;;1
+    (defun UR_TokenLPS:[string] (swpair:string)) ;;1
     (defun UR_FeeLP:decimal (swpair:string))
     (defun UR_FeeSP:decimal (swpair:string))
     (defun UR_FeeSPT:[object{FeeSplit}] (swpair:string))
@@ -1023,15 +1026,15 @@
     (defun UR_FeeUnlocks:integer (swpair:string))
     (defun UR_Special:bool (swpair:string))
     (defun UR_Governor:guard (swpair:string))
-    (defun UR_Amplifier:decimal (swpair:string))
+    (defun UR_Amplifier:decimal (swpair:string)) ;;1
     (defun UR_Primality:bool (swpair:string))
     (defun UR_Pools:[string] (pool-category:string))
-    (defun UR_PoolTokens:[string] (swpair:string))
-    (defun UR_PoolTokenSupplies:[decimal] (swpair:string))
-    (defun UR_PoolGenesisSupplies:[decimal] (swpair:string))
-    (defun UR_PoolTokenPosition:integer (swpair:string id:string))
+    (defun UR_PoolTokens:[string] (swpair:string)) ;;2
+    (defun UR_PoolTokenSupplies:[decimal] (swpair:string)) ;;3
+    (defun UR_PoolGenesisSupplies:[decimal] (swpair:string)) ;;2
+    (defun UR_PoolTokenPosition:integer (swpair:string id:string)) ;;1
     (defun UR_PoolTokenSupply:decimal (swpair:string id:string))
-    (defun UR_PoolTokenPrecisions:[integer] (swpair:string))
+    (defun UR_PoolTokenPrecisions:[integer] (swpair:string)) ;;2
     (defun UR_SpecialFeeTargets:[string] (swpair:string))
     (defun UR_SpecialFeeTargetsProportions:[decimal] (swpair:string))
 
@@ -1044,14 +1047,14 @@
     (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
 
     ;(defun UEV_FeeSplit (input:object{FeeSplit}))
-    (defun UEV_id (swpair:string))
+    (defun UEV_id (swpair:string)) ;;2
     (defun UEV_CanChangeOwnerON (swpair:string))
     (defun UEV_FeeLockState (swpair:string state:bool))
     (defun UEV_PoolFee (fee:decimal))
     (defun UEV_New (t-ids:[string] w:[decimal] amp:decimal))
     (defun UEV_CheckTwo (token-ids:[string] w:[decimal] amp:decimal))
     (defun UEV_CheckAgainstMass:bool (token-ids:[string] present-pools:[string]))
-    (defun UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string]))
+    (defun UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string])) ;;1
     (defun SWPT|UEV_IdAsPrincipal (id:string for-trace:bool))
 
     (defun A_UpdatePrincipal (principal:string add-or-remove:bool))
@@ -1076,5 +1079,18 @@
     (defun X_Issue:string (account:string pool-tokens:[object{PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     (defun SWPT|X_MultiPathTracer (swpair:string))
     (defun SWPT|X_SinglePathTracer (id:string swpair:string))
+
+)
+
+(interface SwapperUsage
+    (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_LpCapacity:decimal (swpair:string))
+    (defun SWPLC|URC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal))
+    (defun SWPLC|URC_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal))
+    (defun SWPLC|URC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal))
+    (defun SWPLC|URC_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_WP_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_S_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    
 
 )
