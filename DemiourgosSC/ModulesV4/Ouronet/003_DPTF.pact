@@ -2,6 +2,7 @@
 (module DPTF GOV
     ;;
     (implements OuronetPolicy)
+    (implements BrandingUsage)
     (implements DemiourgosPactTrueFungible)
     ;;{G1}
     (defconst GOV|MD_DPTF           (keyset-ref-guard (GOV|Demiurgoi)))
@@ -970,33 +971,31 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        @doc "Updates <pending-branding> for DPTF Token <id> costing 100 IGNIS"
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto id))
+                (owner:string (UR_Konto entity-id))
                 (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
             )
             (with-capability (DPTF|C>UPDATE-BRD)
-                (ref-BRD::X_UpdatePendingBranding id logo description website social)
+                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::IGNIS|C_Collect patron owner branding-cost)
             )
         )
     )
-    (defun C_UpgradeBranding (patron:string id:string months:integer)
-        @doc "Upgrades Branding for DPTF Token, making it a premium Branding. \
-        \ Also sets pending-branding to live branding if its branding is not live yet"
-        (enforce-guard (P|UR "TALOS|Summoner"))
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto id))
+                (owner:string (UR_Konto entity-id))
                 (kda-payment:decimal
                     (with-capability (DPTF|C>UPGRADE-BRD)
-                        (ref-BRD::X_UpgradeBranding id owner months)
+                        (ref-BRD::X_UpgradeBranding entity-id owner months)
                     )
                 )
             )
@@ -1004,7 +1003,7 @@
         )
     )
     (defun C_RotateOwnership (patron:string id:string new-owner:string)
-        @doc "Rotates DPTF ID Ownership"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1016,7 +1015,16 @@
         )
     )
     (defun C_DeployAccount (id:string account:string)
-        @doc "Deploys a DPTF Account"
+        (enforce-one
+            "Governor Rotation not permitted"
+            [
+                (enforce-guard (P|UR "ATS|Caller"))
+                (enforce-guard (P|UR "ATSU|Caller"))
+                (enforce-guard (P|UR "VST|Caller"))
+                (enforce-guard (P|UR "SWP|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1048,7 +1056,7 @@
         )
     )
     (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
-        @doc "Toggles Freezing of a DPTF Account"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1061,7 +1069,7 @@
         )
     )
     (defun C_TogglePause (patron:string id:string toggle:bool)
-        @doc "Toggles Pause for a DPTF Token"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1073,7 +1081,7 @@
         )
     )
     (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
-        @doc "Toggles Transfer-Role for a DPTF Token on a specific account"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1087,7 +1095,7 @@
         )
     )
     (defun C_Wipe (patron:string id:string atbw:string)
-        @doc "Wipes a DPTF Token from a given account"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1099,7 +1107,15 @@
         )
     )
     (defun C_Burn (patron:string id:string account:string amount:decimal)
-        @doc "Burns a DPTF Token from an account"
+        (enforce-one
+            "Governor Rotation not permitted"
+            [
+                (enforce-guard (P|UR "ATSU|Caller"))
+                (enforce-guard (P|UR "LQD|Caller"))
+                (enforce-guard (P|UR "SWPU|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1111,8 +1127,7 @@
         )
     )
     (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        @doc "Controls the properties of a DPTF Token \
-            \ <can-change-owner> <can-upgrade> <can-add-special-role> <can-freeze> <can-wipe> <can-pause>"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1124,8 +1139,7 @@
         )
     )
     (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        @doc "Issues a new DPTF Token. Summoned only"
-        (enforce-guard (P|UR "TALOS|Summoner"))
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1143,15 +1157,18 @@
             issued-ids
         )
     )
-    (defun C_IssueLP:string (patron:string account:string name:string ticker:string)
-        @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
-        (enforce-guard (P|UR "SWPI|Caller"))
-        (with-capability (SECURE)
-            (at 0 (X_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
-        )
-    )
     (defun C_Mint (patron:string id:string account:string amount:decimal origin:bool)
-        @doc "Mints a DPTF Token"
+        (enforce-one
+            "Governor Rotation not permitted"
+            [
+                (enforce-guard (P|UR "ATSU|Caller"))
+                (enforce-guard (P|UR "LQD|Caller"))
+                (enforce-guard (P|UR "ORBR|Caller"))
+                (enforce-guard (P|UR "SWP|Caller"))
+                (enforce-guard (P|UR "SWPU|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1166,7 +1183,7 @@
         )
     )
     (defun C_SetFee (patron:string id:string fee:decimal)
-        @doc "Sets a transfer fee for the DPTF Token"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1178,7 +1195,7 @@
         )
     )
     (defun C_SetFeeTarget (patron:string id:string target:string)
-        @doc "Sets the Fee Collection Target for a DPTF"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1190,7 +1207,7 @@
         )
     )
     (defun C_SetMinMove (patron:string id:string min-move-value:decimal)
-        @doc "Sets the minimum amount needed to transfer a DPTF Token"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1202,8 +1219,7 @@
         )
     )
     (defun C_ToggleFee (patron:string id:string toggle:bool)
-        @doc "Toggles Fee collection for a DPTF Token. When a DPTF Token is setup with a transfer fee, \
-        \ it will come in effect only when the toggle is on(true)"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1215,7 +1231,7 @@
         )
     )
     (defun C_ToggleFeeLock (patron:string id:string toggle:bool)
-        @doc "Toggles Fee Settings Lock; Summoned only"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (enforce-guard (P|UR "TALOS|Summoner"))
         (with-capability (DPTF|C>TG_FEE-LOCK id toggle)
             (let
@@ -1240,6 +1256,13 @@
         )
     )
     ;;{F7}
+    (defun X_IssueLP:string (patron:string account:string name:string ticker:string)
+        @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
+        (enforce-guard (P|UR "SWP|Caller"))
+        (with-capability (SECURE)
+            (at 0 (X_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
+        )
+    )
     (defun X_IssueFree:[string] 
         (
             patron:string

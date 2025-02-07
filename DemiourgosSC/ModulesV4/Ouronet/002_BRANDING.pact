@@ -233,14 +233,7 @@
     ;;{F4}
     ;;{F5}
     (defun A_SetFlag (entity-id:string flag:integer)
-        @doc "Forcibly (in administrator mode) sets a Branding Flag for <entity-id> \
-        \ <0> Flag = Golden Flag        Premium Flag reserved for Demiourgos Entity IDs \
-        \ <1> Flag = Blue Flag          Premium Flag for Entity IDs (non-Demiourgos); \
-        \                               Premium Flags are paid live branded Entity-IDs that are not labeled as problematic \
-        \                               Paid live branded Entity IDs can still be flaged Red by the Branding Administrator \
-        \ <2> Flag = Green Flag         Standard Flag for Entity IDs (non-Demiourgos) that have their Branding set to Live \
-        \ <3> Flag = Gray Flag          Default Flag for newly-issued Entity-IDs (non-Demiourgos) that dont have their Branding Live yet \
-        \ <4> Flag = Red Flag           Problem Flag for Entity IDs, marking potential dangerous or scam Entity IDs"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (BRD|C>ADMIN_SET flag)
             (let
                 (
@@ -252,9 +245,7 @@
         )
     )
     (defun A_Live (entity-id:string)
-        @doc "Sets <pending-branding> for an <entity-id> to <live-branding>, reseting <pending-branding> data \
-        \ Resetting <pending-branding> data does not reset its last 3 keys \
-        \ Can only be done by Branding Administrator"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (BRD|C>LIVE)
             (let
                 (

@@ -467,10 +467,10 @@
 (print "")
 
 (print "")
-(begin-tx "INIT TX 026 - 011_SWP.pact")
+(begin-tx "INIT TX 026 - 011_SWPT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/011_SWP.pact")
+(load "Ouronet/011_SWPT.pact")
 (env-gas)
 (commit-tx)
 (print "")
@@ -479,7 +479,25 @@
 (begin-tx "INIT TX 027 - 012_SWP.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/012_SWPU.pact")
+(load "Ouronet/012_SWP.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 028 - 013_SWPU.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/013_SWPU.pact")
+(env-gas)
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 029 - X01_TALOS.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "Ouronet/X01_TALOS-01.pact")
 (env-gas)
 (commit-tx)
 (print "")
@@ -490,34 +508,35 @@
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-;(use U|I)          ;; 44.597
+;(use U|I)          ;; 53.875
 (use U|CT)          ;;  9.016
-(use U|G)           ;;  2.017
-(use U|ST)          ;;  3.491
-(use U|RS)          ;;  1.719
-(use U|LST)         ;;  6.164
-(use U|INT)         ;;  2.723
-(use U|DEC)         ;;  4.122
-(use U|DALOS)       ;;  9.936
-(use U|ATS)         ;; 36.435
-(use U|DPTF)        ;;  3.192
-(use U|VST)         ;;  4.706
-(use U|SWP)         ;; 14.946
-(use U|BFS)         ;; 14.770
+(use U|G)           ;;  2.019
+(use U|ST)          ;;  3.493
+(use U|RS)          ;;  1.721
+(use U|LST)         ;;  6.751
+(use U|INT)         ;;  2.743
+(use U|DEC)         ;;  4.125
+(use U|DALOS)       ;;  9.947
+(use U|ATS)         ;; 36.446
+(use U|DPTF)        ;;  4.422
+(use U|VST)         ;;  4.710
+(use U|SWP)         ;; 21.226
+(use U|BFS)         ;; 14.795
 (print "")
-(use DALOS)         ;; 84.655
-(use BRD)           ;; 29.049
-(use DPTF)          ;; 96.228
-(use DPMF)          ;; 99.204
-(use ATS)           ;;116.494
-(use TFT)           ;; 48.578
-(use ATSU)          ;; 82.513
-(use VST)           ;; 33.074
-(use LIQUID)        ;; 15.516
-(use OUROBOROS)     ;; 27.115
+(use DALOS)         ;; 78.802
+(use BRD)           ;; 29.269
+(use DPTF)          ;; 98.722
+(use DPMF)          ;; 99.698
+(use ATS)           ;;117.690
+(use TFT)           ;; 56.407
+(use ATSU)          ;; 83.010
+(use VST)           ;; 34.022
+(use LIQUID)        ;; 16.032
+(use OUROBOROS)     ;; 27.747
 
-(use SWP)           ;; 88.667
-(use SWPU)          ;; 59.981
+(use SWPT)          ;; 21.595
+(use SWP)           ;; 86.262
+(use SWPU)          ;; 97.949
 
 (env-gas)
 (commit-tx)

@@ -47,6 +47,8 @@
     ;;
     ;;{F-UC}
     (defun UC_BFS:object{BreadthFirstSearch.BFS} (graph:[object{BreadthFirstSearch.GraphNode}] in:string)
+        @doc "Implementation of the Breadth First Search Method, outputing a BFS Object, \
+        \ which ultimately contains all chains, starting from a specific <in> node"
         (fold
             (lambda
                 (acc:object{BreadthFirstSearch.BFS} idx:integer)

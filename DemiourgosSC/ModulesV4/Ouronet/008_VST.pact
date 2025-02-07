@@ -35,10 +35,12 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (ref-DALOS::C_RotateGovernor
-                patron
-                VST|SC_NAME
-                (create-capability-guard (VST|GOV))
+            (with-capability (P|VST|CALLER)
+                (ref-DALOS::C_RotateGovernor
+                    patron
+                    VST|SC_NAME
+                    (create-capability-guard (VST|GOV))
+                )
             )
         ) 
     )
@@ -67,13 +69,33 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (ref-P|DALOS::P|A_Add 
+                "VST|Caller"
+                (create-capability-guard (P|VST|CALLER))
+            )
+            (ref-P|DPTF::P|A_Add
+                "VST|Caller"
+                (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|DPMF::P|A_Add
                 "VST|UpdateVesting"
                 (create-capability-guard (P|VST|UPDATE))
             )
             (ref-P|DPMF::P|A_Add
+                "VST|Caller"
+                (create-capability-guard (P|VST|CALLER))
+            )
+            (ref-P|ATS::P|A_Add
+                "VST|Caller"
+                (create-capability-guard (P|VST|CALLER))
+            )
+            (ref-P|TFT::P|A_Add
                 "VST|Caller"
                 (create-capability-guard (P|VST|CALLER))
             )
@@ -111,6 +133,7 @@
             (ref-DPTF::UEV_Vesting id true)
             (UEV_Active id (ref-DPTF::UR_Vesting id))
             (compose-capability (VST|GOV))
+            (compose-capability (P|VST|CALLER))
         )
         
     )
@@ -125,6 +148,7 @@
             (ref-DPMF::UEV_Vesting id true)
             (UEV_Active (ref-DPMF::UR_Vesting id) id)
             (compose-capability (VST|GOV))
+            (compose-capability (P|VST|CALLER))
         )
     )
     (defcap VST|C>UPDATE (dptf:string dpmf:string)

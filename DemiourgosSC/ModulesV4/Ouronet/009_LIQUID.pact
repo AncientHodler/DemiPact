@@ -39,10 +39,12 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (ref-DALOS::C_RotateGovernor
-                patron
-                LIQUID|SC_NAME
-                (create-capability-guard (LIQUID|GOV))
+            (with-capability (P|LQD|CALLER)
+                (ref-DALOS::C_RotateGovernor
+                    patron
+                    LIQUID|SC_NAME
+                    (create-capability-guard (LIQUID|GOV))
+                )
             )
         )
     )
@@ -51,6 +53,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|LQD|CALLER ()
+        true
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         @doc "Reads the guard of a stored policy"
@@ -64,7 +69,25 @@
         )
     )
     (defun P|A_Define ()              
-        true
+        (let
+            (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (ref-P|DALOS::P|A_Add 
+                "LQD|Caller"
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|DPTF::P|A_Add 
+                "LQD|Caller"
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                "LQD|Caller"
+                (create-capability-guard (P|LQD|CALLER))
+            )
+        )
     )
     ;;
     ;;{1}
@@ -82,6 +105,7 @@
         @event
         (UEV_IzLiquidStakingLive)
         (compose-capability (LIQUID|GOV))
+        (compose-capability (P|LQD|CALLER))
     )
     (defcap LIQUID|C>UNWRAP ()
         @doc "Capability needed to unwrap KDA to DWK"
@@ -89,6 +113,7 @@
         (UEV_IzLiquidStakingLive)
         (compose-capability (LIQUID|GOV))
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
+        (compose-capability (P|LQD|CALLER))
     )
     ;;
     ;;{F0}

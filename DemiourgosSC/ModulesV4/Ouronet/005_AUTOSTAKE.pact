@@ -2,6 +2,7 @@
 (module ATS GOV
     ;;
     (implements OuronetPolicy)
+    (implements BrandingUsage)
     (implements Autostake)
     ;;{G1}
     (defconst GOV|MD_ATS            (keyset-ref-guard (GOV|Demiurgoi)))
@@ -36,14 +37,16 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-U|G:module{OuronetGuards} U|G)
             )
-            (ref-DALOS::C_RotateGovernor
-                patron
-                ATS|SC_NAME
-                (ref-U|G::UEV_Any
-                    [
-                        (create-capability-guard (ATS|GOV))
-                        (P|UR "TFT|RemoteAtsGov")
-                    ]
+            (with-capability (P|ATS|CALLER)
+                (ref-DALOS::C_RotateGovernor
+                    patron
+                    ATS|SC_NAME
+                    (ref-U|G::UEV_Any
+                        [
+                            (create-capability-guard (ATS|GOV))
+                            (P|UR "TFT|RemoteAtsGov")
+                        ]
+                    )
                 )
             )
         )
@@ -70,9 +73,14 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
+            )
+            (ref-P|DALOS::P|A_Add 
+                "ATS|Caller"
+                (create-capability-guard (P|ATS|CALLER))
             )
             (ref-P|BRD::P|A_Add 
                 "ATS|Caller"
@@ -1168,23 +1176,23 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string ats:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        @doc "Updates <pending-branding> for ATSPair <ats> costing 500 IGNIS"
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for ATSPair <entity-id> costing 500 IGNIS"
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_OwnerKonto ats))
+                (owner:string (UR_OwnerKonto entity-id))
                 (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
                 (final-cost:decimal (* 5.0 branding-cost))
             )
             (with-capability (ATS|C>UPDATE-BRD)
-                (ref-BRD::X_UpdatePendingBranding ats logo description website social)
+                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
             )
         )
     )
-    (defun C_UpgradeBranding (patron:string id:string months:integer)
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
         @doc "Upgrades Branding for an ATSPair, making it a premium Branding. \
         \ Also sets pending-branding to live branding if its branding is not live yet"
         (enforce-guard (P|UR "TALOS|Summoner"))
@@ -1192,10 +1200,10 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_OwnerKonto id))
+                (owner:string (UR_OwnerKonto entity-id))
                 (kda-payment:decimal
                     (with-capability (ATS|C>UPGRADE-BRD)
-                        (ref-BRD::X_UpgradeBranding id owner months)
+                        (ref-BRD::X_UpgradeBranding entity-id owner months)
                     )
                 )
             )
@@ -1285,7 +1293,14 @@
         )
     )
     (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
-        @doc "Toggles Burn Role for a DPTF Token on a given account"
+        (enforce-one
+            "DPTF BurnRole toggle not permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "SWP|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1303,7 +1318,14 @@
         )
     )
     (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
-        @doc "Toggles Fee Exemption Role for a DPTF Token on a given account"
+        (enforce-one
+            "DPTF BurnRole toggle not permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1321,7 +1343,14 @@
         )
     )
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
-        @doc "Toggles Mint Role for a DPTF Token on a given account"
+        (enforce-one
+            "DPTF BurnRole toggle not permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "SWP|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1817,17 +1846,19 @@
                         (XC_SetMassRole patron atspair true)
                         true
                     )
-                    (if (not c-rbt-burn-role)
-                        (DPTF|C_ToggleBurnRole patron c-rbt ats-sc true)
-                        true
-                    )
-                    (if (not c-rbt-fer)
-                        (DPTF|C_ToggleFeeExemptionRole patron c-rbt ats-sc true)
-                        true
-                    )
-                    (if (not c-rbt-mint-role)
-                        (DPTF|C_ToggleMintRole patron c-rbt ats-sc true)
-                        true
+                    (with-capability (SECURE)
+                        (if (not c-rbt-burn-role)
+                            (DPTF|C_ToggleBurnRole patron c-rbt ats-sc true)
+                            true
+                        )
+                        (if (not c-rbt-fer)
+                            (DPTF|C_ToggleFeeExemptionRole patron c-rbt ats-sc true)
+                            true
+                        )
+                        (if (not c-rbt-mint-role)
+                            (DPTF|C_ToggleMintRole patron c-rbt ats-sc true)
+                            true
+                        )
                     )
                 )
                 (let
@@ -1873,11 +1904,13 @@
                             (rt-br:bool (ref-DPTF::UR_AccountRoleBurn reward-token ats-sc))
                             (rt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption reward-token ats-sc))
                         )
-                        (if (and (= rt-br false) burn-or-exemption)
-                            (DPTF|C_ToggleBurnRole patron reward-token ats-sc true)        
-                            (if (and (= rt-fer false) (= burn-or-exemption false))
-                                (DPTF|C_ToggleFeeExemptionRole patron reward-token ats-sc true)
-                                true
+                        (with-capability (SECURE)
+                            (if (and (= rt-br false) burn-or-exemption)
+                                (DPTF|C_ToggleBurnRole patron reward-token ats-sc true)
+                                (if (and (= rt-fer false) (= burn-or-exemption false))
+                                    (DPTF|C_ToggleFeeExemptionRole patron reward-token ats-sc true)
+                                    true
+                                )
                             )
                         )
                     )

@@ -150,6 +150,7 @@
             (compose-capability (P|ATS|REMOTE-GOV))
             (compose-capability (P|ATS|UP_ROU))
             (compose-capability (P|DPTF|CREDIT))
+            (compose-capability (SECURE))
         )
     )
     (defcap DPTF|C>TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
@@ -606,7 +607,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_ClearDispo (patron:string account:string)
-        @doc "Clears OURO Dispo by levereging existing Elite-Auryn"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (DPTF|C>CLEAR-DISPO account)
             (let
                 (
@@ -650,8 +651,14 @@
         )
     )
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        @doc "Transmutes a DPTF Token. Transmuting behaves as fee collection, without counting as such \
-            \ Therefore Transmuting, pumps the Index of all ATS Pair the Token is Part of, if proper fee settings are set up in said ATSPairs"
+        (enforce-one
+            "DPTF Transmute permitted"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "ORBR|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -666,11 +673,21 @@
         )
     )
     (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Transfers a DPTF Token"
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (sc:guard (create-capability-guard (SECURE)))
+                (g1:guard (P|UR "ATSU|Caller"))
+                (g2:guard (P|UR "VST|Caller"))
+                (g3:guard (P|UR "LQD|Caller"))
+                (g4:guard (P|UR "ORBR|Caller"))
+                (g5:guard (P|UR "SWP|Caller"))
+                (g6:guard (P|UR "SWPU|Caller"))
+                (g7:guard (P|UR "TS01|Summoner"))
+                (sum-guard:guard (ref-U|G::UEV_GuardOfAny [sc g1 g2 g3 g4 g5 g6 g7]))
             )
+            (enforce-guard sum-guard)
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (X_Transfer id sender receiver transfer-amount method)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transfer-amount 10)))
@@ -681,7 +698,15 @@
         )
     )
     (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Executes a DPTF MultiTransfer, sending multiple DPTF, each with its own amount, to a single receiver"
+        (enforce-one
+            "DPTF Transmute permitted"
+            [
+                (enforce-guard (P|UR "ATSU|Caller"))
+                (enforce-guard (P|UR "SWP|Caller"))
+                (enforce-guard (P|UR "SWPU|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (with-capability (SECURE)
             (let
                 (
@@ -698,7 +723,13 @@
         )
     )
     (defun C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Executes a Bulk DPTF Transfer, sending one DPTF, to multiple receivers, each with its own amount"
+        (enforce-one
+            "DPTF Transmute permitted"
+            [
+                (enforce-guard (P|UR "SWPU|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (with-capability (SECURE)
             (let
                 (
@@ -863,7 +894,6 @@
         )
     )
     (defun X_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool)
-        (require-capability (SECURE))
         (let
             (
                 (id:string (at "id" id-amount-pair))
@@ -873,7 +903,6 @@
         )
     )
     (defun X_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool)
-        (require-capability (SECURE))
         (let
             (
                 (receiver:string (at "receiver" receiver-amount-pair))

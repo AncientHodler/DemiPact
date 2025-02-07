@@ -1,6 +1,5 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module DALOS GOV
-    (use coin)
     ;;
     (implements OuronetPolicy)
     (implements OuronetDalos)
@@ -780,10 +779,9 @@
     )
     (defun IGNIS|UEV_Patron (patron:string)
         @doc "Capability that ensures a DALOS account can act as gas payer, enforcing all necesarry restrictions"
-        (CAP_EnforceAccountOwnership patron)
         (if (UR_AccountType patron)
             (enforce (= patron DALOS|SC_NAME) "Only the DALOS Account can be a Smart Patron")
-            true
+            (CAP_EnforceAccountOwnership patron)
         )
     )
     ;;{F3}
@@ -802,7 +800,7 @@
     )
     ;;{F5}
     (defun A_UpdateUsagePrice (action:string new-price:decimal)
-        @doc "Updates specific Usage Price in KDA"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (GOV|DALOS_ADMIN)
             (let
                 (
@@ -816,7 +814,7 @@
         )
     )
     (defun A_UpdatePublicKey (account:string new-public:string)
-        @doc "Updates Public Key"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (GOV|DALOS_ADMIN)
             (write DALOS|AccountTable account
                 {"public"     : new-public}
@@ -824,25 +822,25 @@
         )
     )
     (defun A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
-        @doc "Deploys a standard Account in Admin Mode"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (GOV|DALOS_ADMIN)
             (C_DeployStandardAccount account guard kadena public)
         )
     )
     (defun A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
-        @doc "Deploys a smart Account in Admin Mode"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (GOV|DALOS_ADMIN)
             (C_DeploySmartAccount account guard kadena sovereign public)
         )
     )
     (defun IGNIS|A_Toggle (native:bool toggle:bool)
-        @doc "Toggles Gas Collection"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (IGNIS|C>TOGGLE native toggle)
             (IGNIS|X_Toggle native toggle)
         )
     )
     (defun IGNIS|A_SetSourcePrice (price:decimal)
-        @doc "Sets OURO Price"
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (GOV|DALOS_ADMIN)
             (IGNIS|X_UpOuroPr price)
         )
@@ -853,7 +851,7 @@
             "Standard Deployment not permitted"
             [
                 (enforce-guard (create-capability-guard (GOV|DALOS_ADMIN)))
-                (enforce-guard (P|UR "TALOS|Summoner"))
+                (enforce-guard (P|UR "TS01|Summoner"))
             ]
         )
         (with-capability (DALOS|S>D-ST account guard kadena)
@@ -887,7 +885,7 @@
             "Smart Deployment not permitted"
             [
                 (enforce-guard (create-capability-guard (GOV|DALOS_ADMIN)))
-                (enforce-guard (P|UR "TALOS|Summoner"))
+                (enforce-guard (P|UR "TS01|Summoner"))
             ]
         )
         (with-capability (DALOS|S>D-SM account guard kadena sovereign)
@@ -917,12 +915,14 @@
         )
     )
     (defun C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (DALOS|C>RT_ACC account)
             (X_RotateGuard account new-guard safe)
             (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
         )
     )
     (defun C_RotateKadena (patron:string account:string kadena:string)
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (DALOS|C>RT_ACC account)
             (X_RotateKadena account kadena)
             (X_UpdateKadenaLedger (UR_AccountKadena account) account false)
@@ -931,25 +931,42 @@
         )
     )
     (defun C_RotateSovereign (patron:string account:string new-sovereign:string)
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (DALOS|C>RT_SOV account new-sovereign)
             (X_RotateSovereign account new-sovereign)
             (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
         )
     )
     (defun C_RotateGovernor (patron:string account:string governor:guard)
+        (enforce-one
+            "Governor Rotation not permitted"
+            [
+                (enforce-guard (P|UR "ATS|Caller"))
+                (enforce-guard (P|UR "LQD|Caller"))
+                (enforce-guard (P|UR "VST|Caller"))
+                (enforce-guard (P|UR "ORBR|Caller"))
+                (enforce-guard (P|UR "TS01|Summoner"))
+            ]
+        )
         (with-capability (DALOS|C>RT_GOV account)
             (X_RotateGovernor account governor)
             (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
         )
     )
     (defun C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+        (enforce-guard (P|UR "TS01|Summoner"))
         (with-capability (DALOS|C>CTRL_SM-ACC patron account payable-as-smart-contract payable-by-smart-contract)
             (X_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
             (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
         )
     )
     (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal)
-        (coin.transfer sender receiver amount)
+        (let
+            (
+                (ref-coin:module{fungible-v2} coin)
+            )
+            (ref-coin::transfer sender receiver amount)
+        )
     )
     (defun IGNIS|C_Collect (patron:string active-account:string amount:decimal)
         (IGNIS|C_CollectWT patron active-account amount (IGNIS|URC_IsVirtualGasZero))
@@ -1337,7 +1354,7 @@
             "OURO Price Update not allowed"
             [
                 (enforce-guard (create-capability-guard (GOV|DALOS_ADMIN)))
-                (enforce-guard (P|UR "SWAPER|UpdateOuroborosPrice"))
+                (enforce-guard (P|UR "SWPU|UpdateOuroborosPrice"))
             ]
         )
         (update DALOS|GasManagementTable DALOS|VGD

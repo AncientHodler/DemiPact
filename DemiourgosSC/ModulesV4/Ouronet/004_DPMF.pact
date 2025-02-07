@@ -2,6 +2,7 @@
 (module DPMF GOV
     ;;
     (implements OuronetPolicy)
+    (implements BrandingUsage)
     (implements DemiourgosPactMetaFungible)
     ;;{G1}
     (defconst GOV|MD_DPMF           (keyset-ref-guard (GOV|Demiurgoi)))
@@ -889,23 +890,23 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        @doc "Updates <pending-branding> for DPMF Token <id> costing 150 IGNIS"
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for DPMF Token <entity-id> costing 150 IGNIS"
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto id))
+                (owner:string (UR_Konto entity-id))
                 (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
                 (final-cost:decimal (* 1.5 branding-cost))
             )
             (with-capability (DPMF|C>UPDATE-BRD)
-                (ref-BRD::X_UpdatePendingBranding id logo description website social)
+                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
             )
         )
     )
-    (defun C_UpgradeBranding (patron:string id:string months:integer)
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
         @doc "Upgrades Branding for DPMF Token, making it a premium Branding. \
         \ Also sets pending-branding to live branding if its branding is not live yet"
         (enforce-guard (P|UR "TALOS|Summoner"))
@@ -913,10 +914,10 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto id))
+                (owner:string (UR_Konto entity-id))
                 (kda-payment:decimal
                     (with-capability (DPMF|C>UPGRADE-BRD)
-                        (ref-BRD::X_UpgradeBranding id owner months)
+                        (ref-BRD::X_UpgradeBranding entity-id owner months)
                     )
                 )
             )

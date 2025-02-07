@@ -38,10 +38,12 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (ref-DALOS::C_RotateGovernor
-                patron
-                ORBR|SC_NAME
-                (create-capability-guard (ORBR|GOV))
+            (with-capability (P|ORBR|CALLER)
+                (ref-DALOS::C_RotateGovernor
+                    patron
+                    ORBR|SC_NAME
+                    (create-capability-guard (ORBR|GOV))
+                )
             )
         )
     )
@@ -50,6 +52,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|ORBR|CALLER ()
+        true
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -62,7 +67,25 @@
         )
     )
     (defun P|A_Define ()
-        true
+        (let
+            (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (ref-P|DALOS::P|A_Add 
+                "ORBR|Caller"
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|DPTF::P|A_Add 
+                "ORBR|Caller"
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                "ORBR|Caller"
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+        )
     )
     ;;
     ;;{1}
@@ -85,12 +108,14 @@
         (UEV_AccountsAsStandard [patron client target])
         (UEV_Exchange)
         (compose-capability (ORBR|GOV))
+        (compose-capability (P|ORBR|CALLER))
     )
     (defcap IGNIS|C>COMPRESS (patron:string client:string)
         @event
         (UEV_AccountsAsStandard [patron client])
         (UEV_Exchange)
         (compose-capability (ORBR|GOV))
+        (compose-capability (P|ORBR|CALLER))
     )
     (defcap OUROBOROS|C>WITHDRAW (patron:string id:string target:string)
         @event
@@ -102,6 +127,7 @@
             (ref-DALOS::UEV_EnforceAccountType target false)
             (ref-DPTF::CAP_Owner id)
             (compose-capability (ORBR|GOV))
+            (compose-capability (P|ORBR|CALLER))
         )
     )
     ;;
@@ -212,8 +238,8 @@
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ATSU:module{Autostake} ATSU)
-                (ref-LIQUID:module{Autostake} LIQUID)
+                (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
                 (orb-sc ORBR|SC_NAME)
                 (orb-kda ORBR|SC_KDA-NAME)
                 (lq-kda (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))

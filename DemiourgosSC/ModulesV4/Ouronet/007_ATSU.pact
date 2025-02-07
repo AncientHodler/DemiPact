@@ -63,6 +63,7 @@
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
             )
             (ref-P|DPTF::P|A_Add
                 "ATSU|Caller"
@@ -83,6 +84,10 @@
             (ref-P|ATS::P|A_Add
                 "ATSU|UpdateROU"
                 (create-capability-guard (P|ATSU|UPDATE_ROU))
+            )
+            (ref-P|TFT::P|A_Add
+                "ATSU|Caller"
+                (create-capability-guard (P|ATSU|CALLER))
             )
         )
     )

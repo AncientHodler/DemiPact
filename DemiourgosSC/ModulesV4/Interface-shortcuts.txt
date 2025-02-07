@@ -8,8 +8,8 @@
 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
 (ref-U|ATS:module{UtilityAts} U|ATS)
 (ref-U|DPTF:module{UtilityDptf} U|DPTF)
-(ref-U|SWP:module{UtilityVst} U|VST)
-(ref-U|VST:module{UtilitySwp} U|SWP)
+(ref-U|VST:module{UtilityVst} U|VST)
+(ref-U|SWP:module{UtilitySwp} U|SWP)
 (ref-U|BFS:module{BreadthFirstSearch} U|BFS)
 
 (ref-P|DALOS:module{OuronetPolicy} DALOS)
@@ -21,6 +21,12 @@
 (ref-P|ATSU:module{OuronetPolicy} ATSU)
 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+(ref-P|SWP:module{OuronetPolicy} SWP)
+
+(ref-B|DPTF:module{BrandingUsage} DPTF}
+(ref-B|DPMF:module{BrandingUsage} DPMF}
+(ref-B|ATS:module{BrandingUsage} ATS}
+(ref-B|SWP:module{BrandingUsage} SWP}
 
 (ref-DALOS:module{OuronetDalos} DALOS)
 (ref-BRD:module{Branding} BRD)
@@ -28,12 +34,16 @@
 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
 (ref-ATS:module{Autostake} ATS)
 (ref-TFT:module{TrueFungibleTransfer} TFT)
-(ref-ATSU:module{Autostake} ATSU)
-(ref-LIQUID:module{Autostake} LIQUID)
-(ref-ORBR:module{Autostake} OUROBOROS)
+(ref-ATSU:module{AutostakeUsage} ATSU)
+(ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
+(ref-ORBR:module{Ouroboros} OUROBOROS)
+(ref-SWPT:module{SwapTracer} SWPT)
+(ref-SWP:module{Swapper} SWP)
+(ref-SWPU:module{SwapperUsage} SWPU)
 
 
-;;>>>>>>>>>>>>>
+
+
 
 ref-DALOS::
 ref-BRD::
@@ -44,6 +54,9 @@ ref-TFT::
 ref-ATSU::
 ref-LIQUID::
 ref-ORBR::
+ref-SWPT::
+ref-SWP::
+ref-SWPU::
 
 ref-U|CT::
 ref-U|G::
@@ -69,6 +82,10 @@ ref-P|ATSU::
 ref-P|LIQUID::
 ref-P|ORBR::
 
+ref-B|DPTF::
+ref-B|DPMF::
+ref-B|ATS::
+ref-B|SWP::
 
 
 

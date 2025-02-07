@@ -1,6 +1,7 @@
 (module SWP GOV
     ;;
     (implements OuronetPolicy)
+    (implements BrandingUsage)
     (implements Swapper)
     ;;{G1}
     (defconst GOV|MD_SWP            (keyset-ref-guard (GOV|Demiurgoi)))
@@ -56,6 +57,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|SWP|CALLER ()
+        true
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -68,7 +72,30 @@
         )
     )
     (defun P|A_Define ()              
-        true
+        (let
+            (
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|SWPT:module{OuronetPolicy} SWP)
+            )
+            (ref-P|DPTF::P|A_Add
+                "SWP|Caller"
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|ATS::P|A_Add
+                "SWP|Caller"
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|TFT::P|A_Add
+                "SWP|Caller"
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|SWPT::P|A_Add
+                "SWP|Caller"
+                (create-capability-guard (P|SWP|CALLER))
+            )
+        )
     )
     ;;
     ;;{1}
@@ -103,14 +130,10 @@
     (defschema SWP|PoolsSchema
         pools:[string]
     )
-    (defschema SWPT|TracerSchema
-        links:[object{Swapper.Edges}]
-    )
     ;;{2}
     (deftable SWP|Properties:{SWP|PropertiesSchema})
     (deftable SWP|Pairs:{SWP|PairsSchema})
     (deftable SWP|Pools:{SWP|PoolsSchema})
-    (deftable SWPT|Tracer:{SWPT|TracerSchema})
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
@@ -127,11 +150,6 @@
     (defconst S5 "S5")
     (defconst S6 "S6")
     (defconst S7 "S7")
-    (defconst NLE [NLEO])
-    (defconst NLEO
-        { "principal" : BAR
-        , "swpairs"   : [BAR]}
-    )
     (defconst SWP|EMPTY-TARGET
         { "target": BAR
         , "value": 1 }
@@ -160,20 +178,6 @@
                 (current:bool (UR_CanChangeOwner swpair))
             )
             (enforce (!= current new-boolean) "Similar boolean unallowed for <can-change-owner>")
-            (CAP_Owner swpair)
-        )
-    )
-    (defcap SWP|S>ADD-OR-SWAP (swpair:string toggle:bool add-or-swap:bool)
-        @event
-        (let
-            (
-                (add:bool (UR_CanAdd swpair))
-                (swap:bool (UR_CanSwap swpair))
-            )
-            (if add-or-swap
-                (enforce (!= add toggle) "Similar boolean unallowed for <can-add> or <can-swap>")
-                (enforce (!= swap toggle) "Similar boolean unallowed for <can-add> or <can-swap>")
-            )
             (CAP_Owner swpair)
         )
     )
@@ -282,6 +286,30 @@
     )
     ;{C3}
     ;{C4}
+    (defcap SWP|C>UPDATE-BRD (atspair:string)
+        @event
+        (CAP_Owner atspair)
+        (compose-capability (P|SWP|CALLER))
+    )
+    (defcap SWP|C>UPGRADE-BRD (atspair:string)
+        @event
+        (compose-capability (P|SWP|CALLER))
+    )
+    (defcap SWP|C>ADD-OR-SWAP (swpair:string toggle:bool add-or-swap:bool)
+        @event
+        (let
+            (
+                (add:bool (UR_CanAdd swpair))
+                (swap:bool (UR_CanSwap swpair))
+            )
+            (if add-or-swap
+                (enforce (!= add toggle) "Similar boolean unallowed for <can-add> or <can-swap>")
+                (enforce (!= swap toggle) "Similar boolean unallowed for <can-add> or <can-swap>")
+            )
+            (CAP_Owner swpair)
+            (compose-capability (P|SWP|CALLER))
+        )
+    )
     (defcap SWP|C>PRINCIPAL (principal:string add-or-remove:bool)
         @event
         (let
@@ -313,7 +341,7 @@
     )
     (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
         @event
-        (let*
+        (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -330,6 +358,7 @@
                 )
                 (iz-principal:bool (contains (at 0 pt-ids) principals))
             )
+            (enforce (!= principals [BAR]) "Principals must be defined before a Swap Pair can be issued")
             (UEV_PoolFee fee-lp)
             (UEV_New pt-ids weights amp)
             (map
@@ -360,9 +389,11 @@
             (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid amp value")
             (enforce (and (>= l1 2) (<= l1 7)) "2 - 7 Tokens can be used to create a Swap Pair")
             (enforce (= l1 l2) "Number of weigths does not concide with the pool-tokens Number")
+        
         )
-        (compose-capability (SECURE))
+        (compose-capability (P|SWP|CALLER))
         (compose-capability (SWP|GOV))
+        (compose-capability (SECURE))
         (if p
             (compose-capability (GOV|SWP_ADMIN))
             true
@@ -438,41 +469,6 @@
                 )
                 []
                 (enumerate 0 (- (length io) 1))
-            )
-        )
-    )
-    (defun SWPT|UC_PSwpairsFTO:[string] (traces:[object{Swapper.Edges}] id:string principal:string)
-        @doc "Principal Swpairs From Trace Object: given a trace object, id and principal, output the stored swpairs\
-        \ UTILS.BAR can be used as principal, returning swpairs that contain no principals. \
-        \ Swpairs that contain no principals, can only be stable swap pairs."
-        (SWPT|UEV_IdAsPrincipal principal true)
-        (let*
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (principals-from-traces:[string] (SWPT|UC_PrincipalsFromTraces traces))
-                (search:[integer] (ref-U|LST::UC_Search principals-from-traces principal))
-            )
-            (if (!= (length search) 0)
-                (at "swpairs" (at (at 0 search) traces))
-                [BAR]
-            )
-        )
-    )
-    (defun SWPT|UC_PrincipalsFromTraces:[string] (traces:[object{Swapper.Edges}])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[string] idx:integer)
-                    (ref-U|LST::UC_AppendLast 
-                        acc
-                        (at "principal" (at idx traces))
-                    )
-                )
-                []
-                (enumerate 0 (- (length traces) 1))
             )
         )
     )
@@ -670,97 +666,8 @@
             (fold (+) [] (ref-U|LST::UC_RemoveItem fl [BAR]))
         )
     )
-    (defun SWPT|URC_PathTracer:[object{Swapper.Edges}] (old-path-tracer:[object{Swapper.Edges}] id:string swpair:string)
-        "Computes a new Path-tracer object list, given <old-path-tracer> object, token-id <id> and Swap-Pair <swpair>"
-        (let*
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (swpair-tokens:[string] (UR_PoolTokens swpair))
-                (has-principals:bool (SWPT|URC_ContainsPrincipals swpair))
-                (current-element-zero-swpairs:[string] (SWPT|UC_PSwpairsFTO old-path-tracer id BAR))
-                (new-element-zero-swpairs:[string]
-                    (if (= current-element-zero-swpairs [BAR])
-                        (if has-principals
-                            [BAR]
-                            [swpair]
-                        )
-                        (if has-principals
-                            current-element-zero-swpairs
-                            (ref-U|LST::UC_AppL current-element-zero-swpairs swpair)
-                        )
-                    )
-                )
-                (element-zero:object{Swapper.Edges}
-                    { "principal" : BAR , "swpairs" : new-element-zero-swpairs}
-                )
-                (principals:[string] (UR_Principals))
-            )
-            (fold
-                (lambda
-                    (acc:[object{Swapper.Edges}] idx:integer)
-                    (ref-U|LST::UC_AppL 
-                        acc
-                        (let*
-                            (
-                                (current-element-swpairs:[string] (SWPT|UC_PSwpairsFTO old-path-tracer id (at idx principals)))
-                                (lopt:integer (length old-path-tracer))
-                                (iz-principal-on-swpair:bool (contains (at idx principals) swpair-tokens))
-                                (check:bool (and (!= id (at idx principals)) iz-principal-on-swpair))
-                                (swpairs-to-add:[string]
-                                    (if (= lopt 1)
-                                        (if check
-                                            [swpair]
-                                            [BAR]
-                                        )
-                                        (if check
-                                            (ref-U|LST::UC_AppL current-element-swpairs swpair)
-                                            current-element-swpairs
-                                        )
-                                    )
-                                )
-                                (filtered-swpairs-to-add:[string]
-                                    (if (= swpairs-to-add [BAR])
-                                        swpairs-to-add
-                                        (if (= (at 0 swpairs-to-add) BAR)
-                                            (drop 1 swpairs-to-add)
-                                            swpairs-to-add
-                                        )
-                                    )
-                                )
-                            )
-                            {
-                                "principal" : (at idx principals),
-                                "swpairs"   : filtered-swpairs-to-add
-                            }
-                        )
-                    )
-                )
-                [element-zero]
-                (enumerate 0 (- (length principals) 1))
-            )
-        )
-    )
-    (defun SWPT|URC_ContainsPrincipals:bool (swpair:string)
-        (let
-            (
-                (swpair-tokens:[string] (UR_PoolTokens swpair))
-                (principals:[string] (UR_Principals))
-            )
-            (fold
-                (lambda
-                    (acc:bool idx:integer)
-                    (or
-                        acc
-                        (contains (at idx swpair-tokens) principals)
-                    )
-                )
-                false
-                (enumerate 0 (- (length swpair-tokens) 1))
-            )
-        )
-    )
     (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{Swapper.PoolTokens}] weights:[decimal] amp:decimal)
-        (let*
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
@@ -914,17 +821,6 @@
             (enumerate 0 (- (length token-ids) 1))
         )
     )
-    (defun SWPT|UEV_IdAsPrincipal (id:string for-trace:bool)
-        (let
-            (
-                (iz-principal:bool (contains id (UR_Principals)))
-            )
-            (if for-trace
-                (enforce (or iz-principal (= id BAR)) (format "ID {} is not a valid principal for trace operations" [id]))
-                (enforce iz-principal (format "ID {} is not a principal" [id]))
-            )
-        )
-    )
     ;;{F3}
     ;;{F4}
     (defun CAP_Owner (swpair:string)
@@ -993,15 +889,50 @@
         )
     )
     ;;{F6}
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for SWPair <entity-id> costing 400 IGNIS"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_OwnerKonto entity-id))
+                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
+                (final-cost:decimal (* 4.0 branding-cost))
+            )
+            (with-capability (SWP|C>UPDATE-BRD)
+                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
+                (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
+            )
+        )
+    )
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
+        @doc "Upgrades Branding for an SWPair, making it a premium Branding. \
+        \ Also sets pending-branding to live branding if its branding is not live yet"
+        (enforce-guard (P|UR "TALOS|Summoner"))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_OwnerKonto entity-id))
+                (kda-payment:decimal
+                    (with-capability (SWP|C>UPGRADE-BRD)
+                        (ref-BRD::X_UpgradeBranding entity-id owner months)
+                    )
+                )
+            )
+            (ref-DALOS::KDA|C_CollectWT patron kda-payment false)
+        )
+    )
     (defun C_Issue:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
         @doc "Issues a new SWPair (Liquidty Pool)"
         (enforce-guard (P|UR "TALOS|Summoner"))
         (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp p)
-            (let*
+            (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ref-SWPT:module{SwapTracer} SWPT)
                     (kda-dptf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
                     (kda-swp-cost:decimal (ref-DALOS::UR_UsagePrice "swp"))
                     (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
@@ -1009,13 +940,13 @@
                     (pool-token-ids:[string] (UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (UC_ExtractTokenSupplies pool-tokens))
                     (lp-name-ticker:[string] (SWPI|URC_LpComposer pool-tokens weights amp))
-                    (token-lp:string (ref-DPTF::C_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
+                    (token-lp:string (ref-DPTF::X_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
                     (swpair:string (X_Issue account pool-tokens token-lp fee-lp weights amp p))
                 )
                 (ref-TFT::C_MultiTransfer patron pool-token-ids account SWP|SC_NAME pool-token-amounts true)
                 (ref-DPTF::C_Mint patron token-lp SWP|SC_NAME 10000000.0 true)
                 (ref-TFT::C_Transfer patron token-lp SWP|SC_NAME account 10000000.0 true)
-                (SWPT|X_MultiPathTracer swpair)
+                (ref-SWPT::X_MultiPathTracer swpair (UR_Principals))
                 (ref-DALOS::IGNIS|C_Collect patron account gas-swp-cost)
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
                 [swpair token-lp]
@@ -1058,11 +989,11 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-ATS:module{Autostake} ATS)
             )
-            (with-capability (SWP|S>ADD-OR-SWAP swpair toggle add-or-swap)
+            (with-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)
                 (X_CanAddOrSwapToggle swpair toggle add-or-swap)
                 (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
                 (if toggle
-                    (let*
+                    (let
                         (
                             (pt-ids:[string] (UR_PoolTokens swpair))
                             (amp:decimal (UR_Amplifier swpair))
@@ -1116,7 +1047,7 @@
         @doc "Locks the fee in place for for an SWPair"
         (enforce-guard (P|UR "TALOS|Summoner"))
         (with-capability (SWP|C>TG_FEE-LOCK swpair toggle)
-            (let*
+            (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (swpair-owner:string (UR_OwnerKonto swpair))
@@ -1223,7 +1154,7 @@
         )  
     )
     (defun X_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
-        (require-capability (SWP|S>ADD-OR-SWAP swpair toggle add-or-swap))
+        (require-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap))
         (if add-or-swap
             (update SWP|Pairs swpair
                 {"can-add"                      : toggle}
@@ -1238,7 +1169,7 @@
             "Modifying weights not allowed"
             [
                 (create-capability-guard (SECURE))
-                (enforce-guard (P|UR "SWPL|Caller"))
+                (enforce-guard (P|UR "SWPU|Caller"))
             ]
         )
         (with-capability (SWP|S>WEIGHTS swpair new-weights)
@@ -1307,14 +1238,7 @@
         )
     )
     (defun X_UpdateSupplies (swpair:string new-supplies:[decimal])
-        (enforce-one
-            "Updating Pool Supplies not allowed"
-            [
-                
-                (enforce-guard (P|UR "SWPL|Caller"))
-                (enforce-guard (P|UR "SWPS|Caller"))
-            ]
-        )
+        (enforce-guard (P|UR "SWPU|Caller"))
         (with-capability (SWP|S>UPDATE-SUPPLIES swpair new-supplies)
             (let
                 (
@@ -1330,7 +1254,7 @@
         )
     )
     (defun X_UpdateSupply (swpair:string id:string new-supply:decimal)
-        (enforce-guard (P|UR "SWPS|Caller"))
+        (enforce-guard (P|UR "SWPU|Caller"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1470,34 +1394,9 @@
             swpair
         )
     )
-    ;;
-    (defun SWPT|X_MultiPathTracer (swpair:string)
-        (enforce-guard (P|UR "SWPI|Caller"))
-        (with-capability (SECURE)
-            (map
-                (lambda
-                    (token:string)
-                    (SWPT|X_SinglePathTracer token swpair)
-                )
-                (UR_PoolTokens swpair)
-            )
-        )
-    )
-    (defun SWPT|X_SinglePathTracer (id:string swpair:string)
-        (require-capability (SECURE))
-        (with-default-read SWPT|Tracer id
-            { "links" : NLE }
-            { "links" := lks }
-            (write SWPT|Tracer id
-                { "links" : (SWPT|URC_PathTracer lks id swpair)}
-            )
-        )
-    )
-    
 )
 
 (create-table P|T)
 (create-table SWP|Properties)
 (create-table SWP|Pairs)
 (create-table SWP|Pools)
-(create-table SWPT|Tracer)
