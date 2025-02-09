@@ -1,3 +1,105 @@
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface Swapper
+    (defschema PoolTokens
+        token-id:string
+        token-supply:decimal
+    )
+    (defschema FeeSplit
+        target:string
+        value:integer
+    )
+    (defun GOV|SWP|SC_KDA-NAME ())
+    ;;
+    (defun UC_ExtractTokens:[string] (input:[object{PoolTokens}]))
+    (defun UC_ExtractTokenSupplies:[decimal] (input:[object{PoolTokens}]))
+    (defun UC_CustomSpecialFeeTargets:[string] (io:[object{FeeSplit}]))
+    (defun UC_CustomSpecialFeeTargetsProportions:[decimal] (io:[object{FeeSplit}]))
+    ;;
+    (defun UR_Principals:[string] ())
+    (defun UR_LiquidBoost:bool ())
+    (defun UR_SpawnLimit:decimal ())
+    (defun UR_InactiveLimit:decimal ())
+    (defun UR_OwnerKonto:string (swpair:string))
+    (defun UR_CanChangeOwner:bool (swpair:string))
+    (defun UR_CanAdd:bool (swpair:string)) ;;2
+    (defun UR_CanSwap:bool (swpair:string))
+    (defun UR_GenesisWeigths:[decimal] (swpair:string))
+    (defun UR_Weigths:[decimal] (swpair:string))
+    (defun UR_GenesisRatio:[object{PoolTokens}] (swpair:string))
+    (defun UR_PoolTokenObject:[object{PoolTokens}] (swpair:string))
+    (defun UR_TokenLP:string (swpair:string)) ;;3
+    (defun UR_TokenLPS:[string] (swpair:string)) ;;1
+    (defun UR_FeeLP:decimal (swpair:string))
+    (defun UR_FeeSP:decimal (swpair:string)) ;;1
+    (defun UR_FeeSPT:[object{FeeSplit}] (swpair:string))
+    (defun UR_FeeLock:bool (swpair:string))
+    (defun UR_FeeUnlocks:integer (swpair:string))
+    (defun UR_Special:bool (swpair:string))
+    (defun UR_Governor:guard (swpair:string))
+    (defun UR_Amplifier:decimal (swpair:string)) ;;3
+    (defun UR_Primality:bool (swpair:string))
+    (defun UR_Pools:[string] (pool-category:string))
+    (defun UR_PoolTokens:[string] (swpair:string)) ;;6
+    (defun UR_PoolTokenSupplies:[decimal] (swpair:string)) ;;6
+    (defun UR_PoolGenesisSupplies:[decimal] (swpair:string)) ;;2
+    (defun UR_PoolTokenPosition:integer (swpair:string id:string)) ;;5
+    (defun UR_PoolTokenSupply:decimal (swpair:string id:string))
+    (defun UR_PoolTokenPrecisions:[integer] (swpair:string)) ;;2
+    (defun UR_SpecialFeeTargets:[string] (swpair:string))
+    (defun UR_SpecialFeeTargetsProportions:[decimal] (swpair:string))
+    ;;
+    (defun URC_CheckID:bool (swpair:string))
+    (defun URC_PoolTotalFee:decimal (swpair:string))
+    (defun URC_LiquidityFee:decimal (swpair:string))
+    (defun URC_Swpairs:[string] ())
+    (defun URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
+    ;;
+    (defun UEV_FeeSplit (input:object{FeeSplit}))
+    (defun UEV_id (swpair:string)) ;;4
+    (defun UEV_CanChangeOwnerON (swpair:string))
+    (defun UEV_FeeLockState (swpair:string state:bool))
+    (defun UEV_PoolFee (fee:decimal))
+    (defun UEV_New (t-ids:[string] w:[decimal] amp:decimal))
+    (defun UEV_CheckTwo (token-ids:[string] w:[decimal] amp:decimal))
+    (defun UEV_CheckAgainstMass:bool (token-ids:[string] present-pools:[string]))
+    (defun UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string])) ;;3
+    ;;
+    (defun A_UpdatePrincipal (principal:string add-or-remove:bool))
+    (defun A_UpdateLiquidBoost (new-boost-variable:bool))
+    (defun A_UpdateLimit (limit:decimal spawn:bool))
+    ;;
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
+    (defun C_Issue:[string] (patron:string account:string pool-tokens:[object{PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
+    (defun C_ChangeOwnership (patron:string swpair:string new-owner:string))
+    (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
+    (defun C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool))
+    (defun C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
+    (defun C_ToggleFeeLock (patron:string swpair:string toggle:bool))
+    (defun C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool))
+    (defun C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
+    (defun C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{FeeSplit}]))
+    (defun C_ToggleSpecialMode (patron:string swpair:string))
+    (defun C_RotateGovernor (patron:string swpair:string new-gov:guard))
+    (defun C_UpdateAmplifier (patron:string swpair:string amp:decimal))
+    ;;
+    (defun X_ChangeOwnership (swpair:string new-owner:string))
+    (defun X_ModifyCanChangeOwner (swpair:string new-boolean:bool))
+    (defun X_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool))
+    (defun X_ModifyWeights (swpair:string new-weights:[decimal])) ;;2
+    (defun X_ToggleFeeLock:[decimal] (swpair:string toggle:bool))
+    (defun X_IncrementFeeUnlocks (swpair:string))
+    (defun X_UpdateLP (swpair:string lp-token:string add-or-remove:bool))
+    (defun X_UpdateSupplies (swpair:string new-supplies:[decimal])) ;;2
+    (defun X_UpdateSupply (swpair:string id:string new-supply:decimal))
+    (defun X_UpdateFee (swpair:string new-fee:decimal lp-or-special:bool))
+    (defun X_UpdateSpecialFeeTargets (swpair:string targets:[object{FeeSplit}]))
+    (defun X_ToggleSpecialMode (swpair:string))
+    (defun X_UpdateGovernor (swpair:string new-governor:guard))
+    (defun X_UpdateAmplifier (swpair:string new-amplifier:decimal))
+    (defun X_SavePool (n:integer what:bool swpair:string))
+    (defun X_Issue:string (account:string pool-tokens:[object{PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool))
+)
 (module SWP GOV
     ;;
     (implements OuronetPolicy)
@@ -60,6 +162,10 @@
     (defcap P|SWP|CALLER ()
         true
     )
+    (defcap P|SECURE-CALLER ()
+        (compose-capability (P|SWP|CALLER))
+        (compose-capability (SECURE))
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -74,27 +180,70 @@
     (defun P|A_Define ()              
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|SWPT:module{OuronetPolicy} SWP)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
+                (ref-P|VST:module{OuronetPolicy} VST)
+                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+                (ref-P|SWPT:module{OuronetPolicy} SWPT)
             )
-            (ref-P|DPTF::P|A_Add
-                "SWP|Caller"
+            (ref-P|DALOS::P|A_Add 
+                (ref-U|G::G12)
                 (create-capability-guard (P|SWP|CALLER))
             )
-            (ref-P|ATS::P|A_Add
-                "SWP|Caller"
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G12)
                 (create-capability-guard (P|SWP|CALLER))
             )
-            (ref-P|TFT::P|A_Add
-                "SWP|Caller"
+            (ref-P|DPTF::P|A_Add 
+                (ref-U|G::G12)
                 (create-capability-guard (P|SWP|CALLER))
             )
-            (ref-P|SWPT::P|A_Add
-                "SWP|Caller"
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G12)
                 (create-capability-guard (P|SWP|CALLER))
             )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|VST::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|LIQUID::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+            (ref-P|ORBR::P|A_Add 
+                (ref-U|G::G12)
+                (create-capability-guard (P|SWP|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [(P|UR (ref-U|G::G13))])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -666,7 +815,7 @@
             (fold (+) [] (ref-U|LST::UC_RemoveItem fl [BAR]))
         )
     )
-    (defun SWPI|URC_LpComposer:[string] (pool-tokens:[object{Swapper.PoolTokens}] weights:[decimal] amp:decimal)
+    (defun URC_LpComposer:[string] (pool-tokens:[object{Swapper.PoolTokens}] weights:[decimal] amp:decimal)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -900,7 +1049,7 @@
                 (final-cost:decimal (* 4.0 branding-cost))
             )
             (with-capability (SWP|C>UPDATE-BRD)
-                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
+                (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
             )
         )
@@ -916,7 +1065,7 @@
                 (owner:string (UR_OwnerKonto entity-id))
                 (kda-payment:decimal
                     (with-capability (SWP|C>UPGRADE-BRD)
-                        (ref-BRD::X_UpgradeBranding entity-id owner months)
+                        (ref-BRD::XE_UpgradeBranding entity-id owner months)
                     )
                 )
             )
@@ -930,6 +1079,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-BRD:module{Branding} BRD)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (ref-SWPT:module{SwapTracer} SWPT)
@@ -939,10 +1089,11 @@
                     (gas-swp-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|swp-issue"))
                     (pool-token-ids:[string] (UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (UC_ExtractTokenSupplies pool-tokens))
-                    (lp-name-ticker:[string] (SWPI|URC_LpComposer pool-tokens weights amp))
-                    (token-lp:string (ref-DPTF::X_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
+                    (lp-name-ticker:[string] (URC_LpComposer pool-tokens weights amp))
+                    (token-lp:string (ref-DPTF::XE_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
                     (swpair:string (X_Issue account pool-tokens token-lp fee-lp weights amp p))
                 )
+                (ref-BRD::XE_Issue swpair)
                 (ref-TFT::C_MultiTransfer patron pool-token-ids account SWP|SC_NAME pool-token-amounts true)
                 (ref-DPTF::C_Mint patron token-lp SWP|SC_NAME 10000000.0 true)
                 (ref-TFT::C_Transfer patron token-lp SWP|SC_NAME account 10000000.0 true)

@@ -1,31 +1,111 @@
+(interface OuronetConstants
+    @doc "Exported Constants as Functions from this Module via interface"
+    ;;
+    (defun CT_NS_USE ())
+    (defun CT_GOV|UTILS ())
+    ;;
+    (defun CT_DPTF-FeeLock ())
+    (defun CT_ATS-FeeLock ())
+    ;;
+    (defun CT_KDA_PRECISION ())
+    (defun CT_MIN_PRECISION ())
+    (defun CT_MAX_PRECISION ())
+    (defun CT_FEE_PRECISION ())
+    (defun CT_MIN_DESIGNATION_LENGTH ())
+    (defun CT_MAX_TOKEN_NAME_LENGTH ())
+    (defun CT_MAX_TOKEN_TICKER_LENGTH ())
+    (defun CT_ACCOUNT_ID_PROH-CHAR ())
+    (defun CT_ACCOUNT_ID_MAX_LENGTH ())
+    (defun CT_BAR ())
+    (defun CT_NUMBERS ())
+    (defun CT_CAPITAL_LETTERS ())
+    (defun CT_NON_CAPITAL_LETTERS ())
+    (defun CT_SPECIAL ())
+    ;;
+    (defun CT_ET ())
+    (defun CT_DEB ())
+    ;;
+    (defun CT_C1 ())
+    (defun CT_C2 ())
+    (defun CT_C3 ())
+    (defun CT_C4 ())
+    (defun CT_C5 ())
+    (defun CT_C6 ())
+    (defun CT_C7 ())
+    ;;
+    (defun CT_N00 ())
+    (defun CT_N01 ())
+    (defun CT_N11 ())
+    (defun CT_N12 ())
+    (defun CT_N13 ())
+    (defun CT_N14 ())
+    (defun CT_N15 ())
+    (defun CT_N16 ())
+    (defun CT_N17 ())
+    ;;
+    (defun CT_N21 ())
+    (defun CT_N22 ())
+    (defun CT_N23 ())
+    (defun CT_N24 ())
+    (defun CT_N25 ())
+    (defun CT_N26 ())
+    (defun CT_N27 ())
+    ;;
+    (defun CT_N31 ())
+    (defun CT_N32 ())
+    (defun CT_N33 ())
+    (defun CT_N34 ())
+    (defun CT_N35 ())
+    (defun CT_N36 ())
+    (defun CT_N37 ())
+    ;;
+    (defun CT_N41 ())
+    (defun CT_N42 ())
+    (defun CT_N43 ())
+    (defun CT_N44 ())
+    (defun CT_N45 ())
+    (defun CT_N46 ())
+    (defun CT_N47 ())
+    ;;
+    (defun CT_N51 ())
+    (defun CT_N52 ())
+    (defun CT_N53 ())
+    (defun CT_N54 ())
+    (defun CT_N55 ())
+    (defun CT_N56 ())
+    (defun CT_N57 ())
+    ;;
+    (defun CT_N61 ())
+    (defun CT_N62 ())
+    (defun CT_N63 ())
+    (defun CT_N64 ())
+    (defun CT_N65 ())
+    (defun CT_N66 ())
+    (defun CT_N67 ())
+    ;;
+    (defun CT_N71 ())
+    (defun CT_N72 ())
+    (defun CT_N73 ())
+    (defun CT_N74 ())
+    (defun CT_N75 ())
+    (defun CT_N76 ())
+    (defun CT_N77 ())
+)
 (module U|CT GOV
     ;;
     (implements OuronetConstants)
     ;;{G1}
-    (defconst NS_MAIN "")
-    (defconst NS_TEST "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-    ;(defconst NS_USE "free")
-
-    ;(defun NS_MAIN () (at 0 [""]))
-    ;(defun NS_TEST () (at 0 ["n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea"]))
-    (defun CT_NS_USE  () (at 0 ["free"]))
-
-    ;(defconst GOV|UTILS             (keyset-ref-guard GOV|DEMIURGOI))
+    (defun NS_MAIN ()               (at 0 [""]))
+    (defun NS_TEST ()               (at 0 ["n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea"]))
+    (defun CT_NS_USE  ()            (at 0 ["free"]))
+    ;;
     (defconst GOV|DEMIURGOI         (+ (CT_NS_USE) ".dh_master-keyset"))
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|CT_ADMIN))
-    )
-    (defcap GOV|U|CT_ADMIN ()
-        (enforce-guard (CT_GOV|UTILS))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|CT_ADMIN)))
+    (defcap GOV|U|CT_ADMIN ()       (enforce-guard (CT_GOV|UTILS)))
     ;;{G3}
-    (defun CT_GOV|UTILS ()
-        (keyset-ref-guard GOV|DEMIURGOI)
-    )
+    (defun CT_GOV|UTILS ()          (keyset-ref-guard GOV|DEMIURGOI))
     ;;
-    ;{1}
-    ;{2}
     ;{3}
     (defun CT_DPTF-FeeLock ()
         (if (or (= (CT_NS_USE) NS_TEST) (= (CT_NS_USE) "free"))
@@ -80,7 +160,7 @@
     )
     ;(defun CT_AURYN_FEE () 50.0)
     ;(defun CT_ELITE-AURYN_FEE () 100.0)
-
+    ;;
     (defun CT_C1 () (at 0 ["NOVICE"]))
     (defun CT_C2 () (at 0 ["INVESTOR"]))
     (defun CT_C3 () (at 0 ["ENTREPRENEUR"]))
@@ -147,8 +227,4 @@
     (defun CT_N76 () (at 0 ["Master Demiurg"]))
     (defun CT_N77 () (at 0 ["Grand-Master Demiurg"]))
     ;;
-    ;;{F-UC}
-    ;;{F_UR}
-    ;;{F-UEV}
-    ;;{F-UDC}
 )

@@ -1,3 +1,60 @@
+(interface Branding
+    @doc "Interface Exposing the Branding Functions needed to create the Branding Functionality \
+    \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
+    \ Should Future entities be added, they too can be branded via this module \
+    \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
+    \ are NOT sorted alphabetically \
+    \ Commented Functions are internal use only, and have no use outside the module"
+    ;;
+    (defschema Schema
+        logo:string
+        description:string
+        website:string
+        social:[object{SocialSchema}]
+        flag:integer
+        genesis:time
+        premium-until:time
+    )
+    (defschema SocialSchema
+        social-media-name:string
+        social-media-link:string
+    )
+    ;;
+    (defun UR_Branding:object{Schema} (id:string pending:bool))
+    (defun UR_Logo:string (id:string pending:bool))
+    (defun UR_Description:string (id:string pending:bool))
+    (defun UR_Website:string (id:string pending:bool))
+    (defun UR_Social:[object{SocialSchema}] (id:string pending:bool))
+    (defun UR_Flag:integer (id:string pending:bool))
+    (defun UR_Genesis:time (id:string pending:bool))
+    (defun UR_PremiumUntil:time (id:string pending:bool))
+    ;;
+    (defun URC_MaxBluePayment (account:string))
+    ;;
+    (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
+    (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
+    (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
+    (defun UDC_BrandingSocial:object{Schema} (input:object{Schema} social:[object{SocialSchema}]))
+    (defun UDC_BrandingFlag:object{Schema} (input:object{Schema} flag:integer))
+    (defun UDC_BrandingPremium:object{Schema} (input:object{Schema} premium:time))
+    ;;
+    (defun A_Live (entity-id:string))
+    (defun A_SetFlag (entity-id:string flag:integer))
+    ;;
+    (defun XE_Issue (entity-id:string))
+    (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{SocialSchema}]))
+    (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer))
+    ;;
+    ;(defun XI_UpdateBrandingData (entity-id:string pending:bool branding:object{Schema}))
+)
+(interface BrandingUsage
+    @doc "Interface Exposing the Actual Branding Functions, that must exist within each Entitys main Module \
+    \ such that said Entity can benefit from Branding. \
+    \ Stage 1 deployment launches following entities: DPTF, DPMF, ATSPairs, SWPairs"
+    ;;
+    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;;4
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer)) ;;4
+)
 (module BRD GOV
     ;;
     (implements OuronetPolicy)
@@ -14,6 +71,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S}) 
     ;;{P3}
+    (defcap P|BRD|CALLER ()
+        true
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -26,7 +86,38 @@
         )
     )
     (defun P|A_Define ()
-        true
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+            )
+            (ref-P|DALOS::P|A_Add 
+                (ref-U|G::G02)
+                (create-capability-guard (P|BRD|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m3:guard (P|UR (ref-U|G::G03)))
+                (m4:guard (P|UR (ref-U|G::G04)))
+                (m5:guard (P|UR (ref-U|G::G05)))
+                (m6:guard (P|UR (ref-U|G::G06)))
+                (m7:guard (P|UR (ref-U|G::G07)))
+                (m8:guard (P|UR (ref-U|G::G08)))
+                (m9:guard (P|UR (ref-U|G::G09)))
+                (m10:guard (P|UR (ref-U|G::G10)))
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m3 m4 m5 m6 m7 m8 m9 m10 m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
+        )
     )
     ;;
     ;;{1}
@@ -92,7 +183,7 @@
             (enforce (<= months mp) "Invalid Months Integer")
         ;;4] Upgrading can only be done if premium time is less than 15 days. Also works when no premium time is available.
             (enforce (< remaining 1296000.0) "Blue Flag has more than 15 days remainig!")
-        ;;5] Capability needed for accesing <X_UpdateBrandingData>
+        ;;5] Capability needed for accesing <XI_UpdateBrandingData>
             (compose-capability (SECURE))
         )
     )
@@ -148,32 +239,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_SpecificPolicy (match:string)
-        @doc "Enforces one of matching policies that end in <match>"
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (keyz:[string] BRD|BrandingTable)
-                (acces-keyz:[string] (ref-U|LST::UC_KeepEndMatch keyz match))
-                (guards:[guard]
-                    (fold
-                        (lambda
-                            (acc:[guard] idx:integer)
-                            (ref-U|LST::UC_AppL
-                                acc
-                                (P|UR (at idx acces-keyz))
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length acces-keyz) 1))
-                    )
-                )
-                (branding-acces:guard (ref-U|G::UEV_GuardOfAny guards))
-            )
-            (enforce-guard branding-acces)
-        )
-    )
     ;;{F3}
     (defun UDC_BrandingLogo:object{Branding.Schema} (input:object{Branding.Schema} logo:string)
         {"logo"             : logo
@@ -232,20 +297,8 @@
     )
     ;;{F4}
     ;;{F5}
-    (defun A_SetFlag (entity-id:string flag:integer)
-        (enforce-guard (P|UR "TS01|Summoner"))
-        (with-capability (BRD|C>ADMIN_SET flag)
-            (let
-                (
-                    (existing-branding:object{Branding.Schema} (UR_Branding entity-id false))
-                    (modified-branding:object{Branding.Schema} (UDC_BrandingFlag existing-branding flag))
-                )
-                (X_UpdateBrandingData entity-id false modified-branding)
-            )
-        )
-    )
     (defun A_Live (entity-id:string)
-        (enforce-guard (P|UR "TS01|Summoner"))
+        (P|UEV_SIP "T")
         (with-capability (BRD|C>LIVE)
             (let
                 (
@@ -258,37 +311,38 @@
                     (np3:object{Branding.Schema} (UDC_BrandingWebsite np2 BAR))
                     (np4:object{Branding.Schema} (UDC_BrandingSocial np3 [SOCIAL|EMPTY]))
                 )
-                (X_UpdateBrandingData entity-id false updated-branding)
-                (X_UpdateBrandingData entity-id true np4)
+                (XI_UpdateBrandingData entity-id false updated-branding)
+                (XI_UpdateBrandingData entity-id true np4)
+            )
+        )
+    )
+    (defun A_SetFlag (entity-id:string flag:integer)
+        (P|UEV_SIP "T")
+        (with-capability (BRD|C>ADMIN_SET flag)
+            (let
+                (
+                    (existing-branding:object{Branding.Schema} (UR_Branding entity-id false))
+                    (modified-branding:object{Branding.Schema} (UDC_BrandingFlag existing-branding flag))
+                )
+                (XI_UpdateBrandingData entity-id false modified-branding)
             )
         )
     )
     ;;{F6}
     ;;{F7}
-    (defun X_Issue (entity-id:string)
-        (UEV_SpecificPolicy "Branding")
+    (defun XE_Issue (entity-id:string)
+        (P|UEV_SIP "M")
         (insert BRD|BrandingTable entity-id
             {"branding"                 : BRD|DEFAULT
             ,"branding-pending"         : BRD|DEFAULT}
         )
     )
-    (defun X_UpdateBrandingData (entity-id:string pending:bool branding:object{Branding.Schema})
-        (require-capability (SECURE))
-        (if pending
-            (update BRD|BrandingTable entity-id
-                {"branding-pending" : branding}
-            )
-            (update BRD|BrandingTable entity-id
-                {"branding" : branding}
-            )
-        )
-    )
-    (defun X_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+    (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
         @doc "Updates <pending-branding> with new branding data. \
             \ This is done by <entity-id> owners to brand their <entity-id> \
             \ Branding Administrator must afterwards set this <pending-branding> data to live, \
             \ in order to activate the actual branding for the <entity-id>"
-        (UEV_SpecificPolicy "Caller")
+        (P|UEV_SIP "M")
         (let
             (
                 (pending:object{Branding.Schema} (UR_Branding entity-id true))
@@ -298,34 +352,34 @@
                 (p4:object{Branding.Schema} (UDC_BrandingSocial p3 social))
             )
             (with-capability (SECURE)
-                (X_UpdateBrandingData entity-id true p4)
+                (XI_UpdateBrandingData entity-id true p4)
             )
         )
     )
-    (defun X_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer)
+    (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer)
         @doc "Upgrades Branding for <entity-id> to Blue Flag; Initial Cost set at 25 KDA per Month \
-        \ KDA Cost may be adjusted in the future reflecting KDA Value \
-        \ Number of months can be 1, 2 or 3, depending on <entity-owner-account> Major Elite Tier \
-        \ Returns the value in KDA that is due to be collected \
-        \ \
-        \ \
-        \ Upgrading a <4> Red Flag is not possible \
-        \ \
-        \ Upgrading a <3> Gray Flag, converts it to a <1> Blue Flag, and moves <pending-branding> to <live-branding> \
-        \       essentialy setting the branding to live; Usefull when you dont need to wait for Branding Administrator \
-        \       to manualy set the branding to live \
-        \   When upgrading from a <3> Gray Flag, it is recommended to upgrade the <pending-branding> Data First \
-        \       so as to benefit from the autonomic moving of the branding to live \    
-        \ \
-        \ Upgrading a <2> Green Flag, converts it to a <1> Blue Flag \
-        \       Keeps branding Data as is for both <branding> and <branding-pending> \
-        \ \
-        \ Upgrading a <1> Blue Flag is allowed if the <entity-id> remaining premium time is less than 15 days \
-        \       This Extends the Premium Time \
-        \       Keeps branding Data as is for both <branding> and <branding-pending> \
-        \ \
-        \ Upgrading a <0> Golden Flag is restricted, as Golden Flags are higher in hierachy than Blue Flags"
-        (UEV_SpecificPolicy "Caller")
+            \ KDA Cost may be adjusted in the future reflecting KDA Value \
+            \ Number of months can be 1, 2 or 3, depending on <entity-owner-account> Major Elite Tier \
+            \ Returns the value in KDA that is due to be collected \
+            \ \
+            \ \
+            \ Upgrading a <4> Red Flag is not possible \
+            \ \
+            \ Upgrading a <3> Gray Flag, converts it to a <1> Blue Flag, and moves <pending-branding> to <live-branding> \
+            \       essentialy setting the branding to live; Usefull when you dont need to wait for Branding Administrator \
+            \       to manualy set the branding to live \
+            \   When upgrading from a <3> Gray Flag, it is recommended to upgrade the <pending-branding> Data First \
+            \       so as to benefit from the autonomic moving of the branding to live \    
+            \ \
+            \ Upgrading a <2> Green Flag, converts it to a <1> Blue Flag \
+            \       Keeps branding Data as is for both <branding> and <branding-pending> \
+            \ \
+            \ Upgrading a <1> Blue Flag is allowed if the <entity-id> remaining premium time is less than 15 days \
+            \       This Extends the Premium Time \
+            \       Keeps branding Data as is for both <branding> and <branding-pending> \
+            \ \
+            \ Upgrading a <0> Golden Flag is restricted, as Golden Flags are higher in hierachy than Blue Flags"
+        (P|UEV_SIP "M")
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
@@ -354,12 +408,24 @@
                 )
                 (if (= flag 3)
                     (do
-                        (X_UpdateBrandingData entity-id false from-pending2)
-                        (X_UpdateBrandingData entity-id true np4)
+                        (XI_UpdateBrandingData entity-id false from-pending2)
+                        (XI_UpdateBrandingData entity-id true np4)
                     )
-                    (X_UpdateBrandingData entity-id false as-is2)
+                    (XI_UpdateBrandingData entity-id false as-is2)
                 )
                 payment
+            )
+        )
+    )
+    ;;
+    (defun XI_UpdateBrandingData (entity-id:string pending:bool branding:object{Branding.Schema})
+        (P|UEV_SIP "I")
+        (if pending
+            (update BRD|BrandingTable entity-id
+                {"branding-pending" : branding}
+            )
+            (update BRD|BrandingTable entity-id
+                {"branding" : branding}
             )
         )
     )

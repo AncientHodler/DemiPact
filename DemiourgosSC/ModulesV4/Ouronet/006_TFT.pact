@@ -1,4 +1,46 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface TrueFungibleTransfer
+    @doc "Exposes DPTF Related Transfer Functions. Due to the complex nature of the DPTF Transfer \
+    \ a whole module had to be dedicated to it, as a mere DPTF Transfer has to take following parameters into account: \
+    \   *] If the DPTF is part of ATS Pair, and if so, specific to its setup, how it must be handeld \
+    \   *] If Transfer Fees are in place, and if so, where they must be redirected, als o tying in the ATSPair involvement \
+    \   *] When handling OUROBOROS, take note of Ouro-Dispo mechanics, which tie into the Elite-Account \
+    \ Also includes Multi and Bulk Transfer Functions. Commented Functions are internal module only.\
+    \ No alphabetic sorting for the functions, to better observe their connections. \
+    \ Commented Functions are internal use only, and have no use outside the module"
+    ;;
+    (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
+    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)) ;;1
+    ;;
+    ;(defun URC_CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal))
+    ;(defun URC_CPF_RBT:decimal (id:string native-fee-amount:decimal))
+    ;(defun URC_CPF_RT:decimal (id:string native-fee-amount:decimal))
+    ;(defun URC_NFR-Boolean_RT-RBT:[bool] (id:string ats-pairs:[string] rt-or-rbt:bool))
+    ;(defun URC_BooleanDecimalCombiner:[decimal] (id:string amount:decimal milestones:integer boolean:[bool]))
+    ;;
+    ;(defun UEV_AmountCheck:bool (id:string amount:decimal))
+    ;(defun UEV_Pair_ID-Amount:bool (id-lst:[string] transfer-amount-lst:[decimal]))
+    ;(defun UEV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal]))
+    ;;
+    (defun UDC_GetDispoData:[decimal] (account:string))
+    ;(defun UDC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal]))
+    ;(defun UDC_Pair_Receiver-Amount:[object{DPTF|Receiver-Amount}] (receiver-lst:[string] transfer-amount-lst:[decimal]))
+    ;;
+    (defun C_ClearDispo (patron:string account:string))
+    (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)) ;;2
+    (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)) ;;28
+    (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)) ;;2
+    (defun C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    ;;
+    ;(defun XI_Transmute (id:string transmuter:string transmute-amount:decimal))
+    ;(defun XI_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    ;(defun XI_CreditPrimaryFee (id:string pf:decimal native:bool))
+    ;(defun XI_CPF_StillFee (id:string target:string still-fee:decimal))
+    ;(defun XI_CPF_BurnFee (id:string target:string burn-fee:decimal))
+    ;(defun XI_CPF_CreditFee (id:string target:string credit-fee:decimal))
+    ;(defun XI_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool))
+    ;(defun XI_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool))
+)
 (module TFT GOV
     ;;
     (implements OuronetPolicy)
@@ -15,25 +57,10 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|TFT|CALLER ()
+        true
+    )
     (defcap P|ATS|REMOTE-GOV ()
-        true
-    )
-    (defcap P|T|UF ()
-        true
-    )
-    (defcap P|DPTF|DEBIT ()
-        true
-    )
-    (defcap P|DPTF|CREDIT ()
-        true
-    )
-    (defcap P|DALOS|UP_ELT ()
-        true
-    )
-    (defcap P|ATS|UP_ROU ()
-        true
-    )
-    (defcap P|DPTF|BURN ()
         true
     )
     ;;{P4}
@@ -50,38 +77,55 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
             )
             (ref-P|DALOS::P|A_Add 
-                "TFT|UpdateElite"
-                (create-capability-guard (P|DALOS|UP_ELT))
+                (ref-U|G::G06)
+                (create-capability-guard (P|TFT|CALLER))
+            )
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G06)
+                (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                "TFT|Debit"
-                (create-capability-guard (P|DPTF|DEBIT))
+                (ref-U|G::G06)
+                (create-capability-guard (P|TFT|CALLER))
             )
-            (ref-P|DPTF::P|A_Add 
-                "TFT|Credit"
-                (create-capability-guard (P|DPTF|CREDIT))
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G06)
+                (create-capability-guard (P|TFT|CALLER))
             )
-            (ref-P|DPTF::P|A_Add 
-                "TFT|UpdateFees"
-                (create-capability-guard (P|T|UF))
-            )
-            (ref-P|DPTF::P|A_Add
-                "TFT|Burn"
-                (create-capability-guard (P|DPTF|BURN))
-            )
-            (ref-P|ATS::P|A_Add
-                "TFT|UpdateROU"
-                (create-capability-guard (P|ATS|UP_ROU))
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G06)
+                (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|ATS::P|A_Add
                 "TFT|RemoteAtsGov"
                 (create-capability-guard (P|ATS|REMOTE-GOV))
             )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m7:guard (P|UR (ref-U|G::G07)))
+                (m8:guard (P|UR (ref-U|G::G08)))
+                (m9:guard (P|UR (ref-U|G::G09)))
+                (m10:guard (P|UR (ref-U|G::G10)))
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m7 m8 m9 m10 m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -110,18 +154,6 @@
     (defcap SECURE ()
         true
     )
-    (defcap DALOS|EXECUTOR ()
-        true
-    )
-    (defcap DPTF|CPF_CREDIT-FEE ()
-        true
-    )
-    (defcap DPTF|CPF_STILL-FEE ()
-        true
-    )
-    (defcap DPTF|CPF_BURN-FEE ()
-        true
-    )
     ;;{C2}
     (defcap DPTF|S>EA-DISPO-LOCKER (id:string account:string)
         (let
@@ -148,8 +180,6 @@
             )
             (enforce (< ouro-amount 0.0) "Dispo Clear requires Negative OURO")
             (compose-capability (P|ATS|REMOTE-GOV))
-            (compose-capability (P|ATS|UP_ROU))
-            (compose-capability (P|DPTF|CREDIT))
             (compose-capability (SECURE))
         )
     )
@@ -202,26 +232,13 @@
                 (compose-capability (DPTF|S>EA-DISPO-LOCKER id sender))
                 true
             )
-            (compose-capability (DPTF|C>CREDIT_PRIMARY-FEE))
-            (compose-capability (P|DPTF|DEBIT))
-            (compose-capability (P|DPTF|CREDIT))
-            (compose-capability (P|DALOS|UP_ELT))
-            (compose-capability (P|T|UF))
+            (compose-capability (SECURE))
         )
-    )
-    (defcap DPTF|C>CREDIT_PRIMARY-FEE ()
-        (compose-capability (P|ATS|UP_ROU))
-        (compose-capability (DPTF|CPF_CREDIT-FEE))
-        (compose-capability (DPTF|CPF_STILL-FEE))
-        (compose-capability (DPTF|CPF_BURN-FEE))
-        (compose-capability (P|DPTF|CREDIT))
-        (compose-capability (P|DPTF|BURN))
     )
     (defcap DPTF|C>TRANSMUTE (id:string transmuter:string)
         @event
         (compose-capability (DPTF|S>EA-DISPO-LOCKER id transmuter))
-        (compose-capability (P|DPTF|DEBIT))
-        (compose-capability (DPTF|C>CREDIT_PRIMARY-FEE))
+        (compose-capability (SECURE))
     )
     ;;
     ;;{F0}
@@ -395,7 +412,7 @@
                                             (acc:decimal index:integer)
                                             (if (at index rt-boolean)
                                                 (do
-                                                    (ref-ATS::X_UpdateRoU (at index rt-ats-pairs) id true true (at index split-with-truths))
+                                                    (ref-ATS::XE_UpdateRoU (at index rt-ats-pairs) id true true (at index split-with-truths))
                                                     (+ acc (at index split-with-truths))
                                                 )
                                                 acc
@@ -453,7 +470,7 @@
                         (lambda
                             (index:integer)
                             (if (at index ats-pairs-bool)
-                                (ref-ATS::X_UpdateRoU (at index ats-pairs) id true true (at index rt-split-with-boolean))
+                                (ref-ATS::XE_UpdateRoU (at index ats-pairs) id true true (at index rt-split-with-boolean))
                                 true
                             )
                         )
@@ -607,7 +624,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_ClearDispo (patron:string account:string)
-        (enforce-guard (P|UR "TS01|Summoner"))
+        (P|UEV_SIP "T")
         (with-capability (DPTF|C>CLEAR-DISPO account)
             (let
                 (
@@ -640,31 +657,24 @@
                 (ref-DPTF::C_Burn patron ea-id ats-sc total-ea)
             ;;3] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
                 (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
-                (ref-ATS::X_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
+                (ref-ATS::XE_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
             ;;4] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
                 (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
-                (ref-ATS::X_UpdateRoU auryndex ouro-id true false ouro-amount)
+                (ref-ATS::XE_UpdateRoU auryndex ouro-id true false ouro-amount)
             ;;5] Finally clears dispo setting OURO <acount> amount to zero
-                (ref-DPTF::X_ClearDispo account)
+                (ref-DPTF::XE_ClearDispo account)
             ;;6] Pleasure doing business with you !
             )
         )
     )
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        (enforce-one
-            "DPTF Transmute permitted"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ORBR|Caller"))
-                (enforce-guard (P|UR "TS01|Summoner"))
-            ]
-        )
+        (P|UEV_SIP "MT")
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|C>TRANSMUTE id transmuter)
-                (X_Transmute id transmuter transmute-amount)
+                (XI_Transmute id transmuter transmute-amount)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transmute-amount 10)))
                     (ref-DALOS::IGNIS|C_CollectWT patron transmuter (ref-DALOS::DALOS|UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAS id transmuter))
                     true
@@ -673,23 +683,13 @@
         )
     )
     (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        (P|UEV_SIP "IMT")
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (sc:guard (create-capability-guard (SECURE)))
-                (g1:guard (P|UR "ATSU|Caller"))
-                (g2:guard (P|UR "VST|Caller"))
-                (g3:guard (P|UR "LQD|Caller"))
-                (g4:guard (P|UR "ORBR|Caller"))
-                (g5:guard (P|UR "SWP|Caller"))
-                (g6:guard (P|UR "SWPU|Caller"))
-                (g7:guard (P|UR "TS01|Summoner"))
-                (sum-guard:guard (ref-U|G::UEV_GuardOfAny [sc g1 g2 g3 g4 g5 g6 g7]))
             )
-            (enforce-guard sum-guard)
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
-                (X_Transfer id sender receiver transfer-amount method)
+                (XI_Transfer id sender receiver transfer-amount method)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transfer-amount 10)))
                     (ref-DALOS::IGNIS|C_CollectWT patron sender (ref-DALOS::UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
                     true
@@ -698,15 +698,7 @@
         )
     )
     (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-one
-            "DPTF Transmute permitted"
-            [
-                (enforce-guard (P|UR "ATSU|Caller"))
-                (enforce-guard (P|UR "SWP|Caller"))
-                (enforce-guard (P|UR "SWPU|Caller"))
-                (enforce-guard (P|UR "TS01|Summoner"))
-            ]
-        )
+        (P|UEV_SIP "MT")
         (with-capability (SECURE)
             (let
                 (
@@ -717,19 +709,13 @@
                     (
                         (pair:[object{DPTF|ID-Amount}] (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
                     )
-                    (map (lambda (x:object{DPTF|ID-Amount}) (X_MultiTransferPaired patron sender receiver x method)) pair)
+                    (map (lambda (x:object{DPTF|ID-Amount}) (XI_MultiTransferPaired patron sender receiver x method)) pair)
                 )
             )
         )
     )
     (defun C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (enforce-one
-            "DPTF Transmute permitted"
-            [
-                (enforce-guard (P|UR "SWPU|Caller"))
-                (enforce-guard (P|UR "TS01|Summoner"))
-            ]
-        )
+        (P|UEV_SIP "MT")
         (with-capability (SECURE)
             (let
                 (
@@ -740,24 +726,24 @@
                     (
                         (pair:[object{DPTF|Receiver-Amount}] (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
                     )
-                    (map (lambda (x:object{DPTF|Receiver-Amount}) (X_BulkTransferPaired patron id sender x method)) pair)
+                    (map (lambda (x:object{DPTF|Receiver-Amount}) (XI_BulkTransferPaired patron id sender x method)) pair)
                 )
             )
         )
     )
     ;;{F7}
-    (defun X_Transmute (id:string transmuter:string transmute-amount:decimal)
-        (require-capability (DPTF|C>TRANSMUTE))
+    (defun XI_Transmute (id:string transmuter:string transmute-amount:decimal)
+        (require-capability (DPTF|C>TRANSMUTE id transmuter))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (dispo-data:[decimal] (UDC_GetDispoData transmuter))
             )
-            (ref-DPTF::X_DebitStandard id transmuter transmute-amount dispo-data)
-            (X_CreditPrimaryFee id transmute-amount false)
+            (ref-DPTF::XB_DebitStandard id transmuter transmute-amount dispo-data)
+            (XI_CreditPrimaryFee id transmute-amount false)
         )
     )
-    (defun X_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun XI_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (require-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method))
         (let
             (
@@ -783,26 +769,26 @@
                 )
                 (dispo-data:[decimal] (UDC_GetDispoData sender))
             )
-            (ref-DPTF::X_DebitStandard id sender transfer-amount dispo-data)
+            (ref-DPTF::XB_DebitStandard id sender transfer-amount dispo-data)
             (if iz-full-credit
-                (ref-DPTF::X_Credit id receiver transfer-amount)
+                (ref-DPTF::XB_Credit id receiver transfer-amount)
                 (if (= secondary-fee 0.0)
                     (do
-                        (X_CreditPrimaryFee id primary-fee true)
-                        (ref-DPTF::X_Credit id receiver remainder)
+                        (XI_CreditPrimaryFee id primary-fee true)
+                        (ref-DPTF::XB_Credit id receiver remainder)
                     )
                     (do
-                        (X_CreditPrimaryFee id primary-fee true)
-                        (ref-DPTF::X_Credit id dalos secondary-fee)
-                        (ref-DPTF::X_UpdateFeeVolume id secondary-fee false)
-                        (ref-DPTF::X_Credit id receiver remainder)
+                        (XI_CreditPrimaryFee id primary-fee true)
+                        (ref-DPTF::XB_Credit id dalos secondary-fee)
+                        (ref-DPTF::XE_UpdateFeeVolume id secondary-fee false)
+                        (ref-DPTF::XB_Credit id receiver remainder)
                     )
                 )
             )
-            (ref-DPMF::X_UpdateElite id sender receiver)
+            (ref-DPMF::XE_UpdateElite id sender receiver)
         )
     )
-    (defun X_CreditPrimaryFee (id:string pf:decimal native:bool)
+    (defun XI_CreditPrimaryFee (id:string pf:decimal native:bool)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -818,9 +804,9 @@
                         (v2:decimal (at 1 v))
                         (v3:decimal (at 2 v))
                     )
-                    (X_CPF_StillFee id target v1)
-                    (X_CPF_CreditFee id target v2)
-                    (X_CPF_BurnFee id target v3)
+                    (XI_CPF_StillFee id target v1)
+                    (XI_CPF_CreditFee id target v2)
+                    (XI_CPF_BurnFee id target v3)
                 )
                 (if rt
                     (let
@@ -828,8 +814,8 @@
                             (v1:decimal (URC_CPF_RT id pf))
                             (v2:decimal (- pf v1))
                         )
-                        (X_CPF_StillFee id target v1)
-                        (X_CPF_CreditFee id target v2)
+                        (XI_CPF_StillFee id target v1)
+                        (XI_CPF_CreditFee id target v2)
                     )
                     (if rbt
                         (let
@@ -837,33 +823,33 @@
                                 (v1:decimal (URC_CPF_RBT id pf))
                                 (v2:decimal (- pf v1))
                             )
-                            (X_CPF_StillFee id target v1)
-                            (X_CPF_BurnFee id target v2)
+                            (XI_CPF_StillFee id target v1)
+                            (XI_CPF_BurnFee id target v2)
                         )
-                        (ref-DPTF::X_Credit id target pf false)
+                        (ref-DPTF::XB_Credit id target pf false)
                     )
                 )
             )
             (if native
-                (ref-DPTF::X_UpdateFeeVolume id pf true)
+                (ref-DPTF::XE_UpdateFeeVolume id pf true)
                 true
             )
         )
     )
-    (defun X_CPF_StillFee (id:string target:string still-fee:decimal)
-        (require-capability (DPTF|CPF_STILL-FEE))
+    (defun XI_CPF_StillFee (id:string target:string still-fee:decimal)
+        (P|UEV_SIP "I")
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
             (if (!= still-fee 0.0)
-                (ref-DPTF::X_Credit id target still-fee)
+                (ref-DPTF::XB_Credit id target still-fee)
                 true
             )
         )
     )
-    (defun X_CPF_BurnFee (id:string target:string burn-fee:decimal)
-        (require-capability (DPTF|CPF_BURN-FEE))
+    (defun XI_CPF_BurnFee (id:string target:string burn-fee:decimal)
+        (P|UEV_SIP "I")
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -872,15 +858,15 @@
             )
             (if (!= burn-fee 0.0)
                 (do
-                    (ref-DPTF::X_Credit id ats burn-fee)
-                    (ref-DPTF::X_Burn id ats burn-fee)
+                    (ref-DPTF::XB_Credit id ats burn-fee)
+                    (ref-DPTF::XE_Burn id ats burn-fee)
                 )
                 true
             )
         )
     )
-    (defun X_CPF_CreditFee (id:string target:string credit-fee:decimal)
-        (require-capability (DPTF|CPF_CREDIT-FEE))
+    (defun XI_CPF_CreditFee (id:string target:string credit-fee:decimal)
+        (P|UEV_SIP "I")
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -888,12 +874,12 @@
                 (ats:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (if (!= credit-fee 0.0)
-                (ref-DPTF::X_Credit id ats credit-fee)
+                (ref-DPTF::XB_Credit id ats credit-fee)
                 true
             )
         )
     )
-    (defun X_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool)
+    (defun XI_MultiTransferPaired (patron:string sender:string receiver:string id-amount-pair:object{DPTF|ID-Amount} method:bool)
         (let
             (
                 (id:string (at "id" id-amount-pair))
@@ -902,7 +888,7 @@
             (C_Transfer patron id sender receiver amount method)
         )
     )
-    (defun X_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool)
+    (defun XI_BulkTransferPaired (patron:string id:string sender:string receiver-amount-pair:object{DPTF|Receiver-Amount} method:bool)
         (let
             (
                 (receiver:string (at "receiver" receiver-amount-pair))

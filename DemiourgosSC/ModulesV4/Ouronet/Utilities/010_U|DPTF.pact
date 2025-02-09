@@ -1,11 +1,18 @@
+(interface UtilityDptf
+    @doc "Exported Utility Functions for the DPTF Module \
+        \ Commented Functions are internal use only and have no use outside the module"
+    ;;  
+    (defun UC_OuroLoanLimit (elite-auryn-amount:decimal dispo-data:[decimal] ouro-precision:integer))
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer)) ;;1
+    (defun UC_VolumetricTax (precision:integer amount:decimal)) ;;1
+    ;(defun UCI_VolumetricPermile:decimal (precision:integer unit:integer))
+)
 (module U|DPTF GOV
     ;;
     (implements UtilityDptf)
     ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|DPTF_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|DPTF_ADMIN)))
     (defcap GOV|U|DPTF_ADMIN ()
         (let
             (
@@ -15,11 +22,6 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     ;;
     ;;{F-UC}
     (defun UC_OuroLoanLimit (elite-auryn-amount:decimal dispo-data:[decimal] ouro-precision:integer)
@@ -62,14 +64,14 @@
                 (amount-str-rev-lst:[string] (reverse (str-to-list amount-str)))
                 (amount-dec-rev-lst:[decimal] (map (lambda (x:string) (dec (str-to-int 10 x))) amount-str-rev-lst))
                 (integer-lst:[integer] (enumerate 0 (- (length amount-dec-rev-lst) 1)))
-                (logarithm-lst:[decimal] (map (lambda (u:integer) (UCX_VolumetricPermile precision u)) integer-lst))
+                (logarithm-lst:[decimal] (map (lambda (u:integer) (UCI_VolumetricPermile precision u)) integer-lst))
                 (multiply-lst:[decimal] (zip (lambda (x:decimal y:decimal) (* x y)) amount-dec-rev-lst logarithm-lst))
                 (volumetric-fee:decimal (floor (fold (+) 0.0 multiply-lst) precision))
             )
             volumetric-fee
         )
     )
-    (defun UCX_VolumetricPermile:decimal (precision:integer unit:integer)
+    (defun UCI_VolumetricPermile:decimal (precision:integer unit:integer)
         @doc "Auxiliary computation function needed to compute the volumetric the VTT"
         (let*
             (
@@ -81,8 +83,4 @@
             volumetric-permile
         )
     )
-    ;;{F_UR}
-    ;;{F-UEV}
-    ;;{F-UDC}
-    
 )

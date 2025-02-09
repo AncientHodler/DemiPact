@@ -1,4 +1,14 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface KadenaLiquidStaking
+    @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA"
+    ;;
+    (defun GOV|LIQUID|SC_KDA-NAME ())
+
+    (defun UEV_IzLiquidStakingLive ())
+
+    (defun C_UnwrapKadena (patron:string unwrapper:string amount:string))
+    (defun C_WrapKadena (patron:string wrapper:string amount:decimal))
+)
 (module LIQUID GOV
     ;;
     (implements OuronetPolicy)
@@ -71,22 +81,63 @@
     (defun P|A_Define ()              
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
+                (ref-P|VST:module{OuronetPolicy} VST)
             )
             (ref-P|DALOS::P|A_Add 
-                "LQD|Caller"
+                (ref-U|G::G09)
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G09)
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                "LQD|Caller"
+                (ref-U|G::G09)
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G09)
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G09)
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                "LQD|Caller"
+                (ref-U|G::G09)
                 (create-capability-guard (P|LQD|CALLER))
             )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G09)
+                (create-capability-guard (P|LQD|CALLER))
+            )
+            (ref-P|VST::P|A_Add 
+                (ref-U|G::G09)
+                (create-capability-guard (P|LQD|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m10:guard (P|UR (ref-U|G::G10)))
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m10 m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -97,6 +148,9 @@
     (defconst BAR                   (CT_Bar))
     ;;
     ;;{C1}
+    (defcap SECURE ()
+        true
+    )
     ;;{C2}
     ;;{C3}
     ;;{C4}
@@ -146,25 +200,8 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun LIQUID|C_WrapKadena (patron:string wrapper:string amount:decimal)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (lq-sc:string LIQUID|SC_NAME)
-                (lq-kda:string LIQUID|SC_KDA-NAME)
-                (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
-                (w-kda-id:string (ref-DALOS::UR_WrappedKadenaID))
-            )
-            (with-capability (LIQUID|C>WRAP)
-                (ref-DALOS::C_TransferDalosFuel kadena-patron lq-kda amount)
-                (ref-DPTF::C_Mint patron w-kda-id lq-sc amount false)
-                (ref-TFT::C_Transfer patron w-kda-id lq-sc wrapper amount true)
-            )
-        )
-    )
-    (defun LIQUID|C_UnwrapKadena (patron:string unwrapper:string amount:string)
+    (defun C_UnwrapKadena (patron:string unwrapper:string amount:string)
+        (P|UEV_SIP "T")
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -180,6 +217,25 @@
                 (ref-DPTF::C_Burn patron w-kda-id lq-sc amount)
                 ;(install-capability (coin.TRANSFER LIQUID|SC_KDA-NAME kadena-patron amount))
                 (ref-DALOS::C_TransferDalosFuel lq-kda kadena-patron amount)
+            )
+        )
+    )
+    (defun C_WrapKadena (patron:string wrapper:string amount:decimal)
+        (P|UEV_SIP "MT")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (lq-sc:string LIQUID|SC_NAME)
+                (lq-kda:string LIQUID|SC_KDA-NAME)
+                (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
+                (w-kda-id:string (ref-DALOS::UR_WrappedKadenaID))
+            )
+            (with-capability (LIQUID|C>WRAP)
+                (ref-DALOS::C_TransferDalosFuel kadena-patron lq-kda amount)
+                (ref-DPTF::C_Mint patron w-kda-id lq-sc amount false)
+                (ref-TFT::C_Transfer patron w-kda-id lq-sc wrapper amount true)
             )
         )
     )

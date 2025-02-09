@@ -1,4 +1,41 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface AutostakeUsage
+    @doc "Exposes the last Batch of Client Autostake Functions \
+    \ Commented Functions are internal use only, and have no use outside the module"
+    ;;
+    (defun C_AddHotRBT (patron:string ats:string hot-rbt:string))
+    (defun C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool))
+    (defun C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal))
+    (defun C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal))
+    (defun C_Cull:[decimal] (patron:string culler:string ats:string))
+    (defun C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
+    (defun C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal)) ;;1
+    (defun C_HotRecovery (patron:string recoverer:string ats:string ra:decimal))
+    (defun C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
+    (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
+    (defun C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal))
+    (defun C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer))
+    (defun C_Redeem (patron:string redeemer:string id:string nonce:integer))
+    (defun C_RemoveSecondary (patron:string remover:string ats:string reward-token:string))
+    (defun C_RotateOwnership (patron:string ats:string new-owner:string))
+    (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
+    (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
+    (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer))
+    (defun C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
+    (defun C_ToggleElite (patron:string ats:string toggle:bool))
+    (defun C_ToggleParameterLock (patron:string ats:string toggle:bool))
+    (defun C_ToggleSyphoning (patron:string ats:string toggle:bool))
+    (defun C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool))
+    (defun C_UpdateSyphon (patron:string ats:string syphon:decimal))
+
+    ;(defun XI_DeployAccount (ats:string acc:string))
+    ;(defun XI_MultiCull:[decimal] (ats:string acc:string))
+    ;(defun XI_Normalize (ats:string acc:string))
+    ;(defun XI_SingleCull:[decimal] (ats:string acc:string position:integer))
+    ;(defun XI_StoreUnstakeObject (ats:string acc:string position:integer obj:object{UtilityAts.Awo}))
+    ;(defun XI_UUP (ats:string acc:string data:[object{UtilityAts.Awo}]))
+
+)
 (module ATSU GOV
     ;;
     (implements OuronetPolicy)
@@ -25,22 +62,20 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
-    (defcap P|ATSU|REMOTE-GOV ()
-        true
-    )
     (defcap P|ATSU|CALLER ()
         true
     )
-    (defcap P|ATSU|UPDATE_ROU ()
+    (defcap P|ATSU|REMOTE-GOV ()
         true
     )
     (defcap P|TT ()
-        (compose-capability (P|DT1))
+        (compose-capability (P|ATSU|REMOTE-GOV))
         (compose-capability (P|ATSU|CALLER))
+        (compose-capability (SECURE))
     )
     (defcap P|DT1 ()
         (compose-capability (P|ATSU|REMOTE-GOV))
-        (compose-capability (P|ATSU|UPDATE_ROU))
+        (compose-capability (SECURE))
     )
     (defcap P|DT2 ()
         (compose-capability (P|ATSU|REMOTE-GOV))
@@ -60,35 +95,55 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
             )
-            (ref-P|DPTF::P|A_Add
-                "ATSU|Caller"
+            (ref-P|DALOS::P|A_Add 
+                (ref-U|G::G07)
                 (create-capability-guard (P|ATSU|CALLER))
             )
-            (ref-P|DPMF::P|A_Add
-                "ATSU|Caller"
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G07)
+                (create-capability-guard (P|ATSU|CALLER))
+            )
+            (ref-P|DPTF::P|A_Add 
+                (ref-U|G::G07)
+                (create-capability-guard (P|ATSU|CALLER))
+            )
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G07)
+                (create-capability-guard (P|ATSU|CALLER))
+            )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G07)
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|ATS::P|A_Add
                 "ATSU|RemoteAtsGov"
                 (create-capability-guard (P|ATSU|REMOTE-GOV))
             )
-            (ref-P|ATS::P|A_Add
-                "ATSU|Caller"
-                (create-capability-guard (P|ATSU|CALLER))
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m8:guard (P|UR (ref-U|G::G08)))
+                (m9:guard (P|UR (ref-U|G::G09)))
+                (m10:guard (P|UR (ref-U|G::G10)))
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m8 m9 m10 m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
             )
-            (ref-P|ATS::P|A_Add
-                "ATSU|UpdateROU"
-                (create-capability-guard (P|ATSU|UPDATE_ROU))
-            )
-            (ref-P|TFT::P|A_Add
-                "ATSU|Caller"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -97,6 +152,9 @@
     ;;{3}
     ;;
     ;;{C1}
+    (defcap SECURE ()
+        true
+    )
     ;;{C2}
     ;;{C3}
     ;;{C4}
@@ -109,8 +167,8 @@
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_RecoveryState ats true true)
-            (compose-capability (P|TT))
             (compose-capability (ATSC|C>DEPLOY ats recoverer))
+            (compose-capability (P|TT))
         )
     )
     (defcap ATSC|C>CULL (culler:string ats:string)
@@ -122,8 +180,8 @@
             )
             (ref-DALOS::CAP_EnforceAccountOwnership culler)
             (ref-ATS::UEV_id ats)
-            (compose-capability (P|TT))
             (compose-capability (ATSC|C>NORM_LEDGER ats culler))
+            (compose-capability (P|TT))
         )
     )
     (defcap ATSC|C>DEPLOY (ats:string acc:string)
@@ -173,7 +231,7 @@
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_id ats)
             (ref-ATS::UEV_RecoveryState ats true false)
-            (compose-capability (P|DT2))
+            (compose-capability (P|TT))
         )
     )
     (defcap ATSH|C>REDEEM (redeemer:string id:string)
@@ -203,7 +261,7 @@
             (ref-DPMF::UEV_id id)
             (enforce iz-rbt "Invalid Hot-RBT")
             (enforce (>= nonce-max-amount amount) "Recovery Amount surpasses Batch Balance")
-            (compose-capability (P|DT2))
+            (compose-capability (P|TT))
         )
     )
     (defcap ATSU|C>RM_SCND (ats:string reward-token:string)
@@ -231,19 +289,19 @@
                 (ref-ATS:module{Autostake} ATS)
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
-            (compose-capability (P|DT1))
+            (compose-capability (P|TT))
         )
     )
-    (defcap ATSF|C>FUEL (atspair:string reward-token:string)
+    (defcap ATSF|C>FUEL (ats:string reward-token:string)
         @event
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
-                (index:decimal (ref-ATS::URC_Index atspair))
+                (index:decimal (ref-ATS::URC_Index ats))
             )
-            (ref-ATS::UEV_RewardTokenExistance atspair reward-token true)
+            (ref-ATS::UEV_RewardTokenExistance ats reward-token true)
             (enforce (>= index 0.1) "Fueling cannot take place on a negative Index")
-            (compose-capability (P|DT1))
+            (compose-capability (P|TT))
         )
     )
     (defcap ATSU|C>SYPHON (ats:string syphon-amounts:[decimal])
@@ -307,10 +365,70 @@
     ;;
     ;;{F5}
     ;;{F6}
+    (defun C_AddHotRBT (patron:string ats:string hot-rbt:string)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-ATS:module{Autostake} ATS)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-DPMF::C_DeployAccount hot-rbt ats-sc)
+                (ref-DPMF::XE_UpdateRewardBearingToken ats hot-rbt)
+                (ref-ATS::XE_AddHotRBT ats hot-rbt)
+                (ref-ATS::CX_EnsureActivationRoles patron ats false)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+            )
+        )
+    )
+    (defun C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-ATS:module{Autostake} ATS)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-DPTF::C_DeployAccount reward-token ats-sc)
+                (ref-ATS::|XE_AddSecondary ats reward-token rt-nfr)
+                (ref-DPTF::XE_UpdateRewardToken ats reward-token true)
+                (ref-ATS::CX_EnsureActivationRoles patron ats true)
+                (if (ref-ATS::URC_IzPresentHotRBT ats)
+                    (ref-ATS::CX_EnsureActivationRoles patron ats false)
+                    true
+                )
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+            )
+        )
+    )
+    (defun C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                (c-rbt-amount:decimal (ref-ATS::URC_RBT ats rt amount))
+            )
+            (with-capability (ATSU|C>COIL_OR_CURL ats rt)
+                (ref-TFT::C_Transfer patron rt coiler ats-sc amount true)
+                (ref-ATS::XE_UpdateRoU ats rt true true amount)
+                (ref-DPTF::C_Mint patron c-rbt ats-sc c-rbt-amount false)
+                (ref-TFT::C_Transfer patron c-rbt ats-sc coiler c-rbt-amount true)
+                c-rbt-amount
+            )
+        )
+    )
     (defun C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)
-        @doc "Recovers Cold-RBT, disolving it, generating cullable RTs in the future."
+        (P|UEV_SIP "T")
         (with-capability (ATSC|C>COLD_REC recoverer ats ra)
-            (X_DeployAccount ats recoverer)
+            (XI_DeployAccount ats recoverer)
             (let
                 (
                     (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -336,8 +454,8 @@
                 (map
                     (lambda
                         (index:integer)
-                        (ref-ATS::X_UpdateRoU ats (at index rt-lst) false true (at index positive-c-fr))
-                        (ref-ATS::X_UpdateRoU ats (at index rt-lst) true false (at index positive-c-fr))
+                        (ref-ATS::XE_UpdateRoU ats (at index rt-lst) false true (at index positive-c-fr))
+                        (ref-ATS::XE_UpdateRoU ats (at index rt-lst) true false (at index positive-c-fr))
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
@@ -351,16 +469,16 @@
                     )
                     true
                 )
-                (X_StoreUnstakeObject ats recoverer usable-position 
+                (XI_StoreUnstakeObject ats recoverer usable-position 
                     { "reward-tokens"   : positive-c-fr 
                     , "cull-time"       : cull-time}
                 )
             )
-            (X_Normalize ats recoverer)
+            (XI_Normalize ats recoverer)
         )
     )
     (defun C_Cull:[decimal] (patron:string culler:string ats:string)
-        @doc "Culls an ATSPair, extracting RTs that are cullable"
+        (P|UEV_SIP "T")
         (with-capability (ATSC|C>CULL culler ats)
             (let
                 (
@@ -369,14 +487,14 @@
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
-                    (c0:[decimal] (X_MultiCull ats culler))
-                    (c1:[decimal] (X_SingleCull ats culler 1))
-                    (c2:[decimal] (X_SingleCull ats culler 2))
-                    (c3:[decimal] (X_SingleCull ats culler 3))
-                    (c4:[decimal] (X_SingleCull ats culler 4))
-                    (c5:[decimal] (X_SingleCull ats culler 5))
-                    (c6:[decimal] (X_SingleCull ats culler 6))
-                    (c7:[decimal] (X_SingleCull ats culler 7))
+                    (c0:[decimal] (XI_MultiCull ats culler))
+                    (c1:[decimal] (XI_SingleCull ats culler 1))
+                    (c2:[decimal] (XI_SingleCull ats culler 2))
+                    (c3:[decimal] (XI_SingleCull ats culler 3))
+                    (c4:[decimal] (XI_SingleCull ats culler 4))
+                    (c5:[decimal] (XI_SingleCull ats culler 5))
+                    (c6:[decimal] (XI_SingleCull ats culler 6))
+                    (c7:[decimal] (XI_SingleCull ats culler 7))
                     (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
                     (cw:[decimal] (ref-U|DEC::UC_AddHybridArray ca))
                 )
@@ -385,7 +503,7 @@
                         (idx:integer)
                         (if (!= (at idx cw) 0.0)
                             (do
-                                (ref-ATS::X_UpdateRoU ats (at idx rt-lst) false false (at idx cw))
+                                (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) false false (at idx cw))
                                 (ref-TFT::C_Transfer patron (at idx rt-lst) ats-sc culler (at idx cw) true)
                             )
                             true
@@ -393,13 +511,51 @@
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
-                (X_Normalize ats culler)
+                (XI_Normalize ats culler)
                 cw
             )
         )
     )
+    (defun C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
+                (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 rt amount))
+                (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
+                (c-rbt2-amount:decimal (ref-ATS::URC_RBT ats2 c-rbt1 c-rbt1-amount))
+            )
+            (with-capability (ATSU|C>COIL_OR_CURL ats1 rt)
+                (ref-TFT::C_Transfer patron rt curler ats-sc amount true)
+                (ref-ATS::XE_UpdateRoU ats1 rt true true amount)
+                (ref-DPTF::C_Mint patron c-rbt1 ats-sc c-rbt1-amount false)
+                (ref-ATS::XE_UpdateRoU ats2 c-rbt1 true true c-rbt1-amount)
+                (ref-DPTF::C_Mint patron c-rbt2 ats-sc c-rbt2-amount false)
+                (ref-TFT::C_Transfer patron c-rbt2 ats-sc curler c-rbt2-amount true)
+                c-rbt2-amount
+            )
+        )
+    )
+    (defun C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+            )
+            (with-capability (ATSF|C>FUEL ats reward-token)
+                (ref-TFT::C_Transfer patron reward-token fueler ats-sc amount true)
+                (ref-ATS::XE_UpdateRoU ats reward-token true true amount)
+            )
+        )
+    )
     (defun C_HotRecovery (patron:string recoverer:string ats:string ra:decimal)
-        @doc "Converts a Cold-RBT to a Hot-RBT, preparing it for Hot Recovery"
+        (P|UEV_SIP "T")
         (with-capability (ATSH|C>HOT_REC recoverer ats ra)
             (let
                 (
@@ -423,8 +579,79 @@
             )
         )
     )
+    (defun C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+            )
+            (with-capability (ATSU|C>KICKSTART kickstarter ats rt-amounts rbt-request-amount)
+                (map
+                    (lambda
+                        (index:integer)
+                        (do
+                            (ref-TFT::C_Transfer patron (at index rt-lst) kickstarter ats-sc (at index rt-amounts) true)
+                            (ref-ATS::XE_UpdateRoU ats (at index rt-lst) true true (at index rt-amounts))
+                        )
+                        
+                    )
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
+                (ref-DPTF::C_Mint patron rbt-id ats-sc rbt-request-amount false)
+                (ref-TFT::C_Transfer patron rbt-id ats-sc kickstarter rbt-request-amount true)
+                (ref-ATS::URC_Index ats)
+            )
+        )
+    )
+    (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_ModifyCanChangeOwner ats new-boolean)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+            )
+        )
+    )
+    (defun C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
+        (P|UEV_SIP "T")
+        (with-capability (ATSH|C>RECOVER recoverer id nonce amount)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                    (ref-ATS:module{Autostake} ATS)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                    (ats:string (ref-DPMF::UR_RewardBearingToken id))
+                    (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                )
+                (ref-DPMF::C_Transfer patron id nonce recoverer ats-sc amount true)
+                (ref-DPMF::C_Burn patron id nonce ats-sc amount)
+                (ref-DPTF::C_Mint patron c-rbt ats-sc amount false)
+                (ref-TFT::C_Transfer patron c-rbt ats-sc recoverer amount true)
+            )
+        )
+    )
+    (defun C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+            )
+            (C_RecoverHotRBT patron recoverer id nonce (ref-DPMF::UR_AccountBatchSupply id nonce recoverer))
+        )
+    )
     (defun C_Redeem (patron:string redeemer:string id:string nonce:integer)
-        @doc "Redeems a Hot-RBT, recovering RTs"
+        (P|UEV_SIP "T")
         (with-capability (ATSH|C>REDEEM redeemer id)
             (let
                 (
@@ -467,7 +694,7 @@
                 (map
                     (lambda
                         (index:integer)
-                        (ref-ATS::X_UpdateRoU ats (at index rt-lst) true false (at index earned-rts))
+                        (ref-ATS::XE_UpdateRoU ats (at index rt-lst) true false (at index earned-rts))
                     )
                     (enumerate 0 (- (length rt-lst) 1))
                 )
@@ -477,7 +704,7 @@
                             (index:integer)
                             (do
                                 (ref-DPTF::C_Burn patron (at index rt-lst) ats-sc (at index fee-rts))
-                                (ref-ATS::X_UpdateRoU ats (at index rt-lst) true false (at index fee-rts))
+                                (ref-ATS::XE_UpdateRoU ats (at index rt-lst) true false (at index fee-rts))
                             )
                         )
                         (enumerate 0 (- (length rt-lst) 1))
@@ -487,204 +714,8 @@
             )
         )
     )
-    (defun C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
-        @doc "Recovers a Hot-RBT, converting back to Cold-RBT, using the whole DPMF nonce amount"
-        (let
-            (
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-            )
-            (C_RecoverHotRBT patron recoverer id nonce (ref-DPMF::UR_AccountBatchSupply id nonce recoverer))
-        )
-    )
-    (defun C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
-        @doc "Recovers a Hot-RBT, converting back to Cold-RBT, using an amount smaller than or equal to DPMF Nonce amount"
-        (with-capability (ATSH|C>RECOVER recoverer id nonce amount)
-            (let
-                (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
-                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                    (ats:string (ref-DPMF::UR_RewardBearingToken id))
-                    (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
-                )
-                (ref-DPMF::C_Transfer patron id nonce recoverer ats-sc amount true)
-                (ref-DPMF::C_Burn patron id nonce ats-sc amount)
-                (ref-DPTF::C_Mint patron c-rbt ats-sc amount false)
-                (ref-TFT::C_Transfer patron c-rbt ats-sc recoverer amount true)
-            )
-        )
-    )
-    (defun C_RotateOwnership (patron:string ats:string new-owner:string)
-        @doc "Rotates ATSPair Ownership"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_ChangeOwnership ats new-owner)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-            )
-        )
-    )
-    (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)
-        @doc "Modifies <can-change-owner> for the ATSPair"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_ModifyCanChangeOwner ats new-boolean)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-            )
-        )
-    )
-    (defun C_ToggleParameterLock (patron:string ats:string toggle:bool)
-        @doc "Toggle ATSPair Parameter Lock"
-        (enforce-guard (P|UR "TALOS|Summoner"))
-        (with-capability (P|ATSU|CALLER)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-ATS:module{Autostake} ATS)
-                    (ats-owner:string (ref-ATS::UR_OwnerKonto ats))
-                    (g1:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                    (toggle-costs:[decimal] (ref-ATS::X_ToggleParameterLock ats toggle))
-                    (g2:decimal (at 0 toggle-costs))
-                    (gas-costs:decimal (+ g1 g2))
-                    (kda-costs:decimal (at 1 toggle-costs))
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ats-owner gas-costs)
-                (if (> kda-costs 0.0)
-                    (do
-                        (ref-ATS::X_IncrementParameterUnlocks ats)
-                        (ref-DALOS::KDA|C_Collect patron kda-costs)
-                    )
-                    true
-                )
-            )
-        )
-    )
-    (defun C_UpdateSyphon (patron:string ats:string syphon:decimal)
-        @doc "Updates Syphone Value, representing the Decimal Index, until ATSPair can be syphoned"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_UpdateSyphon ats syphon)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_ToggleSyphoning (patron:string ats:string toggle:bool)
-        @doc "Toggles ATSPair syphoning capability"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_ToggleSyphoning ats toggle)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
-        @doc "Sets ATSPair Cold Recovery Duration"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_SetCRD ats soft-or-hard base growth)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        ) 
-    )
-    (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        @doc "Sets ATSPair Cold Recovery Fee"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_SetColdFee ats fee-positions fee-thresholds fee-array)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer)
-        @doc "Sets ATSPair Hot Recovery Fee"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_SetHotFee ats promile decay)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_ToggleElite (patron:string ats:string toggle:bool)
-        @doc "Toggles ATSPair Elite Functionality"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_ToggleElite ats toggle)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)
-        @doc "Turns ATSPair Cold or Hot Recovery On"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-ATS::X_TurnRecoveryOn ats cold-or-hot)
-                (ref-ATS::XC_EnsureActivationRoles patron ats cold-or-hot)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
-            )
-        )
-    )
-    (defun C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)
-        @doc "Adds a Secondary RT to an ATSPair"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ATS:module{Autostake} ATS)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-            )
-            (with-capability (P|ATSU|CALLER)
-                (ref-DPTF::C_DeployAccount reward-token ats-sc)
-                (ref-ATS::|X_AddSecondary ats reward-token rt-nfr)
-                (ref-DPTF::X_UpdateRewardToken ats reward-token true)
-                (ref-ATS::XC_EnsureActivationRoles patron ats true)
-                (if (ref-ATS::URC_IzPresentHotRBT ats)
-                    (ref-ATS::XC_EnsureActivationRoles patron ats false)
-                    true
-                )
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-            )
-        )
-    )
     (defun C_RemoveSecondary (patron:string remover:string ats:string reward-token:string)
-        @doc "Removes a Secondary RT from an ATSPair. Only secondary RTs that were added after ATSPair creation can be removed. \
-        \ Removing an RT this way must be done by adding the primary RT back into the Pool."
+        (P|UEV_SIP "T")
         (with-capability (ATSU|C>RM_SCND ats reward-token)
             (let
                 (
@@ -707,58 +738,77 @@
             ;;2]The amount removed is added back as Primal-RT
                 (ref-TFT::C_Transfer patron primal-rt remover ats-sc remove-sum true)
             ;;3]ROU Table is updated with the new DATA, now as primal RT
-                (ref-ATS::X_UpdateRoU ats primal-rt true true resident-sum)
-                (ref-ATS::X_UpdateRoU ats primal-rt false true unbound-sum)
+                (ref-ATS::XE_UpdateRoU ats primal-rt true true resident-sum)
+                (ref-ATS::XE_UpdateRoU ats primal-rt false true unbound-sum)
             ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
                 (map
                     (lambda
                         (kontos:string)
-                        (ref-ATS::X_ReshapeUnstakeAccount ats kontos remove-position)
+                        (ref-ATS::XE_ReshapeUnstakeAccount ats kontos remove-position)
                     )
                     accounts-with-ats-data
                 )
             ;;5]Actually Remove the RT from the ATS-Pair
-                (ref-ATS::X_RemoveSecondary ats reward-token)
+                (ref-ATS::XE_RemoveSecondary ats reward-token)
             ;;6]Update Data in the DPTF Token Properties
-                (ref-DPTF::X_UpdateRewardToken ats reward-token false)
+                (ref-DPTF::XE_UpdateRewardToken ats reward-token false)
             )
         )
     )
-    (defun C_AddHotRBT (patron:string ats:string hot-rbt:string)
-        @doc "Adds a Hot-RBT to an ATS-Pair. A Hot-RBT must be a DPMF Token and cannot be a Vested counterpart of a DPTF Token"
+    (defun C_RotateOwnership (patron:string ats:string new-owner:string)
+        (P|UEV_SIP "T")
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                 (ref-ATS:module{Autostake} ATS)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (with-capability (P|ATSU|CALLER)
-                (ref-DPMF::C_DeployAccount hot-rbt ats-sc)
-                (ref-DPMF::X_UpdateRewardBearingToken ats hot-rbt)
-                (ref-ATS::X_AddHotRBT ats hot-rbt)
-                (ref-ATS::XC_EnsureActivationRoles patron ats false)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                (ref-ATS::XE_ChangeOwnership ats new-owner)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
             )
         )
     )
-    (defun C_Fuel (patron:string fueler:string atspair:string reward-token:string amount:decimal)
-        @doc "Fuels an ATSPair with RT Tokens, increasing its Index"
+    (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
+        (P|UEV_SIP "T")
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
             )
-            (with-capability (ATSF|C>FUEL atspair reward-token)
-                (ref-TFT::C_Transfer patron reward-token fueler ats-sc amount true)
-                (ref-ATS::X_UpdateRoU atspair reward-token true true amount)
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_SetColdFee ats fee-positions fee-thresholds fee-array)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+            )
+        )
+    )
+    (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_SetCRD ats soft-or-hard base growth)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+            )
+        ) 
+    )
+    (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_SetHotFee ats promile decay)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
             )
         )
     )
     (defun C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
-        @doc "Syphons from an ATS Pair, extracting RTs and decreasing ATSPair Index. \
-            \ Syphoning can be executed until the set up Syphon limit is achieved"
+        (P|UEV_SIP "T")
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -774,7 +824,7 @@
                         (if (> (at index syphon-amounts) 0.0)
                             (do
                                 (ref-TFT::C_Transfer patron (at index rt-lst) ats-sc syphon-target (at index syphon-amounts) true)
-                                (ref-ATS::X_UpdateRoU ats (at index rt-lst) true false (at index syphon-amounts))
+                                (ref-ATS::XE_UpdateRoU ats (at index rt-lst) true false (at index syphon-amounts))
                             )
                             true
                         )
@@ -784,83 +834,97 @@
             )
         )
     )
-    (defun C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
-        @doc "Kickstarst an ATSPair, so that it starts at a given Index \
-        \ Can only be done on a freshly created ATSPair"
+    (defun C_ToggleElite (patron:string ats:string toggle:bool)
+        (P|UEV_SIP "T")
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
-                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
             )
-            (with-capability (ATSU|C>KICKSTART kickstarter ats rt-amounts rbt-request-amount)
-                (map
-                    (lambda
-                        (index:integer)
-                        (do
-                            (ref-TFT::C_Transfer patron (at index rt-lst) kickstarter ats-sc (at index rt-amounts) true)
-                            (ref-ATS::X_UpdateRoU ats (at index rt-lst) true true (at index rt-amounts))
-                        )
-                        
-                    )
-                    (enumerate 0 (- (length rt-lst) 1))
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_ToggleElite ats toggle)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+            )
+        )
+    )
+    (defun C_ToggleParameterLock (patron:string ats:string toggle:bool)
+        (P|UEV_SIP "T")
+        (with-capability (P|ATSU|CALLER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-ATS:module{Autostake} ATS)
+                    (ats-owner:string (ref-ATS::UR_OwnerKonto ats))
+                    (g1:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                    (toggle-costs:[decimal] (ref-ATS::XE_ToggleParameterLock ats toggle))
+                    (g2:decimal (at 0 toggle-costs))
+                    (gas-costs:decimal (+ g1 g2))
+                    (kda-costs:decimal (at 1 toggle-costs))
                 )
-                (ref-DPTF::C_Mint patron rbt-id ats-sc rbt-request-amount false)
-                (ref-TFT::C_Transfer patron rbt-id ats-sc kickstarter rbt-request-amount true)
-                (ref-ATS::URC_Index ats)
+                (ref-DALOS::IGNIS|C_Collect patron ats-owner gas-costs)
+                (if (> kda-costs 0.0)
+                    (do
+                        (ref-ATS::XE_IncrementParameterUnlocks ats)
+                        (ref-DALOS::KDA|C_Collect patron kda-costs)
+                    )
+                    true
+                )
             )
         )
     )
-    (defun C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)
-        @doc "Coils an RT Token from a specific ATSPair, generating a RBT Token"
+    (defun C_ToggleSyphoning (patron:string ats:string toggle:bool)
+        (P|UEV_SIP "T")
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
-                (c-rbt-amount:decimal (ref-ATS::URC_RBT ats rt amount))
             )
-            (with-capability (ATSU|C>COIL_OR_CURL ats rt)
-                (ref-TFT::C_Transfer patron rt coiler ats-sc amount true)
-                (ref-ATS::X_UpdateRoU ats rt true true amount)
-                (ref-DPTF::C_Mint patron c-rbt ats-sc c-rbt-amount false)
-                (ref-TFT::C_Transfer patron c-rbt ats-sc coiler c-rbt-amount true)
-                c-rbt-amount
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_ToggleSyphoning ats toggle)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
             )
         )
     )
-    (defun C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
-        @doc "Curls an RT Token from a specific ATSPair, and the subsequent generated RBT Token, is curled again in a second ATSPair, \
-        \ outputing the RBT in from this second ATSPair. Works only if the RBT in the first ATSPair is RT in the second ATSPair"
+    (defun C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)
+        (P|UEV_SIP "T")
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
-                (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 rt amount))
-                (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
-                (c-rbt2-amount:decimal (ref-ATS::URC_RBT ats2 c-rbt1 c-rbt1-amount))
             )
-            (with-capability (ATSU|C>COIL_OR_CURL ats1 rt)
-                (ref-TFT::C_Transfer patron rt curler ats-sc amount true)
-                (ref-ATS::X_UpdateRoU ats1 rt true true amount)
-                (ref-DPTF::C_Mint patron c-rbt1 ats-sc c-rbt1-amount false)
-                (ref-ATS::X_UpdateRoU ats2 c-rbt1 true true c-rbt1-amount)
-                (ref-DPTF::C_Mint patron c-rbt2 ats-sc c-rbt2-amount false)
-                (ref-TFT::C_Transfer patron c-rbt2 ats-sc curler c-rbt2-amount true)
-                c-rbt2-amount
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_TurnRecoveryOn ats cold-or-hot)
+                (ref-ATS::CX_EnsureActivationRoles patron ats cold-or-hot)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+            )
+        )
+    )
+    (defun C_UpdateSyphon (patron:string ats:string syphon:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (with-capability (P|ATSU|CALLER)
+                (ref-ATS::XE_UpdateSyphon ats syphon)
+                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
             )
         )
     )
     ;;{F7}
-    (defun X_MultiCull:[decimal] (ats:string acc:string)
+    (defun XI_DeployAccount (ats:string acc:string)
+        (require-capability (ATSC|C>DEPLOY ats acc))
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+            )
+            (ref-ATS::XE_SpawnAutostakeAccount ats acc)
+            (XI_Normalize ats acc)
+        )
+    )
+    (defun XI_MultiCull:[decimal] (ats:string acc:string)
+        (require-capability (SECURE))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -924,73 +988,13 @@
                         )
                         (summed-culled-values:[decimal] (ref-U|DEC::UC_AddHybridArray culled-values))
                     )
-                    (ref-ATS::X_UpP0 ats acc after-cull)
+                    (ref-ATS::XE_UpP0 ats acc after-cull)
                     summed-culled-values
                 )
             )
         )
     )
-    (defun X_SingleCull:[decimal] (ats:string acc:string position:integer)
-        (let
-            (
-                (ref-ATS:module{Autostake} ATS)
-                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
-                (l:integer (length rt-lst))
-                (empty:[decimal] (make-list l 0.0))
-                (zr:object{UtilityAts.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
-                (unstake-obj:object{UtilityAts.Awo} (ref-ATS::UR_P1-7 ats acc position))
-                (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
-                (cull-output:[decimal] (ref-ATS::URC_CullValue ats unstake-obj))
-            )
-            (if (!= cull-output empty)
-                (X_StoreUnstakeObject ats acc position zr)
-                true
-            )
-            cull-output
-        )
-    )
-    (defun X_StoreUnstakeObject (ats:string acc:string position:integer obj:object{UtilityAts.Awo})
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{Autostake} ATS)
-                (p0:[object{UtilityAts.Awo}] (ref-ATS::UR_P0 ats acc))
-            )
-            (if (= position -1)
-                (if (and 
-                        (= (length p0) 1)
-                        (= 
-                            (at 0 p0) 
-                            (ref-ATS::UDC_MakeZeroUnstakeObject ats)
-                        )
-                    )
-                    (ref-ATS::X_UpP0 ats acc [obj])
-                    (ref-ATS::X_UpP0 ats acc (ref-U|LST::UC_AppL p0 obj))
-                )
-                (cond
-                    ((= position 1) (ref-ATS::X_UpP1 ats acc obj))
-                    ((= position 2) (ref-ATS::X_UpP2 ats acc obj))
-                    ((= position 3) (ref-ATS::X_UpP3 ats acc obj))
-                    ((= position 4) (ref-ATS::X_UpP4 ats acc obj))
-                    ((= position 5) (ref-ATS::X_UpP5 ats acc obj))
-                    ((= position 6) (ref-ATS::X_UpP6 ats acc obj))
-                    ((= position 7) (ref-ATS::X_UpP7 ats acc obj))
-                    true
-                )
-            )
-        )
-    )
-    (defun X_DeployAccount (ats:string acc:string)
-        (require-capability (ATSC|C>DEPLOY ats acc))
-        (let
-            (
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (ref-ATS::X_SpawnAutostakeAccount ats acc)
-            (X_Normalize ats acc)
-        )
-    )
-    (defun X_Normalize (ats:string acc:string)
+    (defun XI_Normalize (ats:string acc:string)
         (require-capability (ATSC|C>NORM_LEDGER ats acc))
         (let
             (
@@ -1033,33 +1037,84 @@
                 (p7-zne:object{UtilityAts.Awo} (if (and (!= p7 zr) (!= p7 ng)) p7 (if (>= major-tier 7) zr ng)))
             )
             (cond
-                ((= positions -1) (X_UUP ats acc [p0-znz p1-znn p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 1) (X_UUP ats acc [p0-znn p1-znz p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 2) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 3) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 4) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znn p6-znn p7-znn]))
-                ((= positions 5) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znn p7-znn]))
-                ((= positions 6) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znn]))
-                ((not elite) (X_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znz]))
-                (elite (X_UUP ats acc [p0-znn p1-znz p2-zne p3-zne p4-zne p5-zne p6-zne p7-zne]))
+                ((= positions -1) (XI_UUP ats acc [p0-znz p1-znn p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
+                ((= positions 1) (XI_UUP ats acc [p0-znn p1-znz p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
+                ((= positions 2) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znn p4-znn p5-znn p6-znn p7-znn]))
+                ((= positions 3) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znn p5-znn p6-znn p7-znn]))
+                ((= positions 4) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znn p6-znn p7-znn]))
+                ((= positions 5) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znn p7-znn]))
+                ((= positions 6) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znn]))
+                ((not elite) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znz]))
+                (elite (XI_UUP ats acc [p0-znn p1-znz p2-zne p3-zne p4-zne p5-zne p6-zne p7-zne]))
                 true
             )
         )
     )
-    (defun X_UUP (ats:string acc:string data:[object{UtilityAts.Awo}])
+    (defun XI_SingleCull:[decimal] (ats:string acc:string position:integer)
+        (let
+            (
+                (ref-ATS:module{Autostake} ATS)
+                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                (l:integer (length rt-lst))
+                (empty:[decimal] (make-list l 0.0))
+                (zr:object{UtilityAts.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
+                (unstake-obj:object{UtilityAts.Awo} (ref-ATS::UR_P1-7 ats acc position))
+                (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
+                (cull-output:[decimal] (ref-ATS::URC_CullValue ats unstake-obj))
+            )
+            (if (!= cull-output empty)
+                (XI_StoreUnstakeObject ats acc position zr)
+                true
+            )
+            cull-output
+        )
+    )
+    (defun XI_StoreUnstakeObject (ats:string acc:string position:integer obj:object{UtilityAts.Awo})
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-ATS:module{Autostake} ATS)
+                (p0:[object{UtilityAts.Awo}] (ref-ATS::UR_P0 ats acc))
+            )
+            (if (= position -1)
+                (if (and 
+                        (= (length p0) 1)
+                        (= 
+                            (at 0 p0) 
+                            (ref-ATS::UDC_MakeZeroUnstakeObject ats)
+                        )
+                    )
+                    (ref-ATS::XE_UpP0 ats acc [obj])
+                    (ref-ATS::XE_UpP0 ats acc (ref-U|LST::UC_AppL p0 obj))
+                )
+                (cond
+                    ((= position 1) (ref-ATS::XE_UpP1 ats acc obj))
+                    ((= position 2) (ref-ATS::XE_UpP2 ats acc obj))
+                    ((= position 3) (ref-ATS::XE_UpP3 ats acc obj))
+                    ((= position 4) (ref-ATS::XE_UpP4 ats acc obj))
+                    ((= position 5) (ref-ATS::XE_UpP5 ats acc obj))
+                    ((= position 6) (ref-ATS::XE_UpP6 ats acc obj))
+                    ((= position 7) (ref-ATS::XE_UpP7 ats acc obj))
+                    true
+                )
+            )
+        )
+    )
+    (defun XI_UUP (ats:string acc:string data:[object{UtilityAts.Awo}])
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
             )
             (enforce (= (length data) 8) "Invalid Data Length")
-            (ref-ATS::X_UpP0 ats acc (at 0 data))
-            (ref-ATS::X_UpP1 ats acc (at 1 data))
-            (ref-ATS::X_UpP2 ats acc (at 2 data))
-            (ref-ATS::X_UpP3 ats acc (at 3 data))
-            (ref-ATS::X_UpP4 ats acc (at 4 data))
-            (ref-ATS::X_UpP5 ats acc (at 5 data))
-            (ref-ATS::X_UpP6 ats acc (at 6 data))
-            (ref-ATS::X_UpP7 ats acc (at 7 data))
+            (ref-ATS::XE_UpP0 ats acc (at 0 data))
+            (ref-ATS::XE_UpP1 ats acc (at 1 data))
+            (ref-ATS::XE_UpP2 ats acc (at 2 data))
+            (ref-ATS::XE_UpP3 ats acc (at 3 data))
+            (ref-ATS::XE_UpP4 ats acc (at 4 data))
+            (ref-ATS::XE_UpP5 ats acc (at 5 data))
+            (ref-ATS::XE_UpP6 ats acc (at 6 data))
+            (ref-ATS::XE_UpP7 ats acc (at 7 data))
         )
     )
 )

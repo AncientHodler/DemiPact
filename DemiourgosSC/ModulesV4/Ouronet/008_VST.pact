@@ -1,4 +1,28 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface Vesting
+    @doc "Exposes Vesting Functions \
+    \ Commented Functions are internal use only, and have no use outside the module"
+    ;;
+    (defschema VST|MetaDataSchema
+        release-amount:decimal
+        release-date:time
+    )
+    ;;
+    (defun GOV|VST|SC_KDA-NAME ())
+    ;;
+    (defun URC_CullMetaDataAmount:decimal (client:string id:string nonce:integer))
+    (defun URC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer))
+
+    (defun UEV_Active (dptf:string dpmf:string))
+
+    (defun UDC_ComposeVestingMetaData:[object{VST|MetaDataSchema}] (id:string amount:decimal offset:integer duration:integer milestones:integer))
+
+    (defun C_CreateVestingLink:string (patron:string dptf:string))
+    (defun C_Cull (patron:string culler:string id:string nonce:integer))
+    (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
+    ;;
+    ;;(defun XI_DefineVestingPair (patron:string dptf:string dpmf:string))
+)
 (module VST GOV
     ;;
     (implements OuronetPolicy)
@@ -52,8 +76,9 @@
     (defcap P|VST|CALLER ()
         true
     )
-    (defcap P|VST|UPDATE ()
-        true
+    (defcap P|DT ()
+        (compose-capability (VST|GOV))
+        (compose-capability (P|VST|CALLER))
     )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
@@ -69,36 +94,59 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
             )
             (ref-P|DALOS::P|A_Add 
-                "VST|Caller"
+                (ref-U|G::G08)
                 (create-capability-guard (P|VST|CALLER))
             )
-            (ref-P|DPTF::P|A_Add
-                "VST|Caller"
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G08)
                 (create-capability-guard (P|VST|CALLER))
             )
-            (ref-P|DPMF::P|A_Add
-                "VST|UpdateVesting"
-                (create-capability-guard (P|VST|UPDATE))
-            )
-            (ref-P|DPMF::P|A_Add
-                "VST|Caller"
+            (ref-P|DPTF::P|A_Add 
+                (ref-U|G::G08)
                 (create-capability-guard (P|VST|CALLER))
             )
-            (ref-P|ATS::P|A_Add
-                "VST|Caller"
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G08)
                 (create-capability-guard (P|VST|CALLER))
             )
-            (ref-P|TFT::P|A_Add
-                "VST|Caller"
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G08)
                 (create-capability-guard (P|VST|CALLER))
             )
+            (ref-P|TFT::P|A_Add 
+                (ref-U|G::G08)
+                (create-capability-guard (P|VST|CALLER))
+            )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G08)
+                (create-capability-guard (P|VST|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m9:guard (P|UR (ref-U|G::G09)))
+                (m10:guard (P|UR (ref-U|G::G10)))
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m9 m10 m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -109,7 +157,7 @@
     (defconst BAR                   (CT_Bar))
     ;;
     ;;{C1}
-    (defcap VST|DEFINE ()
+    (defcap SECURE ()
         true
     )
     ;;{C2}
@@ -117,7 +165,7 @@
     ;;{C4}
     (defcap VST|C>LINK ()
         @event
-        (compose-capability (VST|DEFINE))
+        (compose-capability (SECURE))
         (compose-capability (P|VST|CALLER))
     )
     (defcap VST|C>VEST (vester:string target-account:string id:string)
@@ -132,8 +180,7 @@
             (ref-DPTF::CAP_Owner id)
             (ref-DPTF::UEV_Vesting id true)
             (UEV_Active id (ref-DPTF::UR_Vesting id))
-            (compose-capability (VST|GOV))
-            (compose-capability (P|VST|CALLER))
+            (compose-capability (P|DT))
         )
         
     )
@@ -147,8 +194,7 @@
             (ref-DALOS::UEV_EnforceAccountType culler false)
             (ref-DPMF::UEV_Vesting id true)
             (UEV_Active (ref-DPMF::UR_Vesting id) id)
-            (compose-capability (VST|GOV))
-            (compose-capability (P|VST|CALLER))
+            (compose-capability (P|DT))
         )
     )
     (defcap VST|C>UPDATE (dptf:string dpmf:string)
@@ -170,7 +216,7 @@
                 "Vesting Pairs are immutable !"
             )
             (enforce (= iz-hot-rbt false) "A DPMF defined as a hot-rbt cannot be used as Vesting Token in Vesting pair")
-            (compose-capability (P|VST|UPDATE))
+            (compose-capability (SECURE))
         )
     )
     ;;
@@ -272,11 +318,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_CreateVestingLink:string (patron:string dptf:string)
-        @doc "Creates a Vested Link; \
-        \ A Vested Link, means, issuing a DPMF as a vested counterpart for a DPTF \
-        \ The Vested Link is immutable, meaning, this DPMF will always act as a vested counterpart for the DPTF Token, \
-        \ and will be recorded as such in both the DPTF and DPMF Token Properties."
-        (enforce-guard (P|UR "TALOS|Summoner"))
+        (P|UEV_SIP "T")
         (with-capability (VST|C>LINK)
             (let
                 (
@@ -294,7 +336,7 @@
                     (dpmf-name:string (at 0 vesting-id))
                     (dpmf-ticker:string (at 1 vesting-id))
                     (dpmf-l:[string]
-                        (ref-DPMF::X_IssueFree
+                        (ref-DPMF::XB_IssueFree
                             patron
                             dptf-owner
                             [dpmf-name]
@@ -322,34 +364,14 @@
                 (ref-ATS::DPMF|C_MoveCreateRole patron dpmf vst-sc)
                 (ref-ATS::DPMF|C_ToggleAddQuantityRole patron dpmf vst-sc true)
                 ;;Define Vesting Pair and Collect KDA (for DPMF Issue)
-                (X_DefineVestingPair patron dptf dpmf)
+                (XI_DefineVestingPair patron dptf dpmf)
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
                 dpmf
             )
         )
     )
-    (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Vests a DPTF Token, issuing a Vested Token"
-        (with-capability (VST|C>VEST vester target-account id)
-            (let
-                (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
-                    (vst-sc:string VST|SC_NAME)
-
-                    (dpmf-id:string (ref-DPTF::UR_Vesting id))
-                    (meta-data:string (UDC_ComposeVestingMetaData id amount offset duration milestones))
-                    (nonce:integer (+ (ref-DPMF::UR_NoncesUsed id) 1))
-                )
-                (ref-DPMF::C_Mint patron dpmf-id vst-sc amount meta-data)
-                (ref-TFT::C_Transfer patron id vester vst-sc amount true)
-                (ref-DPMF::C_Transfer patron dpmf-id nonce vst-sc target-account amount true)
-            )
-        )
-    )
     (defun C_Cull (patron:string culler:string id:string nonce:integer)
-        @doc "Culls the Vested Token, recovering its original non vested DPTF counterpart."
+        (P|UEV_SIP "T")
         (with-capability (VST|C>CULL culler id)
             (let
                 (
@@ -379,9 +401,31 @@
             )
         )
     )
+    (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
+        @doc "Vests a DPTF Token, issuing a Vested Token"
+        (P|UEV_SIP "T")
+        (with-capability (VST|C>VEST vester target-account id)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (vst-sc:string VST|SC_NAME)
+
+                    (dpmf-id:string (ref-DPTF::UR_Vesting id))
+                    (meta-data:string (UDC_ComposeVestingMetaData id amount offset duration milestones))
+                    (nonce:integer (+ (ref-DPMF::UR_NoncesUsed id) 1))
+                )
+                (ref-DPMF::C_Mint patron dpmf-id vst-sc amount meta-data)
+                (ref-TFT::C_Transfer patron id vester vst-sc amount true)
+                (ref-DPMF::C_Transfer patron dpmf-id nonce vst-sc target-account amount true)
+            )
+        )
+    )
+    
     ;;{F7}
-    (defun X_DefineVestingPair (patron:string dptf:string dpmf:string)
-        (require-capability (VST|DEFINE))
+    (defun XI_DefineVestingPair (patron:string dptf:string dpmf:string)
+        (require-capability (SECURE))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)

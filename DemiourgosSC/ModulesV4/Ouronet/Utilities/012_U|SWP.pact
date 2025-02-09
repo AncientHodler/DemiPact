@@ -1,11 +1,35 @@
+(interface UtilitySwp
+    @doc "Exported Utility Functions for the SWP Module"
+    ;;
+    (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer]))
+    (defun UC_ComputeD:decimal (A:decimal X:[decimal]))
+    (defun UC_ComputeWP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec w:[decimal]))
+    (defun UC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer o-prec:integer))
+    (defun UC_DNext (D:decimal A:decimal X:[decimal]))
+    (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer))
+    (defun UC_LpID:[string] (token-names:[string] token-tickers:[string] weights:[decimal] amp:decimal))
+    (defun UC_NewSupply:[decimal] (X:[decimal] input-amounts:[decimal] ip:[integer]))
+    (defun UC_PoolID:string (token-ids:[string] weights:[decimal] amp:decimal))
+    (defun UC_Prefix:string (weights:[decimal] amp:decimal))
+    (defun UC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer))
+    ;;
+    (defun UC_AreOnPools:[bool] (id1:string id2:string swpairs:[string]))
+    (defun UC_FilterOne:[string] (swpairs:[string] id:string))
+    (defun UC_FilterTwo:[string] (swpairs:[string] id1:string id2:string))
+    (defun UC_IzOnPool:bool (id:string swpair:string))
+    (defun UC_IzOnPools:[bool] (id:string swpairs:[string]))
+    (defun UC_MakeGraphNodes:[string] (input-id:string output-id:string swpairs:[string]))
+    (defun UC_PoolTokensFromPairs:[[string]] (swpairs:[string]))
+    (defun UC_SpecialFeeOutputs (sftp:[decimal] input-amount:decimal output-precision:integer))
+    (defun UC_TokensFromSwpairString:[string] (swpair:string))
+    (defun UC_UniqueTokens:[string] (swpairs:[string]))
+)
 (module U|SWP GOV
     ;;
     (implements UtilitySwp)
     ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|SWP_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|SWP_ADMIN)))
     (defcap GOV|U|SWP_ADMIN ()
         (let
             (
@@ -15,15 +39,61 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
     ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;{F-UC}
+    (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
+        @doc "Computes Balanced Liquidity Amounts from input sources"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ratio:decimal (floor (/ ia (at ip X)) i-prec))
+                (output:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (ref-U|LST::UC_AppL 
+                                acc 
+                                (if (= idx ip)
+                                    ia
+                                    (floor (* ratio (at idx X)) (at idx Xp))
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length X) 1))
+                    )
+                )
+            )
+            output
+        )
+    )
+    (defun UC_ComputeD:decimal (A:decimal X:[decimal])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (output-lst:[decimal]
+                    (fold
+                        (lambda
+                            (d-values:[decimal] idx:integer)
+                            (let
+                                (
+                                    (prev-d:decimal (at idx d-values))
+                                    (d-value:decimal (UC_DNext prev-d A X))
+                                )
+                                (ref-U|LST::UC_AppL d-values d-value)
+                            )
+                        )
+                        [(fold (+) 0.0 X)]
+                        (enumerate 0 5)
+                    )
+                )
+            )
+            (ref-U|LST::UC_LE output-lst)
+        )
+    )
     (defun UC_ComputeWP (X:[decimal] input-amounts:[decimal] ip:[integer] op:integer o-prec w:[decimal])
         (let
             (
@@ -41,30 +111,6 @@
                 (output:decimal (floor (^ rest iow) o-prec))
             )
             (- (at op X) output)
-        )
-    )
-    (defun UC_NewSupply:[decimal] (X:[decimal] input-amounts:[decimal] ip:[integer])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[decimal] idx:integer)
-                    (ref-U|LST::UC_AppL 
-                        acc 
-                        (+ 
-                            (if (contains idx ip)
-                                (at (at 0 (ref-U|LST::UC_Search ip idx)) input-amounts)
-                                0.0
-                            )
-                            (at idx X)
-                        )
-                    )
-                )
-                []
-                (enumerate 0 (- (length X) 1))
-            )
         )
     )
     (defun UC_ComputeY (A:decimal X:[decimal] input-amount:decimal ip:integer op:integer o-prec:integer)
@@ -94,30 +140,6 @@
                 )
             )
             (- (floor (ref-U|LST::UC_LE output-lst) o-prec) (at op X))
-        )
-    )
-    (defun UC_ComputeD:decimal (A:decimal X:[decimal])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (output-lst:[decimal]
-                    (fold
-                        (lambda
-                            (d-values:[decimal] idx:integer)
-                            (let
-                                (
-                                    (prev-d:decimal (at idx d-values))
-                                    (d-value:decimal (UC_DNext prev-d A X))
-                                )
-                                (ref-U|LST::UC_AppL d-values d-value)
-                            )
-                        )
-                        [(fold (+) 0.0 X)]
-                        (enumerate 0 5)
-                    )
-                )
-            )
-            (ref-U|LST::UC_LE output-lst)
         )
     )
     (defun UC_DNext (D:decimal A:decimal X:[decimal])
@@ -152,48 +174,17 @@
             (floor (/ numerator denominator) prec)
         )
     )
-    (defun UC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer)
-        @doc "Computes Y such that the invariant remains satisfied \
-        \ Sp = x1+x2+x3+ ... without the term to be computed, containing the modified input token amount \
-        \ Pp = x1*x2*x3* ... without the term to be computed, containing the modified input token amount \
-        \ c = (D^(n+1))/(n^n*Pp*A*n^n) \
-        \ b = Sp + (D/A*n^n) \
-        \ Numerator = y^2 + c \
-        \ Denominator = 2*y + b - D \
-        \ YNext = Numerator / Denominator "
+    (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer)
+        @doc "Computes the amount of LP that would result from <input-amounts> of tokens added to the pool, when \
+            \ the pools has <pts> token supply, adn the lp amounts is <lps> and the lp token has <lpp> precision"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (prec:integer 24)
-                (n:decimal (dec (length X)))
-                (XX:[decimal] (ref-U|LST::UC_ReplaceAt X op -1.0))
-                (XXX:[decimal] (ref-U|LST::UC_RemoveItem XX -1.0))
-                (Sp:decimal (fold (+) 0.0 XXX))
-                (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
-                (n1:decimal (+ 1.0 n))
-                (nn:decimal (^ n n))
-                (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
-                (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
-                (Ysq:decimal (^ Y 2.0))
-                (numerator:decimal (floor (+ Ysq c) prec))
-                (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
+                (nz:[decimal] (ref-U|LST::UC_RemoveItem input-amounts 0.0))
+                (fnz:decimal (at 0 nz))
+                (fnzp:integer (at 0 (ref-U|LST::UC_Search input-amounts fnz)))
             )
-            (floor (/ numerator denominator) prec)
-        )
-    )
-    ;;
-    (defun UC_Prefix:string (weights:[decimal] amp:decimal)
-        (let
-            (
-                (ws:decimal (fold (+) 0.0 weights))
-            )
-            (if (= amp -1.0)
-                (if (= ws 1.0)
-                    "W"
-                    "P"
-                )
-                "S"
-            )
+            (floor (* (/ (at fnzp input-amounts) (at fnzp pts)) lps) lpp)
         )
     )
     (defun UC_LpID:[string] (token-names:[string] token-tickers:[string] weights:[decimal] amp:decimal)
@@ -246,6 +237,30 @@
             )
         )
     )
+    (defun UC_NewSupply:[decimal] (X:[decimal] input-amounts:[decimal] ip:[integer])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL 
+                        acc 
+                        (+ 
+                            (if (contains idx ip)
+                                (at (at 0 (ref-U|LST::UC_Search ip idx)) input-amounts)
+                                0.0
+                            )
+                            (at idx X)
+                        )
+                    )
+                )
+                []
+                (enumerate 0 (- (length X) 1))
+            )
+        )
+    )
     (defun UC_PoolID:string (token-ids:[string] weights:[decimal] amp:decimal)
         @doc "Creates a Swap Pool Id from input sources"
         (let
@@ -270,43 +285,156 @@
             (concat [prefix BAR (concat swpair-elements)])
         )
     )
-    (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
-        @doc "Computes Balanced Liquidity Amounts from input sources"
+    (defun UC_Prefix:string (weights:[decimal] amp:decimal)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ratio:decimal (floor (/ ia (at ip X)) i-prec))
-                (output:[decimal]
-                    (fold
-                        (lambda
-                            (acc:[decimal] idx:integer)
-                            (ref-U|LST::UC_AppL 
-                                acc 
-                                (if (= idx ip)
-                                    ia
-                                    (floor (* ratio (at idx X)) (at idx Xp))
-                                )
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length X) 1))
-                    )
-                )
+                (ws:decimal (fold (+) 0.0 weights))
             )
-            output
+            (if (= amp -1.0)
+                (if (= ws 1.0)
+                    "W"
+                    "P"
+                )
+                "S"
+            )
         )
     )
-    (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer)
-        @doc "Computes the amount of LP that would result from <input-amounts> of tokens added to the pool, when \
-            \ the pools has <pts> token supply, adn the lp amounts is <lps> and the lp token has <lpp> precision"
+    (defun UC_YNext (Y:decimal D:decimal A:decimal X:[decimal] op:integer)
+        @doc "Computes Y such that the invariant remains satisfied \
+        \ Sp = x1+x2+x3+ ... without the term to be computed, containing the modified input token amount \
+        \ Pp = x1*x2*x3* ... without the term to be computed, containing the modified input token amount \
+        \ c = (D^(n+1))/(n^n*Pp*A*n^n) \
+        \ b = Sp + (D/A*n^n) \
+        \ Numerator = y^2 + c \
+        \ Denominator = 2*y + b - D \
+        \ YNext = Numerator / Denominator "
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (nz:[decimal] (ref-U|LST::UC_RemoveItem input-amounts 0.0))
-                (fnz:decimal (at 0 nz))
-                (fnzp:integer (at 0 (ref-U|LST::UC_Search input-amounts fnz)))
+                (prec:integer 24)
+                (n:decimal (dec (length X)))
+                (XX:[decimal] (ref-U|LST::UC_ReplaceAt X op -1.0))
+                (XXX:[decimal] (ref-U|LST::UC_RemoveItem XX -1.0))
+                (Sp:decimal (fold (+) 0.0 XXX))
+                (Pp:decimal (floor (fold (*) 1.0 XXX) prec))
+                (n1:decimal (+ 1.0 n))
+                (nn:decimal (^ n n))
+                (c:decimal (floor (/ (^ D n1) (fold (*) 1.0 [nn Pp A nn])) prec))
+                (b:decimal (floor (+ Sp (/ D (* A nn))) prec))
+                (Ysq:decimal (^ Y 2.0))
+                (numerator:decimal (floor (+ Ysq c) prec))
+                (denominator:decimal (floor (- (+ (* Y 2.0) b) D) prec))
             )
-            (floor (* (/ (at fnzp input-amounts) (at fnzp pts)) lps) lpp)
+            (floor (/ numerator denominator) prec)
+        )
+    )
+    ;;
+    (defun UC_AreOnPools:[bool] (id1:string id2:string swpairs:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[bool] idx:integer)
+                    (ref-U|LST::UC_AppL
+                        acc
+                        (let*
+                            (
+                                (pool-tokens:[string] (UC_TokensFromSwpairString (at idx swpairs)))
+                                (iz-id1:bool (contains id1 pool-tokens))
+                                (iz-id2:bool (contains id2 pool-tokens))
+                            )
+                            (and iz-id1 iz-id2)
+                        )
+                    )
+                )
+                []
+                (enumerate 0 (- (length swpairs) 1))
+            )
+        )
+    )
+    (defun UC_FilterOne:[string] (swpairs:[string] id:string)
+        (let*
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (l1:[bool] (UC_IzOnPools id swpairs))
+                (l2:[string] (zip (lambda (s:string b:bool) (if b s BAR)) swpairs l1))
+                (l3:[string] (ref-U|LST::UC_RemoveItem l2 BAR))
+            )
+            l3
+        )
+    )
+    (defun UC_FilterTwo:[string] (swpairs:[string] id1:string id2:string)
+        (let*
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (l1:[bool] (UC_AreOnPools id1 id2 swpairs))
+                (l2:[string] (zip (lambda (s:string b:bool) (if b s BAR)) swpairs l1))
+                (l3:[string] (ref-U|LST::UC_RemoveItem l2 BAR))
+            )
+            l3
+        )
+    )
+    (defun UC_IzOnPool:bool (id:string swpair:string)
+        (contains id (UC_TokensFromSwpairString swpair))
+    )
+    (defun UC_IzOnPools:[bool] (id:string swpairs:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[bool] idx:integer)
+                    (ref-U|LST::UC_AppL
+                        acc
+                        (UC_IzOnPool id (at idx swpairs))
+                    )
+                )
+                []
+                (enumerate 0 (- (length swpairs) 1))
+            )
+        )
+    )
+    (defun UC_MakeGraphNodes:[string] (input-id:string output-id:string swpairs:[string])
+        @doc "Given an <input-id> and <output-id>, creates a list of ids: \
+            \ Representing the nodes of the graph. \
+            \ Uses 2 Steps: \
+            \ \
+            \ Step1 = Filter All Existing <swpairs>, to those containing <input-id> and <output-id> = select-swpairs\
+            \ Step2 = Extract all Tokens from relevant pairs => these are the nodes = nodes \
+            \ \
+            \ Uses p2-p7 s2-s7 Swpair Information Data via passed down <swpairs>"
+        (let*
+            (
+                (in:[string] (UC_FilterOne swpairs input-id))
+                (out:[string] (UC_FilterOne swpairs output-id))
+                (l0:[string] (+ in out))
+                (select-swpairs:[string] (distinct l0))
+
+                (non-distinct-nodes-array:[[string]] (UC_PoolTokensFromPairs select-swpairs))
+                (non-distinct-nodes:[string] (fold (+) [] non-distinct-nodes-array))
+            )
+            (distinct non-distinct-nodes)
+        )
+    )
+    (defun UC_PoolTokensFromPairs:[[string]] (swpairs:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[[string]] idx:integer)
+                    (ref-U|LST::UC_AppL
+                        acc
+                        (UC_TokensFromSwpairString (at idx swpairs))
+                    )
+                )
+                []
+                (enumerate 0 (- (length swpairs) 1))
+            )
         )
     )
     (defun UC_SpecialFeeOutputs (sftp:[decimal] input-amount:decimal output-precision:integer)
@@ -334,117 +462,6 @@
             (ref-U|LST::UC_AppL ipl last)
         )
     )
-    (defun UC_MakeGraphNodes:[string] (input-id:string output-id:string swpairs:[string])
-        @doc "Given an <input-id> and <output-id>, creates a list of ids: \
-            \ Representing the nodes of the graph. \
-            \ Uses 2 Steps: \
-            \ \
-            \ Step1 = Filter All Existing <swpairs>, to those containing <input-id> and <output-id> = select-swpairs\
-            \ Step2 = Extract all Tokens from relevant pairs => these are the nodes = nodes \
-            \ \
-            \ Uses p2-p7 s2-s7 Swpair Information Data via passed down <swpairs>"
-        (let*
-            (
-                (in:[string] (UC_FilterOne swpairs input-id))
-                (out:[string] (UC_FilterOne swpairs output-id))
-                (l0:[string] (+ in out))
-                (select-swpairs:[string] (distinct l0))
-
-                (non-distinct-nodes-array:[[string]] (UC_PoolTokensFromPairs select-swpairs))
-                (non-distinct-nodes:[string] (fold (+) [] non-distinct-nodes-array))
-            )
-            (distinct non-distinct-nodes)
-        )
-    )
-    (defun UC_FilterOne:[string] (swpairs:[string] id:string)
-        (let*
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (l1:[bool] (UC_IzOnPools id swpairs))
-                (l2:[string] (zip (lambda (s:string b:bool) (if b s BAR)) swpairs l1))
-                (l3:[string] (ref-U|LST::UC_RemoveItem l2 BAR))
-            )
-            l3
-        )
-    )
-    (defun UC_IzOnPools:[bool] (id:string swpairs:[string])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[bool] idx:integer)
-                    (ref-U|LST::UC_AppL
-                        acc
-                        (UC_IzOnPool id (at idx swpairs))
-                    )
-                )
-                []
-                (enumerate 0 (- (length swpairs) 1))
-            )
-        )
-    )
-    (defun UC_IzOnPool:bool (id:string swpair:string)
-        (contains id (UC_TokensFromSwpairString swpair))
-    )
-    (defun UC_FilterTwo:[string] (swpairs:[string] id1:string id2:string)
-        (let*
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (l1:[bool] (UC_AreOnPools id1 id2 swpairs))
-                (l2:[string] (zip (lambda (s:string b:bool) (if b s BAR)) swpairs l1))
-                (l3:[string] (ref-U|LST::UC_RemoveItem l2 BAR))
-            )
-            l3
-        )
-    )
-    (defun UC_AreOnPools:[bool] (id1:string id2:string swpairs:[string])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[bool] idx:integer)
-                    (ref-U|LST::UC_AppL
-                        acc
-                        (let*
-                            (
-                                (pool-tokens:[string] (UC_TokensFromSwpairString (at idx swpairs)))
-                                (iz-id1:bool (contains id1 pool-tokens))
-                                (iz-id2:bool (contains id2 pool-tokens))
-                            )
-                            (and iz-id1 iz-id2)
-                        )
-                    )
-                )
-                []
-                (enumerate 0 (- (length swpairs) 1))
-            )
-        )
-    )
-    (defun UC_UniqueTokens:[string] (swpairs:[string])
-        (distinct (fold (+) [] (UC_PoolTokensFromPairs swpairs)))
-    )
-    (defun UC_PoolTokensFromPairs:[[string]] (swpairs:[string])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[[string]] idx:integer)
-                    (ref-U|LST::UC_AppL
-                        acc
-                        (UC_TokensFromSwpairString (at idx swpairs))
-                    )
-                )
-                []
-                (enumerate 0 (- (length swpairs) 1))
-            )
-        )
-    )
     (defun UC_TokensFromSwpairString:[string] (swpair:string)
         (let
             (
@@ -455,8 +472,8 @@
             (drop 1 (ref-U|LST::UC_SplitString bar swpair))
         )
     )
-
-    ;;{F_UR}
-    ;;{F-UEV}
-    ;;{F-UDC}
+    (defun UC_UniqueTokens:[string] (swpairs:[string])
+        (distinct (fold (+) [] (UC_PoolTokensFromPairs swpairs)))
+    )
+    
 )

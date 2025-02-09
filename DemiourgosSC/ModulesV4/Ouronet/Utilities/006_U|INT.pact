@@ -1,11 +1,18 @@
+(interface OuronetIntegers
+    @doc "Exported Integer Functions"
+    ;;
+    (defun UC_MaxInteger:integer (lst:[integer])) ;;2
+    ;;
+    (defun UEV_ContainsAll (l1:[integer] l2:[integer]))
+    (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string))
+    (defun UEV_UniformList (input:[integer]))
+)
 (module U|INT GOV
     ;;
     (implements OuronetIntegers)
     ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|INT_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|INT_ADMIN)))
     (defcap GOV|U|INT_ADMIN ()
         (let
             (
@@ -15,11 +22,6 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     ;;
     ;;{F-UC}
     (defun UC_MaxInteger:integer (lst:[integer])
@@ -32,28 +34,7 @@
             (drop 1 lst)
         )
     )
-    ;;{F_UR}
     ;;{F-UEV}
-    (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string)
-        @doc "Validates a number (positions-number) as positional variable"
-        (enforce (= (contains integer-to-validate (enumerate 1 positions)) true) message)
-    )
-    (defun UEV_UniformList (input:[integer])
-        @doc "Enforces that all elements in the integer list are the same."
-        (let 
-            (
-                (fe:integer (at 0 input))
-            )  ;; Get the first element in the list
-            (map
-                (lambda 
-                    (index:integer)
-                    (enforce (= fe (at index input)) "List elements are not the same")
-                    true
-                )
-                (enumerate 0 (- (length input) 1))
-            )
-        )
-    )
     (defun UEV_ContainsAll (l1:[integer] l2:[integer])
         (let*
             (
@@ -77,6 +58,24 @@
             )
         )
     )
-    ;;{F-UDC}
-    
+    (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string)
+        @doc "Validates a number (positions-number) as positional variable"
+        (enforce (= (contains integer-to-validate (enumerate 1 positions)) true) message)
+    )
+    (defun UEV_UniformList (input:[integer])
+        @doc "Enforces that all elements in the integer list are the same."
+        (let 
+            (
+                (fe:integer (at 0 input))
+            )  ;; Get the first element in the list
+            (map
+                (lambda 
+                    (index:integer)
+                    (enforce (= fe (at index input)) "List elements are not the same")
+                    true
+                )
+                (enumerate 0 (- (length input) 1))
+            )
+        )
+    )  
 )

@@ -1,11 +1,26 @@
+(interface OuronetGasStation
+    @doc "Exported Ouronet Gas Station Functions"
+    ;;
+    (defun UC_chain-gas-notional ())
+    ;;
+    (defun UR_chain-gas-price ())
+    (defun UR_chain-gas-limit ())
+    ;;
+    (defun UEV_max-gas-notional:guard (gasNotional:decimal))
+    (defun UEV_enforce-below-gas-notional (gasNotional:decimal))
+    (defun UEV_enforce-below-or-at-gas-notional (gasNotional:decimal))
+    (defun UEV_max-gas-price:guard (gasPrice:decimal))
+    (defun UEV_enforce-below-gas-price:bool (gasPrice:decimal))
+    (defun UEV_enforce-below-or-at-gas-price:bool (gasPrice:decimal))
+    (defun UEV_max-gas-limit:guard (gasLimit:integer))
+    (defun UEV_enforce-below-gas-limit:bool (gasLimit:integer))
+    (defun UEV_enforce-below-or-at-gas-limit:bool (gasLimit:integer))
+)
 (module U|ST GOV
     ;;
     (implements OuronetGasStation)
-    ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|ST_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|ST_ADMIN)))
     (defcap GOV|U|ST_ADMIN ()
         (let
             (
@@ -15,11 +30,6 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     ;;
     ;;{F-UC}
     (defun UC_chain-gas-notional ()
@@ -84,6 +94,4 @@
             (format "Gas Limit must be smaller than or equal to {}" [gasLimit])
         )
     )
-    ;;{F-UDC}
-    ;;
 )

@@ -1,11 +1,13 @@
+(interface ReservedAccounts
+    @doc "Exported Reserved Account Functions"
+    (defun UEV_CheckReserved:string (account:string))
+    (defun UEV_EnforceReserved:bool (account:string guard:guard))
+)
 (module U|RS GOV
     ;;
     (implements ReservedAccounts)
-    ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|RS_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|RS_ADMIN)))
     (defcap GOV|U|RS_ADMIN ()
         (let
             (
@@ -15,15 +17,21 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
-    ;;
-    ;;{F-UC}
-    ;;{F_UR}
     ;;{F-UEV}
+    (defun UEV_CheckReserved:string (account:string)
+        @doc "Checks account for reserved name and returns type if \
+            \ found or empty string. Reserved names start with a \
+            \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
+        (let 
+            (
+                (pfx (take 2 account))
+            )
+            (if (= ":" (take -1 pfx)) 
+                (take 1 pfx) 
+                ""
+            )
+        )
+    )
     (defun UEV_EnforceReserved:bool (account:string guard:guard)
         @doc "Enforce reserved account name protocols"
         (if 
@@ -45,20 +53,4 @@
             )
         )
     )
-    (defun UEV_CheckReserved:string (account:string)
-        @doc "Checks account for reserved name and returns type if \
-            \ found or empty string. Reserved names start with a \
-            \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
-        (let 
-            (
-                (pfx (take 2 account))
-            )
-            (if (= ":" (take -1 pfx)) 
-                (take 1 pfx) 
-                ""
-            )
-        )
-    )
-    ;;{F-UDC}
-    
 )

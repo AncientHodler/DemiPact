@@ -1,3 +1,34 @@
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface SwapTracer
+    @doc "Exposes Tracer Functions, needed to compute Paths between Tokens existing on Liquidity Pools \
+    \ Commented Functions are internal use only, and have no use outside the module"
+    ;;
+    (defschema Edges
+        principal:string
+        swpairs:[string]
+    )
+    ;;
+    (defun UC_PSwpairsFTO:[string] (traces:[object{Edges}] id:string principal:string principals-lst:[string]))
+    (defun UC_PrincipalsFromTraces:[string] (traces:[object{Edges}]))
+    ;;
+    (defun UR_PathTrace:[object{Edges}] (id:string))
+    ;;
+    (defun URC_PathTracer:[object{Edges}] (old-path-tracer:[object{Edges}] id:string swpair:string principals-lst:[string]))
+    (defun URC_ContainsPrincipals:bool (swpair:string principals-lst:[string]))
+    (defun URC_ComputeGraphPath:[string] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_AllGraphPaths:[[string]] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_MakeGraph:[object{BreadthFirstSearch.GraphNode}] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_TokenNeighbours:[string] (token-id:string principal-lst:[string]))
+    (defun URC_TokenSwpairs:[string] (token-id:string principal-lst:[string]))
+    (defun URC_PrincipalSwpairs:[string] (id:string principal:string))
+    (defun URC_Edges:[string] (t1:string t2:string)) ;;1
+    ;;
+    (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string]))
+    ;;
+    (defun X_MultiPathTracer (swpair:string principals-lst:[string]))
+    ;(defun X_SinglePathTracer (id:string swpair:string principals-lst:[string]))
+)
+
 (module SWPT GOV
     ;;
     (implements OuronetPolicy)
@@ -14,6 +45,9 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
+    (defcap P|SWPT|CALLER ()
+        true
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -26,7 +60,74 @@
         )
     )
     (defun P|A_Define ()              
-        true
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
+                (ref-P|VST:module{OuronetPolicy} VST)
+                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+            )
+            (ref-P|DALOS::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|DPTF::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|VST::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|LIQUID::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+            (ref-P|ORBR::P|A_Add 
+                (ref-U|G::G11)
+                (create-capability-guard (P|SWPT|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
+        )
     )
     ;;
     ;;{1}

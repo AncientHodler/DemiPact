@@ -1,3 +1,20 @@
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface Ouroboros
+    @doc "Exposes Functions related to the OUROBOROS Module"
+    ;;
+    (defun GOV|ORBR|SC_KDA-NAME ())
+    ;;
+    (defun URC_Compress:[decimal] (ignis-amount:decimal))
+    (defun URC_Sublimate:decimal (ouro-amount:decimal))
+    ;;
+    (defun UEV_AccountsAsStandard (accounts:[string]))
+    (defun UEV_Exchange ())
+    ;;
+    (defun C_Compress:decimal (patron:string client:string ignis-amount:decimal))
+    (defun C_Fuel (patron:string))
+    (defun C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal))
+    (defun C_WithdrawFees (patron:string id:string target:string))
+)
 (module OUROBOROS GOV
     ;;
     (implements OuronetPolicy)
@@ -69,22 +86,67 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
+                (ref-P|VST:module{OuronetPolicy} VST)
+                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
             )
             (ref-P|DALOS::P|A_Add 
-                "ORBR|Caller"
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G10)
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                "ORBR|Caller"
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G10)
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                "ORBR|Caller"
+                (ref-U|G::G10)
                 (create-capability-guard (P|ORBR|CALLER))
             )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|VST::P|A_Add 
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+            (ref-P|LIQUID::P|A_Add 
+                (ref-U|G::G10)
+                (create-capability-guard (P|ORBR|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (m11:guard (P|UR (ref-U|G::G11)))
+                (m12:guard (P|UR (ref-U|G::G12)))
+                (m13:guard (P|UR (ref-U|G::G13)))
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (M:[guard] [m11 m12 m13])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -95,6 +157,9 @@
     (defconst BAR                   (CT_Bar))
     ;;
     ;;{C1}
+    (defcap SECURE ()
+        true
+    )
     ;;{C2}
     ;;{C3}
     ;;{C4}
@@ -133,6 +198,31 @@
     ;;
     ;;{F0}
     ;;{F1}
+    (defun URC_Compress:[decimal] (ignis-amount:decimal)
+        (let
+            (
+                (ref-U|ATS:module{UtilityAts} U|ATS)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
+            (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
+            (ref-DPTF::UEV_Amount (ref-DALOS::UR_IgnisID) ignis-amount)
+            (let
+                (
+                    (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                    (ouro-price:decimal (ref-DALOS::UR_OuroborosPrice))
+                    (ouro-price-used:decimal (if (<= ouro-price 1.00) 1.00 ouro-price))
+                    (ouro-precision:integer (ref-DPTF::R_Decimals ouro-id))
+                    (raw-ouro-amount:decimal (floor (/ ignis-amount (* ouro-price-used 100.0)) ouro-precision))
+                    (promile-split:[decimal] (ref-U|ATS::UC_PromilleSplit 15.0 raw-ouro-amount ouro-precision))
+                    (ouro-remainder-amount:decimal (floor (at 0 promile-split) ouro-precision))
+                    (ouro-fee-amount:decimal (at 1 promile-split))
+                )
+                [ouro-remainder-amount ouro-fee-amount]
+            )
+        )
+    )
     (defun URC_Sublimate:decimal (ouro-amount:decimal)
         (let
             (
@@ -160,31 +250,6 @@
             )
         )
         
-    )
-    (defun URC_Compress:[decimal] (ignis-amount:decimal)
-        (let
-            (
-                (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
-            (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
-            (ref-DPTF::UEV_Amount (ref-DALOS::UR_IgnisID) ignis-amount)
-            (let
-                (
-                    (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                    (ouro-price:decimal (ref-DALOS::UR_OuroborosPrice))
-                    (ouro-price-used:decimal (if (<= ouro-price 1.00) 1.00 ouro-price))
-                    (ouro-precision:integer (ref-DPTF::R_Decimals ouro-id))
-                    (raw-ouro-amount:decimal (floor (/ ignis-amount (* ouro-price-used 100.0)) ouro-precision))
-                    (promile-split:[decimal] (ref-U|ATS::UC_PromilleSplit 15.0 raw-ouro-amount ouro-precision))
-                    (ouro-remainder-amount:decimal (floor (at 0 promile-split) ouro-precision))
-                    (ouro-fee-amount:decimal (at 1 promile-split))
-                )
-                [ouro-remainder-amount ouro-fee-amount]
-            )
-        )
     )
     ;;{F2}
     (defun UEV_AccountsAsStandard (accounts:[string])
@@ -230,9 +295,40 @@
     ;;
     ;;{F5}
     ;;{F6}
+    (defun C_Compress:decimal (patron:string client:string ignis-amount:decimal)
+        (P|UEV_SIP "T")
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (orbr-sc:string ORBR|SC_NAME)
+
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ignis-id:string (ref-DALOS::UR_IgnisID))
+                (ignis-to-ouro:[decimal] (URC_Compress ignis-amount))
+                (ouro-remainder-amount:decimal (at 0 ignis-to-ouro))
+                (ouro-fee-amount:decimal (at 1 ignis-to-ouro))
+                (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
+            )
+            (with-capability (IGNIS|C>COMPRESS patron client)
+            ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart DALOS Account
+                (ref-TFT::C_Transfer patron ignis-id client orbr-sc ignis-amount true)
+            ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
+                (ref-DPTF::C_Burn patron ignis-id orbr-sc ignis-amount)
+            ;;03]Ouroboros mints OURO <total-ouro>
+                (ref-DPTF::C_Mint patron ouro-id orbr-sc total-ouro false)
+            ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
+                (ref-TFT::C_Transfer patron ouro-id orbr-sc client ouro-remainder-amount true)
+            ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
+                (ref-TFT::C_Transmute patron ouro-id orbr-sc ouro-fee-amount)
+                ouro-remainder-amount
+            )
+        )
+    )
     (defun C_Fuel (patron:string)
-        @doc "Uses up all collected Native KDA on the Ouroboros Account, wraps it, and fuels the Kadena Liquid Index \
-        \ Transaction fee must be paid for by the Ouronet Gas Station, so that all available balance may be used."
+        
+        (P|UEV_SIP "T")
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
@@ -265,28 +361,8 @@
             )
         )
     )
-    (defun C_WithdrawFees (patron:string id:string target:string)
-        @doc "Withdraws collected DPTF Fees that are being collected in standard mode (no custom fee target set up"
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (orbr-sc:string ORBR|SC_NAME)
-                (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id orbr-sc))
-            )
-            (enforce (> withdraw-amount 0.0) (format "There are no {} fees to be withdrawn from {}" [id orbr-sc]))
-            (with-capability (OUROBOROS|C>WITHDRAW patron id target)
-        ;;1]Patron withdraws Fees from Ouroboros Smart DALOS Account to a target Normal DALOS Account
-                (ref-TFT::C_Transfer patron id orbr-sc target withdraw-amount true)
-            )
-        )
-    )
     (defun C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
-        @doc "Sublimates OUROBOROS, generating Ouronet Gas, in form of IGNIS Token \
-            \ A minimum amount of 1 input OUROBOROS is required. Amount of IGNIS generated depends on OUROBOROS Price in $, \
-            \ with the minimum value being set at 1$ (in case the actual value is lower than 1$ \
-            \ Prior to computing the Ignis Amount, a fee of 1% is deducted. This OURO amount is transmuted. \
-            \ Transmutation is set to increase Auryn Index."
+        (P|UEV_SIP "T")
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -319,40 +395,22 @@
             )
         )
     )
-    (defun C_Compress:decimal (patron:string client:string ignis-amount:decimal)
-        @doc "Compresses IGNIS - Ouronet Gas Token, generating OUROBOROS \
-            \ Only whole IGNIS Amounts greater than or equal to 1.0 can be used for compression \
-            \ Similar to Sublimation, the output amount is dependent on OUROBOROS price, set at a minimum of 1$ \
-            \ Compression costs 1.5% in output fees, the OUROBOROS Fee is transmuted \
-            \ Transmutation is set to increase Auryn Index"
+    (defun C_WithdrawFees (patron:string id:string target:string)
+        (P|UEV_SIP "T")
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-TFT:module{TrueFungibleTransfer} TFT)
                 (orbr-sc:string ORBR|SC_NAME)
-
-                (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                (ignis-id:string (ref-DALOS::UR_IgnisID))
-                (ignis-to-ouro:[decimal] (URC_Compress ignis-amount))
-                (ouro-remainder-amount:decimal (at 0 ignis-to-ouro))
-                (ouro-fee-amount:decimal (at 1 ignis-to-ouro))
-                (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
+                (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id orbr-sc))
             )
-            (with-capability (IGNIS|C>COMPRESS patron client)
-            ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart DALOS Account
-                (ref-TFT::C_Transfer patron ignis-id client orbr-sc ignis-amount true)
-            ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
-                (ref-DPTF::C_Burn patron ignis-id orbr-sc ignis-amount)
-            ;;03]Ouroboros mints OURO <total-ouro>
-                (ref-DPTF::C_Mint patron ouro-id orbr-sc total-ouro false)
-            ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
-                (ref-TFT::C_Transfer patron ouro-id orbr-sc client ouro-remainder-amount true)
-            ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
-                (ref-TFT::C_Transmute patron ouro-id orbr-sc ouro-fee-amount)
-                ouro-remainder-amount
+            (enforce (> withdraw-amount 0.0) (format "There are no {} fees to be withdrawn from {}" [id orbr-sc]))
+            (with-capability (OUROBOROS|C>WITHDRAW patron id target)
+        ;;1]Patron withdraws Fees from Ouroboros Smart DALOS Account to a target Normal DALOS Account
+                (ref-TFT::C_Transfer patron id orbr-sc target withdraw-amount true)
             )
         )
     )
+    
     ;;{F7}
 )

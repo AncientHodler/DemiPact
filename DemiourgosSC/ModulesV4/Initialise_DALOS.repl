@@ -248,16 +248,6 @@
 
 
 (print "")
-(begin-tx "INIT TX 000 - U|I.pact")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(namespace "free")
-(load "Ouronet/Utilities/000_U|I.pact")
-(env-gas)
-(commit-tx)
-(print "LOADED INTERFACES=======")
-(print "")
-
-(print "")
 (begin-tx "INIT TX 003 - U|CT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -508,27 +498,26 @@
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-;(use U|I)          ;; 53.875
-(use U|CT)          ;;  9.016
-(use U|G)           ;;  2.019
-(use U|ST)          ;;  3.493
-(use U|RS)          ;;  1.721
-(use U|LST)         ;;  6.751
-(use U|INT)         ;;  2.743
-(use U|DEC)         ;;  4.125
-(use U|DALOS)       ;;  9.947
-(use U|ATS)         ;; 36.446
-(use U|DPTF)        ;;  4.422
-(use U|VST)         ;;  4.710
-(use U|SWP)         ;; 21.226
-(use U|BFS)         ;; 14.795
+(use U|CT)          ;; 11.125
+(use U|G)           ;;  5.913
+(use U|ST)          ;;  4.175
+(use U|RS)          ;;  1.909
+(use U|LST)         ;;  7.698
+(use U|INT)         ;;  3.056
+(use U|DEC)         ;;  4.595
+(use U|DALOS)       ;; 10.857
+(use U|ATS)         ;; 38.184
+(use U|DPTF)        ;;  4.700
+(use U|VST)         ;;  5.157
+(use U|SWP)         ;; 22.898
+(use U|BFS)         ;; 15.250
 (print "")
-(use DALOS)         ;; 78.802
-(use BRD)           ;; 29.269
-(use DPTF)          ;; 98.722
-(use DPMF)          ;; 99.698
-(use ATS)           ;;117.690
-(use TFT)           ;; 56.407
+(use DALOS)         ;; 86.638
+(use BRD)           ;; 34.653
+(use DPTF)          ;;106.397
+(use DPMF)          ;;106.827 
+(use ATS)           ;;128.734
+(use TFT)           ;; 58.062 ;; Pana AICI
 (use ATSU)          ;; 83.010
 (use VST)           ;; 34.022
 (use LIQUID)        ;; 16.032
@@ -537,6 +526,7 @@
 (use SWPT)          ;; 21.595
 (use SWP)           ;; 86.262
 (use SWPU)          ;; 97.949
+(use TS01)          ;; 35.086
 
 (env-gas)
 (commit-tx)

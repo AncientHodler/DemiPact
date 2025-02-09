@@ -1,3 +1,25 @@
+;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(interface SwapperUsage
+    (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_LpCapacity:decimal (swpair:string))
+    (defun SWPLC|URC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal))
+    (defun SWPLC|URC_SymetricLpAmount:decimal (swpair:string input-id:string input-amount:decimal))
+    (defun SWPLC|URC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal))
+    (defun SWPLC|URC_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_WP_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_S_LpAmount:decimal (swpair:string input-amounts:[decimal]))
+    (defun SWPLC|URC_AddLiquidityIgnisCost:decimal (swpair:string input-amounts:[decimal]))
+
+    (defun SWPSC|URC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun SWPSC|URC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+
+
+    (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
+    (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
+    (defun SWPS|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+)
 (module SWPU GOV
     ;;
     (implements OuronetPolicy)
@@ -14,10 +36,10 @@
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
-    (defcap P|SWPU|REMOTE-GOV ()
+    (defcap P|SWPU|CALLER ()
         true
     )
-    (defcap P|SWPU|CALLER ()
+    (defcap P|SWPU|REMOTE-GOV ()
         true
     )
     (defcap P|DT ()
@@ -38,26 +60,78 @@
     (defun P|A_Define ()              
         (let
             (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ref-P|ATSU:module{OuronetPolicy} ATSU)
+                (ref-P|VST:module{OuronetPolicy} VST)
+                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+                (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
             )
-            (ref-P|DPTF::P|A_Add
-                "SWPU|Caller"
+            (ref-P|DALOS::P|A_Add 
+                (ref-U|G::G13)
                 (create-capability-guard (P|SWPU|CALLER))
             )
-            (ref-P|TFT::P|A_Add
-                "SWPU|Caller"
+            (ref-P|BRD::P|A_Add 
+                (ref-U|G::G13)
                 (create-capability-guard (P|SWPU|CALLER))
             )
-            (ref-P|SWP::P|A_Add
-                "SWPU|RemoteSwpGov"
-                (create-capability-guard (P|SWPU|REMOTE-GOV))
-            )
-            (ref-P|SWP::P|A_Add
-                "SWPU|Caller"
+            (ref-P|DPTF::P|A_Add 
+                (ref-U|G::G13)
                 (create-capability-guard (P|SWPU|CALLER))
             )
+            (ref-P|DPMF::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|ATS::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|ATSU::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|VST::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|LIQUID::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|ORBR::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|SWPT::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+            (ref-P|SWP::P|A_Add 
+                (ref-U|G::G13)
+                (create-capability-guard (P|SWPU|CALLER))
+            )
+        )
+    )
+    (defun P|UEV_SIP (type:string)
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (I:[guard] [(create-capability-guard (SECURE))])
+                (T:[guard] [(P|UR (ref-U|G::G01))])
+            )
+            (ref-U|G::UEV_IMT type I I T)
         )
     )
     ;;
@@ -82,6 +156,9 @@
     (defconst BAR                   (CT_Bar))
     ;;
     ;;{C1}
+    (defcap SECURE ()
+        true
+    )
     ;;{C2}
     ;;{C3}
     ;;{C4}

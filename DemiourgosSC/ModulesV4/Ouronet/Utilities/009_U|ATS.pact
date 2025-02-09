@@ -1,11 +1,35 @@
+(interface UtilityAts
+    @doc "Exported Utility Functions for the ATS and ATSU Modules"
+    (defschema Awo
+        reward-tokens:[decimal]
+        cull-time:time
+    )
+    ;;
+    (defun UC_IzCullable:bool (input:object{Awo}))
+    (defun UC_IzUnstakeObjectValid:bool (input:object{Awo}))
+    (defun UC_MakeHardIntervals:[integer] (start:integer growth:integer))
+    (defun UC_MakeSoftIntervals:[integer] (start:integer growth:integer))
+    (defun UC_MultiReshapeUnstakeObject:[object{Awo}] (input:[object{Awo}] remove-position:integer))
+    (defun UC_PromilleSplit:[decimal] (promille:decimal input:decimal input-precision:integer))
+    (defun UC_QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool))
+    (defun UC_ReshapeUnstakeObject:object{Awo} (input:object{Awo} remove-position:integer))
+    (defun UC_SolidifyUnstakeObject:object{Awo} (input:object{Awo} remove-position:integer))
+    (defun UC_SplitBalanceWithBooleans:[decimal] (precision:integer amount:decimal milestones:integer boolean:[bool]))
+    (defun UC_SplitByIndexedRBT:[decimal] (rbt-amount:decimal pair-rbt-supply:decimal index:decimal resident-amounts:[decimal] rt-precisions:[integer]))
+    (defun UC_TripleAnd:bool (b1:bool b2:bool b3:bool))
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer))
+    (defun UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]]))
+    ;;
+    (defun UEV_AutostakeIndex (ats:string))
+    (defun UEV_UniqueAtspair (ats:string))
+    ;;
+    (defun UDC_Elite (x:decimal))
+)
 (module U|ATS GOV
     ;;
     (implements UtilityAts)
-    ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|ATS_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|ATS_ADMIN)))
     (defcap GOV|U|ATS_ADMIN ()
         (let
             (
@@ -15,38 +39,55 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     ;;
     ;;{F-UC}
-    (defun UC_TripleAnd:bool (b1:bool b2:bool b3:bool)
-        (and (and b1 b2) b3)
-    )
-    (defun UC_QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool)
-        (and (and b1 b2) (and b3 b4))
-    )
-    (defun UC_UnlockPrice:[decimal] (unlocks:integer)
-        @doc "Computes  ATS unlock price \
-            \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"
-        (let
-            (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
-            )
-            (ref-U|DEC::UC_UnlockPrice unlocks false)
-        )
-    )
-    (defun UC_PromilleSplit:[decimal] (promille:decimal input:decimal input-precision:integer)
-        @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
+    (defun UC_IzCullable:bool (input:object{UtilityAts.Awo})
         (let*
             (
-                (ref-U|DEC:module{StringProcessor} U|DEC)
-                (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
-                (remainder:decimal (- input fee))
+                (present-time:time (at "block-time" (chain-data)))
+                (stored-time:time (at "cull-time" input))
+                (diff:decimal (diff-time present-time stored-time))
             )
-            [remainder fee]
+            (if (>= diff 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun UC_IzUnstakeObjectValid:bool (input:object{UtilityAts.Awo})
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (sum-values:decimal (fold (+) 0.0 values))
+            )
+            (if (> sum-values 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun UC_MakeHardIntervals:[integer] (start:integer growth:integer)
+        @doc "Creates a Soft Interval List"
+        (enforce (= (mod start growth) 0) (format "{} must be divisible by {} and it is not" [start growth]))
+        (let*
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (chain:[integer] 
+                    (fold 
+                        (lambda 
+                            (acc:[integer] item:integer) 
+                            (ref-U|LST::UC_AppL acc (+ (ref-U|LST::UC_LE acc) item))
+                        ) 
+                        [start] 
+                        (make-list 48 growth)
+                    )
+                )
+                (big:integer (* 7 growth))
+                (last:integer (ref-U|LST::UC_LE chain))
+                (very-last:integer (+ last big))
+                (final-lst:[integer] (ref-U|LST::UC_AppL chain very-last))
+            )
+            (reverse final-lst)
         )
     )
     (defun UC_MakeSoftIntervals:[integer] (start:integer growth:integer)
@@ -73,28 +114,68 @@
             (reverse final-lst)
         )
     )
-    (defun UC_MakeHardIntervals:[integer] (start:integer growth:integer)
-        @doc "Creates a Soft Interval List"
-        (enforce (= (mod start growth) 0) (format "{} must be divisible by {} and it is not" [start growth]))
-        (let*
+    (defun UC_MultiReshapeUnstakeObject:[object{UtilityAts.Awo}] (input:[object{UtilityAts.Awo}] remove-position:integer)
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (chain:[integer] 
-                    (fold 
-                        (lambda 
-                            (acc:[integer] item:integer) 
-                            (ref-U|LST::UC_AppL acc (+ (ref-U|LST::UC_LE acc) item))
-                        ) 
-                        [start] 
-                        (make-list 48 growth)
+            )
+            (fold
+                (lambda
+                    (acc:[object{UtilityAts.Awo}] item:object{UtilityAts.Awo})
+                    (ref-U|LST::UC_AppL 
+                        acc 
+                        (UC_ReshapeUnstakeObject item remove-position)
                     )
                 )
-                (big:integer (* 7 growth))
-                (last:integer (ref-U|LST::UC_LE chain))
-                (very-last:integer (+ last big))
-                (final-lst:[integer] (ref-U|LST::UC_AppL chain very-last))
+                []
+                input
             )
-            (reverse final-lst)
+        )
+    )
+    (defun UC_PromilleSplit:[decimal] (promille:decimal input:decimal input-precision:integer)
+        @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
+        (let*
+            (
+                (ref-U|DEC:module{StringProcessor} U|DEC)
+                (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
+                (remainder:decimal (- input fee))
+            )
+            [remainder fee]
+        )
+    )
+    (defun UC_QuadAnd:bool (b1:bool b2:bool b3:bool b4:bool)
+        (and (and b1 b2) (and b3 b4))
+    )
+    (defun UC_ReshapeUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
+        (let
+            (
+                (is-valid:bool (UC_IzUnstakeObjectValid input))
+            )
+            (if is-valid
+                (UC_SolidifyUnstakeObject input remove-position)
+                input
+            )
+        )
+    )
+    (defun UC_SolidifyUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
+        (let*
+            (
+                (values:[decimal] (at "reward-tokens" input))
+                (cull-time:time (at "cull-time" input))
+                (how-many-rts:integer (length values))
+            )
+            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
+            (let*
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (primal:decimal (at 0 (at "reward-tokens" input)))
+                    (removee:decimal (at remove-position (at "reward-tokens" input)))
+                    (remove-lst:[decimal] (ref-U|LST::UC_RemoveItemAt values remove-position))
+                    (new-values:[decimal] (ref-U|LST::UC_ReplaceAt remove-lst 0 (+ primal removee)))
+                )
+                { "reward-tokens"   : new-values
+                , "cull-time"       : cull-time}
+            )
         )
     )
     (defun UC_SplitBalanceWithBooleans:[decimal] (precision:integer amount:decimal milestones:integer boolean:[bool])
@@ -185,17 +266,17 @@
             )
         )
     )
-    (defun UC_IzCullable:bool (input:object{UtilityAts.Awo})
-        (let*
+    (defun UC_TripleAnd:bool (b1:bool b2:bool b3:bool)
+        (and (and b1 b2) b3)
+    )
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer)
+        @doc "Computes  ATS unlock price \
+            \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"
+        (let
             (
-                (present-time:time (at "block-time" (chain-data)))
-                (stored-time:time (at "cull-time" input))
-                (diff:decimal (diff-time present-time stored-time))
+                (ref-U|DEC:module{OuronetDecimals} U|DEC)
             )
-            (if (>= diff 0.0)
-                true
-                false
-            )
+            (ref-U|DEC::UC_UnlockPrice unlocks false)
         )
     )
     (defun UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
@@ -211,75 +292,8 @@
             )
         )
     )
-    (defun UC_MultiReshapeUnstakeObject:[object{UtilityAts.Awo}] (input:[object{UtilityAts.Awo}] remove-position:integer)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (fold
-                (lambda
-                    (acc:[object{UtilityAts.Awo}] item:object{UtilityAts.Awo})
-                    (ref-U|LST::UC_AppL 
-                        acc 
-                        (UC_ReshapeUnstakeObject item remove-position)
-                    )
-                )
-                []
-                input
-            )
-        )
-    )
-    (defun UC_ReshapeUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
-        (let
-            (
-                (is-valid:bool (UC_IzUnstakeObjectValid input))
-            )
-            (if is-valid
-                (UC_SolidifyUnstakeObject input remove-position)
-                input
-            )
-        )
-    )
-    (defun UC_IzUnstakeObjectValid:bool (input:object{UtilityAts.Awo})
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (sum-values:decimal (fold (+) 0.0 values))
-            )
-            (if (> sum-values 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun UC_SolidifyUnstakeObject:object{UtilityAts.Awo} (input:object{UtilityAts.Awo} remove-position:integer)
-        (let*
-            (
-                (values:[decimal] (at "reward-tokens" input))
-                (cull-time:time (at "cull-time" input))
-                (how-many-rts:integer (length values))
-            )
-            (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
-            (let*
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (primal:decimal (at 0 (at "reward-tokens" input)))
-                    (removee:decimal (at remove-position (at "reward-tokens" input)))
-                    (remove-lst:[decimal] (ref-U|LST::UC_RemoveItemAt values remove-position))
-                    (new-values:[decimal] (ref-U|LST::UC_ReplaceAt remove-lst 0 (+ primal removee)))
-                )
-                { "reward-tokens"   : new-values
-                , "cull-time"       : cull-time}
-            )
-        )
-    )
-    ;;{F_UR}
+
     ;;{F-UEV}
-    (defun UEV_UniqueAtspair (ats:string)
-        @doc "Enforces that an Unique Account designating an <ats> ID meets charset and length requirements \
-        \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
-        (UEV_AutostakeIndex (take (- (length ats) 13) ats))
-    )
     (defun UEV_AutostakeIndex (ats:string)
         @doc "Enforces that ATS Index Name <account> ID meets charset and length requirements"
         (let
@@ -311,6 +325,11 @@
                 "Atspair does not conform to the ATS-Pair Standards for Size!"
             )
         )
+    )
+    (defun UEV_UniqueAtspair (ats:string)
+        @doc "Enforces that an Unique Account designating an <ats> ID meets charset and length requirements \
+        \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
+        (UEV_AutostakeIndex (take (- (length ats) 13) ats))
     )
     ;;{F-UDC}
     (defun UDC_Elite (x:decimal)

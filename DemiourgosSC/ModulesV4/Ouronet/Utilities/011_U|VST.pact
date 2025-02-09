@@ -1,11 +1,19 @@
+(interface UtilityVst
+    @doc "Exported Utility Functions for the VST Module"
+    ;;
+    (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)) ;;1
+    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)) ;;2
+    (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)) ;;1
+    ;;
+    (defun UEV_Milestone (milestones:integer))
+    (defun UEV_MilestoneWithTime (offset:integer duration:integer milestones:integer)) ;;1
+)
+
 (module U|VST GOV
     ;;
     (implements UtilityVst)
-    ;;{G1}
     ;;{G2}
-    (defcap GOV ()
-        (compose-capability (GOV|U|VST_ADMIN))
-    )
+    (defcap GOV ()                  (compose-capability (GOV|U|VST_ADMIN)))
     (defcap GOV|U|VST_ADMIN ()
         (let
             (
@@ -15,33 +23,8 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
-    ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
     ;;
     ;;{F-UC}
-    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)
-        @doc "Splits an Amount according to vesting parameters"
-        (UEV_Milestone milestones)
-        (enforce (!= milestones 0) "Cannot split with zero milestones")
-        (let
-            (
-                (split:decimal (floor (/ amount (dec milestones)) precision))
-                (multiply:integer (- milestones 1))
-            )
-            (enforce (> split 0.0) (format "Amount {} to small to split into {} milestones" [amount milestones]))
-            (let*
-                (
-                    (big-chunk:decimal (floor (* split (dec multiply)) precision))
-                    (last-split:decimal (floor (- amount big-chunk) precision))
-                )
-                (enforce (= (+ big-chunk last-split) amount) (format "Amount of {} could not be split into {} milestones succesfully" [amount milestones]))
-                (+ (make-list multiply split) [last-split])
-            )
-        )
-    )
     (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
         @doc "Makes a Times list with unvesting milestones according to vesting parameters"
         (let*
@@ -66,6 +49,26 @@
             )
         )
     )
+    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)
+        @doc "Splits an Amount according to vesting parameters"
+        (UEV_Milestone milestones)
+        (enforce (!= milestones 0) "Cannot split with zero milestones")
+        (let
+            (
+                (split:decimal (floor (/ amount (dec milestones)) precision))
+                (multiply:integer (- milestones 1))
+            )
+            (enforce (> split 0.0) (format "Amount {} to small to split into {} milestones" [amount milestones]))
+            (let*
+                (
+                    (big-chunk:decimal (floor (* split (dec multiply)) precision))
+                    (last-split:decimal (floor (- amount big-chunk) precision))
+                )
+                (enforce (= (+ big-chunk last-split) amount) (format "Amount of {} could not be split into {} milestones succesfully" [amount milestones]))
+                (+ (make-list multiply split) [last-split])
+            )
+        )
+    )
     (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)
         (let
             (
@@ -82,7 +85,6 @@
             [vested-name vested-ticker]
         )
     )
-    ;;{F_UR}
     ;;{F-UEV}
     (defun UEV_Milestone (milestones:integer)
         @doc "Restrict Milestone integer between 1 and 365 Milestones"
@@ -99,7 +101,4 @@
             "Total Vesting Time cannot be greater than 25 years"
         )
     )
-    ;;{F-UDC}
-    
-    
 )

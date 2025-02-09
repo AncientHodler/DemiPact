@@ -1,7 +1,18 @@
+(interface OuronetDecimals
+    @doc "Exported Decimal Functions"
+    ;;
+    (defun UC_AddArray:[decimal] (array:[[decimal]]))
+    (defun UC_AddHybridArray (lists)) ;;2
+    (defun UC_Max (x y))
+    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)) ;;3
+    (defun UC_Promille:decimal (x:decimal promille:decimal precision:integer)) ;;1
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool)) ;;2
+    ;;
+    (defun UEV_DecimalArray (array:[[decimal]])) ;;1
+)
 (module U|DEC GOV
     ;;
     (implements OuronetDecimals)
-    ;;{G1}
     ;;{G2}
     (defcap GOV ()
         (compose-capability (GOV|U|DEC_ADMIN))
@@ -15,24 +26,7 @@
             (enforce-guard g)
         )
     )
-    ;;{G3}
     ;;
-    ;;{1}
-    ;;{2}
-    ;;{3}
-    ;;
-    ;;{F-UC}
-    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)
-        (enforce (and (> percent 0.0)(<= percent 100.0)) "Invalid percent amount")
-        (floor (* (/ percent 100.0) x) precision)
-    )
-    (defun UC_Promille:decimal (x:decimal promille:decimal precision:integer)
-        (enforce (and (> promille 0.0)(<= promille 1000.0)) "Invalid permille amount")
-        (floor (* (/ promille 1000.0) x) precision)
-    )
-    (defun UC_Max (x y)
-        (if (> x y) x y)
-    )
     (defun UC_AddArray:[decimal] (array:[[decimal]])
         @doc "Adds all column elements in an array of decimal elements, while ensuring all rows are of equal length"
         (UEV_DecimalArray array)
@@ -82,6 +76,17 @@
             )
         )
     )
+    (defun UC_Max (x y)
+        (if (> x y) x y)
+    )
+    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)
+        (enforce (and (> percent 0.0)(<= percent 100.0)) "Invalid percent amount")
+        (floor (* (/ percent 100.0) x) precision)
+    )
+    (defun UC_Promille:decimal (x:decimal promille:decimal precision:integer)
+        (enforce (and (> promille 0.0)(<= promille 1000.0)) "Invalid permille amount")
+        (floor (* (/ promille 1000.0) x) precision)
+    )
     (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool)
         @doc "Computes  ATS or DPTF unlock price \
         \ Outputs [virtual-gas-costs native-gas-cost] \
@@ -99,7 +104,6 @@
             [gas-cost gaz-cost]
         )
     )
-    ;;{F_UR}
     ;;{F-UEV}
     (defun UEV_DecimalArray (array:[[decimal]])
         @doc "Enforces all inner list inside an array of decimal elements are of equal size"
@@ -127,5 +131,4 @@
             "All Fee-Array Lists must be of equal length !"
         )
     )
-    ;;{F-UDC}
 )
