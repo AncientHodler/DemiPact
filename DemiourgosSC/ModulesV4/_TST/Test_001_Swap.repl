@@ -7,11 +7,11 @@
 (print "")
 
 (print "")
-(load "../Initialise_DALOS.repl")
+(load "../Ouronet/Deployers/ST01_R01_Steps-Init-Dalos.repl")
 (print "************************Initialise_DALOS.repl LOADED************************************************")
 (print "")
 
-;(load "../AOZ/Init_AOZ.repl")
+;(load "../Ouronet/Deployers/ST01_R02_Steps-Init-AOZ.repl")
 ;(print "************************Init_AOZ.repl LOADED********************************************************")
 
 (print "LOADED ALL ENV MODULES")

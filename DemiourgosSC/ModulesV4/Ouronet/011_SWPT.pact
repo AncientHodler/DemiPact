@@ -62,7 +62,6 @@
     (defun P|A_Define ()              
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -75,58 +74,45 @@
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|VST::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|LIQUID::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
             (ref-P|ORBR::P|A_Add 
-                (ref-U|G::G11)
+                "SWPT|<"
                 (create-capability-guard (P|SWPT|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -454,4 +440,5 @@
     )
 )
 
+(create-table P|T)
 (create-table SWPT|Tracer)

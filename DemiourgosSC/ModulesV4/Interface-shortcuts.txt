@@ -19,9 +19,12 @@
 (ref-P|ATS:module{OuronetPolicy} ATS)
 (ref-P|TFT:module{OuronetPolicy} TFT)
 (ref-P|ATSU:module{OuronetPolicy} ATSU)
+(ref-P|VST:module{OuronetPolicy} VST)
 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
 (ref-P|SWP:module{OuronetPolicy} SWP)
+(ref-P|SWPT:module{OuronetPolicy} SWPT)
+(ref-P|SWPU:module{OuronetPolicy} SWPU)
 
 (ref-B|DPTF:module{BrandingUsage} DPTF}
 (ref-B|DPMF:module{BrandingUsage} DPMF}
@@ -35,16 +38,22 @@
 (ref-ATS:module{Autostake} ATS)
 (ref-TFT:module{TrueFungibleTransfer} TFT)
 (ref-ATSU:module{AutostakeUsage} ATSU)
+(ref-VST:module{Vesting} VST)
 (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
 (ref-ORBR:module{Ouroboros} OUROBOROS)
 (ref-SWPT:module{SwapTracer} SWPT)
 (ref-SWP:module{Swapper} SWP)
 (ref-SWPU:module{SwapperUsage} SWPU)
 
+(ref-T01:module{TalosStageOne} TS01)
+
+(ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
 
 
 
+ref-DPL|DALOS::
 
+ref-T01::
 ref-DALOS::
 ref-BRD::
 ref-DPTF::
@@ -81,7 +90,7 @@ ref-P|TFT::
 ref-P|ATSU::
 ref-P|LIQUID::
 ref-P|ORBR::
-
+ref-P|VST:
 ref-B|DPTF::
 ref-B|DPMF::
 ref-B|ATS::
@@ -100,3 +109,28 @@ ref-B|SWP::
 ;;{F5}
 ;;{F6}
 ;;{F7}
+
+(P|UEV_SIP)
+(compose-capability (DPTF|CALLER)
+
+  (defconst GTS "TALOS-01")
+    (defconst G02 "BRD|<")
+    (defconst G03 "DPTF|<")
+    (defconst G04 "DPMF|<")
+    (defconst G05 "ATS|<")
+    (defconst G06 "TFT|<")
+    (defconst G07 "ATSU|<")
+    (defconst G08 "VST|<")
+    (defconst G09 "LIQUID|<")
+    (defconst G10 "OUROBOROS|<")
+    (defconst G11 "SWPT|<")
+    (defconst G12 "SWP|<")
+    (defconst G13 "SWPU|<")
+    
+    (require-capability (SECURE))
+    (enforce-guard (P|UR "TALOS-01"))
+    (enforce-guard (P|UR "BRD|<"))
+    (enforce-guard (create-capability-guard (SECURE)))
+
+
+

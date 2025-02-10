@@ -204,7 +204,7 @@
 
 
     ;;NameSpace Testing
-    (load "_NS/NS.pact")
+    (load "../../_NS/NS.pact")
     (use free.ns)
 
     (define-namespace 
@@ -251,17 +251,18 @@
 (begin-tx "INIT TX 003 - U|CT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/001_U|CT.pact")
-(env-gas)
-(commit-tx)
+(load "../Utilities/001_U|CT.pact")
+(format "<<<<<<<U|CT Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
+(commit-tx)
 
 (print "")
 (begin-tx "INIT TX 004 - U|G.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/002_U|G.pact")
-(env-gas)
+(load "../Utilities/002_U|G.pact")
+(format "<<<<<<<U|G Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -269,8 +270,9 @@
 (begin-tx "INIT TX 005 - U|ST.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/003_U|ST.pact")
-(env-gas)
+(load "../Utilities/003_U|ST.pact")
+(format "<<<<<<<U|ST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -278,8 +280,9 @@
 (begin-tx "INIT TX 006 - U|RS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/004_U|RS.pact")
-(env-gas)
+(load "../Utilities/004_U|RS.pact")
+(format "<<<<<<<U|RS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -287,8 +290,9 @@
 (begin-tx "INIT TX 007 - U|LST.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/005_U|LST.pact")
-(env-gas)
+(load "../Utilities/005_U|LST.pact")
+(format "<<<<<<<U|LST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -296,8 +300,9 @@
 (begin-tx "INIT TX 008 - U|INT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/006_U|INT.pact")
-(env-gas)
+(load "../Utilities/006_U|INT.pact")
+(format "<<<<<<<U|INT Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -305,8 +310,9 @@
 (begin-tx "INIT TX 009 - U|DEC.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/007_U|DEC.pact")
-(env-gas)
+(load "../Utilities/007_U|DEC.pact")
+(format "<<<<<<<U|DEC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -314,8 +320,9 @@
 (begin-tx "INIT TX 010 - U|DALOS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/008_U|DALOS.pact")
-(env-gas)
+(load "../Utilities/008_U|DALOS.pact")
+(format "<<<<<<<U|DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -323,8 +330,9 @@
 (begin-tx "INIT TX 011 - U|ATS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/009_U|ATS.pact")
-(env-gas)
+(load "../Utilities/009_U|ATS.pact")
+(format "<<<<<<<U|ATS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -332,8 +340,9 @@
 (begin-tx "INIT TX 012 - U|DPTF.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/010_U|DPTF.pact")
-(env-gas)
+(load "../Utilities/010_U|DPTF.pact")
+(format "<<<<<<<U|DPTF Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -341,8 +350,9 @@
 (begin-tx "INIT TX 013 - U|VST.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/011_U|VST.pact")
-(env-gas)
+(load "../Utilities/011_U|VST.pact")
+(format "<<<<<<<U|VST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -350,8 +360,9 @@
 (begin-tx "INIT TX 014 - U|SWP.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/012_U|SWP.pact")
-(env-gas)
+(load "../Utilities/012_U|SWP.pact")
+(format "<<<<<<<U|SWP Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -359,8 +370,9 @@
 (begin-tx "INIT TX 015 - U|BFS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/Utilities/013_U|BFS.pact")
-(env-gas)
+(load "../Utilities/013_U|BFS.pact")
+(format "<<<<<<<U|BFS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -370,8 +382,9 @@
 (begin-tx "INIT TX 016 - 001_DALOS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/001_DALOS.pact")
-(env-gas)
+(load "../001_DALOS.pact")
+(format "<<<<<<<DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
 (commit-tx)
 (print "")
 
@@ -379,8 +392,8 @@
 (begin-tx "INIT TX 017 - 002_BRANDING.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/002_BRANDING.pact")
-(env-gas)
+(load "../002_BRANDING.pact")
+(format "<<<<<<<BRANDING Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -388,8 +401,8 @@
 (begin-tx "INIT TX 018 - 003_DPTF.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/003_DPTF.pact")
-(env-gas)
+(load "../003_DPTF.pact")
+(format "<<<<<<<DPTF Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -397,8 +410,8 @@
 (begin-tx "INIT TX 019 - 004_DPMF.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/004_DPMF.pact")
-(env-gas)
+(load "../004_DPMF.pact")
+(format "<<<<<<<DPMF Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -406,8 +419,8 @@
 (begin-tx "INIT TX 020 - 005_AUTOSTAKE.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/005_AUTOSTAKE.pact")
-(env-gas)
+(load "../005_AUTOSTAKE.pact")
+(format "<<<<<<<ATS Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -415,8 +428,8 @@
 (begin-tx "INIT TX 021 - 006_TFT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/006_TFT.pact")
-(env-gas)
+(load "../006_TFT.pact")
+(format "<<<<<<<TFT Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -424,8 +437,8 @@
 (begin-tx "INIT TX 022 - 007_ATSU.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/007_ATSU.pact")
-(env-gas)
+(load "../007_ATSU.pact")
+(format "<<<<<<<ATSU Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -433,8 +446,8 @@
 (begin-tx "INIT TX 023 - 008_VST.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/008_VST.pact")
-(env-gas)
+(load "../008_VST.pact")
+(format "<<<<<<<VST Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -442,8 +455,8 @@
 (begin-tx "INIT TX 024 - 009_LIQUID.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/009_LIQUID.pact")
-(env-gas)
+(load "../009_LIQUID.pact")
+(format "<<<<<<<LIQUID Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -451,8 +464,8 @@
 (begin-tx "INIT TX 025 - 010_OUROBOROS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/010_OUROBOROS.pact")
-(env-gas)
+(load "../010_OUROBOROS.pact")
+(format "<<<<<<<OUROBOROS Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -460,8 +473,8 @@
 (begin-tx "INIT TX 026 - 011_SWPT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/011_SWPT.pact")
-(env-gas)
+(load "../011_SWPT.pact")
+(format "<<<<<<<SWPT Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -469,8 +482,8 @@
 (begin-tx "INIT TX 027 - 012_SWP.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/012_SWP.pact")
-(env-gas)
+(load "../012_SWP.pact")
+(format "<<<<<<<SWP Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -478,8 +491,8 @@
 (begin-tx "INIT TX 028 - 013_SWPU.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/013_SWPU.pact")
-(env-gas)
+(load "../013_SWPU.pact")
+(format "<<<<<<<SWPU Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -487,10 +500,23 @@
 (begin-tx "INIT TX 029 - X01_TALOS.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "Ouronet/X01_TALOS-01.pact")
-(env-gas)
+(load "../X01_TALOS-01.pact")
+(format "<<<<<<<TALOS Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
+
+(print "Main Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+(print "")
+(begin-tx "INIT TX 030 - ST01_P01_DalosDeployer.pact.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "ST01_P01_DalosDeployer.pact")
+(format "<<<<<<<DPL|DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "Deployer Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 (print "")
 (print "===================Initialise Ouronet_TX-xxx-...========================")
@@ -528,5 +554,616 @@
 (use SWPU)          ;;113.545
 (use TS01)          ;;109.628
 
+(use DPL-DALOS)     ;;
+
 (env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 04 - Kadena Account Creation
+(print "==========================InitSnake_TX-08===============================")
+(begin-tx "InitSnake 08 - Kadena Account Creation and Fuel of 1st Account")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-data
+    {
+        "KEY_KDA_AncientHodler": { "keys": [KC.KADN_PBKY_0000]},
+        "KEY_KDA_Florian": { "keys": [KC.KADN_PBKY_000a]},
+        "KEY_KDA_Emma": { "keys": [KC.KADN_PBKY_000b]},
+        "KEY_KDA_Byta": { "keys": [KC.KADN_PBKY_000c]},
+
+        "KEY_KDA_Lumy": { "keys": [KC.KADN_PBKY_000d]},
+        "KEY_KDA_Coca": { "keys": [KC.KADN_PBKY_000e]},
+        "KEY_KDA_Kiss": { "keys": [KC.KADN_PBKY_000f]},
+        "KEY_KDA_Plcs": { "keys": [KC.KADN_PBKY_000g]},
+        "KEY_KDA_Nani": { "keys": [KC.KADN_PBKY_000h]},
+        "KEY_KDA_AOZ": { "keys": [KC.KADN_PBKY_000i]},
+        "KEY_KDA_BM": { "keys": [KC.KADN_PBKY_000j]},
+
+        "KEY_KDA_Ouroboros": { "keys": [KC.KADN_PBKY_0001]},
+        "KEY_KDA_GasTanker": { "keys": [KC.KADN_PBKY_0002]},
+        "KEY_KDA_KadenaLiquidStaking": { "keys": [KC.KADN_PBKY_0003]},
+        "KEY_KDA_DalosAutostake": { "keys": [KC.KADN_PBKY_0004]},
+        "KEY_KDA_DalosVesting": { "keys": [KC.KADN_PBKY_0005]},
+        "KEY_KDA_BJ": { "keys": [KC.KADN_PBKY_0006]}
+    }
+)
+(env-sigs   
+    [
+        {  
+            "key": "alice-key", 
+            "caps":
+                [
+                    (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
+                    (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
+                    (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
+                ]
+        }
+    ]
+)
+
+;;Create KDA Accounts
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+    )
+
+    ;;Create AH and transfer to it 25000 KDA
+    (ref-coin::create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))
+    (ref-DALOS::C_TransferDalosFuel "alice" KC.KADN_NAME_0000 25000.0)
+
+    ;;Create AOZT and transfer to it 5000 KDA
+    (ref-coin::create-account KC.KADN_NAME_000i (read-keyset "KEY_KDA_AOZ"))
+    (ref-DALOS::C_TransferDalosFuel "alice" KC.KADN_NAME_000i 5000.0)
+
+    ;;Create BananaMaster and transfer to it 1500 KDA
+    (ref-coin::create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
+    (ref-DALOS::C_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
+
+    ;;Users
+    (ref-coin::create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
+    (ref-coin::create-account KC.KADN_NAME_000b (read-keyset "KEY_KDA_Emma"))
+    (ref-coin::create-account KC.KADN_NAME_000c (read-keyset "KEY_KDA_Byta"))              ;;CTO
+    (ref-coin::create-account KC.KADN_NAME_000d (read-keyset "KEY_KDA_Lumy"))
+    (ref-coin::create-account KC.KADN_NAME_000e (read-keyset "KEY_KDA_Coca"))
+    (ref-coin::create-account KC.KADN_NAME_000f (read-keyset "KEY_KDA_Kiss"))
+    (ref-coin::create-account KC.KADN_NAME_000g (read-keyset "KEY_KDA_Plcs"))
+    (ref-coin::create-account KC.KADN_NAME_000h (read-keyset "KEY_KDA_Nani"))
+
+
+    ;;Kadena Accounts of demi Smart Contracts to be done in Step 016
+    ;(ref-coin::create-account free.DALOS.DALOS|SC_KDA-NAME free.DALOS.DALOS|GUARD)
+    ;(ref-coin::create-account free.OUROBOROS.OUROBOROS|SC_KDA-NAME free.OUROBOROS.OUROBOROS|GUARD)
+    ;(ref-coin::create-account free.LIQUID.LIQUID|SC_KDA-NAME free.LIQUID.LIQUID|GUARD)
+    ;(ref-coin::create-account free.BANANA.BANANA|SC_KDA-NAME free.BANANA.BANANA|GUARD)
+
+    (ref-coin::create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
+    (ref-coin::create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
+)
+
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 05 - Initialise Demiourgos DALOS Accounts
+(print "==========================InitSnake_TX-09===============================")
+(begin-tx "InitSnake 09 - DPTS User Account Creation")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs [ { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Florean", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Byta", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
+            { "key": "PK_Coca", "caps": [] }
+            { "key": "PK_Kiss", "caps": [] }
+            { "key": "PK_Plcs", "caps": [] }
+            { "key": "PK_Nani", "caps": [] }
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "PK_BM", "caps": [] }
+            { "key": "PK_BJ", "caps": [] }
+          ])
+
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+
+    (ref-T01::DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
+    (ref-T01::DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.us-0004_kiss-keyset") KC.KADN_NAME_000f KC.PBLC_000f)
+    (ref-T01::DALOS|A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.us-0005_plcs-keyset") KC.KADN_NAME_000g KC.PBLC_000g)
+    (ref-T01::DALOS|A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.us-0006_nani-keyset") KC.KADN_NAME_000h KC.PBLC_000h)
+
+    ;;Banana Example
+    (ref-T01::DALOS|A_DeployStandardAccount KC.BM (keyset-ref-guard "free.us-0007_bnms-keyset") KC.KADN_NAME_000j KC.PBLC_000j)
+    (ref-T01::DALOS|A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.us-0008_bnjr-keyset") KC.KADN_NAME_0006 KC.BM KC.PBLC_0006)
+)
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(print "==========================Init-STEPS====================================")
+;;
+(begin-tx "Init STEP 005")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Florean", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step005)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 005 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 006")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step006)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 006 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+
+;;
+;;
+(begin-tx "Init STEP 007")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_DalosVesting", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step007)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 007 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 008")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step008)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 008 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 009")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step009)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 009 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 010")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step010)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 010 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 011")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                1.0)
+            ]
+        }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step011)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 011 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 012")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step012)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 012 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 013")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step013)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 013 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 014")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step014)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 014 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 015")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step015)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 015 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 016")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step016)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 016 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 017")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step017)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 017 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 018")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step018)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 018 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 019")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step019)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 019 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 020")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+          "caps": 
+            [
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                    0.00765
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                    0.00765
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                    0.02295
+                )
+                (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                    0.11475
+                )
+            ] 
+        }
+        
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step020)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 020 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 021")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step021)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 021 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 022")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let 
+    ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
+    (ref-DPL|DALOS::A_Step022)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 022 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
 (commit-tx)

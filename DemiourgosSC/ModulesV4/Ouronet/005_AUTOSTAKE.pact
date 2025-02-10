@@ -18,6 +18,7 @@
     )
     ;;
     (defun GOV|ATS|SC_KDA-NAME ())
+    (defun ATS|SetGovernor (patron:string))
     ;;
     (defun UR_P-KEYS:[string] ())
     (defun UR_KEYS:[string] ())
@@ -186,9 +187,10 @@
                 (ref-DALOS::C_RotateGovernor
                     patron
                     ATS|SC_NAME
-                    (ref-U|G::UEV_Any
+                    (ref-U|G::UEV_GuardOfAny
                         [
                             (create-capability-guard (ATS|GOV))
+                            (P|UR "ATSU|RemoteAtsGov")
                             (P|UR "TFT|RemoteAtsGov")
                         ]
                     )
@@ -222,47 +224,27 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G05)
+                "ATS|<"
                 (create-capability-guard (P|ATS|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G05)
+                "ATS|<"
                 (create-capability-guard (P|ATS|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G05)
+                "ATS|<"
                 (create-capability-guard (P|ATS|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G05)
+                "ATS|<"
                 (create-capability-guard (P|ATS|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m6:guard (P|UR (ref-U|G::G06)))
-                (m7:guard (P|UR (ref-U|G::G07)))
-                (m8:guard (P|UR (ref-U|G::G08)))
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m6 m7 m8 m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -486,7 +468,7 @@
                             (fee:decimal)
                             (do
                                 (ref-U|DALOS::UEV_Fee fee)
-                                (enforce (> fee 0.0) "As ATSPair Cold Fee, Fee Value must be positive !")
+                                (enforce (>= fee 0.0) "As ATSPair Cold Fee, greater than zero !")
                             )
                             
                         )
@@ -1351,7 +1333,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1361,13 +1343,13 @@
                 (final-cost:decimal (* 5.0 branding-cost))
             )
             (with-capability (ATS|C>UPDATE-BRD)
-                (ref-BRD::X_UpdatePendingBranding entity-id logo description website social)
+                (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
             )
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1375,7 +1357,7 @@
                 (owner:string (UR_OwnerKonto entity-id))
                 (kda-payment:decimal
                     (with-capability (ATS|C>UPGRADE-BRD)
-                        (ref-BRD::X_UpgradeBranding entity-id owner months)
+                        (ref-BRD::XE_UpgradeBranding entity-id owner months)
                     )
                 )
             )
@@ -1393,7 +1375,7 @@
             reward-bearing-token:[string]
             rbt-nfr:[bool]
         )
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSI|C>ISSUE account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
             (let
                 (
@@ -1442,7 +1424,7 @@
         )
     )
     (defun C_ToggleFeeSettings (patron:string atspair:string toggle:bool fee-switch:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1454,7 +1436,7 @@
         )
     )
     (defun C_TurnRecoveryOff (patron:string atspair:string cold-or-hot:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1674,7 +1656,14 @@
         )
     )
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1693,7 +1682,14 @@
         )
     )
     (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1711,7 +1707,14 @@
         )
     )
     (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1729,7 +1732,14 @@
         )
     )
     (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1747,7 +1757,14 @@
         )
     )
     (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1765,7 +1782,14 @@
         )
     )
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1784,7 +1808,7 @@
     )
     ;;{F7}
     (defun XE_AddHotRBT (atspair:string hot-rbt:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|C>ADD_SECONDARY atspair hot-rbt false)
             (update ATS|Pairs atspair
                 {"h-rbt" : hot-rbt}
@@ -1792,7 +1816,7 @@
         )
     )
     (defun XE_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1808,7 +1832,7 @@
         )
     )
     (defun XE_ChangeOwnership (atspair:string new-owner:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>RT_OWN atspair new-owner)
             (update ATS|Pairs atspair
                 {"owner-konto"                      : new-owner}
@@ -1816,7 +1840,7 @@
         )
     )
     (defun XE_IncrementParameterUnlocks (atspair:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-read ATS|Pairs atspair
             { "unlocks" := u }
             (update ATS|Pairs atspair
@@ -1825,7 +1849,7 @@
         )
     )
     (defun XE_ModifyCanChangeOwner (atspair:string new-boolean:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>RT_CAN-CHANGE atspair new-boolean)
             (update ATS|Pairs atspair
                 {"can-change-owner"                 : new-boolean}
@@ -1833,7 +1857,7 @@
         )    
     )
     (defun XE_RemoveSecondary (atspair:string reward-token:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1849,7 +1873,7 @@
         ) 
     )
     (defun XE_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -1877,7 +1901,7 @@
         )  
     )
     (defun XE_SetColdFee (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
             (update ATS|Pairs atspair
                 { "c-positions"     : fee-positions
@@ -1887,7 +1911,7 @@
         )
     )
     (defun XE_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -1905,7 +1929,7 @@
         )
     )
     (defun XE_SetHotFee (atspair:string promile:decimal decay:integer)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SET_HOT_FEE atspair promile decay)
             (update ATS|Pairs atspair
                 { "h-promile"       : promile
@@ -1914,7 +1938,7 @@
         )
     )
     (defun XE_SpawnAutostakeAccount (atspair:string account:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (zero:object{UtilityAts.Awo} (UDC_MakeZeroUnstakeObject atspair))
@@ -1954,7 +1978,7 @@
         )
     )
     (defun XE_ToggleElite (atspair:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>TOGGLE_ELITE atspair toggle)
             (update ATS|Pairs atspair
                 { "c-elite-mode" : toggle}
@@ -1962,7 +1986,7 @@
         )
     )
     (defun XE_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -1979,7 +2003,7 @@
         )
     )
     (defun XE_ToggleSyphoning (atspair:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SYPHONING atspair toggle)
             (update ATS|Pairs atspair
                 {"syphoning"                        : toggle}
@@ -1987,7 +2011,7 @@
         )
     )
     (defun XE_TurnRecoveryOn (atspair:string cold-or-hot:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>RECOVERY-ON atspair cold-or-hot)
             (if (= cold-or-hot true)
                 (update ATS|Pairs atspair
@@ -2000,7 +2024,13 @@
         )
     )
     (defun XE_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
-        (P|UEV_SIP "M")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "TFT|<"))
+            ]
+        )
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -2030,7 +2060,7 @@
         )
     )
     (defun XE_UpdateSyphon (atspair:string syphon:decimal)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SYPHON atspair syphon)
             (update ATS|Pairs atspair
                 {"syphon"                           : syphon}
@@ -2038,49 +2068,49 @@
         )
     )
     (defun XE_UpP0 (atspair:string account:string obj:[object{UtilityAts.Awo}])
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P0" : obj}
         )
     )
     (defun XE_UpP1 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P1"  : obj}
         )
     )
     (defun XE_UpP2 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P2"  : obj}
         )
     )
     (defun XE_UpP3 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P3"  : obj}
         )
     )
     (defun XE_UpP4 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P4"  : obj}
         )
     )
     (defun XE_UpP5 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P5"  : obj}
         )
     )
     (defun XE_UpP6 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P6"  : obj}
         )
     )
     (defun XE_UpP7 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATSU|<"))
         (update ATS|Ledger (concat [atspair BAR account])
             { "P7"  : obj}
         )
@@ -2096,7 +2126,7 @@
             reward-bearing-token:string 
             rbt-nfr:bool
         )
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (let
             (
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)

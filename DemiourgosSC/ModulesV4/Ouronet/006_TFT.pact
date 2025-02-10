@@ -77,7 +77,6 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -85,47 +84,29 @@
                 (ref-P|ATS:module{OuronetPolicy} ATS)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G06)
+                "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G06)
+                "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G06)
+                "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G06)
+                "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G06)
+                "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
             (ref-P|ATS::P|A_Add
                 "TFT|RemoteAtsGov"
                 (create-capability-guard (P|ATS|REMOTE-GOV))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m7:guard (P|UR (ref-U|G::G07)))
-                (m8:guard (P|UR (ref-U|G::G08)))
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m7 m8 m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -161,8 +142,8 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                (ea-id:string (ref-DALOS::EliteAurynID))
-                (ouro-amount:string (ref-DPTF::UR_AccountSupply ouro-id account))
+                (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                (ouro-amount:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
             )
             (enforce (not (and (< ouro-amount 0.0)(= id ea-id))) "When Account has negative OURO, Elite-Auryn is dispo-locked and cannot be moved")
         )
@@ -232,12 +213,14 @@
                 (compose-capability (DPTF|S>EA-DISPO-LOCKER id sender))
                 true
             )
+            (compose-capability (P|TFT|CALLER))
             (compose-capability (SECURE))
         )
     )
     (defcap DPTF|C>TRANSMUTE (id:string transmuter:string)
         @event
         (compose-capability (DPTF|S>EA-DISPO-LOCKER id transmuter))
+        (compose-capability (P|TFT|CALLER))
         (compose-capability (SECURE))
     )
     ;;
@@ -588,7 +571,7 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-ATS:module{Autostake} ATS)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                (a-id:string (ref-DALOS::AurynID))
+                (a-id:string (ref-DALOS::UR_AurynID))
                 (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
                 (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
                 (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
@@ -624,7 +607,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_ClearDispo (patron:string account:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (DPTF|C>CLEAR-DISPO account)
             (let
                 (
@@ -668,7 +651,13 @@
         )
     )
     (defun C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -676,29 +665,51 @@
             (with-capability (DPTF|C>TRANSMUTE id transmuter)
                 (XI_Transmute id transmuter transmute-amount)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transmute-amount 10)))
-                    (ref-DALOS::IGNIS|C_CollectWT patron transmuter (ref-DALOS::DALOS|UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAS id transmuter))
+                    (ref-DALOS::IGNIS|C_CollectWT patron transmuter (ref-DALOS::UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAS id transmuter))
                     true
                 )
             )
         )
     )
     (defun C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (P|UEV_SIP "IMT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "LIQUID|<"))
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (is:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                (t:bool (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_Transfer id sender receiver transfer-amount method)
                 (if (not (and (= id (ref-DALOS::UR_UnityID))(>= transfer-amount 10)))
-                    (ref-DALOS::IGNIS|C_CollectWT patron sender (ref-DALOS::UR_UsagePrice "ignis|smallest") (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
+                    (ref-DALOS::IGNIS|C_CollectWT patron sender is t)
                     true
                 )
             )
         )
     )
     (defun C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (with-capability (SECURE)
             (let
                 (
@@ -715,7 +726,13 @@
         )
     )
     (defun C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (with-capability (SECURE)
             (let
                 (
@@ -785,7 +802,7 @@
                     )
                 )
             )
-            (ref-DPMF::XE_UpdateElite id sender receiver)
+            (ref-DPMF::XB_UpdateElite id sender receiver)
         )
     )
     (defun XI_CreditPrimaryFee (id:string pf:decimal native:bool)
@@ -837,7 +854,7 @@
         )
     )
     (defun XI_CPF_StillFee (id:string target:string still-fee:decimal)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -849,7 +866,7 @@
         )
     )
     (defun XI_CPF_BurnFee (id:string target:string burn-fee:decimal)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -866,7 +883,7 @@
         )
     )
     (defun XI_CPF_CreditFee (id:string target:string credit-fee:decimal)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)

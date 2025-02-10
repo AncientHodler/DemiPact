@@ -3,6 +3,7 @@
     @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA"
     ;;
     (defun GOV|LIQUID|SC_KDA-NAME ())
+    (defun GOV|LIQUID|GUARD ())
 
     (defun UEV_IzLiquidStakingLive ())
 
@@ -43,7 +44,8 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|LiquidKey ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|LiquidKey)))
     (defun GOV|LIQUID|SC_NAME ()    (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
-    (defun GOV|LIQUID|SC_KDA-NAME () (create-principal (create-capability-guard (LIQUID|NATIVE-AUTOMATIC))))
+    (defun GOV|LIQUID|SC_KDA-NAME () (create-principal (GOV|LIQUID|GUARD)))
+    (defun GOV|LIQUID|GUARD ()      (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
     (defun LIQUID|SetGovernor (patron:string)
         (let
             (
@@ -68,7 +70,6 @@
     )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
-        @doc "Reads the guard of a stored policy"
         (at "policy" (read P|T policy-name ["policy"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
@@ -81,7 +82,6 @@
     (defun P|A_Define ()              
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -92,52 +92,37 @@
                 (ref-P|VST:module{OuronetPolicy} VST)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
             (ref-P|VST::P|A_Add 
-                (ref-U|G::G09)
+                "LIQUID|<"
                 (create-capability-guard (P|LQD|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -201,7 +186,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_UnwrapKadena (patron:string unwrapper:string amount:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -221,7 +206,13 @@
         )
     )
     (defun C_WrapKadena (patron:string wrapper:string amount:decimal)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)

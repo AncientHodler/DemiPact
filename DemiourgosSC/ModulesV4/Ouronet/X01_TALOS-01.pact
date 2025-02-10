@@ -17,6 +17,10 @@
     (defun ORBR|A_Fuel (patron:string))
     ;;
     ;;
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
+    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
+    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
+
     ;;CLIENT Functions
     (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
     (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
@@ -118,8 +122,8 @@
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
     ;;
     ;;
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:string))
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:string))
+    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
+    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal))
     ;;
     ;;
     (defun ORBR|C_Compress:decimal (patron:string client:string ignis-amount:decimal))
@@ -127,6 +131,26 @@
     (defun ORBR|C_WithdrawFees (patron:string id:string target:string))
     ;;
     ;;
+    (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
+    (defun SWP|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandard:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeighted:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
+    (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
+    (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard))
+    (defun SWP|C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool))
+    (defun SWP|C_ToggleSpecialMode (patron:string swpair:string))
+    (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
+    (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
+    (defun SWP|C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool))
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
+    ;;
+    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
+    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
+    (defun SWP|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    ;;
+    ;;(defun XI_Collect (iz-collect:bool))
 )
 (module TS01 GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
@@ -182,56 +206,64 @@
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
+                (create-capability-guard (P|TS))
+            )
+            (ref-P|DPMF::P|A_Add 
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|VST::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|LIQUID::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|ORBR::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|SWPT::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|SWP::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
             (ref-P|SWPU::P|A_Add 
-                (ref-U|G::G01)
+                "TALOS-01"
                 (create-capability-guard (P|TS))
             )
         )
     )
     (defun P|UEV_SIP (type:string)
+        true
+    )
+    ;;
+    (defcap SECURE ()
         true
     )
     ;;
@@ -243,7 +275,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (P|TS)
-                (ref-DALOS::A_DeploySmartdAccount account guard kadena sovereign public)
+                (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
             )
         )
     )
@@ -353,7 +385,45 @@
             (with-capability (P|F)
                 (ref-ORBR::C_Fuel patron)
             )
-        )       
+        )
+    )
+    ;;{SWP_Administrator}
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool)
+        @doc "Updates the principal Token List. \
+        \ A principal is a token that must exist once in every W or P Swpiar, on the first position \
+        \ Also, the S Pools, must have at least one Token dtied directly to a principal Token"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|F)
+                (ref-SWP::A_UpdatePrincipal principal add-or-remove)
+            )
+        )
+    )
+    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool)
+        @doc "Updates either the <spawn-limit> or <inactive-limit> for the SWP Module \
+        \ The <spawn-limit> is the minimum number in KDA that a pool must be created with, in order to be opened for swap \
+        \ The <inactive-limit> is the minimum number in KDA as total pool liquidity value, that trigger autonomic disable of the swap mechanism"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|F)
+                (ref-SWP::A_UpdateLimit limit spawn)
+            )
+        )
+    )
+    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool)
+        @doc "Updates Liquid Boost switch. When set to true, everyu swap is set to pump the Index for Kadena Liquid Staking"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|F)
+                (ref-SWP::A_UpdateLiquidBoost new-boost-variable)
+            )
+        )
     )
     ;;{DALOS_Client}
     (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
@@ -537,15 +607,16 @@
     (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
         @doc "Issues a new DPTF Token in Bulk, can also be used to issue a single DPTF \
         \ Outputs a string list with the issed DPTF IDs"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
-            )
-            (with-capability (P|TS)
-                (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                    (output:[string] (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
+                )
                 (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                output
             )
         )
     )
@@ -625,7 +696,7 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
             (with-capability (P|TS)
-                (ref-DPTF::SetMinMove patron id min-move-value)
+                (ref-DPTF::C_SetMinMove patron id min-move-value)
             )
         )
     )
@@ -667,13 +738,15 @@
         @doc "Toggles DPTF Fee Settings Lock"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (collect:bool
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_ToggleFeeLock patron id toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_ToggleFeeLock patron id toggle)
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+            (with-capability (SECURE)
+                (XI_Collect collect)
             )
         )
     )
@@ -695,7 +768,7 @@
                 (ref-ATS:module{Autostake} ATS)
             )
             (with-capability (P|TS)
-                (ref-ATS::DPTF|ToggleMintRole patron id account toggle)
+                (ref-ATS::DPTF|C_ToggleMintRole patron id account toggle)
             )
         )
     )
@@ -839,15 +912,16 @@
     )
     (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
         @doc "Similar to its DPTF Variant"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
-            )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                    (output:[string] (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role))
+                )
                 (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                output
             )
         )
     )
@@ -1041,7 +1115,7 @@
                 (ref-ATSU:module{AutostakeUsage} ATSU)
             )
             (with-capability (P|TS)
-                (ref-ATSU::C_coil patron coiler ats rt amount)
+                (ref-ATSU::C_Coil patron coiler ats rt amount)
             )
         )
     )
@@ -1103,15 +1177,16 @@
     )
     (defun ATS|C_Issue:[string] (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool])
         @doc "Issues and Autostake Pair"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
-            )
-            (with-capability (P|TS)
-                (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-ATS:module{Autostake} ATS)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                    (output:[string] (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr))
+                )
                 (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                output
             )
         )
     )
@@ -1123,7 +1198,7 @@
                 (ref-ATSU:module{AutostakeUsage} ATSU)
             )
             (with-capability (P|TS)
-                (ref-ATSU::C_KickStarty patron kickstarter ats rt-amounts rbt-request-amount)
+                (ref-ATSU::C_KickStart patron kickstarter ats rt-amounts rbt-request-amount)
             )
         )
     )
@@ -1271,10 +1346,14 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (collect:bool
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_ToggleParameterLock patron ats toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_ToggleParameterLock patron ats toggle)
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+            (with-capability (SECURE)
+                (XI_Collect collect)
             )
         )
     )
@@ -1403,7 +1482,7 @@
         )
     )
     ;;{LIQUID_Client}
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:string)
+    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)
         @doc "Unwraps DPTF Kadena to Native Kadena"
         (let
             (
@@ -1414,7 +1493,7 @@
             )
         )
     )
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:string)
+    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)
         @doc "Wraps Native Kadena to DPTF Kadena"
         (let
             (
@@ -1469,5 +1548,277 @@
             )
         )
     )
-    
+    ;;{Swapper_Client}
+    (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string)
+        @doc "Changes Ownership of an SWPair"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_ChangeOwnership patron swpair new-owner)
+            )
+        )
+    )
+    (defun SWP|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+        @doc "Issues a Stable Liquidity Pool. First Token in the liquidity Pool must have a connection to a principal Token \
+        \ Stable Pools have the S designation. \
+        \ Stable Pools can be created with up to 7 Tokens, and have by design equal weighting. \
+        \ The <p> boolean defines if The Pool is a Principal Pools. \
+        \ Principal Pools are always on, and cant be disabled by low-liquidity."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-SWP:module{Swapper} SWP)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                    (weights:[decimal] (make-list (length pool-tokens) 1.0))
+                    (output:[string] (ref-SWP::C_Issue patron account pool-tokens fee-lp weights amp p))
+                )
+                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                output
+            )
+        ) 
+    )
+    (defun SWP|C_IssueStandard:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
+        @doc "Issues a Standard, Constant Product Pool. \
+            \ Constant Product Pools have the P Designation, and they are by design equal weigthed \
+            \ Can also be created with up to 7 Tokens, also the <p> boolean determines if its a Principal Pool or not \
+            \ The First Token must be a Principal Token"
+        (SWP|C_IssueStable patron account pool-tokens fee-lp -1.0 p)
+    )
+    (defun SWP|C_IssueWeighted:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+        @doc "Issues a Weigthed Constant Liquidity Pool \
+            \ Weigthed Pools have the W Designation, and the weights can be changed at will. \
+            \ Can also be created with up to 7 Tokens, <p> boolean determines if its a Principal Pool or not \
+            \ The First Token must also be a Principal Token"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-SWP:module{Swapper} SWP)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                    (output:[string] (ref-SWP::C_Issue patron account pool-tokens fee-lp weights -1.0 p))
+                )
+                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                output
+            )          
+        )
+    )
+    (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool)
+        @doc "Modifies the <can-change-owner> parameter of an SWPair"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_ModifyCanChangeOwner patron swpair new-boolean)
+            )
+        )
+    )
+    (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal])
+        @doc "Modify weights for an SWPair. Works only for W Pools"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_ModifyWeights patron swpair new-weights)
+            )
+        )
+    )
+    (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard)
+        @doc "Rotates the Governor for an Swpair \
+            \ The Governor is enforced when Pool is in Special Mode"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_RotateGovernor patron swpair new-gov)
+            )
+        )
+    )
+    (defun SWP|C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool)
+        @doc "When <toggle> is <true>, ensures required Mint, Burn, Transfer Roles are set, if not, set them. \
+            \ The Roles are: \
+            \ Mint and Burn Roles for LP Token (requires LP Token Ownership) \
+            \ Fee Exemption Roles for all Tokens of an S-Pool, or \
+            \ for all Tokens of a W- or P-Pool, except its first Token (which is principal) \
+            \ Roles are needed to SWP|SC_NAME"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_ToggleAddOrSwap patron swpair toggle add-or-swap)
+            )
+        )
+    )
+    (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool)
+        @doc "Locks the SPWPair fees in place. Modifying the SWPair fees requires them to be unlocked \
+            \ Unlocking costs KDA and is financially discouraged"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+                (collect:bool
+                    (with-capability (P|TS)
+                        (ref-SWP::C_ToggleFeeLock patron swpair toggle)
+                    )
+                )
+            )
+            (with-capability (SECURE)
+                (XI_Collect collect)
+            )
+        )
+    )
+    (defun SWP|C_ToggleSpecialMode (patron:string swpair:string)
+        @doc "Toggles Special Mode for an SWPair \
+            \ When Special Mode is on, SWPair Governor is enforced when adding or removing Liquidity \
+            \ This allows for example, for coding special rules when adding liquidity, in a separate module \
+            \ That provides the governing permissions, that is, adding liquidity can only be executed following this special rules \
+            \ This allows for example, to add Liquidity Tokens using Meta-Tokens, as a functionality example"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_ToggleSpecialMode patron swpair)
+            )
+        )
+    )
+    (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal)
+        @doc "Updates Amplifier Value; Only works on S-Pools (Stable Pools)"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_UpdateAmplifier patron swpair amp)
+            )
+        )
+    )
+    (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool)
+        @doc "Updates Fees Values for an SWPair \
+            \ The <lp-or-special> boolesn defines whether its the LP-Fee or Special-Fee that is changed \
+            \ THe LP Fee is the amount of Swap Output kept by the Liquidity Pool, increasing the Value of its LP Token(s) \
+            \ The Special-Fee is the Fee that is collected to the Special-Fee-Targets \
+            \ The Fee must be between 0.0001 - 320.0 (promile, that would be 32%) \
+            \ When <liquid-boost>, an universal SWP Parameter (that can be set only by the admin) is set to true \
+            \   an amount equal to the LP-Fee is also used to boost the Liquid Kadena Index \
+            \   which is why the fee must be capped at close a third of 100% (320 promile in this case)"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_UpdateFee patron swpair new-fee lp-or-special)
+            )
+        )
+    )
+    (defun SWP|C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool)
+        @doc "Updates the LP Tokens of an swpair"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_UpdateLP patron swpair lp-token add-or-remove)
+            )
+        )
+    )
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}])
+        @doc "Updates the Special Fee Targets, along with their Split, for an SWPair"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|TS)
+                (ref-SWP::C_UpdateSpecialFeeTargets patron swpair targets)
+            )
+        )
+    )
+    ;;
+    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal)
+        @doc "Using input only an <input-id> and its <input-amount> \
+            \ Adds Liquidity in a balanced mode, on the <swpair>"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPL|C_AddBalancedLiquidity patron account swpair input-id input-amount)
+            )
+        )
+    )
+    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])
+        @doc "Using custom <input-amounts>, add liquidity on the <swpair> \
+            \ Can be used to add both asymetric and balanced liquidity \
+            \ For Tokens that arent used, the decimal value must be set at 0.0 \
+            \ The order of the values in <input-amounts> must correspond to the Pool Token order, \
+            \ as this determines how much liquidity for which token is added \
+            \ \
+            \ Liquidity can also be added on an otherwise completely empty Liquidty Pool \
+            \ In this case, the original Token Ratios are used, the SWPair was created with."
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPL|C_AddLiquidity patron account swpair input-amounts)
+            )
+        )
+    )
+    (defun SWP|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal)
+        @doc "Removes Liquidity from a Liquidity Pool \
+            \ Removing Liquidty is always done at the current Token Ratio. \
+            \ Removing Liquidty complety leaving the pool exactly empty (0.0 tokens) is fully supported"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPL|C_RemoveLiquidity patron account swpair lp-amount)
+            )
+        )
+    )
+    (defun SWP|C_MultiSwap
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-ids:[string]
+            input-amounts:[decimal]
+            output-id:string
+        )
+        @doc "Executes a Swap between one or multiple input tokens to an output token, on an <swpair> \
+            \ Up to <n-1> input ids can be used for a swap, where <n> is the number of pool Tokens"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id)
+            )
+        )
+    )
+    ;;
+    (defun XI_Collect (iz-collect:bool)
+        (require-capability (SECURE))
+        (if iz-collect
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                )
+                (with-capability (P|TS)
+                    (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                )
+            )
+            true
+        )
+    )
+
 )
+
+(create-table P|T)

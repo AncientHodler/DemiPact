@@ -94,7 +94,6 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -104,49 +103,33 @@
                 (ref-P|ATSU:module{OuronetPolicy} ATSU)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
             (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G08)
+                "VST|<"
                 (create-capability-guard (P|VST|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -318,7 +301,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_CreateVestingLink:string (patron:string dptf:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>LINK)
             (let
                 (
@@ -359,7 +342,7 @@
                 (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
                 ;;Create DPMF Account and Set Roles
                 (ref-DPMF::C_DeployAccount dpmf vst-sc)
-                (ref-DPMF::C_C_ToggleTransferRole patron dpmf vst-sc true)
+                (ref-DPMF::C_ToggleTransferRole patron dpmf vst-sc true)
                 (ref-ATS::DPMF|C_ToggleBurnRole patron dpmf vst-sc true)
                 (ref-ATS::DPMF|C_MoveCreateRole patron dpmf vst-sc)
                 (ref-ATS::DPMF|C_ToggleAddQuantityRole patron dpmf vst-sc true)
@@ -371,7 +354,7 @@
         )
     )
     (defun C_Cull (patron:string culler:string id:string nonce:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>CULL culler id)
             (let
                 (
@@ -403,7 +386,7 @@
     )
     (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
         @doc "Vests a DPTF Token, issuing a Vested Token"
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>VEST vester target-account id)
             (let
                 (
@@ -433,7 +416,7 @@
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
             )
             (with-capability (VST|C>UPDATE dptf dpmf)
-                (ref-DPMF::X_UpdateVesting dptf dpmf)
+                (ref-DPMF::XE_UpdateVesting dptf dpmf)
                 (ref-DALOS::IGNIS|C_Collect patron (ref-DPTF::UR_Konto dptf) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
             )
         )

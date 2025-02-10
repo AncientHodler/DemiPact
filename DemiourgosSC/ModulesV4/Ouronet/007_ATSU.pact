@@ -23,7 +23,7 @@
     (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer))
     (defun C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
     (defun C_ToggleElite (patron:string ats:string toggle:bool))
-    (defun C_ToggleParameterLock (patron:string ats:string toggle:bool))
+    (defun C_ToggleParameterLock:bool (patron:string ats:string toggle:bool))
     (defun C_ToggleSyphoning (patron:string ats:string toggle:bool))
     (defun C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool))
     (defun C_UpdateSyphon (patron:string ats:string syphon:decimal))
@@ -95,7 +95,6 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -104,46 +103,33 @@
                 (ref-P|TFT:module{OuronetPolicy} TFT)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G07)
+                "ATSU|<"
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G07)
+                "ATSU|<"
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G07)
+                "ATSU|<"
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G07)
+                "ATSU|<"
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G07)
+                "ATSU|<"
+                (create-capability-guard (P|ATSU|CALLER))
+            )
+            (ref-P|TFT::P|A_Add 
+                "ATSU|<"
                 (create-capability-guard (P|ATSU|CALLER))
             )
             (ref-P|ATS::P|A_Add
                 "ATSU|RemoteAtsGov"
                 (create-capability-guard (P|ATSU|REMOTE-GOV))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m8:guard (P|UR (ref-U|G::G08)))
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m8 m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -366,7 +352,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_AddHotRBT (patron:string ats:string hot-rbt:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -384,7 +370,7 @@
         )
     )
     (defun C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -394,7 +380,7 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-DPTF::C_DeployAccount reward-token ats-sc)
-                (ref-ATS::|XE_AddSecondary ats reward-token rt-nfr)
+                (ref-ATS::XE_AddSecondary ats reward-token rt-nfr)
                 (ref-DPTF::XE_UpdateRewardToken ats reward-token true)
                 (ref-ATS::CX_EnsureActivationRoles patron ats true)
                 (if (ref-ATS::URC_IzPresentHotRBT ats)
@@ -406,7 +392,7 @@
         )
     )
     (defun C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -426,7 +412,7 @@
         )
     )
     (defun C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSC|C>COLD_REC recoverer ats ra)
             (XI_DeployAccount ats recoverer)
             (let
@@ -478,7 +464,7 @@
         )
     )
     (defun C_Cull:[decimal] (patron:string culler:string ats:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSC|C>CULL culler ats)
             (let
                 (
@@ -517,7 +503,7 @@
         )
     )
     (defun C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -541,7 +527,7 @@
         )
     )
     (defun C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -555,7 +541,7 @@
         )
     )
     (defun C_HotRecovery (patron:string recoverer:string ats:string ra:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSH|C>HOT_REC recoverer ats ra)
             (let
                 (
@@ -580,7 +566,7 @@
         )
     )
     (defun C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -609,7 +595,7 @@
         )
     )
     (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -622,7 +608,7 @@
         )
     )
     (defun C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSH|C>RECOVER recoverer id nonce amount)
             (let
                 (
@@ -642,7 +628,7 @@
         )
     )
     (defun C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
@@ -651,7 +637,7 @@
         )
     )
     (defun C_Redeem (patron:string redeemer:string id:string nonce:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSH|C>REDEEM redeemer id)
             (let
                 (
@@ -715,7 +701,7 @@
         )
     )
     (defun C_RemoveSecondary (patron:string remover:string ats:string reward-token:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (ATSU|C>RM_SCND ats reward-token)
             (let
                 (
@@ -756,7 +742,7 @@
         )
     )
     (defun C_RotateOwnership (patron:string ats:string new-owner:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -769,7 +755,7 @@
         )
     )
     (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -782,7 +768,7 @@
         )
     )
     (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -795,7 +781,7 @@
         ) 
     )
     (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -808,7 +794,7 @@
         )
     )
     (defun C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -835,7 +821,7 @@
         )
     )
     (defun C_ToggleElite (patron:string ats:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -847,8 +833,8 @@
             )
         )
     )
-    (defun C_ToggleParameterLock (patron:string ats:string toggle:bool)
-        (P|UEV_SIP "T")
+    (defun C_ToggleParameterLock:bool (patron:string ats:string toggle:bool)
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (P|ATSU|CALLER)
             (let
                 (
@@ -860,6 +846,7 @@
                     (g2:decimal (at 0 toggle-costs))
                     (gas-costs:decimal (+ g1 g2))
                     (kda-costs:decimal (at 1 toggle-costs))
+                    (output:bool (if (> kda-costs 0.0) true false))
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ats-owner gas-costs)
                 (if (> kda-costs 0.0)
@@ -869,11 +856,12 @@
                     )
                     true
                 )
+                output
             )
         )
     )
     (defun C_ToggleSyphoning (patron:string ats:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -886,7 +874,7 @@
         )
     )
     (defun C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -900,7 +888,7 @@
         )
     )
     (defun C_UpdateSyphon (patron:string ats:string syphon:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)

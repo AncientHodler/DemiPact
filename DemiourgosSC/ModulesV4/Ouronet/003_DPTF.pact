@@ -90,7 +90,7 @@
     (defun C_SetFeeTarget (patron:string id:string target:string))
     (defun C_SetMinMove (patron:string id:string min-move-value:decimal))
     (defun C_ToggleFee (patron:string id:string toggle:bool))
-    (defun C_ToggleFeeLock (patron:string id:string toggle:bool))
+    (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool))
     (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
     (defun C_TogglePause (patron:string id:string toggle:bool))
     (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
@@ -170,39 +170,17 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G03)
+                "DPTF|<"
                 (create-capability-guard (P|DPTF|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G03)
+                "DPTF|<"
                 (create-capability-guard (P|DPTF|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m4:guard (P|UR (ref-U|G::G04)))
-                (m5:guard (P|UR (ref-U|G::G05)))
-                (m6:guard (P|UR (ref-U|G::G06)))
-                (m7:guard (P|UR (ref-U|G::G07)))
-                (m8:guard (P|UR (ref-U|G::G08)))
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m4 m5 m6 m7 m8 m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -1103,7 +1081,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1118,7 +1096,7 @@
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1135,7 +1113,17 @@
     )
     ;;
     (defun C_Burn (patron:string id:string account:string amount:decimal)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "TFT|<"))
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "LIQUID|<"))
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1147,7 +1135,7 @@
         )
     )
     (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1159,7 +1147,16 @@
         )
     )
     (defun C_DeployAccount (id:string account:string)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "ATS|<"))
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1191,7 +1188,7 @@
         )
     )
     (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1210,7 +1207,17 @@
         )
     )
     (defun C_Mint (patron:string id:string account:string amount:decimal origin:bool)
-        (P|UEV_SIP "MT")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "LIQUID|<"))
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1225,7 +1232,7 @@
         )
     )
     (defun C_RotateOwnership (patron:string id:string new-owner:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1237,7 +1244,7 @@
         )
     )
     (defun C_SetFee (patron:string id:string fee:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1249,7 +1256,7 @@
         )
     )
     (defun C_SetFeeTarget (patron:string id:string target:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1261,7 +1268,7 @@
         )
     )
     (defun C_SetMinMove (patron:string id:string min-move-value:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1273,7 +1280,7 @@
         )
     )
     (defun C_ToggleFee (patron:string id:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1284,8 +1291,8 @@
             )
         )
     )
-    (defun C_ToggleFeeLock (patron:string id:string toggle:bool)
-        (P|UEV_SIP "T")
+    (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool)
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (DPTF|C>TG_FEE-LOCK id toggle)
             (let
                 (
@@ -1296,6 +1303,7 @@
                     (g2:decimal (at 0 toggle-costs))
                     (gas-costs:decimal (+ g1 g2))
                     (kda-costs:decimal (at 1 toggle-costs))
+                    (output:bool (if (> kda-costs 0.0) true false))
                 )
                 (ref-DALOS::IGNIS|C_Collect patron token-owner gas-costs)
                 (if (> kda-costs 0.0)
@@ -1305,11 +1313,12 @@
                     )
                     true
                 )
+                output
             )
         )
     )
     (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1322,7 +1331,7 @@
         )
     )
     (defun C_TogglePause (patron:string id:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1334,7 +1343,7 @@
         )
     )
     (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1348,7 +1357,7 @@
         )
     )
     (defun C_Wipe (patron:string id:string atbw:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1361,7 +1370,13 @@
     )
     ;;{F7}
     (defun XB_Credit (id:string account:string amount:decimal)
-        (P|UEV_SIP "IM")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "TFT|<"))
+            ]
+        )
         (if (URC_IzCoreDPTF id)
             (let
                 (
@@ -1371,7 +1386,7 @@
                 )
                 (enforce (>= read-balance 0.0) "Impossible operation, negative Primordial TrueFungible amounts detected")
                 (enforce (> amount 0.0) "Crediting amount must be greater than zero, even for Primordial TrueFungibles")
-                (with-capability (SECURE)
+                (with-capability (P|DPTF|CALLER)
                     (ref-DALOS::XB_UpdateBalance account snake-or-gas (+ read-balance amount))
                 )
             )
@@ -1412,8 +1427,15 @@
             )
         )
     )
+    ;;
     (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:[decimal])
-        (P|UEV_SIP "IM")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "TFT|<"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1425,7 +1447,13 @@
         )
     )
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool)
-        (P|UEV_SIP "IM")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "ATS|<"))
+            ]
+        )
         (let
             (
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
@@ -1491,13 +1519,13 @@
     )
     ;;
     (defun XE_Burn (id:string account:string amount:decimal)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "TFT|<"))
         (with-capability (DPTF|C>BURN id account amount)
             (XI_BurnCore id account amount)
         )
     )
     (defun XE_ClearDispo (account:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "TFT|<"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1510,13 +1538,13 @@
     )
     (defun XE_IssueLP:string (patron:string account:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "SWP|<"))
         (with-capability (DPTF|C>ISSUE account [name] [ticker] [24] [false] [false] [true] [false] [false] [false])
             (at 0 (XI_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
         )
     )
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATS|<"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1532,7 +1560,7 @@
         )
     )
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATS|<"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1548,7 +1576,7 @@
         )
     )
     (defun XE_ToggleMintRole (id:string account:string toggle:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATS|<"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1564,7 +1592,7 @@
         )
     )
     (defun XE_UpdateRewardBearingToken (atspair:string id:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "ATS|<"))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1583,13 +1611,13 @@
         )
     )
     (defun XE_UpdateVesting (dptf:string dpmf:string)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "DPMF|<"))
         (update DPTF|PropertiesTable dptf
             {"vesting" : dpmf}
         )
     )
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        (P|UEV_SIP "M")
+        (enforce-guard (P|UR "TFT|<"))
         (UEV_Amount id amount)
         (if primary
             (with-read DPTF|PropertiesTable id
@@ -1607,7 +1635,13 @@
         )
     )
     (defun XE_UpdateRewardToken (atspair:string id:string direction:bool)
-        (P|UEV_SIP "M")
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "ATS|<"))
+                (enforce-guard (P|UR "ATSU|<"))
+            ]
+        )
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1653,8 +1687,9 @@
             ,"can-pause"                        : can-pause}
         )
     )
+    ;;
     (defun XI_Debit (id:string account:string amount:decimal dispo-data:[decimal])
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (if (URC_IzCoreDPTF id)
             (let
                 (
@@ -1699,12 +1734,12 @@
         )
     )
     (defun XI_DebitAdmin (id:string account:string amount:decimal)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (CAP_Owner id)
         (XI_Debit id account amount [-1.0 -1.0 0.0 0.0])
     )
     (defun XI_IncrementFeeUnlocks (id:string)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (with-read DPTF|PropertiesTable id
             { "fee-unlocks" := fu }
             (enforce (< fu 7) (format "Cannot increment Fee Unlocks for Token {}" [id]))
@@ -1727,7 +1762,7 @@
             can-pause:bool 
             iz-lp:bool
         )
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (let
             (
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
@@ -1918,7 +1953,7 @@
         )
     )
     (defun XI_UpdateRoleTransferAmount (id:string direction:bool)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (if (= direction true)
             (with-read DPTF|PropertiesTable id
                 { "role-transfer-amount" := rta }
@@ -1935,7 +1970,7 @@
         )
     )
     (defun XI_UpdateSupply (id:string amount:decimal direction:bool)
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (UEV_Amount id amount)
         (if (= direction true)
             (with-read DPTF|PropertiesTable id

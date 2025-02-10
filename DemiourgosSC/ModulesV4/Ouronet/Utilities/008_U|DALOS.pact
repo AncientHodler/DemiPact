@@ -83,9 +83,9 @@
         (let*
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (cl:integer (ref-U|CT::CT_CAPITAL_LETTERS))
-                (n:integer (ref-U|CT::CT_NUMBERS))
-                (ncl:integer (ref-U|CT::CT_NON_CAPITAL_LETTERS))
+                (cl:[string] (ref-U|CT::CT_CAPITAL_LETTERS))
+                (n:[string] (ref-U|CT::CT_NUMBERS))
+                (ncl:[string] (ref-U|CT::CT_NON_CAPITAL_LETTERS))
                 (c1 (or (contains c cl)(contains c n)))
                 (c2 (or c1 (contains c ncl) ))
             )
@@ -127,7 +127,7 @@
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (b:integer (ref-U|CT::CT_BAR))
+                (b:string (ref-U|CT::CT_BAR))
             )
             (if direction
                 (if 

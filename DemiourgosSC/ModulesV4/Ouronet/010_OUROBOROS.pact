@@ -3,6 +3,7 @@
     @doc "Exposes Functions related to the OUROBOROS Module"
     ;;
     (defun GOV|ORBR|SC_KDA-NAME ())
+    (defun GOV|ORBR|GUARD ())
     ;;
     (defun URC_Compress:[decimal] (ignis-amount:decimal))
     (defun URC_Sublimate:decimal (ouro-amount:decimal))
@@ -49,7 +50,8 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
     (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
-    (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (create-capability-guard (ORBR|NATIVE-AUTOMATIC))))
+    (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (GOV|ORBR|GUARD)))
+    (defun GOV|ORBR|GUARD ()        (create-capability-guard (ORBR|NATIVE-AUTOMATIC)))
     (defun OUROBOROS|SetGovernor (patron:string)
         (let
             (
@@ -86,7 +88,6 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
@@ -98,55 +99,41 @@
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|VST::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
             (ref-P|LIQUID::P|A_Add 
-                (ref-U|G::G10)
+                "OUROBOROS|<"
                 (create-capability-guard (P|ORBR|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -296,7 +283,7 @@
     ;;{F5}
     ;;{F6}
     (defun C_Compress:decimal (patron:string client:string ignis-amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -327,8 +314,7 @@
         )
     )
     (defun C_Fuel (patron:string)
-        
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
@@ -362,7 +348,7 @@
         )
     )
     (defun C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -396,7 +382,7 @@
         )
     )
     (defun C_WithdrawFees (patron:string id:string target:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -411,6 +397,6 @@
             )
         )
     )
-    
-    ;;{F7}
 )
+
+(create-table P|T)

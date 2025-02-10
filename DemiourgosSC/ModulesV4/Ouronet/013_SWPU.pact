@@ -1,5 +1,12 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (interface SwapperUsage
+    @doc "Exposes Adding|Removing Liquidty and Swapping Functions of the SWP Module"
+    (defschema Hopper
+        nodes:[string]
+        edges:[string]
+        output-values:[decimal]
+    )
+    ;;
     (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal]))
     (defun SWPLC|URC_LpCapacity:decimal (swpair:string))
     (defun SWPLC|URC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal))
@@ -13,12 +20,16 @@
     (defun SWPSC|URC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-
+    (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
+    (defun SWPSC|URC_BestEdge:string (ia:decimal i:string o:string))
 
     (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
+
     (defun SWPS|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+
+    ;(defun XI_PumpLiquidIndex (patron:string id:string amount:decimal))
 )
 (module SWPU GOV
     ;;
@@ -75,72 +86,61 @@
                 (ref-P|SWP:module{OuronetPolicy} SWP)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|BRD::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|DPTF::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|DPMF::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|ATS::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|TFT::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
-            (ref-P|ATSU::P|A_Add 
-                (ref-U|G::G13)
+            (ref-P|ATSU::P|A_Add
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|VST::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|LIQUID::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|ORBR::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|SWPT::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
             (ref-P|SWP::P|A_Add 
-                (ref-U|G::G13)
+                "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
+            (ref-P|SWP::P|A_Add
+                "SWPU|RemoteSwpGov"
+                (create-capability-guard (P|SWPU|REMOTE-GOV))
             )
-            (ref-U|G::UEV_IMT type I I T)
         )
     )
     ;;
     ;;{1}
-    (defschema Hopper
-        nodes:[string]
-        edges:[string]
-        output-values:[decimal]
-    )
     ;;{2}
     ;;{3}
     (defconst EMPTY_HOPPER
@@ -653,7 +653,7 @@
             )
         ) 
     )
-    (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal)
+    (defun SWPSC|URC_Hopper:object{SwapperUsage.Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal)
         @doc "Creates a Hopper Object, by computing \
         \ 1] The trace between <hopper-input-id> and <hopper-output-id>, the <nodes> \
         \ 2] The hops between them, the <edges> as the cheapest available edge from all available \
@@ -666,10 +666,10 @@
                 (swpairs:[string] (ref-SWP::URC_Swpairs))
                 (principal-lst:[string] (ref-SWP::UR_Principals))
                 (nodes:[string] (ref-SWPT::URC_ComputeGraphPath hopper-input-id hopper-output-id swpairs principal-lst))
-                (fl:[object{Hopper}]
+                (fl:[object{SwapperUsage.Hopper}]
                     (fold
                         (lambda
-                            (acc:[object{Hopper}] idx:integer)
+                            (acc:[object{SwapperUsage.Hopper}] idx:integer)
                             (ref-U|LST::UC_ReplaceAt
                                 acc
                                 0
@@ -748,9 +748,11 @@
     ;;{F5}
     ;;{F6}
     (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal)
+        (enforce-guard (P|UR "TALOS-01"))
         (SWPL|C_AddLiquidity patron account swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))          
     )
     (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (SWPL|C>ADD_LQ swpair input-amounts)
             (let
                 (
@@ -772,7 +774,7 @@
                 )
                 (DALOS.IGNIS|C_Collect patron patron final-ignis-cost)
                 (if (= read-lp-supply 0.0)
-                    (ref-SWP::X_ModifyWeights swpair gw)
+                    (ref-SWP::XB_ModifyWeights swpair gw)
                     true
                 )
                 (let
@@ -793,7 +795,7 @@
                         )
                         (enumerate 0 (- (length input-amounts) 1))
                     )
-                    (ref-SWP::X_UpdateSupplies swpair pt-new-amounts)
+                    (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
                     (ref-DPTF::C_Mint patron lp-id swp-sc lp-amount false)
                     (ref-TFT::C_Transfer patron lp-id swp-sc account lp-amount true)
                     lp-amount
@@ -802,6 +804,7 @@
         )
     )
     (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal)
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (SWPL|C>RM_LQ swpair lp-amount)
             (let
                 (
@@ -818,18 +821,11 @@
                 (ref-TFT::C_Transfer patron lp-id account swp-sc lp-amount true)
                 (ref-DPTF::C_Burn patron lp-id swp-sc lp-amount)
                 (ref-TFT::C_MultiTransfer patron pool-token-ids swp-sc account pt-output-amounts true)
-                (ref-SWP::X_UpdateSupplies swpair pt-new-amounts)
+                (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
                 pt-output-amounts
             )
         )
     )
-    ;;{F7}
-    ;;
-    ;;
-    ;;
-    ;;
-    ;;
-    ;;
     (defun SWPS|C_MultiSwap
         (
             patron:string
@@ -839,6 +835,7 @@
             input-amounts:[decimal]
             output-id:string
         )
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (SWPS|C>SWAP swpair input-ids input-amounts output-id)
             (let
                 (
@@ -928,7 +925,7 @@
                     )
                 )
                 ;;1] Updates Pool Token Supplies
-                (ref-SWP::X_UpdateSupplies swpair updated-supplies)
+                (ref-SWP::XE_UpdateSupplies swpair updated-supplies)
                 ;;2] Moves all Input IDs to SWP|SC_NAME via MultiTransfer
                 (ref-TFT::C_MultiTransfer patron input-ids account swp-sc input-amounts true)
                 ;;3] Moves Outputs to their designated places
@@ -948,13 +945,14 @@
                 )
                 ;;3.3]  If non zero, use boost output to boost Kadena Liquid Index
                 (if (!= boost-fee 0.0)
-                    (SWPS|X_PumpLiquidIndex patron output-id boost-output)
+                    (XI_PumpLiquidIndex patron output-id boost-output)
                     true
                 )
             )
         )
     )
-    (defun SWPS|X_PumpLiquidIndex (patron:string id:string amount:decimal)
+    ;;{F7}
+    (defun XI_PumpLiquidIndex (patron:string id:string amount:decimal)
         (require-capability (SWPS|C>PUMP_LQ-IDX))
         (let
             (
@@ -972,7 +970,7 @@
             ;;      as if the id was smart-swapped with no fees to dlk.
                 (let
                     (
-                        (h-obj:object{Hopper} (SWPSC|URC_Hopper id dlk amount))
+                        (h-obj:object{SwapperUsage.Hopper} (SWPSC|URC_Hopper id dlk amount))
                         (path-to-dlk:[string] (at "nodes" h-obj))
                         (edges:[string] (at "edges" h-obj))
                         (ovs:[decimal] (at "output-values" h-obj))
@@ -997,8 +995,8 @@
                                     (f-id-hop-a:decimal (ref-SWP::UR_PoolTokenSupply hop first-id))
                                     (s-id-hop-a:decimal (ref-SWP::UR_PoolTokenSupply hop second-id))
                                 )
-                                (ref-SWP::X_UpdateSupply hop first-id (+ f-id-hop-a first-amount))
-                                (ref-SWP::X_UpdateSupply hop second-id (- s-id-hop-a second-amount))
+                                (ref-SWP::XE_UpdateSupply hop first-id (+ f-id-hop-a first-amount))
+                                (ref-SWP::XE_UpdateSupply hop second-id (- s-id-hop-a second-amount))
                             )
                         )
                         (enumerate 0 (- (length edges) 1))
@@ -1009,3 +1007,4 @@
     )
 )
 
+(create-table P|T)

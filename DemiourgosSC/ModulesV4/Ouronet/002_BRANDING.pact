@@ -31,6 +31,8 @@
     ;;
     (defun URC_MaxBluePayment (account:string))
     ;;
+    ;(defun UEV_PentaEnforce ())
+    ;;
     (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
     (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
     (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
@@ -88,35 +90,12 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
             )
             (ref-P|DALOS::P|A_Add 
-                (ref-U|G::G02)
+                "BRD|<"
                 (create-capability-guard (P|BRD|CALLER))
             )
-        )
-    )
-    (defun P|UEV_SIP (type:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (m3:guard (P|UR (ref-U|G::G03)))
-                (m4:guard (P|UR (ref-U|G::G04)))
-                (m5:guard (P|UR (ref-U|G::G05)))
-                (m6:guard (P|UR (ref-U|G::G06)))
-                (m7:guard (P|UR (ref-U|G::G07)))
-                (m8:guard (P|UR (ref-U|G::G08)))
-                (m9:guard (P|UR (ref-U|G::G09)))
-                (m10:guard (P|UR (ref-U|G::G10)))
-                (m11:guard (P|UR (ref-U|G::G11)))
-                (m12:guard (P|UR (ref-U|G::G12)))
-                (m13:guard (P|UR (ref-U|G::G13)))
-                (I:[guard] [(create-capability-guard (SECURE))])
-                (M:[guard] [m3 m4 m5 m6 m7 m8 m9 m10 m11 m12 m13])
-                (T:[guard] [(P|UR (ref-U|G::G01))])
-            )
-            (ref-U|G::UEV_IMT type I M T)
         )
     )
     ;;
@@ -239,6 +218,18 @@
         )
     )
     ;;{F2}
+    (defun UEV_PentaEnforce ()
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "DPTF|<"))
+                (enforce-guard (P|UR "DPMF|<"))
+                (enforce-guard (P|UR "ATS|<"))
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "SWP|<"))
+            ]
+        )
+    )
     ;;{F3}
     (defun UDC_BrandingLogo:object{Branding.Schema} (input:object{Branding.Schema} logo:string)
         {"logo"             : logo
@@ -298,7 +289,7 @@
     ;;{F4}
     ;;{F5}
     (defun A_Live (entity-id:string)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (BRD|C>LIVE)
             (let
                 (
@@ -317,7 +308,7 @@
         )
     )
     (defun A_SetFlag (entity-id:string flag:integer)
-        (P|UEV_SIP "T")
+        (enforce-guard (P|UR "TALOS-01"))
         (with-capability (BRD|C>ADMIN_SET flag)
             (let
                 (
@@ -331,7 +322,7 @@
     ;;{F6}
     ;;{F7}
     (defun XE_Issue (entity-id:string)
-        (P|UEV_SIP "M")
+        (UEV_PentaEnforce)
         (insert BRD|BrandingTable entity-id
             {"branding"                 : BRD|DEFAULT
             ,"branding-pending"         : BRD|DEFAULT}
@@ -342,7 +333,7 @@
             \ This is done by <entity-id> owners to brand their <entity-id> \
             \ Branding Administrator must afterwards set this <pending-branding> data to live, \
             \ in order to activate the actual branding for the <entity-id>"
-        (P|UEV_SIP "M")
+        (UEV_PentaEnforce)
         (let
             (
                 (pending:object{Branding.Schema} (UR_Branding entity-id true))
@@ -379,7 +370,7 @@
             \       Keeps branding Data as is for both <branding> and <branding-pending> \
             \ \
             \ Upgrading a <0> Golden Flag is restricted, as Golden Flags are higher in hierachy than Blue Flags"
-        (P|UEV_SIP "M")
+        (UEV_PentaEnforce)
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
@@ -419,7 +410,7 @@
     )
     ;;
     (defun XI_UpdateBrandingData (entity-id:string pending:bool branding:object{Branding.Schema})
-        (P|UEV_SIP "I")
+        (require-capability (SECURE))
         (if pending
             (update BRD|BrandingTable entity-id
                 {"branding-pending" : branding}

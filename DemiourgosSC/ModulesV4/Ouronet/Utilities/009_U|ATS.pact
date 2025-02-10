@@ -136,7 +136,7 @@
         @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
         (let*
             (
-                (ref-U|DEC:module{StringProcessor} U|DEC)
+                (ref-U|DEC:module{OuronetDecimals} U|DEC)
                 (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
                 (remainder:decimal (- input fee))
             )
@@ -301,8 +301,8 @@
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
-                (min:integer (ref-U|CT::MIN_DESIGNATION_LENGTH))
-                (max:integer (ref-U|CT::ACCOUNT_ID_MAX_LENGTH))
+                (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
+                (max:integer (ref-U|CT::CT_ACCOUNT_ID_MAX_LENGTH))
                 (al:integer (length ats))
             )
             (enforce
