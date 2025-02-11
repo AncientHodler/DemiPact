@@ -699,6 +699,23 @@
         (at "frozen" (UR_TrueFungible account snake-or-gas))
     )
     ;;{F1}
+    (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal how-many:integer)
+        @doc "Computes discounted Split-KDA prices based on input parameters"
+        (let
+            (
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (hm:decimal (dec how-many))
+                (tkp:decimal (* hm kda-price))
+                (major:integer (UR_Elite-Tier-Major account))
+                (minor:integer (UR_Elite-Tier-Minor account))
+                (rtkp:decimal (ref-U|DALOS::UC_GasCost tkp major minor true))
+                (v1:decimal (* 0.05 rtkp))
+                (v2:decimal (* 0.15 rtkp))
+                (v3:decimal (* 0.75 rtkp))
+            )
+            [v1 v2 v3]
+        )
+    )
     (defun URC_Transferability:bool (sender:string receiver:string method:bool)
         (UEV_SenderWithReceiver sender receiver)
         (let

@@ -295,20 +295,17 @@
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ignis-to-ouro:[decimal] (URC_Compress ignis-amount))
                 (ouro-remainder-amount:decimal (at 0 ignis-to-ouro))
-                (ouro-fee-amount:decimal (at 1 ignis-to-ouro))
-                (total-ouro:decimal (+ ouro-remainder-amount ouro-fee-amount))
+                (total-ouro:decimal (fold (+) 0.0 ignis-to-ouro))
             )
             (with-capability (IGNIS|C>COMPRESS patron client)
             ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart DALOS Account
                 (ref-TFT::C_Transfer patron ignis-id client orbr-sc ignis-amount true)
             ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
                 (ref-DPTF::C_Burn patron ignis-id orbr-sc ignis-amount)
-            ;;03]Ouroboros mints OURO <total-ouro>
-                (ref-DPTF::C_Mint patron ouro-id orbr-sc total-ouro false)
+            ;;03]Ouroboros mints OURO <ouro-remainder-amount>
+                (ref-DPTF::C_Mint patron ouro-id orbr-sc ouro-remainder-amount false)
             ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
                 (ref-TFT::C_Transfer patron ouro-id orbr-sc client ouro-remainder-amount true)
-            ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
-                (ref-TFT::C_Transmute patron ouro-id orbr-sc ouro-fee-amount)
                 ouro-remainder-amount
             )
         )
@@ -363,20 +360,17 @@
 
                 (ouro-split:[decimal] (ref-U|ATS::UC_PromilleSplit 10.0 ouro-amount ouro-precision))
                 (ouro-remainder-amount:decimal (at 0 ouro-split))
-                (ouro-fee-amount:decimal (at 1 ouro-split))
                 (ignis-amount:decimal (URC_Sublimate ouro-remainder-amount))
             )
             (with-capability (IGNIS|C>SUBLIMATE patron client target)
             ;;01]Client sends OURO <ouro-amount> to the Ouroboros Smart DALOS Account
                 (ref-TFT::C_Transfer patron ouro-id client orbr-sc ouro-amount true)
-            ;;02]Ouroboros burns OURO <ouro-remainder-amount>
-                (ref-DPTF::C_Burn patron ouro-id orbr-sc ouro-remainder-amount)
+            ;;02]Ouroboros burns OURO <ouro-amount>
+                (ref-DPTF::C_Burn patron ouro-id orbr-sc ouro-amount)
             ;;03]Ouroboros mints GAS(Ignis) <ignis-amount>
                 (ref-DPTF::C_Mint patron ignis-id orbr-sc ignis-amount false)
             ;;04]Ouroboros transfers GAS(Ignis) <ignis-amount> to <target>
                 (ref-TFT::C_Transfer patron ignis-id orbr-sc target ignis-amount true)
-            ;;05]Ouroboros transmutes OURO <ouro-fee-amount>
-                (ref-TFT::C_Transmute patron ouro-id orbr-sc ouro-fee-amount)
                 ignis-amount
             )
         )

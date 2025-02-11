@@ -16,6 +16,7 @@
     (defun A_Step019 ())
     (defun A_Step020 ())
     (defun A_Step021 ())
+    (defun A_Step022 ())
 )
 (module DPL-DALOS GOV
     ;;
@@ -517,6 +518,7 @@
             (ref-T01::ORBR|C_Sublimate patron patron emma 10.0)
             (ref-T01::ORBR|C_Sublimate patron patron lumy 10.0)
             ;;230380 / 4 = 57597
+            ;;175460 / 4 = 43865
         )
     )
     (defun A_Step017 ()
@@ -558,16 +560,17 @@
             ;;23342 EA | 18986 OURO (no ignis collect = -3702)
         )
     )
+
     (defun A_Step020 ()
-        (acquire-module-admin free.DALOS)
+        ;(acquire-module-admin free.DALOS)
         (let
             (
                 (ref-T01:module{TalosStageOne} TS01)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ids:[string]
                     (ref-T01::DPTF|C_Issue
-                        DEMIURGOI|AH_NAME
-                        DALOS|SC_NAME
+                        patron
+                        patron
                         ["Vesta"]
                         ["VST"]
                         [24]
@@ -584,6 +587,15 @@
             ;;45079
         )
     )
+    ;["Vesta"]
+    ;["VST"]
+    ;[24]
+    ;[true]
+    ;[true]
+    ;[true]
+    ;[true]
+    ;[true]
+    ;[true]
     (defun A_Step021 ()
         (acquire-module-admin free.SWP)
         (let

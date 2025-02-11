@@ -11,8 +11,8 @@
 (print "************************Initialise_DALOS.repl LOADED************************************************")
 (print "")
 
-;(load "../Ouronet/Deployers/ST01_R02_Steps-Init-AOZ.repl")
-;(print "************************Init_AOZ.repl LOADED********************************************************")
+(load "../Ouronet/Deployers/ST01_R02_Steps-Init-AOZ.repl")
+(print "************************Init_AOZ.repl LOADED********************************************************")
 
 (print "LOADED ALL ENV MODULES")
 

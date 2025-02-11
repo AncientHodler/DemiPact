@@ -1,0 +1,179 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load AOZ Module
+(print "")
+(begin-tx "INIT TX 030 - ST01_P02_AOZDeployer.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "ST01_P02_AOZDeployer.pact")
+(format "<<<<<<<DPL|DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "Deployer Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+(begin-tx "Constant Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(module KC GOVERNANCE
+    (defcap GOVERNANCE () true)
+
+    (defconst AOZET "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+)
+
+(module TV GOVERNANCE
+    (defcap GOVERNANCE () true)
+    
+    (defconst TIME00 (time "2024-10-10T00:00:00Z"))
+    (defconst TIME01 (time "2024-10-28T00:00:00Z"))
+    (defconst TIME02 (time "2024-11-15T16:00:00Z"))
+    (defconst TIME03 (time "2024-11-30T16:00:00Z"))
+    (defconst TIME04 (time "2024-12-15T16:00:00Z"))
+    (defconst TIME05 (time "2024-12-29T16:00:00Z"))
+)
+
+(env-gas)
+(commit-tx)
+
+
+(begin-tx "AOZ02 - Use Modules")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(use free.DPL-AOZ)
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Chain Data Time SetUp Definition
+(print "==========================InitSnake_TX-02===============================")
+(begin-tx "IInit STEP 00 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Initialise AOZ Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+(print "==========================Init-STEPS====================================")
+;;
+;;
+(begin-tx "Init STEP 001")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    ((ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ))
+    (ref-DPL|AOZ::A_Step001)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 002")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(use DALOS) 
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KC.AOZET
+                (ref-DALOS::UR_UsagePrice "dptf")
+                9
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (format "KDA Split is {}" [split-kda])
+)
+(let 
+    ((ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ))
+    (ref-DPL|AOZ::A_Step002)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 003")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    ((ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ))
+    (ref-DPL|AOZ::A_Step003)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 003Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

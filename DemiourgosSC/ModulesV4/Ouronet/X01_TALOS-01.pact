@@ -1509,8 +1509,7 @@
         @doc "Compresses IGNIS - Ouronet Gas Token, generating OUROBOROS \
                 \ Only whole IGNIS Amounts greater than or equal to 1.0 can be used for compression \
                 \ Similar to Sublimation, the output amount is dependent on OUROBOROS price, set at a minimum of 1$ \
-                \ Compression costs 1.5% in output fees, the OUROBOROS Fee is transmuted \
-                \ Transmutation is set to increase Auryn Index"
+                \ Compression has 98.5% efficiency, 1.5% is lost as fees."
         (let
             (
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
@@ -1524,8 +1523,7 @@
         @doc "Sublimates OUROBOROS, generating Ouronet Gas, in form of IGNIS Token \
                 \ A minimum amount of 1 input OUROBOROS is required. Amount of IGNIS generated depends on OUROBOROS Price in $, \
                 \ with the minimum value being set at 1$ (in case the actual value is lower than 1$ \
-                \ Prior to computing the Ignis Amount, a fee of 1% is deducted. This OURO amount is transmuted. \
-                \ Transmutation is set to increase Auryn Index."
+                \ Ignis is generated for 99% of the input Ouroboros amount, thus Sublimation has a fee of 1%"
         (let
             (
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
