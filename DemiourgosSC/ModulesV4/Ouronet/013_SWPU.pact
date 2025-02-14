@@ -16,20 +16,18 @@
     (defun SWPLC|URC_WP_LpAmount:decimal (swpair:string input-amounts:[decimal]))
     (defun SWPLC|URC_S_LpAmount:decimal (swpair:string input-amounts:[decimal]))
     (defun SWPLC|URC_AddLiquidityIgnisCost:decimal (swpair:string input-amounts:[decimal]))
-
+    ;;
     (defun SWPSC|URC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
     (defun SWPSC|URC_BestEdge:string (ia:decimal i:string o:string))
-
+    ;;
     (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
-
+    ;;
     (defun SWPS|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-
-    ;(defun XI_PumpLiquidIndex (patron:string id:string amount:decimal))
 )
 (module SWPU GOV
     ;;
@@ -166,7 +164,7 @@
         @event
         (let
             (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-SWP:module{Swapper} SWP)
                 (can-add:bool (ref-SWP::UR_CanAdd swpair))
@@ -175,7 +173,7 @@
                 (l1:integer (length pool-token-ids))
                 (lengths:[integer] [l0 l1])
             )
-            (ref-U|DEC::UEV_UniformList lengths)
+            (ref-U|INT::UEV_UniformList lengths)
             (ref-SWP::UEV_id swpair)
             (map
                 (lambda 
@@ -573,7 +571,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-SWP:module{Swapper} SWP)
@@ -603,7 +601,7 @@
                 )
                 (w:[decimal] (ref-SWP::UR_Weigths swpair))
             )
-            (ref-U|DEC::UEV_UniformList lengths)
+            (ref-U|INT::UEV_UniformList lengths)
             (enforce iz-on-pool "Input Tokens are not part of the pool")
             (enforce t2 "OutputID is not part of Swpair Tokens")
             (enforce (not t1) "Output-ID cannot be within the Input-IDs")
@@ -622,7 +620,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-SWP:module{Swapper} SWP)
@@ -636,7 +634,7 @@
                 (t1:bool (contains output-id input-ids))
                 (t2:bool (contains output-id pool-tokens))
             )
-            (ref-U|DEC::UEV_UniformLis lengths)
+            (ref-U|INT::UEV_UniformList lengths)
             (enforce iz-on-pool "Input Tokens are not part of the pool")
             (enforce t2 "OutputID is not part of Swpair Tokens")
             (enforce (not t1) "Output-ID cannot be within the Input-IDs")
@@ -707,12 +705,14 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-SWPT:module{SwapTracer} SWPT)
-                (edges:[string] (ref-SWPT::URC_Edges i o))
+                (ref-SWP:module{Swapper} SWP)
+                (principals:[string] (ref-SWP::UR_Principals))
+                (edges:[string] (ref-SWPT::URC_Edges i o principals))
                 (svl:[decimal]
                     (fold
                         (lambda
                             (acc:[decimal] idx:integer)
-                            (ref-U|LST::UC_AppendLast 
+                            (ref-U|LST::UC_AppL
                                 acc
                                 (SWPSC|URC_Swap (at idx edges) [i] [ia] o)
                             )
@@ -789,7 +789,7 @@
                         (lambda 
                             (idx:integer)
                             (if (> (at idx input-amounts) 0.0)
-                                (ref-TFT::C_Transfer patron (at idx pool-token-ids) account swp-sc (at idx input-amounts) true)
+                                (ref-TFT::XB_FeelesTransfer patron (at idx pool-token-ids) account swp-sc (at idx input-amounts) true)
                                 true
                             )
                         )
@@ -797,7 +797,7 @@
                     )
                     (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
                     (ref-DPTF::C_Mint patron lp-id swp-sc lp-amount false)
-                    (ref-TFT::C_Transfer patron lp-id swp-sc account lp-amount true)
+                    (ref-TFT::XB_FeelesTransfer patron lp-id swp-sc account lp-amount true)
                     lp-amount
                 )
             )
@@ -818,9 +818,9 @@
                     (pt-current-amounts:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                     (pt-new-amounts:[decimal] (zip (-) pt-current-amounts pt-output-amounts))
                 )
-                (ref-TFT::C_Transfer patron lp-id account swp-sc lp-amount true)
+                (ref-TFT::XB_FeelesTransfer patron lp-id account swp-sc lp-amount true)
                 (ref-DPTF::C_Burn patron lp-id swp-sc lp-amount)
-                (ref-TFT::C_MultiTransfer patron pool-token-ids swp-sc account pt-output-amounts true)
+                (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids swp-sc account pt-output-amounts true)
                 (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
                 pt-output-amounts
             )
@@ -927,12 +927,12 @@
                 ;;1] Updates Pool Token Supplies
                 (ref-SWP::XE_UpdateSupplies swpair updated-supplies)
                 ;;2] Moves all Input IDs to SWP|SC_NAME via MultiTransfer
-                (ref-TFT::C_MultiTransfer patron input-ids account swp-sc input-amounts true)
+                (ref-TFT::XE_FeelesMultiTransfer patron input-ids account swp-sc input-amounts true)
                 ;;3] Moves Outputs to their designated places
                 ;;3.1]  If special fee is zero, move only remainder to client.
                 ;;3.2]  If special fee is non zero, additionaly move special fee to special fee targets via BulkTransfer
                 (if (= special-fee 0.0)
-                    (ref-TFT::C_Transfer patron output-id swp-sc account remainder-output true)
+                    (ref-TFT::XB_FeelesTransfer patron output-id swp-sc account remainder-output true)
                     (let
                         (
                             (ref-U|SWP:module{UtilitySwp} U|SWP)
@@ -940,7 +940,7 @@
                             (sftp:[decimal] (ref-SWP::UR_SpecialFeeTargetsProportions swpair))
                             (sf-outputs:[decimal] (ref-U|SWP::UC_SpecialFeeOutputs sftp special-output op))
                         )
-                        (ref-TFT::C_BulkTransfer patron output-id swp-sc (+ sft [account]) (+ sf-outputs [remainder-output]) true)
+                        (ref-TFT::XE_FeelesBulkTransfer patron output-id swp-sc (+ sft [account]) (+ sf-outputs [remainder-output]) true)
                     )
                 )
                 ;;3.3]  If non zero, use boost output to boost Kadena Liquid Index

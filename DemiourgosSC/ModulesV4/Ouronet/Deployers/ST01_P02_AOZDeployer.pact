@@ -9,6 +9,25 @@
     (defun A_AddNonFungibleGameAsset (nf:string))
 
     (defun A_Step001 ())
+    (defun A_Step002:[string] ())
+    (defun A_Step003 ())
+    (defun A_Step004:[string] ())
+    (defun A_Step005:[string] ())
+    (defun A_Step006:[string] ())
+    (defun A_Step007:[string] ())
+    (defun A_Step008 ())
+    (defun A_Step009 ())
+    (defun A_Step010 ())
+    (defun A_Step011 ())
+    (defun A_Step012 ())
+    (defun A_Step013 ())
+    (defun A_Step014 ())
+    (defun A_Step015 (amount:decimal))
+    (defun A_Step016 (amount:decimal))
+    (defun A_Step017 (amount:decimal))
+    (defun A_Step018 (amount:decimal))
+    (defun A_Step019 (amount:decimal))
+    (defun A_Step020 (amount:decimal))
 
 )
 (module DPL-AOZ GOV
@@ -338,7 +357,315 @@
             (ref-T01::DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
+    (defun A_Step004:[string] ()
+        (let*
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (mf-ids:[string]
+                    (ref-T01::DPMF|C_Issue
+                        patron
+                        patron
+                        ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
+                        ["DDKOSON" "AFKOSON" "SFKOSON" "STKOSON" "DMKOSON" "AIKOSON"]
+                        [24 24 24 24 24 24]
+                        [true true true true true true]                         ;;can change owner
+                        [true true true true true true]                         ;;can upgrade
+                        [true true true true true true]                         ;;can can-add-special-role
+                        [false false false false false false]                   ;;can-freeze
+                        [false false false false false false]                   ;;can-wipe
+                        [true true true true true true]                         ;;can pause
+                        [true true true true true true]                         ;;can-transfer-nft-create-role
+                    )
+                )
+            )
+            (with-capability (SECURE)
+                (map
+                    (lambda
+                        (idx:integer)
+                        (A_AddPrimalMetaFungible (at idx mf-ids))
+                    )
+                    (enumerate 0 5)
+                )
+            )
+            mf-ids
+        )
+    )
+    (defun A_Step005:[string] ()
+        (let*
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (UR_Assets 1 0))
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+
+                (PlebiumDenariusID:string (UR_Assets 1 3))
+                (ComatusAureusID:string (UR_Assets 1 4))
+
+                (DenariusDebilisID:string (UR_Assets 2 0))
+                (AureusFragilisID:string (UR_Assets 2 1))
+
+                (ats-ids:[string]
+                    (ref-T01::ATS|C_Issue
+                        patron
+                        patron
+                        ["PlebeicStrength" "ComatiCommand"]
+                        [24 24]
+                        [PrimordialKosonID PrimordialKosonID]
+                        [false false]
+                        [PlebiumDenariusID ComatusAureusID]
+                        [true true]
+                    )    
+                )
+            )
+            (with-capability (SECURE)
+                (map
+                    (lambda
+                        (idx:integer)
+                        (A_AddATSPair (at idx ats-ids))
+                    )
+                    (enumerate 0 (- (length ats-ids) 1))
+                )
+            )
+            ats-ids
+        )
+    )
+    (defun A_Step006:[string] ()
+        (let*
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (UR_Assets 1 0))
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+
+                (PileatusSolidusID:string (UR_Assets 1 5))
+                (TarabostesStaterID:string (UR_Assets 1 6))
+                
+
+                (SolidusFractusID:string (UR_Assets 2 2))
+                (StaterTenuulusID:string (UR_Assets 2 3))
+                
+
+                (ats-ids:[string]
+                    (ref-T01::ATS|C_Issue
+                        patron
+                        patron
+                        ["PileatiPower" "TarabostesTenacity"]
+                        [24 24]
+                        [PrimordialKosonID PrimordialKosonID]
+                        [false false]
+                        [PileatusSolidusID TarabostesStaterID]
+                        [true true]
+                    )    
+                )
+            )
+            (with-capability (SECURE)
+                (map
+                    (lambda
+                        (idx:integer)
+                        (A_AddATSPair (at idx ats-ids))
+                    )
+                    (enumerate 0 (- (length ats-ids) 1))
+                )
+            )
+            ats-ids
+        )
+    )
+    (defun A_Step007:[string] ()
+        (let*
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (UR_Assets 1 0))
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+
+                (StrategonDrachmaID:string (UR_Assets 1 7))
+                (BasileonAsID:string (UR_Assets 1 8))
+
+                (DrachmaMinimaID:string (UR_Assets 2 4))
+                (AsInfinimusID:string (UR_Assets 2 5))
+
+                (ats-ids:[string]
+                    (ref-T01::ATS|C_Issue
+                        patron
+                        patron
+                        ["StrategonVigor" "AsAuthority"]
+                        [24 24]
+                        [PrimordialKosonID PrimordialKosonID]
+                        [false false]
+                        [StrategonDrachmaID BasileonAsID]
+                        [true true]
+                    )    
+                )
+            )
+            (with-capability (SECURE)
+                (map
+                    (lambda
+                        (idx:integer)
+                        (A_AddATSPair (at idx ats-ids))
+                    )
+                    (enumerate 0 (- (length ats-ids) 1))
+                )
+            )
+            ats-ids
+        )
+    )
+    (defun A_Step008 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (PlebeicStrengthID:string (UR_Assets 3 0))
+                (DenariusDebilisID:string (UR_Assets 2 0))
+                (decay:integer 0)
+            )
+            (Setup_KosonicATS PlebeicStrengthID DenariusDebilisID decay)
+            (ref-T01::ATS|C_TurnRecoveryOn AOZ|SC_NAME PlebeicStrengthID true) ;;When deploying on mainnet must be removed
+        )
+    )
+    (defun A_Step009 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (AureusFragilisID:string (UR_Assets 2 1))
+                (ComatiCommandID:string (UR_Assets 3 1))
+                (decay:integer 90)
+            )
+            (Setup_KosonicATS ComatiCommandID AureusFragilisID decay)
+        )
+    )
+    (defun A_Step010 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (SolidusFractusID:string (UR_Assets 2 2))
+                (PileatiPowerID:string (UR_Assets 3 2))
+                (decay:integer 180)
+            )
+            (Setup_KosonicATS PileatiPowerID SolidusFractusID decay)
+        )
+    )
+    (defun A_Step011 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (StaterTenuulusID:string (UR_Assets 2 3))
+                (TarabostesTenacityID:string (UR_Assets 3 3))
+                (decay:integer 360)
+            )
+            (Setup_KosonicATS TarabostesTenacityID StaterTenuulusID decay)
+        )
+    )
+    (defun A_Step012 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (DrachmaMinimaID:string (UR_Assets 2 4))
+                (StrategonVigorID:string (UR_Assets 3 4))
+                (decay:integer 720)
+            )
+            (Setup_KosonicATS StrategonVigorID DrachmaMinimaID decay)
+        )
+    )
+    (defun A_Step013 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (AsInfinimusID:string (UR_Assets 2 5))
+                (AsAuthorityID:string (UR_Assets 3 5))
+                (decay:integer 1440)
+            )
+            (Setup_KosonicATS AsAuthorityID AsInfinimusID decay)
+        )
+    )
+    (defun A_Step014 ()
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (UR_Assets 1 0))
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+                (pk-amount:decimal 50000.0)
+                (ek-amount:decimal 50000.0)
+                (ak-amount:decimal 50000.0)
+            )
+            (ref-T01::DPTF|C_Mint
+                patron
+                PrimordialKosonID
+                patron
+                pk-amount
+                true
+            )
+            (ref-T01::DPTF|C_Mint
+                patron
+                EsothericKosonID
+                patron
+                ek-amount
+                true
+            )
+            (ref-T01::DPTF|C_Mint
+                patron
+                AncientKosonID
+                patron
+                ak-amount
+                true
+            )
+        )
+    )
+    (defun A_Step015 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 0) amount)
+    )
+    (defun A_Step016 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 1) amount)
+    )
+    (defun A_Step017 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 2) amount)
+    )
+    (defun A_Step018 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 3) amount)
+    )
+    (defun A_Step019 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 4) amount)
+    )
+    (defun A_Step020 (amount:decimal)
+        (Setup_CoilPairs (UR_Assets 3 5) amount)
+    )
     ;;{F6}
+    (defun Setup_KosonicATS (index-name:string hot-rbt:string decay:integer)
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+            )
+            (ref-T01::ATS|C_AddSecondary patron index-name EsothericKosonID false)
+            (ref-T01::ATS|C_AddSecondary patron index-name AncientKosonID false)
+            (ref-T01::ATS|C_AddHotRBT patron index-name hot-rbt)
+            (if (!= decay 0)
+                (ref-T01::ATS|C_SetHotFee patron index-name 900.0 decay)
+                true
+            )
+            (ref-T01::ATS|C_TurnRecoveryOn patron index-name false)
+        )
+    )
+    (defun Setup_CoilPairs (index-name:string amount:decimal)
+        (let
+            (
+                (ref-T01:module{TalosStageOne} TS01)
+                (patron:string AOZ|SC_NAME)
+                (PrimordialKosonID:string (UR_Assets 1 0))
+                (EsothericKosonID:string (UR_Assets 1 1))
+                (AncientKosonID:string (UR_Assets 1 2))
+            )
+            (ref-T01::ATS|C_Coil patron patron index-name PrimordialKosonID amount)
+            (ref-T01::ATS|C_Coil patron patron index-name EsothericKosonID amount)
+            (ref-T01::ATS|C_Coil patron patron index-name AncientKosonID amount)
+        )
+    )
     ;;{F7}
 )
 

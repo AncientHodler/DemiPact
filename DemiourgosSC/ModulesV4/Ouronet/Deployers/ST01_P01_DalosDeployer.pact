@@ -2,9 +2,9 @@
     (defun A_Step005 ())
     (defun A_Step006 ())
     (defun A_Step007 ())
-    (defun A_Step008 ())
+    (defun A_Step008:list ())
     (defun A_Step009 ())
-    (defun A_Step010 ())
+    (defun A_Step010:list ())
     (defun A_Step011 ())
     (defun A_Step012 ())
     (defun A_Step013 ())
@@ -14,7 +14,7 @@
     (defun A_Step017 ())
     (defun A_Step018 ())
     (defun A_Step019 ())
-    (defun A_Step020 ())
+    (defun A_Step020:list ())
     (defun A_Step021 ())
     (defun A_Step022 ())
 )
@@ -255,6 +255,7 @@
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-T01::DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
+            (ref-DALOS::DALOS|SetGovernor patron)
             ;; 
             (ref-T01::DALOS|A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
             (ref-ATS::ATS|SetGovernor patron)
@@ -279,7 +280,7 @@
             ;;27938
         )     
     )
-    (defun A_Step008 ()
+    (defun A_Step008:list ()
         (acquire-module-admin free.DALOS)
         (let
             (
@@ -287,7 +288,7 @@
                 (ref-T01:module{TalosStageOne} TS01)
                 (patron:string DEMIURGOI|AH_NAME)
                 (info:string (ref-DALOS::DALOS|Info))
-                (ids:[string]
+                (ids:list
                     (ref-T01::DPTF|C_Issue
                         DEMIURGOI|AH_NAME
                         DALOS|SC_NAME
@@ -348,6 +349,7 @@
             (ref-T01::DPTF|C_ToggleFeeLock patron StakedKadenaID true)                  ;;2142
             (ref-T01::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3427
             (ref-T01::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3527
+            ids
             ;;65101
         )
     )
@@ -369,7 +371,7 @@
             ;;79631
         )
     )
-    (defun A_Step010 ()
+    (defun A_Step010:list ()
         (let*
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -380,7 +382,7 @@
                 (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
                 (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
                 (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
-                (ats-ids:[string]
+                (ats-ids:list
                     (ref-T01::ATS|C_Issue
                         patron
                         patron
@@ -511,12 +513,12 @@
                 (patron:string DEMIURGOI|AH_NAME)
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
-                (lumy:string PLEB|LUMY_NAME)
+                ;(lumy:string PLEB|LUMY_NAME)
             )
             (ref-T01::ORBR|C_Sublimate patron patron patron 1000.0)
             (ref-T01::ORBR|C_Sublimate patron patron aozt 750.0)
             (ref-T01::ORBR|C_Sublimate patron patron emma 10.0)
-            (ref-T01::ORBR|C_Sublimate patron patron lumy 10.0)
+            ;(ref-T01::ORBR|C_Sublimate patron patron lumy 10.0)
             ;;230380 / 4 = 57597
             ;;175460 / 4 = 43865
         )
@@ -561,13 +563,13 @@
         )
     )
 
-    (defun A_Step020 ()
+    (defun A_Step020:list ()
         ;(acquire-module-admin free.DALOS)
         (let
             (
                 (ref-T01:module{TalosStageOne} TS01)
                 (patron:string DEMIURGOI|AH_NAME)
-                (ids:[string]
+                (ids:list
                     (ref-T01::DPTF|C_Issue
                         patron
                         patron

@@ -14,7 +14,7 @@
     (defun BRD|A_SetFlag (entity-id:string flag:integer))
     ;;
     ;;
-    (defun ORBR|A_Fuel (patron:string))
+    (defun ORBR|A_Fuel ())
     ;;
     ;;
     (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
@@ -40,7 +40,7 @@
     (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
     (defun DPTF|C_DeployAccount (id:string account:string))
     (defun DPTF|C_DonateFees (patron:string id:string))
-    (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
+    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
     (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool))
     (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     (defun DPTF|C_ResetFeeTarget (patron:string id:string))
@@ -60,6 +60,10 @@
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
     (defun DPTF|C_Wipe (patron:string id:string atbw:string))
     ;;
+    (defun DPTF|CK_FeelesTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun DPTF|CK_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun DPTF|CK_FeelesBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    ;;
     ;;
     (defun DPMF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer))
@@ -69,7 +73,7 @@
     (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
     (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]))
     (defun DPMF|C_DeployAccount (id:string account:string))
-    (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
+    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
     (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string))
     (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
@@ -95,7 +99,7 @@
     (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
     (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal))
     (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal))
-    (defun ATS|C_Issue:[string] (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool]))
+    (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool]))
     (defun ATS|C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
     (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
     (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal))
@@ -132,9 +136,9 @@
     ;;
     ;;
     (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
-    (defun SWP|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
     (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard))
@@ -150,7 +154,7 @@
     (defun SWP|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
     (defun SWP|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     ;;
-    ;;(defun XI_Collect (iz-collect:bool))
+    ;;
 )
 (module TS01 GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
@@ -170,11 +174,24 @@
     (deftable P|T:{OuronetPolicy.P|S})
     ;;{P3}
     (defcap P|TS ()
+        @doc "Talos Summoner Capability"
+        true
+    )
+    (defcap P|TRG ()
+        @doc "Talos Remote Governor Capability"
         true
     )
     (defcap P|F ()
         (compose-capability (P|TS))
         (compose-capability (GOV|TS01_ADMIN))
+    )
+    (defcap P|SECURE-GOVERNOR ()
+        (compose-capability (P|TS))
+        (compose-capability (P|TRG))
+    )
+    (defcap P|SECURE-SUMMONER ()
+        (compose-capability (P|TS))
+        (compose-capability (SECURE))
     )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
@@ -204,6 +221,10 @@
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
+            )
+            (ref-P|DALOS::P|A_Add 
+                "TALOS-01|RemoteTalosGov"
+                (create-capability-guard (P|TRG))
             )
             (ref-P|DALOS::P|A_Add 
                 "TALOS-01"
@@ -259,10 +280,10 @@
             )
         )
     )
-    (defun P|UEV_SIP (type:string)
-        true
-    )
     ;;
+    ;;{3}
+    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defconst GASSLES-PATRON        (TALOS|Gassless))
     (defcap SECURE ()
         true
     )
@@ -369,22 +390,17 @@
         )
     )
     ;;{OUROBOROS_Administrator}
-    (defun ORBR|A_Fuel (patron:string)
+    (defun ORBR|A_Fuel ()
         @doc "Uses up all collected Native KDA on the Ouroboros Account, wraps it, and fuels the Kadena Liquid Index \
             \ Transaction fee must be paid for by the Ouronet Gas Station, so that all available balance may be used. \
             \ Is Part of all the Functions that collect native KDA as fee, \
             \ boosting the KDA Liquid Index, from 15% of the collected KDA \
             \ As Stand-Alone Function, can only be used by the Admin. \
             \ In normal condition, there is no need for using it on itself, as all collected KDA is automatically used up \
-            \ by implementing this function at the end of those funtions that collect the KDA."
-        ;;
-        (let
-            (
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
-            )
-            (with-capability (P|F)
-                (ref-ORBR::C_Fuel patron)
-            )
+            \ by implementing this function at the end of those funtions that collect the KDA. \
+            \ Dalos-Patron is the only gass"
+        (with-capability (SECURE)
+            (XI_ProcessFuelKDA true)
         )
     )
     ;;{SWP_Administrator}
@@ -443,8 +459,9 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_DeploySmartdAccount account guard kadena sovereign public)
+            (with-capability (P|SECURE-SUMMONER)
+                (ref-DALOS::C_DeploySmartAccount account guard kadena sovereign public)
+                (XI_ProcessFuelKDA true)
             )
         )
     )
@@ -453,9 +470,11 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ORBR:module{Ouroboros} OUROBOROS)
             )
-            (with-capability (P|TS)
+            (with-capability (P|SECURE-SUMMONER)
                 (ref-DALOS::C_DeployStandardAccount account guard kadena public)
+                (XI_ProcessFuelKDA true)
             )
         )
     )
@@ -523,13 +542,11 @@
             \ Also sets pending-branding to live branding if its branding is not live yet"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
             )
-            (with-capability (P|TS)
+            (with-capability (P|SECURE-SUMMONER)
                 (ref-DPTF::C_UpgradeBranding patron entity-id months)
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                (XI_ProcessFuelKDA true)
             )
         )
     )
@@ -545,15 +562,29 @@
             )
         )
     )
+    (defun DPTF|C_ExemptionBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        @doc "Similar to <DPTF|C_ExemptionTransfer> but for Bulk-Transfers"
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (with-capability (P|TS)
+                (ref-P|TFT::C_ExemptionBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+            )
+        )
+    )
     (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal)
         @doc "Burns a DPTF Token from an account"
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_Burn patron id account amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_Burn patron id account amount)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPTF|C_ClearDispo (patron:string account:string)
@@ -561,10 +592,13 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_ClearDispo patron account)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_ClearDispo patron account)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
@@ -604,20 +638,22 @@
             )
         )
     )
-    (defun DPTF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
+    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
         @doc "Issues a new DPTF Token in Bulk, can also be used to issue a single DPTF \
         \ Outputs a string list with the issed DPTF IDs"
-        (with-capability (P|TS)
+        (with-capability (P|SECURE-SUMMONER)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (output:[string] (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+                    )
                 )
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                output
-            )
+                (XC_IgnisCollect patron account [ico])
+                (XI_ProcessFuelKDA true)
+                (at "output" ico)
+            )   
         )
     )
     (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool)
@@ -625,10 +661,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_Mint patron id account amount origin)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_Mint patron id account amount origin)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
@@ -636,10 +675,27 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+            (XC_IgnisCollect patron sender [ico])
+        )
+    )
+    (defun DPTF|C_ExemptionMultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        @doc "Similar to <DPTF|C_ExemptionTransfer> but for Multi-Transfers"
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_ExemptionMultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+                    )
+                )
             )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPTF|C_ResetFeeTarget (patron:string id:string)
@@ -705,10 +761,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPTF|C_ToggleBurnRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPTF|C_ToggleBurnRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account ico)
         )
     )
     (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)
@@ -728,10 +787,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account ico)
         )
     )
     (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)
@@ -746,7 +808,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_Collect collect)
+                (XI_ProcessFuelKDA collect)
             )
         )
     )
@@ -766,10 +828,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPTF|C_ToggleMintRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPTF|C_ToggleMintRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account ico)
         )
     )
     (defun DPTF|C_TogglePause (patron:string id:string toggle:bool)
@@ -795,14 +860,34 @@
         )
     )
     (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Transfers a DPTF Token from <sender> to <receiver>"
+        @doc "Transfers a DPTF Token from <sender> to <receiver>, with all checks in place"
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_Transfer patron id sender receiver transfer-amount method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_Transfer patron id sender receiver transfer-amount method)
+            (XC_IgnisCollect patron sender [ico])
+        )
+    )
+    (defun DPTF|C_ExemptionTransfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        @doc "Transfers a DPTF Token from <sender> to <receiver>, \
+        \ when either <sender> or <receiver> has <fee-exemption-role> set to true for DPTF <id> \
+        \ Is Faster than <DPTF|C_Transfer> due to trimmed execution logic, and should be used whenever possible, \
+        \ if the proper conditions are met"
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_ExemptionTransfer patron id sender receiver transfer-amount method)
+                    )
+                )
             )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
@@ -811,10 +896,13 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_Transmute patron id transmuter transmute-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_Transmute patron id transmuter transmute-amount)
-            )
+            (XC_IgnisCollect patron transmuter [ico])
         )
     )
     (defun DPTF|C_Wipe (patron:string id:string atbw:string)
@@ -844,13 +932,11 @@
         @doc "Similar to its DPTF Variant"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
             )
-            (with-capability (P|TS)
+            (with-capability (P|SECURE-SUMMONER)
                 (ref-DPMF::C_UpgradeBranding patron entity-id months)
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                (XI_ProcessFuelKDA true)
             )
         )
     )
@@ -860,10 +946,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_AddQuantity patron id nonce account amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_AddQuantity patron id nonce account amount)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal)
@@ -871,10 +960,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Burn patron id nonce account amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Burn patron id nonce account amount)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
@@ -893,10 +985,14 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Create patron id account meta-data)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Create patron id account meta-data)
-            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun DPMF|C_DeployAccount (id:string account:string)
@@ -910,30 +1006,36 @@
             )
         )
     )
-    (defun DPMF|C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
+    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
         @doc "Similar to its DPTF Variant"
-        (with-capability (P|TS)
+        (with-capability (P|SECURE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (output:[string] (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+                    )
                 )
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                output
+                (XC_IgnisCollect patron account [ico])
+                (XI_ProcessFuelKDA true)
+                (at "output" ico)
             )
         )
     )
     (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
-        @doc "Mints a DPMF Token, creating it and adding quantity to it"
+        @doc "Mints a DPMF Token, creating it and adding quantity to it \
+        \ Outputs the nonce of the created DPMF"
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Mint patron id account amount meta-data)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Mint patron id account amount meta-data)
-            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
@@ -941,11 +1043,15 @@
         \ Only a single account may have this role"
         (let
             (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPMF|C_MoveCreateRole patron id receiver)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPMF|C_MoveCreateRole patron id receiver)
-            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto id) ico)
         )
     )
     (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
@@ -953,10 +1059,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_MultiBatchTransfer patron id nonces sender receiver method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_MultiBatchTransfer patron id nonces sender receiver method)
-            )
+            (XC_IgnisCollect patron sender ico)
         )
     )
     (defun DPMF|C_RotateOwnership (patron:string id:string new-owner:string)
@@ -975,10 +1084,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_SingleBatchTransfer patron id nonce sender receiver method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_SingleBatchTransfer patron id nonce sender receiver method)
-            )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
@@ -986,10 +1098,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPMF|C_ToggleAddQuantityRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPMF|C_ToggleAddQuantityRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account ico)
         )
     )
     (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
@@ -997,10 +1112,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-ATS::DPMF|C_ToggleBurnRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::DPMF|C_ToggleBurnRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account ico)
         )
     )
     (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
@@ -1030,10 +1148,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_ToggleTransferRole patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_ToggleTransferRole patron id account toggle)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
@@ -1041,10 +1162,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Transfer patron id nonce sender receiver transfer-amount method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Transfer patron id nonce sender receiver transfer-amount method)
-            )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPMF|C_Wipe (patron:string id:string atbw:string)
@@ -1074,13 +1198,11 @@
         @doc "Similar to its DPTF|DPMF Variant"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
             )
-            (with-capability (P|TS)
+            (with-capability (P|SECURE-SUMMONER)
                 (ref-ATS::C_UpgradeBranding patron entity-id months)
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
+                (XI_ProcessFuelKDA true)
             )
         )
     )
@@ -1090,22 +1212,30 @@
         \ Must be a DPMF Token and cannot be a Vested counterpart of a DPTF Token"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_AddHotRBT patron ats hot-rbt)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_AddHotRBT patron ats hot-rbt)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)
         @doc "Adds a Secondary RT to an ATSPair"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_AddSecondary patron ats reward-token rt-nfr)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_AddSecondary patron ats reward-token rt-nfr)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)
@@ -1113,10 +1243,14 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Coil patron coiler ats rt amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Coil patron coiler ats rt amount)
-            )
+            (XC_IgnisCollect patron coiler [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun ATS|C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)
@@ -1124,10 +1258,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_ColdRecovery patron recoverer ats ra)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_ColdRecovery patron recoverer ats ra)
-            )
+            (XC_IgnisCollect patron recoverer [ico])
         )
     )
     (defun ATS|C_Cull:[decimal] (patron:string culler:string ats:string)
@@ -1135,10 +1272,14 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Cull patron culler ats)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Cull patron culler ats)
-            )
+            (XC_IgnisCollect patron culler [ico])
+            (at "output" ico)
         )
     )
     (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
@@ -1147,10 +1288,14 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Curl patron curler ats1 ats2 rt amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Curl patron curler ats1 ats2 rt amount)
-            )
+            (XC_IgnisCollect patron curler [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal)
@@ -1158,10 +1303,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Fuel patron fueler ats reward-token amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Fuel patron fueler ats reward-token amount)
-            )
+            (XC_IgnisCollect patron fueler [ico])
         )
     )
     (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal)
@@ -1169,24 +1317,28 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_HotRecovery patron recoverer ats ra)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_HotRecovery patron recoverer ats ra)
-            )
+            (XC_IgnisCollect patron recoverer [ico])
         )
     )
-    (defun ATS|C_Issue:[string] (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool])
+    (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool])
         @doc "Issues and Autostake Pair"
-        (with-capability (P|TS)
+        (with-capability (P|SECURE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-ATS:module{Autostake} ATS)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (output:[string] (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
+                    )
                 )
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                output
+                (XC_IgnisCollect patron account [ico])
+                (XI_ProcessFuelKDA true)
+                (at "output" ico)
             )
         )
     )
@@ -1196,10 +1348,14 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_KickStart patron kickstarter ats rt-amounts rbt-request-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_KickStart patron kickstarter ats rt-amounts rbt-request-amount)
-            )
+            (XC_IgnisCollect patron kickstarter [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)
@@ -1219,10 +1375,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_RecoverHotRBT patron recoverer id nonce amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_RecoverHotRBT patron recoverer id nonce amount)
-            )
+            (XC_IgnisCollect patron recoverer [ico])
         )
     )
     (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)
@@ -1231,10 +1390,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_RecoverWholeRBTBatch patron recoverer id nonce)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_RecoverWholeRBTBatch patron recoverer id nonce)
-            )
+            (XC_IgnisCollect patron recoverer [ico])
         )
     )
     (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)
@@ -1242,10 +1404,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Redeem patron redeemer id nonce)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Redeem patron redeemer id nonce)
-            )
+            (XC_IgnisCollect patron redeemer [ico])
         )
     )
     (defun ATS|C_RemoveSecondary (patron:string remover:string ats:string reward-token:string)
@@ -1255,10 +1420,13 @@
         (let
             (
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_RemoveSecondary patron remover ats reward-token)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_RemoveSecondary patron remover ats reward-token)
-            )
+            (XC_IgnisCollect patron remover [ico])
         )
     )
     (defun ATS|C_RotateOwnership (patron:string ats:string new-owner:string)
@@ -1310,11 +1478,15 @@
             \ Syphoning can be executed until the set up Syphon limit is achieved"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_Syphon patron syphon-target ats syphon-amounts)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_Syphon patron syphon-target ats syphon-amounts)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_ToggleElite (patron:string ats:string toggle:bool)
@@ -1333,10 +1505,13 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATS::C_ToggleFeeSettings patron ats toggle fee-switch)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::C_ToggleFeeSettings patron ats toggle fee-switch)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_ToggleParameterLock (patron:string ats:string toggle:bool)
@@ -1353,7 +1528,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_Collect collect)
+                (XI_ProcessFuelKDA collect)
             )
         )
     )
@@ -1373,21 +1548,28 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATS::C_TurnRecoveryOff patron ats cold-or-hot)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::C_TurnRecoveryOff patron ats cold-or-hot)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)
         @doc "Turns ATSPair Cold or Hot Recovery On"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_TurnRecoveryOn patron ats cold-or-hot)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_TurnRecoveryOn patron ats cold-or-hot)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal)
@@ -1411,14 +1593,23 @@
             \ Outputs the resulted Vested Cold-RBT Amount"
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
                 (ref-VST:module{Vesting} VST)
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (c-rbt-amount:decimal (ref-ATS::URC_RBT ats coil-token amount))
+                (ico1:object{OuronetDalos.IgnisCumulator}
+                    (ref-ATSU::C_Coil patron coiler-vester ats coil-token amount)
+                )
+                (ico2:object{OuronetDalos.IgnisCumulator}
+                    (ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
+                )
+                (end-ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS::UDC_CompressICO [ico1 ico2] [])
+                )
             )
-            (ref-ATSU::C_Coil patron coiler-vester ats coil-token amount)
-            (ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
+            (XC_IgnisCollect patron coiler-vester [end-ico])
             c-rbt-amount
         )
     )
@@ -1427,12 +1618,18 @@
             \ A Vested Link, means, issuing a DPMF as a vested counterpart for a DPTF \
             \ The Vested Link is immutable, meaning, this DPMF will always act as a vested counterpart for the DPTF Token, \
             \ and will be recorded as such in both the DPTF and DPMF Token Properties."
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-            )
-            (with-capability (P|TS)
-                (ref-VST::C_CreateVestingLink patron dptf)
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-VST::C_CreateVestingLink patron dptf)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (XI_ProcessFuelKDA true)
+                (at 0 (at "output" ico))
             )
         )
     )
@@ -1441,10 +1638,13 @@
         (let
             (
                 (ref-VST:module{Vesting} VST)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-VST::C_Cull patron culler id nonce)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-VST::C_Cull patron culler id nonce)
-            )
+            (XC_IgnisCollect patron culler [ico])
         )
     )
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
@@ -1457,6 +1657,7 @@
             \ Outputs the resulted Vested Cold-RBT of <ats2>"
         (let*
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
                 (ref-VST:module{Vesting} VST)
@@ -1464,9 +1665,17 @@
                 (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 curl-token amount))
                 (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
                 (c-rbt2-amount:decimal (ref-ATS::URC_RBT ats2 c-rbt1 c-rbt1-amount))
+                (ico1:object{OuronetDalos.IgnisCumulator}
+                    (ref-ATSU::C_Curl patron curler-vester ats1 ats2 curl-token amount)
+                )
+                (ico2:object{OuronetDalos.IgnisCumulator}
+                    (ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
+                )
+                (end-ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS::UDC_CompressICO [ico1 ico2] [])
+                )
             )
-            (ref-ATSU::C_Curl patron curler-vester ats1 ats2 curl-token amount)
-            (ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
+            (XC_IgnisCollect patron curler-vester [end-ico])
             c-rbt2-amount
         )
     )
@@ -1475,10 +1684,13 @@
         (let
             (
                 (ref-VST:module{Vesting} VST)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-VST::C_Vest patron vester target-account id amount offset duration milestones)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-VST::C_Vest patron vester target-account id amount offset duration milestones)
-            )
+            (XC_IgnisCollect patron vester [ico])
         )
     )
     ;;{LIQUID_Client}
@@ -1487,10 +1699,13 @@
         (let
             (
                 (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-LIQUID::C_UnwrapKadena patron unwrapper amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-LIQUID::C_UnwrapKadena patron unwrapper amount)
-            )
+            (XC_IgnisCollect patron unwrapper [ico])
         )
     )
     (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)
@@ -1498,10 +1713,13 @@
         (let
             (
                 (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-LIQUID::C_WrapKadena patron wrapper amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-LIQUID::C_WrapKadena patron wrapper amount)
-            )
+            (XC_IgnisCollect patron wrapper [ico])
         )
     )
     ;;{OUROBOROS_Client}
@@ -1513,10 +1731,14 @@
         (let
             (
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ORBR::C_Compress patron client ignis-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ORBR::C_Compress patron client ignis-amount)
-            )
+            (XC_IgnisCollect patron client [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun ORBR|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)
@@ -1527,10 +1749,14 @@
         (let
             (
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ORBR::C_Sublimate patron client target ouro-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ORBR::C_Sublimate patron client target ouro-amount)
-            )
+            (XC_IgnisCollect patron client [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun ORBR|C_WithdrawFees (patron:string id:string target:string)
@@ -1540,10 +1766,14 @@
         (let
             (
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ORBR::C_WithdrawFees patron id target)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ORBR::C_WithdrawFees patron id target)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     ;;{Swapper_Client}
@@ -1558,48 +1788,53 @@
             )
         )
     )
-    (defun SWP|C_IssueStable:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
         @doc "Issues a Stable Liquidity Pool. First Token in the liquidity Pool must have a connection to a principal Token \
         \ Stable Pools have the S designation. \
         \ Stable Pools can be created with up to 7 Tokens, and have by design equal weighting. \
         \ The <p> boolean defines if The Pool is a Principal Pools. \
         \ Principal Pools are always on, and cant be disabled by low-liquidity."
-        (with-capability (P|TS)
+        (with-capability (P|SECURE-SUMMONER)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-SWP:module{Swapper} SWP)
                     (ref-ORBR:module{Ouroboros} OUROBOROS)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
-                    (output:[string] (ref-SWP::C_Issue patron account pool-tokens fee-lp weights amp p))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-SWP::C_Issue patron account pool-tokens fee-lp weights amp p)
+                    )
                 )
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                output
+                (XC_IgnisCollect patron account [ico])
+                (XI_ProcessFuelKDA true)
+                (at "output" ico)
             )
         ) 
     )
-    (defun SWP|C_IssueStandard:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
         @doc "Issues a Standard, Constant Product Pool. \
             \ Constant Product Pools have the P Designation, and they are by design equal weigthed \
             \ Can also be created with up to 7 Tokens, also the <p> boolean determines if its a Principal Pool or not \
             \ The First Token must be a Principal Token"
         (SWP|C_IssueStable patron account pool-tokens fee-lp -1.0 p)
     )
-    (defun SWP|C_IssueWeighted:[string] (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
         @doc "Issues a Weigthed Constant Liquidity Pool \
             \ Weigthed Pools have the W Designation, and the weights can be changed at will. \
             \ Can also be created with up to 7 Tokens, <p> boolean determines if its a Principal Pool or not \
             \ The First Token must also be a Principal Token"
-        (with-capability (P|TS)
+        (with-capability (P|SECURE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-SWP:module{Swapper} SWP)
                     (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (output:[string] (ref-SWP::C_Issue patron account pool-tokens fee-lp weights -1.0 p))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-SWP::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
+                    )
                 )
-                (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                output
+                (XC_IgnisCollect patron account [ico])
+                (XI_ProcessFuelKDA true)
+                (at "output" ico)
             )          
         )
     )
@@ -1666,7 +1901,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_Collect collect)
+                (XI_ProcessFuelKDA collect)
             )
         )
     )
@@ -1801,22 +2036,72 @@
         )
     )
     ;;
-    (defun XI_Collect (iz-collect:bool)
-        (require-capability (SECURE))
-        (if iz-collect
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                )
-                (with-capability (P|TS)
-                    (ref-ORBR::C_Fuel (ref-DALOS::GOV|DALOS|SC_NAME))
-                )
+    (defun DPTF|CK_FeelesTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        @doc "Transfers a DPTF Token without fees, regardless of Fee Setting. \
+            \ First Checkpoint Function. A Checkpoint Function is a \
+            \   locked Function, that can be used beyond Current Deployment Stage, in future deployment Stages"
+        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
             )
-            true
+            (with-capability (P|TS)
+                (ref-P|TFT::XB_FeelesTransfer patron id sender receiver transfer-amount method)
+            )
         )
     )
-
+    (defun DPTF|CK_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        @doc "Multi-Transfers DPTF Tokens without fees, regardless of Fee Setting"
+        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (with-capability (P|TS)
+                (ref-P|TFT::XE_FeelesMultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+            )
+        )
+    )
+    (defun DPTF|CK_FeelesBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        @doc "Bulk-Transfers DPTF Tokens without fees, regardless of Fee Setting"
+        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
+        (let
+            (
+                (ref-P|TFT:module{OuronetPolicy} TFT)
+            )
+            (with-capability (P|TS)
+                (ref-P|TFT::XE_FeelesBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+            )
+        )
+    )
+    ;;
+    (defun XC_IgnisCollect (patron:string account:string input-ico:[object{OuronetDalos.IgnisCumulator}])
+        @doc "Collects Ignis given input parameters"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ignis:decimal (ref-DALOS::UDC_AddICO input-ico))
+            )
+            (if (!= ignis 0.0)
+                (ref-DALOS::IGNIS|C_Collect patron account ignis)
+                true
+            )
+        )
+    )
+    (defun XI_ProcessFuelKDA (iz-collect:bool)
+        (require-capability (SECURE))
+        (with-capability (P|SECURE-GOVERNOR)
+            (let
+                (
+                    (ref-ORBR:module{Ouroboros} OUROBOROS)
+                )
+                (if iz-collect
+                    (ref-ORBR::C_Fuel GASSLES-PATRON)
+                    true
+                )
+            )
+        )
+    )
 )
 
 (create-table P|T)

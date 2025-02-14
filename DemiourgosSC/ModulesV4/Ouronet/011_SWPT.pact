@@ -1,7 +1,6 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (interface SwapTracer
-    @doc "Exposes Tracer Functions, needed to compute Paths between Tokens existing on Liquidity Pools \
-    \ Commented Functions are internal use only, and have no use outside the module"
+    @doc "Exposes Tracer Functions, needed to compute Paths between Tokens existing on Liquidity Pools"
     ;;
     (defschema Edges
         principal:string
@@ -20,13 +19,12 @@
     (defun URC_MakeGraph:[object{BreadthFirstSearch.GraphNode}] (input:string output:string swpairs:[string] principal-lst:[string]))
     (defun URC_TokenNeighbours:[string] (token-id:string principal-lst:[string]))
     (defun URC_TokenSwpairs:[string] (token-id:string principal-lst:[string]))
-    (defun URC_PrincipalSwpairs:[string] (id:string principal:string))
-    (defun URC_Edges:[string] (t1:string t2:string)) ;;1
+    (defun URC_PrincipalSwpairs:[string] (id:string principal:string principal-lst:[string]))
+    (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])) ;;1
     ;;
     (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string]))
     ;;
     (defun X_MultiPathTracer (swpair:string principals-lst:[string]))
-    ;(defun X_SinglePathTracer (id:string swpair:string principals-lst:[string]))
 )
 
 (module SWPT GOV
@@ -211,7 +209,7 @@
                         acc
                         (let
                             (
-                                (current-element-swpairs:[string] (UC_PSwpairsFTO old-path-tracer id (at idx principals-lst)))
+                                (current-element-swpairs:[string] (UC_PSwpairsFTO old-path-tracer id (at idx principals-lst) principals-lst))
                                 (lopt:integer (length old-path-tracer))
                                 (iz-principal-on-swpair:bool (contains (at idx principals-lst) swpair-tokens))
                                 (check:bool (and (!= id (at idx principals-lst)) iz-principal-on-swpair))
@@ -342,7 +340,7 @@
                 (token-swpairs:[string] (URC_TokenSwpairs token-id principal-lst))
                 (unique-tokens:[string] (ref-U|SWP::UC_UniqueTokens token-swpairs))
             )
-            (ref-U|LST::UC_RemoveItem unique-tokens)
+            (ref-U|LST::UC_RemoveItem unique-tokens token-id)
         )
     )
     (defun URC_TokenSwpairs:[string] (token-id:string principal-lst:[string])
@@ -358,7 +356,7 @@
                             (acc:[[string]] idx:integer)
                             (let
                                 (
-                                    (swpairs:[string] (URC_PrincipalSwpairs token-id (at idx cp)))
+                                    (swpairs:[string] (URC_PrincipalSwpairs token-id (at idx cp) principal-lst))
                                     (u2:[string] [BAR])
                                 )
                                 (if (!= swpairs u2)
@@ -378,15 +376,15 @@
             (fold (+) [] swpairs-array)
         )
     )
-    (defun URC_PrincipalSwpairs:[string] (id:string principal:string)
-        (UC_PSwpairsFTO (UR_PathTrace id) id principal)
+    (defun URC_PrincipalSwpairs:[string] (id:string principal:string principal-lst:[string])
+        (UC_PSwpairsFTO (UR_PathTrace id) id principal principal-lst)
     )
-    (defun URC_Edges:[string] (t1:string t2:string)
+    (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])
         (let
             (
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
-                (swp1:[string] (URC_TokenSwpairs t1))
-                (swp2:[string] (URC_TokenSwpairs t2))
+                (swp1:[string] (URC_TokenSwpairs t1 principal-lst))
+                (swp2:[string] (URC_TokenSwpairs t2 principal-lst))
                 (swps:[string] (+ swp1 swp2))
                 (d:[string] (distinct swps))
             )
@@ -412,7 +410,7 @@
     ;;{F6}
     ;;{F7}
     (defun X_MultiPathTracer (swpair:string principals-lst:[string])
-        (enforce-guard (P|UR "SWP|Caller"))
+        (enforce-guard (P|UR "SWP|<"))
         (with-capability (SECURE)
             (let
                 (

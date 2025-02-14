@@ -3,8 +3,7 @@
     @doc "Exposes most of the Functions of the DPMF Module. \
     \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically \
-    \ Commented Functions are internal use only, and have no use outside the module"
+    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically"
     ;;
     (defschema DPMF|Schema
         nonce:integer
@@ -83,23 +82,23 @@
     (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
-    (defun C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Burn (patron:string id:string nonce:integer account:string amount:decimal))
+    (defun C_AddQuantity:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
+    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
     (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun C_Create:integer (patron:string id:string account:string meta-data:[object]))
+    (defun C_Create:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string meta-data:[object]))
     (defun C_DeployAccount (id:string account:string))
-    (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
+    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
+    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal meta-data:[object]))
+    (defun C_MultiBatchTransfer:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
     (defun C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool))
+    (defun C_SingleBatchTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string method:bool))
     (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
     (defun C_TogglePause (patron:string id:string toggle:bool))
-    (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)) ;;6
+    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
+    (defun C_Transfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)) ;;6
     (defun C_Wipe (patron:string id:string atbw:string))
     ;;
-    (defun XB_IssueFree:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])) ;;1
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])) ;;1
     (defun XB_UpdateElite (id:string sender:string receiver:string))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
@@ -108,28 +107,6 @@
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_UpdateRewardBearingToken (atspair:string id:string))
     (defun XE_UpdateVesting (dptf:string dpmf:string))
-    ;;
-    ;(defun XI_AddQuantity (id:string nonce:integer account:string amount:decimal))
-    ;(defun XI_Burn (id:string nonce:integer account:string amount:decimal))
-    ;(defun XI_ChangeOwnership (id:string new-owner:string))
-    ;(defun XI_Control (patron:string id:string can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:boolcan-transfer-nft-create-role:bool))
-    ;(defun XI_Create:integer (id:string account:string meta-data:[object]))
-    ;(defun XI_Credit (id:string nonce:integer meta-data:[object] account:string amount:decimal))
-    ;(defun XI_DebitAdmin (id:string nonce:integer account:string amount:decimal))
-    ;(defun XI_DebitMultiple (id:string nonce-lst:[integer] account:string balance-lst:[decimal]))
-    ;(defun XI_DebitPaired (id:string account:string nonce-balance-obj:object{DPMF|Nonce-Balance}))
-    ;(defun XI_DebitPure (id:string nonce:integer account:string amount:decimal))
-    ;(defun XI_DebitStandard (id:string nonce:integer account:string amount:decimal))
-    ;(defun XI_IncrementNonce (id:string))
-    ;(defun XI_Issue:string (account:string name:string ticker:string decimals:integer can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:boolcan-transfer-nft-create-role:bool))
-    ;(defun XI_Mint:integer (id:string account:string amount:decimal meta-data:[object]))
-    ;(defun XI_ToggleFreezeAccount (id:string account:string toggle:bool))
-    ;(defun XI_TogglePause (id:string toggle:bool))
-    ;(defun XI_ToggleTransferRole (id:string account:string toggle:bool))
-    ;(defun XI_Transfer (id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    ;(defun XI_UpdateRoleTransferAmount (id:string direction:bool))
-    ;(defun XI_UpdateSupply (id:string amount:decimal direction:bool))
-    ;(defun XI_Wipe (id:string account-to-be-wiped:string))
 )
 (module DPMF GOV
     ;;
@@ -409,7 +386,7 @@
             (ref-U|LST::UC_IzUnique name)
             (ref-U|LST::UC_IzUnique ticker)
             (ref-DALOS::CAP_EnforceAccountOwnership account)
-            (compose-capability (SECURE))
+            (compose-capability (P|SECURE-CALLER))
         )
     )
     (defcap DPMF|C>TG_TRANSFER-R (id:string account:string toggle:bool)
@@ -1037,19 +1014,21 @@
         )
     )
     ;;
-    (defun C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)
+    (defun C_AddQuantity:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal)
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
             (with-capability (DPMF|C>ADD-QTY id account amount)
                 (XI_AddQuantity id nonce account amount)
-                (ref-DALOS::IGNIS|C_CollectWT patron account (ref-DALOS::UR_UsagePrice "ignis|small") (ref-DALOS::IGNIS|URC_ZeroGAS id account))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
-    (defun C_Burn (patron:string id:string nonce:integer account:string amount:decimal)
+    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal)
         (enforce-one
             "Unallowed"
             [
@@ -1061,10 +1040,12 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
             (with-capability (DPMF|C>BURN id account amount)
                 (XI_Burn id nonce account amount)
-                (ref-DALOS::IGNIS|C_CollectWT patron account (ref-DALOS::UR_UsagePrice "ignis|small") (ref-DALOS::IGNIS|URC_ZeroGAS id account))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
@@ -1080,16 +1061,20 @@
             )
         )
     )
-    (defun C_Create:integer (patron:string id:string account:string meta-data:[object])
+    (defun C_Create:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string meta-data:[object])
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
+                (new-nonce:integer
+                    (with-capability (DPMF|C>CREATE id account)
+                        (XI_Create id account meta-data)
+                    )
+                )
             )
-            (with-capability (DPMF|C>CREATE id account)
-                (ref-DALOS::IGNIS|C_CollectWT patron account (ref-DALOS::UR_UsagePrice "ignis|small") (ref-DALOS::IGNIS|URC_ZeroGAS id account))
-                (XI_Create id account meta-data)
-            )
+            (ref-DALOS::UDC_Cumulator price trigger [new-nonce])
         )
     )
     (defun C_DeployAccount (id:string account:string)
@@ -1133,7 +1118,7 @@
             )
         )
     )
-    (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
+    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
@@ -1141,17 +1126,17 @@
                 (l1:integer (length name))
                 (mf-cost:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
                 (kda-costs:decimal (* (dec l1) mf-cost))
-                (issued-ids:[string]
+                (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (SECURE)
                         (XB_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
                     )
-                )                
+                )
             )
             (ref-DALOS::KDA|C_Collect patron kda-costs)
-            issued-ids
+            ico
         )
     )
-    (defun C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
+    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal meta-data:[object])
         (enforce-one
             "Unallowed"
             [
@@ -1163,28 +1148,48 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (new-nonce:integer
+                    (with-capability (DPMF|C>MINT id account amount)
+                        (XI_Mint id account amount meta-data)
+                    )
+                )
+                (medium:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (price:decimal (+ medium small))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
-            (with-capability (DPMF|C>MINT id account amount)
-                (ref-DALOS::IGNIS|C_CollectWT patron account (ref-DALOS::UR_UsagePrice "ignis|small") (ref-DALOS::IGNIS|URC_ZeroGAS id account))
-                (XI_Mint id account amount meta-data)
-            )
+            (ref-DALOS::UDC_Cumulator price trigger [new-nonce])
         )
     )
-    (defun C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defcap DPMF|S>MULTI-BATCH-TRANSFER (id:string nonces:[integer] sender:string)
+        @event
         (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (account-nonces:[integer] (UR_AccountNonces id sender))
-                (contains-all:bool (ref-U|INT::UC_ContainsAll account-nonces nonces))
+                (contains-all:bool (ref-U|INT::UEV_ContainsAll account-nonces nonces))
             )
             (enforce contains-all "Invalid Nonce List for DPTF Multi Batch Transfer")
-            (map
-                (lambda
-                    (single-nonce:integer)
-                    (C_SingleBatchTransfer patron id single-nonce sender receiver method)
+        )
+    )
+    (defun C_MultiBatchTransfer:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (DPMF|S>MULTI-BATCH-TRANSFER id nonces sender)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
                 )
-                nonces
+                (fold
+                    (lambda
+                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                        (ref-U|LST::UC_AppL 
+                            acc 
+                            (C_SingleBatchTransfer patron id (at idx nonces) sender receiver method)
+                        )
+                    )
+                    []
+                    (enumerate 0 (- (length nonces) 1))
+                )
             )
         )
     )
@@ -1200,14 +1205,9 @@
             )
         )
     )
-    (defun C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
+    (defun C_SingleBatchTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string method:bool)
         (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (balance:decimal (UR_AccountBatchSupply id nonce))
-            )
-            (C_Transfer patron id nonce sender receiver balance method)
-        )
+        (C_Transfer patron id nonce sender receiver (UR_AccountBatchSupply id nonce) method)
     )
     (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
         (enforce-guard (P|UR "TALOS-01"))
@@ -1234,7 +1234,7 @@
             )
         )
     )
-    (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool)
         (enforce-one
             "Unallowed"
             [
@@ -1245,16 +1245,19 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (price:decimal (* 3.0 small))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
             )
             (with-capability (DPMF|C>TG_TRANSFER-R id account toggle)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
-                (ref-DALOS::IGNIS|C_Collect patron account (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
-    (defun C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun C_Transfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
         (enforce-one
             "Unallowed"
             [
@@ -1266,10 +1269,12 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (trigger:bool (ref-DALOS::GNIS|URC_ZeroGAZ id sender receiver))
             )
             (with-capability (DPMF|C>TRANSFER id sender receiver transfer-amount method)
-                (ref-DALOS::IGNIS|C_CollectWT patron sender (ref-DALOS::UR_UsagePrice "ignis|smallest") (ref-DALOS::GNIS|URC_ZeroGAZ id sender receiver))
                 (XI_Transfer id nonce sender receiver transfer-amount method)
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
@@ -1286,7 +1291,7 @@
         )
     )
     ;;{F7}
-    (defun XB_IssueFree:[string] 
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator}
         (
             patron:string
             account:string
@@ -1316,6 +1321,7 @@
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (l1:integer (length name))
                     (gas-costs:decimal (* (dec l1) (ref-DALOS::UR_UsagePrice "ignis|token-issue")))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (folded-lst:[string]
                         (fold
                             (lambda
@@ -1347,8 +1353,7 @@
                         )
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron account gas-costs)
-                folded-lst
+                (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
             )
         ) 
     )
@@ -1800,6 +1805,7 @@
         (let
             (
                 (new-nonce:integer (+ (UR_NoncesUsed id) 1))
+                
             )
             (XI_Create id account meta-data)
             (XI_AddQuantity id new-nonce account amount)

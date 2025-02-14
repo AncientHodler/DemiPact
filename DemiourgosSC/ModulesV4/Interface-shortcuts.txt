@@ -48,6 +48,13 @@
 (ref-T01:module{TalosStageOne} TS01)
 
 (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
+(ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+
+
+
+:object{OuronetDalos.IgnisCumulator}
+(ref-DALOS::DALOS|EmptyIgCum)
+(ref-DALOS::UDC_Cumulator price trigger [])
 
 
 

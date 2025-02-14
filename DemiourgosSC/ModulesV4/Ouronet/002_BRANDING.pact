@@ -3,8 +3,7 @@
     \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
     \ Should Future entities be added, they too can be branded via this module \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
-    \ are NOT sorted alphabetically \
-    \ Commented Functions are internal use only, and have no use outside the module"
+    \ are NOT sorted alphabetically"
     ;;
     (defschema Schema
         logo:string
@@ -31,8 +30,6 @@
     ;;
     (defun URC_MaxBluePayment (account:string))
     ;;
-    ;(defun UEV_PentaEnforce ())
-    ;;
     (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
     (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
     (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
@@ -46,8 +43,6 @@
     (defun XE_Issue (entity-id:string))
     (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{SocialSchema}]))
     (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer))
-    ;;
-    ;(defun XI_UpdateBrandingData (entity-id:string pending:bool branding:object{Schema}))
 )
 (interface BrandingUsage
     @doc "Interface Exposing the Actual Branding Functions, that must exist within each Entitys main Module \

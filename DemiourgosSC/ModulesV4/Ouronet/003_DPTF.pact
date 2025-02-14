@@ -4,8 +4,7 @@
     \ Later deployed modules, contain the rest of the DPTF Functions \
     \ These are ATS and TFT Modules \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
-    \ are NOT sorted alphabetically \
-    \ Commented Functions are internal use only, and have no use outside the module"
+    \ are NOT sorted alphabetically"
     ;;
     (defun UR_P-KEYS:[string] ())
     (defun UR_KEYS:[string] ())
@@ -80,11 +79,11 @@
     (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
-    (defun C_Burn (patron:string id:string account:string amount:decimal))
+    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal))
     (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
     (defun C_DeployAccount (id:string account:string))
-    (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
-    (defun C_Mint (patron:string id:string account:string amount:decimal origin:bool))
+    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
+    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal origin:bool))
     (defun C_RotateOwnership (patron:string id:string new-owner:string))
     (defun C_SetFee (patron:string id:string fee:decimal))
     (defun C_SetFeeTarget (patron:string id:string target:string))
@@ -102,7 +101,7 @@
     ;;
     (defun XE_Burn (id:string account:string amount:decimal))
     (defun XE_ClearDispo (account:string))
-    (defun XE_IssueLP:string (patron:string account:string name:string ticker:string))
+    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string))
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool))
     (defun XE_ToggleMintRole (id:string account:string toggle:bool))
@@ -110,27 +109,6 @@
     (defun XE_UpdateVesting (dptf:string dpmf:string))
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool))
     (defun XE_UpdateRewardToken (atspair:string id:string direction:bool))
-    ;;
-    ;(defun XI_BurnCore (id:string account:string amount:decimal))
-    ;(defun XI_ChangeOwnership (id:string new-owner:string))
-    ;(defun XI_Control (id:string can-change-owner:bool can-upgrade:bool can-add-special-role:bool can-freeze:bool can-wipe:bool can-pause:bool))
-    ;(defun XI_Debit (id:string account:string amount:decimal dispo-data:[decimal]))
-    ;(defun XI_DebitAdmin (id:string account:string amount:decimal))
-    ;(defun XI_IncrementFeeUnlocks (id:string))
-    ;(defun XI_Issue:string)
-    ;(defun XI_IssueFree:[string])
-    ;(defun XI_Mint (id:string account:string amount:decimal origin:bool))
-    ;(defun XI_SetFee (id:string fee:decimal))
-    ;(defun XI_SetFeeTarget (id:string target:string))
-    ;(defun XI_SetMinMove (id:string min-move-value:decimal))
-    ;(defun XI_ToggleFee(id:string toggle:bool))
-    ;(defun XI_ToggleFeeLock:[decimal] (id:string toggle:bool))
-    ;(defun XI_ToggleFreezeAccount (id:string account:string toggle:bool))
-    ;(defun XI_TogglePause (id:string toggle:bool))
-    ;(defun XI_ToggleTransferRole (id:string account:string toggle:bool))
-    ;(defun XI_UpdateRoleTransferAmount (id:string direction:bool))
-    ;(defun XI_UpdateSupply (id:string amount:decimal direction:bool))
-    ;(defun XI_Wipe (id:string account-to-be-wiped:string))
 )
 (module DPTF GOV
     ;;
@@ -1112,7 +1090,7 @@
         )
     )
     ;;
-    (defun C_Burn (patron:string id:string account:string amount:decimal)
+    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal)
         (enforce-one
             "Unallowed"
             [
@@ -1127,10 +1105,12 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
             (with-capability (DPTF|C>BURN id account amount)
                 (XI_BurnCore id account amount)
-                (ref-DALOS::IGNIS|C_CollectWT patron account (ref-DALOS::UR_UsagePrice "ignis|small") (ref-DALOS::IGNIS|URC_ZeroGAS id account))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
@@ -1187,7 +1167,7 @@
             )
         )
     )
-    (defun C_Issue:[string] (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
+    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
@@ -1196,17 +1176,17 @@
                 (tl:[bool] (make-list l1 false))
                 (tf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
                 (kda-costs:decimal (* (dec l1) tf-cost))
-                (issued-ids:[string]
+                (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
                         (XI_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause tl)
                     )
                 )
             )
             (ref-DALOS::KDA|C_Collect patron kda-costs)
-            issued-ids
+            ico
         )
     )
-    (defun C_Mint (patron:string id:string account:string amount:decimal origin:bool)
+    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal origin:bool)
         (enforce-one
             "Unallowed"
             [
@@ -1224,10 +1204,11 @@
                 (big:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                 (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
                 (price:decimal (if origin big small))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
             (with-capability (DPTF|C>MINT id account amount origin)
-                (ref-DALOS::IGNIS|C_CollectWT patron account price (ref-DALOS::IGNIS|URC_ZeroGAS id account))
-                (XI_Mint id account amount origin) 
+                (XI_Mint id account amount origin)
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
@@ -1536,11 +1517,11 @@
             )
         )
     )
-    (defun XE_IssueLP:string (patron:string account:string name:string ticker:string)
+    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
         (enforce-guard (P|UR "SWP|<"))
         (with-capability (DPTF|C>ISSUE account [name] [ticker] [24] [false] [false] [true] [false] [false] [false])
-            (at 0 (XI_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true]))
+            (XI_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
         )
     )
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool)
@@ -1805,7 +1786,7 @@
             id
         ) 
     )
-    (defun XI_IssueFree:[string]
+    (defun XI_IssueFree:object{OuronetDalos.IgnisCumulator}
         (
             patron:string
             account:string
@@ -1829,6 +1810,7 @@
                 (l1:integer (length name))
                 (ignis-issue-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (gas-costs:decimal (* (dec l1) ignis-issue-cost))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                 (folded-lst:[string]
                     (fold
                         (lambda
@@ -1860,8 +1842,7 @@
                     )
                 )
             )
-            (ref-DALOS::IGNIS|C_Collect patron account gas-costs)
-            folded-lst
+            (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
         )
     )
     (defun XI_Mint (id:string account:string amount:decimal origin:bool)

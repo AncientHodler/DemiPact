@@ -314,7 +314,7 @@
                 (format "Account ID contained a prohibited character: {}" [ats])
             )
             (enforce
-                (ref-U|DALOS::UC_IzStringANC ats false)
+                (ref-U|DALOS::UC_IzStringANC ats false false)
                 "Atspair does not conform character-wise (Alphanumeric)"
             )
             (enforce

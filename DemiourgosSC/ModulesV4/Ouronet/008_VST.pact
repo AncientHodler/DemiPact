@@ -1,7 +1,6 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (interface Vesting
-    @doc "Exposes Vesting Functions \
-    \ Commented Functions are internal use only, and have no use outside the module"
+    @doc "Exposes Vesting Functions"
     ;;
     (defschema VST|MetaDataSchema
         release-amount:decimal
@@ -17,11 +16,9 @@
 
     (defun UDC_ComposeVestingMetaData:[object{VST|MetaDataSchema}] (id:string amount:decimal offset:integer duration:integer milestones:integer))
 
-    (defun C_CreateVestingLink:string (patron:string dptf:string))
-    (defun C_Cull (patron:string culler:string id:string nonce:integer))
-    (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
-    ;;
-    ;;(defun XI_DefineVestingPair (patron:string dptf:string dpmf:string))
+    (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string))
+    (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string id:string nonce:integer))
+    (defun C_Vest:object{OuronetDalos.IgnisCumulator} (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
 )
 (module VST GOV
     ;;
@@ -300,7 +297,7 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_CreateVestingLink:string (patron:string dptf:string)
+    (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>LINK)
             (let
@@ -318,7 +315,7 @@
                     (vesting-id:[string] (ref-U|VST::UC_VestingID dptf-name dptf-ticker))
                     (dpmf-name:string (at 0 vesting-id))
                     (dpmf-ticker:string (at 1 vesting-id))
-                    (dpmf-l:[string]
+                    (ico0:object{OuronetDalos.IgnisCumulator}
                         (ref-DPMF::XB_IssueFree
                             patron
                             dptf-owner
@@ -334,78 +331,103 @@
                             [true]
                         )
                     )
-                    (dpmf:string (at 0 dpmf-l))
+                    (dpmf:string (at 0 (at "output" ico0)))
                     (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
                 )
-                ;;Create DPTF Account and Set Roles
+                ;;Create DPTF and DPMF Account and Set Roles below
                 (ref-DPTF::C_DeployAccount dptf vst-sc)
-                (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
-                ;;Create DPMF Account and Set Roles
                 (ref-DPMF::C_DeployAccount dpmf vst-sc)
-                (ref-DPMF::C_ToggleTransferRole patron dpmf vst-sc true)
-                (ref-ATS::DPMF|C_ToggleBurnRole patron dpmf vst-sc true)
-                (ref-ATS::DPMF|C_MoveCreateRole patron dpmf vst-sc)
-                (ref-ATS::DPMF|C_ToggleAddQuantityRole patron dpmf vst-sc true)
-                ;;Define Vesting Pair and Collect KDA (for DPMF Issue)
-                (XI_DefineVestingPair patron dptf dpmf)
-                (ref-DALOS::KDA|C_Collect patron kda-costs)
-                dpmf
+                (let
+                    (
+                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                        (ico1:[object{OuronetDalos.IgnisCumulator}]
+                            (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
+                        )
+                        (ico2:object{OuronetDalos.IgnisCumulator}
+                            (ref-DPMF::C_ToggleTransferRole patron dpmf vst-sc true)
+                        )
+                        (ico3:[object{OuronetDalos.IgnisCumulator}]
+                            (ref-ATS::DPMF|C_ToggleBurnRole patron dpmf vst-sc true)
+                        )
+                        (ico4:[object{OuronetDalos.IgnisCumulator}]
+                            (ref-ATS::DPMF|C_MoveCreateRole patron dpmf vst-sc)
+                        )
+                        (ico5:[object{OuronetDalos.IgnisCumulator}]
+                            (ref-ATS::DPMF|C_ToggleAddQuantityRole patron dpmf vst-sc true)
+                        )
+                    )
+                ;;Define Vesting Pair, Collect KDA (for DPMF Issue) and output ICO
+                    (XI_DefineVestingPair patron dptf dpmf)
+                    (ref-DALOS::KDA|C_Collect patron kda-costs)
+                    (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5]) [dpmf])
+                )
             )
         )
     )
-    (defun C_Cull (patron:string culler:string id:string nonce:integer)
+    (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string id:string nonce:integer)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>CULL culler id)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (vst-sc:string VST|SC_NAME)
-
                     (dptf-id:string (ref-DPMF::UR_Vesting id))
                     (initial-amount:decimal (ref-DPMF::UR_AccountBatchSupply id nonce culler))
                     (culled-amount:decimal (URC_CullMetaDataAmount culler id nonce))
                     (return-amount:decimal (- initial-amount culled-amount))
-                )
-                (if (= return-amount 0.0)
-                    (ref-TFT::C_Transfer patron dptf-id vst-sc culler initial-amount true)
-                    (let
-                        (
-                            (remaining-vesting-meta-data:[object{Vesting.VST|MetaDataSchema}] (URC_CullMetaDataObject culler id nonce))
-                            (new-nonce:integer (+ (ref-DPMF::UR_NoncesUsed id) 1))
+                    (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (if (= return-amount 0.0)
+                            [
+                                (ref-TFT::XB_FeelesTransfer patron dptf-id vst-sc culler initial-amount true)
+                            ]
+                            [
+                                (ref-DPMF::C_Mint patron id vst-sc return-amount (URC_CullMetaDataObject culler id nonce))
+                                (ref-TFT::XB_FeelesTransfer patron dptf-id vst-sc culler culled-amount true)
+                                (ref-DPMF::C_Transfer patron id (+ (ref-DPMF::UR_NoncesUsed id) 1) vst-sc culler return-amount true)
+                            ]
                         )
-                        (ref-DPMF::C_Mint patron id vst-sc return-amount remaining-vesting-meta-data)
-                        (ref-TFT::C_Transfer patron dptf-id vst-sc culler culled-amount true)
-                        (ref-DPMF::C_Transfer patron id new-nonce vst-sc culler return-amount true)
+                    )
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Transfer patron id nonce culler vst-sc initial-amount true)
+                    )
+                    (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Burn patron id nonce vst-sc initial-amount)
                     )
                 )
-                (ref-DPMF::C_Transfer patron id nonce culler vst-sc initial-amount true)
-                (ref-DPMF::C_Burn patron id nonce vst-sc initial-amount)
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [ico1 [ico2] [ico3]]) [])
             )
         )
     )
-    (defun C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
+    (defun C_Vest:object{OuronetDalos.IgnisCumulator} (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
         @doc "Vests a DPTF Token, issuing a Vested Token"
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>VEST vester target-account id)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (vst-sc:string VST|SC_NAME)
-
                     (dpmf-id:string (ref-DPTF::UR_Vesting id))
                     (meta-data:string (UDC_ComposeVestingMetaData id amount offset duration milestones))
                     (nonce:integer (+ (ref-DPMF::UR_NoncesUsed id) 1))
+                    (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Mint patron dpmf-id vst-sc amount meta-data)
+                    )
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-TFT::XB_FeelesTransfer patron id vester vst-sc amount true)
+                    )
+                    (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Transfer patron dpmf-id nonce vst-sc target-account amount true)
+                    )
                 )
-                (ref-DPMF::C_Mint patron dpmf-id vst-sc amount meta-data)
-                (ref-TFT::C_Transfer patron id vester vst-sc amount true)
-                (ref-DPMF::C_Transfer patron dpmf-id nonce vst-sc target-account amount true)
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico1] [ico2] [ico3]]) [])
             )
         )
     )
-    
     ;;{F7}
     (defun XI_DefineVestingPair (patron:string dptf:string dpmf:string)
         (require-capability (SECURE))

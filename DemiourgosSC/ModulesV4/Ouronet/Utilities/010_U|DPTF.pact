@@ -3,9 +3,8 @@
         \ Commented Functions are internal use only and have no use outside the module"
     ;;  
     (defun UC_OuroLoanLimit (elite-auryn-amount:decimal dispo-data:[decimal] ouro-precision:integer))
-    (defun UC_UnlockPrice:[decimal] (unlocks:integer)) ;;1
-    (defun UC_VolumetricTax (precision:integer amount:decimal)) ;;1
-    ;(defun UCI_VolumetricPermile:decimal (precision:integer unit:integer))
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer))
+    (defun UC_VolumetricTax (precision:integer amount:decimal))
 )
 (module U|DPTF GOV
     ;;

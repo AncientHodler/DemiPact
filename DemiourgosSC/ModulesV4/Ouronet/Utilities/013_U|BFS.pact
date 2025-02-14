@@ -1,7 +1,6 @@
 (interface BreadthFirstSearch
     @doc "Interface exposing a Breadth-First-Search Implementation on Pact \
-    \ Used in the SWP Modules to compute Paths between SWPair Tokens. \
-    \ Commneted Functions are internal use only and have no use outside of the module."
+    \ Used in the SWP Modules to compute Paths between SWPair Tokens."
     ;;
     (defschema GraphNode
         node:string
@@ -16,23 +15,8 @@
         node:string
         chain:[string]
     )
-
-    (defun UC_BFS:object{BFS} (graph:[object{GraphNode}] in:string))
-    ;(defun UC_GraphNodeLinks:[string] (graph:[object{GraphNode}] node:string))
-    ;(defun UC_GraphNodes:[string] (graph:[object{GraphNode}]))
-    ;(defun UC_PrimalQE:[object{QE}] (links:[string] node:string))
-    ;(defun UC_GetChains:[[string]] (input:[object{QE}]))
-    ;(defun UC_FilterVisited:[string] (visited:[string] new-nodes:[string]))
-    ;(defun UC_ExStrLst:[string] (to-extend:[string] elements:[string]))
-    ;(defun UC_ExQeLst:[object{QE}] (input:[object{QE}] que-element:[object{QE}]))
-    ;(defun UC_RmFirstQeList:[object{QE}] (input:[object{QE}]))
-    ;(defun UC_ExStrArrLst:[[string]] (to-extend:[[string]] elements:[[string]]))
     ;;
-    ;(defun UDC_ExtendChain:object{QE} (input:object{QE} element:string))
-    ;(defun UDC_AddVisited:object{BFS} (input:object{BFS} visited:[string]))
-    ;(defun UDC_AddToQue:object{BFS} (input:object{BFS} que:[object{QE}]))
-    ;(defun UDC_RmFromQue:object{BFS} (input:object{BFS}))
-    ;(defun UDC_AddChains:object{BFS} (input:object{BFS} chains-to-add:[[string]]))
+    (defun UC_BFS:object{BFS} (graph:[object{GraphNode}] in:string))
 )
 (module U|BFS GOV
     ;;

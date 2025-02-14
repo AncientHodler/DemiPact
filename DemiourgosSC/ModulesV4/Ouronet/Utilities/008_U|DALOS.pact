@@ -4,16 +4,14 @@
     (defun UC_FilterId:[string] (listoflists:[[string]] account:string))
     (defun UC_GasCost (base-cost:decimal major:integer minor:integer native:bool))
     (defun UC_GasDiscount (major:integer minor:integer native:bool))
-    (defun UC_IzCharacterANC:bool (c:string capital:bool))
-    (defun UC_IzStringANC:bool (s:string capital:bool))
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool))
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-lp:bool))
     (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal))
     (defun UC_NewRoleList (current-lst:[string] account:string direction:bool))
     ;;
     (defun UEV_Decimals:bool (decimals:integer))
     (defun UEV_Fee (fee:decimal))
     (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-lp:bool))
-    (defun UEV_TickerName:bool (ticker:string))
-    (defun UEV_TokenName:bool (name:string))
     ;;
     (defun UDC_Makeid:string (ticker:string))
     (defun UDC_MakeMVXNonce:string (nonce:integer))
@@ -78,27 +76,35 @@
             )
         )
     )
-    (defun UC_IzCharacterANC:bool (c:string capital:bool)
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool)
         @doc "Checks if a character is alphanumeric with or without Uppercase Only"
         (let*
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
+
                 (cl:[string] (ref-U|CT::CT_CAPITAL_LETTERS))
                 (n:[string] (ref-U|CT::CT_NUMBERS))
                 (ncl:[string] (ref-U|CT::CT_NON_CAPITAL_LETTERS))
-                (c1 (or (contains c cl)(contains c n)))
-                (c2 (or c1 (contains c ncl) ))
+                (s:[string] (ref-U|CT::CT_SPECIAL))
+
+                (c1:bool (or (contains c cl)(contains c n)))
+                (c2:bool (or c1 (contains c ncl) ))
+                (c3:bool (or c1 (contains c s)))
+                (c4:bool (or c3 (contains c ncl)))
             )
-            (if (= capital true) c1 c2)
+            (if iz-lp
+                (if capital c3 c4)
+                (if capital c1 c2)
+            )
         )
     )
-    (defun UC_IzStringANC:bool (s:string capital:bool)
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)
         @doc "Checks if a string is alphanumeric with or without Uppercase Only \
         \ Uppercase Only toggle is used by setting the capital boolean to true"
         (fold
             (lambda
                 (acc:bool c:string)
-                (and acc (UC_IzCharacterANC c capital))
+                (and acc (UC_IzCharacterANC c capital iz-lp))
             )
             true
             (str-to-list s)
@@ -204,54 +210,10 @@
             "Designation does not conform to the DALOS Name Standard for Size!"
             )
             (enforce
-                (UC_IzStringANC name-ticker (not name-or-ticker))
+                (UC_IzStringANC name-ticker (not name-or-ticker) iz-lp)
                 "Designation does not conform character-wise"
             )
         )
-    )
-    (defun UEV_TickerName:bool (ticker:string)
-        @doc "Enforces correct DALOS Ticker Name specifications"
-        (let
-            (
-                (tl (length ticker))
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
-                (max:integer (ref-U|CT::CT_MAX_TOKEN_TICKER_LENGTH))
-            )
-            (enforce
-                (and
-                    (>= tl min)
-                    (<= tl max)
-                )
-            "Token Ticker does not conform to the DALOS Ticker Standard for Size!"
-            )
-            (enforce
-                (UC_IzStringANC ticker true)
-                "Token Ticker is not Alphanumeric with Capitals Only!"
-            )
-        )
-    )
-    (defun UEV_TokenName:bool (name:string)
-        @doc "Enforces correct DALOS Token Name specifications"
-        (let
-            (
-                (nl (length name))
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
-                (max:integer (ref-U|CT::CT_MAX_TOKEN_NAME_LENGTH))
-            )
-            (enforce
-                (and
-                    (>= nl min)
-                    (<= nl max)
-                )
-            "Token Name does not conform to the DALOS Name Standard for Size!"
-            )
-            (enforce
-                (UC_IzStringANC name false)
-                "Token Name is not AlphaNumeric!"
-            )
-        )    
     )
     ;;{F-UDC}
     (defun UDC_Makeid:string (ticker:string)
