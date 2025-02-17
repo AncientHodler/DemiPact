@@ -96,7 +96,7 @@
     (defun C_Wipe (patron:string id:string atbw:string))
     ;;
     (defun XB_Credit (id:string account:string amount:decimal))
-    (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:[decimal]))
+    (defun XI_Debit (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
     (defun XE_Burn (id:string account:string amount:decimal))
@@ -942,6 +942,17 @@
             (enforce (= x state) (format "Frozen for {} on Account {} must be set to {} for exec" [id account state]))
         )
     )
+    (defun UEV_CheckAmount:bool (id:string amount:decimal)
+        (let
+            (
+                (decimals:integer (UR_Decimals id))
+                (decimal-check:bool (if (= (floor amount decimals) amount) true false))
+                (positivity-check:bool (if (> amount 0.0) true false))
+                (result:bool (and decimal-check positivity-check))
+            )
+            result
+        )
+    )
     (defun UEV_Amount (id:string amount:decimal)
         (let
             (
@@ -1409,7 +1420,7 @@
         )
     )
     ;;
-    (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:[decimal])
+    (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData})
         (enforce-one
             "Unallowed"
             [
@@ -1648,8 +1659,14 @@
     ;;
     (defun XI_BurnCore (id:string account:string amount:decimal)
         (require-capability (DPTF|C>BURN id account amount))
-        (XB_DebitStandard id account amount [-1.0 -1.0 0.0 0.0])
-        (XI_UpdateSupply id amount false)
+        (let
+            (
+                (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                (empty-dispo:object{UtilityDptf.DispoData} (ref-U|DPTF::EmptyDispo))
+            )
+            (XB_DebitStandard id account amount empty-dispo)
+            (XI_UpdateSupply id amount false)
+        )
     )
     (defun XI_ChangeOwnership (id:string new-owner:string)
         (require-capability (DPTF|S>RT_OWN id new-owner))
@@ -1669,7 +1686,7 @@
         )
     )
     ;;
-    (defun XI_Debit (id:string account:string amount:decimal dispo-data:[decimal])
+    (defun XI_Debit (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData})
         (require-capability (SECURE))
         (if (URC_IzCoreDPTF id)
             (let
@@ -1690,11 +1707,9 @@
                             )
                             (let
                                 (
-                                    (ea-amount:decimal (UR_AccountSupply ea-id account))
-                                    (o-prec:integer (UR_Decimals ouro-id))
-                                    (max-dispo-ouro:decimal (ref-U|DPTF::UC_OuroLoanLimit ea-amount dispo-data o-prec))
+                                    (max-dispo-ouro (ref-U|DPTF::UC_OuroDispo dispo-data))
                                 )
-                                (enforce (>= (- read-balance amount) (- 0.0 max-dispo-ouro)) "")
+                                (enforce (>= (- read-balance amount) (- 0.0 max-dispo-ouro)) "Ouro Transfer Amount outr of Dispo Bounds")
                                 (ref-DALOS::XB_UpdateBalance account snake-or-gas (- read-balance amount))
                             )
                         )
@@ -1716,8 +1731,14 @@
     )
     (defun XI_DebitAdmin (id:string account:string amount:decimal)
         (require-capability (SECURE))
-        (CAP_Owner id)
-        (XI_Debit id account amount [-1.0 -1.0 0.0 0.0])
+        (let
+            (
+                (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                (empty-dispo:object{UtilityDptf.DispoData} (ref-U|DPTF::EmptyDispo))
+            )
+            (CAP_Owner id)
+            (XI_Debit id account amount empty-dispo)
+        )
     )
     (defun XI_IncrementFeeUnlocks (id:string)
         (require-capability (SECURE))

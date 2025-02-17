@@ -1,0 +1,10 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+(print "")
+(load "Test_000_Barebone.repl")
+(print "************************Demiourgos Ecosystem LOADED**********************************************")
+
+(print "")
+(load "Test_001_DPTF.repl")
+(print "************************DPTF Tests LOADED**********************************************")

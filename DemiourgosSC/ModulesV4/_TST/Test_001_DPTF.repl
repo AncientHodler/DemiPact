@@ -1,0 +1,1066 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 002 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+
+(begin-tx "REPL_Test_001 - TX03 - Accounts Display")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+    )
+    [
+        (format "ANHD Kadena is {}" [(ref-DALOS::UR_AccountKadena KST.ANHD)])
+        (format "CTO is {}" [(ref-DALOS::UR_AccountKadena (at 0 (ref-DALOS::UR_DemiurgoiID)))])
+        (format "HOV is {}" [(ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID)))])
+        (format "OUROBOROS is {}" [(ref-DALOS::UR_AccountKadena ouroboros)])
+        (format "DALOS is {}" [(ref-DALOS::UR_AccountKadena dalos)])
+        (format "LIQUID is {}" [(ref-DALOS::UR_AccountKadena liquid)])
+    ]
+)
+
+(env-gas)
+(commit-tx)
+
+;; 1] Issue Tests
+;; 1.1] Issue 34 new DPTFs
+(begin-tx "DPTF Tx 001 Issue 7 DPTFs Part 1|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(let
+    (
+        (patron:string KST.ANHD)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* (ref-DALOS::UR_UsagePrice "dptf") 7.0)
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (ref-T01:module{TalosStageOne} TS01)
+            (issued-ids:[string]
+                (ref-T01::DPTF|C_Issue
+                    patron
+                    patron
+                    ["BinanceUSD" "TrueUSD" "TetherUSD" "CircleUSD" "DemiourgosUSD" "AustralianUSD" "CanadianUSD"]
+                    ["BUSD" "TUSD" "USDT" "USDC" "USDD" "AUSD" "CUSD"]
+                    (make-list 7 24)                            ;;precision
+                    (make-list 7 true)                          ;;can change owner
+                    (make-list 7 true)                          ;;can upgrade
+                    (make-list 7 true)                          ;;can can-add-special-role
+                    (make-list 7 false)                         ;;can-freeze
+                    (make-list 7 false)                         ;;can-wipe
+                    (make-list 7 true)                          ;;can-pause
+                )
+            )
+        )
+        [
+            issued-ids
+            (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        ]
+        
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 002 Issue 7 DPTFs Part 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(let
+    (
+        (patron:string KST.ANHD)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* (ref-DALOS::UR_UsagePrice "dptf") 7.0)
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (ref-T01:module{TalosStageOne} TS01)
+            (issued-ids:[string]
+                (ref-T01::DPTF|C_Issue
+                    patron
+                    patron
+                    ["BinanceEUR" "TrueEUR" "TetherEUR" "CircleEUR" "DemiourgosEUR" "AustralianEUR" "CanadianEUR"]
+                    ["BEUR" "TEUR" "EURT" "EURC" "EURD" "AEUR" "CEUR"]
+                    (make-list 7 24)                            ;;precision
+                    (make-list 7 true)                          ;;can change owner
+                    (make-list 7 true)                          ;;can upgrade
+                    (make-list 7 true)                          ;;can can-add-special-role
+                    (make-list 7 false)                         ;;can-freeze
+                    (make-list 7 false)                         ;;can-wipe
+                    (make-list 7 true)                          ;;can-pause
+                )
+            )
+        )
+        [
+            issued-ids
+            (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 003 Issue 20 DPTFs Part 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(let
+    (
+        (patron:string KST.ANHD)
+        (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* (ref-DALOS::UR_UsagePrice "dptf") 20.0)
+            )
+        )
+        (cost-from-thausand:decimal 
+            (ref-U|DALOS::UC_GasCost 
+                1000.0
+                (ref-DALOS::UR_Elite-Tier-Major patron)
+                (ref-DALOS::UR_Elite-Tier-Minor patron)
+                false
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (ref-T01:module{TalosStageOne} TS01)
+            (issued-ids:[string]
+                (ref-T01::DPTF|C_Issue
+                    patron
+                    patron
+                    ["Lithium", "Magnesium", "Aluminium", "Titanium", "Germanium", "Gallium", "Indium", "Tellurium", "Bismuth", "Cobalt", "Copper", "Ruthenium", "Palladium", "Silver", "Osmium", "Iridium", "Platinum", "Gold", "Mercury", "Rhenium"]  
+                    ["LI", "MG", "AL", "TI", "GE", "GA", "IN", "TE", "BI", "CO", "CU", "RU", "PD", "AG", "OS", "IR", "PT", "AU", "HG", "RE"]
+                    (make-list 20 24)                           ;;precision
+                    (make-list 20 true)                         ;;can change owner
+                    (make-list 20 true)                         ;;can upgrade
+                    (make-list 20 true)                         ;;can can-add-special-role
+                    (make-list 20 false)                        ;;can-freeze
+                    (make-list 20 false)                        ;;can-wipe
+                    (make-list 20 true)                         ;;can-pause
+                )
+            )
+        )
+        [
+            issued-ids
+            (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+            cost-from-thausand
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 003 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 004 Mint 10 mil of each token")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_Mint patron "BUSD-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "TUSD-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "USDT-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "USDC-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "USDD-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "AUSD-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "CUSD-98c486052a51" patron 10000000.0 true)
+
+    (ref-T01::DPTF|C_Mint patron "BEUR-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "TEUR-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "EURT-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "EURC-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "EURD-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "AEUR-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "CEUR-98c486052a51" patron 10000000.0 true)
+
+    (ref-T01::DPTF|C_Mint patron "LI-98c486052a51" patron 10000000.0 true)
+    (ref-T01::DPTF|C_Mint patron "MG-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "AL-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "TI-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "GE-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "GA-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "IN-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "TE-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "BI-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "CO-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "CU-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "RU-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "PD-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "AG-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "OS-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "IR-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "PT-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "AU-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "HG-98c486052a51" patron 10000000.0 true)  
+    (ref-T01::DPTF|C_Mint patron "RE-98c486052a51" patron 10000000.0 true)  
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 004 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+
+
+
+;; 2] Management Tests
+;; 3] Transfer Tests
+;; 4] Multi and Bulk Transfer Tests
+(begin-tx "DPTF Tx 005 MultiTransfer Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_MultiTransfer
+        patron
+        ["BUSD-98c486052a51" "TUSD-98c486052a51" "USDT-98c486052a51" "USDC-98c486052a51" "USDD-98c486052a51" "AUSD-98c486052a51" "CUSD-98c486052a51"]
+        patron
+        receiver
+        (make-list 7 10.0)
+        false
+    )
+    [
+        (format "Emma has {} BUSD" [(ref-DPTF::UR_AccountSupply "BUSD-98c486052a51" receiver)])
+        (format "Emma has {} TUSD" [(ref-DPTF::UR_AccountSupply "TUSD-98c486052a51" receiver)])
+        (format "Emma has {} USDC" [(ref-DPTF::UR_AccountSupply "USDT-98c486052a51" receiver)])
+        (format "Emma has {} USDD" [(ref-DPTF::UR_AccountSupply "USDD-98c486052a51" receiver)])
+        (format "Emma has {} AUSD" [(ref-DPTF::UR_AccountSupply "AUSD-98c486052a51" receiver)])
+        (format "Emma has {} CUSD" [(ref-DPTF::UR_AccountSupply "CUSD-98c486052a51" receiver)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 005 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 006 MultiTransfer Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_MultiTransfer
+        patron
+        ["LI-98c486052a51" "MG-98c486052a51" "AL-98c486052a51" "TI-98c486052a51" "GE-98c486052a51" "GA-98c486052a51" "IN-98c486052a51" "TE-98c486052a51" "BI-98c486052a51" "CO-98c486052a51"]
+        ;[ "CU-98c486052a51" "RU-98c486052a51" "PD-98c486052a51" "AG-98c486052a51" "OS-98c486052a51" "IR-98c486052a51" "PT-98c486052a51" "AU-98c486052a51" "HG-98c486052a51" "RE-98c486052a51"]
+        patron
+        receiver
+        (make-list 10 10.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 006 MultiTransfer x10 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 006 BulkTransfer Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver-lst:[string]
+            [KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN]
+        )
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_BulkTransfer
+        patron
+        "LI-98c486052a51"
+        patron
+        receiver-lst
+        (make-list 10 15.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 006a BulkTrasnfer x9 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+
+;;Setup Fees system and Autostake Pools for first 10 Tokens. and repeat MultiTransfer
+(begin-tx "Init STEP 007")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(use DALOS) 
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (patron:string KST.ANHD)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* (ref-DALOS::UR_UsagePrice "ats") 5.0)
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (format "KDA Split is {}" [split-kda])
+    (let
+        (
+            (ref-T01:module{TalosStageOne} TS01)
+            (ats-ids:[string]
+                (ref-T01::ATS|C_Issue
+                    patron
+                    patron
+                    ["Galithium" "Magnindium" "Telluminum" "Bisthanium" "CobaltGermanide"]
+                    (make-list 5 24)
+                    ["GA-98c486052a51" "MG-98c486052a51" "TE-98c486052a51" "BI-98c486052a51" "CO-98c486052a51"]
+                    (make-list 5 true)
+                    ["LI-98c486052a51" "IN-98c486052a51" "AL-98c486052a51" "TI-98c486052a51" "GE-98c486052a51"]
+                    (make-list 5 true)
+                )  
+            )
+        )
+        [
+            ats-ids
+            (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        ]
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 007 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+
+;;Set transfer fees for first ten metals
+(begin-tx "DPTF Tx 008 Setup DPTFs")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+        (m1:string "LI-98c486052a51")
+        (m2:string "MG-98c486052a51")
+        (m3:string "AL-98c486052a51")
+        (m4:string "TI-98c486052a51")
+        (m5:string "GE-98c486052a51")
+        (m6:string "GA-98c486052a51")
+        (m7:string "IN-98c486052a51")
+        (m8:string "TE-98c486052a51")
+        (m9:string "BI-98c486052a51")
+        (m10:string "CO-98c486052a51")
+        (m11:string "OS-98c486052a51")
+        (m12:string "IR-98c486052a51")
+
+    )
+    (ref-T01::DPTF|C_SetFee patron m1 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m1 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m1 true)
+
+    (ref-T01::DPTF|C_SetFee patron m2 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m2 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m2 true)
+
+    (ref-T01::DPTF|C_SetFee patron m3 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m3 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m3 true)
+
+    (ref-T01::DPTF|C_SetFee patron m4 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m4 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m4 true)
+
+    (ref-T01::DPTF|C_SetFee patron m5 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m5 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m5 true)
+
+    (ref-T01::DPTF|C_SetFee patron m6 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m6 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m6 true)
+
+    (ref-T01::DPTF|C_SetFee patron m7 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m7 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m7 true)
+
+    (ref-T01::DPTF|C_SetFee patron m8 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m8 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m8 true)
+
+    (ref-T01::DPTF|C_SetFee patron m9 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m9 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m9 true)
+
+    (ref-T01::DPTF|C_SetFee patron m10 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m10 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m10 true)
+
+    (ref-T01::DPTF|C_SetFee patron m11 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m11 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m11 true)
+
+    (ref-T01::DPTF|C_SetFee patron m12 10.0)
+    (ref-T01::DPTF|C_ToggleFee patron m12 true)
+    (ref-T01::DPTF|C_ToggleFeeLock patron m12 true)
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 008 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 009 MultiTransfer Tests again when DPTFs has Fees and is part of ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_MultiTransfer
+        patron
+        ["LI-98c486052a51" "MG-98c486052a51" "AL-98c486052a51" "TI-98c486052a51" "GE-98c486052a51" "GA-98c486052a51" "IN-98c486052a51" "TE-98c486052a51" "BI-98c486052a51" "CO-98c486052a51"]
+        patron
+        receiver
+        (make-list 10 15.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 009 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+;;
+;;
+(begin-tx "DPTF Tx 009a BulkTransfer Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver-lst:[string]
+            [
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY
+            ]
+        )
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_BulkTransfer
+        patron
+        "BUSD-98c486052a51"
+        patron
+        receiver-lst
+        (make-list 14 25.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 009a BulkTrasnfer x12 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 0|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver-lst:[string]
+            [
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+            ]
+        )
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-TFT::C_BulkTransfer160
+        patron
+        "LI-98c486052a51"
+        patron
+        receiver-lst
+        (make-list 160 25.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        (pact-state)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|0 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 1|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 1 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|1 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 2|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 2 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|2 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 3|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 3 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|3 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 4|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 4 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|4 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 5|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 5 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|5 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 6|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 6 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|6 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 7|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 7 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|7 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 8|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 8 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|8 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 9|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 9 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|9 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 10|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 10 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|10 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 11|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 11 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|11 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 010 Defpact BulkTransfer Tests - STEP 12|12")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 12 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0010|12 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

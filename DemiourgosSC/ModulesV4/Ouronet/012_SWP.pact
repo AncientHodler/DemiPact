@@ -80,7 +80,7 @@
     (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
     (defun C_RotateGovernor (patron:string swpair:string new-gov:guard))
-    (defun C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool))
+    (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool))
     (defun C_ToggleFeeLock:bool (patron:string swpair:string toggle:bool))
     (defun C_ToggleSpecialMode (patron:string swpair:string))
     (defun C_UpdateAmplifier (patron:string swpair:string amp:decimal))
@@ -273,8 +273,10 @@
     (deftable SWP|Pools:{SWP|PoolsSchema})
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyIgnisCumulator ()(let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::DALOS|EmptyIgCum)))
     (defun SWP|Info ()              (at 0 ["SwapperInformation"]))
     (defconst BAR                   (CT_Bar))
+    (defconst EIC                   (CT_EmptyIgnisCumulator))
     (defconst SWP|INFO              (SWP|Info))
     (defconst P2 "P2")
     (defconst P3 "P3")
@@ -1095,7 +1097,9 @@
                     (pool-token-ids:[string] (UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (UC_ExtractTokenSupplies pool-tokens))
                     (lp-name-ticker:[string] (URC_LpComposer pool-tokens weights amp))
-                    (ico:object{OuronetDalos.IgnisCumulator} (ref-DPTF::XE_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker)))
+                    (ico:object{OuronetDalos.IgnisCumulator} 
+                        (ref-DPTF::XE_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker))
+                    )
                     (token-lp:string (at 0 (at "output" ico)))
                     (swpair:string (XI_Issue account pool-tokens token-lp fee-lp weights amp p))
                 )
@@ -1159,53 +1163,76 @@
             )
         )
     )
-    (defun C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool)
+    (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool)
         (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ATS:module{Autostake} ATS)
-            )
-            (with-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)
-                (XI_CanAddOrSwapToggle swpair toggle add-or-swap)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
-                (if toggle
-                    (let
-                        (
-                            (pt-ids:[string] (UR_PoolTokens swpair))
-                            (amp:decimal (UR_Amplifier swpair))
-                            (ptts:[string]
-                                (if (= amp -1.0)
-                                    (drop 1 pt-ids)
-                                    pt-ids
+        (with-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-ATS:module{Autostake} ATS)
+                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                    (price:decimal (* 5.0 biggest))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (ico0:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                    (ico1:object{OuronetDalos.IgnisCumulator}
+                        (if toggle
+                            (let
+                                (
+                                    (pt-ids:[string] (UR_PoolTokens swpair))
+                                    (amp:decimal (UR_Amplifier swpair))
+                                    (ptts:[string]
+                                        (if (= amp -1.0)
+                                            (drop 1 pt-ids)
+                                            pt-ids
+                                        )
+                                    )
+                                    (lp-id:string (UR_TokenLP swpair))
+                                    (lp-burn-role:bool (ref-DPTF::UR_AccountRoleBurn lp-id SWP|SC_NAME))
+                                    (lp-mint-role:bool (ref-DPTF::UR_AccountRoleMint lp-id SWP|SC_NAME))
+                                    (ico2:[object{OuronetDalos.IgnisCumulator}]
+                                        (if (not lp-burn-role)
+                                            (ref-ATS::DPTF|C_ToggleBurnRole patron lp-id SWP|SC_NAME true)
+                                            [EIC]
+                                        )
+                                    )
+                                    (ico3:[object{OuronetDalos.IgnisCumulator}]
+                                        (if (not lp-mint-role)
+                                            (ref-ATS::DPTF|C_ToggleMintRole patron lp-id SWP|SC_NAME true)
+                                            [EIC]
+                                        )
+                                    )
+                                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                                        (fold
+                                            (lambda
+                                                (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                                                (ref-U|LST::UC_AppL 
+                                                    acc 
+                                                    (ref-DALOS::UDC_CompressICO
+                                                        (if (not (ref-DPTF::UR_AccountRoleFeeExemption (at idx ptts) SWP|SC_NAME))
+                                                            (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron (at idx ptts) SWP|SC_NAME true)
+                                                            [EIC]
+                                                            )
+                                                        []
+                                                    )
+                                                )
+                                            )
+                                            []
+                                            (enumerate 0 (- (length ptts) 1))
+                                        )
+                                    )
                                 )
+                                (ref-DALOS::UDC_CompressICO (fold (+) [] [ico2 ico3 ico4]) [])
                             )
-                            (lp-id:string (UR_TokenLP swpair))
-                            (lp-burn-role:bool (ref-DPTF::UR_AccountRoleBurn lp-id SWP|SC_NAME))
-                            (lp-mint-role:bool (ref-DPTF::UR_AccountRoleMint lp-id SWP|SC_NAME))
-                        )
-                        (if (not lp-burn-role)
-                            (ref-ATS::DPTF|C_ToggleBurnRole patron lp-id SWP|SC_NAME true)
-                            true
-                        )
-                        (if (not lp-mint-role)
-                            (ref-ATS::DPTF|C_ToggleMintRole patron lp-id SWP|SC_NAME true)
-                            true
-                        )
-                        (map
-                            (lambda
-                                (idx:integer)
-                                (if (not (ref-DPTF::UR_AccountRoleFeeExemption (at idx ptts) SWP|SC_NAME))
-                                    (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron (at idx ptts) SWP|SC_NAME true)
-                                    true
-                                )
-                            )
-                            (enumerate 0 (- (length ptts) 1))
+                            EIC
                         )
                     )
-                    true
                 )
+                (XI_CanAddOrSwapToggle swpair toggle add-or-swap)
+                (ref-DALOS::UDC_CompressICO [ico0 ico1] [])
             )
         )
     )

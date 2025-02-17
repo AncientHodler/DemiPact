@@ -23,11 +23,11 @@
     (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
     (defun SWPSC|URC_BestEdge:string (ia:decimal i:string o:string))
     ;;
-    (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
-    (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
-    (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
+    (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal))
+    (defun SWPL|C_AddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWPL|C_RemoveLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string lp-amount:decimal))
     ;;
-    (defun SWPS|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun SWPS|C_MultiSwap:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
 )
 (module SWPU GOV
     ;;
@@ -151,7 +151,9 @@
         ]
     )
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyIgnisCumulator ()(let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::DALOS|EmptyIgCum)))
     (defconst BAR                   (CT_Bar))
+    (defconst EIC                   (CT_EmptyIgnisCumulator))
     ;;
     ;;{C1}
     (defcap SECURE ()
@@ -747,15 +749,16 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun SWPL|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal)
+    (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal)
         (enforce-guard (P|UR "TALOS-01"))
         (SWPL|C_AddLiquidity patron account swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))          
     )
-    (defun SWPL|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])
+    (defun SWPL|C_AddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-amounts:[decimal])
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (SWPL|C>ADD_LQ swpair input-amounts)
             (let
                 (
+                    (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
@@ -769,45 +772,56 @@
                             0.0
                         )
                     )
-                    (final-ignis-cost:decimal (+ ignis-cost additional-ignis-cost))
+                    (price:decimal (+ ignis-cost additional-ignis-cost))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (gw:[decimal] (ref-SWP::UR_GenesisWeigths swpair))
+                    (pool-token-ids:[string] (ref-SWP::UR_PoolTokens swpair))
+                    (lp-id:string (ref-SWP::UR_TokenLP swpair))
+                    (lp-amount:decimal (SWPLC|URC_LpAmount swpair input-amounts))
+                    (pt-current-amounts:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
+                    (pt-new-amounts:[decimal] (zip (+) pt-current-amounts input-amounts))
+
+                    (ico0:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                    (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (fold
+                            (lambda
+                                (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                                (ref-U|LST::UC_AppL 
+                                    acc
+                                    (if (> (at idx input-amounts) 0.0)
+                                        (ref-TFT::XB_FeelesTransfer patron (at idx pool-token-ids) account swp-sc (at idx input-amounts) true)
+                                        EIC
+                                    )
+                                )
+                            )
+                            []
+                            (enumerate 0 (- (length input-amounts) 1))
+                        )
+                    )
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_Mint patron lp-id swp-sc lp-amount false)
+                    )
+                    (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ref-TFT::XB_FeelesTransfer patron lp-id swp-sc account lp-amount true)
+                    )
                 )
-                (DALOS.IGNIS|C_Collect patron patron final-ignis-cost)
                 (if (= read-lp-supply 0.0)
                     (ref-SWP::XB_ModifyWeights swpair gw)
                     true
                 )
-                (let
-                    (
-                        (pool-token-ids:[string] (ref-SWP::UR_PoolTokens swpair))
-                        (lp-id:string (ref-SWP::UR_TokenLP swpair))
-                        (lp-amount:decimal (SWPLC|URC_LpAmount swpair input-amounts))
-                        (pt-current-amounts:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
-                        (pt-new-amounts:[decimal] (zip (+) pt-current-amounts input-amounts))
-                    )
-                    (map
-                        (lambda 
-                            (idx:integer)
-                            (if (> (at idx input-amounts) 0.0)
-                                (ref-TFT::XB_FeelesTransfer patron (at idx pool-token-ids) account swp-sc (at idx input-amounts) true)
-                                true
-                            )
-                        )
-                        (enumerate 0 (- (length input-amounts) 1))
-                    )
-                    (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
-                    (ref-DPTF::C_Mint patron lp-id swp-sc lp-amount false)
-                    (ref-TFT::XB_FeelesTransfer patron lp-id swp-sc account lp-amount true)
-                    lp-amount
-                )
+                (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] [ico3]]) [lp-amount])
             )
         )
     )
-    (defun SWPL|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal)
+    (defun SWPL|C_RemoveLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string lp-amount:decimal)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (SWPL|C>RM_LQ swpair lp-amount)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (ref-SWP:module{Swapper} SWP)
@@ -817,16 +831,28 @@
                     (pt-output-amounts:[decimal] (SWPLC|URC_LpBreakAmounts swpair lp-amount))
                     (pt-current-amounts:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                     (pt-new-amounts:[decimal] (zip (-) pt-current-amounts pt-output-amounts))
+                    (token-issue:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                    (price:decimal (* 2.0 token-issue))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (ico0:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                    (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ref-TFT::XB_FeelesTransfer patron lp-id account swp-sc lp-amount true)
+                    )
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_Burn patron lp-id swp-sc lp-amount)
+                    )
+                    (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids swp-sc account pt-output-amounts true)
+                    )
                 )
-                (ref-TFT::XB_FeelesTransfer patron lp-id account swp-sc lp-amount true)
-                (ref-DPTF::C_Burn patron lp-id swp-sc lp-amount)
-                (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids swp-sc account pt-output-amounts true)
                 (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
-                pt-output-amounts
+                (ref-DALOS::UDC_CompressICO [ico0 ico1 ico2 ico3] pt-output-amounts)
             )
         )
     )
-    (defun SWPS|C_MultiSwap
+    (defun SWPS|C_MultiSwap:object{OuronetDalos.IgnisCumulator}
         (
             patron:string
             account:string
@@ -842,6 +868,7 @@
                     ;;refs
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                    (ref-U|SWP:module{UtilitySwp} U|SWP)
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
@@ -926,33 +953,53 @@
                 )
                 ;;1] Updates Pool Token Supplies
                 (ref-SWP::XE_UpdateSupplies swpair updated-supplies)
-                ;;2] Moves all Input IDs to SWP|SC_NAME via MultiTransfer
-                (ref-TFT::XE_FeelesMultiTransfer patron input-ids account swp-sc input-amounts true)
+                ;;2] Moves all Input IDs to SWP|SC_NAME via MultiTransfer (ico1)
+                (let
+                    (
+                        (ico1:object{OuronetDalos.IgnisCumulator}
+                            (ref-TFT::XE_FeelesMultiTransfer patron input-ids account swp-sc input-amounts true)
+                        )
+                        (ico2:object{OuronetDalos.IgnisCumulator}
+                            (if (= special-fee 0.0)
+                                (ref-TFT::XB_FeelesTransfer patron output-id swp-sc account remainder-output true)
+                                (ref-TFT::XE_FeelesBulkTransfer 
+                                    patron 
+                                    output-id 
+                                    swp-sc 
+                                    (+ 
+                                        (ref-SWP::UR_SpecialFeeTargets swpair) 
+                                        [account]
+                                    )
+                                    (+
+                                        (ref-U|SWP::UC_SpecialFeeOutputs 
+                                            (ref-SWP::UR_SpecialFeeTargetsProportions swpair) 
+                                            special-output 
+                                            op
+                                        ) 
+                                        [remainder-output]
+                                    )
+                                    true
+                                )
+                            )
+                        )
+                        (ico3:object{OuronetDalos.IgnisCumulator}
+                            (if (!= boost-fee 0.0)
+                                (XI_PumpLiquidIndex patron output-id boost-output)
+                                EIC
+                            )
+                        )
+                    )
+                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3] [remainder-output])
+                )
                 ;;3] Moves Outputs to their designated places
                 ;;3.1]  If special fee is zero, move only remainder to client.
-                ;;3.2]  If special fee is non zero, additionaly move special fee to special fee targets via BulkTransfer
-                (if (= special-fee 0.0)
-                    (ref-TFT::XB_FeelesTransfer patron output-id swp-sc account remainder-output true)
-                    (let
-                        (
-                            (ref-U|SWP:module{UtilitySwp} U|SWP)
-                            (sft:[string] (ref-SWP::UR_SpecialFeeTargets swpair))
-                            (sftp:[decimal] (ref-SWP::UR_SpecialFeeTargetsProportions swpair))
-                            (sf-outputs:[decimal] (ref-U|SWP::UC_SpecialFeeOutputs sftp special-output op))
-                        )
-                        (ref-TFT::XE_FeelesBulkTransfer patron output-id swp-sc (+ sft [account]) (+ sf-outputs [remainder-output]) true)
-                    )
-                )
-                ;;3.3]  If non zero, use boost output to boost Kadena Liquid Index
-                (if (!= boost-fee 0.0)
-                    (XI_PumpLiquidIndex patron output-id boost-output)
-                    true
-                )
+                ;;3.2]  If special fee is non zero, additionaly move special fee to special fee targets via BulkTransfer (ico2)
+                ;;3.3]  If non zero, use boost output to boost Kadena Liquid Index (ico3)
             )
         )
     )
     ;;{F7}
-    (defun XI_PumpLiquidIndex (patron:string id:string amount:decimal)
+    (defun XI_PumpLiquidIndex:object{OuronetDalos.IgnisCumulator} (patron:string id:string amount:decimal)
         (require-capability (SWPS|C>PUMP_LQ-IDX))
         (let
             (
@@ -975,8 +1022,10 @@
                         (edges:[string] (at "edges" h-obj))
                         (ovs:[decimal] (at "output-values" h-obj))
                         (final-boost-output:decimal (at 0 (take -1 ovs)))
+                        (ico:object{OuronetDalos.IgnisCumulator}
+                            (ref-DPTF::C_Burn patron dlk swp-sc final-boost-output)
+                        )
                     )
-                    (ref-DPTF::C_Burn patron dlk swp-sc final-boost-output)
                     (map
                         (lambda 
                             (idx:integer)
@@ -1001,6 +1050,7 @@
                         )
                         (enumerate 0 (- (length edges) 1))
                     )
+                    ico
                 )
             )
         )

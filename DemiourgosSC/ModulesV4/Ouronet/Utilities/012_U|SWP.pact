@@ -20,7 +20,7 @@
     (defun UC_IzOnPools:[bool] (id:string swpairs:[string]))
     (defun UC_MakeGraphNodes:[string] (input-id:string output-id:string swpairs:[string]))
     (defun UC_PoolTokensFromPairs:[[string]] (swpairs:[string]))
-    (defun UC_SpecialFeeOutputs (sftp:[decimal] input-amount:decimal output-precision:integer))
+    (defun UC_SpecialFeeOutputs:[decimal] (sftp:[decimal] input-amount:decimal output-precision:integer))
     (defun UC_TokensFromSwpairString:[string] (swpair:string))
     (defun UC_UniqueTokens:[string] (swpairs:[string]))
 )
@@ -437,29 +437,32 @@
             )
         )
     )
-    (defun UC_SpecialFeeOutputs (sftp:[decimal] input-amount:decimal output-precision:integer)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (sftp-sum:decimal (fold (+) 0.0 sftp))
-                (sftp-wl:[decimal] (drop -1 sftp))
-                (ipl:[decimal]
-                    (fold
-                        (lambda
-                            (acc:[decimal] idx:integer)
-                            (ref-U|LST::UC_AppL
-                                acc
-                                (floor (* (/ (at idx sftp-wl) sftp-sum) input-amount) output-precision)
+    (defun UC_SpecialFeeOutputs:[decimal] (sftp:[decimal] input-amount:decimal output-precision:integer)
+        (if (= (length sftp) 1)
+            [input-amount]
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (sftp-sum:decimal (fold (+) 0.0 sftp))
+                    (sftp-wl:[decimal] (drop -1 sftp))
+                    (ipl:[decimal]
+                        (fold
+                            (lambda
+                                (acc:[decimal] idx:integer)
+                                (ref-U|LST::UC_AppL
+                                    acc
+                                    (floor (* (/ (at idx sftp-wl) sftp-sum) input-amount) output-precision)
+                                )
                             )
+                            []
+                            (enumerate 0 (- (length sftp-wl) 1))
                         )
-                        []
-                        (enumerate 0 (- (length sftp-wl) 1))
                     )
+                    (ipl-sum:decimal (fold (+) 0.0 ipl))
+                    (last:decimal (- input-amount ipl-sum))
                 )
-                (ipl-sum:decimal (fold (+) 0.0 ipl))
-                (last:decimal (- input-amount ipl-sum))
+                (ref-U|LST::UC_AppL ipl last)
             )
-            (ref-U|LST::UC_AppL ipl last)
         )
     )
     (defun UC_TokensFromSwpairString:[string] (swpair:string)

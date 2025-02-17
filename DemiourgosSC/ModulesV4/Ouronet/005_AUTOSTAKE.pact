@@ -3,8 +3,7 @@
     @doc "Exposes half of the Autostake Functions, the other Functions existing in the ATSU Module \
     \ Also contains a few DPTF and DPMF Functions \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically \
-    \ CX are Client Function with no direct Ouronet Gas-Station Support"
+    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically"
     ;;
     (defschema ATS|RewardTokenSchema
         token:string
@@ -1375,7 +1374,6 @@
                     (gas-costs:decimal (* (dec l1) (ref-DALOS::UR_UsagePrice "ignis|ats-issue")))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (kda-costs:decimal (* (dec l1) ats-cost))
-
                     (ats-ids:[string] 
                         (X_FoldedIssue account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )

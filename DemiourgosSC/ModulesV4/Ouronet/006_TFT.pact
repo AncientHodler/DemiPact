@@ -11,7 +11,7 @@
     (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
     ;;
-    (defun UDC_GetDispoData:[decimal] (account:string))
+    (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
     ;;
     (defun C_ClearDispo:object{OuronetDalos.IgnisCumulator} (patron:string account:string))
     (defun C_Transmute:object{OuronetDalos.IgnisCumulator} (patron:string id:string transmuter:string transmute-amount:decimal))
@@ -27,6 +27,8 @@
     (defun C_BulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     (defun C_ExemptionBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     (defun XE_FeelesBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    ;;
+    (defpact C_BulkTransfer160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
 )
 (module TFT GOV
     ;;
@@ -151,6 +153,7 @@
             (compose-capability (SECURE))
         )
     )
+    ;;Transmute
     (defcap DPTF|C>TRANSMUTE (id:string transmuter:string)
         @event
         (compose-capability (DPTF|C>X_TRANSMUTE id transmuter))
@@ -168,6 +171,7 @@
             (compose-capability (P|SECURE-CALLER))
         )
     )
+    ;;Transfer
     (defcap DPTF|C>TRANSFER (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @event
         (let
@@ -216,128 +220,47 @@
             (compose-capability (DPTF|C>X_TRANSMUTE id sender))
         )
     )
-    (defcap DPTF|C>MULTI_TRANSFER (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+    ;;Bulk-Transfer
+    (defcap DPTF|PACT|C>BULK-TRANSFER (id:string sender:string)
         @event
+        (compose-capability (DPTF|C>X_TRANSMUTE id sender))    
+    )
+    (defcap DPTF|C>BULK-TRANSFER (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        @event
+        (UEV_BulkTransfer id sender receiver-lst transfer-amount-lst method)
+        (compose-capability (DPTF|C>X_TRANSMUTE id sender))    
+    )
+    ;;Multi-Transfer
+    (defcap DPTF|PACT|C>MULTI-TRANSFER (id-lst:[string] sender:string)
+        @event
+        (compose-capability (DPTF|C>X_MULTI-TRANSFER id-lst sender))
+    )
+    (defcap DPTF|C>MULTI-TRANSFER (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        @event
+        (UEV_MultiTransfer id-lst sender receiver transfer-amount-lst method)
+        (compose-capability (DPTF|C>X_MULTI-TRANSFER id-lst sender))
+    )
+    (defcap DPTF|C>X_MULTI-TRANSFER (id-lst:[string] sender:string)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
-                (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
-                (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
-                (l1:integer (length id-lst))
-                (l2:integer (length transfer-amount-lst))
             )
-            (enforce (= l1 l2) "Invalid Lists Length for MultiTransfer")
-            (ref-DALOS::CAP_EnforceAccountOwnership sender)
-            (if (and method (ref-DALOS::UR_AccountType receiver))
-                (ref-DALOS::CAP_EnforceAccountOwnership receiver)
-                true
-            )
-            (ref-DALOS::UEV_EnforceTransferability sender receiver method)
             (map
                 (lambda
                     (idx:integer)
-                    (let
-                        (
-                            (id:string (at idx id-lst))
-                            (transfer-amount:decimal (at idx transfer-amount-lst))
-                            (tra:integer (ref-DPTF::UR_TransferRoleAmount id))
-                            (s:bool (ref-DPTF::UR_AccountRoleTransfer id sender))
-                            (r:bool (ref-DPTF::UR_AccountRoleTransfer id receiver))
-                        )
-                        (ref-DPTF::UEV_Amount id transfer-amount)
-                        (ref-DPTF::UEV_PauseState id false)
-                        (ref-DPTF::UEV_AccountFreezeState id sender false)
-                        (ref-DPTF::UEV_AccountFreezeState id receiver false)
-                        (if (not (ref-DPTF::URC_TrFeeMinExc id sender receiver))
-                            (ref-DPTF::UEV_EnforceMinimumAmount id transfer-amount)
-                            true
-                        )
-                        (if
-                            (and
-                                (> tra 0) 
-                                (not (or (= sender ouroboros)(= sender dalos)))
-                            )
-                            (enforce-one
-                                (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
-                                [
-                                    (enforce s (format "TR doesnt check for sender {}" [sender]))
-                                    (enforce r (format "TR doesnt check for receiver {}" [receiver]))
-                                ]
-                            )
-                            (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
-                        )
-                        (if (!= id ea-id)
-                            (compose-capability (DPTF|S>EA-DISPO-LOCKER sender))
-                            true
-                        )
+                    (if (!= (at idx id-lst) ea-id)
+                        (compose-capability (DPTF|S>EA-DISPO-LOCKER sender))
+                        true
                     )
                 )
-                (enumerate 0 (- l1 1))
+                (enumerate 0 (- (length id-lst) 1))
             )
             (compose-capability (P|SECURE-CALLER))
         )
     )
-    (defcap DPTF|C>BULK-TRANSFER (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @event
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
-                (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
-                (l1:integer (length receiver-lst))
-                (l2:integer (length transfer-amount-lst))
-                (tra:integer (ref-DPTF::UR_TransferRoleAmount id))
-                (s:bool (ref-DPTF::UR_AccountRoleTransfer id sender))
-            )
-            (enforce (= l1 l2) "Invalid Lists Length for MultiTransfer")
-            (ref-DALOS::CAP_EnforceAccountOwnership sender)
-            (ref-DPTF::UEV_PauseState id false)
-            (ref-DPTF::UEV_AccountFreezeState id sender false)
-            (map
-                (lambda
-                    (idx:integer)
-                    (let
-                        (
-                            (receiver:string (at idx receiver-lst))
-                            (transfer-amount:decimal (at idx transfer-amount-lst))
-                            (r:bool (ref-DPTF::UR_AccountRoleTransfer id receiver))
-                        )
-                        (ref-DALOS::UEV_EnforceTransferability sender receiver method)
-                        (ref-DPTF::UEV_Amount id transfer-amount)
-                        (ref-DPTF::UEV_AccountFreezeState id receiver false)
-                        (if (and method (ref-DALOS::UR_AccountType receiver))
-                            (ref-DALOS::CAP_EnforceAccountOwnership receiver)
-                            true
-                        )
-                        (if (not (ref-DPTF::URC_TrFeeMinExc id sender receiver))
-                            (ref-DPTF::UEV_EnforceMinimumAmount id transfer-amount)
-                            true
-                        )
-                        (if
-                            (and
-                                (> tra 0) 
-                                (not (or (= sender ouroboros)(= sender dalos)))
-                            )
-                            (enforce-one
-                                (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
-                                [
-                                    (enforce (= s true) (format "TR doesnt check for sender {}" [sender]))
-                                    (enforce (= r true) (format "TR doesnt check for receiver {}" [receiver]))
-                                ]
-        
-                            )
-                            (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
-                        )
-                    )
-                )
-                (enumerate 0 (- l1 1))
-            )
-            (compose-capability (DPTF|C>X_TRANSMUTE id sender))
-        )       
-    )
+    ;;;;;;;New Multi Transfer Validation
+    
     ;;
     ;;{F0}
     (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string)
@@ -617,100 +540,173 @@
         )
     )
     ;;{F2}
-    (defun UEV_MultiTransfer (id-lst:[string] transfer-amount-lst:[decimal])
-        (let
-            (
-                (pair-validation:bool (UEV_Pair_ID-Amount id-lst transfer-amount-lst))
-            )
-            (enforce (= pair-validation true) "Input Lists <id-lst>|<transfer-amount-lst> cannot make a valid pair list for Multi Transfer Processing")
-        )
+    ;;Bulk
+    (defun UEV_BulkTransfer (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        @doc "Complete Bulk Transfer Validations"
+        (UEV_BulkTransferSingleData id sender)
+        (UEV_BulkTransferMultiData id sender receiver-lst transfer-amount-lst method)
     )
-    (defun UEV_BulkTransfer (id:string receiver-lst:[string] transfer-amount-lst:[decimal])
-        (let
-            (
-                (pair-validation:bool (UEV_Pair_Receiver-Amount id receiver-lst transfer-amount-lst)) 
-            )
-            (enforce (= pair-validation true) "Input Lists <receiver-lst>|<transfer-amount-lst> cannot make a valid pair list with the <id> for Bulk Transfer Processing")
-        )
-    )
-    (defun UEV_AmountCheck:bool (id:string amount:decimal)
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (decimals:integer (ref-DPTF::UR_Decimals id))
-                (decimal-check:bool (if (= (floor amount decimals) amount) true false))
-                (positivity-check:bool (if (> amount 0.0) true false))
-                (result:bool (and decimal-check positivity-check))
-            )
-            result
-        )
-    )
-    (defun UEV_Pair_ID-Amount:bool (id-lst:[string] transfer-amount-lst:[decimal])
-        (fold
-            (lambda
-                (acc:bool item:object{DPTF|ID-Amount})
-                (and acc (UEV_AmountCheck (at "id" item) (at "amount" item)))
-            )
-            true
-            (UDC_Pair_ID-Amount id-lst transfer-amount-lst)
-        )
-    )
-    (defun UEV_Pair_Receiver-Amount:bool (id:string receiver-lst:[string] transfer-amount-lst:[decimal])
+    (defun UEV_BulkTransferSingleData (id:string sender:string)
+        @doc "Bulk Transfer Validation for single Data"
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
-            (ref-DPTF::UEV_id id)
-            (and
-                (fold
-                    (lambda
-                        (acc:bool item:object{DPTF|Receiver-Amount})
-                        (let
-                            (
-                                (receiver-account:string (at "receiver" item))
-                                (receiver-check:bool (ref-DALOS::GLYPH|UEV_DalosAccountCheck receiver-account))
-                            )
-                            (and acc receiver-check)
+            (ref-DALOS::CAP_EnforceAccountOwnership sender)
+            (ref-DPTF::UEV_PauseState id false)
+            (ref-DPTF::UEV_AccountFreezeState id sender false)
+        )
+    )
+    (defun UEV_BulkTransferMultiData (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        @doc "Bulk Transfer Validation for Multi Data"
+        (UEV_BulkTransferMapper (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst) sender id method)
+    )
+    (defun UEV_BulkTransferMapper (ra-obj:[object{DPTF|Receiver-Amount}] sender:string id:string method:bool)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (tra:integer (ref-DPTF::UR_TransferRoleAmount id))
+                (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+                (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+                (s:bool (ref-DPTF::UR_AccountRoleTransfer id sender))
+                (l:integer (length ra-obj))
+            )
+            (map
+                (lambda
+                    (idx:integer)
+                    (let
+                        (
+                            (receiver:string (at "receiver" (at idx ra-obj)))
+                            (ta:decimal (at "amount" (at idx ra-obj)))
+                            (r:bool (ref-DPTF::UR_AccountRoleTransfer id receiver))
+                            (r-type:bool (ref-DALOS::UR_AccountType receiver))
                         )
-                    )
-                    true
-                    (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst)
-                )
-                (fold
-                    (lambda
-                        (acc:bool item:object{DPTF|Receiver-Amount})
-                        (let
-                            (
-                                (transfer-amount:decimal (at "amount" item))
-                                (check:bool (UEV_AmountCheck id transfer-amount))
+                        (if
+                            (and
+                                (> tra 0) 
+                                (not (or (= sender ouroboros)(= sender dalos)))
                             )
-                            (and acc check)
+                            (enforce-one
+                                (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
+                                [
+                                    (enforce (= s true) (format "TR doesnt check for sender {}" [sender]))
+                                    (enforce (= r true) (format "TR doesnt check for receiver {}" [receiver]))
+                                ]
+        
+                            )
+                            (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
                         )
+                        (ref-DALOS::UEV_EnforceTransferability sender receiver method)
+                        (ref-DPTF::UEV_Amount id ta)
+                        (ref-DPTF::UEV_AccountFreezeState id receiver false)
+                        (ref-DPTF::UEV_EnforceMinimumAmount id ta)
+                        (enforce (not r-type) "Bulk Transfer does not work to target Smart Dalos Account")
                     )
-                    true
-                    (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst)
                 )
+                (enumerate 0 (- l 1))
+            )
+        )
+    )
+    ;;Multi
+    (defun UEV_MultiTransfer (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        @doc "Complete Multi Transfer Validations"
+        (UEV_MultiTransferSingleData sender receiver method)
+        (UEV_MultiTransferMultiData id-lst sender receiver transfer-amount-lst)
+    )
+    (defun UEV_MultiTransferSingleData (sender:string receiver:string method:bool)
+        @doc "Multi Transfer Validation for single Data"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (r-type:bool (ref-DALOS::UR_AccountType receiver))
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership sender)
+            (ref-DALOS::UEV_EnforceTransferability sender receiver method)
+            (enforce (not r-type) "Multi Transfer does not work to target Smart Dalos Account")
+        )
+    )
+    (defun UEV_MultiTransferMultiData (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
+        @doc "Multi Transfer Validation for Multi Data"
+        (UEV_MultiTransferMapper (UDC_Pair_ID-Amount id-lst transfer-amount-lst) sender receiver)
+    )
+    (defun UEV_MultiTransferMapper (pid-obj:[object{DPTF|ID-Amount}] sender:string receiver:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (l:integer (length pid-obj))
+                (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+                (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+            )
+            (map
+                (lambda
+                    (idx:integer)
+                    (let
+                        (
+                            (id:string (at "id" (at idx pid-obj)))
+                            (ta:decimal (at "amount" (at idx pid-obj)))
+                            (tra:integer (ref-DPTF::UR_TransferRoleAmount id))
+                            (s:bool (ref-DPTF::UR_AccountRoleTransfer id sender))
+                            (r:bool (ref-DPTF::UR_AccountRoleTransfer id receiver))
+                        )
+                        (if
+                            (and
+                                (> tra 0) 
+                                (not (or (= sender ouroboros)(= sender dalos)))
+                            )
+                            (enforce-one
+                                (format "Neither the sender {} nor the receiver {} have an active transfer role" [sender receiver])
+                                [
+                                    (enforce s (format "TR doesnt check for sender {}" [sender]))
+                                    (enforce r (format "TR doesnt check for receiver {}" [receiver]))
+                                ]
+                            )
+                            (format "No transfer restrictions for {} from {} to {}" [id sender receiver])
+                        )
+                        (ref-DPTF::UEV_Amount id ta)
+                        (ref-DPTF::UEV_PauseState id false)
+                        (ref-DPTF::UEV_AccountFreezeState id sender false)
+                        (ref-DPTF::UEV_AccountFreezeState id receiver false)
+                        (ref-DPTF::UEV_EnforceMinimumAmount id ta)
+                    )
+                )
+                (enumerate 0 (- l 1))
             )
         )
     )
     ;;{F3}
-    (defun UDC_GetDispoData:[decimal] (account:string)
+    (defun URC_MinimumOuro:decimal (account:string)
+        @doc "Computes the minimum Negative Ouroboros amount an Account is able to overconsume"
+        (let
+            (
+                (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData account))
+                (max-dispo:decimal (ref-U|DPTF::UC_OuroDispo dispo-data))
+            )
+            (- 0.0 max-dispo)
+        )
+    )
+    (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-ATS:module{Autostake} ATS)
-                (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (a-id:string (ref-DALOS::UR_AurynID))
+                (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
                 (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
-                (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
-                (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
-                (major-tier:decimal (dec (ref-DALOS::UR_Elite-Tier-Major account)))
-                (minor-tier:decimal (dec (ref-DALOS::UR_Elite-Tier-Minor account)))
             )
-            [auryndex-value elite-auryndex-value major-tier minor-tier]
+            {"elite-auryn-amount"           :(ref-DPTF::UR_AccountSupply ea-id account)
+            ,"auryndex-value"               :(ref-ATS::URC_Index auryndex)
+            ,"elite-auryndex-value"         :(ref-ATS::URC_Index elite-auryndex)
+            ,"major-tier"                   :(ref-DALOS::UR_Elite-Tier-Major account)
+            ,"minor-tier"                   :(ref-DALOS::UR_Elite-Tier-Minor account)
+            ,"ouroboros-precision"          :(ref-DPTF::UR_Decimals ouro-id)}
         )
     )
     (defun UDC_Pair_ID-Amount:[object{DPTF|ID-Amount}] (id-lst:[string] transfer-amount-lst:[decimal])
@@ -957,18 +953,22 @@
         )
     )
     ;;Client Multi Transfer
+    (defun C_MultiTransferAsPactStep (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (require-capability (SECURE))
+        (with-capability (DPTF|PACT|C>MULTI-TRANSFER id-lst sender)
+            (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
+        )
+    )
     (defun C_MultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (DPTF|C>MULTI_TRANSFER id-lst sender receiver transfer-amount-lst method)
-            (UEV_MultiTransfer id-lst transfer-amount-lst)
+        (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )
     (defun C_ExemptionMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (DPTF|C>MULTI_TRANSFER id-lst sender receiver transfer-amount-lst method)
-            (UEV_MultiTransfer id-lst transfer-amount-lst)
+        (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_ExemptionMultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
@@ -983,17 +983,21 @@
                 (enforce-guard (P|UR "TALOS-01"))
             ]
         )
-        (with-capability (DPTF|C>MULTI_TRANSFER id-lst sender receiver transfer-amount-lst method)
-            (UEV_MultiTransfer id-lst transfer-amount-lst)
+        (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_FeelesMultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )
     ;;Client Bulk Transfer
+    (defun C_BulkTransferAsPactStep (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (require-capability (SECURE))
+        (with-capability (DPTF|PACT|C>BULK-TRANSFER id sender)
+            (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
+        )
+    )
     (defun C_BulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
-            (UEV_BulkTransfer id receiver-lst transfer-amount-lst)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
@@ -1001,7 +1005,6 @@
     (defun C_ExemptionBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
-            (UEV_BulkTransfer id receiver-lst transfer-amount-lst)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_ExemptionBulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
@@ -1015,7 +1018,6 @@
             ]
         )
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
-            (UEV_BulkTransfer id receiver-lst transfer-amount-lst)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_FeelesBulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
@@ -1027,7 +1029,7 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (dispo-data:[decimal] (UDC_GetDispoData transmuter))
+                (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData transmuter))
             )
             (ref-DPTF::XB_DebitStandard id transmuter transmute-amount dispo-data)
             (XI_CreditPrimaryFee id transmute-amount false)
@@ -1073,7 +1075,7 @@
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (dispo-data:[decimal] (UDC_GetDispoData sender))
+                (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData sender))
             )
             (ref-DPTF::XB_DebitStandard id sender transfer-amount dispo-data)
             (ref-DPTF::XB_Credit id receiver transfer-amount)
@@ -1085,7 +1087,7 @@
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (dispo-data:[decimal] (UDC_GetDispoData sender))
+                (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData sender))
             )
             (ref-DPTF::XB_DebitStandard id sender transfer-amount dispo-data)
             (XI_ComplexCredit id receiver transfer-amount)
@@ -1267,6 +1269,285 @@
             )
             (if (!= credit-fee 0.0)
                 (ref-DPTF::XB_Credit id ats credit-fee)
+                true
+            )
+        )
+    )
+    ;;
+    (defpact C_BulkTransfer160
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+
+        ;;Steps 0|1|2|3 Validation in 4 Steps
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_FourSplitter l))
+                    (v0:integer (at 0 matrix))
+                )
+                (UEV_BulkTransfer 
+                    id sender 
+                    (take v0 receiver-lst) 
+                    (take v0 transfer-amount-lst)
+                    method
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_FourSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                )
+                (UEV_BulkTransfer 
+                    id sender 
+                    (take v1 (drop v0 receiver-lst)) 
+                    (take v1 (drop v0 transfer-amount-lst)) 
+                    method
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_FourSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (+ v0 v1))
+                )
+                (UEV_BulkTransfer 
+                    id sender 
+                    (take v2 (drop v3 receiver-lst)) 
+                    (take v2 (drop v3 transfer-amount-lst)) 
+                    method
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_FourSplitter l))
+                    (v:integer (fold (+) 0 (drop -1 matrix)))
+                )
+                (UEV_BulkTransfer 
+                    id sender 
+                    (drop v receiver-lst)
+                    (drop v transfer-amount-lst)
+                    method
+                )
+            )
+        )
+        ;;Step 4 Collects the required IGNIS
+        (step
+            (let
+                (
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
+                    )
+                )
+                (XC_IgnisCollect patron sender [ico])
+            )
+        )
+        ;;Step 5|6|7|8|9|10|11|12 BulkTransfer
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v0 receiver-lst) 
+                        (take v0 transfer-amount-lst) 
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v1 (drop v0 receiver-lst))
+                        (take v1 (drop v0 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (+ v0 v1))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v2 (drop v3 receiver-lst))
+                        (take v2 (drop v3 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (at 3 matrix))
+                    (v4:integer (fold (+) 0 [v0 v1 v2]))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v3 (drop v4 receiver-lst))
+                        (take v3 (drop v4 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (at 3 matrix))
+                    (v4:integer (at 4 matrix))
+                    (v5:integer (fold (+) 0 [v0 v1 v2 v3]))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v4 (drop v5 receiver-lst))
+                        (take v4 (drop v5 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (at 3 matrix))
+                    (v4:integer (at 4 matrix))
+                    (v5:integer (at 5 matrix))
+                    (v6:integer (fold (+) 0 [v0 v1 v2 v3 v4]))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v5 (drop v6 receiver-lst))
+                        (take v5 (drop v6 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (at 3 matrix))
+                    (v4:integer (at 4 matrix))
+                    (v5:integer (at 5 matrix))
+                    (v6:integer (at 6 matrix))
+                    (v7:integer (fold (+) 0 [v0 v1 v2 v3 v4 v5]))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (take v6 (drop v7 receiver-lst))
+                        (take v6 (drop v7 transfer-amount-lst))
+                        method
+                    )
+                )
+            )
+        )
+        (step
+            (let
+                (
+                    (ref-U|DPTF:module{UtilityDptf} U|DPTF)
+                    (l:integer (length receiver-lst))
+                    (matrix:[integer] (ref-U|DPTF::UC_EightSplitter l))
+                    (v:integer (fold (+) 0 (drop -1 matrix)))
+
+                    (v0:integer (at 0 matrix))
+                    (v1:integer (at 1 matrix))
+                    (v2:integer (at 2 matrix))
+                    (v3:integer (at 3 matrix))
+                    (v4:integer (at 4 matrix))
+                    (v5:integer (at 5 matrix))
+                    (v6:integer (at 6 matrix))
+                    (v7:integer (fold (+) 0 [v0 v1 v2 v3 v4 v5]))
+                )
+                (with-capability (SECURE)
+                    (C_BulkTransferAsPactStep 
+                        patron id sender 
+                        (drop v receiver-lst)
+                        (drop v transfer-amount-lst)
+                        method
+                    )
+                )
+            )
+        )
+    )
+
+    (defun XC_IgnisCollect (patron:string account:string input-ico:[object{OuronetDalos.IgnisCumulator}])
+        @doc "Collects Ignis given input parameters"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ignis:decimal (ref-DALOS::UDC_AddICO input-ico))
+            )
+            (if (!= ignis 0.0)
+                (ref-DALOS::IGNIS|C_Collect patron account ignis)
                 true
             )
         )

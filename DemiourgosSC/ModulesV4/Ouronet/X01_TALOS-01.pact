@@ -151,7 +151,7 @@
     ;;
     (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
-    (defun SWP|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal))
+    (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
     (defun SWP|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     ;;
     ;;
@@ -552,14 +552,19 @@
     )
     ;;
     (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Executes a Bulk DPTF Transfer, sending one DPTF, to multiple receivers, each with its own amount"
+        @doc "Executes a Bulk DPTF Transfer, sending one DPTF, to multiple receivers, each with its own amount \
+        \ Always enforces <min-move> amount, and <receiver-lst> must all be Standard Ouronet Accounts, \
+        \ as it cant send to Smart Ouronet Account recipients."
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
-            )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPTF|C_ExemptionBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
@@ -567,10 +572,13 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-P|TFT::C_ExemptionBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-P|TFT::C_ExemptionBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
-            )
+            (XC_IgnisCollect patron sender [ico])
         )
     )
     (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal)
@@ -1882,10 +1890,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_ToggleAddOrSwap patron swpair toggle add-or-swap)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_ToggleAddOrSwap patron swpair toggle add-or-swap)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool)
@@ -1978,10 +1989,14 @@
         (let
             (
                 (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPL|C_AddBalancedLiquidity patron account swpair input-id input-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWPU::SWPL|C_AddBalancedLiquidity patron account swpair input-id input-amount)
-            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
         )
     )
     (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])
@@ -1996,23 +2011,31 @@
         (let
             (
                 (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPL|C_AddLiquidity patron account swpair input-amounts)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWPU::SWPL|C_AddLiquidity patron account swpair input-amounts)
-            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
         )
     )
-    (defun SWP|C_RemoveLiquidity:[decimal] (patron:string account:string swpair:string lp-amount:decimal)
+    (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal)
         @doc "Removes Liquidity from a Liquidity Pool \
             \ Removing Liquidty is always done at the current Token Ratio. \
             \ Removing Liquidty complety leaving the pool exactly empty (0.0 tokens) is fully supported"
         (let
             (
                 (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPL|C_RemoveLiquidity patron account swpair lp-amount)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWPU::SWPL|C_RemoveLiquidity patron account swpair lp-amount)
-            )
+            (XC_IgnisCollect patron account [ico])
+            (at "output" ico)
         )
     )
     (defun SWP|C_MultiSwap
@@ -2029,10 +2052,13 @@
         (let
             (
                 (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     ;;

@@ -297,13 +297,13 @@
                         patron
                         ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
                         ["PKOSON" "EKOSON" "AKOSON" "PDKOSON" "CAKOSON" "PSKOSON" "TSKOSON" "SDKOSON" "BAKOSON"]
-                        [24 24 24 24 24 24 24 24 24]
-                        [true true true true true true true true true]          ;;can change owner
-                        [true true true true true true true true true]          ;;can upgrade
-                        [true true true true true true true true true]          ;;can can-add-special-role
-                        [false false false false false false false false false] ;;can-freeze
-                        [false false false false false false false false false] ;;can-wipe
-                        [true true true true true true true true true]          ;;can pause
+                        (make-list 9 24)                            ;;precision
+                        (make-list 9 true)                          ;;can change owner
+                        (make-list 9 true)                          ;;can upgrade
+                        (make-list 9 true)                          ;;can can-add-special-role
+                        (make-list 9 false)                         ;;can-freeze
+                        (make-list 9 false)                         ;;can-wipe
+                        (make-list 9 true)                          ;;can-pause
                     )
                 )
             )
@@ -368,14 +368,14 @@
                         patron
                         ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
                         ["DDKOSON" "AFKOSON" "SFKOSON" "STKOSON" "DMKOSON" "AIKOSON"]
-                        [24 24 24 24 24 24]
-                        [true true true true true true]                         ;;can change owner
-                        [true true true true true true]                         ;;can upgrade
-                        [true true true true true true]                         ;;can can-add-special-role
-                        [false false false false false false]                   ;;can-freeze
-                        [false false false false false false]                   ;;can-wipe
-                        [true true true true true true]                         ;;can pause
-                        [true true true true true true]                         ;;can-transfer-nft-create-role
+                        (make-list 6 24)                            ;;precision
+                        (make-list 6 true)                          ;;can change owner
+                        (make-list 6 true)                          ;;can upgrade
+                        (make-list 6 true)                          ;;can can-add-special-role
+                        (make-list 6 false)                         ;;can-freeze
+                        (make-list 6 false)                         ;;can-wipe
+                        (make-list 6 true)                          ;;can-pause
+                        (make-list 6 true)                          ;;can-transfer-nft-create-role
                     )
                 )
             )

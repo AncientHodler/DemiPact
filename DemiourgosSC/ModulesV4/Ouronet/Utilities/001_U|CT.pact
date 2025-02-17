@@ -120,7 +120,7 @@
     (defun CT_MIN_PRECISION () 2)
     (defun CT_MAX_PRECISION () 24)
     (defun CT_FEE_PRECISION () 4)
-    (defun CT_MIN_DESIGNATION_LENGTH () 3)
+    (defun CT_MIN_DESIGNATION_LENGTH () 2)
     (defun CT_MAX_TOKEN_NAME_LENGTH () 50) 
     (defun CT_MAX_TOKEN_TICKER_LENGTH () 30)
 
