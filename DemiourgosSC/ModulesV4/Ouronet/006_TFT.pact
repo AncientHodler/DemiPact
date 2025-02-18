@@ -11,6 +11,8 @@
     (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
     ;;
+    (defun URC_MinimumOuro:decimal (account:string))
+    ;;
     (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
     ;;
     (defun C_ClearDispo:object{OuronetDalos.IgnisCumulator} (patron:string account:string))
@@ -50,6 +52,11 @@
         true
     )
     (defcap P|ATS|REMOTE-GOV ()
+        @doc "Autostake Remote Governor Capability"
+        true
+    )
+    (defcap P|DALOS|REMOTE-GOV ()
+        @doc "Dalos Remote Governor Capability"
         true
     )
     (defcap P|SECURE-CALLER ()
@@ -96,6 +103,10 @@
                 "TFT|<"
                 (create-capability-guard (P|TFT|CALLER))
             )
+            (ref-P|DALOS::P|A_Add
+                "TFT|RemoteDalosGov"
+                (create-capability-guard (P|DALOS|REMOTE-GOV))
+            )
             (ref-P|ATS::P|A_Add
                 "TFT|RemoteAtsGov"
                 (create-capability-guard (P|ATS|REMOTE-GOV))
@@ -114,15 +125,10 @@
     )
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-            )
-            (ref-U|CT::CT_BAR)
-        )
-    )
-    (defconst BAR (CT_Bar))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyIgnisCumulator ()(let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::DALOS|EmptyIgCum)))
+    (defconst BAR                   (CT_Bar))
+    (defconst EIC                   (CT_EmptyIgnisCumulator))
     ;;
     ;;{C1}
     (defcap SECURE ()
@@ -149,8 +155,9 @@
                 (ouro-amount:decimal (ref-DALOS::UR_TF_AccountSupply account true))
             )
             (enforce (< ouro-amount 0.0) "Dispo Clear requires Negative OURO")
+            (compose-capability (P|DALOS|REMOTE-GOV))
             (compose-capability (P|ATS|REMOTE-GOV))
-            (compose-capability (SECURE))
+            (compose-capability (P|SECURE-CALLER))
         )
     )
     ;;Transmute
@@ -831,10 +838,13 @@
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-ATS:module{Autostake} ATS)
+
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                    (a-id:string (ref-DALOS::AurynID))
-                    (ea-id:string (ref-DALOS::EliteAurynID))
-                    (ouro-amount:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
+                    (a-id:string (ref-DALOS::UR_AurynID))
+                    (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                    (ouro-amount:decimal (abs (ref-DPTF::UR_AccountSupply ouro-id account)))
+                    (account-ea-supply:decimal (ref-DPTF::UR_AccountSupply ea-id account))
+                    (frozen-state:bool (ref-DPTF::UR_AccountFrozenState ea-id account))
 
                     (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
                     (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
@@ -848,37 +858,55 @@
                     (burn-auryn-amount:decimal (floor (/ ouro-amount auryndex-value) a-prec))
                     (burn-elite-auryn-amount:decimal (floor (/ burn-auryn-amount elite-auryndex-value) a-prec))
                     (total-ea:decimal (* burn-elite-auryn-amount 2.5))
+                    (ea-remint:decimal (- account-ea-supply total-ea))
                     (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
 
                     ;;Ignis Cumulation
                     (ico1:object{OuronetDalos.IgnisCumulator}
-                        (XB_FeelesTransfer patron ea-id account ats-sc total-ea true)
+                        (if (not frozen-state)
+                            (ref-DPTF::C_ToggleFreezeAccount patron ea-id account true)
+                            EIC
+                        )
                     )
                     (ico2:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPTF::C_Burn patron ea-id ats-sc total-ea)
+                        (ref-DPTF::C_Wipe patron ea-id account)
                     )
                     (ico3:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
+                        (ref-DPTF::C_Mint patron ea-id ats-sc ea-remint false)
                     )
                     (ico4:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_ToggleFreezeAccount patron ea-id account false)
+                    )
+                    (ico5:object{OuronetDalos.IgnisCumulator}
+                        (XB_FeelesTransfer patron ea-id ats-sc account ea-remint true)
+                    )
+                    (ico6:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
+                    )
+                    (ico7:object{OuronetDalos.IgnisCumulator}
                         (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
                     )
                 )
-                
-            ;;1] Account sends <total-ea> EliteAuryn to <ATS|SC-NAME>
-                ;via ico1
-            ;;2] <ATS|SC-NAME> burns all <total-ea> EliteAuryn amount
-                ;via ico2
-            ;;3] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
-                ;via ico3
-                (ref-ATS::XE_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
-            ;;4] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
+            ;;1] Freeze EA on account
+                ;;via ico1
+            ;;2] Wipe EA on account
+                ;;via ico2
+            ;;3] Remint remaining EA
+                ;;via ico3
+            ;;4] Unfreeze EA on account
                 ;;via ico4
+            ;;5] Transfer it back to account
+                ;;via ico5
+            ;;6] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
+                ;via ico6
+                (ref-ATS::XE_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
+            ;;7] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
+                ;;via ico7
                 (ref-ATS::XE_UpdateRoU auryndex ouro-id true false ouro-amount)
-            ;;5] Finally clears dispo setting OURO <acount> amount to zero
-                (ref-DPTF::XE_ClearDispo account)
-            ;;6] Pleasure doing business with you !
-                (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4] [])
+            ;;8] Finally clears dispo setting OURO <acount> amount to zero
+                (ref-DALOS::XE_ClearDispo account)
+            ;;9] Pleasure doing business with you !
+                (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4 ico5 ico6 ico7] [])
             )
         )
     )

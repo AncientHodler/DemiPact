@@ -24,6 +24,7 @@
             \ Key for the Table is a string composed of: <DPTF id> + BAR + <account> \
             \ This ensure a single entry per DPTF id per account. \
             \ As an Exception OUROBOROS and IGNIS Account Data is Stored at the DALOS Account Level"
+        exist:bool
         balance:decimal
         role-burn:bool
         role-mint:bool
@@ -107,6 +108,10 @@
     (defun UR_TF_AccountRoleFeeExemption:bool (account:string snake-or-gas:bool))
     (defun UR_TF_AccountFreezeState:bool (account:string snake-or-gas:bool))
     ;;
+    (defun URC_IgnisGasDiscount:decimal (account:string))
+    (defun URC_KadenaGasDiscount:decimal (account:string))
+    (defun URC_GasDiscount:decimal (account:string native:bool))
+    (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal))
     (defun URC_Transferability:bool (sender:string receiver:string method:bool))
     (defun IGNIS|URC_Exception (account:string))
     (defun IGNIS|URC_ZeroGAZ:bool (id:string sender:string receiver:string))
@@ -163,6 +168,7 @@
     (defun XB_UpdateBalance (account:string snake-or-gas:bool new-balance:decimal))
     (defun XB_UpdateOuroPrice (price:decimal))
     ;;
+    (defun XE_ClearDispo (account:string))
     (defun XE_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool))
     (defun XE_UpdateElite (account:string amount:decimal))
     (defun XE_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool))
@@ -198,11 +204,21 @@
     )
     ;;{G3}
     (defun DALOS|SetGovernor (patron:string)
-        (with-capability (SECURE)
-            (C_RotateGovernor
-                patron
-                DALOS|SC_NAME
-                (P|UR "TALOS-01|RemoteTalosGov")
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (with-capability (SECURE)
+                (C_RotateGovernor
+                    patron
+                    DALOS|SC_NAME
+                    (ref-U|G::UEV_GuardOfAny
+                        [
+                            (P|UR "TFT|RemoteDalosGov")
+                            (P|UR "TALOS-01|RemoteDalosGov")
+                        ]
+                    )
+                )
             )
         )
     )
@@ -377,7 +393,8 @@
     )
     (defconst GAS_QUARTER 0.25)
     (defconst DPTF|BLANK
-        { "balance"                 : 0.0
+        { "exist"                   : true
+        , "balance"                 : 0.0
         , "role-burn"               : false
         , "role-mint"               : false
         , "role-transfer"           : false
@@ -705,17 +722,39 @@
         (at "frozen" (UR_TrueFungible account snake-or-gas))
     )
     ;;{F1}
-    (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal)
-        @doc "Computes discounted Split-KDA prices based on input parameters"
+    (defun URC_IgnisGasDiscount:decimal (account:string)
+        @doc "Computes the Discount for Ignis Gas Costs. A value of 1.00 means no discount"
+        (URC_GasDiscount account false)
+    )
+    (defun URC_KadenaGasDiscount:decimal (account:string)
+        @doc "Computes the Discount for Ignis Gas Costs. A value of 1.00 means no discount"
+        (URC_GasDiscount account true)
+    )
+    (defun URC_GasDiscount:decimal (account:string native:bool)
+        @doc "Computes Gas Discount Values, a value of 1.00 means no discount"
         (let
             (
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                 (major:integer (UR_Elite-Tier-Major account))
                 (minor:integer (UR_Elite-Tier-Minor account))
-                (rtkp:decimal (ref-U|DALOS::UC_GasCost kda-price major minor true))
-                (v1:decimal (* 0.05 rtkp))
-                (v2:decimal (* 0.15 rtkp))
-                (v3:decimal (* 0.75 rtkp))
+            )
+            (ref-U|DALOS::UC_GasCost 1.00 major minor native)
+        )
+    )
+    (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal)
+        @doc "Computes the KDA Split required for Native Gas Collection \
+        \ This is 5% 5% 15% and 75% split, outputed as 5% 15% 75% in a list \
+        \ Takes in consideration the Discounted KDA for <account>"
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                (kda-discount:decimal (URC_KadenaGasDiscount account))
+                (discounted-kda:decimal (floor (* kda-discount kda-price) kda-prec))
+                (v1:decimal (* 0.05 discounted-kda))
+                (v2:decimal (* 0.15 discounted-kda))
+                (v3:decimal (- discounted-kda (fold (+) 0.0 [v1 v1 v2])))
             )
             [v1 v2 v3]
         )
@@ -1207,15 +1246,13 @@
     (defun IGNIS|C_CollectWT (patron:string active-account:string amount:decimal trigger:bool)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (major:integer (UR_Elite-Tier-Major patron))
-                (minor:integer (UR_Elite-Tier-Minor patron))
-                (reduced-amount:decimal (ref-U|DALOS::UC_GasCost amount major minor false))
+                (ignis-discount:decimal (URC_IgnisGasDiscount patron))
+                (discounted-ignis:decimal (* amount ignis-discount))
             )
             (enforce (>= amount 1.0) "Minimum Base Ignis Base that can be collected is 1.0")
             (if (not trigger)
-                (with-capability (IGNIS|C>CLT patron active-account reduced-amount)
-                    (XI_IgnisCollect patron active-account reduced-amount)
+                (with-capability (IGNIS|C>CLT patron active-account discounted-ignis)
+                    (XI_IgnisCollect patron active-account discounted-ignis)
                 )
                 true
             )
@@ -1235,17 +1272,11 @@
     (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (major:integer (UR_Elite-Tier-Major sender))
-                (minor:integer (UR_Elite-Tier-Minor sender))
-
-                (reduced-amount:decimal (ref-U|DALOS::UC_GasCost amount major minor true))
-                (kadena-split:[decimal] (ref-U|DALOS::UC_KadenaSplit reduced-amount))
-                (am0:decimal (at 0 kadena-split))
-                (am1:decimal (at 1 kadena-split))
-                (am2:decimal (at 2 kadena-split))
+                (split-discounted-kda:[decimal] (URC_SplitKDAPrices sender amount))
+                (am0:decimal (at 0 split-discounted-kda))
+                (am1:decimal (at 1 split-discounted-kda))
+                (am2:decimal (at 2 split-discounted-kda))
                 (kda-sender:string (UR_AccountKadena sender))
-
                 (demiurgoi:[string] (UR_DemiurgoiID))
                 (kda-cto:string (UR_AccountKadena (at 0 demiurgoi)))
                 (kda-hov:string (UR_AccountKadena (at 1 demiurgoi)))
@@ -1276,7 +1307,8 @@
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : new-balance
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : new-balance
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
                     ,"role-transfer"        : (at "role-transfer" obj)
@@ -1303,13 +1335,20 @@
         )
     )
     ;;
+    (defun XE_ClearDispo (account:string)
+        (enforce-guard (P|UR "TFT|<"))
+        (with-capability (SECURE)
+            (XB_UpdateBalance account true 0.0)
+        )
+    )
     (defun XE_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool)
         (enforce-guard (P|UR "DPTF|<"))
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : (at "balance" obj)
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : new-burn
                     ,"role-mint"            : (at "role-mint" obj)
                     ,"role-transfer"        : (at "role-transfer" obj)
@@ -1342,7 +1381,8 @@
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : (at "balance" obj)
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
                     ,"role-transfer"        : (at "role-transfer" obj)
@@ -1361,7 +1401,8 @@
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : (at "balance" obj)
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
                     ,"role-transfer"        : (at "role-transfer" obj)
@@ -1380,7 +1421,8 @@
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : (at "balance" obj)
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : new-mint
                     ,"role-transfer"        : (at "role-transfer" obj)
@@ -1399,7 +1441,8 @@
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
                 (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
-                    {"balance"              : (at "balance" obj)
+                    {"exist"                : (at "exist" obj)
+                    ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
                     ,"role-mint"            : (at "role-mint" obj)
                     ,"role-transfer"        : new-transfer

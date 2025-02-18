@@ -1288,8 +1288,8 @@
     )
     ;;{F3}
     (defun UDC_MakeUnstakeObject:object{UtilityAts.Awo} (atspair:string time:time)
-        { "reward-tokens"   : (make-list (length (UR_RewardTokenList atspair)) 0.0)
-        , "cull-time"       : time}
+        {"reward-tokens"    : (make-list (length (UR_RewardTokenList atspair)) 0.0)
+        ,"cull-time"        : time}
     )
     (defun UDC_MakeZeroUnstakeObject:object{UtilityAts.Awo} (atspair:string)
         (UDC_MakeUnstakeObject atspair NULLTIME)
@@ -1303,10 +1303,10 @@
     (defun UDC_RT:object{Autostake.ATS|RewardTokenSchema} (token:string nfr:bool r:decimal u:decimal)
         (enforce (>= r 0.0) "Negative Resident not allowed")
         (enforce (>= u 0.0) "Negative Unbonding not allowed")
-        {"token"                    : token
-        ,"nfr"                      : nfr
-        ,"resident"                 : r
-        ,"unbonding"                : u}
+        {"token"        : token
+        ,"nfr"          : nfr
+        ,"resident"     : r
+        ,"unbonding"    : u}
     )
     ;;{F4}
     (defun CAP_Owner (id:string)
@@ -1530,59 +1530,51 @@
                 (rt-lst:[string] (UR_RewardTokenList atspair))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 (c-rbt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption c-rbt ats-sc))
-                (c-fr:bool (UR_ColdRecoveryFeeRedirection atspair))
-                (ico-a:[object{OuronetDalos.IgnisCumulator}]
+                (ico1:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (SECURE)
+                        (XI_SetMassRole patron atspair true)
+                    )
+                )
+                (ico2:[object{OuronetDalos.IgnisCumulator}]
                     (with-capability (SECURE)
                         (XI_SetMassRole patron atspair false)
                     )
                 )
-                (ico-b:[object{OuronetDalos.IgnisCumulator}]
+                (ico3:[object{OuronetDalos.IgnisCumulator}]
                     (with-capability (SECURE)
                         (if cold-or-hot
                             (let
                                 (
                                     (c-rbt-burn-role:bool (ref-DPTF::UR_AccountRoleBurn c-rbt ats-sc))
                                     (c-rbt-mint-role:bool (ref-DPTF::UR_AccountRoleMint c-rbt ats-sc))
-                                    (ico2:[object{OuronetDalos.IgnisCumulator}]
-                                        (if (not c-fr)
-                                            (XI_SetMassRole patron atspair true)
-                                            [EIC]
-                                        )
-                                    )
-                                    (ico3:[object{OuronetDalos.IgnisCumulator}]
+                                    (ico4:[object{OuronetDalos.IgnisCumulator}]
                                         (if (not c-rbt-burn-role)
                                             (DPTF|C_ToggleBurnRole patron c-rbt ats-sc true)
                                             [EIC]
                                         )
                                     )
-                                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                                    (ico5:[object{OuronetDalos.IgnisCumulator}]
                                         (if (not c-rbt-fer)
                                             (DPTF|C_ToggleFeeExemptionRole patron c-rbt ats-sc true)
                                             [EIC]
                                         )
                                     )
-                                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                                    (ico6:[object{OuronetDalos.IgnisCumulator}]
                                         (if (not c-rbt-mint-role)
                                             (DPTF|C_ToggleMintRole patron c-rbt ats-sc true)
                                             [EIC]
                                         )
                                     )
                                 )
-                                (fold (+) [] [ico2 ico3 ico4 ico5])
+                                (fold (+) [] [ico4 ico5 ico6])
                             )
                             (let
                                 (
                                     (h-rbt:string (UR_HotRewardBearingToken atspair))
-                                    (h-fr:bool (UR_HotRecoveryFeeRedirection atspair))
+                                    
                                     (h-rbt-burn-role:bool (ref-DPMF::UR_AccountRoleBurn h-rbt ats-sc))
                                     (h-rbt-create-role:bool (ref-DPMF::UR_AccountRoleCreate h-rbt ats-sc))
                                     (h-rbt-add-q-role:bool (ref-DPMF::UR_AccountRoleNFTAQ h-rbt ats-sc))
-                                    (ico6:[object{OuronetDalos.IgnisCumulator}]
-                                        (if (not h-fr)
-                                            (XI_SetMassRole patron atspair true)
-                                            [EIC]
-                                        )
-                                    )
                                     (ico7:[object{OuronetDalos.IgnisCumulator}]
                                             (if (not h-rbt-burn-role)
                                             (DPMF|C_ToggleBurnRole patron h-rbt ats-sc true)
@@ -1602,13 +1594,13 @@
                                         )
                                     )
                                 )
-                                (fold (+) [] [ico6 ico7 ico8 ico9])
+                                (fold (+) [] [ico7 ico8 ico9])
                             )
                         )
                     )
                 ) 
             )
-            (+ ico-a ico-b)
+            (fold (+) [] [ico1 ico2 ico3])
         )
     )
     (defun XI_MassTurnColdRecoveryOff:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string)
@@ -2081,23 +2073,23 @@
                 (ref-U|ATS:module{UtilityAts} U|ATS)
             )
             (with-read ATS|Ledger (concat [atspair BAR account])
-                { "P0"      := p0 
-                , "P1"      := p1
-                , "P2"      := p2
-                , "P3"      := p3
-                , "P4"      := p4
-                , "P5"      := p5
-                , "P6"      := p6
-                , "P7"      := p7}
+                {"P0"       := p0 
+                ,"P1"       := p1
+                ,"P2"       := p2
+                ,"P3"       := p3
+                ,"P4"       := p4
+                ,"P5"       := p5
+                ,"P6"       := p6
+                ,"P7"       := p7}
                 (update ATS|Ledger (concat [atspair BAR account])
-                    { "P0"  : (ref-U|ATS::UC_MultiReshapeUnstakeObject p0 rp)
-                    , "P1"  : (ref-U|ATS::UC_ReshapeUnstakeObject p1 rp)
-                    , "P2"  : (ref-U|ATS::UC_ReshapeUnstakeObject p2 rp)
-                    , "P3"  : (ref-U|ATS::UC_ReshapeUnstakeObject p3 rp)
-                    , "P4"  : (ref-U|ATS::UC_ReshapeUnstakeObject p4 rp)
-                    , "P5"  : (ref-U|ATS::UC_ReshapeUnstakeObject p5 rp)
-                    , "P6"  : (ref-U|ATS::UC_ReshapeUnstakeObject p6 rp)
-                    , "P7"  : (ref-U|ATS::UC_ReshapeUnstakeObject p7 rp)}
+                    {"P0"   : (ref-U|ATS::UC_MultiReshapeUnstakeObject p0 rp)
+                    ,"P1"   : (ref-U|ATS::UC_ReshapeUnstakeObject p1 rp)
+                    ,"P2"   : (ref-U|ATS::UC_ReshapeUnstakeObject p2 rp)
+                    ,"P3"   : (ref-U|ATS::UC_ReshapeUnstakeObject p3 rp)
+                    ,"P4"   : (ref-U|ATS::UC_ReshapeUnstakeObject p4 rp)
+                    ,"P5"   : (ref-U|ATS::UC_ReshapeUnstakeObject p5 rp)
+                    ,"P6"   : (ref-U|ATS::UC_ReshapeUnstakeObject p6 rp)
+                    ,"P7"   : (ref-U|ATS::UC_ReshapeUnstakeObject p7 rp)}
                 )
             )
         )  
@@ -2106,9 +2098,9 @@
         (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
             (update ATS|Pairs atspair
-                { "c-positions"     : fee-positions
-                , "c-limits"        : fee-thresholds 
-                , "c-array"         : fee-array}
+                {"c-positions"  : fee-positions
+                ,"c-limits"     : fee-thresholds 
+                ,"c-array"      : fee-array}
             )
         )
     )
@@ -2134,8 +2126,8 @@
         (enforce-guard (P|UR "ATSU|<"))
         (with-capability (ATS|S>SET_HOT_FEE atspair promile decay)
             (update ATS|Pairs atspair
-                { "h-promile"       : promile
-                , "h-decay"         : decay}
+                {"h-promile"    : promile
+                ,"h-decay"      : decay}
             )
         )
     )
@@ -2147,33 +2139,33 @@
                 (negative:object{UtilityAts.Awo} (UDC_MakeNegativeUnstakeObject atspair))
             )
             (with-default-read ATS|Ledger (concat [atspair BAR account])
-                { "P0"  : [zero]
-                , "P1"  : negative
-                , "P2"  : negative
-                , "P3"  : negative
-                , "P4"  : negative
-                , "P5"  : negative
-                , "P6"  : negative
-                , "P7"  : negative
+                {"P0"   : [zero]
+                ,"P1"   : negative
+                ,"P2"   : negative
+                ,"P3"   : negative
+                ,"P4"   : negative
+                ,"P5"   : negative
+                ,"P6"   : negative
+                ,"P7"   : negative
                 }
-                { "P0"  := p0
-                , "P1"  := p1
-                , "P2"  := p2
-                , "P3"  := p3
-                , "P4"  := p4
-                , "P5"  := p5
-                , "P6"  := p6
-                , "P7"  := p7
+                {"P0"   := p0
+                ,"P1"   := p1
+                ,"P2"   := p2
+                ,"P3"   := p3
+                ,"P4"   := p4
+                ,"P5"   := p5
+                ,"P6"   := p6
+                ,"P7"   := p7
                 }
                 (write ATS|Ledger (concat [atspair BAR account])
-                    { "P0"  : p0
-                    , "P1"  : p1
-                    , "P2"  : p2
-                    , "P3"  : p3
-                    , "P4"  : p4
-                    , "P5"  : p5
-                    , "P6"  : p6
-                    , "P7"  : p7
+                    {"P0"   : p0
+                    ,"P1"   : p1
+                    ,"P2"   : p2
+                    ,"P3"   : p3
+                    ,"P4"   : p4
+                    ,"P5"   : p5
+                    ,"P6"   : p6
+                    ,"P7"   : p7
                     }
                 )
             )

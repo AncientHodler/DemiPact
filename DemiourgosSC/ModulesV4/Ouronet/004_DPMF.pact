@@ -188,6 +188,7 @@
     )
     (defschema DPMF|BalanceSchema
         @doc "Key = <DPMF id> + BAR + <account>"
+        exist:bool
         unit:[object{DemiourgosPactMetaFungible.DPMF|Schema}]
         role-nft-add-quantity:bool
         role-nft-burn:bool
@@ -210,14 +211,14 @@
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))    
     (defconst BAR                   (CT_Bar))
     (defconst DPMF|NEUTRAL
-        { "nonce": 0
-        , "balance": 0.0
-        , "meta-data": [{}] }
+        {"nonce": 0
+        ,"balance": 0.0
+        ,"meta-data": [{}] }
     )
     (defconst DPMF|NEGATIVE
-        { "nonce": -1
-        , "balance": -1.0
-        , "meta-data": [{}] }
+        {"nonce": -1
+        ,"balance": -1.0
+        ,"meta-data": [{}] }
     )
     ;;
     ;;{C1}
@@ -772,12 +773,9 @@
     )
     (defun URC_AccountExist:bool (id:string account:string)
         (with-default-read DPMF|BalanceTable (concat [id BAR account])
-            { "unit" : [DPMF|NEGATIVE] }
-            { "unit" := u}
-            (if (= u [DPMF|NEGATIVE])
-                false
-                true
-            )
+            { "exist"   : false }
+            { "exist"   := e}
+            e
         )
     )
     (defun URC_HasVesting:bool (id:string)
@@ -1095,25 +1093,28 @@
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id)
             (with-default-read DPMF|BalanceTable (concat [id BAR account])
-                { "unit" : [DPMF|NEUTRAL]
-                , "role-nft-add-quantity"           : false
-                , "role-nft-burn"                   : false
-                , "role-nft-create"                 : role-nft-create-boolean
-                , "role-transfer"                   : false
-                , "frozen"                          : false}
-                { "unit"                            := u
-                , "role-nft-add-quantity"           := rnaq
-                , "role-nft-burn"                   := rb
-                , "role-nft-create"                 := rnc
-                , "role-transfer"                   := rt
-                , "frozen"                          := f }
+                {"exist"                               : true
+                ,"unit"                                : [DPMF|NEUTRAL]
+                ,"role-nft-add-quantity"               : false
+                ,"role-nft-burn"                       : false
+                ,"role-nft-create"                     : role-nft-create-boolean
+                ,"role-transfer"                       : false
+                ,"frozen"                              : false}
+                {"exist"                               := e
+                ,"unit"                                := u
+                ,"role-nft-add-quantity"               := rnaq
+                ,"role-nft-burn"                       := rb
+                ,"role-nft-create"                     := rnc
+                ,"role-transfer"                       := rt
+                ,"frozen"                              := f }
                 (write DPMF|BalanceTable (concat [id BAR account])
-                    { "unit"                        : u
-                    , "role-nft-add-quantity"       : rnaq
-                    , "role-nft-burn"               : rb
-                    , "role-nft-create"             : rnc
-                    , "role-transfer"               : rt
-                    , "frozen"                      : f}
+                    {"exist"                           : e
+                    ,"unit"                            : u
+                    ,"role-nft-add-quantity"           : rnaq
+                    ,"role-nft-burn"                   : rb
+                    ,"role-nft-create"                 : rnc
+                    ,"role-transfer"                   : rt
+                    ,"frozen"                          : f}
                 )
             )
         )
@@ -1410,54 +1411,54 @@
             )
             (with-capability (BASIS|C>X_WRITE-ROLES id account rp)
                 (with-default-read DPMF|RoleTable id
-                    { "r-nft-burn"          : [BAR]
-                    , "r-nft-create"        : [BAR]
-                    , "r-nft-add-quantity"  : [BAR]
-                    , "r-transfer"          : [BAR]
-                    , "a-frozen"            : [BAR]}
-                    { "r-nft-burn"          := rb
-                    , "r-nft-create"        := rnc
-                    , "r-nft-add-quantity"  := rnaq
-                    , "r-transfer"          := rt
-                    , "a-frozen"            := af}
+                    {"r-nft-burn"           : [BAR]
+                    ,"r-nft-create"         : [BAR]
+                    ,"r-nft-add-quantity"   : [BAR]
+                    ,"r-transfer"           : [BAR]
+                    ,"a-frozen"             : [BAR]}
+                    {"r-nft-burn"           := rb
+                    ,"r-nft-create"         := rnc
+                    ,"r-nft-add-quantity"   := rnaq
+                    ,"r-transfer"           := rt
+                    ,"a-frozen"             := af}
                     (if (= rp 1)
                         (write DPMF|RoleTable id
-                            { "r-nft-burn"          : (ref-U|DALOS::UC_NewRoleList rb account d)
-                            , "r-nft-create"        : rnc
-                            , "r-nft-add-quantity"  : rnaq
-                            , "r-transfer"          : rt
-                            , "a-frozen"            : af}
+                            {"r-nft-burn"           : (ref-U|DALOS::UC_NewRoleList rb account d)
+                            ,"r-nft-create"         : rnc
+                            ,"r-nft-add-quantity"   : rnaq
+                            ,"r-transfer"           : rt
+                            ,"a-frozen"             : af}
                         )
                         (if (= rp 2)
                             (write DPMF|RoleTable id
-                                { "r-nft-burn"          : rb
-                                , "r-nft-create"        : (ref-U|DALOS::UC_NewRoleList rnc account d)
-                                , "r-nft-add-quantity"  : rnaq
-                                , "r-transfer"          : rt
-                                , "a-frozen"            : af}
+                                {"r-nft-burn"           : rb
+                                ,"r-nft-create"         : (ref-U|DALOS::UC_NewRoleList rnc account d)
+                                ,"r-nft-add-quantity"   : rnaq
+                                ,"r-transfer"           : rt
+                                ,"a-frozen"             : af}
                             )
                             (if (= rp 3)
                                 (write DPMF|RoleTable id
-                                    { "r-nft-burn"          : rb
-                                    , "r-nft-create"        : rnc
-                                    , "r-nft-add-quantity"  : (ref-U|DALOS::UC_NewRoleList rnaq account d)
-                                    , "r-transfer"          : rt
-                                    , "a-frozen"            : af}
+                                    {"r-nft-burn"           : rb
+                                    ,"r-nft-create"         : rnc
+                                    ,"r-nft-add-quantity"   : (ref-U|DALOS::UC_NewRoleList rnaq account d)
+                                    ,"r-transfer"           : rt
+                                    ,"a-frozen"             : af}
                                 )
                                 (if (= rp 4)
                                     (write DPMF|RoleTable id
-                                        { "r-nft-burn"          : rb
-                                        , "r-nft-create"        : rnc
-                                        , "r-nft-add-quantity"  : rnaq
-                                        , "r-transfer"          : (ref-U|DALOS::UC_NewRoleList rt account d)
-                                        , "a-frozen"            : af}
+                                        {"r-nft-burn"           : rb
+                                        ,"r-nft-create"         : rnc
+                                        ,"r-nft-add-quantity"   : rnaq
+                                        ,"r-transfer"           : (ref-U|DALOS::UC_NewRoleList rt account d)
+                                        ,"a-frozen"             : af}
                                     )
                                     (write DPMF|RoleTable id
-                                        { "r-nft-burn"          : rb
-                                        , "r-nft-create"        : rnc
-                                        , "r-nft-add-quantity"  : rnaq
-                                        , "r-transfer"          : rt
-                                        , "a-frozen"            : (ref-U|DALOS::UC_NewRoleList af account d)}
+                                        {"r-nft-burn"          : rb
+                                        ,"r-nft-create"        : rnc
+                                        ,"r-nft-add-quantity"  : rnaq
+                                        ,"r-transfer"          : rt
+                                        ,"a-frozen"            : (ref-U|DALOS::UC_NewRoleList af account d)}
                                     )
                                 )
                             )
@@ -1566,13 +1567,13 @@
         )
         (require-capability (DPMF|S>CTRL id))
         (update DPMF|PropertiesTable id
-            {"can-change-owner"                 : can-change-owner
-            ,"can-upgrade"                      : can-upgrade
-            ,"can-add-special-role"             : can-add-special-role
-            ,"can-freeze"                       : can-freeze
-            ,"can-wipe"                         : can-wipe
-            ,"can-pause"                        : can-pause
-            ,"can-transfer-nft-create-role"     : can-transfer-nft-create-role}
+            {"can-change-owner"             : can-change-owner
+            ,"can-upgrade"                  : can-upgrade
+            ,"can-add-special-role"         : can-add-special-role
+            ,"can-freeze"                   : can-freeze
+            ,"can-wipe"                     : can-wipe
+            ,"can-pause"                    : can-pause
+            ,"can-transfer-nft-create-role" : can-transfer-nft-create-role}
         )
     )
     (defun XI_Create:integer (id:string account:string meta-data:[object])
@@ -1584,18 +1585,20 @@
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
             (with-default-read DPMF|BalanceTable (concat [id BAR account])
-                { "unit" : [DPMF|NEUTRAL]
-                , "role-nft-add-quantity" : false
-                , "role-nft-burn" : false
-                , "role-nft-create" : role-nft-create-boolean
-                , "role-transfer" : false
-                , "frozen" : false}
-                { "unit" := u
-                , "role-nft-add-quantity" := rnaq
-                , "role-nft-burn" := rb
-                , "role-nft-create" := rnc
-                , "role-transfer" := rt
-                , "frozen" := f}
+                {"exist"                    : true
+                ,"unit"                     : [DPMF|NEUTRAL]
+                ,"role-nft-add-quantity"    : false
+                ,"role-nft-burn"            : false
+                ,"role-nft-create"          : role-nft-create-boolean
+                ,"role-transfer"            : false
+                ,"frozen"                   : false}
+                {"exist"                    := e
+                ,"unit"                     := u
+                ,"role-nft-add-quantity"    := rnaq
+                ,"role-nft-burn"            := rb
+                ,"role-nft-create"          := rnc
+                ,"role-transfer"            := rt
+                ,"frozen"                   := f}
                 (let
                     (
                         (ref-U|LST:module{StringProcessor} U|LST)
@@ -1604,12 +1607,13 @@
                         (appended-meta-fungible:[object{DemiourgosPactMetaFungible.DPMF|Schema}] (ref-U|LST::UC_AppL u meta-fungible))
                     )
                     (write DPMF|BalanceTable (concat [id BAR account])
-                        { "unit"                        : appended-meta-fungible
-                        , "role-nft-add-quantity"       : rnaq
-                        , "role-nft-burn"               : rb
-                        , "role-nft-create"             : rnc
-                        , "role-transfer"               : rt
-                        , "frozen"                      : f}
+                        {"exist"                    : e
+                        ,"unit"                     : appended-meta-fungible
+                        ,"role-nft-add-quantity"    : rnaq
+                        ,"role-nft-burn"            : rb
+                        ,"role-nft-create"          : rnc
+                        ,"role-transfer"            : rt
+                        ,"frozen"                   : f}
                     )
                     (XI_IncrementNonce id)
                     new-nonce
@@ -1625,18 +1629,19 @@
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
             (with-default-read DPMF|BalanceTable (concat [id BAR account])
-                { "unit" : [DPMF|NEGATIVE]
-                , "role-nft-add-quantity" : false
-                , "role-nft-burn" : false
-                , "role-nft-create" : role-nft-create-boolean
-                , "role-transfer" : false
-                , "frozen" : false}
-                { "unit" := unit
-                , "role-nft-add-quantity" := rnaq
-                , "role-nft-burn" := rb
-                , "role-nft-create" := rnc
-                , "role-transfer" := rt
-                , "frozen" := f}
+                {"exist"                    : true
+                ,"unit"                     : [DPMF|NEGATIVE]
+                ,"role-nft-add-quantity"    : false
+                ,"role-nft-burn"            : false
+                ,"role-nft-create"          : role-nft-create-boolean
+                ,"role-transfer"            : false
+                ,"frozen"                   : false}
+                { "unit"                    := unit
+                ,"role-nft-add-quantity"    := rnaq
+                ,"role-nft-burn"            := rb
+                ,"role-nft-create"          := rnc
+                ,"role-transfer"            := rt
+                ,"frozen"                   := f}
                 (let
                     (
                         (ref-U|LST:module{StringProcessor} U|LST)
@@ -1651,20 +1656,22 @@
                     )
                     (if (= current-nonce-balance 0.0)
                         (write DPMF|BalanceTable (concat [id BAR account])
-                            { "unit"                        : processed-unit-with-append
-                            , "role-nft-add-quantity"       : (if is-new false rnaq)
-                            , "role-nft-burn"               : (if is-new false rb)
-                            , "role-nft-create"             : (if is-new role-nft-create-boolean rnc)
-                            , "role-transfer"               : (if is-new false rt)
-                            , "frozen"                      : (if is-new false f)}
+                            {"exist"                    : true
+                            ,"unit"                     : processed-unit-with-append
+                            ,"role-nft-add-quantity"    : (if is-new false rnaq)
+                            ,"role-nft-burn"            : (if is-new false rb)
+                            ,"role-nft-create"          : (if is-new role-nft-create-boolean rnc)
+                            ,"role-transfer"            : (if is-new false rt)
+                            ,"frozen"                   : (if is-new false f)}
                         )
                         (write DPMF|BalanceTable (concat [id BAR account])
-                            { "unit"                        : processed-unit-with-replace
-                            , "role-nft-add-quantity"       : (if is-new false rnaq)
-                            , "role-nft-burn"               : (if is-new false rb)
-                            , "role-nft-create"             : (if is-new role-nft-create-boolean rnc)
-                            , "role-transfer"               : (if is-new false rt)
-                            , "frozen"                      : (if is-new false f)}
+                            {"exist"                    : true
+                            ,"unit"                     : processed-unit-with-replace
+                            ,"role-nft-add-quantity"    : (if is-new false rnaq)
+                            ,"role-nft-burn"            : (if is-new false rb)
+                            ,"role-nft-create"          : (if is-new role-nft-create-boolean rnc)
+                            ,"role-transfer"            : (if is-new false rt)
+                            ,"frozen"                   : (if is-new false f)}
                         )
                     )
                 )
@@ -1696,12 +1703,13 @@
     (defun XI_DebitPure (id:string nonce:integer account:string amount:decimal)
         (require-capability (SECURE))
         (with-read DPMF|BalanceTable (concat [id BAR account])
-            {"unit"                                 := unit  
-            ,"role-nft-add-quantity"                := rnaq
-            ,"role-nft-burn"                        := rnb
-            ,"role-nft-create"                      := rnc
-            ,"role-transfer"                        := rt
-            ,"frozen"                               := f}
+            {"exist"                    := e
+            ,"unit"                     := unit  
+            ,"role-nft-add-quantity"    := rnaq
+            ,"role-nft-burn"            := rnb
+            ,"role-nft-create"          := rnc
+            ,"role-transfer"            := rt
+            ,"frozen"                   := f}
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
@@ -1716,7 +1724,8 @@
                 (enforce (>= debited-balance 0.0) "Insufficient Funds for debiting")
                 (if (= debited-balance 0.0)
                     (update DPMF|BalanceTable (concat [id BAR account])
-                        {"unit"                     : processed-unit-with-remove
+                        {"exist"                    : e
+                        ,"unit"                     : processed-unit-with-remove
                         ,"role-nft-add-quantity"    : rnaq
                         ,"role-nft-burn"            : rnb
                         ,"role-nft-create"          : rnc
@@ -1724,7 +1733,8 @@
                         ,"frozen"                   : f}
                     )
                     (update DPMF|BalanceTable (concat [id BAR account])
-                        {"unit"                     : processed-unit-with-replace
+                        {"exist"                    : e
+                        ,"unit"                     : processed-unit-with-replace
                         ,"role-nft-add-quantity"    : rnaq
                         ,"role-nft-burn"            : rnb
                         ,"role-nft-create"          : rnc

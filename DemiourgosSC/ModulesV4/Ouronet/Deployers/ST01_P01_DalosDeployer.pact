@@ -298,8 +298,8 @@
                         [true true true true true true]         ;;can change owner
                         [true true true true true true]         ;;can upgrade
                         [true true true true true true]         ;;can can-add-special-role
-                        [true false false true false false]     ;;can-freeze
-                        [true false false false false false]    ;;can-wipe
+                        [true false true true false false]      ;;can-freeze
+                        [true false true false false false]     ;;can-wipe
                         [true false false true false false]     ;;can pause
                     )
                 )

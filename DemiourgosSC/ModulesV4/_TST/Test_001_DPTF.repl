@@ -114,7 +114,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<STEP 001 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 001 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -194,7 +194,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<STEP 002 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 002 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -284,7 +284,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<STEP 003 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 003 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -347,7 +347,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 004 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 004 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -398,7 +398,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 005 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 005 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -440,7 +440,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 006 MultiTransfer x10 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 006 MultiTransfer x10 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -483,7 +483,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 006a BulkTrasnfer x9 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 006a BulkTrasnfer x9 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -563,7 +563,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 007 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 007 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -656,7 +656,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 008 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 008 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -697,7 +697,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 009 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 009 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -745,7 +745,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 009a BulkTrasnfer x12 Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 009a BulkTrasnfer x12 Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -772,17 +772,21 @@
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
                 KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
-                KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                ;KST.FLRN KST.EMMA KST.BYTA KST.LUMY KST.COCA KST.KISS KST.PLCS KST.NANI KST.AOZT KST.FLRN
+                
             ]
         )
         (ref-TFT:module{TrueFungibleTransfer} TFT)
@@ -792,10 +796,10 @@
     )
     (ref-TFT::C_BulkTransfer160
         patron
-        "LI-98c486052a51"
+        "ELITEAURYN-98c486052a51"
         patron
         receiver-lst
-        (make-list 160 25.0)
+        (make-list 80 25.0)
         false
     )
     [
@@ -806,7 +810,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|0 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|0 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -827,7 +831,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|1 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|1 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -848,7 +852,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|2 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|2 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -869,7 +873,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|3 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|3 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -890,7 +894,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|4 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|4 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -911,7 +915,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|5 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|5 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -932,7 +936,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|6 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|6 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -953,7 +957,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|7 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|7 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -974,7 +978,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|8 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|8 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -995,7 +999,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|9 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|9 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -1016,7 +1020,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|10 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|10 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -1037,7 +1041,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|11 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|11 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -1058,9 +1062,261 @@
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 0010|12 BulkTransfer Variable Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 0010|12 BulkTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 011 Dispo Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (receiver:string KST.EMMA)
+        (a-id:string "AURYN-98c486052a51")
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+    )
+    [
+        (format "Emma has {} Elite-Auryn" [(ref-DPTF::UR_AccountSupply ea-id receiver)])
+        (format "Elite-Auryndex before 5000 EA Transfer is {}" [(ref-ATS::URC_Index elite-auryndex)])
+    ]
+    
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ea-id:string "ELITEAURYN-98c486052a51")
+    )
+    (ref-T01::DPTF|C_Transfer patron ea-id patron receiver 5000.0 false)
+    (print "AH transfered 5000 EA to Emma")
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (a-id:string "AURYN-98c486052a51")
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+    )
+    [
+        (format "Emma has after transfer from AH, {} Elite-Auryn" [(ref-DPTF::UR_AccountSupply ea-id receiver)])
+        (format "Elite-Auryndex after 5000 EA Transfer is {}" [(ref-ATS::URC_Index elite-auryndex)])
+    ]
+    
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ea-id:string "ELITEAURYN-98c486052a51")
+    )
+    (format "Minimum OURO for Emma is {}" [(ref-TFT::URC_MinimumOuro receiver)])
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (format "Emma currently has {} OURO" [(ref-DPTF::UR_AccountSupply ouro receiver)])
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        (gas:string "GAS-98c486052a51")
+    )
+    [
+        (format "Emma currently has {} OURO" [(ref-DPTF::UR_AccountSupply ouro receiver)]) 
+        (format "Emma currently has before Sublimate {} GAS" [(ref-DPTF::UR_AccountSupply gas receiver)]) 
+        (format "Emma currently has {} EA" [(ref-DPTF::UR_AccountSupply ea-id receiver)]) 
+    ]
+)
+(print "")
+(print "Emma Sublimates 10 OURO, while having 0 Ouro Balance, to Make IGNIS")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        (gas:string "GAS-98c486052a51")
+    )
+    (ref-T01::ORBR|C_Sublimate receiver receiver receiver 10.0)
+)
+(print "")
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (a-id:string "AURYN-98c486052a51")
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        (gas:string "GAS-98c486052a51")
+        (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro)))
+        (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+    )
+    [
+        (format "Emma currently has {} OURO" [(ref-DPTF::UR_AccountSupply ouro receiver)]) 
+        (format "Emma currently has after Sublimate {} GAS" [(ref-DPTF::UR_AccountSupply gas receiver)]) 
+        (format "Emma currently has {} EA" [(ref-DPTF::UR_AccountSupply ea-id receiver)])
+        (format "Emma has Ignis Gas Discount {}" [(ref-DALOS::URC_IgnisGasDiscount receiver)])
+        (format "Emma has Kadena Gas Discount {}" [(ref-DALOS::URC_KadenaGasDiscount receiver)])
+        (format "Auryndex prior to ClearDispo is {}" [(ref-ATS::URC_Index auryndex)])
+        (format "Elite-Auryndex prior to ClearDispo is {}" [(ref-ATS::URC_Index elite-auryndex)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0011 Dispo Multi Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+(begin-tx "DPTF Tx 012 Clear Dispo Test")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        ;;refs
+        (ref-T01:module{TalosStageOne} TS01)
+        (receiver:string KST.EMMA)
+    )
+    (ref-T01::DPTF|C_ClearDispo receiver receiver)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0012 Clear Dispo Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "DPTF Tx 013 After Clear Dispo Checks")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        ;;refs
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-ATS:module{Autostake} ATS)
+        (receiver:string KST.EMMA)
+        (a-id:string "AURYN-98c486052a51")
+        (ea-id:string "ELITEAURYN-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        (gas:string "GAS-98c486052a51")
+        (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro)))
+        (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+    )
+    [
+        (format "Emma currently has {} OURO" [(ref-DPTF::UR_AccountSupply ouro receiver)]) 
+        (format "Emma currently has {} GAS" [(ref-DPTF::UR_AccountSupply gas receiver)]) 
+        (format "Emma currently has {} EA" [(ref-DPTF::UR_AccountSupply ea-id receiver)])
+        (format "Emma has Ignis Gas Discount {}" [(ref-DALOS::URC_IgnisGasDiscount receiver)])
+        (format "Emma has Kadena Gas Discount {}" [(ref-DALOS::URC_KadenaGasDiscount receiver)])
+        (format "Auryndex after ClearDispo is {}" [(ref-ATS::URC_Index auryndex)])
+        (format "Elite-Auryndex after ClearDispo is {}" [(ref-ATS::URC_Index elite-auryndex)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0013 After Clear Dispo Checks {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+

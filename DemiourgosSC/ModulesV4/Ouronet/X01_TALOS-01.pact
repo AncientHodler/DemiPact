@@ -223,7 +223,7 @@
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
             )
             (ref-P|DALOS::P|A_Add 
-                "TALOS-01|RemoteTalosGov"
+                "TALOS-01|RemoteDalosGov"
                 (create-capability-guard (P|TRG))
             )
             (ref-P|DALOS::P|A_Add 
@@ -825,10 +825,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_ToggleFreezeAccount patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_ToggleFreezeAccount patron id account toggle)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)
@@ -918,10 +921,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_Wipe patron id atbw)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_Wipe patron id atbw)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     ;;{DPMF_Client}

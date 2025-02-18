@@ -90,17 +90,16 @@
     (defun C_SetMinMove (patron:string id:string min-move-value:decimal))
     (defun C_ToggleFee (patron:string id:string toggle:bool))
     (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool))
-    (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
+    (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_TogglePause (patron:string id:string toggle:bool))
     (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun C_Wipe (patron:string id:string atbw:string))
+    (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     ;;
     (defun XB_Credit (id:string account:string amount:decimal))
     (defun XI_Debit (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
     (defun XE_Burn (id:string account:string amount:decimal))
-    (defun XE_ClearDispo (account:string))
     (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string))
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool))
@@ -778,12 +777,9 @@
     (defun URC_AccountExist:bool (id:string account:string)
         @doc "Returns a boolean if a given DPTF Account exists"
         (with-default-read DPTF|BalanceTable (concat [id BAR account])
-            { "balance" : -1.0 }
-            { "balance" := b}
-            (if (= b -1.0)
-                false
-                true
-            )
+            { "exist"   : false }
+            { "exist"   := e}
+            e
         )
     )
     (defun URC_Fee:[decimal] (id:string amount:decimal)
@@ -1155,25 +1151,28 @@
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id)
             (with-default-read DPTF|BalanceTable (concat [id BAR account])
-                { "balance"                             : 0.0
-                , "role-burn"                           : false
-                , "role-mint"                           : false
-                , "role-transfer"                       : false
-                , "role-fee-exemption"                  : false
-                , "frozen"                              : false}
-                { "balance"                             := b
-                , "role-burn"                           := rb
-                , "role-mint"                           := rm
-                , "role-transfer"                       := rt
-                , "role-fee-exemption"                  := rfe
-                , "frozen"                              := f}
+                {"exist"                    : true
+                ,"balance"                  : 0.0
+                ,"role-burn"                : false
+                ,"role-mint"                : false
+                ,"role-transfer"            : false
+                ,"role-fee-exemption"       : false
+                ,"frozen"                   : false}
+                {"exist"                    := e
+                ,"balance"                  := b
+                ,"role-burn"                := rb
+                ,"role-mint"                := rm
+                ,"role-transfer"            := rt
+                ,"role-fee-exemption"       := rfe
+                ,"frozen"                   := f}
                 (write DPTF|BalanceTable (concat [id BAR account])
-                    { "balance"                         : b
-                    , "role-burn"                       : rb
-                    , "role-mint"                       : rm
-                    , "role-transfer"                   : rt
-                    , "role-fee-exemption"              : rfe
-                    , "frozen"                          : f}
+                    {"exist"                : e
+                    ,"balance"              : b
+                    ,"role-burn"            : rb
+                    ,"role-mint"            : rm
+                    ,"role-transfer"        : rt
+                    ,"role-fee-exemption"   : rfe
+                    ,"frozen"               : f}
                 )
             )
         )
@@ -1309,16 +1308,27 @@
             )
         )
     )
-    (defun C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (DPTF|FC>FRZ-ACC id account toggle)
+    (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "TFT|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
+        (with-capability (DPTF|FC>FRZ-ACC id account toggle)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                )
                 (XI_ToggleFreezeAccount id account toggle)
                 (XB_WriteRoles id account 5 toggle)
-                (ref-DALOS::IGNIS|C_Collect patron account (ref-DALOS::UR_UsagePrice "ignis|big"))
+                ico
             )
         )
     )
@@ -1348,15 +1358,26 @@
             )
         )
     )
-    (defun C_Wipe (patron:string id:string atbw:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "TFT|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id atbw))
+                (ico:object{OuronetDalos.IgnisCumulator}
+                     (ref-DALOS::UDC_Cumulator price trigger [])
+                )
             )
             (with-capability (DPTF|C>WIPE id atbw)
                 (XI_Wipe id atbw)
-                (ref-DALOS::IGNIS|C_CollectWT patron atbw (ref-DALOS::UR_UsagePrice "ignis|biggest") (ref-DALOS::IGNIS|URC_ZeroGAS id atbw))
+                ico
             )
         )
     )
@@ -1376,7 +1397,6 @@
                     (snake-or-gas:bool (if (= id (ref-DALOS::UR_OuroborosID)) true false))
                     (read-balance:decimal (ref-DALOS::UR_TF_AccountSupply account snake-or-gas))
                 )
-                (enforce (>= read-balance 0.0) "Impossible operation, negative Primordial TrueFungible amounts detected")
                 (enforce (> amount 0.0) "Crediting amount must be greater than zero, even for Primordial TrueFungibles")
                 (with-capability (P|DPTF|CALLER)
                     (ref-DALOS::XB_UpdateBalance account snake-or-gas (+ read-balance amount))
@@ -1389,30 +1409,30 @@
                 (enforce (> amount 0.0) "Crediting amount must be greater than zero")
                 (if (= dptf-account-exist false)
                     (insert DPTF|BalanceTable (concat [id BAR account])
-                        { "balance"                         : amount
-                        , "role-burn"                       : false
-                        , "role-mint"                       : false
-                        , "role-transfer"                   : false
-                        , "role-fee-exemption"              : false
-                        , "frozen"                          : false
-                        }
+                        {"exist"                    : true
+                        ,"balance"                  : amount
+                        ,"role-burn"                : false
+                        ,"role-mint"                : false
+                        ,"role-transfer"            : false
+                        ,"role-fee-exemption"       : false
+                        ,"frozen"                   : false}
                     )
                     (with-read DPTF|BalanceTable (concat [id BAR account])
-                        { "balance"                         := b
-                        , "role-burn"                       := rb
-                        , "role-mint"                       := rm
-                        , "role-transfer"                   := rt
-                        , "role-fee-exemption"              := rfe
-                        , "frozen"                          := f
-                        }
+                        {"exist"                    := e
+                        ,"balance"                  := b
+                        ,"role-burn"                := rb
+                        ,"role-mint"                := rm
+                        ,"role-transfer"            := rt
+                        ,"role-fee-exemption"       := rfe
+                        ,"frozen"                   := f}
                         (write DPTF|BalanceTable (concat [id BAR account])
-                            { "balance"                     : (+ b amount)
-                            , "role-burn"                   : rb
-                            , "role-mint"                   : rm
-                            , "role-transfer"               : rt
-                            , "role-fee-exemption"          : rfe
-                            , "frozen"                      : f
-                            }   
+                            {"exist"                : e
+                            ,"balance"              : (+ b amount)
+                            ,"role-burn"            : rb
+                            ,"role-mint"            : rm
+                            ,"role-transfer"        : rt
+                            ,"role-fee-exemption"   : rfe
+                            ,"frozen"               : f}
                         )
                     )
                 )
@@ -1452,54 +1472,54 @@
             )
             (with-capability (BASIS|C>X_WRITE-ROLES id account rp)
                 (with-default-read DPTF|RoleTable id
-                    { "r-burn"          : [BAR]
-                    , "r-mint"          : [BAR]
-                    , "r-fee-exemption" : [BAR]
-                    , "r-transfer"      : [BAR]
-                    , "a-frozen"        : [BAR]}
-                    { "r-burn"          := rb
-                    , "r-mint"          := rm
-                    , "r-fee-exemption" := rfe
-                    , "r-transfer"      := rt
-                    , "a-frozen"        := af}
+                    {"r-burn"           : [BAR]
+                    ,"r-mint"           : [BAR]
+                    ,"r-fee-exemption"  : [BAR]
+                    ,"r-transfer"       : [BAR]
+                    ,"a-frozen"         : [BAR]}
+                    {"r-burn"           := rb
+                    ,"r-mint"           := rm
+                    ,"r-fee-exemption"  := rfe
+                    ,"r-transfer"       := rt
+                    ,"a-frozen"         := af}
                     (if (= rp 1)
                         (write DPTF|RoleTable id
                             {"r-burn"           : (ref-U|DALOS::UC_NewRoleList rb account d)
-                            , "r-mint"          : rm
-                            , "r-fee-exemption" : rfe
-                            , "r-transfer"      : rt
-                            , "a-frozen"        : af}
+                            ,"r-mint"           : rm
+                            ,"r-fee-exemption"  : rfe
+                            ,"r-transfer"       : rt
+                            ,"a-frozen"         : af}
                         )
                         (if (= rp 2)
                             (write DPTF|RoleTable id
                                 {"r-burn"           : rb
-                                , "r-mint"          : (ref-U|DALOS::UC_NewRoleList rm account d)
-                                , "r-fee-exemption" : rfe
-                                , "r-transfer"      : rt
-                                , "a-frozen"        : af}
+                                ,"r-mint"           : (ref-U|DALOS::UC_NewRoleList rm account d)
+                                ,"r-fee-exemption"  : rfe
+                                ,"r-transfer"       : rt
+                                ,"a-frozen"         : af}
                             )
                             (if (= rp 3)
                                 (write DPTF|RoleTable id
                                     {"r-burn"           : rb
-                                    , "r-mint"          : rm
-                                    , "r-fee-exemption" : (ref-U|DALOS::UC_NewRoleList rfe account d)
-                                    , "r-transfer"      : rt
-                                    , "a-frozen"        : af}
+                                    ,"r-mint"           : rm
+                                    ,"r-fee-exemption"  : (ref-U|DALOS::UC_NewRoleList rfe account d)
+                                    ,"r-transfer"       : rt
+                                    ,"a-frozen"         : af}
                                 )
                                 (if (= rp 4)
                                     (write DPTF|RoleTable id
                                         {"r-burn"           : rb
-                                        , "r-mint"          : rm
-                                        , "r-fee-exemption" : rfe
-                                        , "r-transfer"      : (ref-U|DALOS::UC_NewRoleList rt account d)
-                                        , "a-frozen"        : af}
+                                        ,"r-mint"           : rm
+                                        ,"r-fee-exemption"  : rfe
+                                        ,"r-transfer"       : (ref-U|DALOS::UC_NewRoleList rt account d)
+                                        ,"a-frozen"         : af}
                                     )
                                     (write DPTF|RoleTable id
                                         {"r-burn"           : rb
-                                        , "r-mint"          : rm
-                                        , "r-fee-exemption" : rfe
-                                        , "r-transfer"      : rt
-                                        , "a-frozen"        : (ref-U|DALOS::UC_NewRoleList af account d)}
+                                        ,"r-mint"           : rm
+                                        ,"r-fee-exemption"  : rfe
+                                        ,"r-transfer"       : rt
+                                        ,"a-frozen"         : (ref-U|DALOS::UC_NewRoleList af account d)}
                                     )
                                 )
                             )
@@ -1514,18 +1534,6 @@
         (enforce-guard (P|UR "TFT|<"))
         (with-capability (DPTF|C>BURN id account amount)
             (XI_BurnCore id account amount)
-        )
-    )
-    (defun XE_ClearDispo (account:string)
-        (enforce-guard (P|UR "TFT|<"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ouro-id:string (ref-DALOS::UR_OuroborosID))
-            )
-            (update DPTF|BalanceTable (concat [ouro-id BAR account])
-                {"balance" : 0.0}
-            )
         )
     )
     (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string)
@@ -1875,8 +1883,8 @@
         (XI_UpdateSupply id amount true)
         (if origin
             (update DPTF|PropertiesTable id
-                { "origin-mint" : false
-                , "origin-mint-amount" : amount}
+                {"origin-mint"          : false
+                ,"origin-mint-amount"   : amount}
             )
             true
         )

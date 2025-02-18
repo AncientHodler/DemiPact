@@ -6,7 +6,6 @@
     (defun UC_GasDiscount (major:integer minor:integer native:bool))
     (defun UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool))
     (defun UC_IzStringANC:bool (s:string capital:bool iz-lp:bool))
-    (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal))
     (defun UC_NewRoleList (current-lst:[string] account:string direction:bool))
     ;;
     (defun UEV_Decimals:bool (decimals:integer))
@@ -108,24 +107,6 @@
             )
             true
             (str-to-list s)
-        )
-    )
-    (defun UC_KadenaSplit:[decimal] (kadena-input-amount:decimal)
-        @doc "Computes the KDA Split required for Native Gas Collection \
-        \ This is 5% 5% 15% and 75% split, outputed as 5% 15% 75% in a list"
-        (let*
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
-                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
-
-
-                (five:decimal (ref-U|DEC::UC_Percent kadena-input-amount 5.0 kda-prec))
-                (fifteen:decimal (ref-U|DEC::UC_Percent kadena-input-amount 15.0 kda-prec))
-                (total:decimal (ref-U|DEC::UC_Percent kadena-input-amount 25.0 kda-prec))
-                (rest:decimal (- kadena-input-amount total))
-            )
-            [five fifteen rest]
         )
     )
     (defun UC_NewRoleList (current-lst:[string] account:string direction:bool)
