@@ -7,7 +7,6 @@
     (defun UC_InsertFirst:list (in:list item))
     (defun UC_IsNotEmpty:bool (x:list))
     (defun UC_IzUnique (lst:[string]))
-    (defun UC_KeepEndMatch:[string] (in:[string] match:string))
     (defun UC_LE (in:list))
     (defun UC_RemoveItem:list (in:list item))
     (defun UC_RemoveItemAt:list (in:list position:integer))
@@ -77,26 +76,6 @@
                 )
             )
             true  ; If all items are unique, the function returns true
-        )
-    )
-    (defun UC_KeepEndMatch:[string] (in:[string] match:string)
-        @doc "From a list of strings, keep only those that match at the end"
-        (let
-            (
-                (l:integer (length match))
-                (t:integer (- 0 l))
-            )
-            (fold 
-                (lambda 
-                    (acc:[string] item:string)
-                    (if (= (take t item) match)
-                        (UC_AppL acc item)
-                        acc
-                    )
-                )
-                [] 
-                in
-            )
         )
     )
     (defun UC_LE (in:list)

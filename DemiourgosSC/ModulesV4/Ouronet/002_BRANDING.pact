@@ -221,7 +221,7 @@
                 (enforce-guard (P|UR "DPMF|<"))
                 (enforce-guard (P|UR "ATS|<"))
                 (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "SWP|<"))
+                (enforce-guard (P|UR "SWPU|<"))
             ]
         )
     )

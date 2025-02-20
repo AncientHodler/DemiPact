@@ -215,6 +215,7 @@
                     (ref-U|G::UEV_GuardOfAny
                         [
                             (P|UR "TFT|RemoteDalosGov")
+                            (P|UR "SWPU|RemoteDalosGov")
                             (P|UR "TALOS-01|RemoteDalosGov")
                         ]
                     )

@@ -76,7 +76,6 @@
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun C_ChangeOwnership (patron:string swpair:string new-owner:string))
-    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string pool-tokens:[object{PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
     (defun C_RotateGovernor (patron:string swpair:string new-gov:guard))
@@ -92,6 +91,7 @@
     ;;
     (defun XE_UpdateSupplies (swpair:string new-supplies:[decimal]))
     (defun XE_UpdateSupply (swpair:string id:string new-supply:decimal))
+    (defun XE_Issue:string (account:string pool-tokens:[object{PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool))
 )
 (module SWP GOV
     ;;
@@ -407,13 +407,30 @@
     )
     (defcap SPW|S>UPDATE_SPECIAL-FEE-TARGETS (swpair:string targets:[object{Swapper.FeeSplit}])
         @event
-        (CAP_Owner swpair)
-        (map
-            (lambda
-                (obj:object{Swapper.FeeSplit})
-                (UEV_FeeSplit obj)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (target-no:integer (length targets))
+                (owner:string (UR_OwnerKonto swpair))
+                (major:integer (ref-DALOS::UR_Elite-Tier-Major owner))
+                (max:integer
+                    (cond
+                        ((or (= major 0) (= major 1)) 1)
+                        ((or (= major 2) (= major 3)) 2)
+                        ((or (= major 4) (= major 5)) 3)
+                        4
+                    )
+                )
             )
-            targets
+            (enforce (and (>= target-no 1) (<= target-no max)) "Between 1 and 4 special fee Targets allowed")
+            (CAP_Owner swpair)
+            (map
+                (lambda
+                    (obj:object{Swapper.FeeSplit})
+                    (UEV_FeeSplit obj)
+                )
+                targets
+            )
         )
     )
     (defcap SWP|S>TG_SPECIAL-MODE (swpair:string)
@@ -479,65 +496,7 @@
         @event
         (compose-capability (GOV|SWP_ADMIN))
     )
-    (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
-        @event
-        (let
-            (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (l1:integer (length pool-tokens))
-                (l2:integer (length weights))
-                (ws:decimal (fold (+) 0.0 weights))
-                (principals:[string] (UR_Principals))
-                (pt-ids:[string] (UC_ExtractTokens pool-tokens))
-                (ptte:[string]
-                    (if (= amp -1.0)
-                        (drop 1 pt-ids)
-                        pt-ids
-                    )
-                )
-                (iz-principal:bool (contains (at 0 pt-ids) principals))
-            )
-            (enforce (!= principals [BAR]) "Principals must be defined before a Swap Pair can be issued")
-            (UEV_PoolFee fee-lp)
-            (UEV_New pt-ids weights amp)
-            (map
-                (lambda
-                    (id:string)
-                    (ref-DPTF::CAP_Owner id)
-                )
-                ptte
-            )
-            (map
-                (lambda
-                    (w:decimal)
-                    (= (floor w (ref-U|CT::CT_FEE_PRECISION)) w)
-                )
-                weights
-            )
-            (enforce-one
-                "Invalid Weight Values"
-                [
-                    (enforce (= ws 1.0) "Weights must add to exactly 1.0")
-                    (enforce (= ws (dec l1)) "Weights must all be 1.0")
-                ]
-            )
-            (if (= amp -1.0)
-                (enforce iz-principal "1st Token is not a Principal")
-                true
-            )
-            (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid amp value")
-            (enforce (and (>= l1 2) (<= l1 7)) "2 - 7 Tokens can be used to create a Swap Pair")
-            (enforce (= l1 l2) "Number of weigths does not concide with the pool-tokens Number")
-        
-        )
-        (compose-capability (P|SECURE-CALLER))
-        (compose-capability (SWP|GOV))
-        (if p
-            (compose-capability (GOV|SWP_ADMIN))
-            true
-        )
-    )
+    
     (defcap SWP|C>TG_FEE-LOCK (swpair:string toggle:bool)
         @event
         (UEV_FeeLockState swpair (not toggle))
@@ -1079,54 +1038,6 @@
             )
         )
     )
-    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
-        @doc "Issues a new SWPair (Liquidty Pool)"
-        (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp p)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-BRD:module{Branding} BRD)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
-                    (ref-SWPT:module{SwapTracer} SWPT)
-                    (kda-dptf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
-                    (kda-swp-cost:decimal (ref-DALOS::UR_UsagePrice "swp"))
-                    (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
-                    (gas-swp-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|swp-issue"))
-                    (pool-token-ids:[string] (UC_ExtractTokens pool-tokens))
-                    (pool-token-amounts:[decimal] (UC_ExtractTokenSupplies pool-tokens))
-                    (lp-name-ticker:[string] (URC_LpComposer pool-tokens weights amp))
-                    (ico:object{OuronetDalos.IgnisCumulator} 
-                        (ref-DPTF::XE_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker))
-                    )
-                    (token-lp:string (at 0 (at "output" ico)))
-                    (swpair:string (XI_Issue account pool-tokens token-lp fee-lp weights amp p))
-                )
-                (ref-BRD::XE_Issue swpair)
-                (let
-                    (
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico1:object{OuronetDalos.IgnisCumulator}
-                            (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids account SWP|SC_NAME pool-token-amounts true)
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DPTF::C_Mint patron token-lp SWP|SC_NAME 10000000.0 true)
-                        )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
-                            (ref-TFT::XB_FeelesTransfer patron token-lp SWP|SC_NAME account 10000000.0 true)
-                        )
-                        (ico4:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator gas-swp-cost trigger [])
-                        )
-                    )
-                    (ref-SWPT::X_MultiPathTracer swpair (UR_Principals))
-                    (ref-DALOS::KDA|C_Collect patron kda-costs)
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4] [swpair token-lp])
-                )
-            )
-        )
-    )
     (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool)
         (enforce-guard (P|UR "TALOS-01"))
         (let
@@ -1374,35 +1285,8 @@
             )
         )
     )
-    ;;
-    (defun XI_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
-        (require-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap))
-        (if add-or-swap
-            (update SWP|Pairs swpair
-                {"can-add"                      : toggle}
-            )
-            (update SWP|Pairs swpair
-                {"can-swap"                     : toggle}
-            )
-        )
-    )
-    (defun XI_ChangeOwnership (swpair:string new-owner:string)
-        (require-capability (SWP|S>RT_OWN swpair new-owner))
-        (update SWP|Pairs swpair
-            {"owner-konto"                      : new-owner}
-        )
-    )
-    (defun XI_IncrementFeeUnlocks (swpair:string)
-        (require-capability (SECURE))
-        (with-read SWP|Pairs swpair
-            { "unlocks" := u }
-            (update SWP|Pairs swpair
-                {"unlocks" : (+ u 1)}
-            )
-        )
-    )
-    (defun XI_Issue:string (account:string pool-tokens:[object{Swapper.PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool)
-        (require-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp p))
+    (defun XE_Issue:string (account:string pool-tokens:[object{Swapper.PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+        (enforce-guard (P|UR "SWPU|<"))
         (let
             (
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
@@ -1444,17 +1328,46 @@
                 ,"primality"                            : p
                 }
             )
-            (XI_SavePool n what swpair)
-            (ref-DPTF::C_DeployAccount token-lp account)
-            (ref-DPTF::C_DeployAccount token-lp SWP|SC_NAME)
-            (map
-                (lambda
-                    (id:string)
-                    (ref-DPTF::C_DeployAccount id SWP|SC_NAME)
+            (with-capability (P|SECURE-CALLER)
+                (XI_SavePool n what swpair)
+                (ref-DPTF::C_DeployAccount token-lp account)
+                (ref-DPTF::C_DeployAccount token-lp SWP|SC_NAME)
+                (map
+                    (lambda
+                        (id:string)
+                        (ref-DPTF::C_DeployAccount id SWP|SC_NAME)
+                    )
+                    ptte
                 )
-                ptte
+                swpair
             )
-            swpair
+        )
+    )
+    ;;
+    (defun XI_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
+        (require-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap))
+        (if add-or-swap
+            (update SWP|Pairs swpair
+                {"can-add"                      : toggle}
+            )
+            (update SWP|Pairs swpair
+                {"can-swap"                     : toggle}
+            )
+        )
+    )
+    (defun XI_ChangeOwnership (swpair:string new-owner:string)
+        (require-capability (SWP|S>RT_OWN swpair new-owner))
+        (update SWP|Pairs swpair
+            {"owner-konto"                      : new-owner}
+        )
+    )
+    (defun XI_IncrementFeeUnlocks (swpair:string)
+        (require-capability (SECURE))
+        (with-read SWP|Pairs swpair
+            { "unlocks" := u }
+            (update SWP|Pairs swpair
+                {"unlocks" : (+ u 1)}
+            )
         )
     )
     (defun XI_ModifyCanChangeOwner (swpair:string new-boolean:bool)

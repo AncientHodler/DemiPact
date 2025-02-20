@@ -62,63 +62,73 @@
                     (let
                         (
                             (links:[string] (UC_GraphNodeLinks graph in))
-                            (primal-que:[object{BreadthFirstSearch.QE}] (UC_PrimalQE links in))
-                            (chains-to-add:[[string]] (UC_GetChains primal-que))
-                            (acc1-visited:object{BreadthFirstSearch.BFS} (UDC_AddVisited acc (+ [in] links)))
-                            (acc2-que:object{BreadthFirstSearch.BFS} (UDC_AddToQue acc1-visited primal-que))
-                            (acc3-chains:object{BreadthFirstSearch.BFS} (UDC_AddChains acc2-que chains-to-add))
                         )
-                        acc3-chains
-                    )
-                    (let
-                        (
-                            (first-qe:object{BreadthFirstSearch.QE} (at 0 (at "que" acc)))
-                            (first-qe-node:string (at "node" first-qe))  
-                        )
-                        (if (!= first-qe-node BAR)
+                        (if (!= links [BAR])
                             (let
                                 (
-                                    (ref-U|LST:module{StringProcessor} U|LST)
-                                    (first-qe-node-links:[string] (UC_GraphNodeLinks graph first-qe-node))
-                                    (visited:[string] (at "visited" acc))
-                                    (not-visited:[string] (UC_FilterVisited visited first-qe-node-links))
-                                    (lnv:integer (length not-visited))
-                                    (acc0-rm:object{BreadthFirstSearch.BFS} (UDC_RmFromQue acc))
-                                    (new-que:[object{BreadthFirstSearch.QE}]
-                                        (if (= lnv 0)
-                                            EQE
-                                            (fold
-                                                (lambda
-                                                    (acc:[object{BreadthFirstSearch.QE}] idx2:integer)
-                                                    (ref-U|LST::UC_AppL 
-                                                        acc
-                                                        (UDC_ExtendChain first-qe (at idx2 not-visited))
-                                                    )
-                                                )
-                                                []
-                                                (enumerate 0 (- (length not-visited) 1))
-                                            )
-                                        )
-                                    )
-                                    (chains-to-add:[[string]] (UC_GetChains new-que))
-                                    (acc1-visited:object{BreadthFirstSearch.BFS} (UDC_AddVisited acc0-rm not-visited))
-                                    (acc2-que:object{BreadthFirstSearch.BFS} 
-                                        (if (!= chains-to-add [[BAR]])
-                                            (UDC_AddToQue acc1-visited new-que)
-                                            acc1-visited
-                                        )
-                                    )
-                                    (acc3-chains:object{BreadthFirstSearch.BFS} 
-                                        (if (!= chains-to-add [[BAR]])
-                                            (UDC_AddChains acc2-que chains-to-add)
-                                            acc2-que
-                                        )
-                                    )
+                                    (primal-que:[object{BreadthFirstSearch.QE}] (UC_PrimalQE links in))
+                                    (chains-to-add:[[string]] (UC_GetChains primal-que))
+                                    (acc1-visited:object{BreadthFirstSearch.BFS} (UDC_AddVisited acc (+ [in] links)))
+                                    (acc2-que:object{BreadthFirstSearch.BFS} (UDC_AddToQue acc1-visited primal-que))
+                                    (acc3-chains:object{BreadthFirstSearch.BFS} (UDC_AddChains acc2-que chains-to-add))
                                 )
                                 acc3-chains
                             )
-                            acc
+                            EBFS
                         )
+                    )
+                    (if (!= acc EBFS)
+                        (let
+                            (
+                                (first-qe:object{BreadthFirstSearch.QE} (at 0 (at "que" acc)))
+                                (first-qe-node:string (at "node" first-qe))  
+                            )
+                            (if (!= first-qe-node BAR)
+                                (let
+                                    (
+                                        (ref-U|LST:module{StringProcessor} U|LST)
+                                        (first-qe-node-links:[string] (UC_GraphNodeLinks graph first-qe-node))
+                                        (visited:[string] (at "visited" acc))
+                                        (not-visited:[string] (UC_FilterVisited visited first-qe-node-links))
+                                        (lnv:integer (length not-visited))
+                                        (acc0-rm:object{BreadthFirstSearch.BFS} (UDC_RmFromQue acc))
+                                        (new-que:[object{BreadthFirstSearch.QE}]
+                                            (if (= lnv 0)
+                                                EQE
+                                                (fold
+                                                    (lambda
+                                                        (acc:[object{BreadthFirstSearch.QE}] idx2:integer)
+                                                        (ref-U|LST::UC_AppL 
+                                                            acc
+                                                            (UDC_ExtendChain first-qe (at idx2 not-visited))
+                                                        )
+                                                    )
+                                                    []
+                                                    (enumerate 0 (- (length not-visited) 1))
+                                                )
+                                            )
+                                        )
+                                        (chains-to-add:[[string]] (UC_GetChains new-que))
+                                        (acc1-visited:object{BreadthFirstSearch.BFS} (UDC_AddVisited acc0-rm not-visited))
+                                        (acc2-que:object{BreadthFirstSearch.BFS} 
+                                            (if (!= chains-to-add [[BAR]])
+                                                (UDC_AddToQue acc1-visited new-que)
+                                                acc1-visited
+                                            )
+                                        )
+                                        (acc3-chains:object{BreadthFirstSearch.BFS} 
+                                            (if (!= chains-to-add [[BAR]])
+                                                (UDC_AddChains acc2-que chains-to-add)
+                                                acc2-que
+                                            )
+                                        )
+                                    )
+                                    acc3-chains
+                                )
+                                acc
+                            )
+                        )
+                        EBFS
                     )
                 )
             )
@@ -133,10 +143,18 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (nodes:[string] (UC_GraphNodes graph))
                 (sl:[integer] (ref-U|LST::UC_Search nodes node))
-                (pos:integer (at 0 sl))
-                (graph-node:object{BreadthFirstSearch.GraphNode} (at pos graph))
+                (search-result-size:integer (length sl))
             )
-            (at "links" graph-node)
+            (if (= search-result-size 0)
+                [BAR]
+                (let
+                    (
+                        (pos:integer (at 0 sl))
+                        (graph-node:object{BreadthFirstSearch.GraphNode} (at pos graph))
+                    )
+                    (at "links" graph-node)
+                )
+            )
         )
     )
     (defun UC_GraphNodes:[string] (graph:[object{BreadthFirstSearch.GraphNode}])

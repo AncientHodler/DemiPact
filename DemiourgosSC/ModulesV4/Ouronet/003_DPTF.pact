@@ -1137,6 +1137,7 @@
         (enforce-one
             "Unallowed"
             [
+                (enforce-guard (create-capability-guard (SECURE)))
                 (enforce-guard (P|UR "ATS|<"))
                 (enforce-guard (P|UR "ATSU|<"))
                 (enforce-guard (P|UR "VST|<"))
@@ -1538,7 +1539,7 @@
     )
     (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
-        (enforce-guard (P|UR "SWP|<"))
+        (enforce-guard (P|UR "SWPU|<"))
         (with-capability (DPTF|C>ISSUE account [name] [ticker] [24] [false] [false] [true] [false] [false] [false])
             (XI_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
         )

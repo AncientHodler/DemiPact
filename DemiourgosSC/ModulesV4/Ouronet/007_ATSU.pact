@@ -606,7 +606,13 @@
         )
     )
     (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string fueler:string ats:string reward-token:string amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "OUROBOROS|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-ATS:module{Autostake} ATS)

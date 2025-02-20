@@ -156,6 +156,7 @@
         @event
         (compose-capability (ORBR|GOV))
         (compose-capability (ORBR|NATIVE-AUTOMATIC))
+        (compose-capability (P|ORBR|CALLER))
     )
     (defcap IGNIS|C>SUBLIMATE (patron:string client:string target:string)
         @event
@@ -330,7 +331,13 @@
         )
     )
     (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string)
-        (enforce-guard (P|UR "TALOS-01"))
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "SWPU|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-coin:module{fungible-v2} coin)

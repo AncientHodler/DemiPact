@@ -44,6 +44,20 @@
     )
     ;;
     ;;{F-UC}
+    (defun UC_TwoSplitter:[integer] (input:integer)
+        (let
+            (
+                (dec-in:decimal (dec input))
+                (div:decimal (/ dec-in 2.0))
+                (rest:decimal (- div (dec (floor div))))
+            )
+            (cond
+                ((= rest 0.0) (make-list 2 (floor div)))
+                ((= rest 0.5) (+ (make-list 1 (+ 1 (floor div))) (make-list 1 (floor div))))
+                [0 0 0 0]
+            )
+        )
+    )
     (defun UC_FourSplitter:[integer] (input:integer)
         (let
             (

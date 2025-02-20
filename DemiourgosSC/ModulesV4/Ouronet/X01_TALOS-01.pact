@@ -136,9 +136,15 @@
     ;;
     ;;
     (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
+    ;;
     (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
     (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
     (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    ;;
+    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    ;;
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
     (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard))
@@ -152,7 +158,11 @@
     (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
-    (defun SWP|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    ;;
+    (defun SWP|C_MultiSwap (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage}))
+    (defun SWP|C_MultiSwapNoSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun SWP|C_SimpleSwap (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage}))
+    (defun SWP|C_SimpleSwapNoSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
     ;;
     ;;
 )
@@ -185,7 +195,7 @@
         (compose-capability (P|TS))
         (compose-capability (GOV|TS01_ADMIN))
     )
-    (defcap P|SECURE-GOVERNOR ()
+    (defcap P|GOVERNING-SUMMONER ()
         (compose-capability (P|TS))
         (compose-capability (P|TRG))
     )
@@ -554,7 +564,8 @@
     (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         @doc "Executes a Bulk DPTF Transfer, sending one DPTF, to multiple receivers, each with its own amount \
         \ Always enforces <min-move> amount, and <receiver-lst> must all be Standard Ouronet Accounts, \
-        \ as it cant send to Smart Ouronet Account recipients."
+        \ as it cant send to Smart Ouronet Account recipients. \
+        \ Works for 12 Recipients when using DPTFs, or 8 Recipients when using Elite-Auryn"
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
@@ -679,7 +690,8 @@
         )
     )
     (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Executes a DPTF MultiTransfer, sending multiple DPTF, each with its own amount, to a single receiver"
+        @doc "Executes a DPTF MultiTransfer, sending multiple DPTF, each with its own amount, to a single receiver \
+            \ Works for up to 12 Tokens in a single TX."
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
@@ -1812,11 +1824,11 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-SWP:module{Swapper} SWP)
+                    (ref-SWPU:module{SwapperUsage} SWPU)
                     (ref-ORBR:module{Ouroboros} OUROBOROS)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
                     (ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-SWP::C_Issue patron account pool-tokens fee-lp weights amp p)
+                        (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights amp p)
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
@@ -1840,16 +1852,55 @@
         (with-capability (P|SECURE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
+                    (ref-SWPU:module{SwapperUsage} SWPU)
                     (ref-ORBR:module{Ouroboros} OUROBOROS)
                     (ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-SWP::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
+                        (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights -1.0 p)
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
                 (XI_ProcessFuelKDA true)
                 (at "output" ico)
             )          
+        )
+    )
+    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+        @doc "Similar outcome to <SWP|C_IssueStable>, but over 3 <steps> (0|1|2) via <defpact> \
+            \ Calling this function runs the Step 0 of 2. To finalize SWPair creation, Steps 1 and 2 must also be executed \
+            \ \
+            \ Step 0: Data Validation, makes sure the input data is correct for SWPair Creation \
+            \ Step 1: Collects IGNIS, KDA, and fuels LiquidStaking Index with collected KDA \
+            \ Step 2: Executes the actual Pool Creation, Issuing the LP Token, Creating the SWPair, minting the LP Token Supply \
+            \   transfering it to its creator, and saves all other relevant data when a Pool Creation takes place"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPI|C_IssueStableMultiStep patron account pool-tokens fee-lp amp p)
+            )
+        )
+    )
+    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
+        @doc "Similar to <SWP|C_IssueStableMultiStep>, but issues a P (Standard) Pool"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPI|C_IssueStandardMultiStep patron account pool-tokens fee-lp p)
+            )
+        )
+    )
+    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+        @doc "Similar to <SWP|C_IssueStableMultiStep>, but issues a W (Weighted) Pool"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+            )
+            (with-capability (P|TS)
+                (ref-SWPU::SWPI|C_IssueWeightedMultiStep patron account pool-tokens fee-lp weights p)
+            )
         )
     )
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool)
@@ -2052,6 +2103,7 @@
             input-ids:[string]
             input-amounts:[decimal]
             output-id:string
+            slippage:object{SwapperUsage.Slippage}
         )
         @doc "Executes a Swap between one or multiple input tokens to an output token, on an <swpair> \
             \ Up to <n-1> input ids can be used for a swap, where <n> is the number of pool Tokens"
@@ -2060,11 +2112,82 @@
                 (ref-SWPU:module{SwapperUsage} SWPU)
                 (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
-                        (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id)
+                        (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id slippage)
                     )
                 )
             )
             (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
+        )
+    )
+    (defun SWP|C_MultiSwapNoSlippage
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-ids:[string]
+            input-amounts:[decimal]
+            output-id:string
+        )
+        @doc "Same as <SWP|C_MultiSwap>, but with no Slippage Protection"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPS|C_MultiSwapNoSlippage patron account swpair input-ids input-amounts output-id)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
+        )
+    )
+    (defun SWP|C_SimpleSwap
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-id:string
+            input-amount:decimal
+            output-id:string
+            slippage:object{SwapperUsage.Slippage}
+        )
+        @doc "Executes a Swap from one Token to Another Token, unsing the input <swpair>"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPS|C_SimpleSwap patron account swpair input-id input-amount output-id slippage)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
+        )
+    )
+    (defun SWP|C_SimpleSwapNoSlippage
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-id:string
+            input-amount:decimal
+            output-id:string
+        )
+        @doc "Same as <SWP|C_SimpleSwap>, but with no Slippage Protection"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPS|C_SimpleSwapNoSlippage patron account swpair input-id input-amount output-id)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
         )
     )
     ;;
@@ -2122,7 +2245,7 @@
     )
     (defun XI_ProcessFuelKDA (iz-collect:bool)
         (require-capability (SECURE))
-        (with-capability (P|SECURE-GOVERNOR)
+        (with-capability (P|GOVERNING-SUMMONER)
             (let
                 (
                     (ref-ORBR:module{Ouroboros} OUROBOROS)

@@ -1,11 +1,22 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (interface SwapperUsage
     @doc "Exposes Adding|Removing Liquidty and Swapping Functions of the SWP Module"
+    (defschema Slippage
+        expected-output-amount:decimal
+        output-precision:integer
+        slippage-percent:decimal
+    )
     (defschema Hopper
         nodes:[string]
         edges:[string]
         output-values:[decimal]
     )
+    ;;
+    (defun SWPS|UC_SlippageMinMax:[decimal] (input:object{Slippage}))
+    ;;
+    (defun URC_SingleWorthDWK (id:string))
+    (defun URC_WorthDWK (id:string amount:decimal))
+    (defun URC_PoolWorthDWK:decimal (swpair:string))
     ;;
     (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal]))
     (defun SWPLC|URC_LpCapacity:decimal (swpair:string))
@@ -20,14 +31,25 @@
     (defun SWPSC|URC_Swap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_ProductSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
     (defun SWPSC|URC_StableSwap:decimal (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-    (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
     (defun SWPSC|URC_BestEdge:string (ia:decimal i:string o:string))
+    (defun SWPSC|URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
+    ;;
+    (defun SPWS|UDC_SlippageObject:object{Slippage} (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage-value:decimal))
+    ;;
+    (defun SWPI|C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
+    (defun SWPI|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWPI|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWPI|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defpact SWPI|C_IssueMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     ;;
     (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWPL|C_AddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWPL|C_RemoveLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string lp-amount:decimal))
     ;;
-    (defun SWPS|C_MultiSwap:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun SWPS|C_SimpleSwap:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{Slippage}))
+    (defun SWPS|C_SimpleSwapNoSlippage:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
+    (defun SWPS|C_MultiSwap:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{Slippage}))
+    (defun SWPS|C_MultiSwapNoSlippage:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
 )
 (module SWPU GOV
     ;;
@@ -131,6 +153,10 @@
                 "SWPU|<"
                 (create-capability-guard (P|SWPU|CALLER))
             )
+            (ref-P|DALOS::P|A_Add 
+                "SWPU|RemoteDalosGov"
+                (create-capability-guard (P|SWPU|REMOTE-GOV))
+            )
             (ref-P|SWP::P|A_Add
                 "SWPU|RemoteSwpGov"
                 (create-capability-guard (P|SWPU|REMOTE-GOV))
@@ -162,6 +188,24 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
+    (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+        @event
+        (SWPI|UEV_Issue account pool-tokens fee-lp weights amp p)
+        (compose-capability (SWPI|X>ISSUE p))
+    )
+    (defcap SWPI|C>PACT-ISSUE (p:bool)
+        @event
+        (compose-capability (SWPI|X>ISSUE p))
+    )
+    (defcap SWPI|X>ISSUE (p:bool)
+        (compose-capability (P|SWPU|CALLER))
+        (compose-capability (P|SWPU|REMOTE-GOV))
+        (if p
+            (compose-capability (GOV|SWPU_ADMIN))
+            true
+        )
+    )
+    ;;
     (defcap SWPL|C>ADD_LQ (swpair:string input-amounts:[decimal])
         @event
         (let
@@ -248,8 +292,79 @@
         )
     )
     ;;
+    ;;{FC}
+    (defun SWPS|UC_SlippageMinMax:[decimal] (input:object{Slippage})
+        (let
+            (
+                (expected:decimal (at "expected-output-amount" input))
+                (o-prec:integer (at "output-precision" input))
+                (sp:decimal (at "slippage-percent" input))
+                (slippage:decimal (floor (/ sp 100.0) 4))
+                (plus-minus-value:decimal (floor (* slippage expected) o-prec))
+                (min:decimal (- expected plus-minus-value))
+                (max:decimal (+ expected plus-minus-value))
+            )
+            [min max]
+        )
+    )
     ;;{F0}
     ;;{F1}
+    (defun URC_SingleWorthDWK (id:string)
+        (URC_WorthDWK id 1.0)
+    )
+    (defun URC_WorthDWK (id:string amount:decimal)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (dwk:string (ref-DALOS::UR_WrappedKadenaID))
+                (dlk:string (ref-DALOS::UR_LiquidKadenaID))
+            )
+            (if (= id dwk)
+                amount
+                (if (= id dlk)
+                    (let
+                        (
+                            (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                            (ref-ATS:module{Autostake} ATS)
+                            (ats-pairs-with-dlk-id:[string] (ref-DPTF::UR_RewardBearingToken dlk))
+                            (kdaliquindex:string (at 0 ats-pairs-with-dlk-id))
+                            (index-value:decimal (ref-ATS::URC_Index kdaliquindex))
+                            (dlk-prec:integer (ref-DPTF::UR_Decimals dlk))
+                        )
+                        (floor (* amount index-value) dlk-prec)
+                    )
+                    (let
+                        (
+                            (h-obj:object{SwapperUsage.Hopper} (SWPSC|URC_Hopper id dwk amount))
+                            (ovs:[decimal] (at "output-values" h-obj))
+                        )
+                        (at 0 (take -1 ovs))
+                    )
+                )
+            )
+        )
+    )
+    (defun URC_PoolWorthDWK:decimal (swpair:string)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-SWP:module{Swapper} SWP)
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                (pool-token-supplies:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
+                (how-many:integer (length pool-tokens))
+                (first-token:string (at 0 pool-tokens))
+                (first-token-supply:decimal (at 0 pool-token-supplies))
+                (first-token-precision:integer (ref-DPTF::UR_Decimals first-token))
+                (pool-type:string (take 1 swpair))
+                (first-weigth:decimal (at 0 (ref-SWP::UR_Weigths swpair)))
+                (first-worth:decimal (URC_WorthDWK first-token first-token-supply))
+            )
+            (if (or (= pool-type "S") (= pool-type "P"))
+                (floor (* (dec how-many) first-worth) first-token-precision)
+                (floor (/ first-worth first-weigth) first-token-precision)
+            )
+        )
+    )
     (defun SWPLC|URC_AreAmountsBalanced:bool (swpair:string input-amounts:[decimal])
         @doc "Determines if <input-amounts> are balanced accoriding to <swpair>"
         (let
@@ -653,55 +768,6 @@
             )
         ) 
     )
-    (defun SWPSC|URC_Hopper:object{SwapperUsage.Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal)
-        @doc "Creates a Hopper Object, by computing \
-        \ 1] The trace between <hopper-input-id> and <hopper-output-id>, the <nodes> \
-        \ 2] The hops between them, the <edges> as the cheapest available edge from all available \
-        \ 3] The best <output> values using said best <edges>, given the <hopper-input-amount>"
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-SWPT:module{SwapTracer} SWPT)
-                (ref-SWP:module{Swapper} SWP)
-                (swpairs:[string] (ref-SWP::URC_Swpairs))
-                (principal-lst:[string] (ref-SWP::UR_Principals))
-                (nodes:[string] (ref-SWPT::URC_ComputeGraphPath hopper-input-id hopper-output-id swpairs principal-lst))
-                (fl:[object{SwapperUsage.Hopper}]
-                    (fold
-                        (lambda
-                            (acc:[object{SwapperUsage.Hopper}] idx:integer)
-                            (ref-U|LST::UC_ReplaceAt
-                                acc
-                                0
-                                (let
-                                    (
-                                        (input:decimal
-                                            (if (= idx 0)
-                                                hopper-input-amount
-                                                (at 0 (take -1 (at "output-values" (at 0 acc))))
-                                            )
-                                        )
-                                        (i-id:string (at idx nodes))
-                                        (o-id:string (at (+ idx 1) nodes))
-                                        (best-edge:string (SWPSC|URC_BestEdge input i-id o-id))
-                                        (output:decimal (SWPSC|URC_Swap best-edge [i-id] [input] o-id))
-                                    )
-                                    {
-                                        "nodes"         : nodes,
-                                        "edges"         : (ref-U|LST::UC_AppL (at "edges" (at 0 acc)) best-edge),
-                                        "output-values" : (ref-U|LST::UC_AppL (at "output-values" (at 0 acc)) output)
-                                    }
-                                )
-                            )
-                        )
-                        EMPTY_HOPPER
-                        (enumerate 0 (- (length nodes) 2))
-                    )
-                )
-            )
-            (at 0 fl)
-        )
-    )
     (defun SWPSC|URC_BestEdge:string (ia:decimal i:string o:string)
         (let
             (
@@ -743,12 +809,367 @@
             (at sp edges)
         )
     )
+    (defun SWPSC|URC_Hopper:object{SwapperUsage.Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal)
+        @doc "Creates a Hopper Object, by computing \
+        \ 1] The trace between <hopper-input-id> and <hopper-output-id>, the <nodes> \
+        \ 2] The hops between them, the <edges> as the cheapest available edge from all available \
+        \ 3] The best <output> values using said best <edges>, given the <hopper-input-amount>"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-SWPT:module{SwapTracer} SWPT)
+                (ref-SWP:module{Swapper} SWP)
+                (swpairs:[string] (ref-SWP::URC_Swpairs))
+                (principal-lst:[string] (ref-SWP::UR_Principals))
+                (nodes:[string] (ref-SWPT::URC_ComputeGraphPath hopper-input-id hopper-output-id swpairs principal-lst))
+            )
+            (if (!= nodes [BAR])
+                (let
+                    (
+                        (fl:[object{SwapperUsage.Hopper}]
+                            (fold
+                                (lambda
+                                    (acc:[object{SwapperUsage.Hopper}] idx:integer)
+                                    (ref-U|LST::UC_ReplaceAt
+                                        acc
+                                        0
+                                        (let
+                                            (
+                                                (input:decimal
+                                                    (if (= idx 0)
+                                                        hopper-input-amount
+                                                        (at 0 (take -1 (at "output-values" (at 0 acc))))
+                                                    )
+                                                )
+                                                (i-id:string (at idx nodes))
+                                                (o-id:string (at (+ idx 1) nodes))
+                                                (best-edge:string (SWPSC|URC_BestEdge input i-id o-id))
+                                                (output:decimal (SWPSC|URC_Swap best-edge [i-id] [input] o-id))
+                                            )
+                                            {
+                                                "nodes"         : nodes,
+                                                "edges"         : (ref-U|LST::UC_AppL (at "edges" (at 0 acc)) best-edge),
+                                                "output-values" : (ref-U|LST::UC_AppL (at "output-values" (at 0 acc)) output)
+                                            }
+                                        )
+                                    )
+                                )
+                                EMPTY_HOPPER
+                                (enumerate 0 (- (length nodes) 2))
+                            )
+                        )
+                    )
+                    (at 0 fl)
+                )
+                (at 0 EMPTY_HOPPER)
+            )
+        )
+    )
     ;;{F2}
+    (defun SWPI|UEV_Issue
+        (account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-SWP:module{Swapper} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (fee-precision:integer (ref-U|CT::CT_FEE_PRECISION))
+                (principals:[string] (ref-SWP::UR_Principals))
+                (l1:integer (length pool-tokens))
+                (l2:integer (length weights))
+                (ws:decimal (fold (+) 0.0 weights))
+                (pt-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
+                (ptte:[string]
+                    (if (= amp -1.0)
+                        (drop 1 pt-ids)
+                        pt-ids
+                    )
+                )
+                (first-pool-token:string (at 0 pt-ids))
+                (iz-principal:bool (contains first-pool-token principals))
+                (contains-principals:bool
+                    (fold
+                        (lambda
+                            (acc:bool idx:integer)
+                            (or
+                                acc
+                                (contains (at idx pt-ids) principals)
+                            )
+                        )
+                        false
+                        (enumerate 0 (- (length pt-ids) 1))
+                    )
+                )
+            )
+            ;;Functions
+            (ref-SWP::UEV_PoolFee fee-lp)
+            (ref-SWP::UEV_New pt-ids weights amp)
+            ;;Mappings
+            (map
+                (lambda
+                    (id:string)
+                    (ref-DPTF::CAP_Owner id)
+                )
+                ptte
+            )
+            (map
+                (lambda
+                    (w:decimal)
+                    (= (floor w fee-precision) w)
+                )
+                weights
+            )
+
+            ;;Enforcements
+            (enforce (!= principals [BAR]) "Principals must be defined before a Swap Pair can be issued")
+            (enforce (or (= amp -1.0) (>= amp 1.0)) "Invalid amp value")
+            (enforce (and (>= l1 2) (<= l1 7)) "2 - 7 Tokens can be used to create a Swap Pair")
+            (enforce (= l1 l2) "Number of weigths does not concide with the pool-tokens Number")
+            (enforce-one
+                "Invalid Weight Values"
+                [
+                    (enforce (= ws 1.0) "Weights must add to exactly 1.0")
+                    (enforce (= ws (dec l1)) "Weights must all be 1.0")
+                ]
+            )
+            ;;Ifs
+            ;;On a W or P pool, first Pool Token must be a Principal Token
+            (if (= amp -1.0)
+                (enforce iz-principal "1st Token is not a Principal")
+                true
+            )
+            ;;If a Stable Pool is to be created and none of its Tokens are Principal Tokens, 
+            ;;  its first Token must have a connection to DLK present via existing pools.
+            (if (and (> amp 0.0) (not contains-principals))
+                (let
+                    (
+                        (ref-DALOS:module{OuronetDalos} DALOS)
+                        (dlk:string (ref-DALOS::UR_LiquidKadenaID))
+                        (h-obj:object{SwapperUsage.Hopper} (SWPSC|URC_Hopper first-pool-token dlk 1.0))
+                    )
+                    (enforce 
+                        (!= h-obj (at 0 EMPTY_HOPPER))
+                        (format "No connection to DLK detected for {}. Create a W or P Pool first with it!" [first-pool-token])
+                    )
+                )
+                true
+            )
+            ;;If pool is not a principal pool, its initial liquidity must be worth at least <spawn-limit>
+            (if (not p)
+                (let
+                    (
+                        (ref-U|SWP:module{UtilitySwp} U|SWP)
+                        (pt-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
+                        (first-pool-token-amount:decimal (at 0 pt-amounts))
+                        (prefix:string (ref-U|SWP::UC_Prefix weights amp))
+                        (how-many:integer (length pool-tokens))
+                        (first-worth:decimal (URC_WorthDWK first-pool-token first-pool-token-amount))
+                        (pool-worth-with-input-tokens-in-dwk:decimal
+                            (if (or (= prefix "S") (= prefix "P"))
+                                (* (dec how-many) first-worth)
+                                (* (at 0 weights) first-worth)
+                            )
+                        )
+                        (spawn-limit:decimal (ref-SWP::UR_SpawnLimit))
+                    )
+                    (enforce (>= pool-worth-with-input-tokens-in-dwk spawn-limit) "More liquidity is needed to open a new pool!")
+                )
+                true
+            )
+            (format "Validation prior to pool creation executed succesfully {}" ["!"])
+        )
+    )
     ;;{F3}
+    (defun SPWS|UDC_SlippageObject:object{Slippage} (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage-value:decimal)
+        @doc "Makes a Slippage Object from <input amounts>"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (op:integer (ref-DPTF::UR_Decimals output-id))
+                (expected:decimal (SWPSC|URC_Swap swpair input-ids input-amounts output-id))
+            )
+            (enforce
+                (= (floor slippage-value 2) slippage-value)
+                (format "{} is not slippage conform decimal wise (max 2 decimals allowed)" [slippage-value])
+            )
+            (enforce
+                (and
+                    (> slippage-value 0.0)
+                    (<= slippage-value 50.0)
+                )
+                "Slippage must be greater than 0.0 and maximum 50.0"
+            )
+            {"expected-output-amount"   : expected
+            ,"output-precision"         : op
+            ,"slippage-percent"         : slippage-value}
+        )
+    )
     ;;{F4}
     ;;
     ;;{F5}
     ;;{F6}
+    (defun SWPI|C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+        @doc "Issues a new SWPair (Liquidty Pool)"
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp p)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-BRD:module{Branding} BRD)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ref-SWPT:module{SwapTracer} SWPT)
+                    (ref-SWP:module{Swapper} SWP)
+                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+                    (kda-dptf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
+                    (kda-swp-cost:decimal (ref-DALOS::UR_UsagePrice "swp"))
+                    (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
+                    (gas-swp-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|swp-issue"))
+                    (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
+                    (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
+                    (lp-name-ticker:[string] (ref-SWP::URC_LpComposer pool-tokens weights amp))
+                    (ico:object{OuronetDalos.IgnisCumulator} 
+                        (ref-DPTF::XE_IssueLP patron account (at 0 lp-name-ticker) (at 1 lp-name-ticker))
+                    )
+                    (token-lp:string (at 0 (at "output" ico)))
+                    (swpair:string (ref-SWP::XE_Issue account pool-tokens token-lp fee-lp weights amp p))
+                )
+                (ref-BRD::XE_Issue swpair)
+                (let
+                    (
+                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                        (ico1:object{OuronetDalos.IgnisCumulator}
+                            (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids account swp-sc pool-token-amounts true)
+                        )
+                        (ico2:object{OuronetDalos.IgnisCumulator}
+                            (ref-DPTF::C_Mint patron token-lp swp-sc 10000000.0 true)
+                        )
+                        (ico3:object{OuronetDalos.IgnisCumulator}
+                            (ref-TFT::XB_FeelesTransfer patron token-lp swp-sc account 10000000.0 true)
+                        )
+                        (ico4:object{OuronetDalos.IgnisCumulator}
+                            (ref-DALOS::UDC_Cumulator gas-swp-cost trigger [])
+                        )
+                    )
+                    (ref-SWPT::X_MultiPathTracer swpair (ref-SWP::UR_Principals))
+                    (ref-DALOS::KDA|C_Collect patron kda-costs)
+                    (ref-DALOS::UDC_CompressICO [ico ico1 ico2 ico3 ico4] [swpair token-lp])
+                )
+            )
+        )
+    )
+    (defun SWPI|C_IssueStableMultiStep
+        (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (SWPI|C_IssueMultiStep
+            patron account pool-tokens fee-lp
+            (make-list (length pool-tokens) 1.0)
+            amp p
+        )
+    )
+    (defun SWPI|C_IssueStandardMultiStep
+        (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (SWPI|C_IssueMultiStep
+            patron account pool-tokens fee-lp
+            (make-list (length pool-tokens) 1.0)
+            -1.0 p
+        )
+    )
+    (defun SWPI|C_IssueWeightedMultiStep
+        (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (SWPI|C_IssueMultiStep
+            patron account pool-tokens fee-lp
+            weights
+            -1.0 p
+        )
+    )
+    (defpact SWPI|C_IssueMultiStep
+        (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+        ;;Issues an SWPair, as MultiStep Transaction, to be used in case <SWPI|C_Issue> cant fit inside one TX.
+        ;;
+        ;;Step 1 Validation
+        (step
+            (SWPI|UEV_Issue account pool-tokens fee-lp weights amp p)
+        )
+        ;;Step 2 Ignis Collection and KDA Fuel Processing
+        (step
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ref-SWP:module{Swapper} SWP)
+                    (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
+                    (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
+                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+
+                    (swp-issue:decimal (ref-DALOS::UR_UsagePrice "ignis|swp-issue"))
+                    (lp-token-issue:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                    (origin-mint:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                    (lp-transfer:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-TFT::UDC_MultiTransferICO pool-token-ids pool-token-amounts account swp-sc)
+                    )
+                    (multi-transfer:decimal (ref-DALOS::UDC_AddICO [ico]))
+                    (ignis-costs:[decimal]
+                        [swp-issue lp-token-issue origin-mint lp-transfer multi-transfer]
+                    )
+                    (sum-ignis:decimal (fold (+) 0.0 ignis-costs))
+
+                    (kda-dptf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
+                    (kda-swp-cost:decimal (ref-DALOS::UR_UsagePrice "swp"))
+                    (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
+                )
+                (ref-DALOS::IGNIS|C_Collect patron account sum-ignis)
+                (ref-DALOS::KDA|C_Collect patron kda-costs)
+                (let
+                    (
+                        (ref-ORBR:module{Ouroboros} OUROBOROS)
+                        (gasless-patron:string (ref-DALOS::GOV|DALOS|SC_NAME))
+                    )
+                    (with-capability (P|DT)
+                        (ref-ORBR::C_Fuel gasless-patron)
+                    )
+                    (format "{} IGNIS and {} KDA collected (raising DLK Index) succesfully." [sum-ignis kda-costs])
+                )
+            )
+        )
+        ;;Step 3 Issuance
+        (step
+            (with-capability (SWPI|C>PACT-ISSUE p)
+                (let
+                    (
+                        (ref-DALOS:module{OuronetDalos} DALOS)
+                        (ref-BRD:module{Branding} BRD)
+                        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                        (ref-TFT:module{TrueFungibleTransfer} TFT)
+                        (ref-SWPT:module{SwapTracer} SWPT)
+                        (ref-SWP:module{Swapper} SWP)
+                        (principals:[string] (ref-SWP::UR_Principals))
+                        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+                        (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
+                        (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
+                        (lp-name-ticker:[string] (ref-SWP::URC_LpComposer pool-tokens weights amp))
+                        (lp-name:string (at 0 lp-name-ticker))
+                        (lp-ticker:string (at 1 lp-name-ticker))
+                        (ico:object{OuronetDalos.IgnisCumulator} 
+                            (ref-DPTF::XE_IssueLP patron account lp-name lp-ticker)
+                        )
+                        (token-lp:string (at 0 (at "output" ico)))
+                        (swpair:string (ref-SWP::XE_Issue account pool-tokens token-lp fee-lp weights amp p))
+                    )
+                    (ref-BRD::XE_Issue swpair)
+                    (ref-TFT::XE_FeelesMultiTransfer patron pool-token-ids account swp-sc pool-token-amounts true)
+                    (ref-DPTF::C_Mint patron token-lp swp-sc 10000000.0 true)
+                    (ref-TFT::XB_FeelesTransfer patron token-lp swp-sc account 10000000.0 true)
+                    (ref-SWPT::X_MultiPathTracer swpair principals)
+                    (format "Swpair with ID {} and LP Token {} ID created succesfully" [swpair token-lp])
+                )
+            )
+        )
+    )
+    ;;
     (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal)
         (enforce-guard (P|UR "TALOS-01"))
         (SWPL|C_AddLiquidity patron account swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))          
@@ -763,7 +1184,7 @@
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (ref-SWP:module{Swapper} SWP)
-                    (swp-sc:string (ref-SWP::GOV|SWP|SC_KDA-NAME))
+                    (swp-sc:string (ref-SWP::GOV|SWP|SC_NAME))
                     (read-lp-supply:decimal (SWPLC|URC_LpCapacity swpair))
                     (ignis-cost:decimal (SWPLC|URC_AddLiquidityIgnisCost swpair input-amounts))
                     (additional-ignis-cost:decimal
@@ -852,20 +1273,57 @@
             )
         )
     )
+    ;;
+    (defun SWPS|C_SimpleSwap:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{Slippage})
+        (SWPS|C_MultiSwap patron account swpair [input-id] [input-amount] output-id slippage)
+    )
+    (defun SWPS|C_SimpleSwapNoSlippage:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string)
+        (SWPS|C_MultiSwapNoSlippage patron account swpair [input-id] [input-amount] output-id)
+    )
     (defun SWPS|C_MultiSwap:object{OuronetDalos.IgnisCumulator}
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-ids:[string]
-            input-amounts:[decimal]
-            output-id:string
+        (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{Slippage})
+        (with-capability (SECURE)
+            (let
+                (
+                    ;;Get Max Theoretical Output Amount <max-toa> and compute Slippage
+                    (max-toa:decimal (SWPSC|URC_Swap swpair input-ids input-amounts output-id))
+                    (min-max:[decimal] (SWPS|UC_SlippageMinMax slippage))
+                    (min:decimal (at 0 min-max))
+                    (max:decimal (at 1 min-max))
+                    (exceed-message:string
+                        (format 
+                            "Expected Output of {} out of Slippage bounds min of {} - max of {}"
+                            [max-toa min max]
+                        )
+                    )
+                )
+                (if
+                    (and
+                        (>= max-toa min)
+                        (<= max-toa max)
+                    )
+                    (SWPS|X_MultiSwap patron account swpair input-ids input-amounts output-id)
+                    {"price"    : 0.0
+                    ,"trigger"  : false
+                    ,"output"   : [exceed-message]}
+                )
+            )
         )
-        (enforce-guard (P|UR "TALOS-01"))
+    )
+    (defun SWPS|C_MultiSwapNoSlippage:object{OuronetDalos.IgnisCumulator} 
+        (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+        (with-capability (SECURE)
+            (SWPS|X_MultiSwap patron account swpair input-ids input-amounts output-id)
+        )
+    )
+    (defun SWPS|X_MultiSwap:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+        (require-capability (SECURE))
         (with-capability (SWPS|C>SWAP swpair input-ids input-amounts output-id)
             (let
                 (
-                    ;;refs
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|DALOS:module{UtilityDalos} U|DALOS)
                     (ref-U|SWP:module{UtilitySwp} U|SWP)

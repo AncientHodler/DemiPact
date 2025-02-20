@@ -1,0 +1,1151 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=============================================BEGIN SWP TESTS==========================================")
+(begin-tx "SWP TX 001 - Make 10k DWK")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": [
+                    (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    20000.0)
+                  ]
+        }
+    ]
+)
+
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::LQD|C_WrapKadena KST.ANHD KST.ANHD 20000.0)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 WrapKadena Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 002 - Coil 5k DLK")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-T01:module{TalosStageOne} TS01)
+
+        (dwk-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (dlk-id:string (ref-DALOS::UR_LiquidKadenaID))
+        (ats-pairs-with-dlk-id:[string] (ref-DPTF::UR_RewardBearingToken dlk-id))
+        (kdaliquindex:string (at 0 ats-pairs-with-dlk-id))
+    )
+    (ref-T01::ATS|C_Coil
+        KST.ANHD
+        KST.ANHD
+        kdaliquindex
+        dwk-id
+        10000.0
+    )
+    [
+        (format "AH has {} DWK" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_WrappedKadenaID) KST.ANHD)])
+        (format "AH has {} DLK" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_LiquidKadenaID) KST.ANHD)])
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        (format "AH Elite is {}" [(ref-DALOS::UR_Elite KST.ANHD)])
+        (format "AH Elite Auryn is {}" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_EliteAurynID) KST.ANHD)])
+        (format "AH Vested Elite Auryn is {}" [(ref-DPMF::UR_AccountSupply (ref-DPTF::UR_Vesting (ref-DALOS::UR_EliteAurynID)) KST.ANHD)])
+    ]
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Coil DWK Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=================================AOZ-SECTION============================================")
+(begin-tx "SWP TX 03 - Move 50k OURO from ANHD to AOZ")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPTF|C_Transfer 
+        KST.ANHD
+        "OURO-98c486052a51"
+        KST.ANHD
+        KST.AOZT
+        50000.0
+        false
+    )
+)
+    
+(print "")
+(print "")
+(format "<<<<<<<STEP 003 Transfer 50k OURO Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 04 - Issue W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (pool
+                (ref-T01::SWP|C_IssueWeighted
+                    KST.ANHD
+                    KST.ANHD
+                    [
+                        { "token-id":  (ref-DALOS::UR_LiquidKadenaID), "token-supply": 3200.0}
+                        { "token-id":  (ref-DALOS::UR_OuroborosID), "token-supply": 10000.0}
+                        { "token-id":  (ref-DALOS::UR_WrappedKadenaID), "token-supply": 6000.0}
+                    ]
+                    5.0
+                    [0.2 0.5 0.3]
+                    true
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 004 Issue W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 05 - Issue S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (ref-U|SWP:module{UtilitySwp} U|SWP)
+            (ref-SWPU:module{SwapperUsage} SWPU)
+            (t1:string (ref-DALOS::UR_LiquidKadenaID))
+            (t2:string (ref-DALOS::UR_OuroborosID))
+            (t3:string (ref-DALOS::UR_WrappedKadenaID))
+            (t1a:decimal 800.0)
+            (t2a:decimal 900.0)
+            (t3a:decimal 850.0)
+            (pool
+                (ref-T01::SWP|C_IssueStable
+                    KST.ANHD
+                    KST.ANHD
+                    [
+                        { "token-id":  t1, "token-supply": t1a}
+                        { "token-id":  t2, "token-supply": t2a}
+                        { "token-id":  t3, "token-supply": t3a}
+                    ]
+                    10.0
+                    85.0
+                    false
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 005 Issue S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 06 - Issue P|OURO-98c486052a51|PKOSON-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (pool
+                (ref-T01::SWP|C_IssueStandard
+                    KST.AOZT
+                    KST.AOZT
+                    [
+                        { "token-id":  "OURO-98c486052a51", "token-supply": 2500.0}
+                        { "token-id":  "PKOSON-98c486052a51", "token-supply": 10000.0}
+                    ]
+                    25.0
+                    false
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 006 Issue P|OURO-98c486052a51|PKOSON-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 07 - Issue S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (pool
+                (ref-T01::SWP|C_IssueStable
+                    KST.AOZT
+                    KST.AOZT
+                    [
+                        { "token-id":  "PKOSON-98c486052a51", "token-supply": 10000.0}
+                        { "token-id":  "EKOSON-98c486052a51", "token-supply": 10000.0}
+                        { "token-id":  "AKOSON-98c486052a51", "token-supply": 10000.0}
+                    ]
+                    5.0
+                    85.0
+                    false
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 007 Issue S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 08 - Issue P|OURO-98c486052a51|BUSD-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (pool
+                (ref-T01::SWP|C_IssueStandard
+                    KST.ANHD
+                    KST.ANHD
+                    [
+                        { "token-id":  "OURO-98c486052a51", "token-supply": 2500.0}
+                        { "token-id":  "BUSD-98c486052a51", "token-supply": 10000.0}
+                    ]
+                    25.0
+                    false
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 008 Issue P|OURO-98c486052a51|BUSD-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 09a - Issue Stable 7xUSD via defpact 0|2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+        (patron:string KST.ANHD)
+        (pool-tokens:[object{Swapper.PoolTokens}]
+            [
+                { "token-id":  "BUSD-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "TUSD-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "USDT-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "USDC-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "USDD-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "AUSD-98c486052a51", "token-supply": 1000000.0}
+                { "token-id":  "CUSD-98c486052a51", "token-supply": 1000000.0}
+            ]
+        )
+        (fee-lp:decimal 10.0)
+        (weights:[decimal] (make-list (length pool-tokens) 1.0))
+        (amp:decimal 85.0)
+        (p:bool false)
+    )
+    (ref-T01::SWP|C_IssueStableMultiStep
+        patron
+        patron
+        pool-tokens
+        fee-lp
+        amp
+        p
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        (pact-state)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 009a Issue Stable 7xUSD STEP 0|2 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 09a - Issue Stable 7xUSD via defpact 1|2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (continue-pact 1 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 009a Issue Stable 7xUSD STEP 1|2 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 09a - Issue Stable 7xUSD via defpact 2|2")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 2 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 009a Issue Stable 7xUSD STEP 2|2 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 10 - Issue W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-T01:module{TalosStageOne} TS01)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (ref-DALOS::UR_UsagePrice "dptf") (ref-DALOS::UR_UsagePrice "swp"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (pool
+                (ref-T01::SWP|C_IssueWeighted
+                    KST.ANHD
+                    KST.ANHD
+                    [
+                        { "token-id":  "OURO-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "TEUR-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "EURT-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "EURC-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "EURD-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "AEUR-98c486052a51", "token-supply": 1000000.0}
+                        { "token-id":  "CEUR-98c486052a51", "token-supply": 1000000.0}
+                    ]
+                    5.0
+                    [0.1429 0.1429 0.1429 0.1429 0.1428 0.1428 0.1428]
+                    true
+                )
+            )
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [pool])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 010 Issue W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;Issued Pools
+;;
+;;      W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51
+;;      S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51
+;;      P|OURO-98c486052a51|PKOSON-98c486052a51
+;;      S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51
+;;      P|OURO-98c486052a51|BUSD-98c486052a51
+;;      S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51
+;;      W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 11 - Enable DLK|OURO|DWK Pools Functionality")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        (pool6:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        (pool7:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+        (spt1:[object{Swapper.FeeSplit}]
+            [
+                {"target":KST.BYTA, "value":15}
+                ;{"target":KST.LUMY, "value":125}
+                ;{"target":KST.COCA, "value":35}
+                ;{"target":KST.KISS, "value":35}
+                ;{"target":KST.PLCS, "value":50}
+                ;{"target":KST.NANI, "value":60}
+                ;{"target":KST.AOZT, "value":10}
+            ]
+        )
+        (spt2:[object{Swapper.FeeSplit}]
+            [
+                {"target":KST.BYTA, "value":15}
+                {"target":KST.LUMY, "value":125}
+                {"target":KST.COCA, "value":35}
+                {"target":KST.KISS, "value":35}
+                ;{"target":KST.PLCS, "value":50}
+                ;{"target":KST.NANI, "value":60}
+                ;{"target":KST.AOZT, "value":10}
+            ]
+        )
+    )
+    ;;Add Special Fee
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool1 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool2 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool3 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool4 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool5 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool6 20.0 false)
+    (ref-T01::SWP|C_UpdateFee KST.ANHD pool7 20.0 false)
+    ;;Add Fee Targets
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool1 spt2)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool2 spt2)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool3 spt1)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool4 spt1)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool5 spt2)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool6 spt2)
+    (ref-T01::SWP|C_UpdateSpecialFeeTargets KST.ANHD pool7 spt2)
+    ;;Toggle Add Liquidity
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool1 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool2 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool3 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool4 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool5 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool6 true true)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool7 true true)
+    ;;Toggle Swap Functionality
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool1 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool2 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool3 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool4 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool5 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool6 true false)
+    (ref-T01::SWP|C_ToggleAddOrSwap KST.ANHD pool7 true false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 011 Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 11 - 1st SWAP")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-T01:module{TalosStageOne} TS01)
+        (patron:string KST.ANHD)
+        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        (pool6:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        (pool7:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+
+        (pool:string pool7)
+        (input-ids:[string]
+            ["TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+        )
+        (input-amounts:[decimal]
+            [230.0 240.0 232.0 223.0 455.0 432.0]
+        )
+        (output-id:string "OURO-98c486052a51")
+        (slippage-value:decimal 5.0)
+        (slippage-obj:object{SwapperUsage.Slippage}
+            (ref-SWPU::SPWS|UDC_SlippageObject pool input-ids input-amounts output-id slippage-value)
+        )
+    )
+    [
+        (format "Slippage-Obj is {}" [slippage-obj])
+        (format "Min-Max is {}" [(ref-SWPU::SWPS|UC_SlippageMinMax slippage-obj)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 011 Swap Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 11b - ONLY SWAP")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::SWP|C_MultiSwap
+        KST.ANHD 
+        KST.ANHD
+        "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+        ["TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+        [230.0 240.0 232.0 223.0 455.0 432.0]
+        "OURO-98c486052a51"
+        {"expected-output-amount": 1809.280886324937455356121064,"output-precision": 24,"slippage-percent": 5.0}
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 011b ONLY Swap Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 11c - ONLY SWAP NO SLIPPAGE")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    [
+        (ref-T01::SWP|C_MultiSwapNoSlippage
+            KST.ANHD 
+            KST.ANHD
+            "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+            ["TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+            [230.0 240.0 232.0 223.0 455.0 432.0]
+            "OURO-98c486052a51"
+        )
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 011c ONLY Swap Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 12 - Add Liqudity")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-T01:module{TalosStageOne} TS01)
+        (patron:string KST.ANHD)
+        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        (pool6:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        (pool7:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+    )
+    [
+        (ref-T01::SWP|C_AddLiquidity
+            KST.ANHD 
+            KST.ANHD
+            pool7
+            [730.0 250.0 330.0 450.0 554.0 332.0 234.0]
+        )
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 012 AddLiquidity Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 13 - Add Balanced Liqudity")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-T01:module{TalosStageOne} TS01)
+        (patron:string KST.ANHD)
+        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        (pool6:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        (pool7:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+    )
+    [
+        (format "Balanced Liquidity with 500 OURO is {}, and adding liquidity so creates {} LP Tokens" 
+            [
+                (ref-SWPU::SWPLC|URC_BalancedLiquidity pool7 "OURO-98c486052a51" 500.0)
+                (ref-T01::SWP|C_AddBalancedLiquidity
+                    KST.ANHD 
+                    KST.ANHD
+                    pool7
+                    "OURO-98c486052a51"
+                    500.0
+                )
+            ]
+        )
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 013 Add Balanced Liquidity Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 14 - Worth Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        (pool6:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        (pool7:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
+
+        (pts:[decimal] (ref-SWP::UR_PoolTokenSupplies pool1))
+        (dlk-amount:decimal (at 0 pts))
+        (dlk-amount-is-worth:decimal (ref-SWPU::URC_WorthDWK "DLK-98c486052a51" dlk-amount))
+
+        (dlk-id:string (ref-DALOS::UR_LiquidKadenaID))
+        (ats-pairs-with-dlk-id:[string] (ref-DPTF::UR_RewardBearingToken dlk-id))
+        (kdaliquindex:string (at 0 ats-pairs-with-dlk-id))
+        (index-value:decimal (ref-ATS::URC_Index kdaliquindex))
+
+    )
+    [
+        (format "DLK in first pool is {}" [dlk-amount])
+        (format "This amount is worth {} DWK" [dlk-amount-is-worth])
+        (format "Because KDA-Liquid-Index is {}" [index-value])
+
+        (format "OURO-98c486052a51 is worth {} DWK" [(ref-SWPU::URC_SingleWorthDWK "OURO-98c486052a51")])
+        (format "Pool 1 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool1)])
+        (format "Pool 2 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool2)])
+        (format "Pool 3 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool3)])
+        (format "Pool 4 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool4)])
+        (format "Pool 5 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool5)])
+        (format "Pool 6 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool6)])
+        (format "Pool 7 is worth {} DWK" [(ref-SWPU::URC_PoolWorthDWK pool6)])
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 014 Worth Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

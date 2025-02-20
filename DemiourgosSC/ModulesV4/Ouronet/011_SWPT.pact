@@ -273,28 +273,36 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (all-paths:[[string]] (URC_AllGraphPaths input output swpairs principal-lst))
-                (fp:[[string]]
-                    (fold
-                        (lambda
-                            (acc:[[string]] idx:integer)
-                            (let
-                                (
-                                    (e:[string] (at idx all-paths))
-                                    (l:string (at 0 (take -1 e)))
-                                    (check:bool (= l output))
+                
+            )
+            (if (!= all-paths [[BAR]])
+                (let
+                    (
+                        (fp:[[string]]
+                            (fold
+                                (lambda
+                                    (acc:[[string]] idx:integer)
+                                    (let
+                                        (
+                                            (e:[string] (at idx all-paths))
+                                            (l:string (at 0 (take -1 e)))
+                                            (check:bool (= l output))
+                                        )
+                                        (if (not check)
+                                            (ref-U|LST::UC_RemoveItem acc e)
+                                            acc
+                                        )
+                                    )
                                 )
-                                (if (not check)
-                                    (ref-U|LST::UC_RemoveItem acc e)
-                                    acc
-                                )
+                                all-paths
+                                (enumerate 0 (- (length all-paths) 1))
                             )
                         )
-                        all-paths
-                        (enumerate 0 (- (length all-paths) 1))
                     )
+                    (at 0 fp)
                 )
+                [BAR]
             )
-            (at 0 fp)
         )
     )
     (defun URC_AllGraphPaths:[[string]] (input:string output:string swpairs:[string] principal-lst:[string])
@@ -410,7 +418,7 @@
     ;;{F6}
     ;;{F7}
     (defun X_MultiPathTracer (swpair:string principals-lst:[string])
-        (enforce-guard (P|UR "SWP|<"))
+        (enforce-guard (P|UR "SWPU|<"))
         (with-capability (SECURE)
             (let
                 (
