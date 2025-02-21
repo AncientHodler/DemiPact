@@ -148,7 +148,8 @@
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
     (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard))
-    (defun SWP|C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool))
+    (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool))
+    (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool))
     (defun SWP|C_ToggleSpecialMode (patron:string swpair:string))
     (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
@@ -1937,19 +1938,43 @@
             )
         )
     )
-    (defun SWP|C_ToggleAddOrSwap (patron:string swpair:string toggle:bool add-or-swap:bool)
-        @doc "When <toggle> is <true>, ensures required Mint, Burn, Transfer Roles are set, if not, set them. \
+    (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool)
+        @doc "Toggle on or off the Functionality of adding liquidity for an <swpair> \
+            \ When <toggle> is <true>, ensures required Mint, Burn, Transfer Roles are set, if not, set them. \
             \ The Roles are: \
             \ Mint and Burn Roles for LP Token (requires LP Token Ownership) \
             \ Fee Exemption Roles for all Tokens of an S-Pool, or \
             \ for all Tokens of a W- or P-Pool, except its first Token (which is principal) \
-            \ Roles are needed to SWP|SC_NAME"
+            \ Roles are needed to SWP|SC_NAME \
+            \ \
+            \ Requires <swpair> ownership"
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ref-SWPU:module{SwapperUsage} SWPU)
                 (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
-                        (ref-SWP::C_ToggleAddOrSwap patron swpair toggle add-or-swap)
+                        (ref-SWPU::C_ToggleAddLiquidity patron swpair toggle)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+        )
+    )
+    (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool)
+        @doc "Toggle on or off the Functionality of swapping for an <swpair> \
+            \ When <toggle> is <true>, same setup for roles is executed as for <SWP|C_ToggleAddLiquidity> \
+            \ \
+            \ <On> Toggle can only be executed is <swpair> surpasses <(ref-SWP::UR_InactiveLimit)> \
+            \ \
+            \ Requires <swpair> ownership"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::C_ToggleSwapCapability patron swpair toggle)
                     )
                 )
             )

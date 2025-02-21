@@ -464,7 +464,6 @@
                 (enforce (!= swap toggle) "Similar boolean unallowed for <can-add> or <can-swap>")
             )
             (CAP_Owner swpair)
-            (compose-capability (P|SWP|CALLER))
         )
     )
     (defcap SWP|C>PRINCIPAL (principal:string add-or-remove:bool)
@@ -1075,21 +1074,21 @@
         )
     )
     (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool)
-        (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)
-            (let
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-ATS:module{Autostake} ATS)
-                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                    (price:decimal (* 5.0 biggest))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    (ico0:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
-                    )
-                    (ico1:object{OuronetDalos.IgnisCumulator}
+        (enforce-guard (P|UR "SWPU|<"))
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-ATS:module{Autostake} ATS)
+                (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (price:decimal (* 5.0 biggest))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                (ico0:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS::UDC_Cumulator price trigger [])
+                )
+                (ico1:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|SWP|CALLER)
                         (if toggle
                             (let
                                 (
@@ -1142,9 +1141,11 @@
                         )
                     )
                 )
-                (XI_CanAddOrSwapToggle swpair toggle add-or-swap)
-                (ref-DALOS::UDC_CompressICO [ico0 ico1] [])
             )
+            (with-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)
+                (XE_CanAddOrSwapToggle swpair toggle add-or-swap)
+            )
+            (ref-DALOS::UDC_CompressICO [ico0 ico1] [])
         )
     )
     (defun C_ToggleFeeLock:bool (patron:string swpair:string toggle:bool)
@@ -1344,8 +1345,14 @@
         )
     )
     ;;
-    (defun XI_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
-        (require-capability (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap))
+    (defun XE_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)))
+                (enforce-guard (P|UR "SWPU|<"))
+            ]
+        )
         (if add-or-swap
             (update SWP|Pairs swpair
                 {"can-add"                      : toggle}
@@ -1354,6 +1361,7 @@
                 {"can-swap"                     : toggle}
             )
         )
+        
     )
     (defun XI_ChangeOwnership (swpair:string new-owner:string)
         (require-capability (SWP|S>RT_OWN swpair new-owner))

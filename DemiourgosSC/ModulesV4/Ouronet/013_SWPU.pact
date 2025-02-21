@@ -42,6 +42,9 @@
     (defun SWPI|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     (defpact SWPI|C_IssueMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     ;;
+    (defun C_ToggleAddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool))
+    (defun C_ToggleSwapCapability:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool))
+    ;;
     (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal))
     (defun SWPL|C_AddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWPL|C_RemoveLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string lp-amount:decimal))
@@ -206,6 +209,23 @@
         )
     )
     ;;
+    (defcap SPW|C>TOGGLE-SWAP (swpair:string toggle:bool)
+        (if toggle
+            (let
+                (
+                    (ref-SWP:module{Swapper} SWP)
+                    (pool-worth:decimal (URC_PoolWorthDWK swpair))
+                    (inactive-limit:decimal (ref-SWP::UR_InactiveLimit))
+                )
+                (enforce 
+                    (> pool-worth inactive-limit) 
+                    (format "Pool {} cannot have its Swap Functionality turned on because its worth is {} DWK, and a {} DWK Value is required for swap" [swpair pool-worth inactive-limit])
+                )
+            )
+            true
+        )
+        (compose-capability (P|SWPU|CALLER))
+    )
     (defcap SWPL|C>ADD_LQ (swpair:string input-amounts:[decimal])
         @event
         (let
@@ -234,6 +254,7 @@
             (enforce can-add "Pool is inactive: cannot add or remove liqudity!")
         )
         (compose-capability (P|DT))
+        (compose-capability (SECURE))
     )
     (defcap SWPL|C>RM_LQ (swpair:string lp-amount:decimal)
         @event
@@ -251,6 +272,7 @@
             (enforce can-add "Pool is inactive: cannot add or remove liqudity!")
         )
         (compose-capability (P|DT))
+        (compose-capability (SECURE))
     )
     (defcap SWPS|C>PUMP_LQ-IDX ()
         @event
@@ -1170,6 +1192,29 @@
         )
     )
     ;;
+    (defun C_ToggleAddLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|SWPU|CALLER)
+                (ref-SWP::C_ToggleAddOrSwap patron swpair toggle true)
+            )
+        )
+    )
+    (defun C_ToggleSwapCapability:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (SPW|C>TOGGLE-SWAP swpair toggle)
+                (ref-SWP::C_ToggleAddOrSwap patron swpair toggle false)
+            )
+        )
+    )
+    ;;
     (defun SWPL|C_AddBalancedLiquidity:object{OuronetDalos.IgnisCumulator} (patron:string account:string swpair:string input-id:string input-amount:decimal)
         (enforce-guard (P|UR "TALOS-01"))
         (SWPL|C_AddLiquidity patron account swpair (SWPLC|URC_BalancedLiquidity swpair input-id input-amount))          
@@ -1233,6 +1278,7 @@
                     true
                 )
                 (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
+                (XI_AutonomousSwapManagement swpair)
                 (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] [ico3]]) [lp-amount])
             )
         )
@@ -1269,6 +1315,7 @@
                     )
                 )
                 (ref-SWP::XE_UpdateSupplies swpair pt-new-amounts)
+                (XI_AutonomousSwapManagement swpair)
                 (ref-DALOS::UDC_CompressICO [ico0 ico1 ico2 ico3] pt-output-amounts)
             )
         )
@@ -1509,6 +1556,22 @@
                         (enumerate 0 (- (length edges) 1))
                     )
                     ico
+                )
+            )
+        )
+    )
+    (defun XI_AutonomousSwapManagement (swpair:string)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+                (pool-worth:decimal (URC_PoolWorthDWK swpair))
+                (inactive-limit:decimal (ref-SWP::UR_InactiveLimit))
+            )
+            (with-capability (P|SWPU|CALLER)
+                (if (< pool-worth inactive-limit)
+                    (ref-SWP::XE_CanAddOrSwapToggle swpair false false)
+                    (ref-SWP::XE_CanAddOrSwapToggle swpair true false)
                 )
             )
         )
