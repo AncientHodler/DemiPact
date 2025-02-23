@@ -1198,3 +1198,145 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Resereve Tests=================================")
+(begin-tx "SWP TX 16 - Deploy Smart Account")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-T01:module{TalosStageOne} TS01)
+        (patron:string KST.ANHD)
+        
+        (ns-use:string (ref-U|CT::CT_NS_USE))
+        (ah-ouronet-account:string "Σ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (ah-key (+ ns-use ".dh_ah-keyset"))
+        (ah-kda:string "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+        (ah-pbl:string "9G.CgcAjiI89ICnk45mxx63hwkBe5G71sIqfEta0ugkzF7EB6cy55BtzlFa27jDGE7Kn7ChljCmkcIsrDw9JwzJECieGLB5Jlkz9Blo6iJct6uxIA1u64Hr7HKa93EAiCwJJBBKAojJtwupEsvspH1jjGxKyFsb8fbfnJm1rAKxcIzcFILmmdHFaICfFpnbJG6tJu0HM9JCJ7MBCE7C2LiqvE6Fc1hqCeAdGHxDp7sGquI0wl2l08aa6wlKvwu44jgqF8mqDnCyjpxHuttEqjs4h9IJ28kmB53ppwoznt16rjzeMl21n3rwfI2es56rp5xavCabDacyCuonniz72L5d7dq3ptIEiuggEyLIIGe9sadH6eaMyitcmKaH7orgFz6d9kL9FKorBr06owFg328wFhCIlCFpwIzokmo47xKKt5kBzhyodBAjhCqayuHBue4oDhoA21A2H9ut9gApMuxokcmsi7Bd1kitrfJAy1GkrGiBK5dvlhgshcnGaG3vhkCm6dI5idCGjDEodivvDbgyI6zaajHvIMdBtrGvuKnxvsBulkbaDbk2wIdKwrK")
+        (balance:decimal (ref-coin::get-balance "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"))
+
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                ah-ouronet-account
+                (ref-DALOS::UR_UsagePrice "smart")
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (ref-T01::DALOS|C_DeploySmartAccount
+        ah-ouronet-account
+        (keyset-ref-guard ah-key) 
+        ah-kda 
+        patron 
+        ah-pbl
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 016 Deploying Smart Account Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 17 - Reservation Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+        (ref-VST:module{Vesting} VST)
+        (ref-T01:module{TalosStageOne} TS01)
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        (IgnisID:string (ref-DALOS::UR_IgnisID))
+        (ROuroID:string (ref-DPTF::UR_Reservation OuroID))
+        (patron:string KST.ANHD)
+        (smart-patron:string "Σ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (emma:string KST.EMMA)
+    )
+    ;;Turn ON Reserve Functionality
+    (ref-T01::DPTF|C_ToggleReservation patron OuroID true)
+    ;;Standard Account makes 15 R|Ouro
+    (ref-T01::VST|C_Reserve patron patron OuroID 15.0)
+    (let
+        (
+            (r-dptf-balance:decimal (ref-DPTF::UR_AccountSupply ROuroID patron))
+        )
+        ;;Deploy Account for ROuroID on Smart-Patron
+        (ref-T01::DPTF|C_DeployAccount ROuroID smart-patron)
+        ;;Transfer Role set to true to Smart Account.
+        (ref-T01::DPTF|C_ToggleTransferRole patron ROuroID smart-patron true)
+        ;;Send 15 R|Ouro to Smart Account
+        (ref-T01::DPTF|C_Transfer patron ROuroID patron smart-patron 15.0 true)
+        ;;Smart Account unreserves 10 Ouro
+        (ref-T01::VST|C_Unreserve patron smart-patron ROuroID 10.0)
+        (let
+            (
+                (r2-dptf-balance:decimal (ref-DPTF::UR_AccountSupply ROuroID smart-patron))
+                (r3-dptf-balance:decimal (ref-DPTF::UR_AccountSupply OuroID smart-patron))
+            )
+            ;;Show R|Ouro Balances, after reserve and after unreserve
+            [
+                (format "AH Standard has {} Reserved Ouro after first reservation" [r-dptf-balance])
+                (format "AH Smart has {} Reserved Ouro after unreserve action" [r2-dptf-balance])
+                (format "AH Smart has {} Ouro after unreserve action" [r3-dptf-balance])
+            ]
+        )
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 017 Reservation Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

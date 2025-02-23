@@ -37,6 +37,8 @@
     (defun UR_Vesting:string (id:string))
     (defun UR_Sleeping:string (id:string))
     (defun UR_Frozen:string (id:string))
+    (defun UR_Reservation:string (id:string))
+    (defun UR_IzReservationOpen:bool (id:string))
     (defun UR_Roles:[string] (id:string rp:integer))
     (defun UR_AccountSupply:decimal (id:string account:string))
     (defun UR_AccountRoleBurn:bool (id:string account:string))
@@ -54,6 +56,9 @@
     (defun URC_Fee:[decimal] (id:string amount:decimal))
     (defun URC_TrFeeMinExc:bool (id:string sender:string receiver:string))
     (defun URC_HasVesting:bool (id:string))
+    (defun URC_HasSleeping:bool (id:string))
+    (defun URC_HasFrozen:bool (id:string))
+    (defun URC_HasReserved:bool (id:string))
     ;;
     (defun UEV_CanChangeOwnerON (id:string))
     (defun UEV_CanUpgradeON (id:string))
@@ -75,6 +80,9 @@
     (defun UEV_AccountFeeExemptionState (id:string account:string state:bool))
     (defun UEV_EnforceMinimumAmount (id:string transfer-amount:decimal))
     (defun UEV_Vesting (id:string existance:bool))
+    (defun UEV_Sleeping (id:string existance:bool))
+    (defun UEV_Frozen (id:string existance:bool))
+    (defun UEV_Reserved (id:string existance:bool))
     ;;
     (defun CAP_Owner (id:string))
     ;;
@@ -94,6 +102,7 @@
     (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool))
     (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_TogglePause (patron:string id:string toggle:bool))
+    (defun C_ToggleReservation (patron:string id:string toggle:bool))
     (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     ;;
@@ -922,6 +931,27 @@
             true
         )
     )
+    (defun URC_HasSleeping:bool (id:string)
+        @doc "Returns a boolean if DPTF has a sleeping counterpart"
+        (if (= (UR_Sleeping id) BAR)
+            false
+            true
+        )
+    )
+    (defun URC_HasFrozen:bool (id:string)
+        @doc "Returns a boolean if DPTF has a frozen counterpart"
+        (if (= (UR_Frozen id) BAR)
+            false
+            true
+        )
+    )
+    (defun URC_HasReserved:bool (id:string)
+        @doc "Returns a boolean if DPTF has a reserved counterpart"
+        (if (= (UR_Reservation id) BAR)
+            false
+            true
+        )
+    )
     ;;{F2}
     (defun UEV_CanChangeOwnerON (id:string)
         (let
@@ -1134,6 +1164,31 @@
             (enforce (= has-vesting existance) (format "Vesting for the Token {} is not satisfied with existance {}" [id existance]))
         )
     )
+    (defun UEV_Sleeping (id:string existance:bool)
+        (let
+            (
+                (has-sleeping:bool (URC_HasSleeping id))
+            )
+            (enforce (= has-sleeping existance) (format "Sleeping for the Token {} is not satisfied with existance {}" [id existance]))
+        )
+    )
+    (defun UEV_Frozen (id:string existance:bool)
+        (let
+            (
+                (has-frozen:bool (URC_HasFrozen id))
+            )
+            (enforce (= has-frozen existance) (format "Frozen for the Token {} is not satisfied with existance {}" [id existance]))
+        )
+    )
+    (defun UEV_Reserved (id:string existance:bool)
+        (let
+            (
+                (has-reserved:bool (URC_HasReserved id))
+            )
+            (enforce (= has-reserved existance) (format "Reserved for the Token {} is not satisfied with existance {}" [id existance]))
+        )
+    )
+
     ;;{F3}
     ;;{F4}
     (defun CAP_Owner (id:string)
@@ -1187,6 +1242,7 @@
             [
                 (enforce-guard (P|UR "TFT|<"))
                 (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "VST|<"))
                 (enforce-guard (P|UR "LIQUID|<"))
                 (enforce-guard (P|UR "OUROBOROS|<"))
                 (enforce-guard (P|UR "SWPU|<"))
@@ -1288,6 +1344,7 @@
             "Unallowed"
             [
                 (enforce-guard (P|UR "ATSU|<"))
+                (enforce-guard (P|UR "VST|<"))
                 (enforce-guard (P|UR "LIQUID|<"))
                 (enforce-guard (P|UR "OUROBOROS|<"))
                 (enforce-guard (P|UR "SWP|<"))

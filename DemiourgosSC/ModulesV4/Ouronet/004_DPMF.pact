@@ -40,6 +40,8 @@
     (defun UR_RewardBearingToken:string (id:string))
     (defun UR_AccountSupply:decimal (id:string account:string))
     (defun UR_AccountRoleBurn:bool (id:string account:string))
+    (defun UR_AccountRoleCreate:bool (id:string account:string))
+    (defun UR_AccountRoleNFTAQ:bool (id:string account:string))
     (defun UR_AccountRoleTransfer:bool (id:string account:string))
     (defun UR_AccountFrozenState:bool (id:string account:string))
     (defun UR_AccountUnit:[object] (id:string account:string))
@@ -47,8 +49,6 @@
     (defun UR_AccountBatchMetaData (id:string nonce:integer account:string))
     (defun UR_AccountBatchSupply:decimal (id:string nonce:integer account:string))
     (defun UR_AccountNonces:[integer] (id:string account:string))
-    (defun UR_AccountRoleNFTAQ:bool (id:string account:string))
-    (defun UR_AccountRoleCreate:bool (id:string account:string))
     ;;
     (defun URC_IzRBT:bool (reward-bearing-token:string))
     (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
@@ -650,6 +650,22 @@
             rb
         )
     )
+    (defun UR_AccountRoleCreate:bool (id:string account:string)
+        (UEV_id id)
+        (with-default-read DPMF|BalanceTable (concat [id BAR account])
+            { "role-nft-create" : false}
+            { "role-nft-create" := rnc }
+            rnc
+        )
+    )
+    (defun UR_AccountRoleNFTAQ:bool (id:string account:string)
+        (UEV_id id)
+        (with-default-read DPMF|BalanceTable (concat [id BAR account])
+            { "role-nft-add-quantity" : false}
+            { "role-nft-add-quantity" := rnaq }
+            rnaq
+        )
+    )
     (defun UR_AccountRoleTransfer:bool (id:string account:string)
         (with-default-read DPMF|BalanceTable (concat [id BAR account])
             { "role-transfer" : false }
@@ -765,22 +781,6 @@
                     read-unit
                 )
             )
-        )
-    )
-    (defun UR_AccountRoleNFTAQ:bool (id:string account:string)
-        (UEV_id id)
-        (with-default-read DPMF|BalanceTable (concat [id BAR account])
-            { "role-nft-add-quantity" : false}
-            { "role-nft-add-quantity" := rnaq }
-            rnaq
-        )
-    )
-    (defun UR_AccountRoleCreate:bool (id:string account:string)
-        (UEV_id id)
-        (with-default-read DPMF|BalanceTable (concat [id BAR account])
-            { "role-nft-create" : false}
-            { "role-nft-create" := rnc }
-            rnc
         )
     )
     ;;{F1}

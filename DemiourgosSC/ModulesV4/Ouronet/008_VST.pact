@@ -11,12 +11,20 @@
     ;;
     (defun URC_CullMetaDataAmount:decimal (client:string id:string nonce:integer))
     (defun URC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer))
-
-    (defun UEV_Active (dptf:string dpmf:string))
-
+    ;;
+    (defun UEV_SpecialTrueFungibleRoles (dptf:string frozen-or-reserved:bool))
+    (defun UEV_SpecialMetaFungibleRoles (dptf:string vesting-or-sleeping:bool))
+    ;;
     (defun UDC_ComposeVestingMetaData:[object{VST|MetaDataSchema}] (id:string amount:decimal offset:integer duration:integer milestones:integer))
-
+    ;;
+    (defun C_CreateFrozenLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string))
+    (defun C_CreateReservationLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string))
     (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string))
+    (defun C_CreateSleepingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string))
+    ;;
+    (defun C_Reserve:[object{OuronetDalos.IgnisCumulator}] (patron:string reserver:string dptf:string amount:decimal))
+    (defun C_Unreserve:[object{OuronetDalos.IgnisCumulator}] (patron:string unreserver:string r-dptf:string amount:decimal))
+    ;;
     (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string id:string nonce:integer))
     (defun C_Vest:object{OuronetDalos.IgnisCumulator} (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
 )
@@ -153,15 +161,44 @@
         @event
         (compose-capability (P|SECURE-CALLER))
     )
+    ;;
     (defcap VST|C>RESERVATION-LINK ()
         @event
         (compose-capability (P|SECURE-CALLER))
     )
-    (defcap VST|C>VESTING-LINK ()
+    (defcap VST|C>RESERVE (reserver:string dptf:string amount:decimal)
         @event
-        (compose-capability (P|SECURE-CALLER))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (iz-reservation:bool (ref-DPTF::UR_IzReservationOpen dptf))
+            )
+            (ref-DALOS::UEV_EnforceAccountType reserver false)
+            (ref-DPTF::UEV_Amount dptf amount)
+            (ref-DPTF::UEV_Reserved dptf true)
+            (UEV_SpecialTrueFungibleRoles dptf false)
+            (enforce iz-reservation (format "Reservation is not opened for Token {}" [dptf]))
+            (compose-capability (P|DT))
+        )
     )
-    (defcap VST|C>SLEEPING-LINK ()
+    (defcap VST|C>UNRESERVE (unreserver:string r-dptf:string amount:decimal)
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (ref-DALOS::UEV_EnforceAccountType unreserver true)
+            (ref-DPTF::UEV_Amount r-dptf amount)
+            (ref-DPTF::CAP_Owner r-dptf)
+            (ref-DPTF::UEV_Reserved r-dptf true)
+            (UEV_SpecialTrueFungibleRoles (ref-DPTF::UR_Reservation r-dptf) false)
+            (compose-capability (P|DT))
+        )
+    )
+    ;;
+    (defcap VST|C>VESTING-LINK ()
         @event
         (compose-capability (P|SECURE-CALLER))
     )
@@ -176,10 +213,9 @@
             (ref-DALOS::UEV_EnforceAccountType target-account false)
             (ref-DPTF::CAP_Owner id)
             (ref-DPTF::UEV_Vesting id true)
-            (UEV_Active id (ref-DPTF::UR_Vesting id))
+            (UEV_SpecialMetaFungibleRoles id true)
             (compose-capability (P|DT))
         )
-        
     )
     (defcap VST|C>CULL (culler:string id:string)
         @event
@@ -190,32 +226,16 @@
             )
             (ref-DALOS::UEV_EnforceAccountType culler false)
             (ref-DPMF::UEV_Vesting id true)
-            (UEV_Active (ref-DPMF::UR_Vesting id) id)
+            (UEV_SpecialMetaFungibleRoles (ref-DPMF::UR_Vesting id) true)
             (compose-capability (P|DT))
         )
     )
-    (defcap VST|C>UPDATE (dptf:string dpmf:string)
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (tf-vesting-id:string (ref-DPTF::UR_Vesting dptf))
-                (mf-vesting-id:string (ref-DPMF::UR_Vesting dpmf))
-                (iz-hot-rbt:bool (ref-DPMF::URC_IzRBT dpmf))
-            )
-            (ref-DPTF::UEV_id dptf)
-            (ref-DPMF::UEV_id dpmf)
-            (ref-DPTF::CAP_Owner dptf)
-            (ref-DPMF::CAP_Owner dpmf)
-            (UEV_Active dptf dpmf)
-            (enforce 
-                (and (= tf-vesting-id BAR) (= mf-vesting-id BAR) )
-                "Vesting Pairs are immutable !"
-            )
-            (enforce (= iz-hot-rbt false) "A DPMF defined as a hot-rbt cannot be used as Vesting Token in Vesting pair")
-            (compose-capability (SECURE))
-        )
+    ;;
+    (defcap VST|C>SLEEPING-LINK ()
+        @event
+        (compose-capability (P|SECURE-CALLER))
     )
+    ;;
     ;;
     ;;{F0}
     ;;{F1}
@@ -277,22 +297,51 @@
         )
     )
     ;;{F2}
-    (defun UEV_Active (dptf:string dpmf:string)
+    (defun UEV_SpecialTrueFungibleRoles (dptf:string frozen-or-reserved:bool)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (special:string (if frozen-or-reserved "Frozen" "Reserved"))
+                (s-dptf:string 
+                    (if frozen-or-reserved
+                        (ref-DPTF::UR_Frozen dptf)
+                        (ref-DPTF::UR_Reservation dptf)
+                    )
+                )
+                (vst-sc:string VST|SC_NAME)
+                (t1:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf vst-sc))
+                (r-burn:bool (ref-DPTF::UR_AccountRoleBurn s-dptf vst-sc))
+                (r-mint:bool (ref-DPTF::UR_AccountRoleMint s-dptf vst-sc))
+                (r-trns:bool (ref-DPTF::UR_AccountRoleTransfer s-dptf vst-sc))
+                (r-fexm:bool (ref-DPTF::UR_AccountRoleFeeExemption s-dptf vst-sc))
+                (t2:bool (and (and r-burn r-mint) (and r-trns r-fexm)))
+                (truth:bool (and t1 t2))
+            )
+            (enforce truth (format "Needed Roles for {} Functionality for the {} Id arent properly set; Special Functionality offline" [special dptf]))
+        )
+    )
+    (defun UEV_SpecialMetaFungibleRoles (dptf:string vesting-or-sleeping:bool)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (dptf-fee-exemption:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf VST|SC_NAME))
-                (create-role:bool (ref-DPMF::UR_AccountRoleCreate dpmf VST|SC_NAME))
-                (add-q-role:bool (ref-DPMF::UR_AccountRoleNFTAQ dpmf VST|SC_NAME))
-                (burn-role:bool (ref-DPMF::UR_AccountRoleBurn dpmf VST|SC_NAME))
-                (transfer-role:bool (ref-DPMF::UR_AccountRoleTransfer dpmf VST|SC_NAME))
+                (special:string (if vesting-or-sleeping "Vesting" "Sleeping"))
+                (s-dpmf:string 
+                    (if vesting-or-sleeping
+                        (ref-DPTF::UR_Vesting dptf)
+                        (ref-DPTF::UR_Sleeping dptf)
+                    )
+                )
+                (vst-sc:string VST|SC_NAME)
+                (t1:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf vst-sc))
+                (r-burn:bool (ref-DPMF::UR_AccountRoleBurn s-dpmf vst-sc))
+                (r-crea:bool (ref-DPMF::UR_AccountRoleCreate s-dpmf vst-sc))
+                (r-nadq:bool (ref-DPMF::UR_AccountRoleNFTAQ s-dpmf vst-sc))
+                (r-trns:bool (ref-DPMF::UR_AccountRoleTransfer s-dpmf vst-sc))
+                (t2:bool (and (and r-burn r-crea) (and r-nadq r-trns)))
+                (truth:bool (and t1 t2))
             )
-            (enforce (= dptf-fee-exemption true) "<role-fee-exemption> needed on DalosVesting")
-            (enforce (= create-role true) "<role-nft-create> needed on DalosVesting")
-            (enforce (= add-q-role true) "<role-nft-add-quantity> needed on DalosVesting")
-            (enforce (= burn-role true) "<role-nft-burn> needed on DalosVesting")
-            (enforce (= transfer-role true) "<role-transfer> needed on DalosVesting")
+            (enforce truth (format "Needed Roles for {} Functionality for the {} Id arent properly set; Special Functionality offline" [special dptf]))
         )
     )
     ;;{F3}
@@ -315,24 +364,87 @@
     ;;{F5}
     ;;{F6}
     (defun C_CreateFrozenLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        @doc "Creates a Frozen Link, issuing a Special-DPTF as a frozen counterpart for another DPTF \
+            \ A Frozen Link is immutable, and noted in the Token Properties of both DPTFs \
+            \ A Special DPTF of the Frozen variety, is used for implementing the FROZEN Functionality for a DPTF Token \
+            \ So called FROZEN Tokens are meant to be frozen on the account holding them, and only be used by that account, \
+            \ for specific purposes only, defined by the <dptf> owner, which is also the owner of the Frozen Token. \
+            \ Frozen Tokens can never be converted back to the original <dptf> Token they were created from \
+            \ \
+            \ Only the <dptf> owner can create Frozen Tokens to Target Accounts, \
+            \ or designate other Smart Ouronet Accounts to create them \
+            \ \
+            \ Frozen Tokens can be used to add Swpair Liquidity, as if they were the initial <dptf> token \
+            \ This can be done, when this functionality is turned on for the Swpair, and using a Frozen Token for adding Liquidity \
+            \ generates a Frozen LP Token, which behaves similarly to the Frozen Token \
+            \ that is, it can never be converted back to the SWPairs native LP, locking liquidity in place \
+            \ Existing LPs can also be frozen, permanently locking liquidity \
+            \ \
+            \ VESTA will be the first Token that will be making use of this functionality"
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>FROZEN-LINK)
             (XI_CreateSpecialTrueFungibleLink patron dptf true)
         )
     )
     (defun C_CreateReservationLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        @doc "Creates a Reservation Link, issuing a Special-DPTF as a reserved counterpart for another DPTF \
+            \ A Reservation Link is immutable, and noted in the Token Properties of both DPTFs \
+            \ A Special DPTF of the Reserved variety, is used for implementing the RESERVED Functionality for a DPTF Token \
+            \ So called RESERVED Tokens are meant to be frozen on the account holding them, and only be used by that account, \
+            \ for specific purposes only, defined by the <dptf> owner, which is also the owner of the Reserved Token. \
+            \ Reserved Tokens can never be converted back to the original <dptf> Token they were created from \
+            \ \
+            \ As opposed to frozen tokens, where only the <dptf> owner can generate them or designated Ouronet Accounts, \
+            \ Reserved Tokens can be generated by clients, using as input the <dptf> Token, only when reservations are open by the <dptf> owner \
+            \ That is, the <dptf> owner dictates when clients can generate reserved tokens from the input <dptf>, \
+            \ and as such, reserved tokens can be used for special discounts when sales are planned with the main <dptf> Token, \
+            \ as if they were the main <dptf> token. \
+            \ \
+            \ Reserved Tokens cannot be used to add liquidty on any Swpair. \
+            \ \
+            \ OURO will be the first Token that will be making use of this functionality"
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>RESERVATION-LINK)
             (XI_CreateSpecialTrueFungibleLink patron dptf false)
         )
     )
     (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        @doc "Creates a Vesting Link, issuing a Special-DPMF as a vested counterpart for another DPTF \
+            \ A Vesting Link is immutable, and noted in the Token Properties of both the DPTF and the Special DPMF \
+            \ A Special DPMF of the Vested variety, is used for implementing the Vesting Functionality for a DPTF Token \
+            \ The <dptf> owner has the ability to vest its <dptf> token into a vested counterpart \
+            \ specifying a target account, an offset, a duration and a number of milestones as vesting parameters \
+            \ \
+            \ The Target account receives the vested token, and according to its input vested parameters, \
+            \ can revert it back to the <dptf> counterpart, as vesting intervals expire \
+            \ \
+            \ Vested Tokens cannot be used to add liquidity on any Swpair \
+            \ \
+            \ If a Vested Counterpart is created for a Token that is a Cold-RBT in an ATS Pair, \
+            \ the RT owner of that ATS Pair can <coil>|<curl> the RT Token, and subsequently <vest> the output Hot-RBT token, \
+            \ thus creating an additional layer of locking, for the input <RT> token, by converting it in a Vested Hot-RBT \
+            \ OURO, AURYN and ELITE-AURYN will be the first Tokens that will make use of this functionality"
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>VESTING-LINK)
             (XI_CreateSpecialMetaFungibleLink patron dptf true)
         )
     )
     (defun C_CreateSleepingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        @doc "Creates a Sleeping Link, issuing a Special-DPMF as a sleeping counterpart for another DPTF \
+            \ A Sleeping Link is immutable, and noted in the Token Properties of both the DPTF and the Special DPMF \
+            \ A Special DPMF of the Sleeping variety, is used for implementing the Sleeping Functionality for a DPTF Token \
+            \ A Sleeping DPMF is similar to a vested Token, however it has a single period after which it can be converted \
+            \ in its entirety, at once, into the initial <dptf> \
+            \ As opposed to Vested DPMF Tokens, multiple Sleeping DPMF Tokens, can be unified into a single Sleeping Token \
+            \ using a weigthed mean to determine the final time when it can be converted back to the initial <dptf> \
+            \ \
+            \ As oposed to Vested Tokens, Sleeping Tokens can be used to add Swpair Liquidity, as if they were the initial <dptf> token \
+            \ This can be done, when this functionality is turned on for the Swpair, and using a Sleeping Token for adding Liquidity \
+            \ generates a Sleeping LP Token, which behaves similarly to the Sleeping Token, inheriting its sleeping date, \
+            \ that is, it can be converted back to the SWPairs native LP, when its sleeping interval expires \
+            \ Existing LPs can also be put to sleep, locking liquidity for a given period \
+            \ \
+            \ VESTA will be the first Token that will be making use of this functionality"
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>SLEEPING-LINK)
             (XI_CreateSpecialMetaFungibleLink patron dptf false)
@@ -340,6 +452,51 @@
     )
     ;;Frozen Token Actions
     ;;Reserve Token Actions
+    (defun C_Reserve:[object{OuronetDalos.IgnisCumulator}] (patron:string reserver:string dptf:string amount:decimal)
+        ;(enforce-guard (P|UR "TALOS-01"))
+        (with-capability (VST|C>RESERVE reserver dptf amount)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (vst-sc:string VST|SC_NAME)
+                    (r-dptf:string (ref-DPTF::UR_Reservation dptf))
+                    
+                )
+                [
+                    ;;1]Reserver sends dptf to VST|SC_NAME
+                    (ref-TFT::XB_FeelesTransfer patron dptf reserver vst-sc amount true) 
+                    ;;2]VST|SC_NAME mint R|dptf
+                    (ref-DPTF::C_Mint patron r-dptf vst-sc amount false)
+                    ;;3]VST|SC_NAME sends R|dptf to reserver
+                    (ref-TFT::XB_FeelesTransfer patron r-dptf vst-sc reserver amount true)
+                ]
+            )
+        )
+    )
+    (defun C_Unreserve:[object{OuronetDalos.IgnisCumulator}] (patron:string unreserver:string r-dptf:string amount:decimal)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (VST|C>UNRESERVE unreserver r-dptf amount)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (vst-sc:string VST|SC_NAME)
+                    (dptf:string (ref-DPTF::UR_Reservation r-dptf))
+                )
+                [
+                    ;;1]Unreserver sends R|dptf to VST|SC_NAME
+                    (ref-TFT::XB_FeelesTransfer patron r-dptf unreserver vst-sc amount true)
+                    ;;2]VST|SC_NAME burns R|dptf
+                    (ref-DPTF::C_Burn patron r-dptf vst-sc amount)
+                    ;;3]VST|SC_NAME sends dptf back to unreserver
+                    (ref-TFT::XB_FeelesTransfer patron dptf vst-sc unreserver amount true)
+                ]
+            )
+        )
+    )
     ;;Vesting Token Actions
     (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string id:string nonce:integer)
         (enforce-guard (P|UR "TALOS-01"))
@@ -414,7 +571,6 @@
                 (ref-U|VST:module{UtilityVst} U|VST)
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-
                 (vst-sc:string VST|SC_NAME)
                 (dptf-owner:string (ref-DPTF::UR_Konto dptf))
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
@@ -438,8 +594,8 @@
                         [false] ;;<can-change-owner>
                         [false] ;;<can-upgrade>
                         [true]  ;;<can-add-special-role>
-                        [false] ;;<can-freeze>
-                        [false] ;;<can-wipe>
+                        [true]  ;;<can-freeze>
+                        [true]  ;;<can-wipe>
                         [false] ;;<can-pause>
                         [true]  ;;<iz-special>
                     )
@@ -464,32 +620,32 @@
                         )
                     )
                     ;;Special-DPTF Roles
-                    (ico2:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPTF::C_ToggleTransferRole patron special-dptf vst-sc true)
-                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
-                        ;;Lifting the Transfer Role for the special DPTF from VST|SC_NAME, disables its functionality as Frozen or Reserved Special DPTF
-                    )
-                    (ico3:[object{OuronetDalos.IgnisCumulator}]
-                        (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron special-dptf vst-sc true)
-                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
-                    )
-                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                    (ico2:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::DPTF|C_ToggleBurnRole patron special-dptf vst-sc true)
                         ;;Even if the Burn Role can be given to external Smart Ouronet Accounts, 
                         ;;it is highly recomended to keep the Burn Role only on the VST|SC_NAME, such that only this Account is allowed to burn the Special-DPTF
                         ;;as was intended by its design, that is, only the the VST|SC_NAME to be allowed to mint burn the Special Token.
                         ;;Giving other Smart Dalos Accounts the Burn Role for a Special Token, will raise a Red Flag for the Parent DPTF Token
                     )
-                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                    (ico3:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::DPTF|C_ToggleMintRole patron special-dptf vst-sc true)
                         ;;Same as Burn Role, see above.
+                    )
+                    (ico4:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_ToggleTransferRole patron special-dptf vst-sc true)
+                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
+                        ;;Lifting the Transfer Role for the special DPTF from VST|SC_NAME, disables its functionality as Frozen or Reserved Special DPTF
+                    )
+                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron special-dptf vst-sc true)
+                        ;;Further Fee Exemption Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
                     )
                     (ico6:object{OuronetDalos.IgnisCumulator}
                         (ref-DPTF::XE_UpdateSpecialTrueFungible dptf special-dptf frozen-or-reserved)
                     )
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
-                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5 [ico6]]) [special-dptf])
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 ico2 ico3 [ico4] ico5 [ico6]]) [special-dptf])
             )
         )
     )
@@ -501,7 +657,6 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-
                 (vst-sc:string VST|SC_NAME)
                 (dptf-owner:string (ref-DPTF::UR_Konto dptf))
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
@@ -525,8 +680,8 @@
                         [false] ;;<can-change-owner>
                         [true]  ;;<can-upgrade>; after <create-role-account> is set to VST|SC_NAME, this will be set to false, 
                         [true]  ;;<can-add-special-role>
-                        [false] ;;<can-freeze>
-                        [false] ;;<can-wipe>
+                        [true] ;;<can-freeze>
+                        [true] ;;<can-wipe>
                         [false] ;;<can-pause>
                         [true]  ;;<can-transfer-nft-create-role>; must be moved to VST|SC_NAME, then set to false
                         [true]  ;;<iz-special>
@@ -552,26 +707,26 @@
                         )
                     )
                     ;;Special-DPMF Roles
-                    (ico2:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPMF::C_ToggleTransferRole patron special-dpmf vst-sc true)
-                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
-                        ;;Lifting the Transfer Role for the special DPMF from VST|SC_NAME, disables its functionality as Vested or Sleeping Special DPMF
-                    )
-                    (ico3:[object{OuronetDalos.IgnisCumulator}]
+                    (ico2:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::DPMF|C_ToggleBurnRole patron special-dpmf vst-sc true)
                         ;;Same as Burn Role for Special DPTFs, see above
                     )
-                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                    (ico3:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::DPMF|C_MoveCreateRole patron special-dpmf vst-sc)
                         ;;After setting <role-nft-create> to VST|SC_NAME, the <can-transfer-nft-create-role> will be set to false,
                         ;;and <can-upgrade> will also be set to false, to lock settings in place via <ico7>
                     )
-                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                    (ico4:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::DPMF|C_ToggleAddQuantityRole patron special-dpmf vst-sc true)
                         ;;Same as Mint Role for Special DPTFs, see above
                     )
+                    (ico5:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_ToggleTransferRole patron special-dpmf vst-sc true)
+                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
+                        ;;Lifting the Transfer Role for the special DPMF from VST|SC_NAME, disables its functionality as Vested or Sleeping Special DPMF
+                    )
                     (ico6:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPMF::C_Control patron special-dpmf false false true false false false false)
+                        (ref-DPMF::C_Control patron special-dpmf false false true true true false false)
                         ;;Control changes locked in place, and <role-nft-create> permanently locked to VST|SC_NAME
                     )
                     (ico7:object{OuronetDalos.IgnisCumulator}
@@ -579,7 +734,7 @@
                     )
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
-                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5 [ico6] [ico7]]) [special-dpmf])
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 ico2 ico3 ico4 [ico5] [ico6] [ico7]]) [special-dpmf])
             )
         )
     )
