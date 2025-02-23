@@ -32,6 +32,7 @@
     (defun UR_Supply:decimal (id:string))
     (defun UR_TransferRoleAmount:integer (id:string))
     (defun UR_Vesting:string (id:string))
+    (defun UR_Sleeping:string (id:string))
     (defun UR_Roles:[string] (id:string rp:integer))
     (defun UR_CanTransferNFTCreateRole:bool (id:string))
     (defun UR_CreateRoleAccount:string (id:string))
@@ -84,7 +85,7 @@
     ;;
     (defun C_AddQuantity:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
     (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
+    (defun C_Control:object{OuronetDalos.IgnisCumulator} (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
     (defun C_Create:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string meta-data:[object]))
     (defun C_DeployAccount (id:string account:string))
     (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
@@ -98,7 +99,7 @@
     (defun C_Transfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)) ;;6
     (defun C_Wipe (patron:string id:string atbw:string))
     ;;
-    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])) ;;1
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool])) ;;1
     (defun XB_UpdateElite (id:string sender:string receiver:string))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
@@ -106,7 +107,9 @@
     (defun XE_ToggleAddQuantityRole (id:string account:string toggle:bool))
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_UpdateRewardBearingToken (atspair:string id:string))
+    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalos.IgnisCumulator} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
     (defun XE_UpdateVesting (dptf:string dpmf:string))
+    (defun XE_UpdateSleeping (dptf:string dpmf:string))
 )
 (module DPMF GOV
     ;;
@@ -184,7 +187,8 @@
         role-transfer-amount:integer
         nonces-used:integer
         reward-bearing-token:string
-        vesting:string
+        vesting-link:string
+        sleeping-link:string
     )
     (defschema DPMF|BalanceSchema
         @doc "Key = <DPMF id> + BAR + <account>"
@@ -471,6 +475,53 @@
             (compose-capability (SECURE))
         ) 
     )
+    (defcap DPMF|C>UPDATE-SPECIAL (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (main-special-id:string
+                    (if vesting-or-sleeping
+                        (ref-DPTF::UR_Vesting main-dptf)
+                        (ref-DPTF::UR_Sleeping main-dptf)
+                    )
+                )
+                (secondary-special-id:string
+                    (if vesting-or-sleeping
+                        (UR_Vesting secondary-dpmf)
+                        (UR_Sleeping secondary-dpmf)
+                    )
+                )
+                (iz-secondary-rbt:bool (URC_IzRBT secondary-dpmf))
+                (main-dptf-first-character:string (take 1 main-dptf))
+                (main-dptf-second-character:string (drop 1 (take 2 main-dptf)))
+            )
+            (ref-DPTF::CAP_Owner main-dptf)
+            (CAP_Owner secondary-dpmf)
+            (enforce 
+                (and (= main-special-id BAR) (= secondary-special-id BAR) )
+                "Special Meta Fungible Links (vesting or sleeping) are immutable !"
+            )
+            (enforce 
+                (not iz-secondary-rbt) 
+                "Special Meta Fungible cannot be a Hot-RBT"
+            )
+            (if (= main-dptf-second-character BAR)
+                (if vesting-or-sleeping
+                    (enforce
+                        (not (contains main-dptf-first-character ["R" "F" "S" "W" "P"]))
+                        (format "When setting a Vesting Link, the main DPTF {} cannot be a Special DPTF" )
+                    )
+                    (enforce
+                        (not (contains main-dptf-first-character ["R" "F"]))
+                        (format "When setting a Sleeping Link, the main DPTF {} cannot be a Reserved or Frozen Token" )
+                    )
+                    
+                )
+                true
+            )
+            (compose-capability (P|SECURE-CALLER))
+        )
+    )
     ;;
     ;;{F0}
     (defun UR_P-KEYS:[string] ()
@@ -519,7 +570,10 @@
         (at "role-transfer-amount" (read DPMF|PropertiesTable id ["role-transfer-amount"]))
     )
     (defun UR_Vesting:string (id:string)
-        (at "vesting" (read DPMF|PropertiesTable id ["vesting"]))
+        (at "vesting-link" (read DPMF|PropertiesTable id ["vesting-link"]))
+    )
+    (defun UR_Sleeping:string (id:string)
+        (at "sleeping-link" (read DPMF|PropertiesTable id ["sleeping-link"]))
     )
     (defun UR_Roles:[string] (id:string rp:integer)
         (if (= rp 1)
@@ -1047,15 +1101,25 @@
             )
         )
     )
-    (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Control:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (dpmf-owner:string (UR_Konto id))
+                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id dpmf-owner))
             )
             (with-capability (DPMF|S>CTRL id)
                 (XI_Control patron id cco cu casr cf cw cp ctncr)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
@@ -1127,9 +1191,10 @@
                 (l1:integer (length name))
                 (mf-cost:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
                 (kda-costs:decimal (* (dec l1) mf-cost))
+                (iz-special:[bool] (make-list l1 false))
                 (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (SECURE)
-                        (XB_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
+                        (XB_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role iz-special)
                     )
                 )
             )
@@ -1306,6 +1371,7 @@
             can-wipe:[bool]
             can-pause:[bool]
             can-transfer-nft-create-role:[bool]
+            iz-special:[bool]
         )
         (enforce-one
             "Unallowed"
@@ -1342,6 +1408,7 @@
                                                 (at index can-wipe) 
                                                 (at index can-pause)
                                                 (at index can-transfer-nft-create-role)
+                                                (at index iz-special)
                                             )
                                         )
                                     )
@@ -1506,18 +1573,44 @@
             {"reward-bearing-token" : atspair}
         )
     )
-    (defun XE_UpdateVesting (dptf:string dpmf:string)
+    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalos.IgnisCumulator}
+        (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool)
         (enforce-guard (P|UR "VST|<"))
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (with-capability (DPMF|C>UPDATE-SPECIAL main-dptf secondary-dpmf vesting-or-sleeping)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                )
+                (if vesting-or-sleeping
+                    (do
+                        (ref-DPTF::XE_UpdateVesting main-dptf secondary-dpmf)
+                        (XE_UpdateVesting main-dptf secondary-dpmf)
+                    )
+                    (do
+                        (ref-DPTF::XE_UpdateVesting main-dptf secondary-dpmf)
+                        (XE_UpdateVesting main-dptf secondary-dpmf)
+                    )
+                )
+                ico
             )
-            (with-capability (P|DPMF|CALLER)
-                (ref-DPTF::XE_UpdateVesting dptf dpmf)
-            )
-            (update DPMF|PropertiesTable dpmf
-                {"vesting" : dptf}
-            )
+        )
+    )
+    (defun XE_UpdateVesting (dptf:string dpmf:string)
+        (require-capability (SECURE))
+        (update DPMF|PropertiesTable dpmf
+            {"vesting-link" : dptf}
+        )
+    )
+    (defun XE_UpdateSleeping (dptf:string dpmf:string)
+        (require-capability (SECURE))
+        (update DPMF|PropertiesTable dpmf
+            {"sleeping-link" : dptf}
         )
     )
     ;;
@@ -1775,6 +1868,7 @@
             can-wipe:bool 
             can-pause:bool
             can-transfer-nft-create-role:bool
+            iz-special:bool
         )
         (require-capability (SECURE))
         (let
@@ -1783,8 +1877,8 @@
                 (id:string (ref-U|DALOS::UDC_Makeid ticker))
             )
             (ref-U|DALOS::UEV_Decimals decimals)
-            (ref-U|DALOS::UEV_NameOrTicker name true false)
-            (ref-U|DALOS::UEV_NameOrTicker ticker false false)
+            (ref-U|DALOS::UEV_NameOrTicker name true iz-special)
+            (ref-U|DALOS::UEV_NameOrTicker ticker false iz-special)
             (insert DPMF|PropertiesTable id
                 {"owner-konto"          : account
                 ,"name"                 : name
@@ -1803,7 +1897,8 @@
                 ,"role-transfer-amount" : 0
                 ,"nonces-used"          : 0
                 ,"reward-bearing-token" : BAR
-                ,"vesting"              : BAR}
+                ,"vesting-link"         : BAR
+                ,"sleeping-link"        : BAR}
             )
             (C_DeployAccount id account)    
             id

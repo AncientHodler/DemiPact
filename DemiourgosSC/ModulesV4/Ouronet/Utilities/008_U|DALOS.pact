@@ -4,13 +4,13 @@
     (defun UC_FilterId:[string] (listoflists:[[string]] account:string))
     (defun UC_GasCost (base-cost:decimal major:integer minor:integer native:bool))
     (defun UC_GasDiscount (major:integer minor:integer native:bool))
-    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool))
-    (defun UC_IzStringANC:bool (s:string capital:bool iz-lp:bool))
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-special:bool))
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-special:bool))
     (defun UC_NewRoleList (current-lst:[string] account:string direction:bool))
     ;;
     (defun UEV_Decimals:bool (decimals:integer))
     (defun UEV_Fee (fee:decimal))
-    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-lp:bool))
+    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-special:bool))
     ;;
     (defun UDC_Makeid:string (ticker:string))
     (defun UDC_MakeMVXNonce:string (nonce:integer))
@@ -75,7 +75,7 @@
             )
         )
     )
-    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-lp:bool)
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-special:bool)
         @doc "Checks if a character is alphanumeric with or without Uppercase Only"
         (let*
             (
@@ -91,19 +91,19 @@
                 (c3:bool (or c1 (contains c s)))
                 (c4:bool (or c3 (contains c ncl)))
             )
-            (if iz-lp
+            (if iz-special
                 (if capital c3 c4)
                 (if capital c1 c2)
             )
         )
     )
-    (defun UC_IzStringANC:bool (s:string capital:bool iz-lp:bool)
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-special:bool)
         @doc "Checks if a string is alphanumeric with or without Uppercase Only \
         \ Uppercase Only toggle is used by setting the capital boolean to true"
         (fold
             (lambda
                 (acc:bool c:string)
-                (and acc (UC_IzCharacterANC c capital iz-lp))
+                (and acc (UC_IzCharacterANC c capital iz-special))
             )
             true
             (str-to-list s)
@@ -168,7 +168,7 @@
             )
         )
     )
-    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-lp:bool)
+    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-special:bool)
         @doc "Enforces correct DALOS Token Name and/or Ticker specifications"
         (let*
             (
@@ -179,8 +179,8 @@
                 (max-t-standard:integer (ref-U|CT::CT_MAX_TOKEN_TICKER_LENGTH))
                 (max-n-lp:integer (+ (* max-n-standard 7) 8))
                 (max-t-lp:integer (+ (* max-t-standard 7) 11))
-                (max-n:integer (if iz-lp max-n-lp max-n-standard))
-                (max-t:integer (if iz-lp max-t-lp max-t-standard))
+                (max-n:integer (if iz-special max-n-lp max-n-standard))
+                (max-t:integer (if iz-special max-t-lp max-t-standard))
                 (max:integer (if name-or-ticker max-n max-t))
             )
             (enforce
@@ -191,7 +191,7 @@
             "Designation does not conform to the DALOS Name Standard for Size!"
             )
             (enforce
-                (UC_IzStringANC name-ticker (not name-or-ticker) iz-lp)
+                (UC_IzStringANC name-ticker (not name-or-ticker) iz-special)
                 "Designation does not conform character-wise"
             )
         )

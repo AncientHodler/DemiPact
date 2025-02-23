@@ -289,6 +289,7 @@
         virtual-gas-spent:decimal           ;;IGNIS spent
         native-gas-toggle:bool              ;;KADENA collection toggle
         native-gas-spent:decimal            ;;KADENA spent
+        native-gas-pump:bool                ;;controls automatic LiquidStaking fueling
     )
     (defschema DALOS|PricesSchema
         price:decimal                       ;;Stores price for action
@@ -620,6 +621,9 @@
     )
     (defun UR_NativeSpent:decimal ()
         (at "native-gas-spent" (read DALOS|GasManagementTable DALOS|VGD ["native-gas-spent"]))
+    )
+    (defun UR_AutoFuel:bool ()
+        (at "native-gas-pump" (read DALOS|GasManagementTable DALOS|VGD ["native-gas-pump"]))
     )
     (defun UR_UsagePrice:decimal (action:string)
         (at "price" (read DALOS|PricesTable action ["price"]))
@@ -1106,6 +1110,12 @@
             (XB_UpdateOuroPrice price)
         )
     )
+    (defun A_SetAutoFueling (toggle:bool)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (GOV|DALOS_ADMIN)
+            (XI_SetAutoFueling toggle)
+        )
+    )
     (defun A_UpdatePublicKey (account:string new-public:string)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (GOV|DALOS_ADMIN)
@@ -1520,6 +1530,12 @@
             (update DALOS|GasManagementTable DALOS|VGD
                 {"virtual-gas-toggle" : toggle}
             )
+        )
+    )
+    (defun XI_SetAutoFueling (toggle:bool)
+        (require-capability (GOV|DALOS_ADMIN))
+        (update DALOS|GasManagementTable DALOS|VGD
+            {"native-gas-pump" : toggle}
         )
     )
     (defun XI_IgnisTransfer (sender:string receiver:string ta:decimal)

@@ -1082,7 +1082,7 @@
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
                 KC.ANCIENTHODLER
-                (* (ref-DALOS::UR_UsagePrice "dptf") 1.0)
+                (+ (* (ref-DALOS::UR_UsagePrice "dptf") 3.0) (ref-DALOS::UR_UsagePrice "dpmf"))
             )
         )
     )

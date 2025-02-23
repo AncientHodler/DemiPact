@@ -77,6 +77,10 @@
         (compose-capability (VST|GOV))
         (compose-capability (P|VST|CALLER))
     )
+    (defcap P|SECURE-CALLER ()
+        (compose-capability (P|VST|CALLER))
+        (compose-capability (SECURE))
+    )
     ;;{P4}
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
@@ -134,7 +138,9 @@
     ;;{2}
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyIgnisCumulator ()(let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::DALOS|EmptyIgCum)))
     (defconst BAR                   (CT_Bar))
+    (defconst EIC                   (CT_EmptyIgnisCumulator))
     ;;
     ;;{C1}
     (defcap SECURE ()
@@ -143,10 +149,21 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
-    (defcap VST|C>LINK ()
+    (defcap VST|C>FROZEN-LINK ()
         @event
-        (compose-capability (SECURE))
-        (compose-capability (P|VST|CALLER))
+        (compose-capability (P|SECURE-CALLER))
+    )
+    (defcap VST|C>RESERVATION-LINK ()
+        @event
+        (compose-capability (P|SECURE-CALLER))
+    )
+    (defcap VST|C>VESTING-LINK ()
+        @event
+        (compose-capability (P|SECURE-CALLER))
+    )
+    (defcap VST|C>SLEEPING-LINK ()
+        @event
+        (compose-capability (P|SECURE-CALLER))
     )
     (defcap VST|C>VEST (vester:string target-account:string id:string)
         @event
@@ -297,73 +314,33 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+    (defun C_CreateFrozenLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
         (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (VST|C>LINK)
-            (let
-                (
-                    (ref-U|VST:module{UtilityVst} U|VST)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-ATS:module{Autostake} ATS)
-                    (vst-sc:string VST|SC_NAME)
-                    (dptf-owner:string (ref-DPTF::UR_Konto dptf))
-                    (dptf-name:string (ref-DPTF::UR_Name dptf))
-                    (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
-                    (dptf-decimals:integer (ref-DPTF::UR_Decimals dptf))
-                    (vesting-id:[string] (ref-U|VST::UC_VestingID dptf-name dptf-ticker))
-                    (dpmf-name:string (at 0 vesting-id))
-                    (dpmf-ticker:string (at 1 vesting-id))
-                    (ico0:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPMF::XB_IssueFree
-                            patron
-                            dptf-owner
-                            [dpmf-name]
-                            [dpmf-ticker]
-                            [dptf-decimals]
-                            [false]
-                            [false]
-                            [true]
-                            [false]
-                            [false]
-                            [false]
-                            [true]
-                        )
-                    )
-                    (dpmf:string (at 0 (at "output" ico0)))
-                    (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
-                )
-                ;;Create DPTF and DPMF Account and Set Roles below
-                (ref-DPTF::C_DeployAccount dptf vst-sc)
-                (ref-DPMF::C_DeployAccount dpmf vst-sc)
-                (let
-                    (
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DPMF::C_ToggleTransferRole patron dpmf vst-sc true)
-                        )
-                        (ico3:[object{OuronetDalos.IgnisCumulator}]
-                            (ref-ATS::DPMF|C_ToggleBurnRole patron dpmf vst-sc true)
-                        )
-                        (ico4:[object{OuronetDalos.IgnisCumulator}]
-                            (ref-ATS::DPMF|C_MoveCreateRole patron dpmf vst-sc)
-                        )
-                        (ico5:[object{OuronetDalos.IgnisCumulator}]
-                            (ref-ATS::DPMF|C_ToggleAddQuantityRole patron dpmf vst-sc true)
-                        )
-                    )
-                ;;Define Vesting Pair, Collect KDA (for DPMF Issue) and output ICO
-                    (XI_DefineVestingPair patron dptf dpmf)
-                    (ref-DALOS::KDA|C_Collect patron kda-costs)
-                    (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5]) [dpmf])
-                )
-            )
+        (with-capability (VST|C>FROZEN-LINK)
+            (XI_CreateSpecialTrueFungibleLink patron dptf true)
         )
     )
+    (defun C_CreateReservationLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (VST|C>RESERVATION-LINK)
+            (XI_CreateSpecialTrueFungibleLink patron dptf false)
+        )
+    )
+    (defun C_CreateVestingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (VST|C>VESTING-LINK)
+            (XI_CreateSpecialMetaFungibleLink patron dptf true)
+        )
+    )
+    (defun C_CreateSleepingLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string)
+        (enforce-guard (P|UR "TALOS-01"))
+        (with-capability (VST|C>SLEEPING-LINK)
+            (XI_CreateSpecialMetaFungibleLink patron dptf false)
+        )
+    )
+    ;;Frozen Token Actions
+    ;;Reserve Token Actions
+    ;;Vesting Token Actions
     (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string id:string nonce:integer)
         (enforce-guard (P|UR "TALOS-01"))
         (with-capability (VST|C>CULL culler id)
@@ -428,18 +405,181 @@
             )
         )
     )
+    ;;Sleeping Token Actions
     ;;{F7}
-    (defun XI_DefineVestingPair (patron:string dptf:string dpmf:string)
+    (defun XI_CreateSpecialTrueFungibleLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string frozen-or-reserved:bool)
         (require-capability (SECURE))
         (let
             (
+                (ref-U|VST:module{UtilityVst} U|VST)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+
+                (vst-sc:string VST|SC_NAME)
+                (dptf-owner:string (ref-DPTF::UR_Konto dptf))
+                (dptf-name:string (ref-DPTF::UR_Name dptf))
+                (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
+                (dptf-decimals:integer (ref-DPTF::UR_Decimals dptf))
+                (special-tf-id:[string]
+                    (if frozen-or-reserved
+                        (ref-U|VST::UC_FrozenID dptf-name dptf-ticker)
+                        (ref-U|VST::UC_ReservedID dptf-name dptf-ticker)
+                    )
+                )
+                (special-tf-name:string (at 0 special-tf-id))
+                (special-tf-ticker:string (at 1 special-tf-id))
+                (ico0:object{OuronetDalos.IgnisCumulator}
+                    (ref-DPTF::XB_IssueFree
+                        patron
+                        dptf-owner
+                        [special-tf-name]
+                        [special-tf-ticker]
+                        [dptf-decimals]
+                        [false] ;;<can-change-owner>
+                        [false] ;;<can-upgrade>
+                        [true]  ;;<can-add-special-role>
+                        [false] ;;<can-freeze>
+                        [false] ;;<can-wipe>
+                        [false] ;;<can-pause>
+                        [true]  ;;<iz-special>
+                    )
+                )
+                (special-dptf:string (at 0 (at "output" ico0)))
+                (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dptf"))
+            )
+            ;;Create DPTF and Special-DPTF Account and Set Required Roles below.
+            ;;For the Special DPTFs to function as intended, these roles must be kept on the VST|SC_NAME
+            (ref-DPTF::C_DeployAccount dptf vst-sc)
+            (ref-DPTF::C_DeployAccount special-dptf vst-sc)
+            (let
+                (
+                    (ref-ATS:module{Autostake} ATS)
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (dptf-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf vst-sc))
+                    ;;DPTF Roles
+                    (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (if (not dptf-fer)
+                            (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
+                            [EIC]
+                        )
+                    )
+                    ;;Special-DPTF Roles
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::C_ToggleTransferRole patron special-dptf vst-sc true)
+                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
+                        ;;Lifting the Transfer Role for the special DPTF from VST|SC_NAME, disables its functionality as Frozen or Reserved Special DPTF
+                    )
+                    (ico3:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron special-dptf vst-sc true)
+                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
+                    )
+                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPTF|C_ToggleBurnRole patron special-dptf vst-sc true)
+                        ;;Even if the Burn Role can be given to external Smart Ouronet Accounts, 
+                        ;;it is highly recomended to keep the Burn Role only on the VST|SC_NAME, such that only this Account is allowed to burn the Special-DPTF
+                        ;;as was intended by its design, that is, only the the VST|SC_NAME to be allowed to mint burn the Special Token.
+                        ;;Giving other Smart Dalos Accounts the Burn Role for a Special Token, will raise a Red Flag for the Parent DPTF Token
+                    )
+                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPTF|C_ToggleMintRole patron special-dptf vst-sc true)
+                        ;;Same as Burn Role, see above.
+                    )
+                    (ico6:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPTF::XE_UpdateSpecialTrueFungible dptf special-dptf frozen-or-reserved)
+                    )
+                )
+                (ref-DALOS::KDA|C_Collect patron kda-costs)
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5 [ico6]]) [special-dptf])
+            )
+        )
+    )
+    (defun XI_CreateSpecialMetaFungibleLink:object{OuronetDalos.IgnisCumulator} (patron:string dptf:string vesting-or-sleeping:bool)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|VST:module{UtilityVst} U|VST)
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+
+                (vst-sc:string VST|SC_NAME)
+                (dptf-owner:string (ref-DPTF::UR_Konto dptf))
+                (dptf-name:string (ref-DPTF::UR_Name dptf))
+                (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
+                (dptf-decimals:integer (ref-DPTF::UR_Decimals dptf))
+                (special-mf-id:[string]
+                    (if vesting-or-sleeping
+                        (ref-U|VST::UC_VestingID dptf-name dptf-ticker)
+                        (ref-U|VST::UC_SleepingID dptf-name dptf-ticker)
+                    )
+                )
+                (special-mf-name:string (at 0 special-mf-id))
+                (special-mf-ticker:string (at 1 special-mf-id))
+                (ico0:object{OuronetDalos.IgnisCumulator}
+                    (ref-DPMF::XB_IssueFree
+                        patron
+                        dptf-owner
+                        [special-mf-name]
+                        [special-mf-ticker]
+                        [dptf-decimals]
+                        [false] ;;<can-change-owner>
+                        [true]  ;;<can-upgrade>; after <create-role-account> is set to VST|SC_NAME, this will be set to false, 
+                        [true]  ;;<can-add-special-role>
+                        [false] ;;<can-freeze>
+                        [false] ;;<can-wipe>
+                        [false] ;;<can-pause>
+                        [true]  ;;<can-transfer-nft-create-role>; must be moved to VST|SC_NAME, then set to false
+                        [true]  ;;<iz-special>
+                    )
+                )
+                (special-dpmf:string (at 0 (at "output" ico0)))
+                (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
             )
-            (with-capability (VST|C>UPDATE dptf dpmf)
-                (ref-DPMF::XE_UpdateVesting dptf dpmf)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-DPTF::UR_Konto dptf) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+            ;;Create DPTF and Special-DPMF Account and Set Required Roles below.
+            ;;For the Special DPTFs to function as intended, these roles must be kept on the VST|SC_NAME
+            (ref-DPTF::C_DeployAccount dptf vst-sc)
+            (ref-DPMF::C_DeployAccount special-dpmf vst-sc)
+            (let
+                (
+                    (ref-ATS:module{Autostake} ATS)
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (dptf-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf vst-sc))
+                    ;;DPTF Roles
+                    (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (if (not dptf-fer)
+                            (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron dptf vst-sc true)
+                            [EIC]
+                        )
+                    )
+                    ;;Special-DPMF Roles
+                    (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_ToggleTransferRole patron special-dpmf vst-sc true)
+                        ;;Further Transfer Roles can be set to external Smart Ouronet Accounts as needed to implement Special DPTF Functionality
+                        ;;Lifting the Transfer Role for the special DPMF from VST|SC_NAME, disables its functionality as Vested or Sleeping Special DPMF
+                    )
+                    (ico3:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPMF|C_ToggleBurnRole patron special-dpmf vst-sc true)
+                        ;;Same as Burn Role for Special DPTFs, see above
+                    )
+                    (ico4:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPMF|C_MoveCreateRole patron special-dpmf vst-sc)
+                        ;;After setting <role-nft-create> to VST|SC_NAME, the <can-transfer-nft-create-role> will be set to false,
+                        ;;and <can-upgrade> will also be set to false, to lock settings in place via <ico7>
+                    )
+                    (ico5:[object{OuronetDalos.IgnisCumulator}]
+                        (ref-ATS::DPMF|C_ToggleAddQuantityRole patron special-dpmf vst-sc true)
+                        ;;Same as Mint Role for Special DPTFs, see above
+                    )
+                    (ico6:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::C_Control patron special-dpmf false false true false false false false)
+                        ;;Control changes locked in place, and <role-nft-create> permanently locked to VST|SC_NAME
+                    )
+                    (ico7:object{OuronetDalos.IgnisCumulator}
+                        (ref-DPMF::XE_UpdateSpecialMetaFungible dptf special-dpmf vesting-or-sleeping)
+                    )
+                )
+                (ref-DALOS::KDA|C_Collect patron kda-costs)
+                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5 [ico6] [ico7]]) [special-dpmf])
             )
         )
     )

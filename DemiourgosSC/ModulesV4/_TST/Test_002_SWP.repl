@@ -1149,3 +1149,52 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 15 - Fueling Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-ORBR:module{Ouroboros} OUROBOROS)
+        (ref-T01:module{TalosStageOne} TS01)
+        (indices:[decimal] (ref-ORBR::URC_ProjectedKdaLiquindex))
+    )
+    [
+        (format "Current Liquindex is {}, Projected Liquindex is" [(at 0 indices) (at 1 indices)])
+    ]
+    (ref-T01::ORBR|A_Fuel)
+    (let
+        (
+            (ref-DALOS:module{OuronetDalos} DALOS)
+            (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            (ref-ATS:module{Autostake} ATS)
+
+            (dlk-id:string (ref-DALOS::UR_LiquidKadenaID))
+            (ats-pairs-with-dlk-id:[string] (ref-DPTF::UR_RewardBearingToken dlk-id))
+            (kdaliquindex:string (at 0 ats-pairs-with-dlk-id))
+            (index-value:decimal (ref-ATS::URC_Index kdaliquindex))
+        )
+        [
+            (format "Initial Liquindex is {}, Projected Liquindex is {}, from {} KDA to be used for fueling" [(at 0 indices) (at 1 indices) (at 2 indices)])
+            (format "After Manual Fuel, Current Liquindex is {}" [index-value])
+        ]
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 015 Fueling Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

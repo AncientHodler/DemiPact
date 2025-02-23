@@ -236,7 +236,8 @@
                 ,"virtual-gas-toggle"       : false
                 ,"virtual-gas-spent"        : 0.0
                 ,"native-gas-toggle"        : false
-                ,"native-gas-spent"         : 0.0}
+                ,"native-gas-spent"         : 0.0
+                ,"native-gas-pump"          : false}
             )
             ;;6433
         )
@@ -567,8 +568,10 @@
         ;(acquire-module-admin free.DALOS)
         (let
             (
+                (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-T01:module{TalosStageOne} TS01)
                 (patron:string DEMIURGOI|AH_NAME)
+                (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (ids:list
                     (ref-T01::DPTF|C_Issue
                         patron
@@ -584,8 +587,12 @@
                         [true]
                     )
                 )
+                (VestaID:string (at 0 ids))
+                (FrozenVestaID:string (ref-T01::VST|C_CreateFrozenLink patron VestaID))
+                (SleepingVestaID:string (ref-T01::VST|C_CreateSleepingLink patron VestaID))
+                (ReservedOuroID:string (ref-T01::VST|C_CreateReservationLink patron OuroID))
             )
-            ids
+            [VestaID FrozenVestaID SleepingVestaID ReservedOuroID]
             ;;45079
         )
     )
@@ -607,7 +614,7 @@
             )
             (insert ref-SWP::SWP|Properties ref-SWP::SWP|INFO
                 {"principals"           : u
-                ,"liquid-boost"         : true
+                ,"liquid-boost"         : false
                 ,"spawn-limit"          : 1000.0
                 ,"inactive-limit"       : 100.0}
             )

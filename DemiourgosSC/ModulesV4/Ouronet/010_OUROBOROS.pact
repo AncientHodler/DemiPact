@@ -5,6 +5,7 @@
     (defun GOV|ORBR|SC_KDA-NAME ())
     (defun GOV|ORBR|GUARD ())
     ;;
+    (defun URC_ProjectedKdaLiquindex:[decimal] ())
     (defun URC_Compress:[decimal] (ignis-amount:decimal))
     (defun URC_Sublimate:decimal (ouro-amount:decimal))
     ;;
@@ -188,6 +189,36 @@
     ;;
     ;;{F0}
     ;;{F1}
+    (defun URC_ProjectedKdaLiquindex:[decimal] ()
+        @doc "Computes the Projected KDA Liquindex, considering KDA amount in reserved ready to be used as Fuel"
+        (let
+            (
+                (ref-coin:module{fungible-v2} coin)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-ATS:module{Autostake} ATS)
+                (orb-sc ORBR|SC_NAME)
+                (present-kda-balance:decimal (ref-coin::get-balance (ref-DALOS::UR_AccountKadena orb-sc)))
+                (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
+                (w-kda-as-rt:[string] (ref-DPTF::UR_RewardToken w-kda))
+                (liquid-idx:string (at 0 w-kda-as-rt))
+                (present-index-value:decimal (ref-ATS::URC_Index liquid-idx))
+
+                (p:integer (ref-ATS::UR_IndexDecimals liquid-idx))
+                (rs:decimal (ref-ATS::URC_ResidentSum liquid-idx))
+                (projected-sum:decimal (+ rs present-kda-balance))
+                (rbt-supply:decimal (ref-ATS::URC_PairRBTSupply liquid-idx))
+                (projected-index-value:decimal
+                    (if
+                        (= rbt-supply 0.0)
+                        -1.0
+                        (floor (/ projected-sum rbt-supply) p)
+                    )
+                )
+            )
+            [present-index-value projected-index-value present-kda-balance]
+        )
+    )
     (defun URC_Compress:[decimal] (ignis-amount:decimal)
         (let
             (

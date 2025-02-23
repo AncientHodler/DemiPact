@@ -6,6 +6,7 @@
     (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
     (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
     (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
+    (defun DALOS|A_SetAutoFueling (toggle:bool))
     (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
     (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
     ;;
@@ -55,6 +56,7 @@
     (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
     (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool))
     (defun DPTF|C_TogglePause (patron:string id:string toggle:bool))
+    (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool))
     (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
     (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
@@ -120,10 +122,18 @@
     (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal))
     ;;
     ;;
-    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
+    (defun VST|C_CreateFrozenLink:string (patron:string dptf:string))
+    (defun VST|C_CreateReservationLink:string (patron:string dptf:string))
     (defun VST|C_CreateVestingLink:string (patron:string dptf:string))
+    (defun VST|C_CreateSleepingLink:string (patron:string dptf:string))
+    ;;Frozen
+    ;;Reservation
+    ;;Vesting
+    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
     (defun VST|C_Cull (patron:string culler:string id:string nonce:integer))
+    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))    
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
+    ;;Sleeping
     ;;
     ;;
     (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
@@ -346,6 +356,17 @@
             )
         )
     )
+    (defun DALOS|A_SetAutoFueling (toggle:bool)
+        @doc "Sets Automatic fueling of Collected KDA for the Increase of the <KdaLiquindex>"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+            )
+            (with-capability (P|TS)
+                (ref-DALOS::A_SetAutoFueling toggle)
+            )
+        )
+    )
     (defun DALOS|A_UpdatePublicKey (account:string new-public:string)
         @doc "Updates Public Key; To be used only as failsafe by the Admin"
         (let
@@ -411,7 +432,7 @@
             \ by implementing this function at the end of those funtions that collect the KDA. \
             \ Dalos-Patron is the only gass"
         (with-capability (SECURE)
-            (XI_ProcessFuelKDA true)
+            (XI_DirectFuelKDA)
         )
     )
     ;;{SWP_Administrator}
@@ -472,7 +493,7 @@
             )
             (with-capability (P|SECURE-SUMMONER)
                 (ref-DALOS::C_DeploySmartAccount account guard kadena sovereign public)
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
             )
         )
     )
@@ -482,10 +503,11 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
+                (auto-fuel:bool (ref-DALOS::UR_AutoFuel))
             )
             (with-capability (P|SECURE-SUMMONER)
                 (ref-DALOS::C_DeployStandardAccount account guard kadena public)
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
             )
         )
     )
@@ -557,7 +579,7 @@
             )
             (with-capability (P|SECURE-SUMMONER)
                 (ref-DPTF::C_UpgradeBranding patron entity-id months)
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
             )
         )
     )
@@ -671,7 +693,7 @@
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
                 (at "output" ico)
             )   
         )
@@ -829,7 +851,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_ProcessFuelKDA collect)
+                (XI_ConditionalFuelKDA collect)
             )
         )
     )
@@ -872,15 +894,30 @@
             )
         )
     )
-    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
-        @doc "Toggles <transfer-role> for a DPTF Token <id> on a specific <account>"
+    (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool)
+        @doc "Toggles Reservations for a DPTF Token"
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
             )
             (with-capability (P|TS)
-                (ref-DPTF::C_ToggleTransferRole patron id account toggle)
+                (ref-DPTF::C_ToggleReservation patron id toggle)
             )
+        )
+    )
+
+    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles <transfer-role> for a DPTF Token <id> on a specific <account>"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_ToggleTransferRole patron id account toggle)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
@@ -963,7 +1000,7 @@
             )
             (with-capability (P|SECURE-SUMMONER)
                 (ref-DPMF::C_UpgradeBranding patron entity-id months)
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
             )
         )
     )
@@ -1001,10 +1038,14 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Control patron id cco cu casr cf cw cp ctncr)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Control patron id cco cu casr cf cw cp ctncr)
-            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto id) [ico])
         )
     )
     (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])
@@ -1044,7 +1085,7 @@
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
                 (at "output" ico)
             )
         )
@@ -1229,7 +1270,7 @@
             )
             (with-capability (P|SECURE-SUMMONER)
                 (ref-ATS::C_UpgradeBranding patron entity-id months)
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
             )
         )
     )
@@ -1364,7 +1405,7 @@
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
                 (at "output" ico)
             )
         )
@@ -1555,7 +1596,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_ProcessFuelKDA collect)
+                (XI_ConditionalFuelKDA collect)
             )
         )
     )
@@ -1611,6 +1652,161 @@
         )
     )
     ;;{VST_Client}
+    
+    (defun VST|C_CreateFrozenLink:string (patron:string dptf:string)
+        @doc "Creates a Frozen Link, issuing a Special-DPTF as a frozen counterpart for another DPTF \
+            \ A Frozen Link is immutable, and noted in the Token Properties of both DPTFs \
+            \ A Special DPTF of the Frozen variety, is used for implementing the FROZEN Functionality for a DPTF Token \
+            \ So called FROZEN Tokens are meant to be frozen on the account holding them, and only be used by that account, \
+            \ for specific purposes only, defined by the <dptf> owner, which is also the owner of the Frozen Token. \
+            \ Frozen Tokens can never be converted back to the original <dptf> Token they were created from \
+            \ \
+            \ Only the <dptf> owner can create Frozen Tokens to Target Accounts, \
+            \ or designate other Smart Ouronet Accounts to create them \
+            \ \
+            \ Frozen Tokens can be used to add Swpair Liquidity, as if they were the initial <dptf> token \
+            \ This can be done, when this functionality is turned on for the Swpair, and using a Frozen Token for adding Liquidity \
+            \ generates a Frozen LP Token, which behaves similarly to the Frozen Token \
+            \ that is, it can never be converted back to the SWPairs native LP, locking liquidity in place \
+            \ \
+            \ VESTA will be the first Token that will be making use of this functionality"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-VST::C_CreateFrozenLink patron dptf)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun VST|C_CreateReservationLink:string (patron:string dptf:string)
+        @doc "Creates a Reservation Link, issuing a Special-DPTF as a reserved counterpart for another DPTF \
+            \ A Reservation Link is immutable, and noted in the Token Properties of both DPTFs \
+            \ A Special DPTF of the Reserved variety, is used for implementing the RESERVED Functionality for a DPTF Token \
+            \ So called RESERVED Tokens are meant to be frozen on the account holding them, and only be used by that account, \
+            \ for specific purposes only, defined by the <dptf> owner, which is also the owner of the Reserved Token. \
+            \ Reserved Tokens can never be converted back to the original <dptf> Token they were created from \
+            \ \
+            \ As opposed to frozen tokens, where only the <dptf> owner can generate them or designated Ouronet Accounts, \
+            \ Reserved Tokens can be generated by clients, using as input the <dptf> Token, only when reservations are open by the <dptf> owner \
+            \ That is, the <dptf> owner dictates when clients can generate reserved tokens from the input <dptf>, \
+            \ and as such, reserved tokens can be used for special discounts when sales are planned with the main <dptf> Token, \
+            \ as if they were the main <dptf> token. \
+            \ \
+            \ Reserved Tokens cannot be used to add liquidty on any Swpair. \
+            \ \
+            \ OURO will be the first Token that will be making use of this functionality"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-VST::C_CreateReservationLink patron dptf)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun VST|C_CreateVestingLink:string (patron:string dptf:string)
+        @doc "Creates a Vesting Link, issuing a Special-DPMF as a vested counterpart for another DPTF \
+            \ A Vesting Link is immutable, and noted in the Token Properties of both the DPTF and the Special DPMF \
+            \ A Special DPMF of the Vested variety, is used for implementing the Vesting Functionality for a DPTF Token \
+            \ The <dptf> owner has the ability to vest its <dptf> token into a vested counterpart \
+            \ specifying a target account, an offset, a duration and a number of milestones as vesting parameters \
+            \ \
+            \ The Target account receives the vested token, and according to its input vested parameters, \
+            \ can revert it back to the <dptf> counterpart, as vesting intervals expire \
+            \ \
+            \ Vested Tokens cannot be used to add liquidity on any Swpair \
+            \ \
+            \ If a Vested Counterpart is created for a Token that is a Cold-RBT in an ATS Pair, \
+            \ the RT owner of that ATS Pair can <coil>|<curl> the RT Token, and subsequently <vest> the output Hot-RBT token, \
+            \ thus creating an additional layer of locking, for the input <RT> token, by converting it in a Vested Hot-RBT \
+            \ OURO, AURYN and ELITE-AURYN will be the first Tokens that will make use of this functionality"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-VST::C_CreateVestingLink patron dptf)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun VST|C_CreateSleepingLink:string (patron:string dptf:string)
+        @doc "Creates a Sleeping Link, issuing a Special-DPMF as a sleeping counterpart for another DPTF \
+            \ A Sleeping Link is immutable, and noted in the Token Properties of both the DPTF and the Special DPMF \
+            \ A Special DPMF of the Sleeping variety, is used for implementing the Sleeping Functionality for a DPTF Token \
+            \ A Sleeping DPMF is similar to a vested Token, however it has a single period after which it can be converted \
+            \ in its entirety, at once, into the initial <dptf> \
+            \ As opposed to Vested DPMF Tokens, multiple Sleeping DPMF Tokens, can be unified into a single Sleeping Token \
+            \ using a weigthed mean to determine the final time when it can be converted back to the initial <dptf> \
+            \ \
+            \ As oposed to Vested Tokens, Sleeping Tokens can be used to add Swpair Liquidity, as if they were the initial <dptf> token \
+            \ This can be done, when this functionality is turned on for the Swpair, and using a Sleeping Token for adding Liquidity \
+            \ generates a Sleeping LP Token, which behaves similarly to the Sleeping Token, inheriting its sleeping date, \
+            \ that is, it can be converted back to the SWPairs native LP, when its sleeping interval expires \
+            \ \
+            \ VESTA will be the first Token that will be making use of this functionality"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-VST::C_CreateSleepingLink patron dptf)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    ;;Vesting
+    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
+        @doc "Vests a DPTF Token, issuing a Vested Token"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-VST::C_Vest patron vester target-account id amount offset duration milestones)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron vester [ico])
+        )
+    )
+    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
+        @doc "Culls the Vested Token, recovering its original non vested DPTF counterpart."
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-VST::C_Cull patron culler id nonce)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron culler [ico])
+        )
+    )
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
         @doc "Coils a DPTF Token and Vests its output to <target-account> \
             \ Requires that: \
@@ -1638,40 +1834,6 @@
             )
             (XC_IgnisCollect patron coiler-vester [end-ico])
             c-rbt-amount
-        )
-    )
-    (defun VST|C_CreateVestingLink:string (patron:string dptf:string)
-        @doc "Creates a Vested Link; \
-            \ A Vested Link, means, issuing a DPMF as a vested counterpart for a DPTF \
-            \ The Vested Link is immutable, meaning, this DPMF will always act as a vested counterpart for the DPTF Token, \
-            \ and will be recorded as such in both the DPTF and DPMF Token Properties."
-        (with-capability (P|SECURE-SUMMONER)
-            (let
-                (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-VST::C_CreateVestingLink patron dptf)
-                    )
-                )
-                (XC_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
-                (XI_ProcessFuelKDA true)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
-        @doc "Culls the Vested Token, recovering its original non vested DPTF counterpart."
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-                (ico:object{OuronetDalos.IgnisCumulator}
-                    (with-capability (P|TS)
-                        (ref-VST::C_Cull patron culler id nonce)
-                    )
-                )
-            )
-            (XC_IgnisCollect patron culler [ico])
         )
     )
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
@@ -1704,20 +1866,6 @@
             )
             (XC_IgnisCollect patron curler-vester [end-ico])
             c-rbt2-amount
-        )
-    )
-    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Vests a DPTF Token, issuing a Vested Token"
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-                (ico:object{OuronetDalos.IgnisCumulator}
-                    (with-capability (P|TS)
-                        (ref-VST::C_Vest patron vester target-account id amount offset duration milestones)
-                    )
-                )
-            )
-            (XC_IgnisCollect patron vester [ico])
         )
     )
     ;;{LIQUID_Client}
@@ -1833,7 +1981,7 @@
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
                 (at "output" ico)
             )
         ) 
@@ -1860,7 +2008,7 @@
                     )
                 )
                 (XC_IgnisCollect patron account [ico])
-                (XI_ProcessFuelKDA true)
+                (XI_DynamicFuelKDA)
                 (at "output" ico)
             )          
         )
@@ -1994,7 +2142,7 @@
                 )
             )
             (with-capability (SECURE)
-                (XI_ProcessFuelKDA collect)
+                (XI_ConditionalFuelKDA collect)
             )
         )
     )
@@ -2268,18 +2416,39 @@
             )
         )
     )
-    (defun XI_ProcessFuelKDA (iz-collect:bool)
+    (defun XI_DirectFuelKDA ()
         (require-capability (SECURE))
-        (with-capability (P|GOVERNING-SUMMONER)
-            (let
-                (
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                )
-                (if iz-collect
-                    (ref-ORBR::C_Fuel GASSLES-PATRON)
-                    true
-                )
+        (let
+            (
+                (ref-ORBR:module{Ouroboros} OUROBOROS)
             )
+            (with-capability (P|GOVERNING-SUMMONER)
+                (ref-ORBR::C_Fuel GASSLES-PATRON)
+            )
+        )
+    )
+    (defun XI_DynamicFuelKDA ()
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (auto-fuel:bool (ref-DALOS::UR_AutoFuel))
+            )
+            (if auto-fuel
+                (with-capability (SECURE)
+                    (XI_DirectFuelKDA)
+                )
+                true
+            )
+        )
+    )
+    (defun XI_ConditionalFuelKDA (condition:bool)
+        (require-capability (SECURE))
+        (if condition
+            (with-capability (SECURE)
+                (XI_DynamicFuelKDA)
+            )
+            true
         )
     )
 )

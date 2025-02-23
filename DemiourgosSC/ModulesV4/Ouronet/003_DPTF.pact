@@ -35,6 +35,8 @@
     (defun UR_RewardToken:[string] (id:string))
     (defun UR_RewardBearingToken:[string] (id:string))
     (defun UR_Vesting:string (id:string))
+    (defun UR_Sleeping:string (id:string))
+    (defun UR_Frozen:string (id:string))
     (defun UR_Roles:[string] (id:string rp:integer))
     (defun UR_AccountSupply:decimal (id:string account:string))
     (defun UR_AccountRoleBurn:bool (id:string account:string))
@@ -92,7 +94,7 @@
     (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool))
     (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_TogglePause (patron:string id:string toggle:bool))
-    (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
+    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     ;;
     (defun XB_Credit (id:string account:string amount:decimal))
@@ -105,7 +107,9 @@
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool))
     (defun XE_ToggleMintRole (id:string account:string toggle:bool))
     (defun XE_UpdateRewardBearingToken (atspair:string id:string))
+    (defun XE_UpdateSpecialTrueFungible:object{OuronetDalos.IgnisCumulator} (main-dptf:string secondary-dptf:string frozen-or-reserved:bool))
     (defun XE_UpdateVesting (dptf:string dpmf:string))
+    (defun XE_UpdateSleeping (dptf:string dpmf:string))
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool))
     (defun XE_UpdateRewardToken (atspair:string id:string direction:bool))
 )
@@ -188,7 +192,11 @@
         secondary-fee-volume:decimal
         reward-token:[string]
         reward-bearing-token:[string]
-        vesting:string
+        vesting-link:string
+        sleeping-link:string
+        frozen-link:string
+        reservation-link:string
+        reservation:bool
     )
     (defschema DPTF|RoleSchema
         r-burn:[string]
@@ -235,6 +243,11 @@
         )
         (CAP_Owner id)
         (UEV_PauseState id (not pause))
+    )
+    (defcap DPTF|S>TG_RESERVATION (id:string toggle:bool)
+        @event
+        (CAP_Owner id)
+        (UEV_ReservationState id (not toggle))
     )
     (defcap DPTF|S>SET_FEE (id:string fee:decimal)
         @event
@@ -468,6 +481,53 @@
         (compose-capability (DPTF|S>X_TG_FEE-LOCK id toggle))
         (compose-capability (SECURE))
     )
+    (defcap DPTF|C>UPDATE-SPECIAL (main-dptf:string secondary-dptf:string frozen-or-reserved:bool)
+        (let
+            (
+                (main-special-id:string
+                    (if frozen-or-reserved
+                        (UR_Frozen main-dptf)
+                        (UR_Reservation main-dptf)
+                    )
+                )
+                (secondary-special-id:string
+                    (if frozen-or-reserved
+                        (UR_Frozen secondary-dptf)
+                        (UR_Reservation secondary-dptf)
+                    )
+                )
+                (iz-secondary-rt:bool (URC_IzRT secondary-dptf))
+                (iz-secondary-rbt:bool (URC_IzRBT secondary-dptf))
+                (main-dptf-first-character:string (take 1 main-dptf))
+                (main-dptf-second-character:string (drop 1 (take 2 main-dptf)))
+            )
+            (CAP_Owner main-dptf)
+            (CAP_Owner secondary-dptf)
+            (enforce 
+                (and (= main-special-id BAR) (= secondary-special-id BAR) )
+                "Special True Fungible Links (frozen or reserved) are immutable !"
+            )
+            (enforce
+                (and (not iz-secondary-rt) (not iz-secondary-rbt))
+                "Special True Fungible cannot be RTs or Cold-RBTs"
+            )
+            (if (= main-dptf-second-character BAR)
+                (if frozen-or-reserved
+                    (enforce
+                        (not (contains main-dptf-first-character ["R" "F"]))
+                        (format "When setting a Frozen Link, the main DPTF {} cannot be a Reserved or Frozen Token" )
+                    )
+                    (enforce
+                        (not (contains main-dptf-first-character ["R" "F" "S" "W" "P"]))
+                        (format "When setting a Reserve Link, the main DPTF {} cannot be a Special DPTF" )
+                    )
+                    
+                )
+                true
+            )
+            (compose-capability (SECURE))
+        )
+    )
     ;;
     ;;{F-}
     (defun UC_VolumetricTax (id:string amount:decimal)
@@ -562,7 +622,19 @@
         (at "reward-bearing-token" (read DPTF|PropertiesTable id ["reward-bearing-token"]))
     )
     (defun UR_Vesting:string (id:string)
-        (at "vesting" (read DPTF|PropertiesTable id ["vesting"]))
+        (at "vesting-link" (read DPTF|PropertiesTable id ["vesting-link"]))
+    )
+    (defun UR_Sleeping:string (id:string)
+        (at "sleeping-link" (read DPTF|PropertiesTable id ["sleeping-link"]))
+    )
+    (defun UR_Frozen:string (id:string)
+        (at "frozen-link" (read DPTF|PropertiesTable id ["frozen-link"]))
+    )
+    (defun UR_Reservation:string (id:string)
+        (at "reservation-link" (read DPTF|PropertiesTable id ["reservation-link"]))
+    )
+    (defun UR_IzReservationOpen:bool (id:string)
+        (at "reservation" (read DPTF|PropertiesTable id ["reservation"]))
     )
     (defun UR_Roles:[string] (id:string rp:integer)
         (if (= rp 1)
@@ -910,7 +982,18 @@
             )
             (if state
                 (enforce x (format "{} is already unpaused" [id]))
-                (enforce (= x false) (format "{} is already paused" [id]))
+                (enforce (not x) (format "{} is already paused" [id]))
+            )
+        )
+    )
+    (defun UEV_ReservationState (id:string state:bool)
+        (let
+            (
+                (x:bool (UR_IzReservationOpen id))
+            )
+            (if state
+                (enforce x (format "{} is already open for reservations" [id]))
+                (enforce (not x) (format "{} is already closed for reservations" [id]))
             )
         )
     )
@@ -1097,7 +1180,8 @@
         )
     )
     ;;
-    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal)
+    (defun C_Burn:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string account:string amount:decimal)
         (enforce-one
             "Unallowed"
             [
@@ -1178,7 +1262,8 @@
             )
         )
     )
-    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
+    (defun C_Issue:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
@@ -1188,8 +1273,8 @@
                 (tf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
                 (kda-costs:decimal (* (dec l1) tf-cost))
                 (ico:object{OuronetDalos.IgnisCumulator}
-                    (with-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
-                        (XI_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause tl)
+                    (with-capability (SECURE)
+                        (XB_IssueFree patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause tl)
                     )
                 )
             )
@@ -1197,7 +1282,8 @@
             ico
         )
     )
-    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal origin:bool)
+    (defun C_Mint:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string account:string amount:decimal origin:bool)
         (enforce-one
             "Unallowed"
             [
@@ -1309,7 +1395,8 @@
             )
         )
     )
-    (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool)
+    (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string account:string toggle:bool)
         (enforce-one
             "Unallowed"
             [
@@ -1345,21 +1432,43 @@
             )
         )
     )
-    (defun C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+    (defun C_ToggleReservation (patron:string id:string toggle:bool)
         (enforce-guard (P|UR "TALOS-01"))
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
+            (with-capability (DPTF|S>TG_RESERVATION id toggle)
+                (XI_ToggleReservation id toggle)
+                (ref-DALOS::IGNIS|C_Collect patron patron (ref-DALOS::UR_UsagePrice "ignis|medium"))
+            )
+        )
+    )
+    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (P|UR "VST|<"))
+                (enforce-guard (P|UR "TALOS-01"))
+            ]
+        )
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (price:decimal (* 3.0 small))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+            )
             (with-capability (DPTF|C>TG_TRANSFER-R id account toggle)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
-                (ref-DALOS::IGNIS|C_Collect patron account (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_Cumulator price trigger [])
             )
         )
     )
-    (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string)
+    (defun C_Wipe:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string atbw:string)
         (enforce-one
             "Unallowed"
             [
@@ -1537,11 +1646,12 @@
             (XI_BurnCore id account amount)
         )
     )
-    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string)
+    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
         (enforce-guard (P|UR "SWPU|<"))
-        (with-capability (DPTF|C>ISSUE account [name] [ticker] [24] [false] [false] [true] [false] [false] [false])
-            (XI_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
+        (with-capability (SECURE)
+            (XB_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
         )
     )
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool)
@@ -1611,10 +1721,43 @@
             )
         )
     )
+    (defun XE_UpdateSpecialTrueFungible:object{OuronetDalos.IgnisCumulator} 
+        (main-dptf:string secondary-dptf:string frozen-or-reserved:bool)
+        (enforce-guard (P|UR "VST|<"))
+        (with-capability (DPTF|C>UPDATE-SPECIAL main-dptf secondary-dptf frozen-or-reserved)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
+                )
+                (if frozen-or-reserved
+                    (do
+                        (XI_UpdateFrozen main-dptf secondary-dptf)
+                        (XI_UpdateFrozen secondary-dptf main-dptf)
+                    )
+                    (do
+                        (XI_UpdateReserved main-dptf secondary-dptf)
+                        (XI_UpdateReserved secondary-dptf main-dptf)
+                    )
+                )
+                ico
+            )
+        )
+    )
     (defun XE_UpdateVesting (dptf:string dpmf:string)
         (enforce-guard (P|UR "DPMF|<"))
         (update DPTF|PropertiesTable dptf
-            {"vesting" : dpmf}
+            {"vesting-link" : dpmf}
+        )
+    )
+    (defun XE_UpdateSleeping (dptf:string dpmf:string)
+        (enforce-guard (P|UR "DPMF|<"))
+        (update DPTF|PropertiesTable dptf
+            {"sleeping-link" : dpmf}
         )
     )
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool)
@@ -1771,7 +1914,7 @@
             can-freeze:bool 
             can-wipe:bool 
             can-pause:bool 
-            iz-lp:bool
+            iz-special:bool
         )
         (require-capability (SECURE))
         (let
@@ -1782,8 +1925,8 @@
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
             )
             (ref-U|DALOS::UEV_Decimals decimals)
-            (ref-U|DALOS::UEV_NameOrTicker name true iz-lp)
-            (ref-U|DALOS::UEV_NameOrTicker ticker false iz-lp)
+            (ref-U|DALOS::UEV_NameOrTicker name true iz-special)
+            (ref-U|DALOS::UEV_NameOrTicker ticker false iz-special)
             (insert DPTF|PropertiesTable id
                 {"owner-konto"          : account
                 ,"name"                 : name
@@ -1810,13 +1953,17 @@
                 ,"secondary-fee-volume" : 0.0
                 ,"reward-token"         : [BAR]
                 ,"reward-bearing-token" : [BAR]
-                ,"vesting"              : BAR}
+                ,"vesting-link"         : BAR
+                ,"sleeping-link"        : BAR
+                ,"frozen-link"          : BAR
+                ,"reservation-link"     : BAR
+                ,"reservation"          : false}
             )
             (C_DeployAccount id account)    
             id
         ) 
     )
-    (defun XI_IssueFree:object{OuronetDalos.IgnisCumulator}
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator}
         (
             patron:string
             account:string
@@ -1829,50 +1976,58 @@
             can-freeze:[bool]
             can-wipe:[bool]
             can-pause:[bool]
-            iz-lp:[bool]
+            iz-special:[bool]
         )
-        (require-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause))
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-BRD:module{Branding} BRD)
-                (l1:integer (length name))
-                (ignis-issue-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                (gas-costs:decimal (* (dec l1) ignis-issue-cost))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                (folded-lst:[string]
-                    (fold
-                        (lambda
-                            (acc:[string] index:integer)
-                            (let
-                                (
-                                    (id:string
-                                        (XI_Issue 
-                                            account 
-                                            (at index name)
-                                            (at index ticker)
-                                            (at index decimals)
-                                            (at index can-change-owner)
-                                            (at index can-upgrade)
-                                            (at index can-add-special-role)
-                                            (at index can-freeze)
-                                            (at index can-wipe) 
-                                            (at index can-pause)
-                                            (at index iz-lp)
+        (enforce-one
+            "Unallowed"
+            [
+                (enforce-guard (create-capability-guard (SECURE)))
+                (enforce-guard (P|UR "VST|<"))
+            ]
+        )
+        (with-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-BRD:module{Branding} BRD)
+                    (l1:integer (length name))
+                    (ignis-issue-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                    (gas-costs:decimal (* (dec l1) ignis-issue-cost))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (folded-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] index:integer)
+                                (let
+                                    (
+                                        (id:string
+                                            (XI_Issue 
+                                                account 
+                                                (at index name)
+                                                (at index ticker)
+                                                (at index decimals)
+                                                (at index can-change-owner)
+                                                (at index can-upgrade)
+                                                (at index can-add-special-role)
+                                                (at index can-freeze)
+                                                (at index can-wipe) 
+                                                (at index can-pause)
+                                                (at index iz-special)
+                                            )
                                         )
                                     )
+                                    (ref-BRD::XE_Issue id)
+                                    (ref-U|LST::UC_AppL acc id)
                                 )
-                                (ref-BRD::XE_Issue id)
-                                (ref-U|LST::UC_AppL acc id)
                             )
+                            []
+                            (enumerate 0 (- l1 1))
                         )
-                        []
-                        (enumerate 0 (- l1 1))
                     )
                 )
+                (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
             )
-            (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
         )
     )
     (defun XI_Mint (id:string account:string amount:decimal origin:bool)
@@ -1949,6 +2104,12 @@
             { "is-paused" : toggle}
         )
     )
+    (defun XI_ToggleReservation (id:string toggle:bool)
+        (require-capability (DPTF|S>TG_RESERVATION id toggle))
+        (update DPTF|PropertiesTable id
+            { "reservation" : toggle}
+        )
+    )
     (defun XI_ToggleTransferRole (id:string account:string toggle:bool)
         (require-capability (DPTF|C>X_TG_TRANSFER-R id account toggle))
         (let
@@ -1961,6 +2122,18 @@
                     {"role-transfer" : toggle}
                 )
             )
+        )
+    )
+    (defun XI_UpdateFrozen (core-dptf:string frozen-dptf:string)
+        (require-capability (SECURE))
+        (update DPTF|PropertiesTable core-dptf
+            {"frozen-link" : frozen-dptf}
+        )
+    )
+    (defun XI_UpdateReserved (core-dptf:string reserved-dptf:string)
+        (require-capability (SECURE))
+        (update DPTF|PropertiesTable core-dptf
+            {"reservation-link" : reserved-dptf}
         )
     )
     (defun XI_UpdateRoleTransferAmount (id:string direction:bool)
@@ -2010,7 +2183,8 @@
                 "Negative Amounts cant be wiped"
             )
         )
-    ) 
+    )
+    
 )
 
 (create-table P|T)

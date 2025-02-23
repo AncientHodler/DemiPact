@@ -1147,13 +1147,21 @@
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
                 (let
                     (
+                        (ref-DALOS:module{OuronetDalos} DALOS)
                         (ref-ORBR:module{Ouroboros} OUROBOROS)
+                        (auto-fuel:bool (ref-DALOS::UR_AutoFuel))
                         (gasless-patron:string (ref-DALOS::GOV|DALOS|SC_NAME))
                     )
-                    (with-capability (P|DT)
-                        (ref-ORBR::C_Fuel gasless-patron)
+                    (if auto-fuel
+                        (do
+                            (with-capability (P|DT)
+                                (ref-ORBR::C_Fuel gasless-patron)
+                            )
+                            (format "{} IGNIS and {} KDA collected (raising DLK Index) succesfully." [sum-ignis kda-costs])
+                        )
+                        (format "{} IGNIS collected, with {} KDA collected (in reserves) succesfully" [sum-ignis kda-costs])
                     )
-                    (format "{} IGNIS and {} KDA collected (raising DLK Index) succesfully." [sum-ignis kda-costs])
+                    
                 )
             )
         )

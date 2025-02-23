@@ -1,12 +1,14 @@
 (interface UtilityVst
     @doc "Exported Utility Functions for the VST Module"
     ;;
-    (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)) ;;1
-    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)) ;;2
-    (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)) ;;1
+    (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer))
+    (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer))
+    (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string))
+    (defun UC_SleepingID:[string] (dptf-name:string dptf-ticker:string))
+    (defun UC_FrozenID:[string] (dptf-name:string dptf-ticker:string))
     ;;
     (defun UEV_Milestone (milestones:integer))
-    (defun UEV_MilestoneWithTime (offset:integer duration:integer milestones:integer)) ;;1
+    (defun UEV_MilestoneWithTime (offset:integer duration:integer milestones:integer))
 )
 (module U|VST GOV
     ;;
@@ -23,6 +25,8 @@
         )
     )
     ;;
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defconst BAR                   (CT_Bar))
     ;;{F-UC}
     (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer)
         @doc "Makes a Times list with unvesting milestones according to vesting parameters"
@@ -69,13 +73,26 @@
         )
     )
     (defun UC_VestingID:[string] (dptf-name:string dptf-ticker:string)
+        (UCX_SpecialID dptf-name dptf-ticker "Vested" "V")
+    )
+    (defun UC_SleepingID:[string] (dptf-name:string dptf-ticker:string)
+        (UCX_SpecialID dptf-name dptf-ticker "Sleeping" "Z")
+    )
+    (defun UC_FrozenID:[string] (dptf-name:string dptf-ticker:string)
+        (UCX_SpecialID dptf-name dptf-ticker "Frozen" "F")
+    )
+    (defun UC_ReservedID:[string] (dptf-name:string dptf-ticker:string)
+        (UCX_SpecialID dptf-name dptf-ticker "Reserved" "R")
+    )
+    (defun UCX_SpecialID:[string] (dptf-name:string dptf-ticker:string special-name:string special-prefix:string)
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (max-name:integer (ref-U|CT::CT_MAX_TOKEN_NAME_LENGTH))
                 (max-ticker:integer (ref-U|CT::CT_MAX_TOKEN_TICKER_LENGTH))
-                (s1:string "Vested")
-                (s2:string "W")
+                (caron:string "^")
+                (s1:string (+ special-name caron))
+                (s2:string (+ special-prefix BAR))
                 (l1:integer (- max-name (length s1)))
                 (l2:integer (- max-ticker (length s2)))
                 (vested-name:string (concat [s1 (take l1 dptf-name)]))
