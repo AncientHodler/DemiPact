@@ -2,6 +2,8 @@
 (interface AutostakeUsage
     @doc "Exposes the last Batch of Client Autostake Functions"
     ;;
+    (defun UEV_IMC ())
+    ;;
     (defun C_AddHotRBT:object{OuronetDalos.IgnisCumulator} (patron:string ats:string hot-rbt:string))
     (defun C_AddSecondary:object{OuronetDalos.IgnisCumulator} (patron:string ats:string reward-token:string rt-nfr:bool))
     (defun C_Coil:object{OuronetDalos.IgnisCumulator} (patron:string coiler:string ats:string rt:string amount:decimal))
@@ -11,21 +13,21 @@
     (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string fueler:string ats:string reward-token:string amount:decimal)) ;;1
     (defun C_HotRecovery:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string ats:string ra:decimal))
     (defun C_KickStart:object{OuronetDalos.IgnisCumulator} (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
-    (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
+    (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator} (patron:string ats:string new-boolean:bool))
     (defun C_RecoverHotRBT:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string id:string nonce:integer amount:decimal))
     (defun C_RecoverWholeRBTBatch:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string id:string nonce:integer))
     (defun C_Redeem:object{OuronetDalos.IgnisCumulator} (patron:string redeemer:string id:string nonce:integer))
     (defun C_RemoveSecondary:object{OuronetDalos.IgnisCumulator} (patron:string remover:string ats:string reward-token:string))
-    (defun C_RotateOwnership (patron:string ats:string new-owner:string))
-    (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
-    (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
-    (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer))
+    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator} (patron:string ats:string new-owner:string))
+    (defun C_SetColdFee:object{OuronetDalos.IgnisCumulator} (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
+    (defun C_SetCRD:object{OuronetDalos.IgnisCumulator} (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
+    (defun C_SetHotFee:object{OuronetDalos.IgnisCumulator} (patron:string ats:string promile:decimal decay:integer))
     (defun C_Syphon:object{OuronetDalos.IgnisCumulator} (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
-    (defun C_ToggleElite (patron:string ats:string toggle:bool))
-    (defun C_ToggleParameterLock:bool (patron:string ats:string toggle:bool))
-    (defun C_ToggleSyphoning (patron:string ats:string toggle:bool))
+    (defun C_ToggleElite:object{OuronetDalos.IgnisCumulator} (patron:string ats:string toggle:bool))
+    (defun C_ToggleParameterLock:object{OuronetDalos.IgnisCumulator} (patron:string ats:string toggle:bool))
+    (defun C_ToggleSyphoning:object{OuronetDalos.IgnisCumulator} (patron:string ats:string toggle:bool))
     (defun C_TurnRecoveryOn:object{OuronetDalos.IgnisCumulator} (patron:string ats:string cold-or-hot:bool))
-    (defun C_UpdateSyphon (patron:string ats:string syphon:decimal))
+    (defun C_UpdateSyphon:object{OuronetDalos.IgnisCumulator} (patron:string ats:string syphon:decimal))
 )
 (module ATSU GOV
     ;;
@@ -52,6 +54,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|ATSU|CALLER ()
         true
@@ -73,13 +76,35 @@
         (compose-capability (P|ATSU|CALLER))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|ATSC_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|ATSC_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -92,35 +117,19 @@
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-            )
-            (ref-P|DALOS::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "ATSU|<"
-                (create-capability-guard (P|ATSU|CALLER))
+                (mg:guard (create-capability-guard (P|ATSU|CALLER)))
             )
             (ref-P|ATS::P|A_Add
                 "ATSU|RemoteAtsGov"
                 (create-capability-guard (P|ATSU|REMOTE-GOV))
             )
+
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
         )
     )
     ;;
@@ -234,7 +243,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                 (iz-rbt:bool (ref-DPMF::URC_IzRBT id))
-                (nonce-max-amount:decimal (ref-DPMF::UR_AccountBatchSupply id nonce recoverer))
+                (nonce-max-amount:decimal (ref-DPMF::UR_AccountNonceBalance id nonce recoverer))
             )
             (ref-DALOS::UEV_EnforceAccountType recoverer false)
             (ref-DPMF::UEV_id id)
@@ -339,13 +348,22 @@
     ;;{F0}
     ;;{F1}
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     ;;{F3}
     ;;{F4}
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_AddHotRBT:object{OuronetDalos.IgnisCumulator} (patron:string ats:string hot-rbt:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_AddHotRBT:object{OuronetDalos.IgnisCumulator} 
+        (patron:string ats:string hot-rbt:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -373,8 +391,9 @@
             )
         )
     )
-    (defun C_AddSecondary:object{OuronetDalos.IgnisCumulator} (patron:string ats:string reward-token:string rt-nfr:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_AddSecondary:object{OuronetDalos.IgnisCumulator} 
+        (patron:string ats:string reward-token:string rt-nfr:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -409,8 +428,9 @@
             )
         )
     )
-    (defun C_Coil:object{OuronetDalos.IgnisCumulator} (patron:string coiler:string ats:string rt:string amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Coil:object{OuronetDalos.IgnisCumulator} 
+        (patron:string coiler:string ats:string rt:string amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -440,8 +460,9 @@
             )
         )
     )
-    (defun C_ColdRecovery:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string ats:string ra:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ColdRecovery:object{OuronetDalos.IgnisCumulator} 
+        (patron:string recoverer:string ats:string ra:decimal)
+        (UEV_IMC)
         (with-capability (ATSC|C>COLD_REC recoverer ats ra)
             (XI_DeployAccount ats recoverer)
             (let
@@ -513,8 +534,9 @@
             )
         )
     )
-    (defun C_Cull:object{OuronetDalos.IgnisCumulator} (patron:string culler:string ats:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Cull:object{OuronetDalos.IgnisCumulator} 
+        (patron:string culler:string ats:string)
+        (UEV_IMC)
         (with-capability (ATSC|C>CULL culler ats)
             (let
                 (
@@ -567,8 +589,9 @@
             )
         )
     )
-    (defun C_Curl:object{OuronetDalos.IgnisCumulator} (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Curl:object{OuronetDalos.IgnisCumulator}
+        (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -605,14 +628,9 @@
             )
         )
     )
-    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string fueler:string ats:string reward-token:string amount:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} 
+        (patron:string fueler:string ats:string reward-token:string amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -625,9 +643,9 @@
             )
         )
     )
-    (defun C_HotRecovery:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string ats:string ra:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
-        
+    (defun C_HotRecovery:object{OuronetDalos.IgnisCumulator} 
+        (patron:string recoverer:string ats:string ra:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -671,8 +689,9 @@
             )
         )
     )
-    (defun C_KickStart:object{OuronetDalos.IgnisCumulator} (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_KickStart:object{OuronetDalos.IgnisCumulator} 
+        (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -715,8 +734,9 @@
             )
         )
     )
-    (defun C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator} 
+        (patron:string ats:string new-boolean:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -724,12 +744,13 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ModifyCanChangeOwner ats new-boolean)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_RecoverHotRBT:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string id:string nonce:integer amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RecoverHotRBT:object{OuronetDalos.IgnisCumulator} 
+        (patron:string recoverer:string id:string nonce:integer amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -762,17 +783,19 @@
             )
         )
     )
-    (defun C_RecoverWholeRBTBatch:object{OuronetDalos.IgnisCumulator} (patron:string recoverer:string id:string nonce:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RecoverWholeRBTBatch:object{OuronetDalos.IgnisCumulator} 
+        (patron:string recoverer:string id:string nonce:integer)
+        (UEV_IMC)
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
             )
-            (C_RecoverHotRBT patron recoverer id nonce (ref-DPMF::UR_AccountBatchSupply id nonce recoverer))
+            (C_RecoverHotRBT patron recoverer id nonce (ref-DPMF::UR_AccountNonceBalance id nonce recoverer))
         )
     )
-    (defun C_Redeem:object{OuronetDalos.IgnisCumulator} (patron:string redeemer:string id:string nonce:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Redeem:object{OuronetDalos.IgnisCumulator} 
+        (patron:string redeemer:string id:string nonce:integer)
+        (UEV_IMC)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -782,8 +805,8 @@
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
 
                 (precision:integer (ref-DPMF::UR_Decimals id))
-                (current-nonce-balance:decimal (ref-DPMF::UR_AccountBatchSupply id nonce redeemer))
-                (meta-data (ref-DPMF::UR_AccountBatchMetaData id nonce redeemer))
+                (current-nonce-balance:decimal (ref-DPMF::UR_AccountNonceBalance id nonce redeemer))
+                (meta-data (ref-DPMF::UR_AccountNonceMetaData id nonce redeemer))
 
                 (birth-date:time (at "mint-time" (at 0 meta-data)))
                 (present-time:time (at "block-time" (chain-data)))
@@ -852,9 +875,9 @@
             )
         )
     )
-    (defun C_RemoveSecondary:object{OuronetDalos.IgnisCumulator} (patron:string remover:string ats:string reward-token:string)
-        (enforce-guard (P|UR "TALOS-01"))
-        
+    (defun C_RemoveSecondary:object{OuronetDalos.IgnisCumulator} 
+        (patron:string remover:string ats:string reward-token:string)
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -912,8 +935,9 @@
             )
         )
     )
-    (defun C_RotateOwnership (patron:string ats:string new-owner:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string new-owner:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -921,12 +945,13 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ChangeOwnership ats new-owner)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetColdFee:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -934,12 +959,13 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetColdFee ats fee-positions fee-thresholds fee-array)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetCRD:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -947,12 +973,13 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetCRD ats soft-or-hard base growth)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         ) 
     )
-    (defun C_SetHotFee (patron:string ats:string promile:decimal decay:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetHotFee:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string promile:decimal decay:integer)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -960,12 +987,13 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetHotFee ats promile decay)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_Syphon:object{OuronetDalos.IgnisCumulator} (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Syphon:object{OuronetDalos.IgnisCumulator} 
+        (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1003,8 +1031,9 @@
             )
         )
     )
-    (defun C_ToggleElite (patron:string ats:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleElite:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1012,26 +1041,25 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ToggleElite ats toggle)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_ToggleParameterLock:bool (patron:string ats:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleParameterLock:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string toggle:bool)
+        (UEV_IMC)
         (with-capability (P|ATSU|CALLER)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-ATS:module{Autostake} ATS)
-                    (ats-owner:string (ref-ATS::UR_OwnerKonto ats))
-                    (g1:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
                     (toggle-costs:[decimal] (ref-ATS::XE_ToggleParameterLock ats toggle))
-                    (g2:decimal (at 0 toggle-costs))
-                    (gas-costs:decimal (+ g1 g2))
+                    (g:decimal (at 0 toggle-costs))
+                    (gas-costs:decimal (+ (ref-DALOS::UR_UsagePrice "ignis|small") g))
                     (kda-costs:decimal (at 1 toggle-costs))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (output:bool (if (> kda-costs 0.0) true false))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ats-owner gas-costs)
                 (if (> kda-costs 0.0)
                     (do
                         (ref-ATS::XE_IncrementParameterUnlocks ats)
@@ -1039,12 +1067,13 @@
                     )
                     true
                 )
-                output
+                (ref-DALOS::UDC_Cumulator gas-costs trigger [output])
             )
         )
     )
-    (defun C_ToggleSyphoning (patron:string ats:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleSyphoning:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1052,33 +1081,30 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ToggleSyphoning ats toggle)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_TurnRecoveryOn:object{OuronetDalos.IgnisCumulator} (patron:string ats:string cold-or-hot:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_TurnRecoveryOn:object{OuronetDalos.IgnisCumulator} 
+        (patron:string ats:string cold-or-hot:bool)
+        (UEV_IMC)
         (with-capability (P|ATSU|CALLER)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-ATS:module{Autostake} ATS)
-                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (ico1:[object{OuronetDalos.IgnisCumulator}]
                         (ref-ATS::XB_EnsureActivationRoles patron ats cold-or-hot)
                     )
-                    (ico2:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
-                    )
                 )
                 (ref-ATS::XE_TurnRecoveryOn ats cold-or-hot)
-                (ref-DALOS::UDC_CompressICO (+ ico1 [ico2]) [])
+                (ref-DALOS::UDC_CompressICO (+ ico1 [(ref-DALOS::UDC_BiggestCumulator)]) [])
             )
         )
     )
-    (defun C_UpdateSyphon (patron:string ats:string syphon:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdateSyphon:object{OuronetDalos.IgnisCumulator}
+        (patron:string ats:string syphon:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1086,7 +1112,7 @@
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_UpdateSyphon ats syphon)
-                (ref-DALOS::IGNIS|C_Collect patron (ref-ATS::UR_OwnerKonto ats) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
@@ -1298,3 +1324,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

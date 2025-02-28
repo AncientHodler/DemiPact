@@ -54,16 +54,19 @@
     (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (GOV|ORBR|GUARD)))
     (defun GOV|ORBR|GUARD ()        (create-capability-guard (ORBR|NATIVE-AUTOMATIC)))
     (defun OUROBOROS|SetGovernor (patron:string)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (P|ORBR|CALLER)
-                (ref-DALOS::C_RotateGovernor
-                    patron
-                    ORBR|SC_NAME
-                    (create-capability-guard (ORBR|GOV))
+        (with-capability (P|ORBR|CALLER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::C_RotateGovernor
+                            patron
+                            ORBR|SC_NAME
+                            (create-capability-guard (ORBR|GOV))
+                        )
+                    )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron patron (at "price" ico))
             )
         )
     )
@@ -71,18 +74,41 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|ORBR|CALLER ()
         true
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|ORBR_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|ORBR_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -98,43 +124,17 @@
                 (ref-P|ATSU:module{OuronetPolicy} ATSU)
                 (ref-P|VST:module{OuronetPolicy} VST)
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+                (mg:guard (create-capability-guard (P|ORBR|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|ATSU::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|VST::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
-            (ref-P|LIQUID::P|A_Add 
-                "OUROBOROS|<"
-                (create-capability-guard (P|ORBR|CALLER))
-            )
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
         )
     )
     ;;
@@ -273,6 +273,14 @@
         
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     (defun UEV_AccountsAsStandard (accounts:[string])
         (let
             (
@@ -316,8 +324,9 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_Compress:object{OuronetDalos.IgnisCumulator} (patron:string client:string ignis-amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Compress:object{OuronetDalos.IgnisCumulator}
+        (patron:string client:string ignis-amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -361,14 +370,9 @@
             )
         )
     )
-    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} 
+        (patron:string)
+        (UEV_IMC)
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
@@ -411,7 +415,7 @@
         )
     )
     (defun C_Sublimate:object{OuronetDalos.IgnisCumulator} (patron:string client:string target:string ouro-amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -459,7 +463,7 @@
         )
     )
     (defun C_WithdrawFees:object{OuronetDalos.IgnisCumulator} (patron:string id:string target:string)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -492,3 +496,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

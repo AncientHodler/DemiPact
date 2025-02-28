@@ -5,11 +5,20 @@
     (defschema P|S
         policy:guard
     )
+    (defschema P|MS
+        m-policies:[guard]
+    )
     (defun P|UR:guard (policy-name:string)
         @doc "Reads a Policy from the local module Policy Table"
     )
+    (defun P|UR_IMP:[guard] ()
+        @doc "Reads the whole Intermodule Policy Guard Chain"
+    )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         @doc "Adds a Policy in the local module Policy Table"
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        @doc "Add a Policy in the local Policy Guard Chain"
     )
     (defun P|A_Define ()
         @doc "Defines in each module the policies that are needed for intermodule communication"
@@ -120,7 +129,8 @@
     (defun IGNIS|URC_IsVirtualGasZero:bool ())
     (defun IGNIS|URC_IsNativeGasZero:bool ())
     ;;
-    (defun UEV_DalosAdminOrTalosSummoner ())
+    (defun UEV_IMC ())
+    (defun UEV_AdminIMC ())
     (defun UEV_StandardAccOwn (account:string))
     (defun UEV_SmartAccOwn (account:string))
     (defun UEV_Methodic (account:string method:bool))
@@ -151,13 +161,13 @@
     (defun A_UpdatePublicKey (account:string new-public:string))
     (defun A_UpdateUsagePrice (action:string new-price:decimal))
     ;;
-    (defun C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
+    (defun C_ControlSmartAccount:object{IgnisCumulator} (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
     (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun C_RotateGuard (patron:string account:string new-guard:guard safe:bool))
-    (defun C_RotateGovernor (patron:string account:string governor:guard))
-    (defun C_RotateKadena (patron:string account:string kadena:string))
-    (defun C_RotateSovereign (patron:string account:string new-sovereign:string))
+    (defun C_RotateGovernor:object{IgnisCumulator} (patron:string account:string governor:guard))
+    (defun C_RotateGuard:object{IgnisCumulator} (patron:string account:string new-guard:guard safe:bool))
+    (defun C_RotateKadena:object{IgnisCumulator} (patron:string account:string kadena:string))
+    (defun C_RotateSovereign:object{IgnisCumulator} (patron:string account:string new-sovereign:string))
     ;;
     (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal))
     (defun IGNIS|C_Collect (patron:string active-account:string amount:decimal))
@@ -204,22 +214,25 @@
     )
     ;;{G3}
     (defun DALOS|SetGovernor (patron:string)
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (with-capability (SECURE)
-                (C_RotateGovernor
-                    patron
-                    DALOS|SC_NAME
-                    (ref-U|G::UEV_GuardOfAny
-                        [
-                            (P|UR "TFT|RemoteDalosGov")
-                            (P|UR "SWPU|RemoteDalosGov")
-                            (P|UR "TALOS-01|RemoteDalosGov")
-                        ]
+        (with-capability (SECURE)
+            (let
+                (
+                    (ref-U|G:module{OuronetGuards} U|G)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (C_RotateGovernor
+                            patron
+                            DALOS|SC_NAME
+                            (ref-U|G::UEV_GuardOfAny
+                                [
+                                    (P|UR "TFT|RemoteDalosGov")
+                                    (P|UR "SWPU|RemoteDalosGov")
+                                    (P|UR "TALOS-01|RemoteDalosGov")
+                                ]
+                            )
+                        )
                     )
                 )
+                (IGNIS|C_Collect patron patron (at "price" ico))
             )
         )
     )
@@ -252,15 +265,38 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (at 0 ["InterModulePolicies"]))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|DALOS_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|DALOS_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                       {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -419,6 +455,10 @@
     ;;{C1}
     (defcap SECURE ()
         true
+    )
+    (defcap SECURE-ADMIN ()
+        (compose-capability (SECURE))
+        (compose-capability (GOV|DALOS_ADMIN))
     )
     ;;{C2}
     (defcap DALOS|S>D-ST (account:string guard:guard kadena:string)
@@ -836,13 +876,23 @@
         )
     )
     ;;{F2}
-    (defun UEV_DalosAdminOrTalosSummoner ()
-        (enforce-one
-            "Account Deployment not permitted"
-            [
-                (enforce-guard (create-capability-guard (GOV|DALOS_ADMIN)))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
+    (defun UEV_AdminIMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (mp:[guard] (P|UR_IMP))
+                (ga:guard (create-capability-guard (GOV|DALOS_ADMIN)))
+                (g:guard (ref-U|G::UEV_GuardOfAny (+ mp [ga])))
+            )
+            (enforce-guard g)
         )
     )
     (defun UEV_StandardAccOwn (account:string)
@@ -1070,6 +1120,25 @@
             (UDC_Cumulator price standard-trigger lst-to-be-saved)
         )
     )
+    (defun UDC_TrueFungibleTransferCumulator:object{OuronetDalos.IgnisCumulator} (id:string sender:string receiver:string)
+        (UDC_Cumulator (UR_UsagePrice "ignis|smallest") (IGNIS|URC_ZeroGAZ id sender receiver) [])
+    )
+
+    (defun UDC_BigCumulator:object{OuronetDalos.IgnisCumulator} ()
+        (UDC_Cumulator (UR_UsagePrice "ignis|big") (IGNIS|URC_IsVirtualGasZero) [])
+    )
+    (defun UDC_BiggestCumulator:object{OuronetDalos.IgnisCumulator} ()
+        (UDC_Cumulator (UR_UsagePrice "ignis|biggest") (IGNIS|URC_IsVirtualGasZero) [])
+    )
+    (defun UDC_BrandingCumulator:object{OuronetDalos.IgnisCumulator} (multiplier:decimal)
+        (UDC_Cumulator (* multiplier (UR_UsagePrice "ignis|branding")) (IGNIS|URC_IsVirtualGasZero) [])
+    )
+    (defun UDC_MediumCumulator:object{OuronetDalos.IgnisCumulator} ()
+        (UDC_Cumulator (UR_UsagePrice "ignis|medium") (IGNIS|URC_IsVirtualGasZero) [])
+    )
+    (defun UDC_SmallCumulator:object{OuronetDalos.IgnisCumulator} ()
+        (UDC_Cumulator (UR_UsagePrice "ignis|small") (IGNIS|URC_IsVirtualGasZero) [])
+    )
     (defun UDC_Cumulator:object{OuronetDalos.IgnisCumulator} (price:decimal trigger:bool lst:list)
         @doc "Composes an IgnisCumulator Object"
         { "price":price, "trigger":trigger, "output":lst}
@@ -1089,35 +1158,35 @@
     )
     ;;{F5}
     (defun A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
-        (with-capability (GOV|DALOS_ADMIN)
-            (C_DeploySmartAccount account guard kadena sovereign public)
+        (with-capability (SECURE-ADMIN)
+            (XI_DeploySmartAccount account guard kadena sovereign public)
         )
     )
     (defun A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
-        (with-capability (GOV|DALOS_ADMIN)
-            (C_DeployStandardAccount account guard kadena public)
+        (with-capability (SECURE-ADMIN)
+            (XI_DeployStandardAccount account guard kadena public)
         )
     )
     (defun A_IgnisToggle (native:bool toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (IGNIS|C>TOGGLE native toggle)
             (XI_IgnisToggle native toggle)
         )
     )
     (defun A_SetIgnisSourcePrice (price:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (GOV|DALOS_ADMIN)
             (XB_UpdateOuroPrice price)
         )
     )
     (defun A_SetAutoFueling (toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (GOV|DALOS_ADMIN)
             (XI_SetAutoFueling toggle)
         )
     )
     (defun A_UpdatePublicKey (account:string new-public:string)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (GOV|DALOS_ADMIN)
             (write DALOS|AccountTable account
                 {"public"     : new-public}
@@ -1125,7 +1194,7 @@
         )
     )
     (defun A_UpdateUsagePrice (action:string new-price:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (GOV|DALOS_ADMIN)
             (let
                 (
@@ -1139,108 +1208,58 @@
         )
     )
     ;;{F6}
-    (defun C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ControlSmartAccount:object{OuronetDalos.IgnisCumulator} 
+        (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
+        (UEV_IMC)
         (with-capability (DALOS|C>CTRL_SM-ACC patron account payable-as-smart-contract payable-by-smart-contract)
             (XI_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-            (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
+            (UDC_SmallCumulator)
         )
     )
     (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
-        (UEV_DalosAdminOrTalosSummoner)
-        (with-capability (DALOS|S>D-SM account guard kadena sovereign)
-            (insert DALOS|AccountTable account
-                { "public"                      : public
-                , "guard"                       : guard
-                , "kadena-konto"                : kadena
-                , "sovereign"                   : sovereign
-                , "governor"                    : guard
-
-                , "smart-contract"              : true
-                , "payable-as-smart-contract"   : false
-                , "payable-by-smart-contract"   : false
-                , "payable-by-method"           : true
-                
-                , "nonce"                       : 0
-                , "elite"                       : DALOS|PLEB
-                , "ouroboros"                   : DPTF|BLANK
-                , "ignis"                       : DPTF|BLANK
-                }  
-            )
-            (XI_UpdateKadenaLedger kadena account true)
-            (if (not (IGNIS|URC_IsNativeGasZero))
-                (KDA|C_Collect account (UR_UsagePrice "smart"))
-                true
-            )
+        (UEV_AdminIMC)
+        (with-capability (SECURE)
+            (XI_DeploySmartAccount account guard kadena sovereign public)
         )
     )
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
-        (UEV_DalosAdminOrTalosSummoner)
-        (with-capability (DALOS|S>D-ST account guard kadena)
-                (insert DALOS|AccountTable account
-                    { "public"                      : public
-                    , "guard"                       : guard
-                    , "kadena-konto"                : kadena
-                    , "sovereign"                   : account
-                    , "governor"                    : guard
-    
-                    , "smart-contract"              : false
-                    , "payable-as-smart-contract"   : false
-                    , "payable-by-smart-contract"   : false
-                    , "payable-by-method"           : false
-                    
-                    , "nonce"                       : 0
-                    , "elite"                       : DALOS|PLEB
-                    , "ouroboros"                   : DPTF|BLANK
-                    , "ignis"                       : DPTF|BLANK
-                    }  
-                )
-                (XI_UpdateKadenaLedger kadena account true)
-                (if (not (IGNIS|URC_IsNativeGasZero))
-                    (KDA|C_Collect account (UR_UsagePrice "standard"))
-                    true
-                )
-            )
-    )
-    (defun C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
-        (enforce-guard (P|UR "TALOS-01"))
-        (with-capability (DALOS|C>RT_ACC account)
-            (XI_RotateGuard account new-guard safe)
-            (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
+        (UEV_AdminIMC)
+        (with-capability (SECURE)
+            (XI_DeployStandardAccount account guard kadena public)
         )
     )
-    (defun C_RotateGovernor (patron:string account:string governor:guard)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ATS|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "LIQUID|<"))
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_RotateGovernor:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string governor:guard)
+        (UEV_IMC)
         (with-capability (DALOS|C>RT_GOV account)
             (XI_RotateGovernor account governor)
-            (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
+            (UDC_SmallCumulator)
         )
     )
-    (defun C_RotateKadena (patron:string account:string kadena:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RotateGuard:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string new-guard:guard safe:bool)
+        (UEV_IMC)
+        (with-capability (DALOS|C>RT_ACC account)
+            (XI_RotateGuard account new-guard safe)
+            (UDC_SmallCumulator)
+        )
+    )
+    (defun C_RotateKadena:object{OuronetDalos.IgnisCumulator}
+        (patron:string account:string kadena:string)
+        (UEV_IMC)
         (with-capability (DALOS|C>RT_ACC account)
             (XI_RotateKadena account kadena)
             (XI_UpdateKadenaLedger (UR_AccountKadena account) account false)
             (XI_UpdateKadenaLedger kadena account true)
-            (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
+            (UDC_SmallCumulator)
         )
     )
-    (defun C_RotateSovereign (patron:string account:string new-sovereign:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RotateSovereign:object{OuronetDalos.IgnisCumulator} 
+        (patron:string account:string new-sovereign:string)
+        (UEV_IMC)
         (with-capability (DALOS|C>RT_SOV account new-sovereign)
             (XI_RotateSovereign account new-sovereign)
-            (IGNIS|C_Collect patron account (UR_UsagePrice "ignis|small"))
+            (UDC_SmallCumulator)
         )
     )
     (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal)
@@ -1307,13 +1326,7 @@
     )
     ;;{F7}
     (defun XB_UpdateBalance (account:string snake-or-gas:bool new-balance:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "DPTF|<"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1333,27 +1346,20 @@
         )
     )
     (defun XB_UpdateOuroPrice (price:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-            ]
-        )
+        (UEV_IMC)
         (update DALOS|GasManagementTable DALOS|VGD
             {"gas-source-price" : price}
         )
     )
     ;;
     (defun XE_ClearDispo (account:string)
-        (enforce-guard (P|UR "TFT|<"))
+        (UEV_IMC)
         (with-capability (SECURE)
             (XB_UpdateBalance account true 0.0)
         )
     )
     (defun XE_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool)
-        (enforce-guard (P|UR "DPTF|<"))
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1373,7 +1379,7 @@
         )
     )
     (defun XE_UpdateElite (account:string amount:decimal)
-        (enforce-guard (P|UR "DPMF|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -1387,7 +1393,7 @@
         )
     )
     (defun XE_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool)
-        (enforce-guard (P|UR "DPTF|<"))
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1407,7 +1413,7 @@
         )
     )
     (defun XE_UpdateFreeze (account:string snake-or-gas:bool new-freeze:bool)
-        (enforce-guard (P|UR "DPTF|<"))
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1427,7 +1433,7 @@
         )
     )
     (defun XE_UpdateMintRole (account:string snake-or-gas:bool new-mint:bool)
-        (enforce-guard (P|UR "DPTF|<"))
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1447,7 +1453,7 @@
         )
     )
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool)
-        (enforce-guard (P|UR "DPTF|<"))
+        (UEV_IMC)
         (let
             (
                 (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
@@ -1467,6 +1473,62 @@
         )
     )
     ;;
+    (defun XI_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
+        (require-capability (SECURE))
+        (with-capability (DALOS|S>D-SM account guard kadena sovereign)
+            (insert DALOS|AccountTable account
+                { "public"                      : public
+                , "guard"                       : guard
+                , "kadena-konto"                : kadena
+                , "sovereign"                   : sovereign
+                , "governor"                    : guard
+
+                , "smart-contract"              : true
+                , "payable-as-smart-contract"   : false
+                , "payable-by-smart-contract"   : false
+                , "payable-by-method"           : true
+                
+                , "nonce"                       : 0
+                , "elite"                       : DALOS|PLEB
+                , "ouroboros"                   : DPTF|BLANK
+                , "ignis"                       : DPTF|BLANK
+                }  
+            )
+            (XI_UpdateKadenaLedger kadena account true)
+            (if (not (IGNIS|URC_IsNativeGasZero))
+                (KDA|C_Collect account (UR_UsagePrice "smart"))
+                true
+            )
+        )
+    )
+    (defun XI_DeployStandardAccount (account:string guard:guard kadena:string public:string)
+        (require-capability (SECURE))
+        (with-capability (DALOS|S>D-ST account guard kadena)
+                (insert DALOS|AccountTable account
+                    { "public"                      : public
+                    , "guard"                       : guard
+                    , "kadena-konto"                : kadena
+                    , "sovereign"                   : account
+                    , "governor"                    : guard
+    
+                    , "smart-contract"              : false
+                    , "payable-as-smart-contract"   : false
+                    , "payable-by-smart-contract"   : false
+                    , "payable-by-method"           : false
+                    
+                    , "nonce"                       : 0
+                    , "elite"                       : DALOS|PLEB
+                    , "ouroboros"                   : DPTF|BLANK
+                    , "ignis"                       : DPTF|BLANK
+                    }  
+                )
+                (XI_UpdateKadenaLedger kadena account true)
+                (if (not (IGNIS|URC_IsNativeGasZero))
+                    (KDA|C_Collect account (UR_UsagePrice "standard"))
+                    true
+                )
+            )
+    )
     (defun XI_IgnisCollect (patron:string active-account:string amount:decimal)
         (require-capability (IGNIS|C>CLT patron active-account amount))
         (let
@@ -1635,6 +1697,7 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table DALOS|PropertiesTable)
 (create-table DALOS|GasManagementTable)
 (create-table DALOS|PricesTable)

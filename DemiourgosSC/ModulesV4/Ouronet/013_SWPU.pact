@@ -69,6 +69,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|SWPU|CALLER ()
         true
@@ -81,13 +82,35 @@
         (compose-capability (P|SWPU|CALLER))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|SWPU_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|SWPU_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -107,55 +130,20 @@
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
+                (mg:guard (create-capability-guard (P|SWPU|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|ATSU::P|A_Add
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|VST::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|LIQUID::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|ORBR::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|SWPT::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
-            (ref-P|SWP::P|A_Add 
-                "SWPU|<"
-                (create-capability-guard (P|SWPU|CALLER))
-            )
+            (ref-P|DALOS::P|A_Add "SWPU|<" mg)
+            (ref-P|BRD::P|A_Add "SWPU|<" mg)
+            (ref-P|DPTF::P|A_Add "SWPU|<" mg)
+            (ref-P|DPMF::P|A_Add "SWPU|<" mg)
+            (ref-P|ATS::P|A_Add "SWPU|<" mg)
+            (ref-P|TFT::P|A_Add "SWPU|<" mg)
+            (ref-P|ATSU::P|A_Add "SWPU|<" mg)
+            (ref-P|VST::P|A_Add "SWPU|<" mg)
+            (ref-P|LIQUID::P|A_Add "SWPU|<" mg)
+            (ref-P|ORBR::P|A_Add "SWPU|<" mg)
+            (ref-P|SWPT::P|A_Add "SWPU|<" mg)
+            (ref-P|SWP::P|A_Add "SWPU|<" mg)
             (ref-P|DALOS::P|A_Add 
                 "SWPU|RemoteDalosGov"
                 (create-capability-guard (P|SWPU|REMOTE-GOV))
@@ -164,6 +152,19 @@
                 "SWPU|RemoteSwpGov"
                 (create-capability-guard (P|SWPU|REMOTE-GOV))
             )
+
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
+            (ref-P|ORBR::P|A_AddIMP mg)
+            (ref-P|SWPT::P|A_AddIMP mg)
+            (ref-P|SWP::P|A_AddIMP mg)
         )
     )
     ;;
@@ -416,36 +417,12 @@
         @doc "Computes the LP Capacity of a Given Swap Pair"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ref-SWP:module{Swapper} SWP)
                 (token-lp:string (ref-SWP::UR_TokenLP swpair))
-                (token-lps:[string] (ref-SWP::UR_TokenLPS swpair))
-                (token-lp-supply:decimal (ref-DPTF::UR_Supply token-lp))
             )
             (ref-SWP::UEV_id swpair)
-            (if (= token-lps [BAR])
-                token-lp-supply
-                (let
-                    (
-                        (token-lps-supplies:[decimal]
-                            (fold
-                                (lambda
-                                    (acc:[decimal] idx:integer)
-                                    (ref-U|LST::UC_AppL 
-                                        acc 
-                                        (ref-DPTF::UR_Supply (at idx token-lps))
-                                    )
-                                )
-                                []
-                                (enumerate 0 (- (length token-lps) 1))
-                            )
-                        )
-                        (sum:decimal (fold (+) 0.0 token-lps-supplies))
-                    )
-                    (+ token-lp-supply sum)
-                )
-            )
+            (ref-DPTF::UR_Supply token-lp)
         )
     )
     (defun SWPLC|URC_BalancedLiquidity:[decimal] (swpair:string input-id:string input-amount:decimal)
@@ -1587,3 +1564,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

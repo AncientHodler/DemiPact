@@ -13,6 +13,8 @@
     ;;
     (defun URC_MinimumOuro:decimal (account:string))
     ;;
+    (defun UEV_IMC ())
+    ;;
     (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
     (defun UDC_BulkTransferICO:object{OuronetDalos.IgnisCumulator} (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string]))
     (defun UDC_MultiTransferICO:object{OuronetDalos.IgnisCumulator} (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string))
@@ -54,6 +56,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|TFT|CALLER ()
         true
@@ -71,13 +74,35 @@
         (compose-capability (SECURE))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|TFT_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|TFT_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -89,26 +114,7 @@
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
-            )
-            (ref-P|DALOS::P|A_Add 
-                "TFT|<"
-                (create-capability-guard (P|TFT|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "TFT|<"
-                (create-capability-guard (P|TFT|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "TFT|<"
-                (create-capability-guard (P|TFT|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "TFT|<"
-                (create-capability-guard (P|TFT|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "TFT|<"
-                (create-capability-guard (P|TFT|CALLER))
+                (mg:guard (create-capability-guard (P|TFT|CALLER)))
             )
             (ref-P|DALOS::P|A_Add
                 "TFT|RemoteDalosGov"
@@ -118,6 +124,11 @@
                 "TFT|RemoteAtsGov"
                 (create-capability-guard (P|ATS|REMOTE-GOV))
             )
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
         )
     )
     ;;
@@ -554,6 +565,14 @@
         )
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     ;;Bulk
     (defun UEV_BulkTransfer (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         @doc "Complete Bulk Transfer Validations"
@@ -844,8 +863,9 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_ClearDispo:object{OuronetDalos.IgnisCumulator} (patron:string account:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ClearDispo:object{OuronetDalos.IgnisCumulator} 
+        (patron:string account:string)
+        (UEV_IMC)
         (with-capability (DPTF|C>CLEAR-DISPO account)
             (let
                 (
@@ -925,8 +945,9 @@
         )
     )
     ;;Client Transmute
-    (defun C_Transmute:object{OuronetDalos.IgnisCumulator} (patron:string id:string transmuter:string transmute-amount:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Transmute:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string transmuter:string transmute-amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -940,57 +961,42 @@
         )
     )
     ;;Client Transfer
-    (defun C_Transfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Transfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_Transfer id sender receiver transfer-amount method)
-                (ref-DALOS::UDC_Cumulator price trigger [])
+                (ref-DALOS::UDC_TrueFungibleTransferCumulator id sender receiver)
             )
         )
     )
-    (defun C_ExemptionTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ExemptionTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_ExemptionTransfer id sender receiver transfer-amount method)
-                (ref-DALOS::UDC_Cumulator price trigger [])
+                (ref-DALOS::UDC_TrueFungibleTransferCumulator id sender receiver)
             )
         )
     )
-    (defun XB_FeelesTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "LIQUID|<"))
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun XB_FeelesTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAZ id sender receiver))
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_SimpleTransfer id sender receiver transfer-amount method)
-                (ref-DALOS::UDC_Cumulator price trigger [])
+                (ref-DALOS::UDC_TrueFungibleTransferCumulator id sender receiver)
             )
         )
     )
@@ -1001,30 +1007,25 @@
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
         )
     )
-    (defun C_MultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_MultiTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )
-    (defun C_ExemptionMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ExemptionMultiTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_ExemptionMultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )    
-    (defun XE_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun XE_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_FeelesMultiTransfer sender receiver x method)) (UDC_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
@@ -1037,29 +1038,25 @@
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
         )
     )
-    (defun C_BulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Works"
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_BulkTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
     )
-    (defun C_ExemptionBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ExemptionBulkTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_ExemptionBulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
     )
-    (defun XE_FeelesBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun XE_FeelesBulkTransfer:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_FeelesBulkTransfer id sender x method)) (UDC_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
@@ -1113,7 +1110,6 @@
         )
     )
     (defun XI_SimpleTransfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Simple Transfer no GAS"
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -1929,3 +1925,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

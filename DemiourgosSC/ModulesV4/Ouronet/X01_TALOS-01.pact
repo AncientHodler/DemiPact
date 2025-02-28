@@ -62,10 +62,6 @@
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
     (defun DPTF|C_Wipe (patron:string id:string atbw:string))
     ;;
-    (defun DPTF|CK_FeelesTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPTF|CK_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|CK_FeelesBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    ;;
     ;;
     (defun DPMF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer))
@@ -88,6 +84,7 @@
     (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
     (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
     (defun DPMF|C_Wipe (patron:string id:string atbw:string))
+    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer]))
     ;;
     ;;
     (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
@@ -127,13 +124,19 @@
     (defun VST|C_CreateVestingLink:string (patron:string dptf:string))
     (defun VST|C_CreateSleepingLink:string (patron:string dptf:string))
     ;;Frozen
+    (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal))
     ;;Reservation
+    (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal))
+    (defun VST|C_Unreserve (patron:string unreserver:string r-dptf:string amount:decimal))
     ;;Vesting
-    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer))
-    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer))
+    (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer))
+    (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer))
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))    
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
     ;;Sleeping
+    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer))
+    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer))
+    (defun VST|C_MergeAll(patron:string merger:string dpmf:string))
     ;;
     ;;
     (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
@@ -157,13 +160,10 @@
     ;;
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
-    (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard))
     (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool))
     (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool))
-    (defun SWP|C_ToggleSpecialMode (patron:string swpair:string))
     (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool))
     (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
     ;;
     (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
@@ -193,6 +193,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|TS ()
         @doc "Talos Summoner Capability"
@@ -215,13 +216,35 @@
         (compose-capability (SECURE))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|TS01_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|TS01_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -242,63 +265,40 @@
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
+                (mg:guard (create-capability-guard (P|TS)))
             )
+            (ref-P|DALOS::P|A_Add "TALOS-01" mg)
+            (ref-P|BRD::P|A_Add "TALOS-01" mg)
+            (ref-P|DPTF::P|A_Add "TALOS-01" mg)
+            (ref-P|DPMF::P|A_Add "TALOS-01" mg)
+            (ref-P|ATS::P|A_Add "TALOS-01" mg)
+            (ref-P|TFT::P|A_Add "TALOS-01" mg)
+            (ref-P|ATSU::P|A_Add "TALOS-01" mg)
+            (ref-P|VST::P|A_Add "TALOS-01" mg)
+            (ref-P|LIQUID::P|A_Add "TALOS-01" mg)
+            (ref-P|ORBR::P|A_Add "TALOS-01" mg)
+            (ref-P|SWPT::P|A_Add "TALOS-01" mg)
+            (ref-P|SWP::P|A_Add "TALOS-01" mg)
+            (ref-P|SWPU::P|A_Add "TALOS-01" mg)
+
             (ref-P|DALOS::P|A_Add 
                 "TALOS-01|RemoteDalosGov"
                 (create-capability-guard (P|TRG))
             )
-            (ref-P|DALOS::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|BRD::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|ATS::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|TFT::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|ATSU::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|VST::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|LIQUID::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|ORBR::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|SWPT::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|SWP::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
-            (ref-P|SWPU::P|A_Add 
-                "TALOS-01"
-                (create-capability-guard (P|TS))
-            )
+
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
+            (ref-P|ORBR::P|A_AddIMP mg)
+            (ref-P|SWPT::P|A_AddIMP mg)
+            (ref-P|SWP::P|A_AddIMP mg)
+            (ref-P|SWPU::P|A_AddIMP mg)
         )
     )
     ;;
@@ -479,10 +479,13 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DALOS::C_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
@@ -517,10 +520,13 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DALOS::C_RotateGovernor patron account governor)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_RotateGovernor patron account governor)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool)
@@ -528,10 +534,13 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DALOS::C_RotateGuard patron account new-guard safe)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_RotateGuard patron account new-guard safe)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
@@ -540,10 +549,13 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DALOS::C_RotateKadena patron account kadena)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_RotateKadena patron account kadena)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
@@ -552,10 +564,13 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DALOS::C_RotateSovereign patron account new-sovereign)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DALOS::C_RotateSovereign patron account new-sovereign)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     ;;{DPTF_Client}
@@ -564,10 +579,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_UpdatePendingBranding patron entity-id logo description website social)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_UpdatePendingBranding patron entity-id logo description website social)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto entity-id) [ico])
         )
     )
     (defun DPTF|C_UpgradeBranding (patron:string entity-id:string months:integer)
@@ -649,10 +667,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_Control patron id cco cu casr cf cw cp)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_Control patron id cco cu casr cf cw cp)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_DeployAccount (id:string account:string)
@@ -760,10 +781,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_RotateOwnership patron id new-owner)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_RotateOwnership patron id new-owner)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_SetFee (patron:string id:string fee:decimal)
@@ -771,10 +795,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_SetFee patron id fee)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_SetFee patron id fee)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)
@@ -782,10 +809,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_SetFeeTarget patron id target)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_SetFeeTarget patron id target)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)
@@ -793,10 +823,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_SetMinMove patron id min-move-value)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_SetMinMove patron id min-move-value)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
@@ -819,10 +852,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_ToggleFee patron id toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_ToggleFee patron id toggle)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)
@@ -844,12 +880,14 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (collect:bool
+                (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
                         (ref-DPTF::C_ToggleFeeLock patron id toggle)
                     )
                 )
+                (collect:bool (at 0 (at "output" ico)))
             )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
             (with-capability (SECURE)
                 (XI_ConditionalFuelKDA collect)
             )
@@ -888,10 +926,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_TogglePause patron id toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_TogglePause patron id toggle)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
     (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool)
@@ -899,10 +940,13 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_ToggleReservation patron id toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPTF::C_ToggleReservation patron id toggle)
-            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
         )
     )
 
@@ -986,10 +1030,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_UpdatePendingBranding patron entity-id logo description website social)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_UpdatePendingBranding patron entity-id logo description website social)
-            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto entity-id) [ico])
         )
     )
     (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer)
@@ -1141,10 +1188,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_RotateOwnership patron id new-owner)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_RotateOwnership patron id new-owner)
-            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto id) ico)
         )
     )
     (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)
@@ -1194,10 +1244,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_ToggleFreezeAccount patron id account toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_ToggleFreezeAccount patron id account toggle)
-            )
+            (XC_IgnisCollect patron account [ico])
         )
     )
     (defun DPMF|C_TogglePause (patron:string id:string toggle:bool)
@@ -1205,10 +1258,13 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_TogglePause patron id toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_TogglePause patron id toggle)
-            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto id) ico)
         )
     )
     (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
@@ -1244,10 +1300,27 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_Wipe patron id atbw)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-DPMF::C_Wipe patron id atbw)
+            (XC_IgnisCollect patron atbw [ico])
+        )
+    )
+    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer])
+        @doc "Similar to <DPMF|C_Wipe>, but only wipes selected nonces"
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPMF::C_WipePartial patron id atbw)
+                    )
+                )
             )
+            (XC_IgnisCollect patron atbw [ico])
         )
     )
     ;;{ATS_Client}
@@ -1256,14 +1329,17 @@
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATS::C_UpdatePendingBranding patron entity-id logo description website social)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATS::C_UpdatePendingBranding patron entity-id logo description website social)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto entity-id) [ico])
         )
     )
     (defun ATS|C_UpgradeBranding (patron:string entity-id:string months:integer)
-        @doc "Similar to its DPTF|DPMF Variant"
+        @doc "Similar to its DPTF, DPMF Variants"
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -1430,11 +1506,15 @@
         @doc "Modifies <can-change-owner> for the ATSPair"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_ModifyCanChangeOwner patron ats new-boolean)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_ModifyCanChangeOwner patron ats new-boolean)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)
@@ -1501,44 +1581,60 @@
         @doc "Rotates ATSPair Ownership"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_RotateOwnership patron ats new-owner)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_RotateOwnership patron ats new-owner)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
         @doc "Sets ATSPair Cold Recovery Fee"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_SetColdFee patron ats fee-positions fee-thresholds fee-array)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_SetColdFee patron ats fee-positions fee-thresholds fee-array)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
         @doc "Sets ATSPair Cold Recovery Duration"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_SetCRD patron ats soft-or-hard base growth)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_SetCRD patron ats soft-or-hard base growth)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_SetHotFee (patron:string ats:string promile:decimal decay:integer)
         @doc "Sets ATSPair Hot Recovery Fee"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_SetHotFee patron ats promile decay)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_SetHotFee patron ats promile decay)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
@@ -1561,11 +1657,15 @@
         @doc "Toggles ATSPair Elite Functionality"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_ToggleElite patron ats toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_ToggleElite patron ats toggle)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_ToggleFeeSettings (patron:string ats:string toggle:bool fee-switch:integer)
@@ -1586,15 +1686,16 @@
         @doc "Toggle ATSPair Parameter Lock"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
-                (ref-ORBR:module{Ouroboros} OUROBOROS)
-                (collect:bool
+                (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
                         (ref-ATSU::C_ToggleParameterLock patron ats toggle)
                     )
                 )
+                (collect:bool (at 0 (at "output" ico)))
             )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
             (with-capability (SECURE)
                 (XI_ConditionalFuelKDA collect)
             )
@@ -1604,11 +1705,15 @@
         @doc "Toggles ATSPair syphoning capability"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_ToggleSyphoning patron ats toggle)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_ToggleSyphoning patron ats toggle)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     (defun ATS|C_TurnRecoveryOff (patron:string ats:string cold-or-hot:bool)
@@ -1644,11 +1749,15 @@
         @doc "Updates Syphone Value, the decimal ATS-Index, until the ATSPair can be syphoned"
         (let
             (
+                (ref-ATS:module{Autostake} ATS)
                 (ref-ATSU:module{AutostakeUsage} ATSU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-ATSU::C_UpdateSyphon patron ats syphon)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-ATSU::C_UpdateSyphon patron ats syphon)
-            )
+            (XC_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
         )
     )
     ;;{VST_Client}
@@ -1716,6 +1825,21 @@
             )
         )
     )
+    ;;Freezing
+    (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal)
+        @doc "Freezes a DPTF Token"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Freeze patron freezer freeze-output dptf amount)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron freezer ico)
+        )
+    )
     ;;Reserving
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal)
         @doc "Reserves a DPTF Token"
@@ -1746,34 +1870,101 @@
         )
     )
     ;;Vesting
-    (defun VST|C_Vest (patron:string vester:string target-account:string id:string amount:decimal offset:integer duration:integer milestones:integer)
-        @doc "Vests a DPTF Token, issuing a Vested Token"
+    (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer)
+        @doc "Culls the Vested DPMF Token, recovering its DPTF counterpart."
         (let
             (
                 (ref-VST:module{Vesting} VST)
-                (ico:object{OuronetDalos.IgnisCumulator}
+                (ico:[object{OuronetDalos.IgnisCumulator}]
                     (with-capability (P|TS)
-                        (ref-VST::C_Vest patron vester target-account id amount offset duration milestones)
+                        (ref-VST::C_Unvest patron culler dpmf nonce)
                     )
                 )
             )
-            (XC_IgnisCollect patron vester [ico])
+            (XC_IgnisCollect patron culler ico)
         )
     )
-    (defun VST|C_Cull (patron:string culler:string id:string nonce:integer)
-        @doc "Culls the Vested Token, recovering its original non vested DPTF counterpart."
+    (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer)
+        @doc "Vests a DPTF Token, generating ist Vested DPMF Counterspart"
         (let
             (
                 (ref-VST:module{Vesting} VST)
-                (ico:object{OuronetDalos.IgnisCumulator}
+                (ico:[object{OuronetDalos.IgnisCumulator}]
                     (with-capability (P|TS)
-                        (ref-VST::C_Cull patron culler id nonce)
+                        (ref-VST::C_Vest patron vester target-account dptf amount offset duration milestones)
                     )
                 )
             )
-            (XC_IgnisCollect patron culler [ico])
+            (XC_IgnisCollect patron vester ico)
         )
     )
+    
+    ;;Sleeping
+    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer)
+        @doc "Culls the Sleeping DPMF Token, recovering its DPTF counterpart."
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Unsleep patron unsleeper dpmf nonce)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron unsleeper ico)
+        )
+    )
+    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer)
+        @doc "Sleeps a DPTF Token, generating ist Sleeping DPMF Counterspart"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Sleep patron sleeper target-account dptf amount duration)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron sleeper ico)
+        )
+    )
+    (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer])
+        @doc "Merges selected sleeping Tokens of an account, \
+        \ releasing them if expired sleeping dpmfs exist within the selected tokens \
+        \ Up to 30 existing Batches can be merged this way."
+
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Merge patron merger dpmf nonces)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron merger ico)
+        )
+    )
+    (defun VST|C_MergeAll(patron:string merger:string dpmf:string)
+        @doc "Merges all sleeping Tokens of an account, \
+        \ releasing them if expired sleeping dpmfs exist on account \
+        \ Up to 30 existing Batches can be merged this way \
+        \ If more than 35 Batches exist on <merger>, <VST|C_Merge> must be used to merge individual batches,\
+        \ to reduce their number, such that mergim them all can fit within a single TX."
+
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_MergeAll patron merger dpmf)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron merger ico)
+        )
+    )
+    ;;
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
         @doc "Coils a DPTF Token and Vests its output to <target-account> \
             \ Requires that: \
@@ -1919,15 +2110,44 @@
         )
     )
     ;;{Swapper_Client}
+    (defun SWP|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for DPMF Token <entity-id> costing 400 IGNIS"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_UpdatePendingBranding patron entity-id logo description website social)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto entity-id) [ico])
+        )
+    )
+    (defun SWP|C_UpgradeBranding (patron:string entity-id:string months:integer)
+        @doc "Similar to its DPTF, DPMF, ATS Variants"
+        (let
+            (
+                (ref-SWP:module{Swapper} SWP)
+            )
+            (with-capability (P|SECURE-SUMMONER)
+                (ref-SWP::C_UpgradeBranding patron entity-id months)
+                (XI_DynamicFuelKDA)
+            )
+        )
+    )
     (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string)
         @doc "Changes Ownership of an SWPair"
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_ChangeOwnership patron swpair new-owner)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_ChangeOwnership patron swpair new-owner)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
@@ -2024,10 +2244,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_ModifyCanChangeOwner patron swpair new-boolean)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_ModifyCanChangeOwner patron swpair new-boolean)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal])
@@ -2035,22 +2258,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_ModifyWeights patron swpair new-weights)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_ModifyWeights patron swpair new-weights)
-            )
-        )
-    )
-    (defun SWP|C_RotateGovernor (patron:string swpair:string new-gov:guard)
-        @doc "Rotates the Governor for an Swpair \
-            \ The Governor is enforced when Pool is in Special Mode"
-        (let
-            (
-                (ref-SWP:module{Swapper} SWP)
-            )
-            (with-capability (P|TS)
-                (ref-SWP::C_RotateGovernor patron swpair new-gov)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool)
@@ -2102,29 +2316,16 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
-                (collect:bool
+                (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
                     )
                 )
+                (collect:bool (at 0 (at "output" ico)))
             )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
             (with-capability (SECURE)
                 (XI_ConditionalFuelKDA collect)
-            )
-        )
-    )
-    (defun SWP|C_ToggleSpecialMode (patron:string swpair:string)
-        @doc "Toggles Special Mode for an SWPair \
-            \ When Special Mode is on, SWPair Governor is enforced when adding or removing Liquidity \
-            \ This allows for example, for coding special rules when adding liquidity, in a separate module \
-            \ That provides the governing permissions, that is, adding liquidity can only be executed following this special rules \
-            \ This allows for example, to add Liquidity Tokens using Meta-Tokens, as a functionality example"
-        (let
-            (
-                (ref-SWP:module{Swapper} SWP)
-            )
-            (with-capability (P|TS)
-                (ref-SWP::C_ToggleSpecialMode patron swpair)
             )
         )
     )
@@ -2133,10 +2334,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_UpdateAmplifier patron swpair amp)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_UpdateAmplifier patron swpair amp)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool)
@@ -2151,21 +2355,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_UpdateFee patron swpair new-fee lp-or-special)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_UpdateFee patron swpair new-fee lp-or-special)
-            )
-        )
-    )
-    (defun SWP|C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool)
-        @doc "Updates the LP Tokens of an swpair"
-        (let
-            (
-                (ref-SWP:module{Swapper} SWP)
-            )
-            (with-capability (P|TS)
-                (ref-SWP::C_UpdateLP patron swpair lp-token add-or-remove)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}])
@@ -2173,10 +2369,13 @@
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWP::C_UpdateSpecialFeeTargets patron swpair targets)
+                    )
+                )
             )
-            (with-capability (P|TS)
-                (ref-SWP::C_UpdateSpecialFeeTargets patron swpair targets)
-            )
+            (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
         )
     )
     ;;
@@ -2331,45 +2530,6 @@
         )
     )
     ;;
-    (defun DPTF|CK_FeelesTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
-        @doc "Transfers a DPTF Token without fees, regardless of Fee Setting. \
-            \ First Checkpoint Function. A Checkpoint Function is a \
-            \   locked Function, that can be used beyond Current Deployment Stage, in future deployment Stages"
-        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
-        (let
-            (
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-            )
-            (with-capability (P|TS)
-                (ref-P|TFT::XB_FeelesTransfer patron id sender receiver transfer-amount method)
-            )
-        )
-    )
-    (defun DPTF|CK_FeelesMultiTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Multi-Transfers DPTF Tokens without fees, regardless of Fee Setting"
-        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
-        (let
-            (
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-            )
-            (with-capability (P|TS)
-                (ref-P|TFT::XE_FeelesMultiTransfer patron id-lst sender receiver transfer-amount-lst method)
-            )
-        )
-    )
-    (defun DPTF|CK_FeelesBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Bulk-Transfers DPTF Tokens without fees, regardless of Fee Setting"
-        (enforce-guard (P|UR "TALOS-01-Checkpoint"))
-        (let
-            (
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-            )
-            (with-capability (P|TS)
-                (ref-P|TFT::XE_FeelesBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
-            )
-        )
-    )
-    ;;
     (defun XC_IgnisCollect (patron:string account:string input-ico:[object{OuronetDalos.IgnisCumulator}])
         @doc "Collects Ignis given input parameters"
         (let
@@ -2421,3 +2581,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

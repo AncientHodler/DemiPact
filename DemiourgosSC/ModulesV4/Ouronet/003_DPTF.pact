@@ -60,6 +60,7 @@
     (defun URC_HasFrozen:bool (id:string))
     (defun URC_HasReserved:bool (id:string))
     ;;
+    (defun UEV_IMC ())
     (defun UEV_CanChangeOwnerON (id:string))
     (defun UEV_CanUpgradeON (id:string))
     (defun UEV_CanAddSpecialRoleON (id:string))
@@ -86,28 +87,29 @@
     ;;
     (defun CAP_Owner (id:string))
     ;;
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal))
-    (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
+    (defun C_Control:object{OuronetDalos.IgnisCumulator} (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
     (defun C_DeployAccount (id:string account:string))
     (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
     (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal origin:bool))
-    (defun C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun C_SetFee (patron:string id:string fee:decimal))
-    (defun C_SetFeeTarget (patron:string id:string target:string))
-    (defun C_SetMinMove (patron:string id:string min-move-value:decimal))
-    (defun C_ToggleFee (patron:string id:string toggle:bool))
-    (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool))
+    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator} (patron:string id:string new-owner:string))
+    (defun C_SetFee:object{OuronetDalos.IgnisCumulator} (patron:string id:string fee:decimal))
+    (defun C_SetFeeTarget:object{OuronetDalos.IgnisCumulator} (patron:string id:string target:string))
+    (defun C_SetMinMove:object{OuronetDalos.IgnisCumulator} (patron:string id:string min-move-value:decimal))
+    (defun C_ToggleFee:object{OuronetDalos.IgnisCumulator} (patron:string id:string toggle:bool))
+    (defun C_ToggleFeeLock:object{OuronetDalos.IgnisCumulator} (patron:string id:string toggle:bool))
     (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
-    (defun C_TogglePause (patron:string id:string toggle:bool))
-    (defun C_ToggleReservation (patron:string id:string toggle:bool))
+    (defun C_TogglePause:object{OuronetDalos.IgnisCumulator} (patron:string id:string toggle:bool))
+    (defun C_ToggleReservation:object{OuronetDalos.IgnisCumulator} (patron:string id:string toggle:bool))
     (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     ;;
     (defun XB_Credit (id:string account:string amount:decimal))
-    (defun XI_Debit (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
+    (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] iz-special:[bool]))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
     (defun XE_Burn (id:string account:string amount:decimal))
@@ -137,7 +139,8 @@
     ;;
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S}) 
+    (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|DPTF|CALLER ()
         true
@@ -147,8 +150,13 @@
         (compose-capability (SECURE))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|DPTF_ADMIN)
@@ -157,20 +165,32 @@
             )
         )
     )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|DPTF_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
+            )
+        )
+    )
     (defun P|A_Define ()
         (let
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
+                (mg:guard (create-capability-guard (P|DPTF|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "DPTF|<"
-                (create-capability-guard (P|DPTF|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "DPTF|<"
-                (create-capability-guard (P|DPTF|CALLER))
-            )
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
         )
     )
     ;;
@@ -385,11 +405,12 @@
     )
     (defcap DPTF|C>UPDATE-BRD (id:string)
         @event
-        (CAP_Owner id)
+        (CAP_SpecialOwner id)
         (compose-capability (P|DPTF|CALLER))
     )
     (defcap DPTF|C>UPGRADE-BRD (id:string)
         @event
+        (CAP_SpecialOwner id)
         (compose-capability (P|DPTF|CALLER))
     )
     (defcap BASIS|C>X_WRITE-ROLES (id:string account:string rp:integer)
@@ -953,6 +974,14 @@
         )
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     (defun UEV_CanChangeOwnerON (id:string)
         (let
             (
@@ -1200,26 +1229,35 @@
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
     )
+    (defun CAP_SpecialOwner (id:string)
+        @doc "Enforces Special DPTF Token ID Ownership, by enforcing Parent DPTF Token Ownership"
+        (if (= (take 2 id) "F|")
+            (CAP_Owner (UR_Frozen id))
+            (if (= (take 2 id) "R|")
+                (CAP_Owner (UR_Reservation id))
+                (CAP_Owner id)
+            )
+        )
+    )
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator}
+        (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto entity-id))
-                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
             )
             (with-capability (DPTF|C>UPDATE-BRD)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
-                (ref-DALOS::IGNIS|C_Collect patron owner branding-cost)
+                (ref-DALOS::UDC_BrandingCumulator 1.0)
             )
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1237,18 +1275,7 @@
     ;;
     (defun C_Burn:object{OuronetDalos.IgnisCumulator}
         (patron:string id:string account:string amount:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "TFT|<"))
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "LIQUID|<"))
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1261,30 +1288,21 @@
             )
         )
     )
-    (defun C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_Control:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>CTRL id)
                 (XI_Control patron id cco cu casr cf cw cp)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
     (defun C_DeployAccount (id:string account:string)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ATS|<"))
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1320,7 +1338,7 @@
     )
     (defun C_Issue:object{OuronetDalos.IgnisCumulator}
         (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1340,24 +1358,11 @@
     )
     (defun C_Mint:object{OuronetDalos.IgnisCumulator}
         (patron:string id:string account:string amount:decimal origin:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "LIQUID|<"))
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (big:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (if origin big small))
+                (price:decimal (if origin (ref-DALOS::UR_UsagePrice "ignis|biggest") (ref-DALOS::UR_UsagePrice "ignis|small")))
                 (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id account))
             )
             (with-capability (DPTF|C>MINT id account amount origin)
@@ -1366,81 +1371,86 @@
             )
         )
     )
-    (defun C_RotateOwnership (patron:string id:string new-owner:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string new-owner:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>RT_OWN id new-owner)
                 (XI_ChangeOwnership id new-owner)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BigCumulator)
+
             )
         )
     )
-    (defun C_SetFee (patron:string id:string fee:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetFee:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string fee:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>SET_FEE id fee)
                 (XI_SetFee id fee)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_SetFeeTarget (patron:string id:string target:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetFeeTarget:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string target:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>SET_FEE-TARGET id target)
                 (XI_SetFeeTarget id target)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_SetMinMove (patron:string id:string min-move-value:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_SetMinMove:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string min-move-value:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>SET_MIN-MOVE id min-move-value)
                 (XI_SetMinMove id min-move-value)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_ToggleFee (patron:string id:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleFee:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>TG_FEE id toggle)
                 (XI_ToggleFee id toggle)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_Konto id) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_ToggleFeeLock:bool (patron:string id:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleFeeLock:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string toggle:bool)
+        (UEV_IMC)
         (with-capability (DPTF|C>TG_FEE-LOCK id toggle)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (token-owner:string (UR_Konto id))
-                    (g1:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
                     (toggle-costs:[decimal] (XI_ToggleFeeLock id toggle))
-                    (g2:decimal (at 0 toggle-costs))
-                    (gas-costs:decimal (+ g1 g2))
+                    (g:decimal (at 0 toggle-costs))
+                    (gas-costs:decimal (+ (ref-DALOS::UR_UsagePrice "ignis|small") g))
                     (kda-costs:decimal (at 1 toggle-costs))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (output:bool (if (> kda-costs 0.0) true false))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron token-owner gas-costs)
                 (if (> kda-costs 0.0)
                     (do
                         (XI_IncrementFeeUnlocks id)
@@ -1448,115 +1458,81 @@
                     )
                     true
                 )
-                output
+                (ref-DALOS::UDC_Cumulator gas-costs trigger [output])
             )
         )
     )
     (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator}
         (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "TFT|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+        (UEV_IMC)
         (with-capability (DPTF|FC>FRZ-ACC id account toggle)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    (ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
-                    )
                 )
                 (XI_ToggleFreezeAccount id account toggle)
                 (XB_WriteRoles id account 5 toggle)
-                ico
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_TogglePause (patron:string id:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_TogglePause:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>TG_PAUSE id toggle)
                 (XI_TogglePause id toggle)
-                (ref-DALOS::IGNIS|C_Collect patron patron (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (ref-DALOS::UDC_MediumCumulator)
             )
         )
     )
-    (defun C_ToggleReservation (patron:string id:string toggle:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleReservation:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>TG_RESERVATION id toggle)
                 (XI_ToggleReservation id toggle)
-                (ref-DALOS::IGNIS|C_Collect patron patron (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (ref-DALOS::UDC_MediumCumulator)
             )
         )
     )
-    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 3.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
             )
             (with-capability (DPTF|C>TG_TRANSFER-R id account toggle)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
-                (ref-DALOS::UDC_Cumulator price trigger [])
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} 
         (patron:string id:string atbw:string)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "TFT|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_ZeroGAS id atbw))
-                (ico:object{OuronetDalos.IgnisCumulator}
-                     (ref-DALOS::UDC_Cumulator price trigger [])
-                )
             )
             (with-capability (DPTF|C>WIPE id atbw)
                 (XI_Wipe id atbw)
-                ico
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
     ;;{F7}
     (defun XB_Credit (id:string account:string amount:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "TFT|<"))
-            ]
-        )
+        (UEV_IMC)
         (if (URC_IzCoreDPTF id)
             (let
                 (
@@ -1608,13 +1584,7 @@
     )
     ;;
     (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData})
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "TFT|<"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1625,14 +1595,69 @@
             )
         )
     )
-    (defun XB_WriteRoles (id:string account:string rp:integer d:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ATS|<"))
-            ]
+    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator}
+        (
+            patron:string
+            account:string
+            name:[string]
+            ticker:[string]
+            decimals:[integer]
+            can-change-owner:[bool]
+            can-upgrade:[bool]
+            can-add-special-role:[bool]
+            can-freeze:[bool]
+            can-wipe:[bool]
+            can-pause:[bool]
+            iz-special:[bool]
         )
+        (UEV_IMC)
+        (with-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-BRD:module{Branding} BRD)
+                    (l1:integer (length name))
+                    (ignis-issue-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                    (gas-costs:decimal (* (dec l1) ignis-issue-cost))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (folded-lst:[string]
+                        (fold
+                            (lambda
+                                (acc:[string] index:integer)
+                                (let
+                                    (
+                                        (id:string
+                                            (XI_Issue 
+                                                account 
+                                                (at index name)
+                                                (at index ticker)
+                                                (at index decimals)
+                                                (at index can-change-owner)
+                                                (at index can-upgrade)
+                                                (at index can-add-special-role)
+                                                (at index can-freeze)
+                                                (at index can-wipe) 
+                                                (at index can-pause)
+                                                (at index iz-special)
+                                            )
+                                        )
+                                    )
+                                    (ref-BRD::XE_Issue id)
+                                    (ref-U|LST::UC_AppL acc id)
+                                )
+                            )
+                            []
+                            (enumerate 0 (- l1 1))
+                        )
+                    )
+                )
+                (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
+            )
+        )
+    )
+    (defun XB_WriteRoles (id:string account:string rp:integer d:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
@@ -1698,7 +1723,7 @@
     )
     ;;
     (defun XE_Burn (id:string account:string amount:decimal)
-        (enforce-guard (P|UR "TFT|<"))
+        (UEV_IMC)
         (with-capability (DPTF|C>BURN id account amount)
             (XI_BurnCore id account amount)
         )
@@ -1706,13 +1731,13 @@
     (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator}
         (patron:string account:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
-        (enforce-guard (P|UR "SWPU|<"))
+        (UEV_IMC)
         (with-capability (SECURE)
             (XB_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
         )
     )
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool)
-        (enforce-guard (P|UR "ATS|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1728,7 +1753,7 @@
         )
     )
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool)
-        (enforce-guard (P|UR "ATS|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1744,7 +1769,7 @@
         )
     )
     (defun XE_ToggleMintRole (id:string account:string toggle:bool)
-        (enforce-guard (P|UR "ATS|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1760,7 +1785,7 @@
         )
     )
     (defun XE_UpdateRewardBearingToken (atspair:string id:string)
-        (enforce-guard (P|UR "ATS|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1780,16 +1805,11 @@
     )
     (defun XE_UpdateSpecialTrueFungible:object{OuronetDalos.IgnisCumulator} 
         (main-dptf:string secondary-dptf:string frozen-or-reserved:bool)
-        (enforce-guard (P|UR "VST|<"))
+        (UEV_IMC)
         (with-capability (DPTF|C>UPDATE-SPECIAL main-dptf secondary-dptf frozen-or-reserved)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    (ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
-                    )
                 )
                 (if frozen-or-reserved
                     (do
@@ -1801,24 +1821,24 @@
                         (XI_UpdateReserved secondary-dptf main-dptf)
                     )
                 )
-                ico
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
     (defun XE_UpdateVesting (dptf:string dpmf:string)
-        (enforce-guard (P|UR "DPMF|<"))
+        (UEV_IMC)
         (update DPTF|PropertiesTable dptf
             {"vesting-link" : dpmf}
         )
     )
     (defun XE_UpdateSleeping (dptf:string dpmf:string)
-        (enforce-guard (P|UR "DPMF|<"))
+        (UEV_IMC)
         (update DPTF|PropertiesTable dptf
             {"sleeping-link" : dpmf}
         )
     )
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool)
-        (enforce-guard (P|UR "TFT|<"))
+        (UEV_IMC)
         (UEV_Amount id amount)
         (if primary
             (with-read DPTF|PropertiesTable id
@@ -1836,13 +1856,7 @@
         )
     )
     (defun XE_UpdateRewardToken (atspair:string id:string direction:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "ATS|<"))
-                (enforce-guard (P|UR "ATSU|<"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -2020,73 +2034,6 @@
             id
         ) 
     )
-    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator}
-        (
-            patron:string
-            account:string
-            name:[string]
-            ticker:[string]
-            decimals:[integer]
-            can-change-owner:[bool]
-            can-upgrade:[bool]
-            can-add-special-role:[bool]
-            can-freeze:[bool]
-            can-wipe:[bool]
-            can-pause:[bool]
-            iz-special:[bool]
-        )
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "VST|<"))
-            ]
-        )
-        (with-capability (DPTF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
-            (let
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-BRD:module{Branding} BRD)
-                    (l1:integer (length name))
-                    (ignis-issue-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                    (gas-costs:decimal (* (dec l1) ignis-issue-cost))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    (folded-lst:[string]
-                        (fold
-                            (lambda
-                                (acc:[string] index:integer)
-                                (let
-                                    (
-                                        (id:string
-                                            (XI_Issue 
-                                                account 
-                                                (at index name)
-                                                (at index ticker)
-                                                (at index decimals)
-                                                (at index can-change-owner)
-                                                (at index can-upgrade)
-                                                (at index can-add-special-role)
-                                                (at index can-freeze)
-                                                (at index can-wipe) 
-                                                (at index can-pause)
-                                                (at index iz-special)
-                                            )
-                                        )
-                                    )
-                                    (ref-BRD::XE_Issue id)
-                                    (ref-U|LST::UC_AppL acc id)
-                                )
-                            )
-                            []
-                            (enumerate 0 (- l1 1))
-                        )
-                    )
-                )
-                (ref-DALOS::UDC_Cumulator gas-costs trigger folded-lst)
-            )
-        )
-    )
     (defun XI_Mint (id:string account:string amount:decimal origin:bool)
         (if origin
             (require-capability (DPTF|C>MINT-ORG id amount ))
@@ -2245,6 +2192,7 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table DPTF|PropertiesTable)
 (create-table DPTF|BalanceTable)
 (create-table DPTF|RoleTable)

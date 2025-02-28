@@ -150,7 +150,6 @@
                 PLEB|LUMY_KDA-NAME
                 PLEB|LUMY_PBL
             )
-            ;;16.781
         )
     )
     (defun A_Step006 ()
@@ -239,7 +238,6 @@
                 ,"native-gas-spent"         : 0.0
                 ,"native-gas-pump"          : false}
             )
-            ;;6433
         )
     )
     (defun A_Step007 ()
@@ -277,8 +275,6 @@
             (ref-coin::create-account OUROBOROS|SC_KDA-NAME OUROBOROS|GUARD) 
             (ref-coin::create-account LQD|SC_KDA-NAME LQD|GUARD)
             (ref-coin::create-account SWP|SC_KDA-NAME SWP|GUARD)
-            ;;
-            ;;27938
         )     
     )
     (defun A_Step008:list ()
@@ -351,7 +347,6 @@
             (ref-T01::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3427
             (ref-T01::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3527
             ids
-            ;;65101
         )
     )
     (defun A_Step009 ()
@@ -369,7 +364,6 @@
                 (VestedEliteAurynID:string (ref-T01::VST|C_CreateVestingLink patron EliteAurynID))
             )
             [VestedOuroID VestedAurynID VestedEliteAurynID]
-            ;;79631
         )
     )
     (defun A_Step010:list ()
@@ -424,7 +418,6 @@
             (ref-T01::ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)               ;;2958
             (ref-T01::ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)             ;;4933
             ats-ids
-            ;;101274
         )
     )
     (defun A_Step011 ()
@@ -434,7 +427,6 @@
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-T01::LQD|C_WrapKadena patron patron 1.0)
-            ;;18580
         )
     )
     (defun A_Step012 ()
@@ -452,8 +444,6 @@
                 (ref-DALOS::UR_WrappedKadenaID)
                 1.0
             )
-            ;;
-            ;35041
         )
     )
     (defun A_Step013 ()
@@ -471,8 +461,6 @@
                 ouro-amount
                 true
             )
-            ;;
-            ;;5731
         )
     )
     (defun A_Step014 ()
@@ -487,8 +475,6 @@
                 (rbt-request-amount:decimal 159016.8713)
             )
             (ref-T01::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
-            ;;
-            ;;40969
         )
     )
     (defun A_Step015 ()
@@ -503,8 +489,6 @@
                 (rbt-request-amount:decimal (at 0 rt-amounts))
             )
             (ref-T01::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
-            ;;
-            ;;38903
         )
     )
     (defun A_Step016 ()
@@ -514,14 +498,10 @@
                 (patron:string DEMIURGOI|AH_NAME)
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
-                ;(lumy:string PLEB|LUMY_NAME)
             )
             (ref-T01::ORBR|C_Sublimate patron patron patron 1000.0)
             (ref-T01::ORBR|C_Sublimate patron patron aozt 750.0)
             (ref-T01::ORBR|C_Sublimate patron patron emma 10.0)
-            ;(ref-T01::ORBR|C_Sublimate patron patron lumy 10.0)
-            ;;230380 / 4 = 57597
-            ;;175460 / 4 = 43865
         )
     )
     (defun A_Step017 ()
@@ -531,7 +511,6 @@
             )
             (ref-T01::DALOS|A_IgnisToggle false true)
             (ref-T01::DALOS|A_IgnisToggle true true)
-            ;;1854
         )
     )
     (defun A_Step018 ()
@@ -544,7 +523,6 @@
                 
             )
             (ref-T01::DPTF|C_Transmute patron ouro-id patron 10.0)
-            ;;18874
         )
     )
     (defun A_Step019 ()
@@ -554,13 +532,12 @@
             )
             (ref-T01::DPTF|C_Transfer 
                 DEMIURGOI|AH_NAME 
-                "ELITEAURYN-98c486052a51"
+                "OURO-98c486052a51"
                 DEMIURGOI|AH_NAME 
                 PLEB|EMMA_NAME 
                 2.0 
                 false
             )
-            ;;23342 EA | 18986 OURO (no ignis collect = -3702)
         )
     )
 
@@ -593,7 +570,6 @@
                 (ReservedOuroID:string (ref-T01::VST|C_CreateReservationLink patron OuroID))
             )
             [VestaID FrozenVestaID SleepingVestaID ReservedOuroID]
-            ;;45079
         )
     )
     ;["Vesta"]

@@ -70,6 +70,7 @@
     (defun URC_ResidentSum:decimal (atspair:string))
     (defun URC_IzPresentHotRBT:bool (atspair:string))
     ;;
+    (defun UEV_IMC ())
     (defun UEV_CanChangeOwnerON (atspair:string))
     (defun UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool))
     (defun UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool))
@@ -93,7 +94,7 @@
     ;;
     (defun CAP_Owner (id:string))
     ;;
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string atspair:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool]))
@@ -168,23 +169,26 @@
     (defun GOV|ATS|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     (defun GOV|ATS|SC_KDA-NAME ()   (at 0 ["k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"]))
     (defun ATS|SetGovernor (patron:string)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (with-capability (P|ATS|CALLER)
-                (ref-DALOS::C_RotateGovernor
-                    patron
-                    ATS|SC_NAME
-                    (ref-U|G::UEV_GuardOfAny
-                        [
-                            (create-capability-guard (ATS|GOV))
-                            (P|UR "ATSU|RemoteAtsGov")
-                            (P|UR "TFT|RemoteAtsGov")
-                        ]
+        (with-capability (P|ATS|CALLER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-U|G:module{OuronetGuards} U|G)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::C_RotateGovernor
+                            patron
+                            ATS|SC_NAME
+                            (ref-U|G::UEV_GuardOfAny
+                                [
+                                    (create-capability-guard (ATS|GOV))
+                                    (P|UR "ATSU|RemoteAtsGov")
+                                    (P|UR "TFT|RemoteAtsGov")
+                                ]
+                            )
+                        )
                     )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron patron (at "price" ico))
             )
         )
     )
@@ -192,6 +196,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|ATS|CALLER ()
         true
@@ -201,13 +206,35 @@
         (compose-capability (SECURE))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|ATS_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|ATS_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -218,23 +245,12 @@
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
+                (mg:guard (create-capability-guard (P|ATS|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "ATS|<"
-                (create-capability-guard (P|ATS|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "ATS|<"
-                (create-capability-guard (P|ATS|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "ATS|<"
-                (create-capability-guard (P|ATS|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "ATS|<"
-                (create-capability-guard (P|ATS|CALLER))
-            )
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
         )
     )
     ;;
@@ -1136,6 +1152,14 @@
         )
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     (defun UEV_CanChangeOwnerON (atspair:string)
         (UEV_id atspair)
         (let
@@ -1321,24 +1345,22 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator}
+        (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_OwnerKonto entity-id))
-                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
-                (final-cost:decimal (* 5.0 branding-cost))
             )
             (with-capability (ATS|C>UPDATE-BRD)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
-                (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
+                (ref-DALOS::UDC_BrandingCumulator 5.0)
             )
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1364,7 +1386,7 @@
             reward-bearing-token:[string]
             rbt-nfr:[bool]
         )
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (ATSI|C>ISSUE account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
             (let
                 (
@@ -1375,7 +1397,7 @@
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (kda-costs:decimal (* (dec l1) ats-cost))
                     (ats-ids:[string] 
-                        (X_FoldedIssue account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
+                        (XI_FoldedIssue account atspair index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
                     (ico-zero:[object{OuronetDalos.IgnisCumulator}]
                         (XI_FoldedActivationRoles patron ats-ids)
@@ -1383,145 +1405,188 @@
                     (ico-one:object{OuronetDalos.IgnisCumulator}
                         (ref-DALOS::UDC_Cumulator gas-costs trigger [])
                     )
-                    (final-ignis:decimal (ref-DALOS::UDC_AddICO (+ ico-zero [ico-one])))
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
-                (ref-DALOS::UDC_Cumulator final-ignis trigger ats-ids)
+                (ref-DALOS::UDC_CompressICO (+ ico-zero [ico-one]) ats-ids)
             )
         )
     )
-    (defun X_FoldedIssue:[string] 
-        (
-            account:string
-            atspair:[string]
-            index-decimals:[integer]
-            reward-token:[string]
-            rt-nfr:[bool]
-            reward-bearing-token:[string]
-            rbt-nfr:[bool]
-        )
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (fold
-                (lambda
-                    (acc:[string] index:integer)
-                    (let
-                        (
-                            (ats-id:string
-                                (XI_Issue
-                                    account 
-                                    (at index atspair)
-                                    (at index index-decimals)
-                                    (at index reward-token)
-                                    (at index rt-nfr)
-                                    (at index reward-bearing-token)
-                                    (at index rbt-nfr)
-                                )
-                            )
-                        )
-                        (ref-BRD::XE_Issue ats-id)
-                        (ref-DPTF::XE_UpdateRewardToken ats-id (at index reward-token) true)
-                        (ref-DPTF::XE_UpdateRewardBearingToken ats-id (at index reward-bearing-token))
-                        (ref-U|LST::UC_AppL acc ats-id)
-                    )
-                )
-                []
-                (enumerate 0 (- (length atspair) 1))
-            )
-        )
-    )
-    (defun XI_FoldedActivationRoles:[object{OuronetDalos.IgnisCumulator}] (patron:string ats-ids:[string])
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (fold
-                (lambda
-                    (acc:[object{OuronetDalos.IgnisCumulator}] index:integer)
-                    (let
-                        (
-                            (ats-id:string (at index ats-ids))
-                            (ico:[object{OuronetDalos.IgnisCumulator}] 
-                                (XB_EnsureActivationRoles patron ats-id true)
-                            )
-                            (ico-ignis:decimal (ref-DALOS::UDC_AddICO ico))
-                            (ignis-to-add:decimal
-                                (if (= index 0)
-                                    ico-ignis
-                                    (+ ico-ignis (at "price" (at 0 acc)))
-                                )
-                            )
-                            (new-ico:object{OuronetDalos.IgnisCumulator}
-                                (ref-DALOS::UDC_Cumulator ignis-to-add trigger [])
-                            )
-                        )
-                        (if (= (length acc) 0)
-                            (ref-U|LST::UC_AppL acc new-ico)
-                            (ref-U|LST::UC_ReplaceAt acc 0 new-ico)
-                        )
-                    )
-                )
-                []
-                (enumerate 0 (- (length ats-ids) 1))
-            )
-        )
-    )
-    (defun C_ToggleFeeSettings:object{OuronetDalos.IgnisCumulator} (patron:string atspair:string toggle:bool fee-switch:integer)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_ToggleFeeSettings:object{OuronetDalos.IgnisCumulator}
+        (patron:string atspair:string toggle:bool fee-switch:integer)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
             )
             (with-capability (ATS|S>TG_FEE atspair toggle fee-switch)
                 (XI_ToggleFeeSettings atspair toggle fee-switch)
-                (ref-DALOS::UDC_Cumulator price trigger [])
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_TurnRecoveryOff:object{OuronetDalos.IgnisCumulator} (patron:string atspair:string cold-or-hot:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_TurnRecoveryOff:object{OuronetDalos.IgnisCumulator} 
+        (patron:string atspair:string cold-or-hot:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (price:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
             )
             (with-capability (ATS|S>RECOVERY-OFF atspair cold-or-hot)
                 (XI_TurnRecoveryOff atspair cold-or-hot)
-                (ref-DALOS::UDC_Cumulator price trigger [])
-                ;(ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto atspair) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun XB_EnsureActivationRoles:[object{OuronetDalos.IgnisCumulator}] (patron:string atspair:string cold-or-hot:bool)
-        @doc "Ensures all Activation Roles such that a given ATSPair can function properly"
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "ATSU|<"))
-            ]
+    ;;
+    (defun DPMF|C_MoveCreateRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string receiver:string)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPMF::XE_MoveCreateRole id receiver)
+                (ref-DPMF::XB_WriteRoles id (ref-DPMF::UR_CreateRoleAccount id) 2 false)
+                (ref-DPMF::XB_WriteRoles id receiver 2 true)
+                (+ 
+                    (if (!= (ref-DPMF::UR_CreateRoleAccount id) ATS|SC_NAME)
+                        (XI_RevokeCreateOrAddQ patron id)
+                        [EIC]
+                    ) 
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
         )
+    )
+    (defun DPMF|C_ToggleAddQuantityRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPMF::XE_ToggleAddQuantityRole id account toggle)
+                (ref-DPMF::XB_WriteRoles id account 3 toggle )
+                (+
+                    (if (and (= account ATS|SC_NAME) (= toggle false))
+                        (XI_RevokeCreateOrAddQ patron id)
+                        [EIC]
+                    )
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
+        )
+    )
+    (defun DPMF|C_ToggleBurnRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (price:decimal (* 2.0 small))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPMF::XE_ToggleBurnRole id account toggle)
+                (ref-DPMF::XB_WriteRoles id account 1 toggle)
+                (let
+                    (
+                        (ico1:[object{OuronetDalos.IgnisCumulator}]
+                            (if (and (= account ATS|SC_NAME) (= toggle false))
+                                (XI_RevokeBurn patron id false)
+                                [EIC]
+                            )
+                        )
+                        (ico2:object{OuronetDalos.IgnisCumulator}
+                            (ref-DALOS::UDC_Cumulator price trigger [])
+                        )
+                    )
+                    (+ ico1 [ico2])
+                )
+                (+
+                    (if (and (= account ATS|SC_NAME) (= toggle false))
+                        (XI_RevokeBurn patron id false)
+                        [EIC]
+                    )
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
+        )
+    )
+    (defun DPTF|C_ToggleBurnRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPTF::XE_ToggleBurnRole id account toggle)
+                (ref-DPTF::XB_WriteRoles id account 1 toggle)
+                (+
+                    (if (and (= account ATS|SC_NAME) (= toggle false))
+                        (XI_RevokeBurn patron id true)
+                        [EIC]
+                    )
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
+        )
+    )
+    (defun DPTF|C_ToggleFeeExemptionRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPTF::XE_ToggleFeeExemptionRole id account toggle)
+                (ref-DPTF::XB_WriteRoles id account 3 toggle)
+                (+
+                    (if (and (= account ATS|SC_NAME) (= toggle false))
+                        (XI_RevokeFeeExemption patron id)
+                        [EIC]
+                    )
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
+        )
+    )
+    (defun DPTF|C_ToggleMintRole:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (with-capability (P|SECURE-CALLER)
+                (ref-DPTF::XE_ToggleMintRole id account toggle)
+                (ref-DPTF::XB_WriteRoles id account 2 toggle)
+                (+
+                    (if (and (= account ATS|SC_NAME) (= toggle false))
+                        (XI_RevokeMint patron id)
+                        [EIC]
+                    )
+                    [(ref-DALOS::UDC_BigCumulator)]
+                )
+            )
+        )
+    )
+    ;;{F7}
+    (defun XB_EnsureActivationRoles:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string atspair:string cold-or-hot:bool)
+        @doc "Ensures all Activation Roles such that a given ATSPair can function properly"
+        (UEV_IMC)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
@@ -1603,406 +1668,9 @@
             (fold (+) [] [ico1 ico2 ico3])
         )
     )
-    (defun XI_MassTurnColdRecoveryOff:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string)
-        @doc "Turns Cold Recovery Off for all ATSPairs where id is Cold-RBT (DPTF)"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-lst:[string] (ref-DPTF::UR_RewardBearingToken id))
-            )
-            (with-capability (SECURE)
-                (fold
-                    (lambda
-                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                        (let
-                            (
-                                (ats:string (at idx ats-lst))
-                                (ats-toggle-cold-recovery:bool (UR_ToggleColdRecovery ats))
-                                (ico:object{OuronetDalos.IgnisCumulator}
-                                    (if ats-toggle-cold-recovery
-                                        (C_TurnRecoveryOff patron ats true)
-                                        EIC
-                                    )
-                                )
-                            )
-                            (ref-U|LST::UC_AppL acc ico)
-                        )
-                    )
-                    []
-                    (enumerate 0 (- (length ats-lst) 1))
-                )
-            )
-        )
-    )
-    (defun XI_RevokeBurn:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string cold-or-hot:bool)
-        @doc "When <burn-role> is toggled to off on the ATS|SC-NAME  \
-            \ for a given <id> [for a RT (DPTF), Cold-RBT (DPTF) or Hot-RBT (DPTF)] when it is part of an ATSPair \
-            \ certain actions must be executed to ensure the proper functioning of the ATSPair, which are done here"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (iz-rt:bool (ref-DPTF::URC_IzRT id))
-                (ats-lst:[string] (ref-DPTF::UR_RewardToken id))
-            )
-            (with-capability (SECURE)
-                (if iz-rt
-                    (fold
-                        (lambda
-                            (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                            (let
-                                (
-                                    (ats:string (at idx ats-lst))
-                                    (ats-cold-rdr:bool (UR_ColdRecoveryFeeRedirection ats))
-                                    (ats-hot-rdr:bool (UR_HotRecoveryFeeRedirection ats))
-                                    (ico1:object{OuronetDalos.IgnisCumulator}
-                                        (if (not ats-cold-rdr)
-                                            (C_ToggleFeeSettings patron ats true 1)
-                                            EIC
-                                        )
-                                    )
-                                    (ico2:object{OuronetDalos.IgnisCumulator}
-                                        (if (not ats-hot-rdr)
-                                            (C_ToggleFeeSettings patron ats true 2)
-                                            EIC
-                                        )
-                                    )
-                                )
-                                (ref-U|LST::UC_AppL acc ico1)
-                                (ref-U|LST::UC_AppL acc ico2)
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length ats-lst) 1))
-                    )
-                    (if (if cold-or-hot (ref-DPTF::URC_IzRBT id) (ref-DPMF::URC_IzRBT id))
-                        (if cold-or-hot
-                            (XI_MassTurnColdRecoveryOff patron id)
-                            (if (UR_ToggleHotRecovery (ref-DPMF::UR_RewardBearingToken id))
-                                [(C_TurnRecoveryOff patron (ref-DPMF::UR_RewardBearingToken id) false)]
-                                true
-                            )
-                        )
-                        true
-                    )
-                )
-            )
-        )
-    )
-    (defun XI_RevokeCreateOrAddQ:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string)
-        @doc "Same as <XI_RevokeBurn> but for the <role-nft-create> or the <role-nft-add-quantity> of Hot-RBT (DPMF)"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (iz-rbt:bool (ref-DPMF::URC_IzRBT id))
-            )
-            (with-capability (SECURE)
-                (if iz-rbt
-                    [(C_TurnRecoveryOff patron (ref-DPMF::UR_RewardBearingToken id) false)]
-                    [EIC]
-                )
-            )
-        )
-    )
-    (defun XI_RevokeFeeExemption:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string)
-        @doc "Same as <XI_RevokeBurn> but for the <fee-exemption-role> of a RT (DPTF) or Cold-RBT (DPTF)"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (iz-rt:bool (ref-DPTF::URC_IzRT id))
-            )
-            (if iz-rt
-                (XI_MassTurnColdRecoveryOff patron id)
-                [EIC]
-            )
-        )
-    )
-    (defun XI_RevokeMint:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string)
-        @doc "Same as <XI_RevokeBurn> but for the <burn-role> of a Cold-RBT (DPTF)"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (iz-rbt:bool (ref-DPTF::URC_IzRBT id))
-            )
-            (if iz-rbt
-                (XI_MassTurnColdRecoveryOff patron id)
-                [EIC]
-            )
-        )
-    )
-    (defun XI_SetMassRole:[object{OuronetDalos.IgnisCumulator}] (patron:string atspair:string burn-or-exemption:bool)
-        @doc "Sets either <burn-role> or <fee-exemption-role>  \
-            \ via the boolean <burn-or-exemption> for all RTs of an <ats-pair>"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-sc:string ATS|SC_NAME)
-                (rt-lst:[string] (UR_RewardTokenList atspair))
-            )
-            (with-capability (SECURE)
-                (fold
-                    (lambda
-                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                        (let
-                            (
-                                (rt:string (at idx rt-lst))
-                                (rt-br:bool (ref-DPTF::UR_AccountRoleBurn rt ats-sc))
-                                (rt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption rt ats-sc))
-                                (ico:object{OuronetDalos.IgnisCumulator}
-                                    (if (and (not rt-br) burn-or-exemption)
-                                        (ref-DALOS::UDC_CompressICO (DPTF|C_ToggleBurnRole patron rt ats-sc true) [])
-                                        (if (and (not rt-fer) (not burn-or-exemption))
-                                            (ref-DALOS::UDC_CompressICO (DPTF|C_ToggleFeeExemptionRole patron rt ats-sc true) [])
-                                            EIC
-                                        )
-                                    )
-                                )
-                            )
-                            (ref-U|LST::UC_AppL acc ico)
-                        )
-                    )
-                    []
-                    (enumerate 0 (- (length rt-lst) 1))
-                )
-            )
-        )
-    )
-    (defun DPMF|C_MoveCreateRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string receiver:string)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 3.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPMF::XE_MoveCreateRole id receiver)
-                (ref-DPMF::XB_WriteRoles id (ref-DPMF::UR_CreateRoleAccount id) 2 false)
-                (ref-DPMF::XB_WriteRoles id receiver 2 true)
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (!= (ref-DPMF::UR_CreateRoleAccount id) ATS|SC_NAME)
-                                (XI_RevokeCreateOrAddQ patron id)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    (defun DPMF|C_ToggleAddQuantityRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 2.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPMF::XE_ToggleAddQuantityRole id account toggle)
-                (ref-DPMF::XB_WriteRoles id account 3 toggle )
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (= account ATS|SC_NAME) (= toggle false))
-                                (XI_RevokeCreateOrAddQ patron id)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    (defun DPMF|C_ToggleBurnRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 2.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPMF::XE_ToggleBurnRole id account toggle)
-                (ref-DPMF::XB_WriteRoles id account 1 toggle)
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (= account ATS|SC_NAME) (= toggle false))
-                                (XI_RevokeBurn patron id false)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    (defun DPTF|C_ToggleBurnRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 2.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPTF::XE_ToggleBurnRole id account toggle)
-                (ref-DPTF::XB_WriteRoles id account 1 toggle)
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (= account ATS|SC_NAME) (= toggle false))
-                                (XI_RevokeBurn patron id true)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    (defun DPTF|C_ToggleFeeExemptionRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 2.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPTF::XE_ToggleFeeExemptionRole id account toggle)
-                (ref-DPTF::XB_WriteRoles id account 3 toggle)
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (= account ATS|SC_NAME) (= toggle false))
-                                (XI_RevokeFeeExemption patron id)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    (defun DPTF|C_ToggleMintRole:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string account:string toggle:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "SWP|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (price:decimal (* 2.0 small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-            )
-            (with-capability (P|SECURE-CALLER)
-                (ref-DPTF::XE_ToggleMintRole id account toggle)
-                (ref-DPTF::XB_WriteRoles id account 2 toggle)
-                (let
-                    (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (= account ATS|SC_NAME) (= toggle false))
-                                (XI_RevokeMint patron id)
-                                [EIC]
-                            )
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
-                        )
-                    )
-                    (+ ico1 [ico2])
-                )
-            )
-        )
-    )
-    ;;{F7}
+    ;;
     (defun XE_AddHotRBT (atspair:string hot-rbt:string)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|C>ADD_SECONDARY atspair hot-rbt false)
             (update ATS|Pairs atspair
                 {"h-rbt" : hot-rbt}
@@ -2010,7 +1678,7 @@
         )
     )
     (defun XE_AddSecondary (atspair:string reward-token:string rt-nfr:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -2026,7 +1694,7 @@
         )
     )
     (defun XE_ChangeOwnership (atspair:string new-owner:string)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>RT_OWN atspair new-owner)
             (update ATS|Pairs atspair
                 {"owner-konto"                      : new-owner}
@@ -2034,7 +1702,7 @@
         )
     )
     (defun XE_IncrementParameterUnlocks (atspair:string)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-read ATS|Pairs atspair
             { "unlocks" := u }
             (update ATS|Pairs atspair
@@ -2043,7 +1711,7 @@
         )
     )
     (defun XE_ModifyCanChangeOwner (atspair:string new-boolean:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>RT_CAN-CHANGE atspair new-boolean)
             (update ATS|Pairs atspair
                 {"can-change-owner"                 : new-boolean}
@@ -2051,7 +1719,7 @@
         )    
     )
     (defun XE_RemoveSecondary (atspair:string reward-token:string)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -2067,7 +1735,7 @@
         ) 
     )
     (defun XE_ReshapeUnstakeAccount (atspair:string account:string rp:integer)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -2095,7 +1763,7 @@
         )  
     )
     (defun XE_SetColdFee (atspair:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>SET_COLD_FEE atspair fee-positions fee-thresholds fee-array)
             (update ATS|Pairs atspair
                 {"c-positions"  : fee-positions
@@ -2105,7 +1773,7 @@
         )
     )
     (defun XE_SetCRD (atspair:string soft-or-hard:bool base:integer growth:integer)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -2123,7 +1791,7 @@
         )
     )
     (defun XE_SetHotFee (atspair:string promile:decimal decay:integer)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>SET_HOT_FEE atspair promile decay)
             (update ATS|Pairs atspair
                 {"h-promile"    : promile
@@ -2132,7 +1800,7 @@
         )
     )
     (defun XE_SpawnAutostakeAccount (atspair:string account:string)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (zero:object{UtilityAts.Awo} (UDC_MakeZeroUnstakeObject atspair))
@@ -2172,7 +1840,7 @@
         )
     )
     (defun XE_ToggleElite (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)        
         (with-capability (ATS|S>TOGGLE_ELITE atspair toggle)
             (update ATS|Pairs atspair
                 { "c-elite-mode" : toggle}
@@ -2180,7 +1848,7 @@
         )
     )
     (defun XE_ToggleParameterLock:[decimal] (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
@@ -2197,7 +1865,7 @@
         )
     )
     (defun XE_ToggleSyphoning (atspair:string toggle:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>SYPHONING atspair toggle)
             (update ATS|Pairs atspair
                 {"syphoning"                        : toggle}
@@ -2205,7 +1873,7 @@
         )
     )
     (defun XE_TurnRecoveryOn (atspair:string cold-or-hot:bool)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>RECOVERY-ON atspair cold-or-hot)
             (if (= cold-or-hot true)
                 (update ATS|Pairs atspair
@@ -2218,13 +1886,7 @@
         )
     )
     (defun XE_UpdateRoU (atspair:string reward-token:string rou:bool direction:bool amount:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "ATSU|<"))
-                (enforce-guard (P|UR "TFT|<"))
-            ]
-        )
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -2254,7 +1916,7 @@
         )
     )
     (defun XE_UpdateSyphon (atspair:string syphon:decimal)
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (with-capability (ATS|S>SYPHON atspair syphon)
             (update ATS|Pairs atspair
                 {"syphon"                           : syphon}
@@ -2262,54 +1924,136 @@
         )
     )
     (defun XE_UpP0 (atspair:string account:string obj:[object{UtilityAts.Awo}])
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P0" : obj}
         )
     )
     (defun XE_UpP1 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P1"  : obj}
         )
     )
     (defun XE_UpP2 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P2"  : obj}
         )
     )
     (defun XE_UpP3 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P3"  : obj}
         )
     )
     (defun XE_UpP4 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P4"  : obj}
         )
     )
     (defun XE_UpP5 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P5"  : obj}
         )
     )
     (defun XE_UpP6 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P6"  : obj}
         )
     )
     (defun XE_UpP7 (atspair:string account:string obj:object{UtilityAts.Awo})
-        (enforce-guard (P|UR "ATSU|<"))
+        (UEV_IMC)
         (update ATS|Ledger (concat [atspair BAR account])
             { "P7"  : obj}
         )
     )
     ;;
+    (defun XI_FoldedActivationRoles:[object{OuronetDalos.IgnisCumulator}] (patron:string ats-ids:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+            )
+            (fold
+                (lambda
+                    (acc:[object{OuronetDalos.IgnisCumulator}] index:integer)
+                    (let
+                        (
+                            (ats-id:string (at index ats-ids))
+                            (ico:[object{OuronetDalos.IgnisCumulator}] 
+                                (XB_EnsureActivationRoles patron ats-id true)
+                            )
+                            (ico-ignis:decimal (ref-DALOS::UDC_AddICO ico))
+                            (ignis-to-add:decimal
+                                (if (= index 0)
+                                    ico-ignis
+                                    (+ ico-ignis (at "price" (at 0 acc)))
+                                )
+                            )
+                            (new-ico:object{OuronetDalos.IgnisCumulator}
+                                (ref-DALOS::UDC_Cumulator ignis-to-add trigger [])
+                            )
+                        )
+                        (if (= (length acc) 0)
+                            (ref-U|LST::UC_AppL acc new-ico)
+                            (ref-U|LST::UC_ReplaceAt acc 0 new-ico)
+                        )
+                    )
+                )
+                []
+                (enumerate 0 (- (length ats-ids) 1))
+            )
+        )
+    )
+    (defun XI_FoldedIssue:[string] 
+        (
+            account:string
+            atspair:[string]
+            index-decimals:[integer]
+            reward-token:[string]
+            rt-nfr:[bool]
+            reward-bearing-token:[string]
+            rbt-nfr:[bool]
+        )
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-BRD:module{Branding} BRD)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+            )
+            (fold
+                (lambda
+                    (acc:[string] index:integer)
+                    (let
+                        (
+                            (ats-id:string
+                                (XI_Issue
+                                    account 
+                                    (at index atspair)
+                                    (at index index-decimals)
+                                    (at index reward-token)
+                                    (at index rt-nfr)
+                                    (at index reward-bearing-token)
+                                    (at index rbt-nfr)
+                                )
+                            )
+                        )
+                        (ref-BRD::XE_Issue ats-id)
+                        (ref-DPTF::XE_UpdateRewardToken ats-id (at index reward-token) true)
+                        (ref-DPTF::XE_UpdateRewardBearingToken ats-id (at index reward-bearing-token))
+                        (ref-U|LST::UC_AppL acc ats-id)
+                    )
+                )
+                []
+                (enumerate 0 (- (length atspair) 1))
+            )
+        )
+    )
     (defun XI_Issue:string
         (
             account:string 
@@ -2369,6 +2113,186 @@
             id
         )
     )
+    (defun XI_MassTurnColdRecoveryOff:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string)
+        @doc "Turns Cold Recovery Off for all ATSPairs where id is Cold-RBT (DPTF)"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-lst:[string] (ref-DPTF::UR_RewardBearingToken id))
+            )
+            (with-capability (SECURE)
+                (fold
+                    (lambda
+                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                        (let
+                            (
+                                (ats:string (at idx ats-lst))
+                                (ats-toggle-cold-recovery:bool (UR_ToggleColdRecovery ats))
+                                (ico:object{OuronetDalos.IgnisCumulator}
+                                    (if ats-toggle-cold-recovery
+                                        (C_TurnRecoveryOff patron ats true)
+                                        EIC
+                                    )
+                                )
+                            )
+                            (ref-U|LST::UC_AppL acc ico)
+                        )
+                    )
+                    []
+                    (enumerate 0 (- (length ats-lst) 1))
+                )
+            )
+        )
+    )
+    (defun XI_RevokeBurn:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string cold-or-hot:bool)
+        @doc "When <burn-role> is toggled to off on the ATS|SC-NAME  \
+            \ for a given <id> [for a RT (DPTF), Cold-RBT (DPTF) or Hot-RBT (DPTF)] when it is part of an ATSPair \
+            \ certain actions must be executed to ensure the proper functioning of the ATSPair, which are done here"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (iz-rt:bool (ref-DPTF::URC_IzRT id))
+                (ats-lst:[string] (ref-DPTF::UR_RewardToken id))
+            )
+            (with-capability (SECURE)
+                (if iz-rt
+                    (fold
+                        (lambda
+                            (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                            (let
+                                (
+                                    (ats:string (at idx ats-lst))
+                                    (ats-cold-rdr:bool (UR_ColdRecoveryFeeRedirection ats))
+                                    (ats-hot-rdr:bool (UR_HotRecoveryFeeRedirection ats))
+                                    (ico1:object{OuronetDalos.IgnisCumulator}
+                                        (if (not ats-cold-rdr)
+                                            (C_ToggleFeeSettings patron ats true 1)
+                                            EIC
+                                        )
+                                    )
+                                    (ico2:object{OuronetDalos.IgnisCumulator}
+                                        (if (not ats-hot-rdr)
+                                            (C_ToggleFeeSettings patron ats true 2)
+                                            EIC
+                                        )
+                                    )
+                                )
+                                (ref-U|LST::UC_AppL acc ico1)
+                                (ref-U|LST::UC_AppL acc ico2)
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length ats-lst) 1))
+                    )
+                    (if (if cold-or-hot (ref-DPTF::URC_IzRBT id) (ref-DPMF::URC_IzRBT id))
+                        (if cold-or-hot
+                            (XI_MassTurnColdRecoveryOff patron id)
+                            (if (UR_ToggleHotRecovery (ref-DPMF::UR_RewardBearingToken id))
+                                [(C_TurnRecoveryOff patron (ref-DPMF::UR_RewardBearingToken id) false)]
+                                true
+                            )
+                        )
+                        true
+                    )
+                )
+            )
+        )
+    )
+    (defun XI_RevokeCreateOrAddQ:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string)
+        @doc "Same as <XI_RevokeBurn> but for the <role-nft-create> or the <role-nft-add-quantity> of Hot-RBT (DPMF)"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (iz-rbt:bool (ref-DPMF::URC_IzRBT id))
+            )
+            (with-capability (SECURE)
+                (if iz-rbt
+                    [(C_TurnRecoveryOff patron (ref-DPMF::UR_RewardBearingToken id) false)]
+                    [EIC]
+                )
+            )
+        )
+    )
+    (defun XI_RevokeFeeExemption:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string)
+        @doc "Same as <XI_RevokeBurn> but for the <fee-exemption-role> of a RT (DPTF) or Cold-RBT (DPTF)"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (iz-rt:bool (ref-DPTF::URC_IzRT id))
+            )
+            (if iz-rt
+                (XI_MassTurnColdRecoveryOff patron id)
+                [EIC]
+            )
+        )
+    )
+    (defun XI_RevokeMint:[object{OuronetDalos.IgnisCumulator}] 
+        (patron:string id:string)
+        @doc "Same as <XI_RevokeBurn> but for the <burn-role> of a Cold-RBT (DPTF)"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (iz-rbt:bool (ref-DPTF::URC_IzRBT id))
+            )
+            (if iz-rbt
+                (XI_MassTurnColdRecoveryOff patron id)
+                [EIC]
+            )
+        )
+    )
+    (defun XI_SetMassRole:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string atspair:string burn-or-exemption:bool)
+        @doc "Sets either <burn-role> or <fee-exemption-role>  \
+            \ via the boolean <burn-or-exemption> for all RTs of an <ats-pair>"
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ats-sc:string ATS|SC_NAME)
+                (rt-lst:[string] (UR_RewardTokenList atspair))
+            )
+            (with-capability (SECURE)
+                (fold
+                    (lambda
+                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                        (let
+                            (
+                                (rt:string (at idx rt-lst))
+                                (rt-br:bool (ref-DPTF::UR_AccountRoleBurn rt ats-sc))
+                                (rt-fer:bool (ref-DPTF::UR_AccountRoleFeeExemption rt ats-sc))
+                                (ico:object{OuronetDalos.IgnisCumulator}
+                                    (if (and (not rt-br) burn-or-exemption)
+                                        (ref-DALOS::UDC_CompressICO (DPTF|C_ToggleBurnRole patron rt ats-sc true) [])
+                                        (if (and (not rt-fer) (not burn-or-exemption))
+                                            (ref-DALOS::UDC_CompressICO (DPTF|C_ToggleFeeExemptionRole patron rt ats-sc true) [])
+                                            EIC
+                                        )
+                                    )
+                                )
+                            )
+                            (ref-U|LST::UC_AppL acc ico)
+                        )
+                    )
+                    []
+                    (enumerate 0 (- (length rt-lst) 1))
+                )
+            )
+        )
+    )
     (defun XI_ToggleFeeSettings (atspair:string toggle:bool fee-switch:integer)
         (require-capability (ATS|S>TG_FEE atspair toggle fee-switch))
         (if (= fee-switch 0)
@@ -2399,5 +2323,6 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table ATS|Pairs)
 (create-table ATS|Ledger)

@@ -1340,3 +1340,166 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 18 - Frozen Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+        (vst:string "VST-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (f-vst:string (ref-DPTF::UR_Frozen vst))
+        
+    )
+    ;;Mint 1000 VST
+    (ref-T01::DPTF|C_Mint patron vst patron 100000000.0 true)
+    ;;Freeze 600 VST to Emma
+    (ref-T01::VST|C_Freeze patron patron emma vst 5000.0)
+    ;;Show Emmas Balance
+    (format "Emma has {} {}"[(ref-DPTF::UR_AccountSupply f-vst emma) f-vst])
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 018 Reservation Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 19 - Sleeping Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-VST:module{Vesting} VST)
+        (ref-T01:module{TalosStageOne} TS01)
+        (vst:string "VST-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (s-vst:string (ref-DPTF::UR_Sleeping vst))
+        (p:string ".")
+        
+    )
+    ;;Sleept 6500 VST to Emma
+    (ref-T01::VST|C_Sleep patron patron emma vst 5000.0 432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 777600)
+
+    (ref-T01::VST|C_Sleep patron patron emma vst 5000.0 5432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 4518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 3604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 2691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 1777600)
+
+    (ref-T01::VST|C_Sleep patron patron emma vst 5000.0 5432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 4518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 3604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 2691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 2777600)
+
+    (ref-T01::VST|C_Sleep patron patron emma vst 51000.0 432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 1518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 1604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 2691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 1777600)
+
+    (ref-T01::VST|C_Sleep patron patron emma vst 57000.0 432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 1518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 1604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 2691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 1777600)
+
+    (ref-T01::VST|C_Sleep patron patron emma vst 13000.0 432000)
+    (ref-T01::VST|C_Sleep patron patron emma vst 6000.0 1518400)
+    (ref-T01::VST|C_Sleep patron patron emma vst 7000.0 1604800)
+    (ref-T01::VST|C_Sleep patron patron emma vst 8000.0 2691200)
+    (ref-T01::VST|C_Sleep patron patron emma vst 9000.0 1777600)
+
+    ;;Show Emmas Balance
+    
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+         "block-time": (time "2024-10-16T00:00:00Z")}
+    )
+    [
+        (format "<<<<<>>>>>{}" [p])
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst emma) s-vst (ref-DPMF::UR_AccountNonces s-vst emma)])
+        (format "<<<<<>>>>>{}" [p])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
+        (format "<<<<<>>>>>{}" [p])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 019 Sleeping Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 19 - Sleeping Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    ;(ref-T01::VST|C_Merge KST.EMMA KST.EMMA "Z|VST-98c486052a51" (enumerate 1 30))
+    (ref-T01::VST|C_MergeAll KST.EMMA KST.EMMA "Z|VST-98c486052a51")
+    [
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply "Z|VST-98c486052a51" KST.EMMA) "Z|VST-98c486052a51" (ref-DPMF::UR_AccountNonces "Z|VST-98c486052a51" KST.EMMA)])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply "VST-98c486052a51" KST.EMMA)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 020 Sleeping Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+

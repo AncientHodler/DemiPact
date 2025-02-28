@@ -32,14 +32,11 @@
     (defun UR_GenesisRatio:[object{PoolTokens}] (swpair:string))
     (defun UR_PoolTokenObject:[object{PoolTokens}] (swpair:string))
     (defun UR_TokenLP:string (swpair:string)) ;;3
-    (defun UR_TokenLPS:[string] (swpair:string)) ;;1
     (defun UR_FeeLP:decimal (swpair:string))
     (defun UR_FeeSP:decimal (swpair:string)) ;;1
     (defun UR_FeeSPT:[object{FeeSplit}] (swpair:string))
     (defun UR_FeeLock:bool (swpair:string))
     (defun UR_FeeUnlocks:integer (swpair:string))
-    (defun UR_Special:bool (swpair:string))
-    (defun UR_Governor:guard (swpair:string))
     (defun UR_Amplifier:decimal (swpair:string)) ;;3
     (defun UR_Primality:bool (swpair:string))
     (defun UR_Pools:[string] (pool-category:string))
@@ -58,6 +55,7 @@
     (defun URC_Swpairs:[string] ())
     (defun URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
     ;;
+    (defun UEV_IMC ())
     (defun UEV_FeeSplit (input:object{FeeSplit}))
     (defun UEV_id (swpair:string)) ;;4
     (defun UEV_CanChangeOwnerON (swpair:string))
@@ -72,20 +70,17 @@
     (defun A_UpdateLimit (limit:decimal spawn:bool))
     (defun A_UpdateLiquidBoost (new-boost-variable:bool))
     ;;
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
-    (defun C_ChangeOwnership (patron:string swpair:string new-owner:string))
-    (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
-    (defun C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
-    (defun C_RotateGovernor (patron:string swpair:string new-gov:guard))
+    (defun C_ChangeOwnership:object{OuronetDalos.IgnisCumulator}  (patron:string swpair:string new-owner:string))
+    (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-boolean:bool))
+    (defun C_ModifyWeights:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-weights:[decimal]))
     (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool))
-    (defun C_ToggleFeeLock:bool (patron:string swpair:string toggle:bool))
-    (defun C_ToggleSpecialMode (patron:string swpair:string))
-    (defun C_UpdateAmplifier (patron:string swpair:string amp:decimal))
-    (defun C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool))
-    (defun C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{FeeSplit}]))
+    (defun C_ToggleFeeLock:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool))
+    (defun C_UpdateAmplifier:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string amp:decimal))
+    (defun C_UpdateFee:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-fee:decimal lp-or-special:bool))
+    (defun C_UpdateSpecialFeeTargets:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string targets:[object{FeeSplit}]))
     ;;
     (defun XB_ModifyWeights (swpair:string new-weights:[decimal]))
     ;;
@@ -131,22 +126,25 @@
     (defun GOV|SWP|SC_KDA-NAME ()   (create-principal (GOV|SWP|GUARD)))
     (defun GOV|SWP|GUARD ()         (create-capability-guard (SWP|NATIVE-AUTOMATIC)))
     (defun SWP|SetGovernor (patron:string)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (with-capability (P|SWP|CALLER)
-                (ref-DALOS::C_RotateGovernor
-                    patron
-                    SWP|SC_NAME
-                    (ref-U|G::UEV_GuardOfAny
-                        [
-                            (create-capability-guard (SWP|GOV))
-                            (P|UR "SWPU|RemoteSwpGov")
-                        ]
+        (with-capability (P|SWP|CALLER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-U|G:module{OuronetGuards} U|G)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::C_RotateGovernor
+                            patron
+                            SWP|SC_NAME
+                            (ref-U|G::UEV_GuardOfAny
+                                [
+                                    (create-capability-guard (SWP|GOV))
+                                    (P|UR "SWPU|RemoteSwpGov")
+                                ]
+                            )
+                        )
                     )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron patron (at "price" ico))
             )
         )
     )
@@ -154,6 +152,7 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|SWP|CALLER ()
         true
@@ -163,13 +162,35 @@
         (compose-capability (SECURE))
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|SWP_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|SWP_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -187,51 +208,31 @@
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
+                (mg:guard (create-capability-guard (P|SWP|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|ATSU::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|VST::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|LIQUID::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|ORBR::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
-            (ref-P|SWPT::P|A_Add 
-                "SWP|<"
-                (create-capability-guard (P|SWP|CALLER))
-            )
+            (ref-P|DALOS::P|A_Add "SWP|<" mg)
+            (ref-P|BRD::P|A_Add "SWP|<" mg)
+            (ref-P|DPTF::P|A_Add "SWP|<" mg)
+            (ref-P|DPMF::P|A_Add "SWP|<" mg)
+            (ref-P|ATS::P|A_Add "SWP|<" mg)
+            (ref-P|TFT::P|A_Add "SWP|<" mg)
+            (ref-P|ATSU::P|A_Add "SWP|<" mg)
+            (ref-P|VST::P|A_Add "SWP|<" mg)
+            (ref-P|LIQUID::P|A_Add "SWP|<" mg)
+            (ref-P|ORBR::P|A_Add "SWP|<" mg)
+            (ref-P|SWPT::P|A_Add "SWP|<" mg)
+
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
+            (ref-P|ORBR::P|A_AddIMP mg)
+            (ref-P|SWPT::P|A_AddIMP mg)
         )
     )
     ;;
@@ -253,14 +254,11 @@
         genesis-ratio:[object{Swapper.PoolTokens}]
         pool-tokens:[object{Swapper.PoolTokens}]
         token-lp:string
-        token-lps:[string]
         fee-lp:decimal
         fee-special:decimal
         fee-special-targets:[object{Swapper.FeeSplit}]
         fee-lock:bool
         unlocks:integer
-        special:bool
-        governor:guard
         amplifier:decimal
         primality:bool
     )
@@ -341,21 +339,6 @@
             (CAP_Owner swpair)
         )
     )
-    (defcap SWP|S>UPDATE-LP (swpair:string lp-token:string add-or-remove:bool)
-        @event
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (ref-DPTF::UEV_id lp-token)
-            (CAP_Owner swpair)
-            (if (not add-or-remove)
-                (ref-U|LST::UEV_StringPresence lp-token (UR_TokenLPS swpair))
-                true
-            )
-        )
-    )
     (defcap SWP|S>UPDATE-SUPPLIES (swpair:string new-supplies:[decimal])
         (let
             (
@@ -432,14 +415,6 @@
                 targets
             )
         )
-    )
-    (defcap SWP|S>TG_SPECIAL-MODE (swpair:string)
-        @event
-        (CAP_Owner swpair)
-    )
-    (defcap SPW|S>RT_GOV (swpair:string)
-        @event
-        (CAP_Owner swpair)
     )
     ;{C3}
     ;{C4}
@@ -609,9 +584,7 @@
     (defun UR_TokenLP:string (swpair:string)
         (at "token-lp" (read SWP|Pairs swpair ["token-lp"]))
     )
-    (defun UR_TokenLPS:[string] (swpair:string)
-        (at "token-lps" (read SWP|Pairs swpair ["token-lps"]))
-    )
+    
     (defun UR_FeeLP:decimal (swpair:string)
         (at "fee-lp" (read SWP|Pairs swpair ["fee-lp"]))
     )
@@ -626,12 +599,6 @@
     )
     (defun UR_FeeUnlocks:integer (swpair:string)
         (at "fee-unlocks" (read SWP|Pairs swpair ["fee-unlocks"]))
-    )
-    (defun UR_Special:bool (swpair:string)
-        (at "special" (read SWP|Pairs swpair ["special"]))
-    )
-    (defun UR_Governor:guard (swpair:string)
-        (at "governor" (read SWP|Pairs swpair ["governor"]))
     )
     (defun UR_Amplifier:decimal (swpair:string)
         (at "amplifier" (read SWP|Pairs swpair ["amplifier"]))
@@ -802,6 +769,16 @@
         )
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (mp:[guard] (P|UR_IMP))
+                (g:guard (ref-U|G::UEV_GuardOfAny mp))
+            )
+            (enforce-guard g)
+        )
+    )
     (defun UEV_FeeSplit (input:object{Swapper.FeeSplit})
         (let
             (
@@ -989,27 +966,24 @@
         )
     )
     ;;{F6}
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
-        @doc "Updates <pending-branding> for SWPair <entity-id> costing 400 IGNIS"
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator}
+        (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_OwnerKonto entity-id))
-                (branding-cost:decimal (ref-DALOS::UR_UsagePrice "ignis|branding"))
-                (final-cost:decimal (* 4.0 branding-cost))
             )
             (with-capability (SWP|C>UPDATE-BRD)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
-                (ref-DALOS::IGNIS|C_Collect patron owner final-cost)
+                (ref-DALOS::UDC_BrandingCumulator 4.0)
             )
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
         @doc "Upgrades Branding for an SWPair, making it a premium Branding. \
         \ Also sets pending-branding to live branding if its branding is not live yet"
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -1025,56 +999,48 @@
         )
     )
     ;;
-    (defun C_ChangeOwnership (patron:string swpair:string new-owner:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ChangeOwnership:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string new-owner:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SWP|S>RT_OWN swpair new-owner)
                 (XI_ChangeOwnership swpair new-owner)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string new-boolean:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SWP|S>RT_CAN-CHANGE swpair new-boolean)
                 (XI_ModifyCanChangeOwner swpair new-boolean)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_ModifyWeights (patron:string swpair:string new-weights:[decimal])
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ModifyWeights:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string new-weights:[decimal])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SECURE)
                 (XB_ModifyWeights swpair new-weights)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (ref-DALOS::UDC_BiggestCumulator)
             )
         )
     )
-    (defun C_RotateGovernor (patron:string swpair:string new-gov:guard)
-        (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (SPW|S>RT_GOV swpair)
-                (XI_UpdateGovernor swpair new-gov)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
-            )
-        )
-    )
-    (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool)
-        (enforce-guard (P|UR "SWPU|<"))
+    (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string toggle:bool add-or-swap:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1148,22 +1114,20 @@
             (ref-DALOS::UDC_CompressICO [ico0 ico1] [])
         )
     )
-    (defun C_ToggleFeeLock:bool (patron:string swpair:string toggle:bool)
-        @doc "If KDA was collected, outputs a <true> boolean"
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_ToggleFeeLock:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string toggle:bool)
+        (UEV_IMC)
         (with-capability (SWP|C>TG_FEE-LOCK swpair toggle)
             (let
                 (
                     (ref-DALOS:module{OuronetDalos} DALOS)
-                    (swpair-owner:string (UR_OwnerKonto swpair))
-                    (g1:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
                     (toggle-costs:[decimal] (XI_ToggleFeeLock swpair toggle))
-                    (g2:decimal (at 0 toggle-costs))
-                    (gas-costs:decimal (+ g1 g2))
+                    (g:decimal (at 0 toggle-costs))
+                    (gas-costs:decimal (+ (ref-DALOS::UR_UsagePrice "ignis|small") g))
                     (kda-costs:decimal (at 1 toggle-costs))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (output:bool (if (> kda-costs 0.0) true false))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron swpair-owner gas-costs)
                 (if (> kda-costs 0.0)
                     (do
                         (XI_IncrementFeeUnlocks swpair)
@@ -1171,81 +1135,52 @@
                     )
                     true
                 )
-                output
+                (ref-DALOS::UDC_Cumulator gas-costs trigger [output])
             )
         )
     )
-    (defun C_ToggleSpecialMode (patron:string swpair:string)
-        (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (SWP|S>TG_SPECIAL-MODE swpair)
-                (XI_ToggleSpecialMode swpair)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
-            )
-        )
-    )
-    (defun C_UpdateAmplifier (patron:string swpair:string amp:decimal)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdateAmplifier:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string amp:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SWP|S>UPDATE-AMPLIFIER swpair amp)
                 (XI_UpdateAmplifier swpair amp)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (ref-DALOS::UDC_MediumCumulator)
             )
         )
     )
-    (defun C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdateFee:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string new-fee:decimal lp-or-special:bool)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SWP|S>UPDATE-FEE swpair new-fee)
                 (XI_UpdateFee swpair new-fee lp-or-special)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (ref-DALOS::UDC_SmallCumulator)
             )
         )
     )
-    (defun C_UpdateLP (patron:string swpair:string lp-token:string add-or-remove:bool)
-        @doc "Updates LP Tokens for an SWPair"
-        (enforce-guard (P|UR "TALOS-01"))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (SWP|S>UPDATE-LP swpair lp-token add-or-remove)
-                (XI_UpdateLP swpair lp-token add-or-remove)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-            )
-        )
-    )
-    (defun C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}])
-        @doc "Updates the Fee Targets for an SWPair"
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UpdateSpecialFeeTargets:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string targets:[object{Swapper.FeeSplit}])
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (SPW|S>UPDATE_SPECIAL-FEE-TARGETS swpair targets)
                 (XI_UpdateSpecialFeeTargets swpair targets)
-                (ref-DALOS::IGNIS|C_Collect patron (UR_OwnerKonto swpair) (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (ref-DALOS::UDC_MediumCumulator)
             )
         )
     )
     ;;{F7}
     (defun XB_ModifyWeights (swpair:string new-weights:[decimal])
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SECURE)))
-                (enforce-guard (P|UR "SWPU|<"))
-            ]
-        )
+        (UEV_IMC)
         (with-capability (SWP|S>WEIGHTS swpair new-weights)
             (update SWP|Pairs swpair
                 {"weights"                          : new-weights}
@@ -1254,7 +1189,7 @@
     )
     ;;
     (defun XE_UpdateSupplies (swpair:string new-supplies:[decimal])
-        (enforce-guard (P|UR "SWPU|<"))
+        (UEV_IMC)
         (with-capability (SWP|S>UPDATE-SUPPLIES swpair new-supplies)
             (let
                 (
@@ -1270,7 +1205,7 @@
         )
     )
     (defun XE_UpdateSupply (swpair:string id:string new-supply:decimal)
-        (enforce-guard (P|UR "SWPU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -1287,7 +1222,7 @@
         )
     )
     (defun XE_Issue:string (account:string pool-tokens:[object{Swapper.PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool)
-        (enforce-guard (P|UR "SWPU|<"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|SWP:module{UtilitySwp} U|SWP)
@@ -1315,7 +1250,6 @@
                 ,"genesis-ratio"                        : pool-tokens
                 ,"pool-tokens"                          : pool-tokens
                 ,"token-lp"                             : token-lp
-                ,"token-lps"                            : [BAR]
 
                 ,"fee-lp"                               : fee-lp
                 ,"fee-special"                          : 0.0
@@ -1323,8 +1257,6 @@
                 ,"fee-lock"                             : false
                 ,"unlocks"                              : 0
 
-                ,"special"                              : false
-                ,"governor"                             : (ref-DALOS::UR_AccountGuard account)
                 ,"amplifier"                            : amp
                 ,"primality"                            : p
                 }
@@ -1346,12 +1278,14 @@
     )
     ;;
     (defun XE_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (create-capability-guard (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)))
-                (enforce-guard (P|UR "SWPU|<"))
-            ]
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (local-guard:guard (create-capability-guard (SWP|C>ADD-OR-SWAP swpair toggle add-or-swap)))
+                (mg:[guard] (P|UR_IMP))
+                (ag:[guard] (+ [local-guard] mg))
+            )
+            (ref-U|G::UEV_Any ag)
         )
         (if add-or-swap
             (update SWP|Pairs swpair
@@ -1428,15 +1362,6 @@
             )
         )
     )
-    (defun XI_ToggleSpecialMode (swpair:string)
-        (require-capability (SWP|S>TG_SPECIAL-MODE swpair))
-        (with-read SWP|Pairs swpair
-            { "special" := s}
-            (update SWP|Pairs swpair
-                {"special" : (not s)}
-            )
-        )
-    )
     (defun XI_UpdateAmplifier (swpair:string new-amplifier:decimal)
         (with-capability (SWP|S>UPDATE-AMPLIFIER swpair new-amplifier)
             (update SWP|Pairs swpair
@@ -1455,46 +1380,6 @@
             )
         )
     )
-    (defun XI_UpdateGovernor (swpair:string new-governor:guard)
-        (require-capability (SPW|S>RT_GOV swpair))
-        (update SWP|Pairs swpair
-            {"governor" : new-governor}
-        )
-    )
-    (defun XI_UpdateLP (swpair:string lp-token:string add-or-remove:bool)
-        (require-capability (SWP|S>UPDATE-LP swpair lp-token add-or-remove))
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (with-read SWP|Pairs swpair
-                { "token-lps" := tlps}
-                (if add-or-remove
-                    (if (= tlps [BAR])
-                        (update SWP|Pairs swpair
-                            {"token-lps" : [lp-token]}
-                        )
-                        (update SWP|Pairs swpair
-                            {"token-lps" : (ref-U|LST::UC_AppL tlps lp-token)}
-                        )
-                    )
-                    (if (= 1 (length tlps))
-                        (update SWP|Pairs swpair
-                            {"token-lps" : [BAR]}
-                        )
-                        (let
-                            (
-                                (lp-token-position:integer (at 0 (ref-U|LST::UC_Search (UR_TokenLPS swpair) lp-token)))
-                            )
-                            (update SWP|Pairs swpair
-                                {"token-lps" : (ref-U|LST::UC_RemoveItem tlps (at lp-token-position tlps))}
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    )
     (defun XI_UpdateSpecialFeeTargets (swpair:string targets:[object{Swapper.FeeSplit}])
         (require-capability (SPW|S>UPDATE_SPECIAL-FEE-TARGETS swpair targets))
         (update SWP|Pairs swpair
@@ -1504,6 +1389,7 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table SWP|Properties)
 (create-table SWP|Pairs)
 (create-table SWP|Pools)

@@ -22,6 +22,7 @@
     (defun URC_PrincipalSwpairs:[string] (id:string principal:string principal-lst:[string]))
     (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])) ;;1
     ;;
+    (defun UEV_IMC ())
     (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string]))
     ;;
     (defun X_MultiPathTracer (swpair:string principals-lst:[string]))
@@ -42,18 +43,41 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|SWPT|CALLER ()
         true
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|SWPT_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|SWPT_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -70,47 +94,29 @@
                 (ref-P|VST:module{OuronetPolicy} VST)
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+                (mg:guard (create-capability-guard (P|SWPT|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|ATSU::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|VST::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|LIQUID::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
-            (ref-P|ORBR::P|A_Add 
-                "SWPT|<"
-                (create-capability-guard (P|SWPT|CALLER))
-            )
+            (ref-P|DALOS::P|A_Add "SWPT|<" mg)
+            (ref-P|BRD::P|A_Add "SWPT|<" mg)
+            (ref-P|DPTF::P|A_Add "SWPT|<" mg)
+            (ref-P|DPMF::P|A_Add "SWPT|<" mg)
+            (ref-P|ATS::P|A_Add "SWPT|<" mg)
+            (ref-P|TFT::P|A_Add "SWPT|<" mg)
+            (ref-P|ATSU::P|A_Add "SWPT|<" mg)
+            (ref-P|VST::P|A_Add "SWPT|<" mg)
+            (ref-P|LIQUID::P|A_Add "SWPT|<" mg)
+            (ref-P|ORBR::P|A_Add "SWPT|<" mg)
+
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
+            (ref-P|ORBR::P|A_AddIMP mg)
         )
     )
     ;;
@@ -400,6 +406,14 @@
         )
     )
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string])
         (let
             (
@@ -418,7 +432,7 @@
     ;;{F6}
     ;;{F7}
     (defun X_MultiPathTracer (swpair:string principals-lst:[string])
-        (enforce-guard (P|UR "SWPU|<"))
+        (UEV_IMC)
         (with-capability (SECURE)
             (let
                 (
@@ -447,4 +461,5 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table SWPT|Tracer)

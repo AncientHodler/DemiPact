@@ -36,20 +36,24 @@
                 (first-time:time (add-time present-time offset))
                 (times:[time] [first-time])
             )
-            (fold
-                (lambda
-                    (acc:[time] idx:integer)
-                    (let*
-                        (
-                            (to-add:integer (* idx duration))
-                            (new-time:time (add-time first-time to-add))
+            (if (= milestones 1)
+                [(add-time present-time duration)]
+                (fold
+                    (lambda
+                        (acc:[time] idx:integer)
+                        (let*
+                            (
+                                (to-add:integer (* idx duration))
+                                (new-time:time (add-time first-time to-add))
+                            )
+                            (+ acc [new-time])
                         )
-                        (+ acc [new-time])
                     )
+                    times
+                    (enumerate 1 (- milestones 1))
                 )
-                times
-                (enumerate 1 (- milestones 1))
             )
+            
         )
     )
     (defun UC_SplitBalanceForVesting:[decimal] (precision:integer amount:decimal milestones:integer)

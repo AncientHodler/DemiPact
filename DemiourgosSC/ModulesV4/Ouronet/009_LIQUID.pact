@@ -4,9 +4,10 @@
     ;;
     (defun GOV|LIQUID|SC_KDA-NAME ())
     (defun GOV|LIQUID|GUARD ())
-
+    ;;
+    (defun UEV_IMC ())
     (defun UEV_IzLiquidStakingLive ())
-
+    ;;
     (defun C_UnwrapKadena:object{OuronetDalos.IgnisCumulator} (patron:string unwrapper:string amount:string))
     (defun C_WrapKadena:object{OuronetDalos.IgnisCumulator} (patron:string wrapper:string amount:decimal))
 )
@@ -47,16 +48,19 @@
     (defun GOV|LIQUID|SC_KDA-NAME () (create-principal (GOV|LIQUID|GUARD)))
     (defun GOV|LIQUID|GUARD ()      (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
     (defun LIQUID|SetGovernor (patron:string)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-            )
-            (with-capability (P|LQD|CALLER)
-                (ref-DALOS::C_RotateGovernor
-                    patron
-                    LIQUID|SC_NAME
-                    (create-capability-guard (LIQUID|GOV))
+        (with-capability (P|LQD|CALLER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::C_RotateGovernor
+                            patron
+                            LIQUID|SC_NAME
+                            (create-capability-guard (LIQUID|GOV))
+                        )
+                    )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron patron (at "price" ico))
             )
         )
     )
@@ -64,18 +68,41 @@
     ;;{P1}
     ;;{P2}
     (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|LQD|CALLER ()
         true
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|LIQUID_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|LIQUID_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
             )
         )
     )
@@ -90,39 +117,16 @@
                 (ref-P|TFT:module{OuronetPolicy} TFT)
                 (ref-P|ATSU:module{OuronetPolicy} ATSU)
                 (ref-P|VST:module{OuronetPolicy} VST)
+                (mg:guard (create-capability-guard (P|LQD|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|BRD::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|DPTF::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|DPMF::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|ATS::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|TFT::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|ATSU::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
-            (ref-P|VST::P|A_Add 
-                "LIQUID|<"
-                (create-capability-guard (P|LQD|CALLER))
-            )
+            (ref-P|DALOS::P|A_AddIMP mg)
+            (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
+            (ref-P|DPMF::P|A_AddIMP mg)
+            (ref-P|ATS::P|A_AddIMP mg)
+            (ref-P|TFT::P|A_AddIMP mg)
+            (ref-P|ATSU::P|A_AddIMP mg)
+            (ref-P|VST::P|A_AddIMP mg)
         )
     )
     ;;
@@ -158,6 +162,14 @@
     ;;{F0}
     ;;{F1}
     ;;{F2}
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     (defun UEV_IzLiquidStakingLive ()
         @doc "Enforces Liquid Staking is live with an existing Autostake Pair"
         (let
@@ -185,8 +197,9 @@
     ;;
     ;;{F5}
     ;;{F6}
-    (defun C_UnwrapKadena:object{OuronetDalos.IgnisCumulator} (patron:string unwrapper:string amount:string)
-        (enforce-guard (P|UR "TALOS-01"))
+    (defun C_UnwrapKadena:object{OuronetDalos.IgnisCumulator}
+        (patron:string unwrapper:string amount:string)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -213,14 +226,9 @@
             )
         )
     )
-    (defun C_WrapKadena:object{OuronetDalos.IgnisCumulator} (patron:string wrapper:string amount:decimal)
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "OUROBOROS|<"))
-                (enforce-guard (P|UR "TALOS-01"))
-            ]
-        )
+    (defun C_WrapKadena:object{OuronetDalos.IgnisCumulator}
+        (patron:string wrapper:string amount:decimal)
+        (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -251,3 +259,4 @@
 )
 
 (create-table P|T)
+(create-table P|MT)

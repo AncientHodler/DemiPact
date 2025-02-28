@@ -30,6 +30,8 @@
     ;;
     (defun URC_MaxBluePayment (account:string))
     ;;
+    (defun UEV_IMC ())
+    ;;
     (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
     (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
     (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
@@ -49,7 +51,7 @@
     \ such that said Entity can benefit from Branding. \
     \ Stage 1 deployment launches following entities: DPTF, DPMF, ATSPairs, SWPairs"
     ;;
-    (defun C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;;4
+    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;;4
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)) ;;4
 )
 (module BRD GOV
@@ -66,14 +68,20 @@
     ;;
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S}) 
+    (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|BRD|CALLER ()
         true
     )
     ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
         (with-capability (GOV|BRD_ADMIN)
@@ -82,15 +90,30 @@
             )
         )
     )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|BRD_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
+            )
+        )
+    )
     (defun P|A_Define ()
         (let
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (mg:guard (create-capability-guard (P|BRD|CALLER)))
             )
-            (ref-P|DALOS::P|A_Add 
-                "BRD|<"
-                (create-capability-guard (P|BRD|CALLER))
-            )
+            (ref-P|DALOS::P|A_AddIMP mg)
         )
     )
     ;;
@@ -213,16 +236,12 @@
         )
     )
     ;;{F2}
-    (defun UEV_PentaEnforce ()
-        (enforce-one
-            "Unallowed"
-            [
-                (enforce-guard (P|UR "DPTF|<"))
-                (enforce-guard (P|UR "DPMF|<"))
-                (enforce-guard (P|UR "ATS|<"))
-                (enforce-guard (P|UR "VST|<"))
-                (enforce-guard (P|UR "SWPU|<"))
-            ]
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;{F3}
@@ -284,7 +303,7 @@
     ;;{F4}
     ;;{F5}
     (defun A_Live (entity-id:string)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (BRD|C>LIVE)
             (let
                 (
@@ -303,7 +322,7 @@
         )
     )
     (defun A_SetFlag (entity-id:string flag:integer)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (BRD|C>ADMIN_SET flag)
             (let
                 (
@@ -317,7 +336,7 @@
     ;;{F6}
     ;;{F7}
     (defun XE_Issue (entity-id:string)
-        (UEV_PentaEnforce)
+        (UEV_IMC)
         (insert BRD|BrandingTable entity-id
             {"branding"                 : BRD|DEFAULT
             ,"branding-pending"         : BRD|DEFAULT}
@@ -328,7 +347,7 @@
             \ This is done by <entity-id> owners to brand their <entity-id> \
             \ Branding Administrator must afterwards set this <pending-branding> data to live, \
             \ in order to activate the actual branding for the <entity-id>"
-        (UEV_PentaEnforce)
+        (UEV_IMC)
         (let
             (
                 (pending:object{Branding.Schema} (UR_Branding entity-id true))
@@ -365,7 +384,7 @@
             \       Keeps branding Data as is for both <branding> and <branding-pending> \
             \ \
             \ Upgrading a <0> Golden Flag is restricted, as Golden Flags are higher in hierachy than Blue Flags"
-        (UEV_PentaEnforce)
+        (UEV_IMC)
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
@@ -418,4 +437,5 @@
 )
 
 (create-table P|T)
+(create-table P|MT)
 (create-table BRD|BrandingTable)
