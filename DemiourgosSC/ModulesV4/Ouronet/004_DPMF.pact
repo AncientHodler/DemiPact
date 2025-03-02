@@ -63,6 +63,10 @@
     (defun URC_HasVesting:bool (id:string))
     ;;
     (defun UEV_IMC ())
+    (defun UEV_NoncesToAccount (id:string account:string nonces:[integer]))
+    (defun UEV_id (id:string))
+    (defun UEV_CheckID:bool (id:string))
+    (defun UEV_Amount (id:string amount:decimal))
     (defun UEV_UpdateRewardBearingToken (id:string))
     (defun UEV_CanChangeOwnerON (id:string))
     (defun UEV_CanUpgradeON (id:string))
@@ -74,9 +78,6 @@
     (defun UEV_AccountBurnState (id:string account:string state:bool))
     (defun UEV_AccountTransferState (id:string account:string state:bool))
     (defun UEV_AccountFreezeState (id:string account:string state:bool))
-    (defun UEV_Amount (id:string amount:decimal))
-    (defun UEV_CheckID:bool (id:string))
-    (defun UEV_id (id:string))
     (defun UEV_CanTransferNFTCreateRoleON (id:string))
     (defun UEV_AccountAddQuantityState (id:string account:string state:bool))
     (defun UEV_AccountCreateState (id:string account:string state:bool))
@@ -433,8 +434,17 @@
         (compose-capability (BASIS|C>X_WRITE-ROLES id account 4))
         (compose-capability (SECURE))
     )
-    (defcap DPMF|C>WIPE (id:string account-to-be-wiped:string)
+    (defcap DPMF|C>TOTAL-WIPE (id:string account-to-be-wiped:string)
         @event
+        (compose-capability (DPMF|X>WIPE id account-to-be-wiped))
+    )
+    (defcap DPMF|C>PARTIAL-WIPE (id:string account-to-be-wiped:string nonces:[integer])
+        @event
+        (UEV_NoncesToAccount id account-to-be-wiped nonces)
+        (compose-capability (DPMF|X>WIPE id account-to-be-wiped))
+        
+    )
+    (defcap DPMF|X>WIPE (id:string account-to-be-wiped:string)
         (UEV_CanWipeON id)
         (UEV_AccountFreezeState id account-to-be-wiped true)
         (compose-capability (SECURE))
@@ -828,12 +838,10 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|INT:module{OuronetIntegers} U|INT)
                 (all-nonce-lst:[integer] (UR_AccountNonces id account))
                 (all-balance-lst:[decimal] (UR_AccountBalances id account))
-                (validate-nonces:bool (ref-U|INT::UEV_ContainsAll nonces all-nonce-lst))
             )
-            (enforce validate-nonces (format "Input nonces {} for {} dont all exist on {}" [nonces id account]))
+            (UEV_NoncesToAccount id account nonces)
             (fold
                 (lambda 
                     (acc:[decimal] nonce:integer)
@@ -849,12 +857,10 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|INT:module{OuronetIntegers} U|INT)
                 (all-nonce-lst:[integer] (UR_AccountNonces id account))
                 (all-metadata-lst:[[object]] (UR_AccountMetaDatas id account))
-                (validate-nonces:bool (ref-U|INT::UEV_ContainsAll nonces all-nonce-lst))
             )
-            (enforce validate-nonces (format "Input nonces {} for {} dont all exist on {}" [nonces id account]))
+            (UEV_NoncesToAccount id account nonces)
             (fold
                 (lambda 
                     (acc:[[object]] nonce:integer)
@@ -928,6 +934,51 @@
                 (ref-U|G:module{OuronetGuards} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
+    (defun UEV_NoncesToAccount (id:string account:string nonces:[integer])
+        (let
+            (
+                (ref-U|INT:module{OuronetIntegers} U|INT)
+                (all-nonce-lst:[integer] (UR_AccountNonces id account))
+                (validate-nonces:bool (ref-U|INT::UEV_ContainsAll nonces all-nonce-lst))
+            )
+            (enforce validate-nonces (format "Input nonces {} for {} dont all exist on {}" [nonces id account]))
+        )
+    )
+    (defun UEV_id (id:string)
+        (with-default-read DPMF|PropertiesTable id
+            { "supply" : -1.0 }
+            { "supply" := s }
+            (enforce
+                (>= s 0.0)
+                (format "DPMF ID {} does not exist" [id])
+            )
+        )
+    )
+    (defun UEV_CheckID:bool (id:string)
+        (with-default-read DPMF|PropertiesTable id
+            { "supply" : -1.0 }
+            { "supply" := s }
+            (if (>= s 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun UEV_Amount (id:string amount:decimal)
+        (let
+            (
+                (decimals:integer (UR_Decimals id))
+            )
+            (enforce
+                (= (floor amount decimals) amount)
+                (format "{} is not conform with the {} prec" [amount id])
+            )
+            (enforce
+                (> amount 0.0)
+                (format "{} is not a Valid Transaction amount" [amount])
+            )
         )
     )
     (defun UEV_UpdateRewardBearingToken (id:string)
@@ -1026,41 +1077,9 @@
             (enforce (= x state) (format "Frozen for {} on Account {} must be set to {} for exec" [id account state]))
         )
     )
-    (defun UEV_Amount (id:string amount:decimal)
-        (let
-            (
-                (decimals:integer (UR_Decimals id))
-            )
-            (enforce
-                (= (floor amount decimals) amount)
-                (format "{} is not conform with the {} prec" [amount id])
-            )
-            (enforce
-                (> amount 0.0)
-                (format "{} is not a Valid Transaction amount" [amount])
-            )
-        )
-    )
-    (defun UEV_CheckID:bool (id:string)
-        (with-default-read DPMF|PropertiesTable id
-            { "supply" : -1.0 }
-            { "supply" := s }
-            (if (>= s 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun UEV_id (id:string)
-        (with-default-read DPMF|PropertiesTable id
-            { "supply" : -1.0 }
-            { "supply" := s }
-            (enforce
-                (>= s 0.0)
-                (format "DPMF ID {} does not exist" [id])
-            )
-        )
-    )
+    
+    
+    
     (defun UEV_CanTransferNFTCreateRoleON (id:string)
         (let
             (
@@ -1402,7 +1421,7 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (with-capability (DPMF|C>WIPE id atbw)
+            (with-capability (DPMF|C>TOTAL-WIPE id atbw)
                 (XI_Wipe id atbw)
                 (ref-DALOS::UDC_BiggestCumulator)
             )
@@ -1415,7 +1434,7 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (with-capability (DPMF|C>WIPE id atbw)
+            (with-capability (DPMF|C>PARTIAL-WIPE id atbw nonces)
                 (XI_WipePartial id atbw nonces)
                 (ref-DALOS::UDC_BiggestCumulator)
             )
@@ -2023,7 +2042,7 @@
         )
     )
     (defun XI_Wipe (id:string account-to-be-wiped:string)
-        (require-capability (DPMF|C>WIPE id account-to-be-wiped))
+        (require-capability (DPMF|C>TOTAL-WIPE id account-to-be-wiped))
         (let
             (
                 (nonce-lst:[integer] (UR_AccountNonces id account-to-be-wiped))
@@ -2035,7 +2054,7 @@
         )
     )
     (defun XI_WipePartial (id:string account-to-be-wiped:string nonces:[integer])
-        (require-capability (DPMF|C>WIPE id account-to-be-wiped))
+        (require-capability (DPMF|C>PARTIAL-WIPE id account-to-be-wiped nonces))
         (let
             (
                 (balances:[decimal] (UR_AccountNoncesBalances id nonces account-to-be-wiped))

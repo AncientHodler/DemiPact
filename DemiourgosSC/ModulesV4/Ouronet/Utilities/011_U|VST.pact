@@ -107,9 +107,9 @@
     )
     ;;{F-UEV}
     (defun UEV_Milestone (milestones:integer)
-        @doc "Restrict Milestone integer between 1 and 365 Milestones"
+        @doc "Restrict Milestone integer between 1 and 250 Milestones"
         (enforce 
-            (and (>= milestones 1) (<= milestones 365)) 
+            (and (>= milestones 1) (<= milestones 250)) 
             (format "Milestone splitting number {} is out of bounds"[milestones])
         )
     )

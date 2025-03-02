@@ -11,9 +11,7 @@
     ;;
     (defun URC_CullMetaDataAmount:decimal (client:string id:string nonce:integer))
     (defun URC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer))
-    (defun URC_AllSTU:[decimal] (dpmf:string account:string))
-    (defun URC_PartialSTU:[decimal] (dpmf:string account:string nonces:[integer]))
-
+    (defun URC_SecondsToUnlock:[decimal] (dpmf:string account:string nonces:[integer]))
     ;;
     (defun UEV_IMC ())
     (defun UEV_SpecialTrueFungibleRoles (dptf:string frozen-or-reserved:bool))
@@ -28,17 +26,24 @@
     ;;
     ;;
     (defun C_Freeze:[object{OuronetDalos.IgnisCumulator}] (patron:string freezer:string freeze-output:string dptf:string amount:decimal))
+    (defun C_RepurposeFrozen:[object{OuronetDalos.IgnisCumulator}] (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
     ;;
     (defun C_Reserve:[object{OuronetDalos.IgnisCumulator}] (patron:string reserver:string dptf:string amount:decimal))
     (defun C_Unreserve:[object{OuronetDalos.IgnisCumulator}] (patron:string unreserver:string r-dptf:string amount:decimal))
+    (defun C_RepurposeReserved:[object{OuronetDalos.IgnisCumulator}] (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
     ;;
     (defun C_Unvest:[object{OuronetDalos.IgnisCumulator}] (patron:string unvester:string dpmf:string nonce:integer))
     (defun C_Vest:[object{OuronetDalos.IgnisCumulator}] (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer))
+    (defun C_RepurposeVested:[object{OuronetDalos.IgnisCumulator}] (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
     ;;
     (defun C_Merge:[object{OuronetDalos.IgnisCumulator}] (patron:string merger:string dpmf:string nonces:[integer]))
     (defun C_MergeAll:[object{OuronetDalos.IgnisCumulator}] (patron:string merger:string dpmf:string))
     (defun C_Sleep:[object{OuronetDalos.IgnisCumulator}] (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer))
     (defun C_Unsleep:[object{OuronetDalos.IgnisCumulator}] (patron:string unsleeper:string dpmf:string nonce:integer))
+    (defun C_RepurposeSleeping:[object{OuronetDalos.IgnisCumulator}] (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
+    (defun C_RepurposeMerge:[object{OuronetDalos.IgnisCumulator}] (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string))
+    (defun C_RepurposeMergeAll:[object{OuronetDalos.IgnisCumulator}] (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string))
+
 )
 (module VST GOV
     ;;
@@ -250,13 +255,15 @@
             (compose-capability (P|DT))
         )
     )
-    (defcap VST|C>CULL (unvester:string dpmf:string)
+    (defcap VST|C>CULL (unvester:string dpmf:string nonce:integer)
         @event
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (culled-amount:decimal (URC_CullMetaDataAmount unvester dpmf nonce))
             )
+            (enforce (> culled-amount 0.0) (format "Nonce {} cant be culled" [nonce]))
             (ref-DALOS::UEV_EnforceAccountType unvester false)
             (ref-DPMF::UEV_Vesting dpmf true)
             (UEV_SpecialMetaFungibleRoles (ref-DPMF::UR_Vesting dpmf) true)
@@ -299,7 +306,16 @@
             (compose-capability (P|DT))
         )
     )
-    (defcap VST|C>MERGE (merger:string dpmf:string)
+    (defcap VST|C>MERGE (merger:string dpmf:string nonces:[integer])
+        @event
+        (UEV_NoncesForMerging nonces)
+        (compose-capability (VST|X>MERGE merger dpmf))
+    )
+    (defcap VST|C>MERGE-ALL (merger:string dpmf:string)
+        @event
+        (compose-capability (VST|X>MERGE merger dpmf))
+    )
+    (defcap VST|X>MERGE (merger:string dpmf:string)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -308,6 +324,82 @@
             (ref-DALOS::CAP_EnforceAccountOwnership merger)
             (ref-DALOS::UEV_EnforceAccountType merger false)
             (compose-capability (P|DT))
+            (compose-capability (SECURE))
+        )
+    )
+    ;;
+    (defcap VST|C>REPURPOSE-FROZEN-TF (dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @event
+        (compose-capability (VST|C>REPURPOSE-TF dptf-to-repurpose repurpose-from repurpose-to true))
+    )
+    (defcap VST|C>REPURPOSE-RESERVED-TF (dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @event
+        (compose-capability (VST|C>REPURPOSE-TF dptf-to-repurpose repurpose-from repurpose-to false))
+    )
+    (defcap VST|C>REPURPOSE-VESTING-MF (dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        @event
+        (compose-capability (VST|C>REPURPOSE-MF dpmf-to-repurpose [nonce] repurpose-from repurpose-to true))
+    )
+    (defcap VST|C>REPURPOSE-SLEEPING-MF (dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        @event
+        (compose-capability (VST|C>REPURPOSE-MF dpmf-to-repurpose [nonce] repurpose-from repurpose-to false))
+    )
+
+    (defcap VST|C>REPURPOSE-MERGE (dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string)
+        @event
+        (UEV_NoncesForMerging nonces)
+        (compose-capability (VST|C>REPURPOSE-MF dpmf-to-repurpose nonces repurpose-from repurpose-to false))
+    )
+    (defcap VST|C>REPURPOSE-MERGE-ALL (dpmf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @event
+        (compose-capability (VST|X>REPURPOSE-MF dpmf-to-repurpose repurpose-from repurpose-to false))
+    )
+    (defcap VST|C>REPURPOSE-TF (dptf-to-repurpose:string repurpose-from:string repurpose-to:string frozen-or-reserved:bool)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (dptf:string 
+                    (if frozen-or-reserved
+                        (ref-DPTF::UR_Frozen dptf-to-repurpose)
+                        (ref-DPTF::UR_Reservation dptf-to-repurpose)
+                    )
+                )
+            )
+            (ref-DALOS::UEV_SenderWithReceiver repurpose-from repurpose-to)
+            (ref-DALOS::UEV_EnforceAccountType repurpose-to false)
+            (ref-DPTF::CAP_Owner dptf)
+            (compose-capability (P|DT))
+            (compose-capability (SECURE))
+        )
+    )
+    (defcap VST|C>REPURPOSE-MF (dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string vesting-or-sleeping:bool)
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+            )
+            (ref-DPMF::UEV_NoncesToAccount dpmf-to-repurpose repurpose-from nonces)
+            (compose-capability (VST|X>REPURPOSE-MF dpmf-to-repurpose repurpose-from repurpose-to vesting-or-sleeping))
+        )
+    )
+    (defcap VST|X>REPURPOSE-MF (dpmf-to-repurpose:string repurpose-from:string repurpose-to:string vesting-or-sleeping:bool)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (dptf:string 
+                    (if vesting-or-sleeping
+                        (ref-DPMF::UR_Vesting dpmf-to-repurpose)
+                        (ref-DPMF::UR_Sleeping dpmf-to-repurpose)
+                    )
+                )
+            )
+            (ref-DALOS::UEV_SenderWithReceiver repurpose-from repurpose-to)
+            (ref-DALOS::UEV_EnforceAccountType repurpose-to false)
+            (ref-DPTF::CAP_Owner dptf)
+            (compose-capability (P|DT))
+            (compose-capability (SECURE))
         )
     )
     ;;
@@ -363,11 +455,54 @@
             [
                 (at 0 wake-numerator-denominator)
                 (- sum (at 0 wake-numerator-denominator))
-                (floor (/ (at 1 wake-numerator-denominator) (at 2 wake-numerator-denominator)) 0)
+                (if (!= (at 2 wake-numerator-denominator) 0.0)
+                    (floor (/ (at 1 wake-numerator-denominator) (at 2 wake-numerator-denominator)) 0)
+                    0.0
+                )
+                
             ]
         )
     )
     ;;{F1}
+    (defun URC_CullMetaDataAmountWithObject:list (client:string id:string nonce:integer)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (meta-data:[object{Vesting.VST|MetaDataSchema}] (ref-DPMF::UR_AccountNonceMetaData id nonce client))
+            )
+            (fold
+                (lambda
+                    (acc:list item:object{Vesting.VST|MetaDataSchema})
+                    (let
+                        (
+                            (balance:decimal (at "release-amount" item))
+                            (date:time (at "release-date" item))
+                            (present-time:time (at "block-time" (chain-data)))
+                            (t:decimal (diff-time present-time date))
+                            (current-acc-amount:decimal (at 0 acc))
+                            (current-acc-obj:list (at 1 acc))
+                            (amount
+                                (if (>= t 0.0)
+                                    (+ current-acc-amount balance)
+                                    current-acc-amount
+                                )
+                            )
+                            (md-obj
+                                (if (< t 0.0)
+                                    (ref-U|LST::UC_AppL current-acc-obj item)
+                                    current-acc-obj
+                                )
+                            )
+                        )
+                        [amount md-obj]
+                    )
+                )
+                [0.0 []]
+                meta-data
+            )
+        )
+    )
     (defun URC_CullMetaDataAmount:decimal (client:string id:string nonce:integer)
         (let
             (
@@ -425,28 +560,7 @@
             )
         )
     )
-    (defun URC_AllSTU:[decimal] (dpmf:string account:string)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (meta-datas:[[object{VST|MetaDataSchema}]] (ref-DPMF::UR_AccountMetaDatas dpmf account))
-                (present-time:time (at "block-time" (chain-data)))
-            )
-            (fold
-                (lambda
-                    (acc:[decimal] idx:integer)
-                    (ref-U|LST::UC_AppL 
-                        acc
-                        (diff-time (at "release-date" (at 0 (take -1 (at idx meta-datas)))) present-time)
-                    )
-                )
-                []
-                (enumerate 0 (- (length meta-datas) 1))
-            )
-        )
-    )
-    (defun URC_PartialSTU:[decimal] (dpmf:string account:string nonces:[integer])
+    (defun URC_SecondsToUnlock:[decimal] (dpmf:string account:string nonces:[integer])
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -474,6 +588,14 @@
                 (ref-U|G:module{OuronetGuards} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
+    (defun UEV_NoncesForMerging (nonces:[integer])
+        (let
+            (
+                (l:integer (length nonces))
+            )
+            (enforce (>= l 2) "Merging requires at least 2 nonces")
         )
     )
     (defun UEV_SpecialTrueFungibleRoles (dptf:string frozen-or-reserved:bool)
@@ -657,6 +779,13 @@
             )
         )
     )
+    (defun C_RepurposeFrozen:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-FROZEN-TF dptf-to-repurpose repurpose-from repurpose-to)
+            (XI_RepurposeTrueFungible patron dptf-to-repurpose repurpose-from repurpose-to)
+        )
+    )
     ;;Reserve Token Actions
     (defun C_Reserve:[object{OuronetDalos.IgnisCumulator}]
         (patron:string reserver:string dptf:string amount:decimal)
@@ -703,20 +832,37 @@
             )
         )
     )
+    (defun C_RepurposeReserved:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-RESERVED-TF dptf-to-repurpose repurpose-from repurpose-to)
+            (XI_RepurposeTrueFungible patron dptf-to-repurpose repurpose-from repurpose-to)
+        )
+    )
     ;;Vesting Token Actions
     (defun C_Unvest:[object{OuronetDalos.IgnisCumulator}]
         (patron:string unvester:string dpmf:string nonce:integer)
         (UEV_IMC)
-        (with-capability (VST|C>CULL unvester dpmf)
+        (with-capability (VST|C>CULL unvester dpmf nonce)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dptf-id:string (ref-DPMF::UR_Vesting dpmf))
                     (initial-amount:decimal (ref-DPMF::UR_AccountNonceBalance dpmf nonce unvester))
-                    (culled-amount:decimal (URC_CullMetaDataAmount unvester dpmf nonce))
+                    (culled-data:list (URC_CullMetaDataAmountWithObject unvester dpmf nonce))
+                    (culled-amount:decimal (at 0 culled-data))
+                    (md-remint:[object{Vesting.VST|MetaDataSchema}] (at 1 culled-data))
+                    (obj-l:decimal (dec (length md-remint)))
+                    (smallest:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                    (price:decimal (/ (* obj-l smallest) 5.0))
+                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (return-amount:decimal (- initial-amount culled-amount))
+                    (ico0:object{OuronetDalos.IgnisCumulator}
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    )
                     (ico1:[object{OuronetDalos.IgnisCumulator}]
                         (if (= return-amount 0.0)
                             [
@@ -724,26 +870,29 @@
                                 (ref-TFT::XB_FeelesTransfer patron dptf-id vst-sc unvester initial-amount true)
                             ]
                             [
-                                ;;1]If return amount is non zero, it is minted as a new DPMF
-                                (ref-DPMF::C_Mint patron dpmf vst-sc return-amount (URC_CullMetaDataObject unvester dpmf nonce))
-                                ;;2]Only the ready to unvest dptf is trasnfered back to unvester
+                                ;;1]Only the ready to unvest dptf is trasnfered back to unvester
                                 (ref-TFT::XB_FeelesTransfer patron dptf-id vst-sc unvester culled-amount true)
+                                ;;2]If return amount is non zero, it is minted as a new DPMF
+                                (ref-DPMF::C_Mint patron dpmf vst-sc return-amount md-remint)
                                 ;;3]Together with the newly minted remainder, still vested, dpmf
-                                (ref-DPMF::C_Transfer patron dpmf (+ (ref-DPMF::UR_NoncesUsed dpmf) 1) vst-sc unvester return-amount true)
+                                (ref-DPMF::C_Transfer patron dpmf (+ 1 nonce) vst-sc unvester return-amount true)
                             ]
                         )
                     )
                     (ico2:[object{OuronetDalos.IgnisCumulator}]
                         [
-                            ;;1]Unvester transfers the initial dpmf to the VST|SC_NAME
-                            (ref-DPMF::C_Transfer patron dpmf nonce unvester vst-sc initial-amount true)
-                            ;;2]Which is then burned in its entirety
-                            (ref-DPMF::C_Burn patron dpmf nonce vst-sc initial-amount)
+                            ;;1]Freeze unvester account
+                            (ref-DPMF::C_ToggleFreezeAccount patron dpmf unvester true)
+                            ;;2]Wipe unvest nonce
+                            (ref-DPMF::C_WipePartial patron dpmf unvester [nonce])
+                            ;;3]Unfreeze unvester account
+                            (ref-DPMF::C_ToggleFreezeAccount patron dpmf unvester false)
                         ]
-                        
                     )
+                    
+
                 )
-                (+ ico1 ico2)
+                (+ [ico0] (+ ico1 ico2))
             )
         )
     )
@@ -772,101 +921,31 @@
             )
         )
     )
+    (defun C_RepurposeVested:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-VESTING-MF dpmf-to-repurpose nonce repurpose-from repurpose-to)
+            (XI_RepurposeMetaFungible patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
+        )
+    )
     ;;Sleeping Token Actions
     (defun C_Merge:[object{OuronetDalos.IgnisCumulator}]
         (patron:string merger:string dpmf:string nonces:[integer])
         (UEV_IMC)
-        (with-capability (VST|C>MERGE merger dpmf)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
-                    (l:integer (length nonces))
-                    (dptf:string (ref-DPMF::UR_Sleeping dpmf))
-                    (nonces-balances:[decimal] (ref-DPMF::UR_AccountNoncesBalances dpmf nonces merger))
-                    (stu:[decimal] (URC_PartialSTU dpmf merger nonces))
-                    (compute-merge-all:[decimal] (UC_MergeAll nonces-balances stu))
-
-                    (wake-amount:decimal (at 0 compute-merge-all))
-                    (asleep-amount:decimal (at 1 compute-merge-all))
-                    (sleep-time-in-seconds:integer (floor (at 2 compute-merge-all)))
-                    (meta-data:[object{Vesting.VST|MetaDataSchema}] 
-                        (UDC_ComposeVestingMetaData dptf asleep-amount 0 sleep-time-in-seconds 1)
-                    )
-                    (mint-ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPMF::C_Mint patron dpmf VST|SC_NAME asleep-amount meta-data)
-                    )
-                    (minted-nonce:integer (at 0 (at "output" mint-ico)))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                )
-                (enforce (>= l 2) "At least 2 Nonces must be selected for Merging")
-                [
-                    ;;1]Freeze <merger> for dpmf
-                        (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger true)
-                    ;;2]Full Wipe <merger> for dpmf
-                        (ref-DPMF::C_WipePartial patron dpmf merger nonces)
-                    ;;3]Mint rest dpmf
-                        ;;via <mint-ico>
-                    ;;4]Unfreeze <merger> for dpmf
-                        (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger false)
-                    ;;5]Transfer rest dpmf
-                        (ref-DPMF::C_SingleBatchTransfer patron dpmf minted-nonce VST|SC_NAME merger true)
-                    ;;6]Transfer rest dptf if it exists
-                        (if (> wake-amount 0.0)
-                            (ref-TFT::XB_FeelesTransfer patron dptf VST|SC_NAME merger wake-amount true)
-                            EIC
-                        )
-                    ;;7]MergeAll Costs
-                        (ref-DALOS::UDC_Cumulator (* (dec (length nonces-balances)) (ref-DALOS::UR_UsagePrice "ignis|biggest")) trigger [])
-                    ]
-            )
+        (with-capability (VST|C>MERGE merger dpmf nonces)
+            (XI_MergeNoncesToTarget patron dpmf merger merger nonces)
         )
     )
     (defun C_MergeAll:[object{OuronetDalos.IgnisCumulator}]
         (patron:string merger:string dpmf:string)
         (UEV_IMC)
-        (with-capability (VST|C>MERGE merger dpmf)
+        (with-capability (VST|C>MERGE-ALL merger dpmf)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
-                    (dptf:string (ref-DPMF::UR_Sleeping dpmf))
-                    (a-balances:[decimal] (ref-DPMF::UR_AccountBalances dpmf merger))
-                    (stu:[decimal] (URC_AllSTU dpmf merger))
-                    (compute-merge-all:[decimal] (UC_MergeAll a-balances stu))
-                    (wake-amount:decimal (at 0 compute-merge-all))
-                    (asleep-amount:decimal (at 1 compute-merge-all))
-                    (sleep-time-in-seconds:integer (floor (at 2 compute-merge-all)))
-                    (meta-data:[object{Vesting.VST|MetaDataSchema}] 
-                        (UDC_ComposeVestingMetaData dptf asleep-amount 0 sleep-time-in-seconds 1)
-                    )
-                    (mint-ico:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPMF::C_Mint patron dpmf VST|SC_NAME asleep-amount meta-data)
-                    )
-                    (minted-nonce:integer (at 0 (at "output" mint-ico)))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (nonces:[integer] (ref-DPMF::UR_AccountNonces dpmf merger))
                 )
-                [
-                ;;1]Freeze <merger> for dpmf
-                    (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger true)
-                ;;2]Full Wipe <merger> for dpmf
-                    (ref-DPMF::C_Wipe patron dpmf merger)
-                ;;3]Mint rest dpmf
-                    ;;via <mint-ico>
-                ;;4]Unfreeze <merger> for dpmf
-                    (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger false)
-                ;;5]Transfer rest dpmf
-                    (ref-DPMF::C_SingleBatchTransfer patron dpmf minted-nonce VST|SC_NAME merger true)
-                ;;6]Transfer rest dptf if it exists
-                    (if (> wake-amount 0.0)
-                        (ref-TFT::XB_FeelesTransfer patron dptf VST|SC_NAME merger wake-amount true)
-                        EIC
-                    )
-                ;;7]MergeAll Costs
-                    (ref-DALOS::UDC_Cumulator (* (dec (length a-balances)) (ref-DALOS::UR_UsagePrice "ignis|biggest")) trigger [])
-                ]
+                (XI_MergeNoncesToTarget patron dpmf merger merger nonces)
             )
         )
     )
@@ -915,6 +994,33 @@
                     ;;3]VST|SC_NAME transfers in return the initial amount of the dpmf, as the dptf counterpart
                     (ref-TFT::XB_FeelesTransfer patron dptf-id vst-sc unsleeper initial-amount true)
                 ]
+            )
+        )
+    )
+    (defun C_RepurposeSleeping:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-SLEEPING-MF dpmf-to-repurpose nonce repurpose-from repurpose-to)
+            (XI_RepurposeMetaFungible patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
+        )
+    )
+    (defun C_RepurposeMerge:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-MERGE dpmf-to-repurpose nonces repurpose-from repurpose-to)
+            (XI_MergeNoncesToTarget patron dpmf-to-repurpose repurpose-from repurpose-to nonces)
+        )
+    )
+    (defun C_RepurposeMergeAll:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        (UEV_IMC)
+        (with-capability (VST|C>REPURPOSE-MERGE-ALL dpmf-to-repurpose repurpose-from repurpose-to)
+            (let
+                (
+                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                    (nonces:[integer] (ref-DPMF::UR_AccountNonces dpmf-to-repurpose repurpose-from))
+                )
+                (XI_MergeNoncesToTarget patron dpmf-to-repurpose repurpose-from repurpose-to nonces)
             )
         )
     )
@@ -1079,6 +1185,121 @@
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-costs)
                 (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico0] ico1 ico2 ico3 [ico4] [ico5]]) [special-dpmf])
+            )
+        )
+    )
+    (defun XI_RepurposeTrueFungible:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (amount:decimal (ref-DPTF::UR_AccountSupply dptf-to-repurpose repurpose-from))
+                (vst-sc:string VST|SC_NAME)
+            )
+            [
+                ;;1]Freeze <repurpose-from> for <dptf-to-repurpose>
+                (ref-DPTF::C_ToggleFreezeAccount patron dptf-to-repurpose repurpose-from true)
+                ;;2]Wipe <dptf-to-repurpose> on <repurpose-from>
+                (ref-DPTF::C_Wipe patron dptf-to-repurpose repurpose-from)
+                ;;3]Unfreeze <repurpose-from>
+                (ref-DPTF::C_ToggleFreezeAccount patron dptf-to-repurpose repurpose-from false)
+                ;;4]Mint <dptf-to-repurpose> anew
+                (ref-DPTF::C_Mint patron dptf-to-repurpose vst-sc amount false)
+                ;;5]Transfer it to <repurpose-to>
+                (ref-TFT::XB_FeelesTransfer patron dptf-to-repurpose vst-sc repurpose-to amount true)
+            ]
+        )
+    )
+    (defun XI_RepurposeMetaFungible:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (amount:decimal (ref-DPMF::UR_AccountNonceBalance dpmf-to-repurpose nonce repurpose-from))
+                (meta-data:[object] (ref-DPMF::UR_AccountNonceMetaData dpmf-to-repurpose nonce repurpose-from))
+                (vst-sc:string VST|SC_NAME)
+            )
+            [
+                ;;1]Freeze <repurpose-from> for <dpmf-to-repurpose>
+                (ref-DPMF::C_ToggleFreezeAccount patron dpmf-to-repurpose repurpose-from true)
+                ;;2]WipePartial <dpmf-to-repurpose> on <repurpose-from>
+                (ref-DPMF::C_WipePartial patron dpmf-to-repurpose repurpose-from [nonce])
+                ;;3]Unfreeze <repurpose-from>
+                (ref-DPMF::C_ToggleFreezeAccount patron dpmf-to-repurpose repurpose-from false)
+                ;;4]Mint <dptf-to-repurpose> anew
+                (ref-DPMF::C_Mint patron dpmf-to-repurpose vst-sc amount meta-data)
+                ;;5]Transfer it to <repurpose-to>
+                (ref-DPMF::C_SingleBatchTransfer patron dpmf-to-repurpose (ref-DPMF::UR_NoncesUsed dpmf-to-repurpose) vst-sc repurpose-to true)
+            ]
+        )
+    )
+    (defun XI_MergeNoncesToTarget:[object{OuronetDalos.IgnisCumulator}]
+        (patron:string dpmf:string merger:string target:string nonces:[integer])
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (dptf:string (ref-DPMF::UR_Sleeping dpmf))
+                (nonces-balances:[decimal] (ref-DPMF::UR_AccountNoncesBalances dpmf nonces merger))
+                (how-many:decimal (dec (length nonces)))
+                (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                (price:decimal (* how-many biggest))
+                (stu:[decimal] (URC_SecondsToUnlock dpmf merger nonces))
+                (compute-merge-all:[decimal] (UC_MergeAll nonces-balances stu))
+                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                ;;
+                (wake-amount:decimal (at 0 compute-merge-all))
+                (asleep-amount:decimal (at 1 compute-merge-all))
+                (sleep-time-in-seconds:integer (floor (at 2 compute-merge-all)))
+            )
+            (if (= asleep-amount 0.0)
+                [
+                    ;;1]Freeze <merger> for <dpmf>
+                    (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger true)
+                    ;;2]WipePartial <dpmf> on <merger>
+                    (ref-DPMF::C_WipePartial patron dpmf merger nonces)
+                    ;;3]Unfreeze <merger>
+                    (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger false)
+                    ;;4]Retrieve the <wake-amount> to <target>
+                    (ref-TFT::XB_FeelesTransfer patron dptf VST|SC_NAME target wake-amount true)
+                    ;;5]Add Merging IGNIS Costs
+                    (ref-DALOS::UDC_Cumulator price trigger [])
+                ]
+                (let
+                    (
+                        (meta-data:[object{Vesting.VST|MetaDataSchema}] 
+                            (UDC_ComposeVestingMetaData dptf asleep-amount 0 sleep-time-in-seconds 1)
+                        )
+                        (mint-ico:object{OuronetDalos.IgnisCumulator}
+                            (ref-DPMF::C_Mint patron dpmf VST|SC_NAME asleep-amount meta-data)
+                        )
+                        (minted-nonce:integer (at 0 (at "output" mint-ico)))
+                    )
+                    [
+                        ;;Add minted ico
+                        mint-ico
+                        ;;1]Freeze <merger> for <dpmf>
+                        (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger true)
+                        ;;2]WipePartial <dpmf> on <merger>
+                        (ref-DPMF::C_WipePartial patron dpmf merger nonces)
+                        ;;3]Unfreeze <merger>
+                        (ref-DPMF::C_ToggleFreezeAccount patron dpmf merger false)
+                        ;;4]Retrieve the <wake-amount> to <target> if its greater than zero
+                        (if (> wake-amount 0.0)
+                            (ref-TFT::XB_FeelesTransfer patron dptf VST|SC_NAME target wake-amount true)
+                            EIC
+                        )
+                        ;;5]Retrieve the minted <dpmf> to <target>
+                        (ref-DPMF::C_SingleBatchTransfer patron dpmf minted-nonce VST|SC_NAME target true)
+                        ;;6]Add Merging IGNIS Costs
+                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    ]
+                )
             )
         )
     )

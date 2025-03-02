@@ -892,7 +892,6 @@
                     (burn-auryn-amount:decimal (floor (/ ouro-amount auryndex-value) a-prec))
                     (burn-elite-auryn-amount:decimal (floor (/ burn-auryn-amount elite-auryndex-value) ea-prec))
                     (total-ea:decimal (floor (* burn-elite-auryn-amount 2.5) ea-prec))
-                    (ea-remint:decimal (- account-ea-supply total-ea))
                     (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
 
                     ;;Ignis Cumulation
@@ -903,44 +902,34 @@
                         )
                     )
                     (ico2:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPTF::C_Wipe patron ea-id account)
+                        (ref-DPTF::C_WipePartial patron ea-id account total-ea)
                     )
                     (ico3:object{OuronetDalos.IgnisCumulator}
-                        (ref-DPTF::C_Mint patron ea-id ats-sc ea-remint false)
-                    )
-                    (ico4:object{OuronetDalos.IgnisCumulator}
                         (ref-DPTF::C_ToggleFreezeAccount patron ea-id account false)
                     )
-                    (ico5:object{OuronetDalos.IgnisCumulator}
-                        (XB_FeelesTransfer patron ea-id ats-sc account ea-remint true)
-                    )
-                    (ico6:object{OuronetDalos.IgnisCumulator}
+                    (ico4:object{OuronetDalos.IgnisCumulator}
                         (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
                     )
-                    (ico7:object{OuronetDalos.IgnisCumulator}
+                    (ico5:object{OuronetDalos.IgnisCumulator}
                         (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
                     )
                 )
             ;;1] Freeze EA on account
                 ;;via ico1
-            ;;2] Wipe EA on account
+            ;;2] Partial Wipe EA on account
                 ;;via ico2
-            ;;3] Remint remaining EA
+            ;;3] Unfreeze EA on account
                 ;;via ico3
-            ;;4] Unfreeze EA on account
-                ;;via ico4
-            ;;5] Transfer it back to account
-                ;;via ico5
-            ;;6] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
-                ;via ico6
+            ;;4] <ATS|SC-NAME> burns <burn-auryn-amount> Auryn amount and decrease Resident Amount by it on <elite-auryndex>
+                ;via ico4
                 (ref-ATS::XE_UpdateRoU elite-auryndex a-id true false burn-auryn-amount)
-            ;;7] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
-                ;;via ico7
+            ;;5] <ATS|SC-NAME> burns <ouro-amount> OURO amount and decrease Resident Amount by it on <auryndex>
+                ;;via ico5
                 (ref-ATS::XE_UpdateRoU auryndex ouro-id true false ouro-amount)
-            ;;8] Finally clears dispo setting OURO <acount> amount to zero
+            ;;6] Finally clears dispo setting OURO <acount> amount to zero
                 (ref-DALOS::XE_ClearDispo account)
-            ;;9] Pleasure doing business with you !
-                (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4 ico5 ico6 ico7] [])
+            ;;7] Pleasure doing business with you !
+                (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3  ico4 ico5] [])
             )
         )
     )

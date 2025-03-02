@@ -55,8 +55,9 @@
 :object{OuronetDalos.IgnisCumulator}
 (ref-DALOS::DALOS|EmptyIgCum)
 (ref-DALOS::UDC_Cumulator price trigger [])
+(ref-DALOS::UDC_CompressICO [ico1 ico2] trigger [])
 
-
+        (UEV_IMC)
 
 ref-DPL|DALOS::
 
@@ -68,6 +69,7 @@ ref-DPMF::
 ref-ATS::
 ref-TFT::
 ref-ATSU::
+ref-VST::
 ref-LIQUID::
 ref-ORBR::
 ref-SWPT::
@@ -139,5 +141,6 @@ ref-B|SWP::
     (enforce-guard (P|UR "BRD|<"))
     (enforce-guard (create-capability-guard (SECURE)))
 
+(fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5])
 
-
+(auto-fuel:bool (ref-DALOS::UR_AutoFuel))

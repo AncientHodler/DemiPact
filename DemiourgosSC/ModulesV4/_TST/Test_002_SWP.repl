@@ -1317,6 +1317,9 @@
         (ref-T01::DPTF|C_Transfer patron ROuroID patron smart-patron 15.0 true)
         ;;Smart Account unreserves 10 Ouro
         (ref-T01::VST|C_Unreserve patron smart-patron ROuroID 10.0)
+
+        ;;
+        ;(ref-T01::VST|C_RepurposeReserved patron ROuroID patron emma)
         (let
             (
                 (r2-dptf-balance:decimal (ref-DPTF::UR_AccountSupply ROuroID smart-patron))
@@ -1327,6 +1330,7 @@
                 (format "AH Standard has {} Reserved Ouro after first reservation" [r-dptf-balance])
                 (format "AH Smart has {} Reserved Ouro after unreserve action" [r2-dptf-balance])
                 (format "AH Smart has {} Ouro after unreserve action" [r3-dptf-balance])
+                ;(format "Emma has {} {} after repurpose"[(ref-DPTF::UR_AccountSupply ROuroID emma) ROuroID])
             ]
         )
     )
@@ -1356,6 +1360,7 @@
 (let
     (
         (ref-T01:module{TalosStageOne} TS01)
+        (ref-VST:module{Vesting} VST)
         (vst:string "VST-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -1365,15 +1370,20 @@
     )
     ;;Mint 1000 VST
     (ref-T01::DPTF|C_Mint patron vst patron 100000000.0 true)
-    ;;Freeze 600 VST to Emma
+    ;;Freeze 500 VST to Emma
     (ref-T01::VST|C_Freeze patron patron emma vst 5000.0)
     ;;Show Emmas Balance
-    (format "Emma has {} {}"[(ref-DPTF::UR_AccountSupply f-vst emma) f-vst])
+    ;(format "Emma has {} {}"[(ref-DPTF::UR_AccountSupply f-vst emma) f-vst])
+    ;;Repurpose frozen Token back to AH
+    (ref-T01::VST|C_RepurposeFrozen patron f-vst emma patron)
+    ;(ref-VST::XI_RepurposeTrueFungible patron f-vst emma patron true)
+    ;;Show AH Balance
+    (format "AH has {} {} after repurpose"[(ref-DPTF::UR_AccountSupply f-vst patron) f-vst])
 )
 
 (print "")
 (print "")
-(format "<<<<<<<STEP 018 Reservation Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<STEP 018 Freeze Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -1449,12 +1459,15 @@
         {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
          "block-time": (time "2024-10-16T00:00:00Z")}
     )
+    ;(ref-T01::VST|C_RepurposeSleeping patron s-vst 30 emma patron)
     [
         (format "<<<<<>>>>>{}" [p])
         (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst emma) s-vst (ref-DPMF::UR_AccountNonces s-vst emma)])
         (format "<<<<<>>>>>{}" [p])
         (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
         (format "<<<<<>>>>>{}" [p])
+        (format "<<<<<>>>>>{}" [p])
+        (format "AH has {} {} in total after repurpose, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst patron) s-vst (ref-DPMF::UR_AccountNonces s-vst patron)])
     ]
 )
 
@@ -1487,10 +1500,14 @@
         (ref-T01:module{TalosStageOne} TS01)
     )
     ;(ref-T01::VST|C_Merge KST.EMMA KST.EMMA "Z|VST-98c486052a51" (enumerate 1 30))
-    (ref-T01::VST|C_MergeAll KST.EMMA KST.EMMA "Z|VST-98c486052a51")
+    ;(ref-T01::VST|C_MergeAll KST.EMMA KST.EMMA "Z|VST-98c486052a51")
+    ;(ref-T01::VST|C_RepurposeMerge KST.EMMA "Z|VST-98c486052a51" (enumerate 1 10) KST.EMMA KST.ANHD)
+    (ref-T01::VST|C_RepurposeMergeAll KST.EMMA "Z|VST-98c486052a51" KST.EMMA KST.ANHD)
     [
         (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply "Z|VST-98c486052a51" KST.EMMA) "Z|VST-98c486052a51" (ref-DPMF::UR_AccountNonces "Z|VST-98c486052a51" KST.EMMA)])
         (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply "VST-98c486052a51" KST.EMMA)])
+        (format "Ah has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply "Z|VST-98c486052a51" KST.ANHD) "Z|VST-98c486052a51" (ref-DPMF::UR_AccountNonces "Z|VST-98c486052a51" KST.ANHD)])
+        (format "Ah VST supply is {}" [(ref-DPTF::UR_AccountSupply "VST-98c486052a51" KST.ANHD)])
     ]
 )
 
@@ -1502,4 +1519,167 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 21 - Vesting Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
 
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-T01:module{TalosStageOne} TS01)
+        (ouro:string "OURO-98c486052a51")
+        (v-ouro:string "V|OURO-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+    )
+    ;(ref-T01::VST|C_Merge KST.EMMA KST.EMMA "Z|VST-98c486052a51" (enumerate 1 30))
+    (ref-T01::VST|C_Vest patron patron emma ouro 250.0 3600 7200 20)
+    [
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply v-ouro emma) v-ouro (ref-DPMF::UR_AccountNonces v-ouro emma)])
+        (format "Emma Vested-Ouro Unit is {}" [(ref-DPMF::UR_AccountUnit v-ouro emma)])
+        (format "Emma OURO supply is {}" [(ref-DPTF::UR_AccountSupply ouro emma)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 021 Vesting Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 22 - Vesting Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-VST:module{Vesting} VST)
+        (ref-T01:module{TalosStageOne} TS01)
+        (ouro:string "OURO-98c486052a51")
+        (v-ouro:string "V|OURO-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+         "block-time": (time "2024-10-16T13:00:00Z")}
+    )
+    ;(ref-T01::VST|C_Unvest emma emma v-ouro 1)
+    [
+        ;(format "Account Nonce Balance is {}" [(ref-DPMF::UR_AccountNonceBalance v-ouro 1 emma)])
+        ;(format "Culled Amount is {}" [(ref-VST::URC_CullMetaDataAmount emma v-ouro 1)])
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply v-ouro emma) v-ouro (ref-DPMF::UR_AccountNonces v-ouro emma)])
+        (format "Emma Vested-Ouro Unit is {}" [(ref-DPMF::UR_AccountUnit v-ouro emma)])
+        (format "Emma OURO supply is {}" [(ref-DPTF::UR_AccountSupply ouro emma)])
+        (format "Emma GAS supply is {}" [(ref-DPTF::UR_AccountSupply "GAS-98c486052a51" emma)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 022 Vesting Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 23 - Vesting Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    (ref-T01::DPMF|C_DeployAccount "V|OURO-98c486052a51" KST.ANHD)
+    (ref-T01::DPMF|C_ToggleTransferRole KST.ANHD "V|OURO-98c486052a51" KST.ANHD true)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 023 Vesting Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 24 - Vesting Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-T01:module{TalosStageOne} TS01)
+    )
+    ;(ref-T01::DPMF|C_Transfer KST.EMMA "V|OURO-98c486052a51" 1 KST.EMMA KST.ANHD 100.0 false)
+    ;(expect-failure "No Cull Possible" (ref-T01::VST|C_Unvest KST.EMMA KST.EMMA "V|OURO-98c486052a51" 2))
+    (ref-T01::VST|C_Unvest KST.EMMA KST.EMMA "V|OURO-98c486052a51" 1)
+    ;[
+    ;    ;(format "Account Nonce Balance is {}" [(ref-DPMF::UR_AccountNonceBalance v-ouro 1 emma)])
+    ;    ;(format "Culled Amount is {}" [(ref-VST::URC_CullMetaDataAmount emma v-ouro 1)])
+    ;    (format "AH has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply "V|OURO-98c486052a51" KST.ANHD) "V|OURO-98c486052a51" (ref-DPMF::UR_AccountNonces "V|OURO-98c486052a51" KST.ANHD)])
+    ;    (format "AH Vested-Ouro Unit is {}" [(ref-DPMF::UR_AccountUnit "V|OURO-98c486052a51" KST.ANHD)])
+    ;    (format "AH OURO supply is {}" [(ref-DPTF::UR_AccountSupply "OURO-98c486052a51" KST.ANHD)])
+    ;]
+    [
+        (format "Emma GAS supply after unvest is {}" [(ref-DPTF::UR_AccountSupply "GAS-98c486052a51" KST.EMMA)])
+        (format "Emma has Ignis Gas Discount {}" [(ref-DALOS::URC_IgnisGasDiscount KST.EMMA)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 024 Vesting Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

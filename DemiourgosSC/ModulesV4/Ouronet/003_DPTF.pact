@@ -61,6 +61,9 @@
     (defun URC_HasReserved:bool (id:string))
     ;;
     (defun UEV_IMC ())
+    (defun UEV_id (id:string))
+    (defun UEV_CheckID:bool (id:string))
+    (defun UEV_Amount (id:string amount:decimal))
     (defun UEV_CanChangeOwnerON (id:string))
     (defun UEV_CanUpgradeON (id:string))
     (defun UEV_CanAddSpecialRoleON (id:string))
@@ -71,9 +74,6 @@
     (defun UEV_AccountBurnState (id:string account:string state:bool))
     (defun UEV_AccountTransferState (id:string account:string state:bool))
     (defun UEV_AccountFreezeState (id:string account:string state:bool))
-    (defun UEV_Amount (id:string amount:decimal))
-    (defun UEV_CheckID:bool (id:string))
-    (defun UEV_id (id:string))
     (defun UEV_Virgin (id:string))
     (defun UEV_FeeLockState (id:string state:bool))
     (defun UEV_FeeToggleState (id:string state:bool))
@@ -106,6 +106,7 @@
     (defun C_ToggleReservation:object{OuronetDalos.IgnisCumulator} (patron:string id:string toggle:bool))
     (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
+    (defun C_WipePartial:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string amtbw:decimal))
     ;;
     (defun XB_Credit (id:string account:string amount:decimal))
     (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
@@ -473,11 +474,31 @@
         (compose-capability (BASIS|C>X_WRITE-ROLES id account 4))
         (compose-capability (SECURE))
     )
-    (defcap DPTF|C>WIPE (id:string account-to-be-wiped:string)
+    (defcap DPTF|C>TOTAL-WIPE (id:string account-to-be-wiped:string)
         @event
-        (UEV_CanWipeON id)
-        (UEV_AccountFreezeState id account-to-be-wiped true)
-        (compose-capability (SECURE))
+        (compose-capability (DPTF|X>WIPE id account-to-be-wiped))
+    )
+    (defcap DPTF|C>PARTIAL-WIPE (id:string account-to-be-wiped:string amount-to-be-wiped:decimal)
+        @event
+        (let
+            (
+                (current-balance:decimal (UR_AccountSupply id account-to-be-wiped))
+            )
+            (enforce (<= amount-to-be-wiped current-balance) "Wipe Amount must be lower that Account Balance")
+            (UEV_Amount id amount-to-be-wiped)
+            (compose-capability (DPTF|X>WIPE id account-to-be-wiped))
+        )
+    )
+    (defcap DPTF|X>WIPE (id:string account-to-be-wiped:string)
+        (let
+            (
+                (account-to-be-wiped-balance:decimal (UR_AccountSupply id account-to-be-wiped))
+            )
+            (enforce (> account-to-be-wiped-balance 0.0) "Negative Balace Accounts cant be wiped")
+            (UEV_CanWipeON id)
+            (UEV_AccountFreezeState id account-to-be-wiped true)
+            (compose-capability (SECURE))
+        )
     )
     (defcap DPTF|C>MINT (id:string client:string amount:decimal origin:bool)
         (let
@@ -982,6 +1003,41 @@
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
+    (defun UEV_id (id:string)
+        (with-default-read DPTF|PropertiesTable id
+            { "supply" : -1.0 }
+            { "supply" := s }
+            (enforce
+                (>= s 0.0)
+                (format "DPTF ID {} does not exist" [id])
+            )
+        )
+    )
+    (defun UEV_CheckID:bool (id:string)
+        (with-default-read DPTF|PropertiesTable id
+            { "supply" : -1.0 }
+            { "supply" := s }
+            (if (>= s 0.0)
+                true
+                false
+            )
+        )
+    )
+    (defun UEV_Amount (id:string amount:decimal)
+        (let
+            (
+                (decimals:integer (UR_Decimals id))
+            )
+            (enforce
+                (= (floor amount decimals) amount)
+                (format "{} is not conform with the {} prec." [amount id])
+            )
+            (enforce
+                (> amount 0.0)
+                (format "{} is not a Valid Transaction amount" [amount])
+            )
+        )
+    )
     (defun UEV_CanChangeOwnerON (id:string)
         (let
             (
@@ -1089,41 +1145,6 @@
                 (result:bool (and decimal-check positivity-check))
             )
             result
-        )
-    )
-    (defun UEV_Amount (id:string amount:decimal)
-        (let
-            (
-                (decimals:integer (UR_Decimals id))
-            )
-            (enforce
-                (= (floor amount decimals) amount)
-                (format "{} is not conform with the {} prec." [amount id])
-            )
-            (enforce
-                (> amount 0.0)
-                (format "{} is not a Valid Transaction amount" [amount])
-            )
-        )
-    )
-    (defun UEV_CheckID:bool (id:string)
-        (with-default-read DPTF|PropertiesTable id
-            { "supply" : -1.0 }
-            { "supply" := s }
-            (if (>= s 0.0)
-                true
-                false
-            )
-        )
-    )
-    (defun UEV_id (id:string)
-        (with-default-read DPTF|PropertiesTable id
-            { "supply" : -1.0 }
-            { "supply" := s }
-            (enforce
-                (>= s 0.0)
-                (format "DPTF ID {} does not exist" [id])
-            )
         )
     )
     (defun UEV_Virgin (id:string)
@@ -1524,8 +1545,21 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
-            (with-capability (DPTF|C>WIPE id atbw)
+            (with-capability (DPTF|C>TOTAL-WIPE id atbw)
                 (XI_Wipe id atbw)
+                (ref-DALOS::UDC_BiggestCumulator)
+            )
+        )
+    )
+    (defun C_WipePartial:object{OuronetDalos.IgnisCumulator}
+        (patron:string id:string atbw:string amtbw:decimal)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+            )
+            (with-capability (DPTF|C>PARTIAL-WIPE id atbw amtbw)
+                (XI_WipePartial id atbw amtbw)
                 (ref-DALOS::UDC_BiggestCumulator)
             )
         )
@@ -2174,19 +2208,19 @@
         )
     )
     (defun XI_Wipe (id:string account-to-be-wiped:string)
-        (require-capability (DPTF|C>WIPE id account-to-be-wiped))
+        (require-capability (DPTF|C>TOTAL-WIPE id account-to-be-wiped))
         (let
             (
                 (amount-to-be-wiped:decimal (UR_AccountSupply id account-to-be-wiped))
             )
-            (if (> amount-to-be-wiped 0.0)
-                (do
-                    (XI_DebitAdmin id account-to-be-wiped amount-to-be-wiped)
-                    (XI_UpdateSupply id amount-to-be-wiped false)
-                )
-                "Negative Amounts cant be wiped"
-            )
+            (XI_DebitAdmin id account-to-be-wiped amount-to-be-wiped)
+            (XI_UpdateSupply id amount-to-be-wiped false)
         )
+    )
+    (defun XI_WipePartial (id:string account-to-be-wiped:string amount-to-be-wiped:decimal)
+        (require-capability (DPTF|C>PARTIAL-WIPE id account-to-be-wiped amount-to-be-wiped))
+        (XI_DebitAdmin id account-to-be-wiped amount-to-be-wiped)
+        (XI_UpdateSupply id amount-to-be-wiped false)
     )
     
 )

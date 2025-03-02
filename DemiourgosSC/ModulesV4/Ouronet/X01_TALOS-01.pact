@@ -125,18 +125,25 @@
     (defun VST|C_CreateSleepingLink:string (patron:string dptf:string))
     ;;Frozen
     (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal))
+    (defun VST|C_RepurposeFrozen (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
     ;;Reservation
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal))
     (defun VST|C_Unreserve (patron:string unreserver:string r-dptf:string amount:decimal))
+    (defun VST|C_RepurposeReserved (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
     ;;Vesting
     (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer))
     (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer))
+    (defun VST|C_RepurposeVested (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))    
     (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
     ;;Sleeping
-    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer))
-    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer))
+    (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer]))
     (defun VST|C_MergeAll(patron:string merger:string dpmf:string))
+    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer))
+    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer))
+    (defun VST|C_RepurposeSleeping (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
+    (defun VST|C_RepurposeMerge (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string))
+    (defun VST|C_RepurposeMergeAll (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string))
     ;;
     ;;
     (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
@@ -1011,13 +1018,28 @@
         )
     )
     (defun DPTF|C_Wipe (patron:string id:string atbw:string)
-        @doc "Wipes a DPTF Token from a given account"
+        @doc "Wipes a DPTF Token from a given account in its entirety \
+        \ Only works for positive existing amounts"
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                 (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
                         (ref-DPTF::C_Wipe patron id atbw)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto id) [ico])
+        )
+    )
+    (defun DPTF|C_WipePartial (patron:string id:string atbw:string amtbw:decimal)
+        @doc "Similar to <DPTF|C_Wipe>, but doesnt wipe the whole existing amount"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-DPTF::C_WipePartial patron id atbw amtbw)
                     )
                 )
             )
@@ -1840,6 +1862,20 @@
             (XC_IgnisCollect patron freezer ico)
         )
     )
+    (defun VST|C_RepurposeFrozen (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @doc "Repurposes a Frozen DPTF to another account"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_RepurposeFrozen patron dptf-to-repurpose repurpose-from repurpose-to)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron repurpose-from ico)
+        )
+    )
     ;;Reserving
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal)
         @doc "Reserves a DPTF Token"
@@ -1867,6 +1903,20 @@
                 )
             )
             (XC_IgnisCollect patron unreserver ico)
+        )
+    )
+    (defun VST|C_RepurposeReserved (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @doc "Repurposes a Reserved DPTF to another account"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_RepurposeReserved patron dptf-to-repurpose repurpose-from repurpose-to)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron repurpose-from ico)
         )
     )
     ;;Vesting
@@ -1898,73 +1948,20 @@
             (XC_IgnisCollect patron vester ico)
         )
     )
-    
-    ;;Sleeping
-    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer)
-        @doc "Culls the Sleeping DPMF Token, recovering its DPTF counterpart."
+    (defun VST|C_RepurposeVested (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        @doc "Repurposes a Vested DPMF to another account"
         (let
             (
                 (ref-VST:module{Vesting} VST)
                 (ico:[object{OuronetDalos.IgnisCumulator}]
                     (with-capability (P|TS)
-                        (ref-VST::C_Unsleep patron unsleeper dpmf nonce)
+                        (ref-VST::C_RepurposeVested patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
                     )
                 )
             )
-            (XC_IgnisCollect patron unsleeper ico)
+            (XC_IgnisCollect patron repurpose-from ico)
         )
     )
-    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer)
-        @doc "Sleeps a DPTF Token, generating ist Sleeping DPMF Counterspart"
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-                (ico:[object{OuronetDalos.IgnisCumulator}]
-                    (with-capability (P|TS)
-                        (ref-VST::C_Sleep patron sleeper target-account dptf amount duration)
-                    )
-                )
-            )
-            (XC_IgnisCollect patron sleeper ico)
-        )
-    )
-    (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer])
-        @doc "Merges selected sleeping Tokens of an account, \
-        \ releasing them if expired sleeping dpmfs exist within the selected tokens \
-        \ Up to 30 existing Batches can be merged this way."
-
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-                (ico:[object{OuronetDalos.IgnisCumulator}]
-                    (with-capability (P|TS)
-                        (ref-VST::C_Merge patron merger dpmf nonces)
-                    )
-                )
-            )
-            (XC_IgnisCollect patron merger ico)
-        )
-    )
-    (defun VST|C_MergeAll(patron:string merger:string dpmf:string)
-        @doc "Merges all sleeping Tokens of an account, \
-        \ releasing them if expired sleeping dpmfs exist on account \
-        \ Up to 30 existing Batches can be merged this way \
-        \ If more than 35 Batches exist on <merger>, <VST|C_Merge> must be used to merge individual batches,\
-        \ to reduce their number, such that mergim them all can fit within a single TX."
-
-        (let
-            (
-                (ref-VST:module{Vesting} VST)
-                (ico:[object{OuronetDalos.IgnisCumulator}]
-                    (with-capability (P|TS)
-                        (ref-VST::C_MergeAll patron merger dpmf)
-                    )
-                )
-            )
-            (XC_IgnisCollect patron merger ico)
-        )
-    )
-    ;;
     (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)
         @doc "Coils a DPTF Token and Vests its output to <target-account> \
             \ Requires that: \
@@ -2024,6 +2021,113 @@
             )
             (XC_IgnisCollect patron curler-vester [end-ico])
             c-rbt2-amount
+        )
+    )
+    ;;Sleeping
+    (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer])
+        @doc "Merges selected sleeping Tokens of an account, \
+        \ releasing them if expired sleeping dpmfs exist within the selected tokens \
+        \ Up to 30 existing Batches can be merged this way."
+
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Merge patron merger dpmf nonces)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron merger ico)
+        )
+    )
+    (defun VST|C_MergeAll(patron:string merger:string dpmf:string)
+        @doc "Merges all sleeping Tokens of an account, \
+        \ releasing them if expired sleeping dpmfs exist on account \
+        \ Up to 30 existing Batches can be merged this way \
+        \ If more than 35 Batches exist on <merger>, <VST|C_Merge> must be used to merge individual batches,\
+        \ to reduce their number, such that mergim them all can fit within a single TX."
+
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_MergeAll patron merger dpmf)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron merger ico)
+        )
+    )
+    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer)
+        @doc "Sleeps a DPTF Token, generating ist Sleeping DPMF Counterspart"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Sleep patron sleeper target-account dptf amount duration)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron sleeper ico)
+        )
+    )
+    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer)
+        @doc "Culls the Sleeping DPMF Token, recovering its DPTF counterpart."
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_Unsleep patron unsleeper dpmf nonce)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron unsleeper ico)
+        )
+    )
+    (defun VST|C_RepurposeSleeping (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)
+        @doc "Repurposes a single Sleeping DPMF from <repurpose-from> to <repurpose-to>"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_RepurposeSleeping patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron repurpose-from ico)
+        )
+    )
+    (defun VST|C_RepurposeMerge (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string)
+        @doc "Repurposes multiple Sleeping DPMFs (up to 30) from <repurpose-from> to <repurpose-to>"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_RepurposeMerge patron dpmf-to-repurpose nonces repurpose-from repurpose-to)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron repurpose-from ico)
+        )
+    )
+    (defun VST|C_RepurposeMergeAll (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string)
+        @doc "Repurposes all Sleeping DPMFs (up to 30, more wont fit in a tx) from <repurpose-from> to <repurpose-to>"
+        (let
+            (
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_RepurposeMergeAll patron dpmf-to-repurpose repurpose-from repurpose-to)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron repurpose-from ico)
         )
     )
     ;;{LIQUID_Client}
