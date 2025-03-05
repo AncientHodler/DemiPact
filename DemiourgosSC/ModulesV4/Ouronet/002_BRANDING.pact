@@ -30,8 +30,6 @@
     ;;
     (defun URC_MaxBluePayment (account:string))
     ;;
-    (defun UEV_IMC ())
-    ;;
     (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
     (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
     (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
@@ -114,6 +112,14 @@
                 (mg:guard (create-capability-guard (P|BRD|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -236,14 +242,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     ;;{F3}
     (defun UDC_BrandingLogo:object{Branding.Schema} (input:object{Branding.Schema} logo:string)
         {"logo"             : logo
@@ -394,10 +392,8 @@
                     (branding-pending:object{Branding.Schema} (UR_Branding entity-id true))
                     (flag:integer (UR_Flag entity-id false))
                     (premium:time (UR_PremiumUntil entity-id false))
-                    (mdec:decimal (dec months))
-                    (days:decimal (* 30.0 mdec))
-                    (seconds:decimal (* 86400.0 days))
-                    (payment:decimal (* mdec blue))
+                    (seconds:decimal (fold (*) 1.0 [86400.0 30.0 (dec months)]))
+                    (payment:decimal (* (dec months) blue))
                     (premium-until:time (add-time premium seconds))
 
                     (as-is1:object{Branding.Schema} (UDC_BrandingFlag branding 1))

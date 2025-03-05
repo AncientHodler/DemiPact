@@ -59,8 +59,9 @@
     (defun URC_HasSleeping:bool (id:string))
     (defun URC_HasFrozen:bool (id:string))
     (defun URC_HasReserved:bool (id:string))
+    (defun URC_Parent:string (dptf:string))
     ;;
-    (defun UEV_IMC ())
+    (defun UEV_ParentOwnership (dptf:string))
     (defun UEV_id (id:string))
     (defun UEV_CheckID:bool (id:string))
     (defun UEV_Amount (id:string amount:decimal))
@@ -114,7 +115,7 @@
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
     ;;
     (defun XE_Burn (id:string account:string amount:decimal))
-    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:string ticker:string))
+    (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator} (patron:string name:string ticker:string))
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool))
     (defun XE_ToggleMintRole (id:string account:string toggle:bool))
@@ -192,6 +193,14 @@
             )
             (ref-P|DALOS::P|A_AddIMP mg)
             (ref-P|BRD::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -404,14 +413,14 @@
         (UEV_AccountFreezeState id account (not frozen))
         (compose-capability (P|DPTF|CALLER))
     )
-    (defcap DPTF|C>UPDATE-BRD (id:string)
+    (defcap DPTF|C>UPDATE-BRD (dptf:string)
         @event
-        (CAP_SpecialOwner id)
+        (UEV_ParentOwnership dptf)
         (compose-capability (P|DPTF|CALLER))
     )
-    (defcap DPTF|C>UPGRADE-BRD (id:string)
+    (defcap DPTF|C>UPGRADE-BRD (dptf:string)
         @event
-        (CAP_SpecialOwner id)
+        (UEV_ParentOwnership dptf)
         (compose-capability (P|DPTF|CALLER))
     )
     (defcap BASIS|C>X_WRITE-ROLES (id:string account:string rp:integer)
@@ -994,14 +1003,35 @@
             true
         )
     )
-    ;;{F2}
-    (defun UEV_IMC ()
+    (defun URC_Parent:string (dptf:string)
+        @doc "Computes <dptf> parent"
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (fourth:string (drop 3 (take 4 dptf)))
             )
-            (ref-U|G::UEV_Any (P|UR_IMP))
+            (enforce (!= fourth BAR) "Frozen LP Tokens not allowed for this operation")
+            (let
+                (
+                    (first-two:string (take 2 dptf))
+                )
+                (if (= first-two "F|")
+                    (UR_Frozen dptf)
+                    (if (= first-two "R|")
+                        (UR_Reservation dptf)
+                        dptf
+                    )
+                )
+            )
         )
+    )
+    ;;{F2}
+    (defun UEV_ParentOwnership (dptf:string)
+        @doc "Enforces: \
+            \ <dptf> Ownership, if <dptf> is pure \
+            \ <(UR_Frozen dptf)>, if its a f|dptf \
+            \ (UR_Reservation dptf), if its a r|dptf \
+            \ While ensuring a Frozen LP cant be used for this operation."
+        (CAP_Owner (URC_Parent dptf))
     )
     (defun UEV_id (id:string)
         (with-default-read DPTF|PropertiesTable id
@@ -1096,8 +1126,8 @@
                 (x:bool (UR_Paused id))
             )
             (if state
-                (enforce x (format "{} is already unpaused" [id]))
-                (enforce (not x) (format "{} is already paused" [id]))
+                (enforce x (format "{} must not be paused for action" [id]))
+                (enforce (not x) (format "{} is paused; transfers are paused" [id]))
             )
         )
     )
@@ -1250,16 +1280,6 @@
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
     )
-    (defun CAP_SpecialOwner (id:string)
-        @doc "Enforces Special DPTF Token ID Ownership, by enforcing Parent DPTF Token Ownership"
-        (if (= (take 2 id) "F|")
-            (CAP_Owner (UR_Frozen id))
-            (if (= (take 2 id) "R|")
-                (CAP_Owner (UR_Reservation id))
-                (CAP_Owner id)
-            )
-        )
-    )
     ;;
     ;;{F5}
     ;;{F6}
@@ -1271,7 +1291,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
             )
-            (with-capability (DPTF|C>UPDATE-BRD)
+            (with-capability (DPTF|C>UPDATE-BRD entity-id)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::UDC_BrandingCumulator 1.0)
             )
@@ -1283,10 +1303,11 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto entity-id))
+                (parent:string (URC_Parent entity-id))
+                (parent-owner:string (UR_Konto parent))
                 (kda-payment:decimal
-                    (with-capability (DPTF|C>UPGRADE-BRD)
-                        (ref-BRD::XE_UpgradeBranding entity-id owner months)
+                    (with-capability (DPTF|C>UPGRADE-BRD entity-id)
+                        (ref-BRD::XE_UpgradeBranding entity-id parent-owner months)
                     )
                 )
             )
@@ -1317,7 +1338,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|S>CTRL id)
-                (XI_Control patron id cco cu casr cf cw cp)
+                (XI_Control id cco cu casr cf cw cp)
                 (ref-DALOS::UDC_SmallCumulator)
             )
         )
@@ -1763,11 +1784,17 @@
         )
     )
     (defun XE_IssueLP:object{OuronetDalos.IgnisCumulator}
-        (patron:string account:string name:string ticker:string)
+        (patron:string name:string ticker:string)
         @doc "Issues a DPTF Token as a Liquidity Pool Token. A LP DPTF follows specific rules in naming."
         (UEV_IMC)
         (with-capability (SECURE)
-            (XB_IssueFree patron account [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+                )
+                (XB_IssueFree patron swp-sc [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
+            )
         )
     )
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool)

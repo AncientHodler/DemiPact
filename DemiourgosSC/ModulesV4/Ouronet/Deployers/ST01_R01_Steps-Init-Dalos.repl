@@ -497,16 +497,56 @@
 (commit-tx)
 (print "")
 
+(print "Main Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+;(print "")
+;(begin-tx "INIT TX 029 - X01_TALOS.pact")
+;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+;(namespace "free")
+;(load "../X01_TALOS-01.pact")
+;(format "<<<<<<<TALOS Costs {} GAS>>>>>>>" [(env-gas)])
+;(commit-tx)
+;(print "")
+;;
+;;
+;;
 (print "")
-(begin-tx "INIT TX 029 - X01_TALOS.pact")
+(begin-tx "INIT TX 029a - TALOS-01_A.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "../X01_TALOS-01.pact")
-(format "<<<<<<<TALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(load "../StageOne/TALOS-01_A.pact")
+(format "<<<<<<<TALOS-01_A Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
-(print "Main Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+(print "")
+(begin-tx "INIT TX 029b - TALOS-01_C1.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../StageOne/TALOS-01_C1.pact")
+(format "<<<<<<<TALOS-01_C1 Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 029c - TALOS-01_C2.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../StageOne/TALOS-01_C2.pact")
+(format "<<<<<<<TALOS-01_C2 Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 029c - TALOS-01_P.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../StageOne/TALOS-01_P.pact")
+(format "<<<<<<<TALOS-01_P Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "TALOS Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 (print "")
 (begin-tx "INIT TX 030 - ST01_P01_DalosDeployer.pact")
@@ -526,36 +566,41 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
 (use U|CT)          ;; 11.125
-(use U|G)           ;;  5.913
-(use U|ST)          ;;  4.175
-(use U|RS)          ;;  1.909
-(use U|LST)         ;;  7.698
-(use U|INT)         ;;  3.056
-(use U|DEC)         ;;  4.595
-(use U|DALOS)       ;; 10.857
-(use U|ATS)         ;; 38.185
-(use U|DPTF)        ;;  4.700
-(use U|VST)         ;;  5.157
-(use U|SWP)         ;; 22.898
-(use U|BFS)         ;; 15.250
+(use U|G)           ;;  2.295
+(use U|ST)          ;;  4.164
+(use U|RS)          ;;  1.898
+(use U|LST)         ;;  7.112
+(use U|INT)         ;;  3.035
+(use U|DEC)         ;;  4.583
+(use U|DALOS)       ;;  8.876
+(use U|ATS)         ;; 38.151
+(use U|DPTF)        ;;  9.963
+(use U|VST)         ;;  6.839
+(use U|SWP)         ;; 23.544
+(use U|BFS)         ;; 15.686
 (print "")
-(use DALOS)         ;; 86.638
-(use BRD)           ;; 34.653
-(use DPTF)          ;;106.902
-(use DPMF)          ;;107.225
-(use ATS)           ;;129.159
-(use TFT)           ;; 58.145
-(use ATSU)          ;; 89.280
-(use VST)           ;; 39.094
-(use LIQUID)        ;; 26.716
-(use OUROBOROS)     ;; 38.374
+(use DALOS)         ;; 96.398
+(use BRD)           ;; 34.960
+(use DPTF)          ;;121.156
+(use DPMF)          ;;120.199
+(use ATS)           ;;138.940
+(use TFT)           ;;118.810
+(use ATSU)          ;;104.135
+(use VST)           ;; 93.711
+(use LIQUID)        ;; 34.225
+(use OUROBOROS)     ;; 50.163
 
-(use SWPT)          ;; 38.433
-(use SWP)           ;;100.646
-(use SWPU)          ;;113.545
-(use TS01)          ;;109.628
+(use SWPT)          ;; 46.731
+(use SWP)           ;;103.513
+(use SWPU)          ;;130.187
 
-(use DPL-DALOS)     ;;
+(use TS01-A)        ;; 23.845
+(use TS01-C1)       ;; 78.521
+(use TS01-C2)       ;;117.941
+(use TS01-CP)       ;; 21.131
+
+(use DPL-DALOS)     ;;120.963
+;(use DPL-AOZ)      ;; 59.570
 
 (env-gas)
 (commit-tx)
@@ -603,6 +648,7 @@
                     (coin.TRANSFER "alice" KC.KADN_NAME_0000 25000.0)
                     (coin.TRANSFER "alice" KC.KADN_NAME_000i 5000.0)
                     (coin.TRANSFER "alice" KC.KADN_NAME_000j 1500.0)
+                    (coin.TRANSFER "alice" KC.KADN_NAME_000b 1500.0)
                 ]
         }
     ]
@@ -627,9 +673,12 @@
     (ref-coin::create-account KC.KADN_NAME_000j (read-keyset "KEY_KDA_BM"))
     (ref-DALOS::C_TransferDalosFuel "alice" KC.KADN_NAME_000j 1500.0)
 
+    ;;Create Emma and transfer some kadenas
+    (ref-coin::create-account KC.KADN_NAME_000b (read-keyset "KEY_KDA_Emma"))
+    (ref-DALOS::C_TransferDalosFuel "alice" KC.KADN_NAME_000b 1500.0)
+
     ;;Users
     (ref-coin::create-account KC.KADN_NAME_000a (read-keyset "KEY_KDA_Florian"))           ;;HOV
-    (ref-coin::create-account KC.KADN_NAME_000b (read-keyset "KEY_KDA_Emma"))
     (ref-coin::create-account KC.KADN_NAME_000c (read-keyset "KEY_KDA_Byta"))              ;;CTO
     (ref-coin::create-account KC.KADN_NAME_000d (read-keyset "KEY_KDA_Lumy"))
     (ref-coin::create-account KC.KADN_NAME_000e (read-keyset "KEY_KDA_Coca"))
@@ -681,17 +730,17 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-T01:module{TalosStageOne} TS01)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
     )
 
-    (ref-T01::DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
-    (ref-T01::DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.us-0004_kiss-keyset") KC.KADN_NAME_000f KC.PBLC_000f)
-    (ref-T01::DALOS|A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.us-0005_plcs-keyset") KC.KADN_NAME_000g KC.PBLC_000g)
-    (ref-T01::DALOS|A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.us-0006_nani-keyset") KC.KADN_NAME_000h KC.PBLC_000h)
+    (ref-TS01-A::DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
+    (ref-TS01-A::DALOS|A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.us-0004_kiss-keyset") KC.KADN_NAME_000f KC.PBLC_000f)
+    (ref-TS01-A::DALOS|A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.us-0005_plcs-keyset") KC.KADN_NAME_000g KC.PBLC_000g)
+    (ref-TS01-A::DALOS|A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.us-0006_nani-keyset") KC.KADN_NAME_000h KC.PBLC_000h)
 
     ;;Banana Example
-    (ref-T01::DALOS|A_DeployStandardAccount KC.BM (keyset-ref-guard "free.us-0007_bnms-keyset") KC.KADN_NAME_000j KC.PBLC_000j)
-    (ref-T01::DALOS|A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.us-0008_bnjr-keyset") KC.KADN_NAME_0006 KC.BM KC.PBLC_0006)
+    (ref-TS01-A::DALOS|A_DeployStandardAccount KC.BM (keyset-ref-guard "free.us-0007_bnms-keyset") KC.KADN_NAME_000j KC.PBLC_000j)
+    (ref-TS01-A::DALOS|A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.us-0008_bnjr-keyset") KC.KADN_NAME_0006 KC.BM KC.PBLC_0006)
 )
 (env-sigs [])
 (env-gas)

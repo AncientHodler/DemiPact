@@ -70,7 +70,6 @@
     (defun URC_ResidentSum:decimal (atspair:string))
     (defun URC_IzPresentHotRBT:bool (atspair:string))
     ;;
-    (defun UEV_IMC ())
     (defun UEV_CanChangeOwnerON (atspair:string))
     (defun UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool))
     (defun UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool))
@@ -251,6 +250,14 @@
             (ref-P|BRD::P|A_AddIMP mg)
             (ref-P|DPTF::P|A_AddIMP mg)
             (ref-P|DPMF::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -569,6 +576,7 @@
     )
     (defcap ATS|C>UPGRADE-BRD (atspair:string)
         @event
+        (CAP_Owner atspair)
         (compose-capability (P|ATS|CALLER))
     )
     (defcap ATS|C>ADD_SECONDARY (atspair:string reward-token:string token-type:bool)
@@ -1152,14 +1160,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     (defun UEV_CanChangeOwnerON (atspair:string)
         (UEV_id atspair)
         (let
@@ -1353,7 +1353,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
             )
-            (with-capability (ATS|C>UPDATE-BRD)
+            (with-capability (ATS|C>UPDATE-BRD entity-id)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::UDC_BrandingCumulator 5.0)
             )
@@ -1367,7 +1367,7 @@
                 (ref-BRD:module{Branding} BRD)
                 (owner:string (UR_OwnerKonto entity-id))
                 (kda-payment:decimal
-                    (with-capability (ATS|C>UPGRADE-BRD)
+                    (with-capability (ATS|C>UPGRADE-BRD entity-id)
                         (ref-BRD::XE_UpgradeBranding entity-id owner months)
                     )
                 )

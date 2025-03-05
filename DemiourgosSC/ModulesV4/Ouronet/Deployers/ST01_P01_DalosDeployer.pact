@@ -111,40 +111,40 @@
     (defun A_Step005 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
             )
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 DEMIURGOI|AH_NAME
                 (keyset-ref-guard DEMIURGOI|AH_KEY)
                 DEMIURGOI|AH_KDA-NAME
                 DEMIURGOI|AH_PBL
             )
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 DEMIURGOI|CTO_NAME
                 (keyset-ref-guard DEMIURGOI|CTO_KEY)
                 DEMIURGOI|CTO_KDA-NAME
                 DEMIURGOI|CTO_PBL
             )
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 DEMIURGOI|HOV_NAME
                 (keyset-ref-guard DEMIURGOI|HOV_KEY)
                 DEMIURGOI|HOV_KDA-NAME
                 DEMIURGOI|HOV_PBL
             )
             ;;PLEB Accounts
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 PLEB|AOZT_NAME
                 (keyset-ref-guard PLEB|AOZT_KEY)
                 PLEB|AOZT_KDA-NAME
                 PLEB|AOZT_PBL
             )
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 PLEB|EMMA_NAME
                 (keyset-ref-guard PLEB|EMMA_KEY)
                 PLEB|EMMA_KDA-NAME
                 PLEB|EMMA_PBL
             )
-            (ref-T01::DALOS|A_DeployStandardAccount
+            (ref-TS01-A::DALOS|A_DeployStandardAccount
                 PLEB|LUMY_NAME
                 (keyset-ref-guard PLEB|LUMY_KEY)
                 PLEB|LUMY_KDA-NAME
@@ -168,9 +168,13 @@
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|T01:module{OuronetPolicy} TS01)
 
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
+                (ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
+                (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+                (ref-P|TS01-CP:module{OuronetPolicy} TS01-CP)
+
+                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
 
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -190,30 +194,34 @@
             (ref-P|SWP::P|A_Define)
             (ref-P|SWPT::P|A_Define)
             (ref-P|SWPU::P|A_Define)
-            (ref-P|T01::P|A_Define)
+
+            (ref-P|TS01-A::P|A_Define)
+            (ref-P|TS01-C1::P|A_Define)
+            (ref-P|TS01-C2::P|A_Define)
+            (ref-P|TS01-CP::P|A_Define)
             ;;
             ;;Kadena Prices
-            (ref-T01::DALOS|A_UpdateUsagePrice "standard"      0.01)
-            (ref-T01::DALOS|A_UpdateUsagePrice "smart"         0.02)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ats"            0.1)
-            (ref-T01::DALOS|A_UpdateUsagePrice "swp"           0.15)
-            (ref-T01::DALOS|A_UpdateUsagePrice "dptf"           0.2)
-            (ref-T01::DALOS|A_UpdateUsagePrice "dpmf"           0.3)
-            (ref-T01::DALOS|A_UpdateUsagePrice "dpsf"           0.4)
-            (ref-T01::DALOS|A_UpdateUsagePrice "dpnf"           0.5)
-            (ref-T01::DALOS|A_UpdateUsagePrice "blue"         0.025)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "standard"      0.01)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "smart"         0.02)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ats"            0.1)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "swp"           0.15)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "dptf"           0.2)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpmf"           0.3)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpsf"           0.4)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpnf"           0.5)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "blue"         0.025)
 
             ;;Ignis Prices
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
-            (ref-T01::DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
+            (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
             ;;
             (insert ref-DALOS::DALOS|PropertiesTable info
                 {"demiurgoi"                : 
@@ -250,25 +258,25 @@
                 (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
                 (ref-ORBR:module{Ouroboros} OUROBOROS)
                 (ref-SWP:module{Swapper} SWP)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 (patron:string DEMIURGOI|AH_NAME)
             )
-            (ref-T01::DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
             (ref-DALOS::DALOS|SetGovernor patron)
             ;; 
-            (ref-T01::DALOS|A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount ATS|SC_NAME (keyset-ref-guard ATS|SC_KEY) ATS|SC_KDA-NAME patron ATS|PBL)
             (ref-ATS::ATS|SetGovernor patron)
             ;;
-            (ref-T01::DALOS|A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount VST|SC_NAME (keyset-ref-guard VST|SC_KEY) VST|SC_KDA-NAME patron VST|PBL)
             (ref-VST::VST|SetGovernor patron)
             ;;    
-            (ref-T01::DALOS|A_DeploySmartAccount LQD|SC_NAME (keyset-ref-guard LQD|SC_KEY) LQD|SC_KDA-NAME patron LQD|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount LQD|SC_NAME (keyset-ref-guard LQD|SC_KEY) LQD|SC_KDA-NAME patron LQD|PBL)
             (ref-LIQUID::LIQUID|SetGovernor patron)
             ;;
-            (ref-T01::DALOS|A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount OUROBOROS|SC_NAME (keyset-ref-guard OUROBOROS|SC_KEY) OUROBOROS|SC_KDA-NAME patron OUROBOROS|PBL)
             (ref-ORBR::OUROBOROS|SetGovernor patron)
             ;;
-            (ref-T01::DALOS|A_DeploySmartAccount SWP|SC_NAME (keyset-ref-guard SWP|SC_KEY) SWP|SC_KDA-NAME patron SWP|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount SWP|SC_NAME (keyset-ref-guard SWP|SC_KEY) SWP|SC_KDA-NAME patron SWP|PBL)
             (ref-SWP::SWP|SetGovernor patron)
             ;;
             (ref-coin::create-account DALOS|SC_KDA-NAME DALOS|GUARD) 
@@ -282,11 +290,11 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (info:string (ref-DALOS::DALOS|Info))
                 (ids:list
-                    (ref-T01::DPTF|C_Issue
+                    (ref-TS01-C1::DPTF|C_Issue
                         DEMIURGOI|AH_NAME
                         DALOS|SC_NAME
                         ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
@@ -316,36 +324,36 @@
                 , "liquid-kda-id"           : StakedKadenaID
                 }
             )
-            (ref-T01::DPTF|C_DeployAccount AurynID ATS|SC_NAME)         ;;542
-            (ref-T01::DPTF|C_DeployAccount EliteAurynID ATS|SC_NAME)    ;;544
-            (ref-T01::DPTF|C_DeployAccount WrappedKadenaID LQD|SC_NAME) ;;532
-            (ref-T01::DPTF|C_DeployAccount StakedKadenaID LQD|SC_NAME)  ;;533
+            (ref-TS01-C1::DPTF|C_DeployAccount AurynID ATS|SC_NAME)         ;;542
+            (ref-TS01-C1::DPTF|C_DeployAccount EliteAurynID ATS|SC_NAME)    ;;544
+            (ref-TS01-C1::DPTF|C_DeployAccount WrappedKadenaID LQD|SC_NAME) ;;532
+            (ref-TS01-C1::DPTF|C_DeployAccount StakedKadenaID LQD|SC_NAME)  ;;533
             ;;
             ;;Set Token Roles Part I
-            (ref-T01::DPTF|C_SetFee patron AurynID 50.0)               ;;2139
-            (ref-T01::DPTF|C_SetFee patron EliteAurynID 100.0)         ;;2143
-            (ref-T01::DPTF|C_ToggleFee patron AurynID true)            ;;2690
-            (ref-T01::DPTF|C_ToggleFee patron EliteAurynID true)       ;;2696
-            (ref-T01::DPTF|C_ToggleFeeLock patron AurynID true)        ;;2139
-            (ref-T01::DPTF|C_ToggleFeeLock patron EliteAurynID true)   ;;2142
+            (ref-TS01-C1::DPTF|C_SetFee patron AurynID 50.0)               ;;2139
+            (ref-TS01-C1::DPTF|C_SetFee patron EliteAurynID 100.0)         ;;2143
+            (ref-TS01-C1::DPTF|C_ToggleFee patron AurynID true)            ;;2690
+            (ref-TS01-C1::DPTF|C_ToggleFee patron EliteAurynID true)       ;;2696
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron AurynID true)        ;;2139
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron EliteAurynID true)   ;;2142
             ;;
             ;;Set Token Roles Part II
-            (ref-T01::DPTF|C_SetMinMove patron GasID 1000.0)                            ;;2216
-            (ref-T01::DPTF|C_SetFee patron GasID -1.0)                                  ;;2138
-            (ref-T01::DPTF|C_SetFeeTarget patron GasID DALOS|SC_NAME)                   ;;2491
-            (ref-T01::DPTF|C_ToggleFee patron GasID true)                               ;;2690
-            (ref-T01::DPTF|C_ToggleFeeLock patron GasID true)                           ;;2140
-            (ref-T01::DPTF|C_ToggleBurnRole patron GasID OUROBOROS|SC_NAME true)        ;;4217
-            (ref-T01::DPTF|C_ToggleBurnRole patron OuroID OUROBOROS|SC_NAME true)       ;;4214
-            (ref-T01::DPTF|C_ToggleMintRole patron GasID OUROBOROS|SC_NAME true)        ;;4315
-            (ref-T01::DPTF|C_ToggleMintRole patron OuroID OUROBOROS|SC_NAME true)       ;;4315
+            (ref-TS01-C1::DPTF|C_SetMinMove patron GasID 1000.0)                            ;;2216
+            (ref-TS01-C1::DPTF|C_SetFee patron GasID -1.0)                                  ;;2138
+            (ref-TS01-C1::DPTF|C_SetFeeTarget patron GasID DALOS|SC_NAME)                   ;;2491
+            (ref-TS01-C1::DPTF|C_ToggleFee patron GasID true)                               ;;2690
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron GasID true)                           ;;2140
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron GasID OUROBOROS|SC_NAME true)        ;;4217
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID OUROBOROS|SC_NAME true)       ;;4214
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID OUROBOROS|SC_NAME true)        ;;4315
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID OUROBOROS|SC_NAME true)       ;;4315
             ;;
             ;;Set Token Roles Part III
-            (ref-T01::DPTF|C_SetFee patron StakedKadenaID -1.0)                         ;;2141
-            (ref-T01::DPTF|C_ToggleFee patron StakedKadenaID true)                      ;;2696
-            (ref-T01::DPTF|C_ToggleFeeLock patron StakedKadenaID true)                  ;;2142
-            (ref-T01::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3427
-            (ref-T01::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3527
+            (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)                         ;;2141
+            (ref-TS01-C1::DPTF|C_ToggleFee patron StakedKadenaID true)                      ;;2696
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StakedKadenaID true)                  ;;2142
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3427
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)    ;;3527
             ids
         )
     )
@@ -353,15 +361,15 @@
         (let*
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
                 (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
         
-                (VestedOuroID:string (ref-T01::VST|C_CreateVestingLink patron OuroID))
-                (VestedAurynID:string (ref-T01::VST|C_CreateVestingLink patron AurynID))
-                (VestedEliteAurynID:string (ref-T01::VST|C_CreateVestingLink patron EliteAurynID))
+                (VestedOuroID:string (ref-TS01-C2::VST|C_CreateVestingLink patron OuroID))
+                (VestedAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron AurynID))
+                (VestedEliteAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron EliteAurynID))
             )
             [VestedOuroID VestedAurynID VestedEliteAurynID]
         )
@@ -370,7 +378,7 @@
         (let*
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
@@ -378,7 +386,7 @@
                 (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
                 (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
                 (ats-ids:list
-                    (ref-T01::ATS|C_Issue
+                    (ref-TS01-C2::ATS|C_Issue
                         patron
                         patron
                         ["Auryndex" "EliteAuryndex" "KdaLiquindex"]
@@ -394,7 +402,7 @@
                 (Kadena-Liquid-Index:string (at 2 ats-ids))
             )
             ;;Set Up <Auryndex> 4795
-            (ref-T01::ATS|C_SetColdFee patron Auryndex
+            (ref-TS01-C2::ATS|C_SetColdFee patron Auryndex
                 7
                 [50.0 100.0 200.0 350.0 550.0 800.0]
                 [
@@ -407,26 +415,26 @@
                     [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
                 ]
             )
-            (ref-T01::ATS|C_TurnRecoveryOn patron Auryndex true)                        ;;6131
+            (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Auryndex true)                        ;;6131
             ;;Set Up <EliteAuryndex>
-            (ref-T01::ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])           ;;2953
-            (ref-T01::ATS|C_SetCRD patron Elite-Auryndex false 360 24)                  ;;3964
-            (ref-T01::ATS|C_ToggleElite patron Elite-Auryndex true)                     ;;2952
-            (ref-T01::ATS|C_TurnRecoveryOn patron Elite-Auryndex true)                  ;;4957
+            (ref-TS01-C2::ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])           ;;2953
+            (ref-TS01-C2::ATS|C_SetCRD patron Elite-Auryndex false 360 24)                  ;;3964
+            (ref-TS01-C2::ATS|C_ToggleElite patron Elite-Auryndex true)                     ;;2952
+            (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Elite-Auryndex true)                  ;;4957
             ;;Set Up <KdaLiquindex>
-            (ref-T01::ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])     ;;2943
-            (ref-T01::ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)               ;;2958
-            (ref-T01::ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)             ;;4933
+            (ref-TS01-C2::ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])     ;;2943
+            (ref-TS01-C2::ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)               ;;2958
+            (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)             ;;4933
             ats-ids
         )
     )
     (defun A_Step011 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
-            (ref-T01::LQD|C_WrapKadena patron patron 1.0)
+            (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
         )
     )
     (defun A_Step012 ()
@@ -434,10 +442,10 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
-            (ref-T01::ATS|C_Coil
+            (ref-TS01-C2::ATS|C_Coil
                 patron
                 patron
                 (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
@@ -450,11 +458,11 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-amount:decimal 10000000.0)
             )
-            (ref-T01::DPTF|C_Mint
+            (ref-TS01-C1::DPTF|C_Mint
                 patron
                 (ref-DALOS::UR_OuroborosID)
                 patron
@@ -468,13 +476,13 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
                 (rt-amounts:[decimal] [418414.8824])
                 (rbt-request-amount:decimal 159016.8713)
             )
-            (ref-T01::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
+            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
         )
     )
     (defun A_Step015 ()
@@ -482,55 +490,55 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
                 (rt-amounts:[decimal] [114907.2904])
                 (rbt-request-amount:decimal (at 0 rt-amounts))
             )
-            (ref-T01::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
+            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
         )
     )
     (defun A_Step016 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
             )
-            (ref-T01::ORBR|C_Sublimate patron patron patron 1000.0)
-            (ref-T01::ORBR|C_Sublimate patron patron aozt 750.0)
-            (ref-T01::ORBR|C_Sublimate patron patron emma 10.0)
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron patron 1000.0)
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron aozt 750.0)
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron emma 10.0)
         )
     )
     (defun A_Step017 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
             )
-            (ref-T01::DALOS|A_IgnisToggle false true)
-            (ref-T01::DALOS|A_IgnisToggle true true)
+            (ref-TS01-A::DALOS|A_IgnisToggle false true)
+            (ref-TS01-A::DALOS|A_IgnisToggle true true)
         )
     )
     (defun A_Step018 ()
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 
             )
-            (ref-T01::DPTF|C_Transmute patron ouro-id patron 10.0)
+            (ref-TS01-C1::DPTF|C_Transmute patron ouro-id patron 10.0)
         )
     )
     (defun A_Step019 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
             )
-            (ref-T01::DPTF|C_Transfer 
+            (ref-TS01-C1::DPTF|C_Transfer 
                 DEMIURGOI|AH_NAME 
                 "OURO-98c486052a51"
                 DEMIURGOI|AH_NAME 
@@ -546,11 +554,12 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (ids:list
-                    (ref-T01::DPTF|C_Issue
+                    (ref-TS01-C1::DPTF|C_Issue
                         patron
                         patron
                         ["Vesta"]
@@ -565,9 +574,9 @@
                     )
                 )
                 (VestaID:string (at 0 ids))
-                (FrozenVestaID:string (ref-T01::VST|C_CreateFrozenLink patron VestaID))
-                (SleepingVestaID:string (ref-T01::VST|C_CreateSleepingLink patron VestaID))
-                (ReservedOuroID:string (ref-T01::VST|C_CreateReservationLink patron OuroID))
+                (FrozenVestaID:string (ref-TS01-C2::VST|C_CreateFrozenLink patron VestaID))
+                (SleepingVestaID:string (ref-TS01-C2::VST|C_CreateSleepingLink patron VestaID))
+                (ReservedOuroID:string (ref-TS01-C2::VST|C_CreateReservationLink patron OuroID))
             )
             [VestaID FrozenVestaID SleepingVestaID ReservedOuroID]
         )
@@ -637,19 +646,20 @@
             (
                 (patron:string DEMIURGOI|AH_NAME)
                 (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 (p1:string (ref-DALOS::UR_LiquidKadenaID))
                 (p2:string (ref-DALOS::UR_OuroborosID))
             )
-            (ref-T01::SWP|A_UpdatePrincipal p1 true)
-            (ref-T01::SWP|A_UpdatePrincipal p2 true)
+            (ref-TS01-A::SWP|A_UpdatePrincipal p1 true)
+            (ref-TS01-A::SWP|A_UpdatePrincipal p2 true)
 
-            (ref-T01::DPTF|C_DeployAccount p1 SWP|SC_NAME)
-            (ref-T01::DPTF|C_ToggleFeeExemptionRole patron p1 SWP|SC_NAME true)
-            (ref-T01::DPTF|C_ToggleBurnRole patron p1 SWP.SWP|SC_NAME true)
+            (ref-TS01-C1::DPTF|C_DeployAccount p1 SWP|SC_NAME)
+            (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p1 SWP|SC_NAME true)
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron p1 SWP.SWP|SC_NAME true)
 
-            (ref-T01::DPTF|C_DeployAccount p2 SWP|SC_NAME)
-            (ref-T01::DPTF|C_ToggleFeeExemptionRole patron p2 SWP|SC_NAME true)
+            (ref-TS01-C1::DPTF|C_DeployAccount p2 SWP|SC_NAME)
+            (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p2 SWP|SC_NAME true)
         )
     )
 

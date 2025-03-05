@@ -289,10 +289,10 @@
     (defun A_Step002:[string] ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (tf-ids:[string]
-                    (ref-T01::DPTF|C_Issue
+                    (ref-TS01-C1::DPTF|C_Issue
                         patron
                         patron
                         ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
@@ -322,7 +322,7 @@
     (defun A_Step003 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (PlebiumDenariusID:string (UR_Assets 1 3))
                 (ComatusAureusID:string (UR_Assets 1 4))
@@ -332,38 +332,38 @@
                 (BasileonAsID:string (UR_Assets 1 8))
             )
             ;;Set Transaction Fees for Minor Solid Kosonic Currencies
-            (ref-T01::DPTF|C_SetFee patron PlebiumDenariusID 10.0)
-            (ref-T01::DPTF|C_ToggleFee patron PlebiumDenariusID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron PlebiumDenariusID 10.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron PlebiumDenariusID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
 
-            (ref-T01::DPTF|C_SetFee patron ComatusAureusID 20.0)
-            (ref-T01::DPTF|C_ToggleFee patron ComatusAureusID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron ComatusAureusID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron ComatusAureusID 20.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron ComatusAureusID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron ComatusAureusID true)
 
-            (ref-T01::DPTF|C_SetFee patron PileatusSolidusID 30.0)
-            (ref-T01::DPTF|C_ToggleFee patron PileatusSolidusID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron PileatusSolidusID 30.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron PileatusSolidusID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
 
-            (ref-T01::DPTF|C_SetFee patron TarabostesStaterID 40.0)
-            (ref-T01::DPTF|C_ToggleFee patron TarabostesStaterID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron TarabostesStaterID 40.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron TarabostesStaterID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
 
-            (ref-T01::DPTF|C_SetFee patron StrategonDrachmaID 50.0)
-            (ref-T01::DPTF|C_ToggleFee patron StrategonDrachmaID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron StrategonDrachmaID 50.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron StrategonDrachmaID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
 
-            (ref-T01::DPTF|C_SetFee patron BasileonAsID 60.0)
-            (ref-T01::DPTF|C_ToggleFee patron BasileonAsID true)
-            (ref-T01::DPTF|C_ToggleFeeLock patron BasileonAsID true)
+            (ref-TS01-C1::DPTF|C_SetFee patron BasileonAsID 60.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron BasileonAsID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron BasileonAsID true)
         )
     )
     (defun A_Step004:[string] ()
         (let*
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (mf-ids:[string]
-                    (ref-T01::DPMF|C_Issue
+                    (ref-TS01-C1::DPMF|C_Issue
                         patron
                         patron
                         ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
@@ -394,7 +394,7 @@
     (defun A_Step005:[string] ()
         (let*
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -407,7 +407,7 @@
                 (AureusFragilisID:string (UR_Assets 2 1))
 
                 (ats-ids:[string]
-                    (ref-T01::ATS|C_Issue
+                    (ref-TS01-C2::ATS|C_Issue
                         patron
                         patron
                         ["PlebeicStrength" "ComatiCommand"]
@@ -434,7 +434,7 @@
     (defun A_Step006:[string] ()
         (let*
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -449,7 +449,7 @@
                 
 
                 (ats-ids:[string]
-                    (ref-T01::ATS|C_Issue
+                    (ref-TS01-C2::ATS|C_Issue
                         patron
                         patron
                         ["PileatiPower" "TarabostesTenacity"]
@@ -476,7 +476,7 @@
     (defun A_Step007:[string] ()
         (let*
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -489,7 +489,7 @@
                 (AsInfinimusID:string (UR_Assets 2 5))
 
                 (ats-ids:[string]
-                    (ref-T01::ATS|C_Issue
+                    (ref-TS01-C2::ATS|C_Issue
                         patron
                         patron
                         ["StrategonVigor" "AsAuthority"]
@@ -516,19 +516,18 @@
     (defun A_Step008 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (PlebeicStrengthID:string (UR_Assets 3 0))
                 (DenariusDebilisID:string (UR_Assets 2 0))
                 (decay:integer 0)
             )
             (Setup_KosonicATS PlebeicStrengthID DenariusDebilisID decay)
-            (ref-T01::ATS|C_TurnRecoveryOn AOZ|SC_NAME PlebeicStrengthID true) ;;When deploying on mainnet must be removed
+            (ref-TS01-C2::ATS|C_TurnRecoveryOn AOZ|SC_NAME PlebeicStrengthID true) ;;When deploying on mainnet must be removed
         )
     )
     (defun A_Step009 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
                 (AureusFragilisID:string (UR_Assets 2 1))
                 (ComatiCommandID:string (UR_Assets 3 1))
                 (decay:integer 90)
@@ -539,7 +538,6 @@
     (defun A_Step010 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
                 (SolidusFractusID:string (UR_Assets 2 2))
                 (PileatiPowerID:string (UR_Assets 3 2))
                 (decay:integer 180)
@@ -550,7 +548,6 @@
     (defun A_Step011 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
                 (StaterTenuulusID:string (UR_Assets 2 3))
                 (TarabostesTenacityID:string (UR_Assets 3 3))
                 (decay:integer 360)
@@ -561,7 +558,6 @@
     (defun A_Step012 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
                 (DrachmaMinimaID:string (UR_Assets 2 4))
                 (StrategonVigorID:string (UR_Assets 3 4))
                 (decay:integer 720)
@@ -572,7 +568,6 @@
     (defun A_Step013 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
                 (AsInfinimusID:string (UR_Assets 2 5))
                 (AsAuthorityID:string (UR_Assets 3 5))
                 (decay:integer 1440)
@@ -583,7 +578,7 @@
     (defun A_Step014 ()
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -592,21 +587,21 @@
                 (ek-amount:decimal 50000.0)
                 (ak-amount:decimal 50000.0)
             )
-            (ref-T01::DPTF|C_Mint
+            (ref-TS01-C1::DPTF|C_Mint
                 patron
                 PrimordialKosonID
                 patron
                 pk-amount
                 true
             )
-            (ref-T01::DPTF|C_Mint
+            (ref-TS01-C1::DPTF|C_Mint
                 patron
                 EsothericKosonID
                 patron
                 ek-amount
                 true
             )
-            (ref-T01::DPTF|C_Mint
+            (ref-TS01-C1::DPTF|C_Mint
                 patron
                 AncientKosonID
                 patron
@@ -637,33 +632,33 @@
     (defun Setup_KosonicATS (index-name:string hot-rbt:string decay:integer)
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
             )
-            (ref-T01::ATS|C_AddSecondary patron index-name EsothericKosonID false)
-            (ref-T01::ATS|C_AddSecondary patron index-name AncientKosonID false)
-            (ref-T01::ATS|C_AddHotRBT patron index-name hot-rbt)
+            (ref-TS01-C2::ATS|C_AddSecondary patron index-name EsothericKosonID false)
+            (ref-TS01-C2::ATS|C_AddSecondary patron index-name AncientKosonID false)
+            (ref-TS01-C2::ATS|C_AddHotRBT patron index-name hot-rbt)
             (if (!= decay 0)
-                (ref-T01::ATS|C_SetHotFee patron index-name 900.0 decay)
+                (ref-TS01-C2::ATS|C_SetHotFee patron index-name 900.0 decay)
                 true
             )
-            (ref-T01::ATS|C_TurnRecoveryOn patron index-name false)
+            (ref-TS01-C2::ATS|C_TurnRecoveryOn patron index-name false)
         )
     )
     (defun Setup_CoilPairs (index-name:string amount:decimal)
         (let
             (
-                (ref-T01:module{TalosStageOne} TS01)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
             )
-            (ref-T01::ATS|C_Coil patron patron index-name PrimordialKosonID amount)
-            (ref-T01::ATS|C_Coil patron patron index-name EsothericKosonID amount)
-            (ref-T01::ATS|C_Coil patron patron index-name AncientKosonID amount)
+            (ref-TS01-C2::ATS|C_Coil patron patron index-name PrimordialKosonID amount)
+            (ref-TS01-C2::ATS|C_Coil patron patron index-name EsothericKosonID amount)
+            (ref-TS01-C2::ATS|C_Coil patron patron index-name AncientKosonID amount)
         )
     )
     ;;{F7}

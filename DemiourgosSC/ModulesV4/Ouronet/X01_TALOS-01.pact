@@ -2,13 +2,13 @@
 (interface TalosStageOne
     ;;
     ;;ADMIN Functions
-    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
+    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)) ;d
+    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)) ;d
+    (defun DALOS|A_IgnisToggle (native:bool toggle:bool)) ;d
     (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
     (defun DALOS|A_SetAutoFueling (toggle:bool))
     (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
-    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
+    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal)) ;d
     ;;
     ;;
     (defun BRD|A_Live (entity-id:string))
@@ -18,7 +18,7 @@
     (defun ORBR|A_Fuel ())
     ;;
     ;;
-    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool)) ;d
     (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
     (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
 
@@ -26,7 +26,7 @@
     (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
     (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
     (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard))
+    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)) ;i
     (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool))
     (defun DALOS|C_RotateKadena (patron:string account:string kadena:string))
     (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string))
@@ -35,31 +35,31 @@
     (defun DPTF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPTF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
-    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)) ;d
     (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal))
     (defun DPTF|C_ClearDispo (patron:string account:string))
     (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
-    (defun DPTF|C_DeployAccount (id:string account:string))
+    (defun DPTF|C_DeployAccount (id:string account:string)) ;d
     (defun DPTF|C_DonateFees (patron:string id:string))
-    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
-    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool))
-    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])) ;d
+    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool)) ;d
+    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)) ;d
     (defun DPTF|C_ResetFeeTarget (patron:string id:string))
     (defun DPTF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPTF|C_SetFee (patron:string id:string fee:decimal))
-    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string))
-    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal))
-    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool))
+    (defun DPTF|C_SetFee (patron:string id:string fee:decimal)) ;d
+    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string)) ;d
+    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal)) ;d
+    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)) ;d
+    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool)) ;d
+    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool)) ;d
+    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool)) ;d
     (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool))
+    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool)) ;d
     (defun DPTF|C_TogglePause (patron:string id:string toggle:bool))
     (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool))
     (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
     (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
+    (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)) ;d
     (defun DPTF|C_Wipe (patron:string id:string atbw:string))
     ;;
     ;;
@@ -71,7 +71,7 @@
     (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
     (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]))
     (defun DPMF|C_DeployAccount (id:string account:string))
-    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
+    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])) ;d
     (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string))
     (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
@@ -91,37 +91,37 @@
     (defun ATS|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun ATS|C_AddHotRBT (patron:string ats:string hot-rbt:string))
-    (defun ATS|C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool))
-    (defun ATS|C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal))
+    (defun ATS|C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)) ;d
+    (defun ATS|C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)) ;d
     (defun ATS|C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal))
     (defun ATS|C_Cull:[decimal] (patron:string culler:string ats:string))
     (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
     (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal))
-    (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal))
-    (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool]))
-    (defun ATS|C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
+    (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal)) ;d
+    (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool])) ;d
+    (defun ATS|C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)) ;d
     (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
     (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal))
     (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer))
     (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer))
     (defun ATS|C_RemoveSecondary (patron:string remover:string ats:string reward-token:string))
     (defun ATS|C_RotateOwnership (patron:string ats:string new-owner:string))
-    (defun ATS|C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
-    (defun ATS|C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
-    (defun ATS|C_SetHotFee (patron:string ats:string promile:decimal decay:integer))
+    (defun ATS|C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])) ;d
+    (defun ATS|C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)) ;d
+    (defun ATS|C_SetHotFee (patron:string ats:string promile:decimal decay:integer)) ;d
     (defun ATS|C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
-    (defun ATS|C_ToggleElite (patron:string ats:string toggle:bool))
+    (defun ATS|C_ToggleElite (patron:string ats:string toggle:bool)) ;d
     (defun ATS|C_ToggleFeeSettings (patron:string ats:string toggle:bool fee-switch:integer))
     (defun ATS|C_ToggleParameterLock (patron:string ats:string toggle:bool))
     (defun ATS|C_ToggleSyphoning (patron:string ats:string toggle:bool))
     (defun ATS|C_TurnRecoveryOff (patron:string ats:string cold-or-hot:bool))
-    (defun ATS|C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool))
+    (defun ATS|C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)) ;d
     (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal))
     ;;
     ;;
     (defun VST|C_CreateFrozenLink:string (patron:string dptf:string))
     (defun VST|C_CreateReservationLink:string (patron:string dptf:string))
-    (defun VST|C_CreateVestingLink:string (patron:string dptf:string))
+    (defun VST|C_CreateVestingLink:string (patron:string dptf:string)) ;d
     (defun VST|C_CreateSleepingLink:string (patron:string dptf:string))
     ;;Frozen
     (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal))
@@ -130,6 +130,7 @@
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal))
     (defun VST|C_Unreserve (patron:string unreserver:string r-dptf:string amount:decimal))
     (defun VST|C_RepurposeReserved (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
+    (defun VST|C_ToggleTransferRoleReservedDPTF (patron:string s-dptf:string target:string toggle:bool))
     ;;Vesting
     (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer))
     (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer))
@@ -144,18 +145,21 @@
     (defun VST|C_RepurposeSleeping (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
     (defun VST|C_RepurposeMerge (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string))
     (defun VST|C_RepurposeMergeAll (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string))
+    (defun VST|C_ToggleTransferRoleSleepingDPMF (patron:string s-dpmf:string target:string toggle:bool))
     ;;
     ;;
     (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal))
+    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)) ;d
     ;;
     ;;
     (defun ORBR|C_Compress:decimal (patron:string client:string ignis-amount:decimal))
-    (defun ORBR|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal))
+    (defun ORBR|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal)) ;d
     (defun ORBR|C_WithdrawFees (patron:string id:string target:string))
     ;;
     ;;
     (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
+    (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
+    (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
     ;;
     (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
     (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
@@ -174,6 +178,8 @@
     (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
     ;;
     (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
+    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
+    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
     (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
     ;;
@@ -306,6 +312,16 @@
             (ref-P|SWPT::P|A_AddIMP mg)
             (ref-P|SWP::P|A_AddIMP mg)
             (ref-P|SWPU::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (mp:[guard] (P|UR_IMP))
+                (g:guard (ref-U|G::UEV_GuardOfAny mp))
+            )
+            (enforce-guard g)
         )
     )
     ;;
@@ -1876,6 +1892,21 @@
             (XC_IgnisCollect patron repurpose-from ico)
         )
     )
+    (defun VST|C_ToggleTransferRoleFrozenDPTF (patron:string s-dptf:string target:string toggle:bool)
+        @doc "Toggles Transfer Role for a Frozen DPTF"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_ToggleTransferRoleFrozenDPTF patron s-dptf target toggle)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf) ico)
+        )
+    )
     ;;Reserving
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal)
         @doc "Reserves a DPTF Token"
@@ -1917,6 +1948,21 @@
                 )
             )
             (XC_IgnisCollect patron repurpose-from ico)
+        )
+    )
+    (defun VST|C_ToggleTransferRoleReservedDPTF (patron:string s-dptf:string target:string toggle:bool)
+        @doc "Toggles Transfer Role for a Reserved DPTF"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_ToggleTransferRoleReservedDPTF patron s-dptf target toggle)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf) ico)
         )
     )
     ;;Vesting
@@ -2130,6 +2176,21 @@
             (XC_IgnisCollect patron repurpose-from ico)
         )
     )
+    (defun VST|C_ToggleTransferRoleSleepingDPMF (patron:string s-dpmf:string target:string toggle:bool)
+        @doc "Toggles Transfer Role for a Sleeping DPMF"
+        (let
+            (
+                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-VST:module{Vesting} VST)
+                (ico:[object{OuronetDalos.IgnisCumulator}]
+                    (with-capability (P|TS)
+                        (ref-VST::C_ToggleTransferRoleSleepingDPMF patron s-dpmf target toggle)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron (ref-DPMF::UR_Konto s-dpmf) ico)
+        )
+    )
     ;;{LIQUID_Client}
     (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)
         @doc "Unwraps DPTF Kadena to Native Kadena"
@@ -2252,6 +2313,38 @@
                 )
             )
             (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+        )
+    )
+    (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string)
+        @doc "Enables the posibility of using Frozen Tokens to add Liquidity for an SWPair"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-SWP:module{Swapper} SWP)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-SWP::C_EnableFrozenLP patron swpair)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string)
+        @doc "Enables the posibility of using Sleeping Tokens to add Liquidity for an SWPair"
+        (with-capability (P|SECURE-SUMMONER)
+            (let
+                (
+                    (ref-SWP:module{Swapper} SWP)
+                    (ico:object{OuronetDalos.IgnisCumulator}
+                        (ref-SWP::C_EnableSleepingLP patron swpair)
+                    )
+                )
+                (XC_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+                (XI_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
         )
     )
     (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
@@ -2492,6 +2585,36 @@
                 (ico:object{OuronetDalos.IgnisCumulator}
                     (with-capability (P|TS)
                         (ref-SWPU::SWPL|C_AddBalancedLiquidity patron account swpair input-id input-amount)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
+        )
+    )
+    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)
+        @doc "Adds liquidity with a <frozen-dptf> Token to an <swpair>"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPL|C_AddFrozenLiquidity patron account swpair frozen-dptf input-amount)
+                    )
+                )
+            )
+            (XC_IgnisCollect patron account [ico])
+            (at 0 (at "output" ico))
+        )
+    )
+    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer)
+        @doc "Adds liquidity with a <sleeping-dpmf> Token to an <swpair>"
+        (let
+            (
+                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ico:object{OuronetDalos.IgnisCumulator}
+                    (with-capability (P|TS)
+                        (ref-SWPU::SWPL|C_AddSleepingLiquidity patron account swpair sleeping-dpmf nonce)
                     )
                 )
             )

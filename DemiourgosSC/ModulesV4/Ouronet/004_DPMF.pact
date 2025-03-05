@@ -61,8 +61,9 @@
     (defun URC_EliteAurynzSupply (account:string))
     (defun URC_AccountExist:bool (id:string account:string))
     (defun URC_HasVesting:bool (id:string))
+    (defun URC_Parent:string (dpmf:string))
     ;;
-    (defun UEV_IMC ())
+    (defun UEV_ParentOwnership (dpmf:string))
     (defun UEV_NoncesToAccount (id:string account:string nonces:[integer]))
     (defun UEV_id (id:string))
     (defun UEV_CheckID:bool (id:string))
@@ -187,6 +188,14 @@
             (ref-P|DALOS::P|A_AddIMP mg)
             (ref-P|BRD::P|A_AddIMP mg)
             (ref-P|DPTF::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -363,14 +372,14 @@
     )
     ;;{C3}
     ;;{C4}
-    (defcap DPMF|C>UPDATE-BRD (id:string)
+    (defcap DPMF|C>UPDATE-BRD (dpmf:string)
         @event
-        (CAP_SpecialOwner id)
+        (UEV_ParentOwnership dpmf)
         (compose-capability (P|DPMF|CALLER))
     )
-    (defcap DPMF|C>UPGRADE-BRD (id:string)
+    (defcap DPMF|C>UPGRADE-BRD (dpmf:string)
         @event
-        (CAP_SpecialOwner id)
+        (UEV_ParentOwnership dpmf)
         (compose-capability (P|DPMF|CALLER))
     )
     (defcap BASIS|C>X_WRITE-ROLES (id:string account:string rp:integer)
@@ -927,13 +936,44 @@
             true
         )
     )
-    ;;{F2}
-    (defun UEV_IMC ()
+    (defun URC_Parent:string (dpmf:string)
+        @doc "Computes <dpmf> parent"
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (fourth:string (drop 3 (take 4 dpmf)))
             )
-            (ref-U|G::UEV_Any (P|UR_IMP))
+            (enforce (!= fourth BAR) "Sleeping LP Tokens not allowed for this operation")
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (first-two:string (take 2 dpmf))
+                )
+                (if (= first-two "V|")
+                    (UR_Vesting dpmf)
+                    (if (= first-two "Z|")
+                        (UR_Sleeping dpmf)
+                        dpmf
+                    )
+                )
+            )
+        )
+    )
+    ;;{F2}
+    (defun UEV_ParentOwnership (dpmf:string)
+        @doc "Enforces: \
+            \ <dpmf> Ownership, if <dpmf> is pure \
+            \ <(UR_Vesting dpmf)>, if its a v|dpmf \
+            \ <(UR_Sleeping dpmf)>, if its a s|dpmf \
+            \ While ensuring a Sleeping LP cant be used for this operation."
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (parent:string (URC_Parent dpmf))
+            )
+            (if (= parent dpmf)
+                (CAP_Owner dpmf)
+                (ref-DPTF::CAP_Owner parent)
+            )
         )
     )
     (defun UEV_NoncesToAccount (id:string account:string nonces:[integer])
@@ -1139,21 +1179,6 @@
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
     )
-    (defun CAP_SpecialOwner (id:string)
-        @doc "Enforces Special DPMF Token ID Ownership, by enforcing Parent DPTF Token Ownership"
-        (let
-            (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            )
-            (if (= (take 2 id) "V|")
-                (ref-DPTF::CAP_Owner (UR_Vesting id))
-                (if (= (take 2 id) "Z|")
-                    (ref-DPTF::CAP_Owner (UR_Sleeping id))
-                    (CAP_Owner id)
-                )
-            )
-        )
-    )
     ;;
     ;;{F5}
     ;;{F6}
@@ -1165,7 +1190,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
             )
-            (with-capability (DPMF|C>UPDATE-BRD)
+            (with-capability (DPMF|C>UPDATE-BRD entity-id)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::UDC_BrandingCumulator 1.5)
             )
@@ -1177,10 +1202,17 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (owner:string (UR_Konto entity-id))
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (parent:string (URC_Parent entity-id))
+                (parent-owner:string
+                    (if (= parent entity-id)
+                        (UR_Konto entity-id)
+                        (ref-DPTF::UR_Konto parent)
+                    )
+                )
                 (kda-payment:decimal
-                    (with-capability (DPMF|C>UPGRADE-BRD)
-                        (ref-BRD::XE_UpgradeBranding entity-id owner months)
+                    (with-capability (DPMF|C>UPGRADE-BRD entity-id)
+                        (ref-BRD::XE_UpgradeBranding entity-id parent-owner months)
                     )
                 )
             )

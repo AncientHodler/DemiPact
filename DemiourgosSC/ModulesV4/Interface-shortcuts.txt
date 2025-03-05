@@ -25,6 +25,7 @@
 (ref-P|SWP:module{OuronetPolicy} SWP)
 (ref-P|SWPT:module{OuronetPolicy} SWPT)
 (ref-P|SWPU:module{OuronetPolicy} SWPU)
+(ref-P|T01-A:module{TalosStageOne_Admin} T01-A)
 
 (ref-B|DPTF:module{BrandingUsage} DPTF}
 (ref-B|DPMF:module{BrandingUsage} DPMF}
@@ -45,7 +46,20 @@
 (ref-SWP:module{Swapper} SWP)
 (ref-SWPU:module{SwapperUsage} SWPU)
 
-(ref-T01:module{TalosStageOne} TS01)
+(ref-P|TS01-A:module{OuronetPolicy} TS01-A)
+(ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
+(ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+(ref-P|TS01-CP:module{OuronetPolicy} TS01-CP)
+
+(ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+(ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+(ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+(ref-TS01-CP:module{TalosStageOne_ClientPacts} TS01-CP)
+
+ref-TS01-A::
+ref-TS01-C1::
+ref-TS01-C2::
+ref-TS01-CP::
 
 (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
@@ -62,6 +76,8 @@
 ref-DPL|DALOS::
 
 ref-T01::
+ref-TS01-A::
+
 ref-DALOS::
 ref-BRD::
 ref-DPTF::
@@ -99,7 +115,9 @@ ref-P|TFT::
 ref-P|ATSU::
 ref-P|LIQUID::
 ref-P|ORBR::
-ref-P|VST:
+ref-P|VST::
+ref-P|T01-A:
+
 ref-B|DPTF::
 ref-B|DPMF::
 ref-B|ATS::

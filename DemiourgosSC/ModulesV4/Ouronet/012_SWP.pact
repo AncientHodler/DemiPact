@@ -25,37 +25,39 @@
     (defun UR_InactiveLimit:decimal ())
     (defun UR_OwnerKonto:string (swpair:string))
     (defun UR_CanChangeOwner:bool (swpair:string))
-    (defun UR_CanAdd:bool (swpair:string)) ;;2
+    (defun UR_CanAdd:bool (swpair:string))
     (defun UR_CanSwap:bool (swpair:string))
     (defun UR_GenesisWeigths:[decimal] (swpair:string))
     (defun UR_Weigths:[decimal] (swpair:string))
     (defun UR_GenesisRatio:[object{PoolTokens}] (swpair:string))
     (defun UR_PoolTokenObject:[object{PoolTokens}] (swpair:string))
-    (defun UR_TokenLP:string (swpair:string)) ;;3
+    (defun UR_TokenLP:string (swpair:string))
     (defun UR_FeeLP:decimal (swpair:string))
-    (defun UR_FeeSP:decimal (swpair:string)) ;;1
+    (defun UR_FeeSP:decimal (swpair:string))
     (defun UR_FeeSPT:[object{FeeSplit}] (swpair:string))
     (defun UR_FeeLock:bool (swpair:string))
     (defun UR_FeeUnlocks:integer (swpair:string))
-    (defun UR_Amplifier:decimal (swpair:string)) ;;3
+    (defun UR_Amplifier:decimal (swpair:string))
     (defun UR_Primality:bool (swpair:string))
+    (defun UR_IzFrozenLP:bool (swpair:string))
+    (defun UR_IzSleepingLP:bool (swpair:string))
     (defun UR_Pools:[string] (pool-category:string))
-    (defun UR_PoolTokens:[string] (swpair:string)) ;;6
-    (defun UR_PoolTokenSupplies:[decimal] (swpair:string)) ;;6
-    (defun UR_PoolGenesisSupplies:[decimal] (swpair:string)) ;;2
-    (defun UR_PoolTokenPosition:integer (swpair:string id:string)) ;;5
+    (defun UR_PoolTokens:[string] (swpair:string))
+    (defun UR_PoolTokenSupplies:[decimal] (swpair:string))
+    (defun UR_PoolGenesisSupplies:[decimal] (swpair:string))
+    (defun UR_PoolTokenPosition:integer (swpair:string id:string))
     (defun UR_PoolTokenSupply:decimal (swpair:string id:string))
-    (defun UR_PoolTokenPrecisions:[integer] (swpair:string)) ;;2
+    (defun UR_PoolTokenPrecisions:[integer] (swpair:string))
     (defun UR_SpecialFeeTargets:[string] (swpair:string))
     (defun UR_SpecialFeeTargetsProportions:[decimal] (swpair:string))
     ;;
+    (defun URC_EntityPosToID:string (swpair:string entity-pos:integer))
     (defun URC_CheckID:bool (swpair:string))
     (defun URC_PoolTotalFee:decimal (swpair:string))
     (defun URC_LiquidityFee:decimal (swpair:string))
     (defun URC_Swpairs:[string] ())
     (defun URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
     ;;
-    (defun UEV_IMC ())
     (defun UEV_FeeSplit (input:object{FeeSplit}))
     (defun UEV_id (swpair:string)) ;;4
     (defun UEV_CanChangeOwnerON (swpair:string))
@@ -64,7 +66,9 @@
     (defun UEV_New (t-ids:[string] w:[decimal] amp:decimal))
     (defun UEV_CheckTwo (token-ids:[string] w:[decimal] amp:decimal))
     (defun UEV_CheckAgainstMass:bool (token-ids:[string] present-pools:[string]))
-    (defun UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string])) ;;3
+    (defun UEV_CheckAgainst:bool (token-ids:[string] pool-tokens:[string]))
+    (defun UEV_FrozenLP (swpair:string state:bool))
+    (defun UEV_SleepingLP (swpair:string state:bool))
     ;;
     (defun A_UpdatePrincipal (principal:string add-or-remove:bool))
     (defun A_UpdateLimit (limit:decimal spawn:bool))
@@ -72,8 +76,12 @@
     ;;
     (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
+    (defun C_UpdatePendingBrandingLPs:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
     ;;
-    (defun C_ChangeOwnership:object{OuronetDalos.IgnisCumulator}  (patron:string swpair:string new-owner:string))
+    (defun C_ChangeOwnership:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-owner:string))
+    (defun C_EnableFrozenLP:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string))
+    (defun C_EnableSleepingLP:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string))
     (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-boolean:bool))
     (defun C_ModifyWeights:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string new-weights:[decimal]))
     (defun C_ToggleAddOrSwap:object{OuronetDalos.IgnisCumulator} (patron:string swpair:string toggle:bool add-or-swap:bool))
@@ -161,6 +169,10 @@
         (compose-capability (P|SWP|CALLER))
         (compose-capability (SECURE))
     )
+    (defcap P|GOVERNING-CALLER ()
+        (compose-capability (P|SWP|CALLER))
+        (compose-capability (SWP|GOV))
+    )
     ;;{P4}
     (defconst P|I                   (P|Info))
     (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
@@ -235,6 +247,16 @@
             (ref-P|SWPT::P|A_AddIMP mg)
         )
     )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (mp:[guard] (P|UR_IMP))
+                (g:guard (ref-U|G::UEV_GuardOfAny mp))
+            )
+            (enforce-guard g)
+        )
+    )
     ;;
     ;;{1}
     (defschema SWP|PropertiesSchema
@@ -261,6 +283,8 @@
         unlocks:integer
         amplifier:decimal
         primality:bool
+        frozen-lp:bool
+        sleeping-lp:bool
     )
     (defschema SWP|PoolsSchema
         pools:[string]
@@ -418,13 +442,14 @@
     )
     ;{C3}
     ;{C4}
-    (defcap SWP|C>UPDATE-BRD (atspair:string)
+    (defcap SWP|C>UPDATE-BRD (swpair:string)
         @event
-        (CAP_Owner atspair)
+        (CAP_Owner swpair)
         (compose-capability (P|SWP|CALLER))
     )
-    (defcap SWP|C>UPGRADE-BRD (atspair:string)
+    (defcap SWP|C>UPGRADE-BRD (swpair:string)
         @event
+        (CAP_Owner swpair)
         (compose-capability (P|SWP|CALLER))
     )
     (defcap SWP|C>ADD-OR-SWAP (swpair:string toggle:bool add-or-swap:bool)
@@ -462,7 +487,7 @@
             (
                 (lqb:bool (UR_LiquidBoost))
             )
-            (enforce (!= new-boost-variable lqb))
+            (enforce (!= new-boost-variable lqb) (format "Liquid Boost already set to {}" [new-boost-variable]))
         )
         (compose-capability (GOV|SWP_ADMIN))
     )
@@ -476,6 +501,16 @@
         (UEV_FeeLockState swpair (not toggle))
         (CAP_Owner swpair)
         (compose-capability (SECURE))
+    )
+    (defcap SWP|C>ENABLE-FROZEN (swpair:string)
+        @event
+        (UEV_FrozenLP swpair false)
+        (compose-capability (P|GOVERNING-CALLER))
+    )
+    (defcap SWP|C>ENABLE-SLEEPING (swpair:string)
+        @event
+        (UEV_SleepingLP swpair false)
+        (compose-capability (P|GOVERNING-CALLER))
     )
     ;;{FC}
     (defun UC_ExtractTokens:[string] (input:[object{Swapper.PoolTokens}])
@@ -606,6 +641,12 @@
     (defun UR_Primality:bool (swpair:string)
         (at "primality" (read SWP|Pairs swpair ["primality"]))
     )
+    (defun UR_IzFrozenLP:bool (swpair:string)
+        (at "frozen-lp" (read SWP|Pairs swpair ["frozen-lp"]))
+    )
+    (defun UR_IzSleepingLP:bool (swpair:string)
+        (at "sleeping-lp" (read SWP|Pairs swpair ["sleeping-lp"]))
+    )
     (defun UR_Pools:[string] (pool-category:string)
         (at "pools" (read SWP|Pools pool-category ["pools"]))
     )
@@ -663,6 +704,27 @@
         (UC_CustomSpecialFeeTargetsProportions (UR_FeeSPT swpair))
     )
     ;;{F1}
+    (defun URC_EntityPosToID:string (swpair:string entity-pos:integer)
+        (let
+            (
+                (ref-U|INT:module{OuronetIntegers} U|INT)
+            )
+            (ref-U|INT::UEV_PositionalVariable entity-pos 3 "Invalid entity position")
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (lp-id:string (UR_TokenLP swpair))
+                )
+                (if (= entity-pos 1)
+                    lp-id
+                    (if (= entity-pos 2)
+                        (ref-DPTF::UR_Frozen lp-id)
+                        (ref-DPTF::UR_Sleeping lp-id)
+                    )
+                )
+            )
+        )
+    )
     (defun URC_CheckID:bool (swpair:string)
         (with-default-read SWP|Pairs swpair
             { "unlocks" : -1 }
@@ -769,16 +831,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (mp:[guard] (P|UR_IMP))
-                (g:guard (ref-U|G::UEV_GuardOfAny mp))
-            )
-            (enforce-guard g)
-        )
-    )
     (defun UEV_FeeSplit (input:object{Swapper.FeeSplit})
         (let
             (
@@ -895,6 +947,22 @@
             (enumerate 0 (- (length token-ids) 1))
         )
     )
+    (defun UEV_FrozenLP (swpair:string state:bool)
+        (let
+            (
+                (frozen-lp:bool (UR_IzFrozenLP swpair))
+            )
+            (enforce (= state frozen-lp) (format "Swpair {} must have its Frozen-LP set to <> for this operation" [swpair state]))
+        )
+    )
+    (defun UEV_SleepingLP (swpair:string state:bool)
+        (let
+            (
+                (sleeping-lp:bool (UR_IzSleepingLP swpair))
+            )
+            (enforce (= state sleeping-lp) (format "Swpair {} must have its Sleeping-LP set to <> for this operation" [swpair state]))
+        )
+    )
     ;;{F3}
     ;;{F4}
     (defun CAP_Owner (swpair:string)
@@ -909,7 +977,7 @@
     ;;
     ;;{F5}
     (defun A_UpdatePrincipal (principal:string add-or-remove:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -945,7 +1013,7 @@
         )
     )
     (defun A_UpdateLimit (limit:decimal spawn:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (SWP|C>LIMIT)
             (if spawn
                 (update SWP|Properties SWP|INFO
@@ -958,7 +1026,7 @@
         )
     )
     (defun A_UpdateLiquidBoost (new-boost-variable:bool)
-        (enforce-guard (P|UR "TALOS-01"))
+        (UEV_IMC)
         (with-capability (SWP|C>LQBOOST new-boost-variable)
             (update SWP|Properties SWP|INFO
                 {"liquid-boost" : new-boost-variable}
@@ -974,15 +1042,13 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-BRD:module{Branding} BRD)
             )
-            (with-capability (SWP|C>UPDATE-BRD)
+            (with-capability (SWP|C>UPDATE-BRD entity-id)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
                 (ref-DALOS::UDC_BrandingCumulator 4.0)
             )
         )
     )
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)
-        @doc "Upgrades Branding for an SWPair, making it a premium Branding. \
-        \ Also sets pending-branding to live branding if its branding is not live yet"
         (UEV_IMC)
         (let
             (
@@ -990,7 +1056,39 @@
                 (ref-BRD:module{Branding} BRD)
                 (owner:string (UR_OwnerKonto entity-id))
                 (kda-payment:decimal
-                    (with-capability (SWP|C>UPGRADE-BRD)
+                    (with-capability (SWP|C>UPGRADE-BRD entity-id)
+                        (ref-BRD::XE_UpgradeBranding entity-id owner months)
+                    )
+                )
+            )
+            (ref-DALOS::KDA|C_CollectWT patron kda-payment false)
+        )
+    )
+    (defun C_UpdatePendingBrandingLPs:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (entity-id:string (URC_EntityPosToID swpair entity-pos))
+            )
+            (with-capability (SWP|C>UPDATE-BRD swpair)
+                (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
+                (ref-DALOS::UDC_BrandingCumulator 2.0)
+            )
+        )
+    )
+    (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-BRD:module{Branding} BRD)
+                (owner:string (UR_OwnerKonto swpair))
+                (entity-id:string (URC_EntityPosToID swpair entity-pos))
+                (kda-payment:decimal
+                    (with-capability (SWP|C>UPGRADE-BRD swpair)
                         (ref-BRD::XE_UpgradeBranding entity-id owner months)
                     )
                 )
@@ -1009,6 +1107,36 @@
             (with-capability (SWP|S>RT_OWN swpair new-owner)
                 (XI_ChangeOwnership swpair new-owner)
                 (ref-DALOS::UDC_BiggestCumulator)
+            )
+        )
+    )
+    (defun C_EnableFrozenLP:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string)
+        (UEV_IMC)
+        (with-capability (SWP|C>ENABLE-FROZEN swpair)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (lp-id:string (UR_TokenLP swpair))
+                )
+                (XI_EnableFrozenLP swpair)
+                (ref-VST::C_CreateFrozenLink patron lp-id)
+            )
+        )
+    )
+    (defun C_EnableSleepingLP:object{OuronetDalos.IgnisCumulator}
+        (patron:string swpair:string)
+        (UEV_IMC)
+        (with-capability (SWP|C>ENABLE-SLEEPING swpair)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-VST:module{Vesting} VST)
+                    (lp-id:string (UR_TokenLP swpair))             
+                )
+                (XI_EnableSleepingLP swpair)
+                (ref-VST::C_CreateSleepingLink patron lp-id)
             )
         )
     )
@@ -1054,7 +1182,7 @@
                     (ref-DALOS::UDC_Cumulator price trigger [])
                 )
                 (ico1:object{OuronetDalos.IgnisCumulator}
-                    (with-capability (P|SWP|CALLER)
+                    (with-capability (P|GOVERNING-CALLER)
                         (if toggle
                             (let
                                 (
@@ -1183,7 +1311,7 @@
         (UEV_IMC)
         (with-capability (SWP|S>WEIGHTS swpair new-weights)
             (update SWP|Pairs swpair
-                {"weights"                          : new-weights}
+                {"weights"  : new-weights}
             )
         )
     )
@@ -1240,31 +1368,32 @@
                 )
             )
             (insert SWP|Pairs swpair
-                {"owner-konto"                          : account
-                ,"can-change-owner"                     : true
-                ,"can-add"                              : false
-                ,"can-swap"                             : false
+                {"owner-konto"          : account
+                ,"can-change-owner"     : true
+                ,"can-add"              : false
+                ,"can-swap"             : false
 
-                ,"genesis-weights"                      : weights
-                ,"weights"                              : weights
-                ,"genesis-ratio"                        : pool-tokens
-                ,"pool-tokens"                          : pool-tokens
-                ,"token-lp"                             : token-lp
+                ,"genesis-weights"      : weights
+                ,"weights"              : weights
+                ,"genesis-ratio"        : pool-tokens
+                ,"pool-tokens"          : pool-tokens
+                ,"token-lp"             : token-lp
 
-                ,"fee-lp"                               : fee-lp
-                ,"fee-special"                          : 0.0
-                ,"fee-special-targets"                  : [SWP|EMPTY-TARGET]
-                ,"fee-lock"                             : false
-                ,"unlocks"                              : 0
+                ,"fee-lp"               : fee-lp
+                ,"fee-special"          : 0.0
+                ,"fee-special-targets"  : [SWP|EMPTY-TARGET]
+                ,"fee-lock"             : false
+                ,"unlocks"              : 0
 
-                ,"amplifier"                            : amp
-                ,"primality"                            : p
+                ,"amplifier"            : amp
+                ,"primality"            : p
+                ,"frozen-lp"            : false
+                ,"sleeping-lp"          : false
                 }
             )
             (with-capability (P|SECURE-CALLER)
                 (XI_SavePool n what swpair)
                 (ref-DPTF::C_DeployAccount token-lp account)
-                (ref-DPTF::C_DeployAccount token-lp SWP|SC_NAME)
                 (map
                     (lambda
                         (id:string)
@@ -1384,6 +1513,18 @@
         (require-capability (SPW|S>UPDATE_SPECIAL-FEE-TARGETS swpair targets))
         (update SWP|Pairs swpair
             {"fee-special-targets"                : targets}
+        )
+    )
+    (defun XI_EnableFrozenLP (swpair:string)
+        (require-capability (SWP|C>ENABLE-FROZEN swpair))
+        (update SWP|Pairs swpair
+            {"frozen-lp"    : true}
+        )
+    )
+    (defun XI_EnableSleepingLP (swpair:string)
+        (require-capability (SWP|C>ENABLE-SLEEPING swpair))
+        (update SWP|Pairs swpair
+            {"sleeping-lp"    : true}
         )
     )
 )

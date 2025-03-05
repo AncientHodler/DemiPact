@@ -2,8 +2,6 @@
 (interface AutostakeUsage
     @doc "Exposes the last Batch of Client Autostake Functions"
     ;;
-    (defun UEV_IMC ())
-    ;;
     (defun C_AddHotRBT:object{OuronetDalos.IgnisCumulator} (patron:string ats:string hot-rbt:string))
     (defun C_AddSecondary:object{OuronetDalos.IgnisCumulator} (patron:string ats:string reward-token:string rt-nfr:bool))
     (defun C_Coil:object{OuronetDalos.IgnisCumulator} (patron:string coiler:string ats:string rt:string amount:decimal))
@@ -130,6 +128,14 @@
             (ref-P|DPMF::P|A_AddIMP mg)
             (ref-P|ATS::P|A_AddIMP mg)
             (ref-P|TFT::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -348,14 +354,6 @@
     ;;{F0}
     ;;{F1}
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     ;;{F3}
     ;;{F4}
     ;;

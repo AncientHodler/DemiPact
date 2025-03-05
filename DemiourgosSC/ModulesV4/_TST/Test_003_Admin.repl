@@ -1,0 +1,386 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 001 - Admin Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-BRD:module{Branding} BRD)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (patron:string KST.ANHD)
+    )
+    (ref-TS01-A::DALOS|A_SetIgnisSourcePrice 1.2)
+    (ref-TS01-A::DALOS|A_SetAutoFueling true)
+    (ref-TS01-A::DALOS|A_UpdatePublicKey patron "plmea")
+    ;;
+    (ref-TS01-C1::DPTF|C_UpdatePendingBranding
+        patron
+        "GA-98c486052a51"
+        "This is the logo"
+        "Galium is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C1::DPTF|C_UpdatePendingBranding
+        patron
+        "F|VST-98c486052a51"
+        "This is the logo"
+        "Galium is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C1::DPMF|C_UpdatePendingBranding
+        patron
+        "Z|VST-98c486052a51"
+        "This is the logo"
+        "Galium is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C2::ATS|C_UpdatePendingBranding
+        patron
+        "Magnindium-98c486052a51"
+        "This is the logo"
+        "Galium is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C2::SWP|C_UpdatePendingBranding
+        patron
+        "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+        "This is the logo"
+        "Galium is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C2::SWP|C_UpdatePendingBrandingLPs
+        patron
+        "P|OURO-98c486052a51|VST-98c486052a51"
+        1
+        "This is the logo"
+        "Native LP is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C2::SWP|C_UpdatePendingBrandingLPs
+        patron
+        "P|OURO-98c486052a51|VST-98c486052a51"
+        2
+        "This is the logo"
+        "Frozen LP is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-C2::SWP|C_UpdatePendingBrandingLPs
+        patron
+        "P|OURO-98c486052a51|VST-98c486052a51"
+        3
+        "This is the logo"
+        "Sleeping LP is an element"
+        "Website of Galium"
+        [
+            { "social-media-name":  "Galium Facebook", "social-media-link": "Facebook link"}
+            { "social-media-name":  "Galium Waztup", "social-media-link": "Watzup link"}
+        ]
+    )
+    (ref-TS01-A::BRD|A_Live "GA-98c486052a51")
+    (ref-TS01-A::BRD|A_SetFlag "GA-98c486052a51" 2)
+
+    (ref-TS01-A::SWP|A_UpdateLimit 500.0 true)
+    (ref-TS01-A::SWP|A_UpdateLimit 75.0 false)
+    ;(ref-TS01-A::SWP|A_UpdateLiquidBoost true)
+
+    [
+        (format "Ouro Price is {}" [(ref-DALOS::UR_OuroborosPrice)])
+        (format "Auto Fueling is is {}" [(ref-DALOS::UR_AutoFuel)])
+        (format "AH pblkey is {}" [(ref-DALOS::UR_AccountPublicKey patron)])
+
+        (format "Live Galium Logo is {}" [(ref-BRD::UR_Logo "GA-98c486052a51" false)])
+        (format "Live Galium Flag is {}" [(ref-BRD::UR_Flag "GA-98c486052a51" false)])
+
+        (format "Spawn Limit is {}" [(ref-SWP::UR_SpawnLimit)])
+        (format "Inactive Limit is {}" [(ref-SWP::UR_InactiveLimit)])
+        ;(format "Liquid Boost is {}" [(ref-SWP::UR_LiquidBoost)])
+    ]
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Admin Tests {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 001 - Admin Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-BRD:module{Branding} BRD)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (patron:string KST.ANHD)
+        (patron:string KST.EMMA)
+
+        (nsuse:string (ref-U|CT::CT_NS_USE))
+        (npkey (+ nsuse ".us-0001_emma-keyset"))
+        (new-patron-guard:guard
+            (keyset-ref-guard npkey)
+        )
+        (smart-patron:string "Σ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    )
+    (ref-TS01-C1::DALOS|C_ControlSmartAccount patron smart-patron true false true)
+    (ref-TS01-C1::DALOS|C_RotateGuard
+        patron patron new-patron-guard true
+    )
+    ;(ref-TS01-C1::DALOS|C_RotateKadena
+    ;    patron patron "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48"
+    ;)
+    (ref-TS01-C1::DALOS|C_RotateSovereign
+        patron smart-patron KST.EMMA
+    )
+
+    [
+        (format "Smart Patron properties are: {}" [(ref-DALOS::UR_AccountProperties smart-patron)])
+        (format "Ah Kadena is {}" [(ref-DALOS::UR_AccountKadena patron)])
+        (format "Smart AH Sovereign is {}" [(ref-DALOS::UR_AccountSovereign smart-patron)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Admin Tests {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 001 - Admin Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (months:integer 3)
+        (dec-months:decimal (dec months))
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* (ref-DALOS::UR_UsagePrice "blue") dec-months)
+            )
+        )
+    )
+    ;AH k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    
+    ;(ref-TS01-C1::DPTF|C_UpgradeBranding
+    ;    patron
+    ;    "GA-98c486052a51"
+    ;    months
+    ;)
+    (ref-TS01-C1::DPTF|C_UpgradeBranding
+        patron
+        "F|VST-98c486052a51"
+        months
+    )
+    ;(ref-TS01-C1::DPMF|C_UpgradeBranding
+    ;    patron
+    ;    "Z|VST-98c486052a51"
+    ;    months
+    ;)
+    ;(ref-TS01-C2::ATS|C_UpgradeBranding
+    ;    patron
+    ;    "Magnindium-98c486052a51"
+    ;    months
+    ;)
+    ;(ref-TS01-C2::SWP|C_UpgradeBranding
+    ;    patron
+    ;    "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51"
+    ;    months
+    ;)
+    ;(ref-TS01-C2::SWP|C_UpgradeBrandingLPs
+    ;    patron
+    ;    "P|OURO-98c486052a51|VST-98c486052a51"
+    ;    3
+    ;    months
+    ;)
+    [
+        (format "Z|VST-98c486052a51 parent is {}" [(ref-DPMF::URC_Parent "Z|VST-98c486052a51")])
+        (format "F|VST-98c486052a51 parent is {}" [(ref-DPTF::URC_Parent "F|VST-98c486052a51")])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Upgrade Branding costs {} >>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF - Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-BRD:module{Branding} BRD)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (dptf:string "GA-98c486052a51")
+
+    )
+    (ref-TS01-C1::DPTF|C_ToggleBurnRole patron dptf patron true)
+    (ref-TS01-C1::DPTF|C_Burn patron dptf patron 10.0)
+    (ref-TS01-C1::DPTF|C_Control patron dptf true true true true true true)
+    (ref-TS01-C1::DPTF|C_DonateFees patron dptf)
+    (ref-TS01-C1::DPTF|C_ResetFeeTarget patron dptf)
+    (ref-TS01-C1::DPTF|C_RotateOwnership patron dptf emma)
+    (ref-TS01-C1::DPTF|C_ToggleFreezeAccount patron dptf patron true)
+    (ref-TS01-C1::DPTF|C_ToggleFreezeAccount patron dptf patron false)
+    (ref-TS01-C1::DPTF|C_TogglePause patron dptf true)
+    ;(ref-TS01-C1::DPTF|C_Transfer patron dptf patron emma 10.0 false)
+    (ref-TS01-C1::DPTF|C_ToggleFreezeAccount patron dptf patron true)
+    ;(ref-TS01-C1::DPTF|C_Wipe patron dptf patron)
+    (ref-TS01-C1::DPTF|C_WipePartial patron dptf patron 1777.0)
+    [
+        (format "cco <can-change-owner> is {}" [(ref-DPTF::UR_CanChangeOwner dptf)])
+        (format "cu <can-upgrade> is {}" [(ref-DPTF::UR_CanUpgrade dptf)])
+        (format "casr <can-add-special-role> is {}" [(ref-DPTF::UR_CanAddSpecialRole dptf)])
+        (format "cf <can-freeze> is {}" [(ref-DPTF::UR_CanFreeze dptf)])
+        (format "cw <can-wipe> is {}" [(ref-DPTF::UR_CanWipe dptf)])
+        (format "cw <can-pause> is {}" [(ref-DPTF::UR_CanPause dptf)])
+        (format "Fee Target is {}" [(ref-DPTF::UR_FeeTarget dptf)])
+        (format "DPTF Owner is {}" [(ref-DPTF::UR_Konto dptf)])
+        (format "AH for GA frozen state is {}" [(ref-DPTF::UR_AccountFrozenState dptf patron)])
+        (format "Pause State for GA is {}" [(ref-DPTF::UR_Paused dptf)])
+        (format "AH has GA {}" [(ref-DPTF::UR_AccountSupply dptf patron)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Admin Tests {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+

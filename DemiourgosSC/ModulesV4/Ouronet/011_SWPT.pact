@@ -22,7 +22,6 @@
     (defun URC_PrincipalSwpairs:[string] (id:string principal:string principal-lst:[string]))
     (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])) ;;1
     ;;
-    (defun UEV_IMC ())
     (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string]))
     ;;
     (defun X_MultiPathTracer (swpair:string principals-lst:[string]))
@@ -117,6 +116,14 @@
             (ref-P|VST::P|A_AddIMP mg)
             (ref-P|LIQUID::P|A_AddIMP mg)
             (ref-P|ORBR::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -406,14 +413,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string])
         (let
             (

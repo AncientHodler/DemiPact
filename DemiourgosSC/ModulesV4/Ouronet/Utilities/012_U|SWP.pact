@@ -478,5 +478,15 @@
     (defun UC_UniqueTokens:[string] (swpairs:[string])
         (distinct (fold (+) [] (UC_PoolTokensFromPairs swpairs)))
     )
+    (defun UC_MakeLiquidityList (swpair:string ptp:integer amount:decimal)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (how-many-pts:integer (length (UC_TokensFromSwpairString swpair)))
+                (zeroes:[decimal] (make-list how-many-pts 0.0))
+            )
+            (ref-U|LST::UC_ReplaceAt zeroes ptp amount)
+        )
+    )
     
 )

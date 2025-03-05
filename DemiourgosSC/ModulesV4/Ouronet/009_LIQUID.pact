@@ -5,7 +5,6 @@
     (defun GOV|LIQUID|SC_KDA-NAME ())
     (defun GOV|LIQUID|GUARD ())
     ;;
-    (defun UEV_IMC ())
     (defun UEV_IzLiquidStakingLive ())
     ;;
     (defun C_UnwrapKadena:object{OuronetDalos.IgnisCumulator} (patron:string unwrapper:string amount:string))
@@ -129,6 +128,14 @@
             (ref-P|VST::P|A_AddIMP mg)
         )
     )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
     ;;
     ;;{1}
     ;;{2}
@@ -162,14 +169,6 @@
     ;;{F0}
     ;;{F1}
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     (defun UEV_IzLiquidStakingLive ()
         @doc "Enforces Liquid Staking is live with an existing Autostake Pair"
         (let

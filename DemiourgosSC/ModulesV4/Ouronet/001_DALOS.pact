@@ -23,6 +23,9 @@
     (defun P|A_Define ()
         @doc "Defines in each module the policies that are needed for intermodule communication"
     )
+    (defun UEV_IMC ()
+        @doc "Defines the Intermodule Guards"
+    )
 )
 (interface OuronetDalos
     @doc "Interface Exposing DALOS Module Functions \
@@ -62,6 +65,7 @@
     (defun GOV|VST|SC_NAME ())
     (defun GOV|LIQUID|SC_NAME ())
     (defun GOV|OUROBOROS|SC_NAME ())
+    (defun GOV|SWP|SC_NAME ())
     ;;
     (defun GOV|DALOS|PBL ())
     (defun GOV|ATS|PBL ())
@@ -129,8 +133,6 @@
     (defun IGNIS|URC_IsVirtualGasZero:bool ())
     (defun IGNIS|URC_IsNativeGasZero:bool ())
     ;;
-    (defun UEV_IMC ())
-    (defun UEV_AdminIMC ())
     (defun UEV_StandardAccOwn (account:string))
     (defun UEV_SmartAccOwn (account:string))
     (defun UEV_Methodic (account:string method:bool))
@@ -226,7 +228,7 @@
                                 [
                                     (P|UR "TFT|RemoteDalosGov")
                                     (P|UR "SWPU|RemoteDalosGov")
-                                    (P|UR "TALOS-01|RemoteDalosGov")
+                                    (P|UR "TS01-A|RemoteDalosGov")
                                 ]
                             )
                         )
@@ -302,6 +304,14 @@
     )
     (defun P|A_Define ()
         true
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
     )
     ;;
     ;;{1}
@@ -876,25 +886,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
-    (defun UEV_AdminIMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (mp:[guard] (P|UR_IMP))
-                (ga:guard (create-capability-guard (GOV|DALOS_ADMIN)))
-                (g:guard (ref-U|G::UEV_GuardOfAny (+ mp [ga])))
-            )
-            (enforce-guard g)
-        )
-    )
     (defun UEV_StandardAccOwn (account:string)
         (let
             (
@@ -1188,7 +1179,7 @@
     (defun A_UpdatePublicKey (account:string new-public:string)
         (UEV_IMC)
         (with-capability (GOV|DALOS_ADMIN)
-            (write DALOS|AccountTable account
+            (update DALOS|AccountTable account
                 {"public"     : new-public}
             )
         )
@@ -1211,19 +1202,19 @@
     (defun C_ControlSmartAccount:object{OuronetDalos.IgnisCumulator} 
         (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
         (UEV_IMC)
-        (with-capability (DALOS|C>CTRL_SM-ACC patron account payable-as-smart-contract payable-by-smart-contract)
+        (with-capability (DALOS|C>CTRL_SM-ACC account payable-as-smart-contract payable-by-smart-contract payable-by-method)
             (XI_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
             (UDC_SmallCumulator)
         )
     )
     (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
-        (UEV_AdminIMC)
+        (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeploySmartAccount account guard kadena sovereign public)
         )
     )
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
-        (UEV_AdminIMC)
+        (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeployStandardAccount account guard kadena public)
         )
@@ -1347,8 +1338,8 @@
     )
     (defun XB_UpdateOuroPrice (price:decimal)
         (UEV_IMC)
-        (update DALOS|GasManagementTable DALOS|VGD
-            {"gas-source-price" : price}
+        (update DALOS|PropertiesTable DALOS|INFO
+            {"gas-source-id-price" : price}
         )
     )
     ;;
@@ -1608,7 +1599,7 @@
     (defun XI_RotateGovernor (account:string governor:guard)
         (require-capability (DALOS|F>GOV account))
         (update DALOS|AccountTable account
-            {"governor"                        : governor}
+            {"governor" : governor}
         )
     )
     (defun XI_RotateGuard (account:string new-guard:guard safe:bool)
@@ -1617,8 +1608,14 @@
             (enforce-guard new-guard)
             true
         )
-        (update DALOS|AccountTable account
-            {"guard"                        : new-guard}
+        (if (UR_AccountType account)
+            (update DALOS|AccountTable account
+                {"guard"    : new-guard}
+            )
+            (update DALOS|AccountTable account
+                {"guard"    : new-guard
+                ,"governor" : new-guard}
+            )
         )
     )
     (defun XI_RotateKadena (account:string kadena:string)

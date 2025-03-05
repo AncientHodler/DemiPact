@@ -13,8 +13,6 @@
     ;;
     (defun URC_MinimumOuro:decimal (account:string))
     ;;
-    (defun UEV_IMC ())
-    ;;
     (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
     (defun UDC_BulkTransferICO:object{OuronetDalos.IgnisCumulator} (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string]))
     (defun UDC_MultiTransferICO:object{OuronetDalos.IgnisCumulator} (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string))
@@ -34,12 +32,11 @@
     (defun C_ExemptionBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     (defun XE_FeelesBulkTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     ;;
-    (defpact C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defpact C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defpact C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    ;;
-    (defpact C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defpact C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
 )
 (module TFT GOV
     ;;
@@ -129,6 +126,14 @@
             (ref-P|DPTF::P|A_AddIMP mg)
             (ref-P|DPMF::P|A_AddIMP mg)
             (ref-P|ATS::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
         )
     )
     ;;
@@ -565,14 +570,6 @@
         )
     )
     ;;{F2}
-    (defun UEV_IMC ()
-        (let
-            (
-                (ref-U|G:module{OuronetGuards} U|G)
-            )
-            (ref-U|G::UEV_Any (P|UR_IMP))
-        )
-    )
     ;;Bulk
     (defun UEV_BulkTransfer (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         @doc "Complete Bulk Transfer Validations"
@@ -1051,6 +1048,32 @@
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
     )
+    ;;
+    (defun PS|C_BulkTransfer81-160
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
+        (C_BulkTransfer81-160 patron id sender receiver-lst transfer-amount-lst method)
+    )
+    (defun PS|C_BulkTransfer41-80
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
+        (C_BulkTransfer41-80 patron id sender receiver-lst transfer-amount-lst method)
+    )
+    (defun PS|C_BulkTransfer13-40
+        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
+        (C_BulkTransfer13-40 patron id sender receiver-lst transfer-amount-lst method)
+    )
+    (defun PS|C_MultiTransfer41-80
+        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
+        (C_MultiTransfer41-80 patron id-lst sender receiver transfer-amount-lst method)
+    )
+    (defun PS|C_MultiTransfer13-40
+        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+        (UEV_IMC)
+        (C_MultiTransfer13-40 patron id-lst sender receiver transfer-amount-lst method)
+    )
     ;;{F7}
     ;;Auxiliary Transmute
     (defun XI_Transmute (id:string transmuter:string transmute-amount:decimal)
@@ -1301,11 +1324,10 @@
             )
         )
     )
+    ;;
     ;;Extended Bulk Transfer
     (defpact C_BulkTransfer81-160
         (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 81-160 DPTFs in Bulk or 41-80 Elite Auryns in Bulk"
-
         ;;Steps 0|1|2|3 Validation in 4 Steps
         (step
             (let
@@ -1553,8 +1575,6 @@
     )
     (defpact C_BulkTransfer41-80
         (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 41-80 DPTFs in Bulk or 21-40 Elite Auryns in Bulk"
-
         ;;Steps 0|1 Validation in 2 Steps
         (step
             (let
@@ -1672,8 +1692,6 @@
     )
     (defpact C_BulkTransfer13-40
         (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 13-40 DPTFs in Bulk or 9-20 Elite Auryns in Bulk"
-
         ;;Steps 0 Validation in 1 Step
         (step
             (UEV_BulkTransfer id sender receiver-lst transfer-amount-lst method)
@@ -1723,8 +1741,6 @@
     ;;Extended Multi Transfer
     (defpact C_MultiTransfer41-80
         (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Multi Transfers 15-40 DPTFs"
-
         ;;Steps 0|1 Validation in 2 Steps
         (step
             (let
@@ -1847,8 +1863,6 @@
     )
     (defpact C_MultiTransfer13-40
         (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Multi Transfers 13-40 DPTFs"
-
         ;;Steps 0 Validation in 1 Step
         (step
             (UEV_MultiTransfer id-lst sender receiver transfer-amount-lst method)
@@ -1897,7 +1911,7 @@
             )
         )
     )
-
+    ;;
     (defun XC_IgnisCollect (patron:string account:string input-ico:[object{OuronetDalos.IgnisCumulator}])
         @doc "Collects Ignis given input parameters"
         (let
