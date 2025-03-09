@@ -4,33 +4,33 @@
     (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;d
     (defun ATS|C_UpgradeBranding (patron:string entity-id:string months:integer)) ;d
     ;;
-    (defun ATS|C_AddHotRBT (patron:string ats:string hot-rbt:string))
+    (defun ATS|C_AddHotRBT (patron:string ats:string hot-rbt:string)) ;d
     (defun ATS|C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool)) ;d
     (defun ATS|C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal)) ;d
-    (defun ATS|C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal))
-    (defun ATS|C_Cull:[decimal] (patron:string culler:string ats:string))
-    (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
-    (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal))
+    (defun ATS|C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)) ;d
+    (defun ATS|C_Cull:[decimal] (patron:string culler:string ats:string)) ;d
+    (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)) ;d
+    (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal)) ;d
     (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal)) ;d
     (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool])) ;d
     (defun ATS|C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)) ;d
-    (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
-    (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal))
-    (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer))
-    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer))
+    (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool)) ;d
+    (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal)) ;d
+    (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer)) ;d
+    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer)) ;d
     (defun ATS|C_RemoveSecondary (patron:string remover:string ats:string reward-token:string))
-    (defun ATS|C_RotateOwnership (patron:string ats:string new-owner:string))
+    (defun ATS|C_RotateOwnership (patron:string ats:string new-owner:string)) ;d
     (defun ATS|C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])) ;d
     (defun ATS|C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer)) ;d
     (defun ATS|C_SetHotFee (patron:string ats:string promile:decimal decay:integer)) ;d
-    (defun ATS|C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
+    (defun ATS|C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal])) ;d
     (defun ATS|C_ToggleElite (patron:string ats:string toggle:bool)) ;d
-    (defun ATS|C_ToggleFeeSettings (patron:string ats:string toggle:bool fee-switch:integer))
-    (defun ATS|C_ToggleParameterLock (patron:string ats:string toggle:bool))
-    (defun ATS|C_ToggleSyphoning (patron:string ats:string toggle:bool))
-    (defun ATS|C_TurnRecoveryOff (patron:string ats:string cold-or-hot:bool))
+    (defun ATS|C_ToggleFeeSettings (patron:string ats:string toggle:bool fee-switch:integer)) ;d
+    (defun ATS|C_ToggleParameterLock (patron:string ats:string toggle:bool)) ;d
+    (defun ATS|C_ToggleSyphoning (patron:string ats:string toggle:bool)) ;d
+    (defun ATS|C_TurnRecoveryOff (patron:string ats:string cold-or-hot:bool)) ;d
     (defun ATS|C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool)) ;d
-    (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal))
+    (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal)) ;d
     ;;
     ;;
     ;;VST (Vesting) Functions
@@ -41,30 +41,31 @@
     ;;Frozen
     (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal)) ;d
     (defun VST|C_RepurposeFrozen (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)) ;d
+    (defun VST|C_ToggleTransferRoleFrozenDPTF (patron:string s-dptf:string target:string toggle:bool)) ;d
     ;;Reservation
     (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal)) ;d
     (defun VST|C_Unreserve (patron:string unreserver:string r-dptf:string amount:decimal)) ;d
     (defun VST|C_RepurposeReserved (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string)) ;d
-    (defun VST|C_ToggleTransferRoleReservedDPTF (patron:string s-dptf:string target:string toggle:bool))
+    (defun VST|C_ToggleTransferRoleReservedDPTF (patron:string s-dptf:string target:string toggle:bool)) ;d
     ;;Vesting
     (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer)) ;d
     (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer)) ;d
     (defun VST|C_RepurposeVested (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
-    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))    
-    (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
+    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)) ;d
+    (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer)) ;d
     ;;Sleeping
     (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer])) ;d
     (defun VST|C_MergeAll(patron:string merger:string dpmf:string)) ;d
     (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer)) ;d
-    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer))
+    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer)) ;d
     (defun VST|C_RepurposeSleeping (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string)) ;d
     (defun VST|C_RepurposeMerge (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string)) ;d
     (defun VST|C_RepurposeMergeAll (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string)) ;d
-    (defun VST|C_ToggleTransferRoleSleepingDPMF (patron:string s-dpmf:string target:string toggle:bool))
+    (defun VST|C_ToggleTransferRoleSleepingDPMF (patron:string s-dpmf:string target:string toggle:bool)) ;d
     ;;
     ;;
     ;;LQD (Liquid-Staking KDA) Functions
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
+    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)) ;d
     (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)) ;d
     ;;
     ;;
@@ -80,32 +81,32 @@
     (defun SWP|C_UpdatePendingBrandingLPs (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;d
     (defun SWP|C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer)) ;d
     ;;
-    (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
-    (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
-    (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
+    (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string)) ;d
+    (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string)) ;d
+    (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string)) ;d
     ;;Issue
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)) ;d
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)) ;d
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)) ;d
     ;;Management
-    (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
-    (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
-    (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool))
-    (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool))
-    (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
-    (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
+    (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool)) ;d
+    (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal])) ;d
+    (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool)) ;d
+    (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool)) ;d
+    (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal)) ;d
+    (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool)) ;d
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}])) ;d
     ;;Liquidity
-    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
-    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
-    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
-    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
-    (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
+    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal)) ;d
+    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)) ;d
+    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer)) ;d
+    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])) ;d
+    (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal)) ;d
     ;;Swap
-    (defun SWP|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-    (defun SWP|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
+    (defun SWP|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage})) ;d
+    (defun SWP|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)) ;d
+    (defun SWP|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage})) ;d
+    (defun SWP|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string)) ;d
 
 )
 (module TS01-C2 GOV
@@ -819,7 +820,7 @@
                     (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 )
                 (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf) 
-                    (ref-VST::C_ToggleTransferRoleFrozenDPTF patron s-dptf target toggle)
+                    [(ref-VST::C_ToggleTransferRoleFrozenDPTF patron s-dptf target toggle)]
                 )
             )
         )
@@ -877,7 +878,7 @@
                     (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 )
                 (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf) 
-                    (ref-VST::C_ToggleTransferRoleReservedDPTF patron s-dptf target toggle)
+                    [(ref-VST::C_ToggleTransferRoleReservedDPTF patron s-dptf target toggle)]
                 )
             )
         )
@@ -945,7 +946,7 @@
                 (ref-TS01-A::XE_IgnisCollect patron coiler-vester 
                     (+
                         [(ref-ATSU::C_Coil patron coiler-vester ats coil-token amount)]
-                        [(ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)]
+                        (ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
                     )
                 )
                 c-rbt-amount
@@ -975,7 +976,7 @@
                 (ref-TS01-A::XE_IgnisCollect patron curler-vester 
                     (+
                         [(ref-ATSU::C_Curl patron curler-vester ats1 ats2 curl-token amount)]
-                        [(ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)]
+                        (ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
                     )
                 )
                 c-rbt2-amount
@@ -1097,7 +1098,7 @@
                     (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 )
                 (ref-TS01-A::XE_IgnisCollect patron (ref-DPMF::UR_Konto s-dpmf) 
-                    (ref-VST::C_ToggleTransferRoleSleepingDPMF patron s-dpmf target toggle)
+                    [(ref-VST::C_ToggleTransferRoleSleepingDPMF patron s-dpmf target toggle)]
                 )
             )
         )
@@ -1112,7 +1113,7 @@
                     (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 )
                 (ref-TS01-A::XE_IgnisCollect patron unwrapper 
-                    [(ref-LIQUID::C_UnwrapKadena patron unwrapper amount)]
+                    (ref-LIQUID::C_UnwrapKadena patron unwrapper amount)
                 )
             )
         )
@@ -1126,7 +1127,7 @@
                     (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
                 )
                 (ref-TS01-A::XE_IgnisCollect patron wrapper 
-                    [(ref-LIQUID::C_WrapKadena patron wrapper amount)]
+                    (ref-LIQUID::C_WrapKadena patron wrapper amount)
                 )
             )
         )

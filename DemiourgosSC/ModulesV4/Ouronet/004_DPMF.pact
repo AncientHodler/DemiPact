@@ -109,6 +109,7 @@
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     (defun C_WipePartial:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string nonces:[integer]))
     ;;
+    (defun XB_DeployAccountWNE (id:string account:string))
     (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool])) ;;1
     (defun XB_UpdateElite (id:string sender:string receiver:string))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
@@ -325,7 +326,7 @@
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (account-nonces:[integer] (UR_AccountNonces id sender))
-                (contains-all:bool (ref-U|INT::UEV_ContainsAll account-nonces nonces))
+                (contains-all:bool (ref-U|INT::UEV_ContainsAll nonces account-nonces))
             )
             (enforce contains-all "Invalid Nonce List for DPMF Multi Batch Transfer")
         )
@@ -1426,6 +1427,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPMF|C>TG_TRANSFER-R id account toggle)
+                (XB_DeployAccountWNE id account)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
@@ -1473,6 +1475,18 @@
         )
     )
     ;;{F7}
+    (defun XB_DeployAccountWNE (id:string account:string)
+        (UEV_IMC)      
+        (let
+            (
+                (exist-account:bool (URC_AccountExist id account))
+            )
+            (if (not exist-account)
+                (C_DeployAccount id account)
+                true
+            )
+        )
+    )
     (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator}
         (
             patron:string

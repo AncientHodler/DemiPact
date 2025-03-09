@@ -1921,3 +1921,128 @@
 
 (print "=============================================END DPTF TESTS==========================================")
 
+
+(begin-tx "DPTF Tx 018 Defpact MultiTransfer Tests - STEP 0|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-TFT:module{TrueFungibleTransfer} TFT)
+
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (id-lst:[string]
+            [
+                "ELITEAURYN-98c486052a51" "OURO-98c486052a51" "AURYN-98c486052a51" 
+                "BUSD-98c486052a51" "TUSD-98c486052a51" "USDT-98c486052a51" "USDC-98c486052a51" 
+                "USDD-98c486052a51" "AUSD-98c486052a51" "CUSD-98c486052a51"
+                "BEUR-98c486052a51" "TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" 
+                "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"
+
+                "LI-98c486052a51" "MG-98c486052a51" "AL-98c486052a51" "TI-98c486052a51" "GE-98c486052a51" 
+                "GA-98c486052a51" "IN-98c486052a51" "TE-98c486052a51" "BI-98c486052a51" "CO-98c486052a51" 
+                "CU-98c486052a51" "RU-98c486052a51" "PD-98c486052a51" "AG-98c486052a51" "OS-98c486052a51" 
+                "IR-98c486052a51" "PT-98c486052a51" "AU-98c486052a51" "HG-98c486052a51" "RE-98c486052a51"
+                "OURO-98c486052a51" "OURO-98c486052a51" "OURO-98c486052a51"
+            ]
+        )
+    )
+    (ref-TFT::C_MultiTransfer13-40
+        patron
+        id-lst
+        patron
+        receiver
+        (make-list 40 1.0)
+        false
+    )
+    [
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        (pact-state)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0017|0 MultiTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 018 Defpact MultiTransfer Tests - STEP 1|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 1 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0018|1 MultiTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 018 Defpact MultiTransfer Tests - STEP 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 2 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0018|2 MultiTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 018 Defpact MultiTransfer Tests - STEP 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(continue-pact 3 false "DldRwCblQ7Loqy6wYJnaodHl30d3j3eH-qtFzfEv46g")
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 0018|3 MultiTransfer Variable Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

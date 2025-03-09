@@ -176,7 +176,8 @@
     )
     (defun UC_LP:decimal (input-amounts:[decimal] pts:[decimal] lps:decimal lpp:integer)
         @doc "Computes the amount of LP that would result from <input-amounts> of tokens added to the pool, when \
-            \ the pools has <pts> token supply, adn the lp amounts is <lps> and the lp token has <lpp> precision"
+            \ the pools has <pts> token supply, and the lp amounts is <lps> and the lp token has <lpp> precision \
+            \ Must only be used when <input-amounts> are balanced, otherwise LP computation results in an inccorect value"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)

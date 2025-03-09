@@ -13,7 +13,7 @@
     (defun UEV_Exchange ())
     ;;
     (defun C_Compress:object{OuronetDalos.IgnisCumulator} (patron:string client:string ignis-amount:decimal))
-    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} (patron:string))
+    (defun C_Fuel:[object{OuronetDalos.IgnisCumulator}] (patron:string))
     (defun C_Sublimate:object{OuronetDalos.IgnisCumulator} (patron:string client:string target:string ouro-amount:decimal))
     (defun C_WithdrawFees:object{OuronetDalos.IgnisCumulator} (patron:string id:string target:string))
 )
@@ -242,7 +242,7 @@
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
                     (ouro-price:decimal (ref-DALOS::UR_OuroborosPrice))
                     (ouro-price-used:decimal (if (<= ouro-price 1.00) 1.00 ouro-price))
-                    (ouro-precision:integer (ref-DPTF::R_Decimals ouro-id))
+                    (ouro-precision:integer (ref-DPTF::UR_Decimals ouro-id))
                     (raw-ouro-amount:decimal (floor (/ ignis-amount (* ouro-price-used 100.0)) ouro-precision))
                     (promile-split:[decimal] (ref-U|ATS::UC_PromilleSplit 15.0 raw-ouro-amount ouro-precision))
                     (ouro-remainder-amount:decimal (floor (at 0 promile-split) ouro-precision))
@@ -370,7 +370,7 @@
             )
         )
     )
-    (defun C_Fuel:object{OuronetDalos.IgnisCumulator} 
+    (defun C_Fuel:[object{OuronetDalos.IgnisCumulator}]
         (patron:string)
         (UEV_IMC)
         (let
@@ -395,22 +395,15 @@
                     (if (> present-kda-balance 0.0)
                         (with-capability (LIQUIDFUEL|C>ADMIN_FUEL)
                             (install-capability (ref-coin::TRANSFER orb-kda lq-kda present-kda-balance))
-                            (let
-                                (
-                                    (ico1:object{OuronetDalos.IgnisCumulator}
-                                        (ref-LIQUID::C_WrapKadena patron orb-sc present-kda-balance)
-                                    )
-                                    (ico2:object{OuronetDalos.IgnisCumulator}
-                                        (ref-ATSU::C_Fuel patron orb-sc liquid-idx w-kda present-kda-balance)
-                                    )
-                                )
-                                (ref-DALOS::UDC_CompressICO [ico1 ico2] [])
+                            (+
+                                (ref-LIQUID::C_WrapKadena patron orb-sc present-kda-balance)
+                                [(ref-ATSU::C_Fuel patron orb-sc liquid-idx w-kda present-kda-balance)]
                             )
                         )
-                        EIC
+                        [EIC]
                     )
                 )
-                EIC
+                [EIC]
             )
         )
     )

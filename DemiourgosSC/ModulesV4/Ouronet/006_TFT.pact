@@ -1271,7 +1271,7 @@
                             (XI_CPF_StillFee id target v1)
                             (XI_CPF_BurnFee id target v2)
                         )
-                        (ref-DPTF::XB_Credit id target pf false)
+                        (ref-DPTF::XB_Credit id target pf)
                     )
                 )
             )

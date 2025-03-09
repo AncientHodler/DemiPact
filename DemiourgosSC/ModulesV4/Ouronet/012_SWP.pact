@@ -354,12 +354,12 @@
             (map
                 (lambda
                     (w:decimal)
-                    (= (floor w ref-U|CT::CT_FEE_PRECISION) w)
+                    (= (floor w (ref-U|CT::CT_FEE_PRECISION)) w)
                 )
                 new-weights
             )
             (enforce (= pp "W") "Changing weights available only for weighted Pools")
-            (enforce (= ws 1.0) "All weights must add to exactl 1.0")
+            (enforce (= ws 1.0) "All weights must add to exactly 1.0")
             (CAP_Owner swpair)
         )
     )

@@ -599,16 +599,7 @@
                             (fold
                                 (lambda
                                     (acc:[decimal] idx:integer)
-                                    (let
-                                        (
-                                            (token-percent:decimal (floor (/ (at idx input-amounts) (at idx pool-token-supplies)) 24))
-                                            (lp-amount:decimal (floor (fold (*) 1.0 [token-percent (at idx percent-lst) lp-supply]) lp-prec))
-                                        )
-                                        (ref-U|LST::UC_AppL 
-                                            acc 
-                                            lp-amount
-                                        )
-                                    )
+                                    (ref-U|LST::UC_AppL acc (floor (fold (*) 1.0 [(/ (at idx input-amounts) (at idx pool-token-supplies)) (at idx percent-lst) lp-supply]) lp-prec))
                                 )
                                 []
                                 (enumerate 0 (- li 1))
@@ -1009,7 +1000,7 @@
                         (pool-worth-with-input-tokens-in-dwk:decimal
                             (if (or (= prefix "S") (= prefix "P"))
                                 (* (dec how-many) first-worth)
-                                (* (at 0 weights) first-worth)
+                                (/ first-worth (at 0 weights))
                             )
                         )
                         (spawn-limit:decimal (ref-SWP::UR_SpawnLimit))
@@ -1417,7 +1408,7 @@
                     (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
                     (ref-TFT:module{TrueFungibleTransfer} TFT)
                     (ref-SWP:module{Swapper} SWP)
-                    (swp-sc:string (ref-SWP::GOV|SWP|SC_KDA-NAME))
+                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
                     (pool-token-ids:[string] (ref-SWP::UR_PoolTokens swpair))
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
                     (pt-output-amounts:[decimal] (SWPLC|URC_LpBreakAmounts swpair lp-amount))

@@ -672,6 +672,7 @@
         (patron:string KST.ANHD)
         (pool-tokens:[object{Swapper.PoolTokens}]
             [
+                ;{ "token-id":  "OURO-98c486052a51", "token-supply": 1000.0}
                 { "token-id":  "BUSD-98c486052a51", "token-supply": 1000000.0}
                 { "token-id":  "TUSD-98c486052a51", "token-supply": 1000000.0}
                 { "token-id":  "USDT-98c486052a51", "token-supply": 1000000.0}
@@ -683,6 +684,7 @@
         )
         (fee-lp:decimal 10.0)
         (weights:[decimal] (make-list (length pool-tokens) 1.0))
+        (w-weigths:[decimal] [0.1 0.1 0.1 0.1 0.2 0.2 0.2 ])
         (amp:decimal 85.0)
         (p:bool false)
     )
@@ -694,6 +696,22 @@
         amp
         p
     )
+    ;(ref-TS01-CP::SWP|C_IssueStandardMultiStep
+    ;    patron
+    ;    patron
+    ;    pool-tokens
+    ;    fee-lp
+    ;    ;amp
+    ;    p
+    ;)
+    ;(ref-TS01-CP::SWP|C_IssueWeightedMultiStep
+    ;    patron
+    ;    patron
+    ;    pool-tokens
+    ;    fee-lp
+    ;    w-weigths
+    ;    p
+    ;)
     [
         (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
         (pact-state)
@@ -903,7 +921,11 @@
         (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
         (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
         (pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
+
         (pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "P|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "W|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
         (spt1:[object{Swapper.FeeSplit}]
             [
@@ -997,7 +1019,11 @@
         (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
         (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
         (pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
+
         (pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "P|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "W|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
 
         (pool:string pool8)
@@ -1007,15 +1033,30 @@
         (input-amounts:[decimal]
             [230.0 240.0 232.0 223.0 455.0 432.0]
         )
+
+        (input-ids-s:[string]
+            ["EURT-98c486052a51"]
+        )
+        (input-amounts-s:[decimal]
+            [2400.0]
+        )
+
         (output-id:string "OURO-98c486052a51")
         (slippage-value:decimal 5.0)
         (slippage-obj:object{SwapperUsage.Slippage}
             (ref-SWPU::SPWS|UDC_SlippageObject pool input-ids input-amounts output-id slippage-value)
         )
+
+        (slippage-obj-s:object{SwapperUsage.Slippage}
+            (ref-SWPU::SPWS|UDC_SlippageObject pool input-ids-s input-amounts-s output-id slippage-value)
+        )
     )
     [
         (format "Slippage-Obj is {}" [slippage-obj])
         (format "Min-Max is {}" [(ref-SWPU::SWPS|UC_SlippageMinMax slippage-obj)])
+
+        (format "Slippage-Obj Simple is {}" [slippage-obj-s])
+        (format "Min-Max Simple is {}" [(ref-SWPU::SWPS|UC_SlippageMinMax slippage-obj-s)])
     ]
 )
 
@@ -1044,6 +1085,7 @@
     (
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
     )
+    ;;134k
     (ref-TS01-C2::SWP|C_MultiSwap
         KST.ANHD 
         KST.ANHD
@@ -1052,6 +1094,37 @@
         [230.0 240.0 232.0 223.0 455.0 432.0]
         "OURO-98c486052a51"
         {"expected-output-amount": 1809.280886324937455356121064,"output-precision": 24,"slippage-percent": 5.0}
+    )
+    ;;129k
+    (ref-TS01-C2::SWP|C_MultiSwapNoSlippage
+        KST.ANHD 
+        KST.ANHD
+        "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+        ["TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+        [230.0 240.0 232.0 223.0 455.0 432.0]
+        "OURO-98c486052a51"
+        ;{"expected-output-amount": 1809.280886324937455356121064,"output-precision": 24,"slippage-percent": 5.0}
+    )
+
+    ;84k
+    (ref-TS01-C2::SWP|C_SimpleSwap
+        KST.ANHD 
+        KST.ANHD
+        "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+        "EURT-98c486052a51"
+        2400.0
+        "OURO-98c486052a51"
+        {"expected-output-amount": 2394.253790901391766965389252,"output-precision": 24,"slippage-percent": 5.0}
+    )
+    ;;81k
+    (ref-TS01-C2::SWP|C_SimpleSwapNoSlippage
+        KST.ANHD 
+        KST.ANHD
+        "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+        "EURT-98c486052a51"
+        2400.0
+        "OURO-98c486052a51"
+        ;{"expected-output-amount": 1809.280886324937455356121064,"output-precision": 24,"slippage-percent": 5.0}
     )
 )
 
@@ -1119,34 +1192,38 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        ;(ref-DALOS:module{OuronetDalos} DALOS)
+        ;(ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-SWP:module{Swapper} SWP)
-        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+        ;(ref-SWP:module{Swapper} SWP)
+        ;(swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (patron:string KST.ANHD)
-        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
-        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
-        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
-        (pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
-        (pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        ;(pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        ;(pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        ;(pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        ;(pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        ;(pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
+
+        ;(pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "P|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "W|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
-        (pool8-lp:string (ref-SWP::UR_TokenLP pool8))
+        ;(pool8-lp:string (ref-SWP::UR_TokenLP pool8))
     )
     [
         (ref-TS01-C2::SWP|C_AddLiquidity
-            KST.ANHD 
-            KST.ANHD
+            patron 
+            patron
             pool8
             [730.0 250.0 330.0 450.0 554.0 332.0 234.0]
         )
-        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
-        (format "Pool8 LP is {}" [pool8-lp])
-        (format "Burn role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleBurn pool8-lp swp-sc)])
-        (format "Mint role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleMint pool8-lp swp-sc)])
-        (format "Pool8-LP Owner is {}" [(ref-DPTF::UR_Konto pool8-lp)])
+        ;(format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        ;(format "Pool8 LP is {}" [pool8-lp])
+        ;(format "Burn role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleBurn pool8-lp swp-sc)])
+        ;(format "Mint role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleMint pool8-lp swp-sc)])
+        ;(format "Pool8-LP Owner is {}" [(ref-DPTF::UR_Konto pool8-lp)])
     ]
     
 )
@@ -1179,29 +1256,33 @@
         (ref-SWPU:module{SwapperUsage} SWPU)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (patron:string KST.ANHD)
-        (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-        (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
-        (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
-        (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
-        (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
-        (pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
-        (pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        ;(pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        ;(pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
+        ;(pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+        ;(pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
+        ;(pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
+
+        ;(pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "P|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "W|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
     )
     [
-        (format "Balanced Liquidity with 500 OURO is {}, and adding liquidity so creates {} LP Tokens" 
+        (format "Balanced Liquidity with 500 OURO is{}, and adding liquidity so creates {} LP Tokens" 
             [
                 (ref-SWPU::SWPLC|URC_BalancedLiquidity pool8 "OURO-98c486052a51" 500.0)
                 (ref-TS01-C2::SWP|C_AddBalancedLiquidity
-                    KST.ANHD 
-                    KST.ANHD
+                    patron
+                    patron
                     pool8
                     "OURO-98c486052a51"
                     500.0
                 )
             ]
         )
-        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) KST.ANHD)])
+        (format "AH has {} GAS" [(ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) patron)])
     ]
     
 )
@@ -1240,7 +1321,11 @@
         (pool4:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
         (pool5:string "P|OURO-98c486052a51|BUSD-98c486052a51")
         (pool6:string "P|OURO-98c486052a51|VST-98c486052a51")
+
         (pool7:string "S|BUSD-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "P|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+        ;(pool7:string "W|OURO-98c486052a51|TUSD-98c486052a51|USDT-98c486052a51|USDC-98c486052a51|USDD-98c486052a51|AUSD-98c486052a51|CUSD-98c486052a51")
+
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
 
         (pts:[decimal] (ref-SWP::UR_PoolTokenSupplies pool1))
@@ -1946,6 +2031,302 @@
 (print "")
 (print "")
 (format "<<<<<<<STEP 026 Add Frozen/Sleeping VST Transfer Role costs Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 27 - Change Ownership Test")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        
+        ;
+        ;(ref-VST:module{Vesting} VST)
+        ;(emma:string KST.EMMA)
+        ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
+        ;(lp-id "P|OURO-VST|LP-98c486052a51")
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-SWP:module{Swapper} SWP)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (f-vst:string "F|VST-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+        (pool:string "P|OURO-98c486052a51|VST-98c486052a51")
+        (pool-lp:string (ref-SWP::UR_TokenLP pool))
+        (f-lp:string (ref-DPTF::UR_Frozen pool-lp))
+        (s-lp:string (ref-DPTF::UR_Sleeping pool-lp))
+
+        (wp:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
+        (wp-lp:string (ref-SWP::UR_TokenLP wp))
+
+        (sp:string "S|PKOSON-98c486052a51|EKOSON-98c486052a51|AKOSON-98c486052a51")
+
+        (dlk:string "DLK-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        (dwk:string "DWK-98c486052a51")
+        (ignis:string "GAS-98c486052a51")
+
+    )
+    (ref-TS01-C2::SWP|C_ChangeOwnership patron pool emma)
+    (ref-TS01-C2::SWP|C_ModifyCanChangeOwner patron pool false)
+    (ref-TS01-C2::SWP|C_ModifyCanChangeOwner patron pool true)
+    (ref-TS01-C2::SWP|C_ChangeOwnership patron pool patron)
+    (ref-TS01-C2::SWP|C_ModifyWeights patron wp [0.25 0.25 0.50])
+    (ref-TS01-C2::SWP|C_UpdateAmplifier patron sp 95.0)
+
+    ;;
+    (ref-TS01-C2::SWP|C_RemoveLiquidity patron patron wp 10000000.0)
+    (ref-TS01-C2::SWP|C_AddLiquidity
+        patron 
+        patron
+        wp
+        [2000.0 2500.0 2000.0]
+    )
+    (ref-TS01-C2::ORBR|C_Compress patron patron 1000.0)
+    [
+        (format "AH has {} Ignis and {} OURO" [(ref-DPTF::UR_AccountSupply ignis patron) (ref-DPTF::UR_AccountSupply ouro patron )])
+        (format "Pool {} owner is {}" [pool (ref-SWP::UR_OwnerKonto pool)])
+        (format "Cand change owner for pool {} is {}" [pool (ref-SWP::UR_CanChangeOwner pool)])
+        (format "Weigthed Pool weigths are {}" [(ref-SWP::UR_Weigths wp)])
+        (format "Stable pool amplifier is {}" [(ref-SWP::UR_Amplifier sp)])
+        (format "AH has {} {}" [(ref-DPTF::UR_AccountSupply wp-lp patron) wp-lp])
+        (format "{} total supply is {}" [wp-lp (ref-DPTF::UR_Supply wp-lp)])
+        (format "Pool {} suply of tokens is {}" [wp (ref-SWP::UR_PoolTokenSupplies wp)])
+
+        (format "AH has {} {}, {} {}, and {} {}"
+            [
+                (ref-DPTF::UR_AccountSupply dlk patron)
+                dlk
+                (ref-DPTF::UR_AccountSupply ouro patron)
+                ouro
+                (ref-DPTF::UR_AccountSupply dwk patron)
+                dwk
+            ]
+        )
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<SWP TX 27 - Change Ownership Test Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "SWP TX 28 Withdraw Fees Test")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWP:module{Swapper} SWP)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (ref-DALOS::UR_UsagePrice "dptf")
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 1 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 2 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (let
+        (
+            (ids:list
+                (ref-TS01-C1::DPTF|C_Issue
+                    patron
+                    patron
+                    ["BlessedVesta"]
+                    ["BVST"]
+                    [24]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                )
+            )
+            (bvst-id:string (at 0 ids))
+        )
+        (print "")
+        (print "")
+        (format "<<<<<<<Issue Data is {} >>>>>>>" [bvst-id])
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<SWP TX 28 Withdraw Fees Test Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 27 - Change Ownership Test")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        
+        ;
+        ;(ref-VST:module{Vesting} VST)
+        ;(emma:string KST.EMMA)
+        ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
+        ;(lp-id "P|OURO-VST|LP-98c486052a51")
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-SWP:module{Swapper} SWP)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (coca:string KST.COCA)
+        (kiss:string KST.KISS)
+        (b-vst:string "BVST-98c486052a51")
+        (orbr:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (gas-tanker:string (ref-DALOS::GOV|DALOS|SC_NAME))
+
+    )
+    (ref-TS01-C1::DPTF|C_SetFee patron b-vst 250.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron b-vst true)
+    ;(ref-TS01-C1::DPTF|C_ToggleFeeLock patron b-vst true)
+    (ref-TS01-C1::DPTF|C_Mint
+        patron
+        b-vst
+        patron
+        5000000.0
+        true
+    )
+    (ref-TS01-C1::DPTF|C_Transfer 
+        patron 
+        b-vst
+        patron
+        emma
+        1000000.0
+        false
+    )
+    (ref-TS01-C1::DPTF|C_Transfer 
+        patron 
+        b-vst
+        emma
+        lumy
+        400000.0
+        false
+    )
+    (ref-TS01-C1::DPTF|C_DonateFees patron b-vst)
+    (ref-TS01-C1::DPTF|C_Transfer 
+        patron 
+        b-vst
+        emma
+        lumy
+        200000.0
+        false
+    )
+    (ref-TS01-C1::DPTF|C_SetFeeTarget patron b-vst coca)
+    (ref-TS01-C1::DPTF|C_Transfer 
+        patron 
+        b-vst
+        emma
+        lumy
+        100000.0
+        false
+    )
+    (ref-TS01-C2::ORBR|C_WithdrawFees patron b-vst kiss)
+    [   
+        (format "AH has {} {}" [(ref-DPTF::UR_AccountSupply b-vst patron) b-vst])
+        (format "Emma has {} {}" [(ref-DPTF::UR_AccountSupply b-vst emma) b-vst])
+        (format "Lumy has {} {}" [(ref-DPTF::UR_AccountSupply b-vst lumy) b-vst])
+        (format "Coca has {} {}" [(ref-DPTF::UR_AccountSupply b-vst coca) b-vst])
+        (format "Kiss has {} {}" [(ref-DPTF::UR_AccountSupply b-vst kiss) b-vst])
+        (format "Gas Tanker has {} {}" [(ref-DPTF::UR_AccountSupply b-vst gas-tanker) b-vst])
+        (format "Default Collector has {} {}" [(ref-DPTF::UR_AccountSupply b-vst orbr) b-vst])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<SWP TX 27 - Change Ownership Test Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

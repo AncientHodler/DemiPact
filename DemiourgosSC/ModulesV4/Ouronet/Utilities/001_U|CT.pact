@@ -108,7 +108,11 @@
     ;;
     ;{3}
     (defun CT_DPTF-FeeLock ()
-        (if (or (= (CT_NS_USE) NS_TEST) (= (CT_NS_USE) "free"))
+        (if 
+            (or 
+                (= (CT_NS_USE) (NS_TEST))
+                (= (CT_NS_USE) "free")
+            )
             1.0
             10000.0
         )

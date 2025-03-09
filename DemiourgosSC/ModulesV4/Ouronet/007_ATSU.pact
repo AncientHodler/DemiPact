@@ -485,7 +485,7 @@
                     ;;for true
                     (positive-c-fr:[decimal] (ref-ATS::URC_RTSplitAmounts ats (at 0 c-rbt-fee-split)))      ;;remainder
                     ;;
-                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|token-biggest"))
+                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                     (price:decimal (* 2.0 biggest))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (ico1:object{OuronetDalos.IgnisCumulator}
@@ -556,7 +556,7 @@
                     (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
                     (cw:[decimal] (ref-U|DEC::UC_AddHybridArray ca))
                     ;;
-                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|token-biggest"))
+                    (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                     (price:decimal (* 2.0 biggest))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     ;;
@@ -663,7 +663,7 @@
                 (let
                     (
                         (ref-DALOS:module{OuronetDalos} DALOS)
-                        (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|token-biggest"))
+                        (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                         (price:decimal (* 3.0 biggest))
                         (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                         (ico1:object{OuronetDalos.IgnisCumulator}
@@ -1024,7 +1024,7 @@
                             )
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO [ico] [])
+                    (ref-DALOS::UDC_CompressICO ico [])
                 )
             )
         )
@@ -1131,6 +1131,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-ATS:module{Autostake} ATS)
                 (zr:object{UtilityAts.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
                 (ng:object{UtilityAts.Awo} (ref-ATS::UDC_MakeNegativeUnstakeObject ats))
@@ -1140,7 +1141,7 @@
                     (fold
                         (lambda
                             (acc:[bool] item:object{UtilityAts.Awo})
-                            (ref-U|LST::UC_AppL acc (ref-ATS::UC_IzCullable item))
+                            (ref-U|LST::UC_AppL acc (ref-U|ATS::UC_IzCullable item))
                         )
                         []
                         p0
@@ -1215,6 +1216,7 @@
                 (positions:integer (ref-ATS::UR_ColdRecoveryPositions ats))
                 (elite:bool (ref-ATS::UR_EliteMode ats))
                 (major-tier:integer (ref-DALOS::UR_Elite-Tier-Major acc))
+                ;;
                 (p0-znn:[object{UtilityAts.Awo}] (if (and (!= p0 [zr]) (!= p0 [ng])) p0 [ng]))
                 (p0-znz:[object{UtilityAts.Awo}] (if (and (!= p0 [zr]) (!= p0 [ng])) p0 [zr]))
                 (p1-znn:object{UtilityAts.Awo} (if (and (!= p1 zr) (!= p1 ng)) p1 ng))
@@ -1237,17 +1239,28 @@
                 (p5-zne:object{UtilityAts.Awo} (if (and (!= p5 zr) (!= p5 ng)) p5 (if (>= major-tier 5) zr ng)))
                 (p6-zne:object{UtilityAts.Awo} (if (and (!= p6 zr) (!= p6 ng)) p6 (if (>= major-tier 6) zr ng)))
                 (p7-zne:object{UtilityAts.Awo} (if (and (!= p7 zr) (!= p7 ng)) p7 (if (>= major-tier 7) zr ng)))
+                ;;
+                (c-pm1:[object{UtilityAts.Awo}] (fold (+) [] [p0-znz [p1-znn] [p2-znn] [p3-znn] [p4-znn] [p5-znn] [p6-znn] [p7-znn]]))
+                (c-p1:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znn] [p3-znn] [p4-znn] [p5-znn] [p6-znn] [p7-znn]]))
+                (c-p2:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znn] [p4-znn] [p5-znn] [p6-znn] [p7-znn]]))
+                (c-p3:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znz] [p4-znn] [p5-znn] [p6-znn] [p7-znn]]))
+                (c-p4:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znz] [p4-znz] [p5-znn] [p6-znn] [p7-znn]]))
+                (c-p5:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znz] [p4-znz] [p5-znz] [p6-znn] [p7-znn]]))
+                (c-p6:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znz] [p4-znz] [p5-znz] [p6-znz] [p7-znn]]))
+                (c-ne:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-znz] [p3-znz] [p4-znz] [p5-znz] [p6-znz] [p7-znz]]))
+                (c-el:[object{UtilityAts.Awo}] (fold (+) [] [p0-znn [p1-znz] [p2-zne] [p3-zne] [p4-zne] [p5-zne] [p6-zne] [p7-zne]]))
+
             )
             (cond
-                ((= positions -1) (XI_UUP ats acc [p0-znz p1-znn p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 1) (XI_UUP ats acc [p0-znn p1-znz p2-znn p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 2) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znn p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 3) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znn p5-znn p6-znn p7-znn]))
-                ((= positions 4) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znn p6-znn p7-znn]))
-                ((= positions 5) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znn p7-znn]))
-                ((= positions 6) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znn]))
-                ((not elite) (XI_UUP ats acc [p0-znn p1-znz p2-znz p3-znz p4-znz p5-znz p6-znz p7-znz]))
-                (elite (XI_UUP ats acc [p0-znn p1-znz p2-zne p3-zne p4-zne p5-zne p6-zne p7-zne]))
+                ((= positions -1) (XI_UUP ats acc c-pm1))
+                ((= positions 1) (XI_UUP ats acc c-p1))
+                ((= positions 2) (XI_UUP ats acc c-p2))
+                ((= positions 3) (XI_UUP ats acc c-p3))
+                ((= positions 4) (XI_UUP ats acc c-p4))
+                ((= positions 5) (XI_UUP ats acc c-p5))
+                ((= positions 6) (XI_UUP ats acc c-p6))
+                ((not elite) (XI_UUP ats acc c-ne))
+                (elite (XI_UUP ats acc c-el))
                 true
             )
         )
@@ -1308,15 +1321,14 @@
             (
                 (ref-ATS:module{Autostake} ATS)
             )
-            (enforce (= (length data) 8) "Invalid Data Length")
-            (ref-ATS::XE_UpP0 ats acc (at 0 data))
-            (ref-ATS::XE_UpP1 ats acc (at 1 data))
-            (ref-ATS::XE_UpP2 ats acc (at 2 data))
-            (ref-ATS::XE_UpP3 ats acc (at 3 data))
-            (ref-ATS::XE_UpP4 ats acc (at 4 data))
-            (ref-ATS::XE_UpP5 ats acc (at 5 data))
-            (ref-ATS::XE_UpP6 ats acc (at 6 data))
-            (ref-ATS::XE_UpP7 ats acc (at 7 data))
+            (ref-ATS::XE_UpP0 ats acc (drop -7 data))
+            (ref-ATS::XE_UpP1 ats acc (at 0 (take 1 (take -7 data))))
+            (ref-ATS::XE_UpP2 ats acc (at 0 (take 1 (take -6 data))))
+            (ref-ATS::XE_UpP3 ats acc (at 0 (take 1 (take -5 data))))
+            (ref-ATS::XE_UpP4 ats acc (at 0 (take 1 (take -4 data))))
+            (ref-ATS::XE_UpP5 ats acc (at 0 (take 1 (take -3 data))))
+            (ref-ATS::XE_UpP6 ats acc (at 0 (take 1 (take -2 data))))
+            (ref-ATS::XE_UpP7 ats acc (at 0 (take -1 data)))
         )
     )
 )

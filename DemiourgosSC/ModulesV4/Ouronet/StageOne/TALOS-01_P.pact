@@ -2,16 +2,16 @@
     ;;
     ;;
     ;;DPTF (Demiourgos Pact True Fungible) Pact Initiating Functions
-    (defun DPTF|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun DPTF|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)) ;d
+    (defun DPTF|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)) ;d
+    (defun DPTF|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)) ;d
+    (defun DPTF|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)) ;d
+    (defun DPTF|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)) ;d
     ;;SWP (Swap-Pair) Pact Initiating Functions
     ;;Issue
-    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)) ;d
+    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)) ;d
+    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)) ;d
 
 )
 (module TS01-CP GOV

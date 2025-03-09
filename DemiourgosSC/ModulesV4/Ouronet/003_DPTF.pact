@@ -109,6 +109,7 @@
     (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
     (defun C_WipePartial:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string amtbw:decimal))
     ;;
+    (defun XB_DeployAccountWNE (id:string account:string))
     (defun XB_Credit (id:string account:string amount:decimal))
     (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
     (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] iz-special:[bool]))
@@ -1552,6 +1553,7 @@
                 (ref-DALOS:module{OuronetDalos} DALOS)
             )
             (with-capability (DPTF|C>TG_TRANSFER-R id account toggle)
+                (XB_DeployAccountWNE id account)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
@@ -1586,6 +1588,18 @@
         )
     )
     ;;{F7}
+    (defun XB_DeployAccountWNE (id:string account:string)
+        (UEV_IMC)      
+        (let
+            (
+                (exist-account:bool (URC_AccountExist id account))
+            )
+            (if (not exist-account)
+                (C_DeployAccount id account)
+                true
+            )
+        )
+    )
     (defun XB_Credit (id:string account:string amount:decimal)
         (UEV_IMC)
         (if (URC_IzCoreDPTF id)

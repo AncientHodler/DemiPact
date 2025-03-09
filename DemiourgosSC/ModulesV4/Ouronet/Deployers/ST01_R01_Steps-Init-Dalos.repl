@@ -905,6 +905,7 @@
 ;;
 ;;
 (begin-tx "Init STEP 011")
+(namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [   
@@ -919,7 +920,6 @@
         }
     ]
 )
-(namespace "free")
 
 (let 
     ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))

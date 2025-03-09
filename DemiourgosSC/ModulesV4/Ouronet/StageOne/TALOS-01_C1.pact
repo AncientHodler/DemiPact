@@ -47,25 +47,25 @@
     (defun DPMF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;d
     (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer)) ;d
     ;;
-    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]))
-    (defun DPMF|C_DeployAccount (id:string account:string))
+    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal)) ;d
+    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal)) ;d
+    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)) ;d
+    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object])) ;d
+    (defun DPMF|C_DeployAccount (id:string account:string)) ;i
     (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])) ;d
-    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string))
-    (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun DPMF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool))
-    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
+    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])) ;d
+    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)) ;d
+    (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool)) ;d
+    (defun DPMF|C_RotateOwnership (patron:string id:string new-owner:string)) ;d
+    (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool)) ;d
+    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)) ;d
+    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)) ;d
     (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool))
-    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPMF|C_Wipe (patron:string id:string atbw:string))
-    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer]))
+    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool)) ;d
+    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)) ;d
+    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)) ;d
+    (defun DPMF|C_Wipe (patron:string id:string atbw:string)) ;d
+    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer])) ;d
 )
 (module TS01-C1 GOV
     @doc "TALOS Stage 1 Client Functiones Part 1"
