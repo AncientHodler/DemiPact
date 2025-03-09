@@ -79,6 +79,7 @@
     (defun DALOS|EmptyIgCum:object{IgnisCumulator} ())
     ;;
     ;;
+    (defun UR_GAP:bool ())
     (defun UR_KadenaLedger:[string] (kadena:string))
     (defun UR_DemiurgoiID:[string] ())
     (defun UR_UnityID:string ())
@@ -156,6 +157,8 @@
     (defun CAP_EnforceAccountOwnership (account:string))
     ;;
     ;;
+    (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun A_ToggleGAP (gap:bool))
     (defun A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
     (defun A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
     (defun A_IgnisToggle (native:bool toggle:bool))
@@ -249,6 +252,9 @@
     (defun GOV|LiquidKey ()         (+ (GOV|NS_Use) ".dh_sc_kadenaliquidstaking-keyset"))
     (defun GOV|OuroborosKey ()      (+ (GOV|NS_Use) ".dh_sc_ouroboros-keyset"))
     (defun GOV|SwapKey ()           (+ (GOV|NS_Use) ".dh_sc_swapper-keyset"))
+    (defun GOV|DHVKey ()            (+ (GOV|NS_Use) ".dh_sc_dhvault-keyset"))
+    (defun GOV|CSTKey ()            (+ (GOV|NS_Use) ".dh_sc_custodians-keyset"))
+    (defun GOV|DSPKey ()            (+ (GOV|NS_Use) ".dh_sc_dispenser-keyset"))
     ;;
     (defun GOV|DALOS|SC_NAME ()     (at 0 ["Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ"]))
     (defun GOV|ATS|SC_NAME ()       (at 0 ["Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ"]))
@@ -256,6 +262,13 @@
     (defun GOV|LIQUID|SC_NAME ()    (at 0 ["Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ"]))
     (defun GOV|OUROBOROS|SC_NAME () (at 0 ["Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ"]))
     (defun GOV|SWP|SC_NAME ()       (at 0 ["Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ"]))
+
+    (defun GOV|DHV1|SC_NAME ()      (at 0 ["Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"]))
+    (defun GOV|CST1|SC_NAME ()      (at 0 ["Ѻ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ"]))
+    (defun GOV|DSP1|SC_NAME ()      (at 0 ["Ѻ.hÜ5ĞÊÜεŞΓõè1Ă₳äàÄìãÓЦφLÕзЯŮμĞ₿мK6àŘуVćχδдзηφыβэÎχUHRêγBğΛ∇VŒižďЬШ£îOÜøE4ÖFSõЩЩAłκè1ččΨΦŻЖэч6Iчη₱ØćнúŒψУćÀyпãЗцÚäδÏÍtςřïçγț6γÎęôigFzÝûηы₿ÏЬüБэΞčмŃт₳ŘчjζsŠȚHъĘïЦ0"]))
+    (defun GOV|DHV2|SC_NAME ()      (+ "Σ" (drop 1 (GOV|DHV1|SC_NAME))))
+    (defun GOV|CST2|SC_NAME ()      (+ "Σ" (drop 1 (GOV|CST1|SC_NAME))))
+    (defun GOV|DSP2|SC_NAME ()      (+ "Σ" (drop 1 (GOV|DSP1|SC_NAME))))
     ;;
     (defun GOV|DALOS|PBL ()         (at 0 ["9G.DwF3imJMCp4ht88DD1vx6pdjEkLM4j7Fvzso8zJF7Ixe1p2oKfGb53a5svtEF0Lz1q4MjvHaMrgqCfjlA1cBj2bzvs86EeLIMg2fmutzwbA5vI4woKoqq0acDHllAonxC4qLBulsLclMGwcw9iGxiw919t4tfD8FpcIc4MJ059ki7giFIAyCghgMwwr199v3qiDfIon426rbz1jMLmCe4jhHwD3sEarwMlmzLJ5li43J70CEDzouh7x8pu4u1GxJHa6Cabrsc147gIlzIdDmCC2j87LFpEdvqLge9o0w4av8mLr0lDAfalpnEabfkl0E6zE9KMG7LH2w7uvBIup3Hxxxu2Giwu29Cqye3fJ5ihcjacop4vtcLsi33ip742uAhGzjHaDLwAh933ntp8tEC1zkt9yi6n89JtsDLk477p80rscbGtsi14nxsMf7y0d7GxzE8FFmljElu5yE3vx25cEvc9574Hw4iIi23FFKfdhGF77LMqaBkDB9hJKmpc1B2rM1a8mfilyvLAdzpj57Ae5FG5vvm1n1nzgau373dBF7CuBAu2zbts09du55"]))
     (defun GOV|ATS|PBL ()           (at 0 ["9H.9I8veD6Lqmcd5nKlb1vlHkg976FhdtooE3iH73h8i2Gq9tLKdclnpo07sC29i2yvMeuB0ikkKghiIgdAfkfDiM57o2phj2quCD8gutjIgDs6AlecMtw2lG6kMMBxBH4B5d1xqhpzA7AHkgEqF7Hgqwpx6E5aIMAtqxIpMhjyqziDiwLA69dKlhlwpjoze34Bwz6swBjlA880ItKfwxtulKEJG9oI3Gjmwgn6bbAgL7xy4brdbgK5DukMBHc0K1jIs1DjcDzhJz2liKultB67rKaBf3nMHMkbzhwl1hdu2wBCeHMLLphug2kE3tDtpxw6kLcj80qfBxvwmuxbeHjk349Md2B7eB4brt8fldi2CxGltfj41KA7GkgmtMa6szivDl5aCk9ozab9ohrsfBHikGL7GJ5Az4A2a8ufnIAJIz2mAgwGDmsAl7yyavbx12e5KhFFupclbKadmiFx8dvqkqwziu4vtt3AcKDhl96EzhuiKAF49vGoaAMo5vxM4h0t94nscG8IGl33De5MJGCpdf3g23D13eJ9BDi034wECutafzao4zzCe9IyvD3E"]))
@@ -263,6 +276,20 @@
     (defun GOV|LIQUID|PBL ()        (at 0 ["9H.b49lfzLzvC25g87fst6MqCkfbuqq39iGu50gDqi9jBEk6Cn86w54b91zDxeGgLdCxIjJDfyi6gBBwA93lyGLcdfggf0LzwKu405piavx0nEnqpzyHK125h2BhECnobmDBAps61c7mGmw5GrczBjvBMLxHwl2avt5jwhKeGxh7Ibm1ui6wI6lpAKBMay4tvEwHK0EibhbeaA2lLqjIwqMKnldp22txeje3DFLautFC798ExbLxG7q3om8l1f9qpMJkw9f5nmHsHGJcrcIF2mou9lmpr3hbz64La6nF9w26h7osABLMLlK9Glp48yrj4h1MkI7xjftytKDnJFyqvoMFqKvA43cJ81bJCvmn63eJ9jx5n3GxFbc9H4v400iFwtyIilmhKymsa1iCnwL29g21DvkaE6JJyxl5eLCiGH3Ml1nb0jkg16zJbf9cfg41KHA0IGFIvLj9LBhj7okL6wspCEBfkc5Aui6DAM7dvAqH54LApEaAzIgyMloEmqvBgt5wF0lyd05xHxz4Mtb3ItGb5fLpzbMGqGKBffi4dElI7Hbs6Id0hCKGaeIg9JL"]))
     (defun GOV|OUROBOROS|PBL ()     (at 0 ["9H.28jB2BBny4op601Cfqz9brFJKAEo67jbEDJi91i00pGjcD1Mpn0y0A1CxcAwGgBu35Ix3bG4e4p56Mu6x7Mmd50nKfmpDGtLy1ywyCjoDD5xiHBb0y5dAjB0fuokrqyx3ula9rtxyEHK1A4gkG4g3GEyysMtgF40IBgKjm7t8ffGshICIypFeF3gA5x0MixA0soiCx9tBnMDzI6G5xC8yIJJ3Bt2sCvJHAp7HAEA3rKK6Bgnx8hK94oDbgrpCkxw3zpo7tbeHhcakzbg0ELG3EJvk19hyd9LC73t2gizl0B6puq3Ljji5EDAhzno7K32x8vCagc5D2GLiMfdzEzsj5KEe1c2p7hxj76lMvp40r9F56vzlK8Kb7mrKt90ILEMqCghLrok7D4uH8h28EGqbK75wiyguimc1jDGxthyBJFfApClymKA57ehqbv2Lyv323w44b0kIItu35fjmhe2DCBMwjn67ffDII97b6AdyG010wvAHf55xFt25Mbm2pflsggL4D5jHtokl7qn6g4ltM5ilvHvsxn7jHe23Cfgoxn1JssdFMBpcDvB2xki7"]))
     (defun GOV|SWP|PBL ()           (at 0 ["9G.4Bl3bJ5o1eIoBkhynF39lFdvkA3E0n8m5fBr9iG4D6Ahj3xfop72b98rr33vFFLjqaiozE1btl7lgzKcjHwjzu5GuFqvMb43v9CHHe8je3buLbHMkcAyKdEMD85yIHsb9ty58Kzyado3ho1n1mf9GzpeegMrpK9wDFteeKexdL7HHq8GF7ptD2w45IkMf2A8j4pm7E6vJ1ytCckhclD9nd3JzL2j5cyLxawnE76leKmEmFaxqnF76yyJe5Mu6yLkg2yonJa6vx6jd1kr0hdEf81o42Asr8EcCDeeqD4nAehC3w3pFDMwbln4Mbl6t55GHGephx99LJKH1ojhlMlnyC4bbJFAiyD1h6vs0o7mKAaazFG9y0vfbvM9imcs1vCMmpk2cGDAAAqH6iJe32ugHA3AECEgCvxCskw4Mfx6Cc4rx2BkmKMlxeHqyDceI6wa2qjzuyI80vKg6H6tMwEg48H0ywIMDyxteDfHav08eEJE2lljEIAc1jxLlLcosbiknAyxJvu8g7kA4oAlcio2jI8lMxp76vosd5FxpatowuFktILfyCFyHvKfcozy"]))
+    (defun GOV|DHV|PBL ()           (at 0 ["9G.7G3mkhkk34Bg37uslsu3M7psBc40xsKFibE9DL0jb43JcJ7fzDh9cz3Edn8uvlkh0bCeFafFntCKt0HvJsmczx3Lek9d3mqr38BbIwmBrDkd8sordjr4L7tJ5Fnqj39F6s55hD3rEFvMGors4sws3lDcKiEHkMEE7kHuuB31gGe3F5HsI0yHbwsm2IcspsB1ICiD1g73vup127pjLauIc6gxl3sJy0lAml1uA9g18Btcl6prinGmo3uFomeoyvx9oLGlf6ctFsfavKa5vFrvaw2FB1KsAiejqqjaeMu1I1cEey3m55allFm5pg9LaFK307qnmjxfmqv38vvr2wBerI4BnvFKLgpB7e7pCCmarDJq1l6nHEIv6wl3d96iwAqEHxKEwpH7ljzqnsnBpcEFlpKu6xjc5o78DiwzrltiDxa5c9ug7wML3MGqDEH9tzIj2IreF5yEnw4M15yy38z7gqKbd7l3Fb3qc7kvrgHKG8cpq9M54kg6v5a1k7Laqea07ynccK6r2bjwl7L8IkE7EsAep77M1kb4455klFFH2qx2uEuGBlfsu1rztiMa"]))
+    (defun GOV|CST|PBL ()           (at 0 ["9H.abeq3vvcwJp9gl2Kdt5xb7djJwdB35bCgkIaF3r0k38kBF6La1M6ci0ma2e5exMehsmwe1x3d6EpsIjxv95hAvc3uJweirnitcAAryxn9HaHJ1f0ya36BDfsrfaIBL4moIF3B8glb5pDBhta7pyxigEdt13ccEIKtCdyC6krMhB5iyqfEyB70zf5tjqn2xpDDzg9nA7auzzjxxtwLH80Lmdp4wAEcnqprGishhMLLefMnzDv9dFyM0n31fAcziHogCIM4kktFgydhHah7hmJurs3xCrGrs5qAEtjid0zioLHM58l8wogL2j0L9LIH21wI4lD1BlKq4445nos849CEzcm3DC9t67IH1r63pkgc9xFEGr8K6H3CCfg9aqDcApxaDuEomaKjEj6ft71gtEwbEJJmrAzfDolHrFfubcertjF2rE2wMywhv7HqIoHMCKEznMFCy2C6eyGyh1mIMeKJDDhwqIDIA5a2wvtt0HedKxmgDldafrrGdn5yDGHMexLFCrGv9aG50G82zIlE5z7cksfplf5taeiz8vlydDKmLaCcMgA7ne77hsbGHuu"]))
+    (defun GOV|DSP|PBL ()           (at 0 ["9G.o0n0iHmGhkch5aEqr0wcpEKpuqgGt5uvFapDLb94GwCbJvBga5H4xrFAx41CbMMH0M7AHmqFnrafceFmaHBfjsH51ggCxJmu5DMpK4jGg0rpogpD26r4yiykAIkaqDz61sHGewpxl1tly780ahKxbEB7uD8FlvA1nGppsttz3AhIhbxlhJ3BpI3Hehf5tCM6bfqF9o6ryb3bErqJwEDJmMGFC9HEeDiLKAtMgqaajzK2b0yg2sE0lJMp2K8I6sjfwnyhyL5vnycpMpeCgagdlnbMMMaA9trHLx4FxLym6KqCFAxCFwFHohfbcolG3u5wGo06M1fMBKpC64Mgm4584tH93Hpmop4tLpD7157GLo7mejJk8ryrA229K07D2hbhtanzCgdtjziBs9yqvHLq78EFEsD1fpEeD0pMhJeLEMEsqu8zf816cLErk4aDC22GnsC9774C59iaLFKkzKzh11xnAEalcpGcLf7aecGBHu5IABIGq8sEFa9Ahi5inermzrys3HcLpz2degMmAEy8hKsI83zvaCta8Ksimgn3qmv4r4jocMsIAwDeEfzE"]))
+    ;;
+    (defcap GOV|GAP (gap:bool)  
+        @event
+        (let
+            (
+                (current-gap:bool (UR_GAP))
+            )
+            (enforce (!= gap current-gap) (format "GAP is already toggled to {}" [gap]))
+            (compose-capability (GOV|DALOS_ADMIN))
+        )
+    )
     ;;
     ;;{P1}
     ;;{P2}
@@ -319,6 +346,7 @@
         dalos:[string]
     )
     (defschema DALOS|PropertiesSchema
+        global-administrative-pause:bool    ;;Stores the GAP Boolesn
         demiurgoi:[string]                  ;;Stores Demiurgoi DALOS Accounts
         unity-id:string                     ;;Unity
         gas-source-id:string                ;;OUROBOROS
@@ -511,6 +539,21 @@
         (UEV_EnforceAccountType account true)
     )
     ;;{C4}
+    (defcap GOV|MIGRATE (migration-target-kda-account:string)
+        @event
+        (let
+            (
+                (ref-coin:module{fungible-v2} coin)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (target-balance:decimal (ref-coin::get-balance migration-target-kda-account))
+                (gap:bool (ref-DALOS::UR_GAP))
+            )
+            (enforce gap (format "Migration can only be executed when Global Administrative Pause is offline"))
+            (enforce (= target-balance 0.0) "Migration can only be executed to an empty kda account")
+            (compose-capability (GOV|DALOS_ADMIN))
+            (compose-capability (DALOS|NATIVE-AUTOMATIC))
+        )
+    )
     (defcap DALOS|C>RT_ACC (account:string)
         @event
         (compose-capability (SECURE))
@@ -617,6 +660,9 @@
             { "dalos"    := d }
             d
         )
+    )
+    (defun UR_GAP:bool ()
+        (at "global-administrative-pause" (read DALOS|PropertiesTable DALOS|INFO ["global-administrative-pause"]))
     )
     (defun UR_DemiurgoiID:[string] ()
         (at "demiurgoi" (read DALOS|PropertiesTable DALOS|INFO ["demiurgoi"]))
@@ -1148,6 +1194,28 @@
         )
     )
     ;;{F5}
+    (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
+        (UEV_IMC)
+        (with-capability (GOV|MIGRATE migration-target-kda-account)
+            (let
+                (
+                    (ref-coin:module{fungible-v2} coin)
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (dalos-kda:string DALOS|SC_KDA-NAME)
+                    (present-kda-balance:decimal (ref-coin::get-balance dalos-kda))
+                )
+                (install-capability (ref-coin::TRANSFER dalos-kda migration-target-kda-account present-kda-balance))
+                (ref-DALOS::C_TransferDalosFuel dalos-kda migration-target-kda-account present-kda-balance)
+                present-kda-balance
+            )
+        )
+    )
+    (defun A_ToggleGAP (gap:bool)
+        (UEV_IMC)
+        (with-capability (GOV|GAP gap)
+            (XI_UpdateGAP gap)
+        )
+    )
     (defun A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (with-capability (SECURE-ADMIN)
             (XI_DeploySmartAccount account guard kadena sovereign public)
@@ -1464,6 +1532,12 @@
         )
     )
     ;;
+    (defun XI_UpdateGAP (gap:bool)
+        (UEV_IMC)
+        (update DALOS|PropertiesTable DALOS|INFO
+            {"global-administrative-pause"  : gap}
+        )
+    )
     (defun XI_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (require-capability (SECURE))
         (with-capability (DALOS|S>D-SM account guard kadena sovereign)

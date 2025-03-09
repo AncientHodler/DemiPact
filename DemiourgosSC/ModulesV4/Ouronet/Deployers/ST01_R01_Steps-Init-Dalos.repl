@@ -130,6 +130,10 @@
         (defconst BJ DPTS_NAME_0006)
         (defconst DPTS_PBKY_0006 "PK_BJ")
         (defconst PBLC_0006 "9G.4sL1e97qhq86v50IA4rpqhwF7H6hmj7xcFfy2Imo7xMzAEwclA8ILGgEDGur41Fye8rBexevupdJqmutcuGvqhq4w0jI39AfCn13cb43E92oMdqtjf1gE6K6LIwdqMiy9yoecpJtMrs2hj1qd96n1uMyIH97Jqjqk9Ao587Cwlcxft1uiC2g7BlnalEmHnvFolxpqMDqydv4g2xBuuLb8vwIjphH8zz12Lzn8MtvzCfinoe4s9LrIJa75rspxs5gegtAGbEBpv0vydnepq4IHgB0w9rmiwzGEBmmohlEHkduwFx9y0uazlcFxwugj3G1u0Fz947AKo9CCjpjnKBgM0kd5kug9xwM66rea1KgFeAgI8G6IAI2cgEyAplMpIdn2w55jJsez1Iwe2itojBazeE4BzwFDs3qjMk0L2v59asMtwyGust49DxzAcIrFbcemBwiCi9cwqq7480BhL71pdeDin1fA9zmulrwj04bpBD5JKzHKszL2EmHdfvipb9lC0vkqtfLFI0nuBp27Fa3ndi1uLaxrhFnGB903AMDcIJCmkaxmnr5dxA2J0bL")
+
+        (defconst DPTS_PBKY_0007 "PK_DHV")
+        (defconst DPTS_PBKY_0008 "PK_CST")
+        (defconst DPTS_PBKY_0009 "PK_DSP")
     )
 
     (module TV GOVERNANCE
@@ -156,6 +160,10 @@
             "KEY_SC_DalosAutostake": { "keys": [KC.DPTS_PBKY_0004]},
             "KEY_SC_DalosVesting": { "keys": [KC.DPTS_PBKY_0005]},
             "KEY_SC_DalosSwapper": { "keys": [KC.DPTS_PBKY_0000]},
+
+            "KEY_SC_DHVault": { "keys": [KC.DPTS_PBKY_0007]},
+            "KEY_SC_Custodians": { "keys": [KC.DPTS_PBKY_0008]},
+            "KEY_SC_Dispenser": { "keys": [KC.DPTS_PBKY_0009]},
             ;;DEMI-USER-KEYS
             "KEY_US_AncientHodler": { "keys": [KC.DPTS_PBKY_0000]},
             "KEY_US_Florian": { "keys": [KC.DPTS_PBKY_000a]},
@@ -183,6 +191,10 @@
     (define-keyset "free.dh_sc_kadenaliquidstaking-keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
     (define-keyset "free.dh_sc_ouroboros-keyset" (read-keyset "KEY_SC_Ouroboros"))
     (define-keyset "free.dh_sc_swapper-keyset" (read-keyset "KEY_SC_DalosSwapper"))
+    ;;
+    (define-keyset "free.dh_sc_dhvault-keyset" (read-keyset "KEY_SC_DHVault"))
+    (define-keyset "free.dh_sc_custodians-keyset" (read-keyset "KEY_SC_Custodians"))
+    (define-keyset "free.dh_sc_dispenser-keyset" (read-keyset "KEY_SC_Dispenser"))
     ;;DEMI SMART_CONTRACTS KEYSETS
     
     ;;USER KEYSETS
@@ -814,6 +826,10 @@
         { "key": "PK_AncientHodler", "caps": [] }
         { "key": "PK_DalosAutostake", "caps": [] }
         { "key": "PK_DalosVesting", "caps": [] }
+
+        { "key": "PK_DHV", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
     ]
 )
 (namespace "free")

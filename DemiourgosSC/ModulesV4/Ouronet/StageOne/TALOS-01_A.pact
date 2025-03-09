@@ -1,6 +1,8 @@
 (interface TalosStageOne_Admin
     ;;
     ;;DALOS Functions
+    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun DALOS|A_ToggleGAP (gap:bool))
     (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)) ;d
     (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)) ;d
     (defun DALOS|A_IgnisToggle (native:bool toggle:bool)) ;d
@@ -13,6 +15,10 @@
     ;;BRD Functions
     (defun BRD|A_Live (entity-id:string)) ;d
     (defun BRD|A_SetFlag (entity-id:string flag:integer)) ;d
+    ;;
+    ;;
+    ;;LIQUID Functions
+    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
     ;;
     ;;
     ;;ORBR Functions
@@ -108,6 +114,7 @@
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
+                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (mg:guard (create-capability-guard (P|TS)))
@@ -118,6 +125,7 @@
             )
             (ref-P|DALOS::P|A_AddIMP mg)
             (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|LIQUID::P|A_AddIMP mg)
             (ref-P|ORBR::P|A_AddIMP mg)
             (ref-P|SWP::P|A_AddIMP mg)
         )
@@ -141,6 +149,30 @@
     ;;
     ;;
     ;;{DALOS_Administrator}
+    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
+        @doc "Migrates Ouronet Gas Station Funds, to another kda adress, \
+        \ if needed due to a migration to a new namespace and new module code \
+        \ Outputs the migrated amount"
+        (with-capability (P|ADMINISTRATIVE-SUMMONER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                )
+                (ref-DALOS::A_MigrateLiquidFunds migration-target-kda-account)
+            )
+        )
+    )
+    (defun DALOS|A_ToggleGAP (gap:bool)
+        @doc "Toggles the Global administrative Pause, the GAP, to <toggle>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                )
+                (ref-DALOS::A_ToggleGAP gap)
+            )
+        )
+    )
     (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         @doc "Deploys a Smart Ouronet Account in Administrator Mode, without collection KDA"
         (with-capability (P|TS)
@@ -250,6 +282,20 @@
                     (ref-BRD:module{Branding} BRD)
                 )
                 (ref-BRD::A_SetFlag entity-id flag)
+            )
+        )
+    )
+    ;;{LIQUID_Administrator}
+    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
+        @doc "Migrates Kadena Liquid Staking KDA Funds, to another kda adress, \
+        \ if needed due to a migration to a new namespace and new module code \
+        \ Outputs the migrated amount"
+        (with-capability (P|ADMINISTRATIVE-SUMMONER)
+            (let
+                (
+                    (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
+                )
+                (ref-LIQUID::A_MigrateLiquidFunds migration-target-kda-account)
             )
         )
     )

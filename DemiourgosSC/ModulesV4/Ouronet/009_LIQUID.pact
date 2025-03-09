@@ -150,6 +150,21 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
+    (defcap GOV|MIGRATE (migration-target-kda-account:string)
+        @event
+        (let
+            (
+                (ref-coin:module{fungible-v2} coin)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (target-balance:decimal (ref-coin::get-balance migration-target-kda-account))
+                (gap:bool (ref-DALOS::UR_GAP))
+            )
+            (enforce gap (format "Migration can only be executed when Global Administrative Pause is offline"))
+            (enforce (= target-balance 0.0) "Migration can only be executed to an empty kda account")
+            (compose-capability (GOV|LIQUID_ADMIN))
+            (compose-capability (LIQUID|NATIVE-AUTOMATIC))
+        )
+    )
     (defcap LIQUID|C>WRAP ()
         @doc "Capability needed to wrap KDA to DWK"
         @event
@@ -195,6 +210,22 @@
     ;;{F4}
     ;;
     ;;{F5}
+    (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
+        (UEV_IMC)
+        (with-capability (GOV|MIGRATE migration-target-kda-account)
+            (let
+                (
+                    (ref-coin:module{fungible-v2} coin)
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (lq-kda:string LIQUID|SC_KDA-NAME)
+                    (present-kda-balance:decimal (ref-coin::get-balance lq-kda))
+                )
+                (install-capability (ref-coin::TRANSFER lq-kda migration-target-kda-account present-kda-balance))
+                (ref-DALOS::C_TransferDalosFuel lq-kda migration-target-kda-account present-kda-balance)
+                present-kda-balance
+            )
+        )
+    )
     ;;{F6}
     (defun C_UnwrapKadena:[object{OuronetDalos.IgnisCumulator}]
         (patron:string unwrapper:string amount:decimal)

@@ -15,7 +15,7 @@
         mint-time:time
     )
     ;;
-    (defun GOV|ATS|SC_KDA-NAME ())
+    ;(defun GOV|ATS|SC_KDA-NAME ())
     (defun ATS|SetGovernor (patron:string))
     ;;
     (defun UR_P-KEYS:[string] ())
@@ -146,7 +146,7 @@
     ;;
     (defconst ATS|SC_KEY            (GOV|AutostakeKey))
     (defconst ATS|SC_NAME           (GOV|ATS|SC_NAME))
-    (defconst ATS|SC_KDA-NAME       (GOV|ATS|SC_KDA-NAME))
+    ;(defconst ATS|SC_KDA-NAME       (GOV|ATS|SC_KDA-NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|ATS_ADMIN)))
     (defcap GOV|ATS_ADMIN ()
@@ -166,7 +166,7 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
     (defun GOV|ATS|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
-    (defun GOV|ATS|SC_KDA-NAME ()   (at 0 ["k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"]))
+    ;(defun GOV|ATS|SC_KDA-NAME ()   (at 0 ["k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"]))
     (defun ATS|SetGovernor (patron:string)
         (with-capability (P|ATS|CALLER)
             (let

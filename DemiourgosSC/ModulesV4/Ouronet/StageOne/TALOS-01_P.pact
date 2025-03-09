@@ -33,6 +33,16 @@
     (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
     (defcap P|TS ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (gap:bool (ref-DALOS::UR_GAP))
+            )
+            (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
+            (compose-capability (P|TALOS-SUMMONER))
+        )
+    )
+    (defcap P|TALOS-SUMMONER ()
         @doc "Talos Summoner Capability"
         true
     )
@@ -74,7 +84,7 @@
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (mg:guard (create-capability-guard (P|TS)))
+                (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|SWPU::P|A_AddIMP mg)
             (ref-P|TFT::P|A_AddIMP mg)

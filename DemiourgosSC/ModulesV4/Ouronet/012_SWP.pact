@@ -10,8 +10,8 @@
         target:string
         value:integer
     )
-    (defun GOV|SWP|SC_KDA-NAME ())
-    (defun GOV|SWP|GUARD ())
+    ;(defun GOV|SWP|SC_KDA-NAME ())
+    ;(defun GOV|SWP|GUARD ())
     (defun SWP|Info ())
     ;;
     (defun UC_ExtractTokens:[string] (input:[object{PoolTokens}]))
@@ -107,7 +107,7 @@
     ;;
     (defconst SWP|SC_KEY            (GOV|SwapKey))
     (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
-    (defconst SWP|SC_KDA-NAME       (GOV|SWP|SC_KDA-NAME))
+    ;(defconst SWP|SC_KDA-NAME       (GOV|SWP|SC_KDA-NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|SWP_ADMIN)))
     (defcap GOV|SWP_ADMIN ()
@@ -131,8 +131,9 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|SwapKey ()           (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|SwapKey)))
     (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
-    (defun GOV|SWP|SC_KDA-NAME ()   (create-principal (GOV|SWP|GUARD)))
-    (defun GOV|SWP|GUARD ()         (create-capability-guard (SWP|NATIVE-AUTOMATIC)))
+    ;(defun GOV|SWP|SC_KDA-NAME ()   (at 0 ["k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"]))
+    ;(defun GOV|SWP|SC_KDA-NAME ()   (create-principal (GOV|SWP|GUARD)))
+    ;(defun GOV|SWP|GUARD ()         (create-capability-guard (SWP|NATIVE-AUTOMATIC)))
     (defun SWP|SetGovernor (patron:string)
         (with-capability (P|SWP|CALLER)
             (let

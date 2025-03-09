@@ -2253,6 +2253,7 @@
         (ref-DALOS:module{OuronetDalos} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
         (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (ref-SWPU:module{SwapperUsage} SWPU)
@@ -2267,6 +2268,7 @@
         (gas-tanker:string (ref-DALOS::GOV|DALOS|SC_NAME))
 
     )
+    ;(ref-TS01-A::DALOS|A_ToggleGAP true)
     (ref-TS01-C1::DPTF|C_SetFee patron b-vst 250.0)
     (ref-TS01-C1::DPTF|C_ToggleFee patron b-vst true)
     ;(ref-TS01-C1::DPTF|C_ToggleFeeLock patron b-vst true)
@@ -2320,6 +2322,68 @@
         (format "Kiss has {} {}" [(ref-DPTF::UR_AccountSupply b-vst kiss) b-vst])
         (format "Gas Tanker has {} {}" [(ref-DPTF::UR_AccountSupply b-vst gas-tanker) b-vst])
         (format "Default Collector has {} {}" [(ref-DPTF::UR_AccountSupply b-vst orbr) b-vst])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<SWP TX 27 - Change Ownership Test Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 27 - Change Ownership Test")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        
+        ;
+        ;(ref-VST:module{Vesting} VST)
+        ;(emma:string KST.EMMA)
+        ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
+        ;(lp-id "P|OURO-VST|LP-98c486052a51")
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-SWP:module{Swapper} SWP)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (coca:string KST.COCA)
+        (kiss:string KST.KISS)
+        (b-vst:string "BVST-98c486052a51")
+        (orbr:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (gas-tanker:string (ref-DALOS::GOV|DALOS|SC_NAME))
+
+        (migration-target:string "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
+        (dwk:string "DWK-98c486052a51")
+    )
+    (ref-TS01-A::DALOS|A_ToggleGAP true)
+    
+    [   
+        (format "DWK Supply is {}" [(ref-DPTF::UR_Supply dwk)])
+        (format "Migration will migrate {} KDA" [(ref-TS01-A::LIQUID|A_MigrateLiquidFunds migration-target)])
+        (format "Migration address has {} KDA" [(ref-coin::get-balance migration-target)])
     ]
     
 )

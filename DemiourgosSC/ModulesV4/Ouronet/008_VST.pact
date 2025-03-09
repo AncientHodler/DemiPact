@@ -7,7 +7,7 @@
         release-date:time
     )
     ;;
-    (defun GOV|VST|SC_KDA-NAME ())
+    ;(defun GOV|VST|SC_KDA-NAME ())
     ;;
     (defun URC_CullMetaDataAmount:decimal (client:string id:string nonce:integer))
     (defun URC_CullMetaDataObject:[object{VST|MetaDataSchema}] (client:string id:string nonce:integer))
@@ -56,7 +56,7 @@
     ;;
     (defconst VST|SC_KEY            (GOV|VestingKey))
     (defconst VST|SC_NAME           (GOV|VST|SC_NAME))
-    (defconst VST|SC_KDA-NAME       (GOV|VST|SC_KDA-NAME))
+    ;(defconst VST|SC_KDA-NAME       (GOV|VST|SC_KDA-NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|VESTING_ADMIN)))
     (defcap GOV|VESTING_ADMIN ()
@@ -76,7 +76,7 @@
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|VestingKey ()        (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|VestingKey)))
     (defun GOV|VST|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
-    (defun GOV|VST|SC_KDA-NAME ()   (at 0 ["k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d"]))
+    ;(defun GOV|VST|SC_KDA-NAME ()   (at 0 ["k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d"]))
     (defun VST|SetGovernor (patron:string)
         (with-capability (P|VST|CALLER)
             (let
