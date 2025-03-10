@@ -17,6 +17,12 @@
     (defun BRD|A_SetFlag (entity-id:string flag:integer)) ;d
     ;;
     ;;
+    ;;DPTF Functions
+    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
+    (defun DPTF|A_WipeTreasuryDebt (patron:string))
+    (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal))
+    ;;
+    ;;
     ;;LIQUID Functions
     (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
     ;;
@@ -114,6 +120,7 @@
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
+                (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
@@ -125,6 +132,7 @@
             )
             (ref-P|DALOS::P|A_AddIMP mg)
             (ref-P|BRD::P|A_AddIMP mg)
+            (ref-P|DPTF::P|A_AddIMP mg)
             (ref-P|LIQUID::P|A_AddIMP mg)
             (ref-P|ORBR::P|A_AddIMP mg)
             (ref-P|SWP::P|A_AddIMP mg)
@@ -282,6 +290,47 @@
                     (ref-BRD:module{Branding} BRD)
                 )
                 (ref-BRD::A_SetFlag entity-id flag)
+            )
+        )
+    )
+    ;;{DPTF_Administrator}
+    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal)
+        @doc "Updates Treasury Dispo Parameters, that dictate how much OURO Debt the Treasury can incurr \
+            \ Type can only be 0 1 2 3 \
+            \ Type 0 = No Treasury Dispo \
+            \ Type 1 = Maximum Dispo equal to Total Supply \
+            \ Type 2 = Promile Based Dispo; A <tdp> value of 320.0 means up to 32% of Total Supply can be overspent\
+            \ Type 3 = Absolute Value Dispo in Thousands; A <tds> value of 250.0 means up to 250 Thousands can be overspent"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                )
+                (ref-DPTF::A_UpdateTreasury type tdp tds)
+            )
+        )
+    )
+    (defun DPTF|A_WipeTreasuryDebt (patron:string)
+        @doc "Wipes all Treasury Debt, increasing OURO supply by the Debt Amount, \
+            \ and setting Treasury Dispo Parameters to neutral (no overspend capability)"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                )
+                (ref-DPTF::A_WipeTreasuryDebt patron)
+            )
+        )
+    )
+    (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal)
+        @doc "Wipes all partialy the Treasury Debt, increasing OURO supply by the <debt-to-be-wiped> amount \
+        \ Treasury Dispo Parameters are left as they are, this function simply wipe a part of the Treasury Debt through mint."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                )
+                (ref-DPTF::A_WipeTreasuryDebtPartial patron debt-to-be-wiped)
             )
         )
     )

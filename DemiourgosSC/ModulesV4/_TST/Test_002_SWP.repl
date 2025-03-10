@@ -2338,7 +2338,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
 (print "=======================Swap Tests=================================")
-(begin-tx "SWP TX 27 - Change Ownership Test")
+(begin-tx "SWP TX 28 - Migration Test")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -2378,19 +2378,89 @@
         (migration-target:string "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
         (dwk:string "DWK-98c486052a51")
     )
-    (ref-TS01-A::DALOS|A_ToggleGAP true)
+    ;(ref-TS01-A::DALOS|A_ToggleGAP true)
     
     [   
         (format "DWK Supply is {}" [(ref-DPTF::UR_Supply dwk)])
-        (format "Migration will migrate {} KDA" [(ref-TS01-A::LIQUID|A_MigrateLiquidFunds migration-target)])
-        (format "Migration address has {} KDA" [(ref-coin::get-balance migration-target)])
+        ;(format "Migration will migrate {} KDA" [(ref-TS01-A::LIQUID|A_MigrateLiquidFunds migration-target)])
+        ;(format "Migration address has {} KDA" [(ref-coin::get-balance migration-target)])
     ]
     
 )
 
 (print "")
 (print "")
-(format "<<<<<<<SWP TX 27 - Change Ownership Test Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<SWP TX 28 Migration Costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=======================Swap Tests=================================")
+(begin-tx "SWP TX 29 - Treasury Dispo Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DHV", "caps": [] }
+    ]
+)
+
+(let
+    (
+
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+        (ouro:string (ref-DALOS::UR_OuroborosID))
+
+        ;(ref-VST:module{Vesting} VST)
+        (emma:string KST.EMMA)
+        ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
+        ;(lp-id "P|OURO-VST|LP-98c486052a51")
+        ;(ref-coin:module{fungible-v2} coin)
+        
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        ;(ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        ;(ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        ;(ref-SWPU:module{SwapperUsage} SWPU)
+        ;(ref-SWP:module{Swapper} SWP)
+        ;(lumy:string KST.LUMY)
+        ;(coca:string KST.COCA)
+        ;(kiss:string KST.KISS)
+        ;(b-vst:string "BVST-98c486052a51")
+        ;(orbr:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        ;(gas-tanker:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        ;(migration-target:string "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
+        ;(dwk:string "DWK-98c486052a51")
+    )
+    (ref-TS01-C1::DPTF|C_Transfer patron ouro treasury emma 250000.0 false)
+    (ref-TS01-A::DPTF|A_WipeTreasuryDebtPartial patron 100000.0)
+    (ref-TS01-A::DPTF|A_WipeTreasuryDebt patron)
+    (ref-TS01-A::DPTF|A_UpdateTreasuryDispoParameters 2 12.0 24.0)
+    [   
+        (format "Treasury OURO Supply is {}" [(ref-DPTF::UR_AccountSupply ouro treasury)])
+        (format "Emma OURO Supply is {}" [(ref-DPTF::UR_AccountSupply ouro emma)])
+        (format "Ouro Supply is {}" [(ref-DPTF::UR_Supply ouro)])
+        (format "Minimum Treasury Dispo is {}" [(ref-DPTF::URC_TreasuryLowestDispo)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<SWP TX 29 - Treasury Dispo Tests Costs {} KDA GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

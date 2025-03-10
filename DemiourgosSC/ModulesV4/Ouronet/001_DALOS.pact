@@ -90,6 +90,9 @@
     (defun UR_EliteAurynID:string ())
     (defun UR_WrappedKadenaID:string ())
     (defun UR_LiquidKadenaID:string ())
+    (defun UR_DispoType:integer ())
+    (defun UR_DispoTDP:decimal ())
+    (defun UR_DispoTDS:decimal ())
     (defun UR_Tanker:string ())
     (defun UR_VirtualToggle:bool ())
     (defun UR_VirtualSpent:decimal ())
@@ -356,6 +359,10 @@
         elite-ats-gas-source-id:string      ;;ELITE-AURYN
         wrapped-kda-id:string               ;;DWK - Dalos Wrapped Kadena
         liquid-kda-id:string                ;;DLK - Dalos Liquid Kadena
+
+        treasury-dispo-type:integer
+        treasury-dynamic-promille:decimal
+        treasury-static-tds:decimal
     )
     (defschema DALOS|GasManagementSchema
         virtual-gas-tank:string             ;;IGNIS|SC_NAME = "GasTanker"
@@ -694,6 +701,15 @@
     )
     (defun UR_LiquidKadenaID:string ()
         (at "liquid-kda-id" (read DALOS|PropertiesTable DALOS|INFO ["liquid-kda-id"]))
+    )
+    (defun UR_DispoType:integer ()
+        (at "treasury-dispo-type" (read DALOS|PropertiesTable DALOS|INFO ["treasury-dispo-type"]))
+    )
+    (defun UR_DispoTDP:decimal ()
+        (at "treasury-dynamic-promille" (read DALOS|PropertiesTable DALOS|INFO ["treasury-dynamic-promille"]))
+    )
+    (defun UR_DispoTDS:decimal ()
+        (at "treasury-static-tds" (read DALOS|PropertiesTable DALOS|INFO ["treasury-static-tds"]))
     )
     (defun UR_Tanker:string ()
         (at "virtual-gas-tank" (read DALOS|GasManagementTable DALOS|VGD ["virtual-gas-tank"]))
@@ -1210,6 +1226,7 @@
             )
         )
     )
+    
     (defun A_ToggleGAP (gap:bool)
         (UEV_IMC)
         (with-capability (GOV|GAP gap)
@@ -1367,8 +1384,8 @@
                 (am2:decimal (at 2 split-discounted-kda))
                 (kda-sender:string (UR_AccountKadena sender))
                 (demiurgoi:[string] (UR_DemiurgoiID))
-                (kda-cto:string (UR_AccountKadena (at 0 demiurgoi)))
-                (kda-hov:string (UR_AccountKadena (at 1 demiurgoi)))
+                (kda-cto:string (UR_AccountKadena (at 1 demiurgoi)))
+                (kda-hov:string (UR_AccountKadena (at 2 demiurgoi)))
                 (kda-ouroboros:string (UR_AccountKadena (GOV|OUROBOROS|SC_NAME)))
                 (kda-dalos:string (UR_AccountKadena DALOS|SC_NAME))
             )
@@ -1529,6 +1546,15 @@
             (with-capability (SECURE)
                 (XI_UpdateTF account snake-or-gas new-obj)
             )
+        )
+    )
+    (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal)
+        (UEV_IMC)
+        (update DALOS|PropertiesTable DALOS|INFO
+            {"treasury-dispo-type"          : type
+            ,"treasury-dynamic-promille"    : tdp
+            ,"treasury-static-tds"          : tds}
+
         )
     )
     ;;

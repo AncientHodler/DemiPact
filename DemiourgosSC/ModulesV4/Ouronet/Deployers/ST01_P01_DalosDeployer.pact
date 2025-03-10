@@ -249,6 +249,7 @@
                 {"global-administrative-pause"  : false
                 ,"demiurgoi"                    : 
                     [
+                        DHV2|SC_NAME
                         DEMIURGOI|CTO_NAME
                         DEMIURGOI|HOV_NAME
                     ]
@@ -259,7 +260,10 @@
                 ,"ats-gas-source-id"            : bar
                 ,"elite-ats-gas-source-id"      : bar
                 ,"wrapped-kda-id"               : bar
-                ,"liquid-kda-id"                : bar}
+                ,"liquid-kda-id"                : bar
+                ,"treasury-dispo-type"          : 3
+                ,"treasury-dynamic-promille"    : 320.0
+                ,"treasury-static-tds"          : 250.0}
             )
             (insert ref-DALOS::DALOS|GasManagementTable vgd
                 {"virtual-gas-tank"             : DALOS|SC_NAME
@@ -347,6 +351,7 @@
                 (GasID:string (at 3 ids))
                 (WrappedKadenaID:string (at 4 ids))
                 (StakedKadenaID:string (at 5 ids))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
             )
             (update ref-DALOS::DALOS|PropertiesTable info
                 { "gas-source-id"           : OuroID
@@ -380,6 +385,7 @@
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID OUROBOROS|SC_NAME true)       ;;4214
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID OUROBOROS|SC_NAME true)        ;;4315
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID OUROBOROS|SC_NAME true)       ;;4315
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury true)       ;;4315
             ;;
             ;;Set Token Roles Part III
             (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)                         ;;2141

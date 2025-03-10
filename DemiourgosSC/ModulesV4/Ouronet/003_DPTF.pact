@@ -88,6 +88,10 @@
     ;;
     (defun CAP_Owner (id:string))
     ;;
+    (defun A_UpdateTreasury (type:integer tdp:decimal tds:decimal))
+    (defun A_WipeTreasuryDebt (patron:string))
+    (defun A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal))
+    ;;
     (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
@@ -258,6 +262,70 @@
         true
     )
     ;;{C2}
+    (defcap GOV|SET_TREASURY-DISPO (type:integer tdp:decimal tds:decimal)
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (ouro-supply:decimal (UR_Supply ouro))
+                (op:integer (UR_Decimals ouro))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (treasury-supply:decimal (UR_AccountSupply ouro treasury))
+            )
+            ;;Type can only pe 0, 1, 2 or 3
+            ;;Type 0 = No Treasury Dispo
+            ;;Type 1 = Maximum Dispo equal to Total Supply
+            ;;Type 2 = Percent Based Dispo
+            ;:Type 3 = Absolute Value Dispo in Thousands
+            (enforce (= (contains type (enumerate 0 3)) true) "Treasury Dispo Type can only be 0, 1, 2 or 3!")
+            (let
+                (
+                    (lowest-dispo:decimal (UC_TreasuryLowestDispo ouro-supply op type tdp tds))
+                )
+                (enforce 
+                    (<= lowest-dispo treasury-supply) 
+                    (format "A Type {} Treasury Dispo cannot be set at {} because it surpases the Current Treasury Value of {}" [type tdp treasury-supply])
+                )
+                (compose-capability (GOV|DPTF_ADMIN))
+            )
+        )
+    )
+    (defcap GOV|WIPE_ALL-TREASURY-DEBT ()
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (ouro-supply:decimal (UR_Supply ouro))
+                (op:integer (UR_Decimals ouro))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (treasury-supply:decimal (UR_AccountSupply ouro treasury))
+            )
+            (enforce (< treasury-supply 0.0) "Cannot Wipe Positive Treasury Balance")
+            (compose-capability (GOV|DPTF_ADMIN))
+            (compose-capability (SECURE))
+        )
+    )
+    (defcap GOV|WIPE_PARTIAL-TREASURY-DEBT (debt-to-be-wiped:decimal)
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (ouro-supply:decimal (UR_Supply ouro))
+                (op:integer (UR_Decimals ouro))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (treasury-supply:decimal (UR_AccountSupply ouro treasury))
+            )
+            (enforce (< treasury-supply 0.0) "Cannot Wipe Positive Treasury Balance")
+            (enforce (<= debt-to-be-wiped (abs treasury-supply)) 
+                "Debt to be wiped must be smaller than or equal to the absolute value of the current Treasury Debt"
+            )
+            (compose-capability (GOV|DPTF_ADMIN))
+            (compose-capability (SECURE))
+        )
+    )
     (defcap DPTF|S>CTRL (id:string)
         @event
         (CAP_Owner id)
@@ -1025,6 +1093,37 @@
             )
         )
     )
+    (defun URC_TreasuryLowestDispo:decimal ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+            )
+            (UC_TreasuryLowestDispo
+                (UR_Supply ouro)
+                (UR_Decimals ouro)
+                (ref-DALOS::UR_DispoType)
+                (ref-DALOS::UR_DispoTDP)
+                (ref-DALOS::UR_DispoTDS)
+            )
+        )
+    )
+    (defun UC_TreasuryLowestDispo 
+        (ouro-supply:decimal ouro-precision:integer dispo-type:integer tdp:decimal tds:decimal)
+        (let
+            (
+                (max-dispo:decimal
+                    (cond
+                        ((= dispo-type 1) ouro-supply)
+                        ((= dispo-type 2) (floor (/ (* tdp ouro-supply) 1000.0) ouro-precision))
+                        ((= dispo-type 3) (floor (* tds 1000.0) ouro-precision))
+                        0.0
+                    )
+                )
+            )
+            (- 0.0 max-dispo)
+        )
+    )
     ;;{F2}
     (defun UEV_ParentOwnership (dptf:string)
         @doc "Enforces: \
@@ -1283,6 +1382,46 @@
     )
     ;;
     ;;{F5}
+    (defun A_UpdateTreasury (type:integer tdp:decimal tds:decimal)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+            )
+            (with-capability (GOV|SET_TREASURY-DISPO type tdp tds)
+                (ref-DALOS::XE_UpdateTreasury type tdp tds)
+            )
+        )
+    )
+    (defun A_WipeTreasuryDebt (patron:string)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (treasury-supply:decimal (UR_AccountSupply ouro treasury))
+            )
+            (with-capability (GOV|WIPE_ALL-TREASURY-DEBT)
+                (C_Mint patron ouro treasury (abs treasury-supply) false)
+                (ref-DALOS::XE_UpdateTreasury 0 0.0 0.0)
+            )
+        )
+    )
+    (defun A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (treasury-supply:decimal (UR_AccountSupply ouro treasury))
+            )
+            (with-capability (GOV|WIPE_PARTIAL-TREASURY-DEBT debt-to-be-wiped)
+                (C_Mint patron ouro treasury debt-to-be-wiped false)
+            )
+        )
+    )
     ;;{F6}
     (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator}
         (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
@@ -1995,25 +2134,36 @@
                     (ea-id:string (ref-DALOS::UR_EliteAurynID))
                     (snake-or-gas:bool (if (= id ouro-id) true false))
                     (read-balance:decimal (ref-DALOS::UR_TF_AccountSupply account snake-or-gas))
+                    (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                    (debit-result:decimal (- read-balance amount))
                 )
                 (with-capability (P|DPTF|CALLER)
                     (if snake-or-gas
-                        (if (= ea-id BAR)
-                            (do
-                                (enforce (<= amount read-balance) "Insufficient OURO Funds for debiting")
-                                (ref-DALOS::XB_UpdateBalance account snake-or-gas (- read-balance amount))
-                            )
+                        (if (= account treasury)
                             (let
                                 (
-                                    (max-dispo-ouro (ref-U|DPTF::UC_OuroDispo dispo-data))
+                                    (lowest-dispo:decimal (URC_TreasuryLowestDispo))
                                 )
-                                (enforce (>= (- read-balance amount) (- 0.0 max-dispo-ouro)) "Ouro Transfer Amount outr of Dispo Bounds")
-                                (ref-DALOS::XB_UpdateBalance account snake-or-gas (- read-balance amount))
+                                (enforce (>= debit-result lowest-dispo) "Treasury Dispo surpassed, Transfer cannot occur")
+                                (ref-DALOS::XB_UpdateBalance account snake-or-gas debit-result)
+                            )
+                            (if (= ea-id BAR)
+                                (do
+                                    (enforce (<= amount read-balance) "Insufficient OURO Funds for debiting")
+                                    (ref-DALOS::XB_UpdateBalance account snake-or-gas debit-result)
+                                )
+                                (let
+                                    (
+                                        (max-dispo-ouro (ref-U|DPTF::UC_OuroDispo dispo-data))
+                                    )
+                                    (enforce (>= debit-result (- 0.0 max-dispo-ouro)) "Ouro Transfer Amount outr of Dispo Bounds")
+                                    (ref-DALOS::XB_UpdateBalance account snake-or-gas debit-result)
+                                )
                             )
                         )
                         (do
                             (enforce (<= amount read-balance) "Insufficient IGNIS Funds for debiting")
-                            (ref-DALOS::XB_UpdateBalance account snake-or-gas (- read-balance amount))
+                            (ref-DALOS::XB_UpdateBalance account snake-or-gas debit-result)
                         )
                     )
                 )
