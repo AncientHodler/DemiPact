@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface TalosStageOne_Admin
     ;;
     ;;DALOS Functions
@@ -45,8 +46,8 @@
 )
 (module TS01-A GOV
     @doc "TALOS Stage 1 Administrator Functions \
-    \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
-    \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
+        \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
+        \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
     (implements OuronetPolicy)
     (implements TalosStageOne_Admin)
@@ -183,8 +184,8 @@
     ;;  [DALOS_Administrator]
     (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
         @doc "Migrates Ouronet Gas Station Funds, to another kda adress, \
-        \ if needed due to a migration to a new namespace and new module code \
-        \ Outputs the migrated amount"
+            \ if needed due to a migration to a new namespace and new module code \
+            \ Outputs the migrated amount"
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
@@ -241,8 +242,8 @@
     )
     (defun DALOS|A_IgnisToggle (native:bool toggle:bool)
         @doc "Toggles Ouronet Gas Collection \
-        \ <native> true is KDA Collection for Specific Usage Actions \
-        \ <native> false is IGNIS Collection for Client Functions"
+            \ <native> true is KDA Collection for Specific Usage Actions \
+            \ <native> false is IGNIS Collection for Client Functions"
         (with-capability (P|TS)
             (let
                 (
@@ -359,7 +360,7 @@
     )
     (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal)
         @doc "Wipes all partialy the Treasury Debt, increasing OURO supply by the <debt-to-be-wiped> amount \
-        \ Treasury Dispo Parameters are left as they are, this function simply wipe a part of the Treasury Debt through mint."
+            \ Treasury Dispo Parameters are left as they are, this function simply wipe a part of the Treasury Debt through mint."
         (with-capability (P|TS)
             (let
                 (
@@ -372,8 +373,8 @@
     ;;  [LIQUID_Administrator]
     (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
         @doc "Migrates Kadena Liquid Staking KDA Funds, to another kda adress, \
-        \ if needed due to a migration to a new namespace and new module code \
-        \ Outputs the migrated amount"
+            \ if needed due to a migration to a new namespace and new module code \
+            \ Outputs the migrated amount"
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
@@ -400,8 +401,8 @@
     ;;  [SWP_Administrator]
     (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool)
         @doc "Updates the principal Token List. \
-        \ A principal is a token that must exist once in every W or P Swpiar, on the first position \
-        \ Also, the S Pools, must have at least one Token dtied directly to a principal Token"
+            \ A principal is a token that must exist once in every W or P Swpiar, on the first position \
+            \ Also, the S Pools, must have at least one Token dtied directly to a principal Token"
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
@@ -413,8 +414,8 @@
     )
     (defun SWP|A_UpdateLimit (limit:decimal spawn:bool)
         @doc "Updates either the <spawn-limit> or <inactive-limit> for the SWP Module \
-        \ The <spawn-limit> is the minimum number in KDA that a pool must be created with, in order to be opened for swap \
-        \ The <inactive-limit> is the minimum number in KDA as total pool liquidity value, that trigger autonomic disable of the swap mechanism"
+            \ The <spawn-limit> is the minimum number in KDA that a pool must be created with, in order to be opened for swap \
+            \ The <inactive-limit> is the minimum number in KDA as total pool liquidity value, that trigger autonomic disable of the swap mechanism"
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (

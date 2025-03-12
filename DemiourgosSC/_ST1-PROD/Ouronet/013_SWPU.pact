@@ -1,4 +1,4 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface SwapperUsage
     @doc "Exposes Adding|Removing Liquidty and Swapping Functions of the SWP Module"
     (defschema Slippage
@@ -584,9 +584,9 @@
     )
     (defun SWPLC|URC_WP_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount you get on a Constant Product Weigthed or non-Weigthed Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
-        \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
-        \ The pool token order is used for the <input-amounts> variable; \
-        \ There is no Liquidity fee when computing the amount for a Constant Product Weigthed Pool, since it has no concept of balance."
+            \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
+            \ The pool token order is used for the <input-amounts> variable; \
+            \ There is no Liquidity fee when computing the amount for a Constant Product Weigthed Pool, since it has no concept of balance."
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -647,9 +647,9 @@
     )
     (defun SWPLC|URC_S_LpAmount:decimal (swpair:string input-amounts:[decimal])
         @doc "Computes the LP Amount you get on a Stable Pool, when adding the <input-amounts> of Pool Tokens as Liquidity \
-        \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
-        \ The pool token order is used for the <input-amounts> variable; \
-        \ Liquidity Fee is hardcoded at 1%."
+            \ The <input-amounts> must contain amounts for all pool tokens, using 0.0 for Pool Tokens that arent being used \
+            \ The pool token order is used for the <input-amounts> variable; \
+            \ Liquidity Fee is hardcoded at 1%."
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -879,9 +879,9 @@
     (defun SWPSC|URC_Hopper:object{SwapperUsage.Hopper}
         (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal)
         @doc "Creates a Hopper Object, by computing \
-        \ 1] The trace between <hopper-input-id> and <hopper-output-id>, the <nodes> \
-        \ 2] The hops between them, the <edges> as the cheapest available edge from all available \
-        \ 3] The best <output> values using said best <edges>, given the <hopper-input-amount>"
+            \ 1] The trace between <hopper-input-id> and <hopper-output-id>, the <nodes> \
+            \ 2] The hops between them, the <edges> as the cheapest available edge from all available \
+            \ 3] The best <output> values using said best <edges>, given the <hopper-input-amount>"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)

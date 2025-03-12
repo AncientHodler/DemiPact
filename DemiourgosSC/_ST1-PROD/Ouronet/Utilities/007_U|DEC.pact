@@ -1,15 +1,15 @@
-(namespace "...")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface OuronetDecimals
     @doc "Exported Decimal Functions"
     ;;
     (defun UC_AddArray:[decimal] (array:[[decimal]]))
-    (defun UC_AddHybridArray (lists)) ;;2
+    (defun UC_AddHybridArray (lists))
     (defun UC_Max (x y))
-    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer)) ;;3
-    (defun UC_Promille:decimal (x:decimal promille:decimal precision:integer)) ;;1
-    (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool)) ;;2
+    (defun UC_Percent:decimal (x:decimal percent:decimal precision:integer))
+    (defun UC_Promille:decimal (x:decimal promille:decimal precision:integer))
+    (defun UC_UnlockPrice:[decimal] (unlocks:integer dptf-or-ats:bool))
     ;;
-    (defun UEV_DecimalArray (array:[[decimal]])) ;;1
+    (defun UEV_DecimalArray (array:[[decimal]]))
 )
 (module U|DEC GOV
     ;;

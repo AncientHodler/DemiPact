@@ -1,8 +1,9 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface DeployerAoz
     @doc "Exposes AOZ Deployer Functions"
     ;;
     (defun UR_Assets:string (ar:integer p:integer))
-
+    ;;
     (defun A_AddPrimalTrueFungible (tf:string))
     (defun A_AddPrimalMetaFungible (mf:string))
     (defun A_AddATSPair (atspair:string))
@@ -10,7 +11,7 @@
     (defun A_AddMetaFungibleGameAsset (mf:string))
     (defun A_AddSemiFungibleGameAsset (sf:string))
     (defun A_AddNonFungibleGameAsset (nf:string))
-
+    ;;
     (defun A_Step001 ())
     (defun A_Step002:[string] ())
     (defun A_Step003 ())
@@ -24,16 +25,18 @@
     (defun A_Step011 ())
     (defun A_Step012 ())
     (defun A_Step013 ())
-    (defun A_Step014 ())
+    (defun A_Step014 (pk-amount:decimal ek-amount:decimal ak-amount:decimal))
     (defun A_Step015 (amount:decimal))
     (defun A_Step016 (amount:decimal))
     (defun A_Step017 (amount:decimal))
     (defun A_Step018 (amount:decimal))
     (defun A_Step019 (amount:decimal))
     (defun A_Step020 (amount:decimal))
-
 )
 (module DPL-AOZ GOV
+    @doc "Contains Functions needed for AOZ Initialisation \
+        \ Initialisation costs 4200 KDA, which is needed if KDA Collection is turned on \
+        \ Otherwise it will need to be added via <DALOS::KDA|C_CollectWT sender amount false>"
     ;;
     (implements DeployerAoz)
     ;;
@@ -45,7 +48,7 @@
     ;;
     (defconst AOZ|SC_KEY                    (+ (GOV|NS_Use) ".us-0000_aozt-keyset"))
     (defconst AOZ|SC_NAME                   "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
-    (defconst AOZ|SC_KDA-NAME               "k:...")
+    (defconst AOZ|SC_KDA-NAME               "k:ad620c6759112c10a26519cc4e9a440721c04f1684f3c123f670d1c51f4bb4df")
     (defconst AOZ|PBL                       "9G.29k17uqiwBF7mbc3rzr5gz228lxepz7a0fwrja2Bgzk1czjCLja3wg9q1ey10ftFhxIAiFBHCtvotkmKIIxFisMni8EA6esncL3lg2uLLH2u89Er9sgbeGmK0k7b63xujf1nAIf5GB583fcE6pzFak2CwhEi1dHzI0F14tvtxv4H8r1ABk5weoJ7HfCoadMm1h8MjIwjzbDKo80H25AJL8I1JiFF66Iwjcj3sFrD9xaqz1ziEEBJICF2k81pG9ABpDk2rK4ooglCK3kmC0h7yvvakjIvMpGp00jnw2Cpg1HoxjK0HoqzuKciIIczGsEzCjoB43x7lKsxkzAm7op2urv0I85Kon7uIBmg328cuKMc8driw8boAFnrdqHEFhx4sFjm8DM44FutCykKGx7GGLnoeJLaC707lot9tM51krmp6KDG8Ii318fIc1L5iuzqEwDnkro35JthzlDD1GkJaGgze3kDApAckn3uMcBypdz4LxbDGrg5K2GdiFBdFHqdpHyssrH8t694BkBtM9EB3yI3ojbnrbKrEM8fMaHAH2zl4x5gdkHnpjAeo8nz")
     ;;{G2}
     (defcap GOV ()                          (compose-capability (GOV|DPL_AOZ_ADMIN)))
@@ -109,13 +112,13 @@
             )
             (ref-U|INT::UEV_PositionalVariable ar 7 "Asset-Row Input out of Bounds")
             (with-read AOZ|Assets AOZ|INFO
-                { "primal-tf-ids"       := pti
-                , "primal-mf-ids"       := pmi
-                , "atspair-ids"         := ats
-                ,"tf-game-assets"       := tf
-                ,"mf-game-assets"       := mf
-                ,"sf-game-assets"       := sf
-                ,"nf-game-assets"       := nf
+                {"primal-tf-ids"    := pti
+                ,"primal-mf-ids"    := pmi
+                ,"atspair-ids"      := ats
+                ,"tf-game-assets"   := tf
+                ,"mf-game-assets"   := mf
+                ,"sf-game-assets"   := sf
+                ,"nf-game-assets"   := nf
                 }
                 (cond
                     ((= ar 1) (UEV_AssetPossition ar p (length pti)))
@@ -305,6 +308,7 @@
         )
     )
     (defun A_Step002:[string] ()
+        @doc "1800 KDA Cost; must be collected"
         (let
             (
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
@@ -315,13 +319,13 @@
                         patron
                         ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
                         ["PKOSON" "EKOSON" "AKOSON" "PDKOSON" "CAKOSON" "PSKOSON" "TSKOSON" "SDKOSON" "BAKOSON"]
-                        (make-list 9 24)                            ;;precision
-                        (make-list 9 true)                          ;;can change owner
-                        (make-list 9 true)                          ;;can upgrade
-                        (make-list 9 true)                          ;;can can-add-special-role
-                        (make-list 9 false)                         ;;can-freeze
-                        (make-list 9 false)                         ;;can-wipe
-                        (make-list 9 true)                          ;;can-pause
+                        (make-list 9 24)    ;;precision
+                        (make-list 9 true)  ;;can change owner
+                        (make-list 9 true)  ;;can upgrade
+                        (make-list 9 true)  ;;can can-add-special-role
+                        (make-list 9 false) ;;can-freeze
+                        (make-list 9 false) ;;can-wipe
+                        (make-list 9 true)  ;;can-pause
                     )
                 )
             )
@@ -376,6 +380,7 @@
         )
     )
     (defun A_Step004:[string] ()
+        @doc "1800 KDA Cost"
         (let*
             (
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
@@ -386,14 +391,14 @@
                         patron
                         ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
                         ["DDKOSON" "AFKOSON" "SFKOSON" "STKOSON" "DMKOSON" "AIKOSON"]
-                        (make-list 6 24)                            ;;precision
-                        (make-list 6 true)                          ;;can change owner
-                        (make-list 6 true)                          ;;can upgrade
-                        (make-list 6 true)                          ;;can can-add-special-role
-                        (make-list 6 false)                         ;;can-freeze
-                        (make-list 6 false)                         ;;can-wipe
-                        (make-list 6 true)                          ;;can-pause
-                        (make-list 6 true)                          ;;can-transfer-nft-create-role
+                        (make-list 6 24)    ;;precision
+                        (make-list 6 true)  ;;can change owner
+                        (make-list 6 true)  ;;can upgrade
+                        (make-list 6 true)  ;;can can-add-special-role
+                        (make-list 6 false) ;;can-freeze
+                        (make-list 6 false) ;;can-wipe
+                        (make-list 6 true)  ;;can-pause
+                        (make-list 6 true)  ;;can-transfer-nft-create-role
                     )
                 )
             )
@@ -410,6 +415,7 @@
         )
     )
     (defun A_Step005:[string] ()
+        @doc "200 KDA Cost"
         (let*
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -417,13 +423,10 @@
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
-
                 (PlebiumDenariusID:string (UR_Assets 1 3))
                 (ComatusAureusID:string (UR_Assets 1 4))
-
                 (DenariusDebilisID:string (UR_Assets 2 0))
                 (AureusFragilisID:string (UR_Assets 2 1))
-
                 (ats-ids:[string]
                     (ref-TS01-C2::ATS|C_Issue
                         patron
@@ -450,6 +453,7 @@
         )
     )
     (defun A_Step006:[string] ()
+        @doc "200 KDA Cost"
         (let*
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -457,15 +461,10 @@
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
-
                 (PileatusSolidusID:string (UR_Assets 1 5))
                 (TarabostesStaterID:string (UR_Assets 1 6))
-
-
                 (SolidusFractusID:string (UR_Assets 2 2))
                 (StaterTenuulusID:string (UR_Assets 2 3))
-
-
                 (ats-ids:[string]
                     (ref-TS01-C2::ATS|C_Issue
                         patron
@@ -492,6 +491,7 @@
         )
     )
     (defun A_Step007:[string] ()
+        @doc "200 KDA Cost"
         (let*
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -499,13 +499,10 @@
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
-
                 (StrategonDrachmaID:string (UR_Assets 1 7))
                 (BasileonAsID:string (UR_Assets 1 8))
-
                 (DrachmaMinimaID:string (UR_Assets 2 4))
                 (AsInfinimusID:string (UR_Assets 2 5))
-
                 (ats-ids:[string]
                     (ref-TS01-C2::ATS|C_Issue
                         patron

@@ -1,6 +1,6 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface Vesting
-    @doc "Exposes Vesting Functions"
+    @doc "Exposes Special Token Management Functions"
     ;;
     (defschema VST|MetaDataSchema
         release-amount:decimal

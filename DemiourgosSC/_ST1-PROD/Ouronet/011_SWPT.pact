@@ -1,4 +1,4 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface SwapTracer
     @doc "Exposes Tracer Functions, needed to compute Paths between Tokens existing on Liquidity Pools"
     ;;
@@ -152,8 +152,8 @@
     ;;FUNCTIONS
     (defun UC_PSwpairsFTO:[string] (traces:[object{SwapTracer.Edges}] id:string principal:string principals-lst:[string])
         @doc "Principal Swpairs From Trace Object: given a trace object, id and principal, output the stored swpairs\
-        \ UTILS.BAR can be used as principal, returning swpairs that contain no principals. \
-        \ Swpairs that contain no principals, can only be stable swap pairs."
+            \ UTILS.BAR can be used as principal, returning swpairs that contain no principals. \
+            \ Swpairs that contain no principals, can only be stable swap pairs."
         (UEV_IdAsPrincipal principal true principals-lst)
         (let
             (
@@ -281,7 +281,7 @@
     )
     (defun URC_ComputeGraphPath:[string] (input:string output:string swpairs:[string] principal-lst:[string])
         @doc "Computes the path between an <input> and <output> using BFS via <URC_AllGraphPaths> \
-        \ from a passed down list of existing <swpairs>"
+            \ from a passed down list of existing <swpairs>"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -320,7 +320,7 @@
     )
     (defun URC_AllGraphPaths:[[string]] (input:string output:string swpairs:[string] principal-lst:[string])
         @doc "Computes all paths that exist in a Graph defined from <input> ids, <output> ids \
-        \ over a specific passed-down list of existing <swpairs>"
+            \ over a specific passed-down list of existing <swpairs>"
         (let
             (
                 (ref-U|BFS:module{BreadthFirstSearch} U|BFS)
@@ -366,7 +366,7 @@
     )
     (defun URC_TokenSwpairs:[string] (token-id:string principal-lst:[string])
         @doc "Reads all swpairs attached to the <token-id> and outputs them into a string list \
-        \ Requires a list of principals through <principal-lst>"
+            \ Requires a list of principals through <principal-lst>"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)

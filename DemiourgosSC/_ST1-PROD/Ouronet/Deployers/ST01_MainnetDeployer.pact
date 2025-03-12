@@ -17,8 +17,8 @@
 ;;Replace the Namespace with the ACTUAL NAMEPACE created. This will be the namespace where Ouronet resides.
 (let
     (
-        ;;Namespace must be changed with the created Namespace
-        (ons:string "n_e096dec549c18b706547e425df9ac0571ebd00b0.")
+        ;;n_7d40ccda457e374d8eb07b658fd38c282c545038
+        (ons:string "n_7d40ccda457e374d8eb07b658fd38c282c545038.")
         (k00:string "dh_master-keyset")
         (k01:string "dh_sc_dalos-keyset")
         (k02:string "dh_sc_autostake-keyset")
@@ -29,17 +29,17 @@
         (k07:string "dh_sc_dhvault-keyset")
         (k08:string "dh_sc_custodians-keyset")
         (k09:string "dh_sc_dispenser-keyset")
-
+        ;;Demiurgoi Keys
         (k10:string "dh_ah-keyset")
         (k11:string "dh_cto-keyset")
         (k12:string "dh_hov-keyset")
-
+        ;;User Keys
         (k13:string "us-0000_aozt-keyset")
         (k14:string "us-0001_emma-keyset")
         (k15:string "us-0002_lumy-keyset")
 
     )
-    (namespace ons)
+    (namespace (drop -1 ons))
     ;;Ouronet Keys
     (define-keyset (+ ons k00) (read-keyset k00))
     (define-keyset (+ ons k01) (read-keyset k01))
@@ -61,24 +61,29 @@
     (define-keyset (+ ons k15) (read-keyset k15))
 )
 ;;ENTER KDA Accounts associated with each keyset below for ease of use:
-;;[0]   dh_master-keyset                      ||    k:
-;;[1]   dh_sc_dalos-keyset                    ||    k:
-;;[2]   dh_sc_autostake-keyset                ||    k:
-;;[3]   dh_sc_vesting-keyset                  ||    k:
-;;[4]   dh_sc_kadenaliquidstaking-keyset      ||    k:
-;;[5]   dh_sc_ouroboros-keyset                ||    k:
-;;[6]   dh_sc_swapper-keyset                  ||    k:
-;;[7]   dh_sc_dhvault-keyset                  ||    k:
-;;[8]   dh_sc_custodians-keyset               ||    k:
-;;[9]   dh_sc_dispenser-keyset                ||    k:
+;;[0]   dh_master-keyset                      ||    k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8
+;;[1]   dh_sc_dalos-keyset                    ||    k:10b998049806491ec3e26f7507020554441e6b9271cfee1779d85230139c92df
+;;[2]   dh_sc_autostake-keyset                ||    k:725d6ad18c7e4ef6e2773f6bb315bde13437872d0235f6404c0c99d9d900bbb4
+;;[3]   dh_sc_vesting-keyset                  ||    k:5047d039d1d918e3489f42a52a46b54cb5b3b259e42dd2e43c071fe2b77863f2
+;;[4]   dh_sc_kadenaliquidstaking-keyset      ||    k:6a084a59d1485b4b41661ec05be6ebe9475f1fe1a19ba77018b9d176927611c9
+;;[5]   dh_sc_ouroboros-keyset                ||    k:428a0ed942d266d84e6bf995d1612c009777eda858e92c0c9bc3ef8932d4e44d
+;;[6]   dh_sc_swapper-keyset                  ||    k:572bd2e1a7e126c1072d328bbac3064ffadf96cc20fd0752f1c5875d549c2b31
+;;[7]   dh_sc_dhvault-keyset                  ||    k:013b30abebdae21d5afd6e2d5b6486f6fae2b5aa6d8495a2aa3131ab8d292836
+;;[8]   dh_sc_custodians-keyset               ||    k:5a082d160fd3fcb61f168ccfd78b19443880fb9d1952bc9bd6d289db1ad4075d
+;;[9]   dh_sc_dispenser-keyset                ||    k:05654aee733a30bfdc2fd36461276c74e3a8a52b9065cc01bc2f1c947d3d8fab
 
-;;[10]  dh_ah-keyset                          ||    k:
-;;[11]  dh_cto-keyset                         ||    k:
-;;[12]  dh_hov-keyset                         ||    k:
+;;[10]  dh_ah-keyset                          ||    k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5
+;;[11]  dh_cto-keyset                         ||    k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8
+;;[12]  dh_hov-keyset                         ||    k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0
 
-;;[13]  us-0000_aozt-keyset                   ||    k:
-;;[14]  us-0001_emma-keyset                   ||    k:
-;;[15]  us-0002_lumy-keyset                   ||    k:
+;;[13]  us-0000_aozt-keyset                   ||    k:ad620c6759112c10a26519cc4e9a440721c04f1684f3c123f670d1c51f4bb4df
+;;[14]  us-0001_emma-keyset                   ||    k:08786a657018b620ffce173a2071f85135ed9f4d7a67938a34b8d72f5c0763b1
+;;[15]  us-0002_lumy-keyset                   ||    k:2df04179bfcddf22dd3d79c7d4afd9651e5f8e2a9dfbb8ba6fd9e77e2b432710
+
+;;[16]  dh_sc_dispenser-keyset                ||    k:3a7c4c0fe8d2bfa68497f569cc33ef821511ec017c151c35f046ed504649d477
+;;[17]  dh_sc_custodians-keyset               ||    k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca
+
+
 (print "END STEP 002")
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -180,8 +185,18 @@
 ;;STEP 21           ;;  6.169
 ;;STEP 22           ;; 38.739
 
+;;Put GAP on, after Deploy, set to false to set to offline
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+    )
+    (ref-TS01-A::DALOS|A_ToggleGAP true)
+)
 
 ;;Replace A_Step005 with up to 22, and be carefull where input parameters are needed
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (let
     (
         (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)

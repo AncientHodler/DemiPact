@@ -1,10 +1,7 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface DemiourgosPactTrueFungible
     @doc "Exposes most of the Functions of the DPTF Module. \
-    \ Later deployed modules, contain the rest of the DPTF Functions \
-    \ These are ATS and TFT Modules \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
-    \ are NOT sorted alphabetically"
+    \ Later modules (ATS TFT), contain the rest of the DPTF Functions"
     ;;
     (defun UC_VolumetricTax (id:string amount:decimal))
     (defun UC_TreasuryLowestDispo (ouro-supply:decimal ouro-precision:integer dispo-type:integer tdp:decimal tds:decimal))

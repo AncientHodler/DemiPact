@@ -1,4 +1,4 @@
-(namespace "...")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface OuronetConstants
     @doc "Exported Constants as Functions from this Module via interface"
     ;;
@@ -99,7 +99,7 @@
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defun NS_MAIN ()               (at 0 ["..."]))
+    (defun NS_MAIN ()               (at 0 ["n_7d40ccda457e374d8eb07b658fd38c282c545038"]))
     (defun NS_TEST ()               (at 0 ["free"]))
     (defun CT_NS_USE  ()            (NS_MAIN))
     ;;

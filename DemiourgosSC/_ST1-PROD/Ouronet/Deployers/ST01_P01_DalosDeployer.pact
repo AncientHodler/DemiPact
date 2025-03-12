@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface DeployerDalos
     @doc "Exposes DALOS Deployer Functions"
     ;;
@@ -7,20 +8,23 @@
     (defun A_Step008:list ())
     (defun A_Step009 ())
     (defun A_Step010:list ())
-    (defun A_Step011 ())
-    (defun A_Step012 ())
-    (defun A_Step013 ())
-    (defun A_Step014 ())
-    (defun A_Step015 ())
-    (defun A_Step016 ())
+    (defun A_Step011 (wrap-amount:decimal))
+    (defun A_Step012 (coil-amount:decimal))
+    (defun A_Step013 (ouro-origin-amount:decimal))
+    (defun A_Step014 (ouro-in:decimal requested-auryn-out:decimal))
+    (defun A_Step015 (auryn-in:decimal))
+    (defun A_Step016 (a1:decimal a2:decimal a3:decimal))
     (defun A_Step017 ())
-    (defun A_Step018 ())
-    (defun A_Step019 ())
+    (defun A_Step018 (am:decimal))
+    (defun A_Step019 (am:decimal))
     (defun A_Step020:list ())
     (defun A_Step021 ())
     (defun A_Step022 ())
 )
 (module DPL-DALOS GOV
+    @doc "Contains Functions needed for Ouronet Initialisation \
+        \ Initialisation costs 3510 KDA, only 900 KDA needed, \
+        \ Remaining 2610 KDA, to be added later with <DALOS::KDA|C_CollectWT sender amount false>"
     ;;
     (implements DeployerDalos)
     ;;
@@ -31,19 +35,19 @@
     ;;
     ;;  [KDA Accounts]
     (defconst DALOS|SC_KDA-NAME             (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|DALOS|SC_KDA-NAME)))
-    (defconst ATS|SC_KDA-NAME               "k:...")
-    (defconst VST|SC_KDA-NAME               "k:...")
+    (defconst ATS|SC_KDA-NAME               "k:725d6ad18c7e4ef6e2773f6bb315bde13437872d0235f6404c0c99d9d900bbb4")
+    (defconst VST|SC_KDA-NAME               "k:5047d039d1d918e3489f42a52a46b54cb5b3b259e42dd2e43c071fe2b77863f2")
     (defconst LQD|SC_KDA-NAME               (let ((ref-LQD:module{KadenaLiquidStaking} LIQUID)) (ref-LQD::GOV|LIQUID|SC_KDA-NAME)))
     (defconst OUROBOROS|SC_KDA-NAME         (let ((ref-ORBR:module{Ouroboros} OUROBOROS)) (ref-ORBR::GOV|ORBR|SC_KDA-NAME)))
-    (defconst SWP|SC_KDA-NAME               "k:...")
-    (defconst DHV|SC_KDA-NAME               "k:...")
+    (defconst SWP|SC_KDA-NAME               "k:572bd2e1a7e126c1072d328bbac3064ffadf96cc20fd0752f1c5875d549c2b31")
+    (defconst DHV|SC_KDA-NAME               "k:013b30abebdae21d5afd6e2d5b6486f6fae2b5aa6d8495a2aa3131ab8d292836")
     ;;
-    (defconst DEMIURGOI|AH_KDA-NAME         "k:...")
-    (defconst DEMIURGOI|CTO_KDA-NAME        "k:...")
-    (defconst DEMIURGOI|HOV_KDA-NAME        "k:...")
-    (defconst PLEB|AOZT_KDA-NAME            "k:...")
-    (defconst PLEB|EMMA_KDA-NAME            "k:...")
-    (defconst PLEB|LUMY_KDA-NAME            "k:...")
+    (defconst DEMIURGOI|AH_KDA-NAME         "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5")
+    (defconst DEMIURGOI|CTO_KDA-NAME        "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8")
+    (defconst DEMIURGOI|HOV_KDA-NAME        "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0")
+    (defconst PLEB|AOZT_KDA-NAME            "k:ad620c6759112c10a26519cc4e9a440721c04f1684f3c123f670d1c51f4bb4df")
+    (defconst PLEB|EMMA_KDA-NAME            "k:08786a657018b620ffce173a2071f85135ed9f4d7a67938a34b8d72f5c0763b1")
+    (defconst PLEB|LUMY_KDA-NAME            "k:2df04179bfcddf22dd3d79c7d4afd9651e5f8e2a9dfbb8ba6fd9e77e2b432710")
     ;;
     ;;  [Autonomic Guards]
     (defconst DALOS|GUARD                   (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|DALOS|GUARD)))
@@ -149,6 +153,7 @@
             (
                 (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
             )
+            ;;DEMIURGOIS Accounts
             (ref-TS01-A::DALOS|A_DeployStandardAccount
                 DEMIURGOI|AH_NAME
                 (keyset-ref-guard DEMIURGOI|AH_KEY)
@@ -189,7 +194,7 @@
         )
     )
     (defun A_Step006 ()
-        (acquire-module-admin free.DALOS)
+        (acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
         (let
             (
                 (ref-P|BRD:module{OuronetPolicy} BRD)
@@ -245,7 +250,7 @@
             (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpsf"        400.0)
             (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpnf"        500.0)
             (ref-TS01-A::DALOS|A_UpdateUsagePrice "blue"        25.0)
-
+            ;;
             ;;Ignis Prices
             (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
             (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
@@ -291,6 +296,7 @@
         )
     )
     (defun A_Step007 ()
+        @doc "150 KDA Cost; doesnt get collected"
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
@@ -332,7 +338,8 @@
         )
     )
     (defun A_Step008:list ()
-        (acquire-module-admin free.DALOS)
+        @doc "1200 KDA Cost; doesnt get collected"
+        (acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -395,9 +402,7 @@
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID OUROBOROS|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID OUROBOROS|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID OUROBOROS|SC_NAME true)
-
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury-sc true)
-
             ;;
             ;;Set Token Roles Part III
             (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)
@@ -409,6 +414,7 @@
         )
     )
     (defun A_Step009 ()
+        @doc "900 KDA Cost; doesnt get collected"
         (let*
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -417,7 +423,6 @@
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
                 (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
-
                 (VestedOuroID:string (ref-TS01-C2::VST|C_CreateVestingLink patron OuroID))
                 (VestedAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron AurynID))
                 (VestedEliteAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron EliteAurynID))
@@ -426,6 +431,7 @@
         )
     )
     (defun A_Step010:list ()
+        @doc "300 KDA Cost; doesnt get collected"
         (let*
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -479,16 +485,16 @@
             ats-ids
         )
     )
-    (defun A_Step011 ()
+    (defun A_Step011 (wrap-amount:decimal)
         (let
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
-            (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
+            (ref-TS01-C2::LQD|C_WrapKadena patron patron wrap-amount)
         )
     )
-    (defun A_Step012 ()
+    (defun A_Step012 (coil-amount:decimal)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -501,11 +507,11 @@
                 patron
                 (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
                 (ref-DALOS::UR_WrappedKadenaID)
-                1.0
+                coil-amount
             )
         )
     )
-    (defun A_Step013 (ouro-amount:decimal)
+    (defun A_Step013 (ouro-origin-amount:decimal)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -516,7 +522,7 @@
                 patron
                 (ref-DALOS::UR_OuroborosID)
                 patron
-                ouro-amount
+                ouro-origin-amount
                 true
             )
         )
@@ -549,7 +555,7 @@
             (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
         )
     )
-    (defun A_Step016 ()
+    (defun A_Step016 (a1:decimal a2:decimal a3:decimal)
         (let
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -557,9 +563,9 @@
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
             )
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron patron 1000.0)
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron aozt 750.0)
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron emma 10.0)
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron patron a1) ;;1000.0
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron aozt a2)   ;;750.0    
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron emma a3)   ;;10.0
         )
     )
     (defun A_Step017 ()
@@ -571,7 +577,7 @@
             (ref-TS01-A::DALOS|A_IgnisToggle true true)
         )
     )
-    (defun A_Step018 ()
+    (defun A_Step018 (am:decimal)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -580,10 +586,10 @@
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
 
             )
-            (ref-TS01-C1::DPTF|C_Transmute patron ouro-id patron 10.0)
+            (ref-TS01-C1::DPTF|C_Transmute patron ouro-id patron am);;10.0
         )
     )
-    (defun A_Step019 ()
+    (defun A_Step019 (am:decimal)
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -595,12 +601,13 @@
                 OuroID
                 DEMIURGOI|AH_NAME
                 PLEB|EMMA_NAME
-                2.0
+                am
                 false
             )
         )
     )
     (defun A_Step020:list ()
+        @doc "900 KDA Cost; must be collected"
         (let
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
@@ -632,7 +639,7 @@
         )
     )
     (defun A_Step021 ()
-        (acquire-module-admin free.SWP)
+        (acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.SWP)
         (let
             (
                 (ref-SWP:module{Swapper} SWP)
@@ -694,11 +701,11 @@
             )
             (ref-TS01-A::SWP|A_UpdatePrincipal p1 true)
             (ref-TS01-A::SWP|A_UpdatePrincipal p2 true)
-
+            ;;
             (ref-TS01-C1::DPTF|C_DeployAccount p1 SWP|SC_NAME)
             (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p1 SWP|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron p1 SWP.SWP|SC_NAME true)
-
+            ;;
             (ref-TS01-C1::DPTF|C_DeployAccount p2 SWP|SC_NAME)
             (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p2 SWP|SC_NAME true)
         )

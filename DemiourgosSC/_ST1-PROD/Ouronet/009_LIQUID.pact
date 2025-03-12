@@ -1,6 +1,6 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface KadenaLiquidStaking
-    @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA"
+    @doc "Exposes the Functions of the Liquid Staking Module"
     ;;
     (defun GOV|LIQUID|SC_KDA-NAME ())
     (defun GOV|LIQUID|GUARD ())

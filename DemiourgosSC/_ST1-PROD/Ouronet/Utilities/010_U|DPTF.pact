@@ -1,7 +1,6 @@
-(namespace "...")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface UtilityDptf
-    @doc "Exported Utility Functions for the DPTF Module \
-        \ Commented Functions are internal use only and have no use outside the module"
+    @doc "Exported Utility Functions for the DPTF Module"
     ;;
     (defschema DispoData
         @doc "Stores the information needed to compute the maximum Negative Ouro an Account is allowed to overconsume"

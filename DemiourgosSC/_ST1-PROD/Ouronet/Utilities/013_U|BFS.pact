@@ -1,4 +1,4 @@
-(namespace "...")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface BreadthFirstSearch
     @doc "Interface exposing a Breadth-First-Search Implementation on Pact \
     \ Used in the SWP Modules to compute Paths between SWPair Tokens."

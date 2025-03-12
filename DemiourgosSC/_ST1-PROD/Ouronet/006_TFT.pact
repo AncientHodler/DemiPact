@@ -1,12 +1,11 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface TrueFungibleTransfer
     @doc "Exposes DPTF Related Transfer Functions. Due to the complex nature of the DPTF Transfer \
         \ a whole module had to be dedicated to it, as a mere DPTF Transfer has to take following parameters into account: \
         \   *] If the DPTF is part of ATS Pair, and if so, specific to its setup, how it must be handeld \
         \   *] If Transfer Fees are in place, and if so, where they must be redirected, als o tying in the ATSPair involvement \
         \   *] When handling OUROBOROS, take note of Ouro-Dispo mechanics, which tie into the Elite-Account \
-        \ Also includes Multi and Bulk Transfer Functions. Commented Functions are internal module only.\
-        \ No alphabetic sorting for the functions, to better observe their connections"
+        \ Also includes Multi and Bulk Transfer Functions"
     ;;
     (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer))
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
@@ -434,10 +433,10 @@
     ;;{F1}  [URC]
     (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string)
         @doc "Computes the Unbonding Amount existing for a given <reward-token> of an <atspair>; \
-        \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
-        \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
-        \ and adds found balances up. \
-        \ Output of these 2 functions must match to the last decimal."
+            \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
+            \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
+            \ and adds found balances up. \
+            \ Output of these 2 functions must match to the last decimal."
         (let
             (
                 (ref-ATS:module{Autostake} ATS)
@@ -455,7 +454,7 @@
     )
     (defun URC_MinimumOuro:decimal (account:string)
         @doc "Computes the minimum Negative Ouroboros amount an Account is able to overconsume \
-        \ Using the Standard Dispo mechanics"
+            \ Using the Standard Dispo mechanics"
         (let
             (
                 (ref-U|DPTF:module{UtilityDptf} U|DPTF)

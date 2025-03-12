@@ -1,5 +1,5 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface TalosStageOne_ClientPacts
-    ;;
     ;;
     ;;DPTF (Demiourgos Pact True Fungible) Pact Initiating Functions
     (defun DPTF|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))

@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface TalosStageOne_ClientOne
     ;;
     ;;DALOS Functions
@@ -71,7 +72,7 @@
     (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer]))
 )
 (module TS01-C1 GOV
-    @doc "TALOS Stage 1 Client Functiones Part 1"
+    @doc "TALOS Stage 1 Client Functions Part 1"
     ;;
     (implements OuronetPolicy)
     (implements TalosStageOne_ClientOne)
@@ -237,7 +238,7 @@
     )
     (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)
         @doc "Rotates the governor of a Smart Ouronet Account \
-        \ The Governor acts as a governing entity for the Smart Ouronet Account allowing fine control of its assets"
+            \ The Governor acts as a governing entity for the Smart Ouronet Account allowing fine control of its assets"
         (with-capability (P|TS)
             (let
                 (
@@ -266,7 +267,7 @@
     )
     (defun DALOS|C_RotateKadena (patron:string account:string kadena:string)
         @doc "Rotates the KDA Account attached to an Ouronet Account. \
-        \ The attached KDA Account is the account that makes KDA Payments for specific Ouronet Actions"
+            \ The attached KDA Account is the account that makes KDA Payments for specific Ouronet Actions"
         (with-capability (P|TS)
             (let
                 (
@@ -281,7 +282,7 @@
     )
     (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string)
         @doc "Rotates the Sovereign of a Smart Ouronet Account \
-        \ The Sovereign of a Smart Ouronet Account acts as its owner, allowing dominion over its assets"
+            \ The Sovereign of a Smart Ouronet Account acts as its owner, allowing dominion over its assets"
         (with-capability (P|TS)
             (let
                 (
@@ -326,9 +327,9 @@
     ;;
     (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         @doc "Executes a Bulk DPTF Transfer, sending one DPTF, to multiple receivers, each with its own amount \
-        \ Always enforces <min-move> amount, and <receiver-lst> must all be Standard Ouronet Accounts, \
-        \ as it cant send to Smart Ouronet Account recipients. \
-        \ Works for 12 Recipients when using DPTFs, or 8 Recipients when using Elite-Auryn"
+            \ Always enforces <min-move> amount, and <receiver-lst> must all be Standard Ouronet Accounts, \
+            \ as it cant send to Smart Ouronet Account recipients. \
+            \ Works for 12 Recipients when using DPTFs, or 8 Recipients when using Elite-Auryn"
         (with-capability (P|TS)
             (let
                 (
@@ -412,7 +413,7 @@
     )
     (defun DPTF|C_DonateFees (patron:string id:string)
         @doc "Sets the Fee Collection target to the DALOS|SC_NAME \
-        \ When DPTF Fees collect here, the will be earned by Ouronet Custodians"
+            \ When DPTF Fees collect here, the will be earned by Ouronet Custodians"
         (with-capability (P|TS)
             (let
                 (
@@ -428,7 +429,7 @@
     )
     (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool])
         @doc "Issues a new DPTF Token in Bulk, can also be used to issue a single DPTF \
-        \ Outputs a string list with the issed DPTF IDs"
+            \ Outputs a string list with the issed DPTF IDs"
         (with-capability (P|TS)
             (let
                 (
@@ -490,7 +491,7 @@
     )
     (defun DPTF|C_ResetFeeTarget (patron:string id:string)
         @doc "Sets the Fee Collection target to the OUROBOROS|SC_NAME \
-        \ Fees can then be collected by <DPTF|C_WithdrawFees>"
+            \ Fees can then be collected by <DPTF|C_WithdrawFees>"
         (with-capability (P|TS)
             (let
                 (
@@ -706,9 +707,9 @@
     )
     (defun DPTF|C_ExemptionTransfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
         @doc "Transfers a DPTF Token from <sender> to <receiver>, \
-        \ when either <sender> or <receiver> has <fee-exemption-role> set to true for DPTF <id> \
-        \ Is Faster than <DPTF|C_Transfer> due to trimmed execution logic, and should be used whenever possible, \
-        \ if the proper conditions are met"
+            \ when either <sender> or <receiver> has <fee-exemption-role> set to true for DPTF <id> \
+            \ Is Faster than <DPTF|C_Transfer> due to trimmed execution logic, and should be used whenever possible, \
+            \ if the proper conditions are met"
         (with-capability (P|TS)
             (let
                 (
@@ -723,7 +724,7 @@
     )
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         @doc "Transmutes a DPTF Token. Transmuting behaves follows the same mechanics of a DPTF Fee Processing \
-        \ without counting as DPTF Fee in the DPTF Fee Counter"
+            \ without counting as DPTF Fee in the DPTF Fee Counter"
         (with-capability (P|TS)
             (let
                 (
@@ -738,7 +739,7 @@
     )
     (defun DPTF|C_Wipe (patron:string id:string atbw:string)
         @doc "Wipes a DPTF Token from a given account in its entirety \
-        \ Only works for positive existing amounts"
+            \ Only works for positive existing amounts"
         (with-capability (P|TS)
             (let
                 (
@@ -885,7 +886,7 @@
     )
     (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object])
         @doc "Mints a DPMF Token, creating it and adding quantity to it \
-        \ Outputs the nonce of the created DPMF"
+            \ Outputs the nonce of the created DPMF"
         (with-capability (P|TS)
             (let
                 (
@@ -904,7 +905,7 @@
     )
     (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string)
         @doc "Moves <create-role> for a DPMF Token <id> to <receiver> \
-        \ Only a single account may have this role"
+            \ Only a single account may have this role"
         (with-capability (P|TS)
             (let
                 (

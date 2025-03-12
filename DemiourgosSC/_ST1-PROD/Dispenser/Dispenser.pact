@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface DeployerDispenser
     @doc "Exposes Dispenser Functions via the DSP Module"
     ;;
@@ -23,8 +24,8 @@
     (defconst GOV|SC_DSP                    (keyset-ref-guard DSP|SC_KEY))
     ;;
     ;; KDA Accounts
-    (defconst DSP|SC_KDA-NAME               "k:...")
-    (defconst CST|SC_KDA-NAME               "k:...")
+    (defconst DSP|SC_KDA-NAME               "k:05654aee733a30bfdc2fd36461276c74e3a8a52b9065cc01bc2f1c947d3d8fab")
+    (defconst CST|SC_KDA-NAME               "k:5a082d160fd3fcb61f168ccfd78b19443880fb9d1952bc9bd6d289db1ad4075d")
     ;;
     ;;  Dispenser
     (defconst DSP|SC_KEY                    (GOV|DSPKey))
@@ -168,8 +169,7 @@
     ;;{F0}  [UR]
     (defun UR_KDA:decimal ()
         @doc "Retrieves KDA Price in dollars"
-        ;(at "value" (n_bfb76eab37bf8c84359d6552a1d96a309e030b71.dia-oracle.get-value "KDA/USD"))
-        1.0
+        (at "value" (n_bfb76eab37bf8c84359d6552a1d96a309e030b71.dia-oracle.get-value "KDA/USD"))
     )
     ;;{F1}  [URC]
     (defun URC_DailyOURO ()

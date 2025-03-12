@@ -1,9 +1,7 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface Autostake
     @doc "Exposes half of the Autostake Functions, the other Functions existing in the ATSU Module \
-    \ Also contains a few DPTF and DPMF Functions \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically"
+    \ Also contains a few DPTF and DPMF Functions"
     ;;
     (defschema ATS|RewardTokenSchema
         token:string

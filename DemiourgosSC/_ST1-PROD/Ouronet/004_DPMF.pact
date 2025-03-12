@@ -1,9 +1,7 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface DemiourgosPactMetaFungible
     @doc "Exposes most of the Functions of the DPMF Module. \
-    \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically"
+    \ A later module (ATS), contains the rest of the DPMF Functions"
     ;;
     (defschema DPMF|Schema
         nonce:integer

@@ -1,7 +1,6 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface OuronetPolicy
-    @doc "Interface exposing OuronetPolicy Functions, which are needed for intermodule communication \
-        \ Each Module must have these Functions for these Purposes"
+    @doc "Interface exposing OuronetPolicy Functions, which are needed for intermodule communication"
     ;;
     (defschema P|S
         policy:guard
@@ -541,7 +540,6 @@
             (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
             (enforce-guard guard)
             (compose-capability (SECURE))
-            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
     (defcap DALOS|S>D-SM (account:string guard:guard kadena:string sovereign:string)
@@ -557,7 +555,6 @@
             (UEV_EnforceAccountType sovereign false)
             (enforce-guard guard)
             (compose-capability (SECURE))
-            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
     ;;{C3}
@@ -918,16 +915,16 @@
                 (r-mt:bool (UR_AccountPayableByMethod receiver))
             )
             (if (= s-sc false)
-                (if (= r-sc false)              ;;sender is normal
-                    true                        ;;receiver is normal (Normal => Normal | Case 1)
-                    (if (= method true)         ;;receiver is smart  (Normal => Smart | Case 3)
+                (if (= r-sc false)      ;;sender is normal
+                    true                ;;receiver is normal (Normal => Normal | Case 1)
+                    (if (= method true) ;;receiver is smart  (Normal => Smart | Case 3)
                         r-mt
                         r-pasc
                     )
                 )
-                (if (= r-sc false)              ;;sender is smart
-                    true                        ;;receiver is normal (Smart => Normal | Case 4)
-                    (if (= method true)         ;;receiver is false (Smart => Smart | Case 2)
+                (if (= r-sc false)      ;;sender is smart
+                    true                ;;receiver is normal (Smart => Normal | Case 4)
+                    (if (= method true) ;;receiver is false (Smart => Smart | Case 2)
                         r-mt
                         r-pbsc
                     )

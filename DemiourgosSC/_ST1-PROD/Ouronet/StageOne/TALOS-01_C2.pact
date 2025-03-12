@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface TalosStageOne_ClientTwo
     ;;
     ;;ATS (Autostake) Functions
@@ -116,7 +117,7 @@
 
 )
 (module TS01-C2 GOV
-    @doc "TALOS Administrator and Client Module for Stage 1"
+    @doc "TALOS Stage 1 Client Functions Part 2"
     ;;
     (implements OuronetPolicy)
     (implements TalosStageOne_ClientTwo)
@@ -276,7 +277,7 @@
     ;;
     (defun ATS|C_AddHotRBT (patron:string ats:string hot-rbt:string)
         @doc "Adds a Hot-RBT to an ATS-Pair \
-        \ Must be a DPMF Token and cannot be a Vested counterpart of a DPTF Token"
+            \ Must be a DPMF Token and cannot be a Vested counterpart of a DPTF Token"
         (with-capability (P|TS)
             (let
                 (
@@ -1211,8 +1212,8 @@
     )
     (defun ORBR|C_WithdrawFees (patron:string id:string target:string)
         @doc "Withdraws collected DPTF Fees collected in standard mode \
-        \ DPTF Fees collected in standard mode cumullate on the OUROBOROS Smart Account \
-        \ Only the Token Owner can withdraw these fees."
+            \ DPTF Fees collected in standard mode cumullate on the OUROBOROS Smart Account \
+            \ Only the Token Owner can withdraw these fees."
         (with-capability (P|TS)
             (let
                 (
@@ -1668,7 +1669,6 @@
                 (at 0 (at "output" ico))
             )
         )
-
     )
     (defun SWP|OPU|C_SimpleSwap:decimal
         (
@@ -1771,7 +1771,6 @@
                 (at 0 (at "output" ico))
             )
         )
-
     )
     (defun SWP|C_SimpleSwap:decimal
         (

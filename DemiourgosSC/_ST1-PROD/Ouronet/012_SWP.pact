@@ -1,6 +1,6 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface Swapper
-    @doc "Exposes Swapper Related Functios, except those related to adding and swapping liquidity"
+    @doc "Exposes Swapper Related Functions, except those related to adding and swapping liquidity"
     ;;
     (defschema PoolTokens
         token-id:string
@@ -481,7 +481,6 @@
         @event
         (compose-capability (GOV|SWP_ADMIN))
     )
-
     (defcap SWP|C>TG_FEE-LOCK (swpair:string toggle:bool)
         @event
         (UEV_FeeLockState swpair (not toggle))

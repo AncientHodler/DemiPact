@@ -1,9 +1,8 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (interface Branding
     @doc "Interface Exposing the Branding Functions needed to create the Branding Functionality \
     \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
-    \ Should Future entities be added, they too can be branded via this module \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
-    \ are NOT sorted alphabetically"
+    \ Should Future entities be added, they too can be branded via this module"
     ;;
     (defschema Schema
         logo:string
