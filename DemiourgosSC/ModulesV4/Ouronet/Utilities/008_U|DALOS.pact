@@ -18,6 +18,9 @@
 (module U|DALOS GOV
     ;;
     (implements UtilityDalos)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|DALOS_ADMIN)))
@@ -30,16 +33,38 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
-    ;;{F-UC}
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_FilterId:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
-        (let 
+        (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (result
                     (fold
-                        (lambda 
+                        (lambda
                             (acc:[string] item:[string])
                             (if (= (ref-U|LST::UC_FE item) account)
                                 (ref-U|LST::UC_AppL acc (ref-U|LST::UC_LE item))
@@ -117,7 +142,7 @@
                 (b:string (ref-U|CT::CT_BAR))
             )
             (if direction
-                (if 
+                (if
                     (= current-lst [b])
                     [account]
                     (ref-U|LST::UC_AppL current-lst account)
@@ -130,7 +155,9 @@
             )
         )
     )
-    ;;{F-UEV}
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_Decimals:bool (decimals:integer)
         @doc "Enforces the decimal size is DALOS precision conform"
         (let
@@ -159,11 +186,11 @@
                 (= (floor fee fp) fee)
                 (format "The fee amount of {} is not a valid fee amount decimal wise" [fee])
             )
-            (enforce 
-                (or 
+            (enforce
+                (or
                     (or (= fee -1.0) (= fee 0.0))
                     (and (>= fee 1.0) (<= fee 999.0))
-                ) 
+                )
                 (format "The fee amount of {} is not a valid fee amount value wise" [fee])
             )
         )
@@ -196,9 +223,9 @@
             )
         )
     )
-    ;;{F-UDC}
+    ;;{F3}  [UDC]
     (defun UDC_Makeid:string (ticker:string)
-        @doc "Creates a Token Id from a string source as the Token Ticker \ 
+        @doc "Creates a Token Id from a string source as the Token Ticker \
             \ using the first 12 Characters of the prev-block-hash of (chain-data) as randomness source"
         (let
             (
@@ -221,4 +248,10 @@
             )
         )
     )
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

@@ -14,6 +14,10 @@
     ;;
     (defun EmptyDispo:object{DispoData} ())
     ;;
+    (defun UC_TwoSplitter:[integer] (input:integer))
+    (defun UC_FourSplitter:[integer] (input:integer))
+    (defun UC_EightSplitter:[integer] (input:integer))
+    ;;
     (defun UC_OuroDispo:decimal (input:object{DispoData}))
     (defun UC_UnlockPrice:[decimal] (unlocks:integer))
     (defun UC_VolumetricTax (precision:integer amount:decimal))
@@ -21,6 +25,9 @@
 (module U|DPTF GOV
     ;;
     (implements UtilityDptf)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|DPTF_ADMIN)))
@@ -33,6 +40,19 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
+    ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
     ;;{3}
     (defun EmptyDispo:object{DispoData} ()
         {"elite-auryn-amount"           :0.0
@@ -43,7 +63,15 @@
         ,"ouroboros-precision"          :24}
     )
     ;;
-    ;;{F-UC}
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_TwoSplitter:[integer] (input:integer)
         (let
             (
@@ -137,14 +165,14 @@
                 (amount-str-rev-lst:[string] (reverse (str-to-list amount-str)))
                 (amount-dec-rev-lst:[decimal] (map (lambda (x:string) (dec (str-to-int 10 x))) amount-str-rev-lst))
                 (integer-lst:[integer] (enumerate 0 (- (length amount-dec-rev-lst) 1)))
-                (logarithm-lst:[decimal] (map (lambda (u:integer) (UCI_VolumetricPermile precision u)) integer-lst))
+                (logarithm-lst:[decimal] (map (lambda (u:integer) (UCX_VolumetricPermile precision u)) integer-lst))
                 (multiply-lst:[decimal] (zip (lambda (x:decimal y:decimal) (* x y)) amount-dec-rev-lst logarithm-lst))
                 (volumetric-fee:decimal (floor (fold (+) 0.0 multiply-lst) precision))
             )
             volumetric-fee
         )
     )
-    (defun UCI_VolumetricPermile:decimal (precision:integer unit:integer)
+    (defun UCX_VolumetricPermile:decimal (precision:integer unit:integer)
         @doc "Auxiliary computation function needed to compute the volumetric the VTT"
         (let*
             (
@@ -156,4 +184,14 @@
             volumetric-permile
         )
     )
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

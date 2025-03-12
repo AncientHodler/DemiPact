@@ -11,6 +11,9 @@
 (module U|G GOV
     ;;
     (implements OuronetGuards)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|G_ADMIN)))
@@ -23,10 +26,37 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
     ;;{3}
     ;;
-    ;;{F-UEV}
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
+    (defun UC_Try (g:guard)
+        @doc "Helper function used in <UEV_Any>"
+        (try false (enforce-guard g))
+    )
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_All:bool (guards:[guard])
         @doc "Enforces all guards in GUARDS"
         (map (enforce-guard) guards)
@@ -34,7 +64,7 @@
     )
     (defun UEV_Any:bool (guards:[guard])
         @doc "Will succeed if at least one guard in GUARDS is successfully enforced."
-        (enforce 
+        (enforce
             (< 0 (length (filter (= true) (map (UC_Try) guards))))
             "None of the guards passed"
         )
@@ -49,9 +79,11 @@
         (enforce (< 0 (length guards)) "Guard list cannot be empty")
         (create-user-guard (UEV_Any guards))
     )
-    ;;{F-UDC}
-    (defun UC_Try (g:guard)
-        @doc "Helper function used in <UEV_Any>"
-        (try false (enforce-guard g))
-    )
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

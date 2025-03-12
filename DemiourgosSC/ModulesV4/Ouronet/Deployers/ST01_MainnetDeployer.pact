@@ -4,7 +4,7 @@
 ;;
 ;;
 ;;STEP 001 - Namespace Deployment
-(define-namespace 
+(define-namespace
     (ns.create-principal-namespace (read-keyset "dh_master-keyset"))
     (read-keyset "dh_master-keyset" )
     (read-keyset "dh_master-keyset" )
@@ -108,59 +108,62 @@
 
 ;;STEP 004 - Deploy Modules
 
-;; U|CT             ;; 11.125
-;; U|G              ;;  2.294
-;; U|ST             ;;  4.163
-;; U|RS             ;;  1.897
-;; U|LST            ;;  7.686
-;; U|INT            ;;  3.041
-;; U|DEC            ;;  4.583
-;; U|DALOS          ;; 10.845
-;; U|ATS            ;; 38.170
-;; U|DPTF           ;;  4.686
-;; U|VST            ;;  5.145
-;; U|SWP            ;; 22.882
-;; U|BFS            ;; 15.234
+;; U|CT             ;; 11.134
+;; U|G              ;;  2.296
+;; U|ST             ;;  4.167
+;; U|RS             ;;  1.899
+;; U|LST            ;;  7.113
+;; U|INT            ;;  3.036
+;; U|DEC            ;;  4.584
+;; U|DALOS          ;;  8.877
+;; U|ATS            ;; 38.152
+;; U|DPTF           ;; 10.107
+;; U|VST            ;;  6.840
+;; U|SWP            ;; 23.622
+;; U|BFS            ;; 15.710
 
-;; DALOS            ;; 86.821
-;; BRD              ;; 32.989
-;; DPTF             ;;107.114
-;; DPMF             ;;106.832
-;; ATS              ;;129.167
-;; TFT              ;; 57.540
-;; ATSU             ;; 87.903
-;; VST              ;; 37.203
-;; LIQUID           ;; 25.121
-;; OUROBOROS        ;; 36.589
+;; DALOS            ;;103.365
+;; BRD              ;; 35.136
+;; DPTF             ;;130.142
+;; DPMF             ;;124.830
+;; ATS              ;;140.018
+;; TFT              ;;120.721
+;; ATSU             ;;106.934
+;; VST              ;; 94.482
+;; LIQUID           ;; 37.528
+;; OUROBOROS        ;; 50.706
 
-;; SWPT             ;; 36.964
-;; SWP              ;; 99.956
-;; SWPU             ;;112.924
+;; SWPT             ;; 46.723
+;; SWP              ;;106.917
+;; SWPU             ;;140.506
 
-;; TS01             ;;109.350
-;; DPL-DALOS        ;;109.097
-;; DPL-AOZ          ;;
+;; TS01-A           ;; 33.202
+;; TS01-C1          ;; 80.778
+;; TS01-C2          ;;127.604
+;; TS01-P           ;; 21.944
 
+;; DPL-DALOS        ;;125.403
 
 ;;DALOS INIT
-;;STEP 05           ;; 19.287
-;;STEP 06           ;;  9.478
-;;STEP 07           ;; 30.984
-;;STEP 08           ;; 68.147
-;;STEP 09           ;; 82.614
-;;STEP 10           ;;104.320
-;;STEP 11           ;; 21.629
-;;STEP 12           ;; 38.086
-;;STEP 13           ;;  8.776
-;;STEP 14           ;; 44.015
-;;STEP 15           ;; 41.949
-;;STEP 16           ;;132.723
-;;STEP 17           ;;  4.900
-;;STEP 18           ;; 22.019
-;;STEP 19           ;; 26.503
-;;STEP 20           ;; 53.498
-;;STEP 21           ;;  4.962
-;;STEP 22           ;; 31.110
+;;STEP 05           ;; 21.069
+;;STEP 06           ;; 21.615
+;;STEP 07           ;; 40.915
+;;STEP 08           ;; 74.180
+;;STEP 09           ;; 67.129
+;;STEP 10           ;;123.966
+;;STEP 11           ;; 23.376
+;;STEP 12           ;; 40.302
+;;STEP 13           ;; 10.094
+;;STEP 14           ;; 46.020
+;;STEP 15           ;; 43.686
+;;STEP 16           ;;136.822
+;;STEP 17           ;;  6.424
+;;STEP 18           ;; 25.340
+;;STEP 19           ;; 26.898
+;;STEP 20           ;; 99.763
+;;STEP 21           ;;  6.169
+;;STEP 22           ;; 38.739
+
 
 ;;Replace A_Step005 with up to 22
 (let
@@ -170,33 +173,41 @@
     (ref-DPL|DALOS::A_Step005)
 )
 
+;; DPL-AOZ          ;; 61.841
+
 ;;AOZ INIT
-;;STEP 01           ;;  1.111
-;;STEP 02           ;; 59.547
-;;STEP 03           ;; 94.406
-;;STEP 04           ;; 55.664
-;;STEP 05           ;;118.409
-;;STEP 06           ;;111.180
-;;STEP 07           ;;111.358
-;;STEP 08           ;; 93.470
-;;STEP 09           ;; 74.382
-;;STEP 10           ;; 74.482
-;;STEP 11           ;; 74.658
-;;STEP 12           ;; 74.735
-;;STEP 13           ;; 74.803
-;;STEP 14           ;; 21.898
-;;STEP 15           ;;142.905
-;;STEP 16           ;;142.606
-;;STEP 17           ;;142.523
-;;STEP 18           ;;143.342
-;;STEP 19           ;;142.821
-;;STEP 20           ;;142.370
+;;STEP 01           ;;  1.334
+;;STEP 02           ;; 30.729
+;;STEP 03           ;;111.968
+;;STEP 04           ;; 25.986
+;;STEP 05           ;; 62.656
+;;STEP 06           ;; 57.089
+;;STEP 07           ;; 57.290
+;;STEP 08           ;;100.915 (less than)
+;;STEP 09           ;; 81.113
+;;STEP 10           ;; 81.259
+;;STEP 11           ;; 81.488
+;;STEP 12           ;; 81.615
+;;STEP 13           ;; 81.728
+;;STEP 14           ;; 25.769
+;;STEP 15           ;;121.629
+;;STEP 16           ;;121.319
+;;STEP 17           ;;121.224
+;;STEP 18           ;;122.120
+;;STEP 19           ;;121.557
+;;STEP 20           ;;121.117
 
 ;;Replace A_Step001 with up to 20
 ;;Step 15 to 20, additional input of 250.0
 (let
     (
-        (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+        (ref-DPL|DSP:module{DeployerDispenser} DSP)
     )
-    (ref-DPL|AOZ::A_Step001)
+    (ref-DPL|DSP::A_Step001)
 )
+
+;; DSP              ;; 44.497
+;:DISPENSER
+;;STEP 01           ;;  3.458
+;;STEP 02           ;; 28.495
+;;STEP 03           ;; 11.568

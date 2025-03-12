@@ -2018,6 +2018,7 @@
     )
     (ref-TS01-C2::SWP|C_AddSleepingLiquidity patron patron pool s-vst 31)
     (ref-TS01-C2::SWP|C_AddFrozenLiquidity patron patron pool f-vst 1000000.0)
+    (ref-TS01-C2::SWP|C_ToggleFeeLock patron pool true)
     ;(ref-DPMF::UR_AccountNonceMetaData s-vst 31 patron)
     [
         (format "AH has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst patron) s-vst (ref-DPMF::UR_AccountNonces s-vst patron)])
@@ -2422,6 +2423,7 @@
         (emma:string KST.EMMA)
         (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
         (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-SWPU:module{SwapperUsage} SWPU)
         (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
         (ouro:string (ref-DALOS::UR_OuroborosID))
 
@@ -2455,6 +2457,7 @@
         (format "Emma OURO Supply is {}" [(ref-DPTF::UR_AccountSupply ouro emma)])
         (format "Ouro Supply is {}" [(ref-DPTF::UR_Supply ouro)])
         (format "Minimum Treasury Dispo is {}" [(ref-DPTF::URC_TreasuryLowestDispo)])
+        (format "Ouro is worth DWK {}" [(ref-SWPU::URC_WorthDWK ouro 1.0)])
     ]
 )
 

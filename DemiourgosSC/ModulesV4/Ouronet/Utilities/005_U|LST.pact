@@ -22,6 +22,10 @@
 (module U|LST GOV
     ;;
     (implements StringProcessor)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
+    ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|LST_ADMIN)))
     (defcap GOV|U|LST_ADMIN ()
@@ -33,8 +37,30 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
-    ;;{F-UC}
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_AppL:list (in:list item)
         @doc "Append an item at the end of the list"
         (+ in [item])
@@ -60,17 +86,17 @@
         @doc "Ensures List is composed of unique elements"
         (let
             (
-                (unique-set 
-                    (fold 
-                        (lambda 
+                (unique-set
+                    (fold
+                        (lambda
                             (acc:[string] item:string)
-                            (enforce 
-                                (not (contains item acc)) 
+                            (enforce
+                                (not (contains item acc))
                                 (format "Unique Items Required, duplicate item found: {}" [item])
                             )
                             (UC_AppL acc item)
                         )
-                        [] 
+                        []
                         lst
                     )
                 )
@@ -101,7 +127,7 @@
     (defun UC_ReplaceAt:list (in:list idx:integer item)
         @doc "Replace the item at position idx"
         (enforce (and? (<= 0) (> (length in)) idx) "Index out of bounds")
-        (UC_Chain 
+        (UC_Chain
             [
                 (take idx in),
                 [item],
@@ -116,7 +142,7 @@
     (defun UC_Search:[integer] (searchee:list item)
         @doc "Search an item into the list and returns a list of index"
         (if (contains item searchee)
-            (let 
+            (let
                 (
                     (indexes (enumerate 0 (length searchee)))
                     (match (lambda (v i) (if (= item v) i -1)))
@@ -135,7 +161,7 @@
         @doc "Splits a string using a single string as splitter"
         (if (= 0 (length splitee))
             [] ;If the string is empty return a zero length list
-            (let* 
+            (let*
                 (
                     (sep-pos (UC_Search (str-to-list splitee) splitter))
                     (substart (map (+ 1) (UC_InsertFirst sep-pos -1)))
@@ -146,7 +172,9 @@
             )
         )
     )
-    ;;{F-UEV}
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_NotEmpty:bool (x:list)
         @doc "Verify and Enforces that a list is not empty"
         (enforce (UC_IsNotEmpty x) "List cannot be empty")
@@ -162,4 +190,11 @@
             (enforce iz-present (format "String {} is not present in list {}." [item item-lst]))
         )
     )
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

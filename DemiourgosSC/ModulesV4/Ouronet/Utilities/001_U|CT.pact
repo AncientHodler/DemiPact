@@ -94,6 +94,9 @@
 (module U|CT GOV
     ;;
     (implements OuronetConstants)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     (defun NS_MAIN ()               (at 0 [""]))
     (defun NS_TEST ()               (at 0 ["n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea"]))
@@ -106,10 +109,21 @@
     ;;{G3}
     (defun CT_GOV|UTILS ()          (keyset-ref-guard GOV|DEMIURGOI))
     ;;
-    ;{3}
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
     (defun CT_DPTF-FeeLock ()
-        (if 
-            (or 
+        (if
+            (or
                 (= (CT_NS_USE) (NS_TEST))
                 (= (CT_NS_USE) "free")
             )
@@ -125,7 +139,7 @@
     (defun CT_MAX_PRECISION () 24)
     (defun CT_FEE_PRECISION () 4)
     (defun CT_MIN_DESIGNATION_LENGTH () 2)
-    (defun CT_MAX_TOKEN_NAME_LENGTH () 50) 
+    (defun CT_MAX_TOKEN_NAME_LENGTH () 50)
     (defun CT_MAX_TOKEN_TICKER_LENGTH () 30)
 
     (defun CT_ACCOUNT_ID_PROH-CHAR () ["$" "¢" "£"])
@@ -144,7 +158,7 @@
 
     (defun CT_ET ()
         @doc "Represents the Total-Elite-Auryn (vested and non-vested) to increase in Elite-Account Rank"
-        [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0 
+        [0.0 1.0 2.0 5.0 10.0 20.0 50.0 100.0
         105.0 110.0 125.0 150.0 200.0 350.0 600.0
         610.0 620.0 650.0 700.0 800.0 1100.0 1600.0
         1650.0 1700.0 1850.0 2100.0 2600.0 4100.0 6600.0
@@ -162,8 +176,6 @@
         2.46 2.59 2.72 2.85 2.98 3.11 3.24
         3.45 3.66 3.87 4.08 4.29 4.50 4.71]
     )
-    ;(defun CT_AURYN_FEE () 50.0)
-    ;(defun CT_ELITE-AURYN_FEE () 100.0)
     ;;
     (defun CT_C1 () (at 0 ["NOVICE"]))
     (defun CT_C2 () (at 0 ["INVESTOR"]))
@@ -230,5 +242,24 @@
     (defun CT_N75 () (at 0 ["Elite Demiurg"]))
     (defun CT_N76 () (at 0 ["Master Demiurg"]))
     (defun CT_N77 () (at 0 ["Grand-Master Demiurg"]))
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
     ;;
 )

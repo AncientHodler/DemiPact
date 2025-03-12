@@ -1,0 +1,72 @@
+(print "")
+(print "===================Last Vesting Tests============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Manual Ouro Price Update")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_DHV", "caps": [] }
+        ;{ "key": "PK_CST", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ouro:string (ref-DALOS::UR_OuroborosID))
+        (os:decimal (ref-DPTF::UR_Supply ouro))
+
+        (treasury:string (ref-DALOS::GOV|DHV1|SC_NAME))
+        (validators:string (ref-DPL|DSP::GOV|CST1|SC_NAME))
+        (dispenser:string (ref-DPL|DSP::GOV|DSP1|SC_NAME))
+
+        (auryn:string (ref-DALOS::UR_AurynID))
+        (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
+        (auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken auryn)))
+        (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken elite-auryn)))
+    )
+    (ref-DPL|DSP::A_ManualOuroPriceUpdate)
+    ;(ref-DPL|DSP::A_OuroMinterStageOne)
+    [
+        (format "Minting Ouro Daily is {}" [(ref-DPL|DSP::A_OuroMinterStageOne)])
+        (format "Ouro Price is {}" [(ref-DALOS::UR_OuroborosPrice)])
+        (format "Ouro Supply is {}" [os])
+        (format "OURO on Treasury is {}" [(ref-DPTF::UR_AccountSupply ouro treasury)])
+        (format "OURO on Validators is {}" [(ref-DPTF::UR_AccountSupply ouro validators)])
+        (format "OURO on Dispenser is {}" [(ref-DPTF::UR_AccountSupply ouro dispenser)])
+
+        (format "Auryndex is {}" [(ref-ATS::URC_Index auryndex)])
+        (format "Elite-Auryndex is {}" [(ref-ATS::URC_Index elite-auryndex)])
+
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Manual Ouro Price Update Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)

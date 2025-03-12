@@ -1,10 +1,18 @@
 ;MODULE LOADINGS
 ;;==============================================================================
 ;; PART 01 - Load all Mockup Enviroment Modules
+
+;;Primary Modules - Ecosystem initialisation
 (print "")
 (load "Test_000_Barebone.repl")
 (print "************************Demiourgos Ecosystem LOADED**********************************************")
 
+;;Secondary Modules - After Ecosystem Initialisation
+(print "")
+(load "../Dispenser/Dispenser.repl")
+(print "************************Demiourgos Ecosystem LOADED**********************************************")
+
+;;Tests after Primary and Secondary Modules
 (print "")
 (load "Test_001_DPTF.repl")
 (print "************************DPTF Tests LOADED**********************************************")
@@ -13,18 +21,22 @@
 (load "Test_002_SWP.repl")
 (print "************************SWP Tests LOADED***********************************************")
 
-;(print "")
-;(load "Test_003_Admin.repl")
-;(print "************************ADMIN Tests LOADED*********************************************")
+(print "")
+(load "Test_003_Admin.repl")
+(print "************************ADMIN Tests LOADED*********************************************")
 
-;(print "")
-;(load "Test_004_DPMF.repl")
-;(print "************************DPMF Tests LOADED**********************************************")
+(print "")
+(load "Test_004_DPMF.repl")
+(print "************************DPMF Tests LOADED**********************************************")
 
-;(print "")
-;(load "Test_005_ATS.repl")
-;(print "************************ATS Tests LOADED***********************************************")
+(print "")
+(load "Test_005_ATS.repl")
+(print "************************ATS Tests LOADED***********************************************")
 
-;(print "")
-;(load "Test_006_VST.repl")
-;(print "************************VST Tests LOADED***********************************************")
+(print "")
+(load "Test_006_VST.repl")
+(print "************************VST Tests LOADED***********************************************")
+
+(print "")
+(load "Test_007_DSP.repl")
+(print "************************DSP Tests LOADED***********************************************")

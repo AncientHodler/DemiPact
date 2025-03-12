@@ -13,6 +13,10 @@
 (module U|DEC GOV
     ;;
     (implements OuronetDecimals)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
+    ;;{G1}
     ;;{G2}
     (defcap GOV ()
         (compose-capability (GOV|U|DEC_ADMIN))
@@ -26,7 +30,30 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_AddArray:[decimal] (array:[[decimal]])
         @doc "Adds all column elements in an array of decimal elements, while ensuring all rows are of equal length"
         (UEV_DecimalArray array)
@@ -41,12 +68,12 @@
     )
     (defun UC_AddHybridArray (lists)
         @doc "Adds all column elements in an array of numbers, even if the inner lists are of unequal lengths"
-        (let 
+        (let
             (
-                (maxl 
-                    (fold 
-                        (lambda 
-                            (acc lst) 
+                (maxl
+                    (fold
+                        (lambda
+                            (acc lst)
                             (UC_Max acc (length lst))
                         )
                         0
@@ -54,14 +81,14 @@
                     )
                 )
             )
-            (map 
-                (lambda 
+            (map
+                (lambda
                     (i)
-                    (fold 
-                        (+) 
+                    (fold
+                        (+)
                         0.0
-                        (map 
-                            (lambda 
+                        (map
+                            (lambda
                                 (inner-lst)
                                 (if (< i (length inner-lst))
                                     (at i inner-lst)
@@ -104,7 +131,9 @@
             [gas-cost gaz-cost]
         )
     )
-    ;;{F-UEV}
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_DecimalArray (array:[[decimal]])
         @doc "Enforces all inner list inside an array of decimal elements are of equal size"
         (enforce
@@ -115,8 +144,8 @@
                         (acc:bool inner-lst:[decimal])
                         (and
                             acc
-                            (if (= 
-                                    (length inner-lst) 
+                            (if (=
+                                    (length inner-lst)
                                     (length (at 0 array))
                                 )
                                 true
@@ -131,4 +160,11 @@
             "All Fee-Array Lists must be of equal length !"
         )
     )
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

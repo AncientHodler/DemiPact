@@ -1,5 +1,6 @@
 (interface UtilityAts
     @doc "Exported Utility Functions for the ATS and ATSU Modules"
+    ;;
     (defschema Awo
         reward-tokens:[decimal]
         cull-time:time
@@ -28,6 +29,10 @@
 (module U|ATS GOV
     ;;
     (implements UtilityAts)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
+    ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|ATS_ADMIN)))
     (defcap GOV|U|ATS_ADMIN ()
@@ -39,8 +44,30 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
-    ;;{F-UC}
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_IzCullable:bool (input:object{UtilityAts.Awo})
         (let*
             (
@@ -72,13 +99,13 @@
         (let*
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (chain:[integer] 
-                    (fold 
-                        (lambda 
-                            (acc:[integer] item:integer) 
+                (chain:[integer]
+                    (fold
+                        (lambda
+                            (acc:[integer] item:integer)
                             (ref-U|LST::UC_AppL acc (+ (ref-U|LST::UC_LE acc) item))
-                        ) 
-                        [start] 
+                        )
+                        [start]
                         (make-list 48 growth)
                     )
                 )
@@ -122,8 +149,8 @@
             (fold
                 (lambda
                     (acc:[object{UtilityAts.Awo}] item:object{UtilityAts.Awo})
-                    (ref-U|LST::UC_AppL 
-                        acc 
+                    (ref-U|LST::UC_AppL
+                        acc
                         (UC_ReshapeUnstakeObject item remove-position)
                     )
                 )
@@ -224,10 +251,10 @@
     (defun UC_SplitByIndexedRBT:[decimal]
         (
             rbt-amount:decimal
-            pair-rbt-supply:decimal 
+            pair-rbt-supply:decimal
             index:decimal
             resident-amounts:[decimal]
-            rt-precisions:[integer] 
+            rt-precisions:[integer]
         )
         @doc "Called from ATS.ATS|UC_RTSplitAmounts: Splits a RBT value, the <rbt-amount>, using following inputs: \
             \ Reward-Bearing-Token supply <rbt-supply> of an <atspair> (read below) \
@@ -247,7 +274,7 @@
                     (max-pp:integer (at 0 (ref-U|LST::UC_Search rt-precisions max-precision)))
                     (indexed-rbt:decimal (floor (* rbt-amount index) max-precision))
                     (resident-sum:decimal (fold (+) 0.0 resident-amounts))
-                    (preliminary-output:[decimal] 
+                    (preliminary-output:[decimal]
                         (fold
                             (lambda
                                 (acc:[decimal] index:integer)
@@ -280,7 +307,7 @@
         )
     )
     (defun UC_ZeroColdFeeExceptionBoolean:bool (fee-thresholds:[decimal] fee-array:[[decimal]])
-        (not 
+        (not
             (UC_TripleAnd
                 (= (length fee-thresholds) 1)
                 (= (at 0 fee-thresholds) 0.0)
@@ -292,8 +319,9 @@
             )
         )
     )
-
-    ;;{F-UEV}
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_AutostakeIndex (ats:string)
         @doc "Enforces that ATS Index Name <account> ID meets charset and length requirements"
         (let
@@ -331,7 +359,7 @@
         \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
         (UEV_AutostakeIndex (take (- (length ats) 13) ats))
     )
-    ;;{F-UDC}
+    ;;{F3}  [UDC]
     (defun UDC_Elite (x:decimal)
         @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (let
@@ -469,4 +497,10 @@
             )
         )
     )
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

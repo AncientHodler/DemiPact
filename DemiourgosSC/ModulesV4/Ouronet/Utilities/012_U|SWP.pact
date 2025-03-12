@@ -23,10 +23,14 @@
     (defun UC_SpecialFeeOutputs:[decimal] (sftp:[decimal] input-amount:decimal output-precision:integer))
     (defun UC_TokensFromSwpairString:[string] (swpair:string))
     (defun UC_UniqueTokens:[string] (swpairs:[string]))
+    (defun UC_MakeLiquidityList (swpair:string ptp:integer amount:decimal))
 )
 (module U|SWP GOV
     ;;
     (implements UtilitySwp)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|SWP_ADMIN)))
@@ -39,11 +43,32 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
-    ;;{F-UC}
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_BalancedLiquidity:[decimal] (ia:decimal ip:integer i-prec X:[decimal] Xp:[integer])
         @doc "Computes Balanced Liquidity Amounts from input sources"
         (let
@@ -54,8 +79,8 @@
                     (fold
                         (lambda
                             (acc:[decimal] idx:integer)
-                            (ref-U|LST::UC_AppL 
-                                acc 
+                            (ref-U|LST::UC_AppL
+                                acc
                                 (if (= idx ip)
                                     ia
                                     (floor (* ratio (at idx X)) (at idx Xp))
@@ -246,9 +271,9 @@
             (fold
                 (lambda
                     (acc:[decimal] idx:integer)
-                    (ref-U|LST::UC_AppL 
-                        acc 
-                        (+ 
+                    (ref-U|LST::UC_AppL
+                        acc
+                        (+
                             (if (contains idx ip)
                                 (at (at 0 (ref-U|LST::UC_Search ip idx)) input-amounts)
                                 0.0
@@ -489,5 +514,14 @@
             (ref-U|LST::UC_ReplaceAt zeroes ptp amount)
         )
     )
-    
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

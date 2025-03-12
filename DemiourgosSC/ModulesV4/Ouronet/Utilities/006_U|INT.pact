@@ -10,6 +10,9 @@
 (module U|INT GOV
     ;;
     (implements OuronetIntegers)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|U|INT_ADMIN)))
@@ -22,8 +25,30 @@
             (enforce-guard g)
         )
     )
+    ;;{G3}
     ;;
-    ;;{F-UC}
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_MaxInteger:integer (lst:[integer])
         (fold
             (lambda
@@ -34,7 +59,9 @@
             (drop 1 lst)
         )
     )
-    ;;{F-UEV}
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
     (defun UEV_ContainsAll (l1:[integer] l2:[integer])
         (let*
             (
@@ -64,12 +91,12 @@
     )
     (defun UEV_UniformList (input:[integer])
         @doc "Enforces that all elements in the integer list are the same."
-        (let 
+        (let
             (
                 (fe:integer (at 0 input))
             )  ;; Get the first element in the list
             (map
-                (lambda 
+                (lambda
                     (index:integer)
                     (enforce (= fe (at index input)) "List elements are not the same")
                     true
@@ -77,5 +104,12 @@
                 (enumerate 0 (- (length input) 1))
             )
         )
-    )  
+    )
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    ;;
 )

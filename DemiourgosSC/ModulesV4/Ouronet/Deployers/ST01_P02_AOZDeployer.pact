@@ -1,5 +1,8 @@
 (interface DeployerAoz
+    @doc "Exposes AOZ Deployer Functions"
+    ;;
     (defun UR_Assets:string (ar:integer p:integer))
+
     (defun A_AddPrimalTrueFungible (tf:string))
     (defun A_AddPrimalMetaFungible (mf:string))
     (defun A_AddATSPair (atspair:string))
@@ -33,14 +36,12 @@
 (module DPL-AOZ GOV
     ;;
     (implements DeployerAoz)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
     ;;{G1}
     (defconst GOV|MD_DPL-AOZ                (keyset-ref-guard (GOV|Demiurgoi)))
     (defconst GOV|SC_DPL-AOZ                (keyset-ref-guard AOZ|SC_KEY))
-    ;;
-    (defconst DEMIURGOI|AH_KEY              (+ (GOV|NS_Use) ".dh_ah-keyset"))
-    (defconst DEMIURGOI|AH_NAME             "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
-    (defconst DEMIURGOI|AH_KDA-NAME         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")   ;;change to what is needed.
-    (defconst DEMIURGOI|AH_PBL              "9G.CgcAjiI89ICnk45mxx63hwkBe5G71sIqfEta0ugkzF7EB6cy55BtzlFa27jDGE7Kn7ChljCmkcIsrDw9JwzJECieGLB5Jlkz9Blo6iJct6uxIA1u64Hr7HKa93EAiCwJJBBKAojJtwupEsvspH1jjGxKyFsb8fbfnJm1rAKxcIzcFILmmdHFaICfFpnbJG6tJu0HM9JCJ7MBCE7C2LiqvE6Fc1hqCeAdGHxDp7sGquI0wl2l08aa6wlKvwu44jgqF8mqDnCyjpxHuttEqjs4h9IJ28kmB53ppwoznt16rjzeMl21n3rwfI2es56rp5xavCabDacyCuonniz72L5d7dq3ptIEiuggEyLIIGe9sadH6eaMyitcmKaH7orgFz6d9kL9FKorBr06owFg328wFhCIlCFpwIzokmo47xKKt5kBzhyodBAjhCqayuHBue4oDhoA21A2H9ut9gApMuxokcmsi7Bd1kitrfJAy1GkrGiBK5dvlhgshcnGaG3vhkCm6dI5idCGjDEodivvDbgyI6zaajHvIMdBtrGvuKnxvsBulkbaDbk2wIdKwrK")
     ;;
     (defconst AOZ|SC_KEY                    (+ (GOV|NS_Use) ".us-0000_aozt-keyset"))
     (defconst AOZ|SC_NAME                   "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
@@ -61,6 +62,15 @@
     (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
     ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    ;;{P3}
+    ;;{P4}
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
     (defschema AOZ|PropertiesSchema
         primal-tf-ids:[string]
@@ -76,17 +86,22 @@
     ;;{3}
     (defconst AOZ|INFO "AOZ-Table-Key")
     ;;
+    ;;<==========>
+    ;;CAPABILITIES
     ;;{C1}
     (defcap SECURE ()
         true
     )
-    ;;{F0}
-    (defun UEV_AssetPossition (a-row:integer a-pos:integer how-many-assets:integer)
-        (enforce (= (contains a-pos (enumerate 0 (- how-many-assets 1))) true) (UC_Fm a-pos a-row))
-    )
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
     (defun UC_Fm (p:integer ar:integer)
         (format "Position {} out of bounds for Asset-Row {}" [p ar])
     )
+    ;;{F0}  [UR]
     (defun UR_Assets:string (ar:integer p:integer)
         (let
             (
@@ -94,7 +109,7 @@
             )
             (ref-U|INT::UEV_PositionalVariable ar 7 "Asset-Row Input out of Bounds")
             (with-read AOZ|Assets AOZ|INFO
-                { "primal-tf-ids"       := pti 
+                { "primal-tf-ids"       := pti
                 , "primal-mf-ids"       := pmi
                 , "atspair-ids"         := ats
                 ,"tf-game-assets"       := tf
@@ -125,12 +140,15 @@
             )
         )
     )
-    ;;{F1}
-    ;;{F2}
-    ;;{F3}
-    ;;{F4}
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
+    (defun UEV_AssetPossition (a-row:integer a-pos:integer how-many-assets:integer)
+        (enforce (= (contains a-pos (enumerate 0 (- how-many-assets 1))) true) (UC_Fm a-pos a-row))
+    )
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
     ;;
-    ;;{F5}
+    ;;{F5}  [A]
     (defun A_AddPrimalTrueFungible (tf:string)
         (require-capability (SECURE))
         (let
@@ -142,7 +160,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "primal-tf-ids" := pti }
                 (update AOZ|Assets AOZ|INFO
-                    { "primal-tf-ids" : 
+                    { "primal-tf-ids" :
                         (if (= pti [""])
                             [tf]
                             (ref-U|LST::UC_AppL pti tf)
@@ -163,7 +181,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "primal-mf-ids" := pmi }
                 (update AOZ|Assets AOZ|INFO
-                    { "primal-mf-ids" : 
+                    { "primal-mf-ids" :
                         (if (= pmi [""])
                             [mf]
                             (ref-U|LST::UC_AppL pmi mf)
@@ -184,7 +202,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "atspair-ids" := ats }
                 (update AOZ|Assets AOZ|INFO
-                    { "atspair-ids" : 
+                    { "atspair-ids" :
                         (if (= ats [""])
                             [atspair]
                             (ref-U|LST::UC_AppL ats atspair)
@@ -205,7 +223,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "tf-game-assets" := tga }
                 (update AOZ|Assets AOZ|INFO
-                    { "tf-game-assets" : 
+                    { "tf-game-assets" :
                         (if (= tga [""])
                             [tf]
                             (ref-U|LST::UC_AppL tga tf)
@@ -226,7 +244,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "mf-game-assets" := mga }
                 (update AOZ|Assets AOZ|INFO
-                    { "mf-game-assets" : 
+                    { "mf-game-assets" :
                         (if (= mga [""])
                             [mf]
                             (ref-U|LST::UC_AppL mga mf)
@@ -245,7 +263,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "sf-game-assets" := sga }
                 (update AOZ|Assets AOZ|INFO
-                    { "sf-game-assets" : 
+                    { "sf-game-assets" :
                         (if (= sga [""])
                             [sf]
                             (ref-U|LST::UC_AppL sga sf)
@@ -264,7 +282,7 @@
             (with-read AOZ|Assets AOZ|INFO
                 { "nf-game-assets" := nga }
                 (update AOZ|Assets AOZ|INFO
-                    { "nf-game-assets" : 
+                    { "nf-game-assets" :
                         (if (= nga [""])
                             [nf]
                             (ref-U|LST::UC_AppL nga nf)
@@ -274,7 +292,7 @@
             )
         )
     )
-    ;;Deploy
+    ;;  [DEPLOY]
     (defun A_Step001 ()
         (insert AOZ|Assets AOZ|INFO
             {"primal-tf-ids"            : [""]
@@ -416,7 +434,7 @@
                         [false false]
                         [PlebiumDenariusID ComatusAureusID]
                         [true true]
-                    )    
+                    )
                 )
             )
             (with-capability (SECURE)
@@ -442,11 +460,11 @@
 
                 (PileatusSolidusID:string (UR_Assets 1 5))
                 (TarabostesStaterID:string (UR_Assets 1 6))
-                
+
 
                 (SolidusFractusID:string (UR_Assets 2 2))
                 (StaterTenuulusID:string (UR_Assets 2 3))
-                
+
 
                 (ats-ids:[string]
                     (ref-TS01-C2::ATS|C_Issue
@@ -458,7 +476,7 @@
                         [false false]
                         [PileatusSolidusID TarabostesStaterID]
                         [true true]
-                    )    
+                    )
                 )
             )
             (with-capability (SECURE)
@@ -498,7 +516,7 @@
                         [false false]
                         [StrategonDrachmaID BasileonAsID]
                         [true true]
-                    )    
+                    )
                 )
             )
             (with-capability (SECURE)
@@ -514,65 +532,77 @@
         )
     )
     (defun A_Step008 ()
-        (let
-            (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-                (PlebeicStrengthID:string (UR_Assets 3 0))
-                (DenariusDebilisID:string (UR_Assets 2 0))
-                (decay:integer 0)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    (PlebeicStrengthID:string (UR_Assets 3 0))
+                    (DenariusDebilisID:string (UR_Assets 2 0))
+                    (decay:integer 0)
+                )
+                (XI_SetupKosonicATS PlebeicStrengthID DenariusDebilisID decay)
+                (ref-TS01-C2::ATS|C_TurnRecoveryOn AOZ|SC_NAME PlebeicStrengthID true) ;;When deploying on mainnet must be removed
             )
-            (Setup_KosonicATS PlebeicStrengthID DenariusDebilisID decay)
-            (ref-TS01-C2::ATS|C_TurnRecoveryOn AOZ|SC_NAME PlebeicStrengthID true) ;;When deploying on mainnet must be removed
         )
     )
     (defun A_Step009 ()
-        (let
-            (
-                (AureusFragilisID:string (UR_Assets 2 1))
-                (ComatiCommandID:string (UR_Assets 3 1))
-                (decay:integer 90)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (AureusFragilisID:string (UR_Assets 2 1))
+                    (ComatiCommandID:string (UR_Assets 3 1))
+                    (decay:integer 90)
+                )
+                (XI_SetupKosonicATS ComatiCommandID AureusFragilisID decay)
             )
-            (Setup_KosonicATS ComatiCommandID AureusFragilisID decay)
         )
     )
     (defun A_Step010 ()
-        (let
-            (
-                (SolidusFractusID:string (UR_Assets 2 2))
-                (PileatiPowerID:string (UR_Assets 3 2))
-                (decay:integer 180)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (SolidusFractusID:string (UR_Assets 2 2))
+                    (PileatiPowerID:string (UR_Assets 3 2))
+                    (decay:integer 180)
+                )
+                (XI_SetupKosonicATS PileatiPowerID SolidusFractusID decay)
             )
-            (Setup_KosonicATS PileatiPowerID SolidusFractusID decay)
         )
     )
     (defun A_Step011 ()
-        (let
-            (
-                (StaterTenuulusID:string (UR_Assets 2 3))
-                (TarabostesTenacityID:string (UR_Assets 3 3))
-                (decay:integer 360)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (StaterTenuulusID:string (UR_Assets 2 3))
+                    (TarabostesTenacityID:string (UR_Assets 3 3))
+                    (decay:integer 360)
+                )
+                (XI_SetupKosonicATS TarabostesTenacityID StaterTenuulusID decay)
             )
-            (Setup_KosonicATS TarabostesTenacityID StaterTenuulusID decay)
         )
     )
     (defun A_Step012 ()
-        (let
-            (
-                (DrachmaMinimaID:string (UR_Assets 2 4))
-                (StrategonVigorID:string (UR_Assets 3 4))
-                (decay:integer 720)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (DrachmaMinimaID:string (UR_Assets 2 4))
+                    (StrategonVigorID:string (UR_Assets 3 4))
+                    (decay:integer 720)
+                )
+                (XI_SetupKosonicATS StrategonVigorID DrachmaMinimaID decay)
             )
-            (Setup_KosonicATS StrategonVigorID DrachmaMinimaID decay)
         )
     )
     (defun A_Step013 ()
-        (let
-            (
-                (AsInfinimusID:string (UR_Assets 2 5))
-                (AsAuthorityID:string (UR_Assets 3 5))
-                (decay:integer 1440)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (let
+                (
+                    (AsInfinimusID:string (UR_Assets 2 5))
+                    (AsAuthorityID:string (UR_Assets 3 5))
+                    (decay:integer 1440)
+                )
+                (XI_SetupKosonicATS AsAuthorityID AsInfinimusID decay)
             )
-            (Setup_KosonicATS AsAuthorityID AsInfinimusID decay)
         )
     )
     (defun A_Step014 ()
@@ -611,25 +641,39 @@
         )
     )
     (defun A_Step015 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 0) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 0) amount)
+        )
     )
     (defun A_Step016 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 1) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 1) amount)
+        )
     )
     (defun A_Step017 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 2) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 2) amount)
+        )
     )
     (defun A_Step018 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 3) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 3) amount)
+        )
     )
     (defun A_Step019 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 4) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 4) amount)
+        )
     )
     (defun A_Step020 (amount:decimal)
-        (Setup_CoilPairs (UR_Assets 3 5) amount)
+        (with-capability (GOV|DPL_AOZ_ADMIN)
+            (XI_SetupCoilPairs (UR_Assets 3 5) amount)
+        )
     )
-    ;;{F6}
-    (defun Setup_KosonicATS (index-name:string hot-rbt:string decay:integer)
+    ;;{F6}  [C]
+    ;;{F7}  [X]
+    (defun XI_SetupKosonicATS (index-name:string hot-rbt:string decay:integer)
+        (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -647,7 +691,8 @@
             (ref-TS01-C2::ATS|C_TurnRecoveryOn patron index-name false)
         )
     )
-    (defun Setup_CoilPairs (index-name:string amount:decimal)
+    (defun XI_SetupCoilPairs (index-name:string amount:decimal)
+        (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
@@ -662,6 +707,7 @@
         )
     )
     ;;{F7}
+    ;;
 )
 
 (create-table AOZ|Assets)
