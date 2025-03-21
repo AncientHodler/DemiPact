@@ -65,7 +65,7 @@
     ;;  [VESTING]
     (defconst VST|SC_KEY                    (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|VestingKey)))
     (defconst VST|SC_NAME                   (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
-    (defconst VST|PBL                       (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|VST|PBL)))
+    (defconst VST|PBL                       (let ((ref-DALOS:moduleg{OuronetDalos} DALOS)) (ref-DALOS::GOV|VST|PBL)))
     ;;  LIQUID-STAKING
     (defconst LQD|SC_KEY                    (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|LiquidKey)))
     (defconst LQD|SC_NAME                   (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))

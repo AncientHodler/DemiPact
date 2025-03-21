@@ -535,13 +535,13 @@
     )
     (defcap ATS|S>RECOVERY-ON (atspair:string cold-or-hot:bool)
         @event
-        (UEV_ParameterLockState atspair false)
+        ;(UEV_ParameterLockState atspair false)
         (UEV_RecoveryState atspair false cold-or-hot)
         (CAP_Owner atspair)
     )
     (defcap ATS|S>RECOVERY-OFF (atspair:string cold-or-hot:bool)
         @event
-        (UEV_ParameterLockState atspair false)
+        ;(UEV_ParameterLockState atspair false)
         (UEV_RecoveryState atspair true cold-or-hot)
         (CAP_Owner atspair)
     )

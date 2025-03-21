@@ -214,6 +214,30 @@
 )
 (module DALOS GOV
     ;;
+    ;;Ouronet DALOS Gas-Station
+    (defcap GAS_PAYER:bool (user:string limit:integer price:decimal)
+        (let
+            (
+                (ref-U|ST:module{OuronetGasStation} U|ST)
+                (gas-price (ref-U|ST::UR_chain-gas-price))
+            )
+            (compose-capability (DALOS|NATIVE-AUTOMATIC))
+            (enforce-one
+                "Add multiple conditions needed to use Ouronet DALOS Gas-Station"
+                [
+                    (enforce-guard GOV|MD_DALOS)
+                    (enforce-guard (ref-U|ST::UEV_max-gas-notional 0.02))
+                ]
+            )
+            (enforce (= 1 (length (at "exec-code" (read-msg)))) "Tx of only one Pact Function")
+            (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS Modules allowed")
+        )
+    )
+    (defun create-gas-payer-guard:guard ()
+        GOV|DALOS|GUARD
+    )
+    ;;
+    (implements gas-payer-v1)
     (implements OuronetPolicy)
     (implements OuronetDalos)
     ;;
@@ -891,7 +915,7 @@
     )
     (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal)
         @doc "Computes the KDA Split required for Native Gas Collection \
-        \ This is 5% 5% 15% and 75% split, outputed as 5% 15% 75% in a list \
+        \ This is 10% 20% 30% and 40% split, outputed as 4 element list \
         \ Takes in consideration the Discounted KDA for <account>"
         (let
             (
@@ -900,11 +924,12 @@
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-discount:decimal (URC_KadenaGasDiscount account))
                 (discounted-kda:decimal (floor (* kda-discount kda-price) kda-prec))
-                (v1:decimal (* 0.05 discounted-kda))
-                (v2:decimal (* 0.15 discounted-kda))
-                (v3:decimal (- discounted-kda (fold (+) 0.0 [v1 v1 v2])))
+                (v1:decimal (* 0.1 discounted-kda))
+                (v2:decimal (* 0.2 discounted-kda))
+                (v3:decimal (* 0.3 discounted-kda))
+                (v4:decimal (- discounted-kda (fold (+) 0.0 [v1 v2 v3])))
             )
-            [v1 v2 v3]
+            [v1 v2 v3 v4]
         )
     )
     (defun URC_Transferability:bool (sender:string receiver:string method:bool)
@@ -1420,6 +1445,7 @@
                 (am0:decimal (at 0 split-discounted-kda))
                 (am1:decimal (at 1 split-discounted-kda))
                 (am2:decimal (at 2 split-discounted-kda))
+                (am3:decimal (at 3 split-discounted-kda))
                 (kda-sender:string (UR_AccountKadena sender))
                 (demiurgoi:[string] (UR_DemiurgoiID))
                 (kda-cto:string (UR_AccountKadena (at 1 demiurgoi)))
@@ -1429,10 +1455,10 @@
             )
             (if (not trigger)
                 (do
-                    (C_TransferDalosFuel kda-sender kda-cto am0)          ;; 5% to KDA-CTO
-                    (C_TransferDalosFuel kda-sender kda-hov am0)          ;; 5% to KDA-HOV
-                    (C_TransferDalosFuel kda-sender kda-ouroboros am1)    ;;15% to KDA-Ouroboros (to be used for Liquid Kadena Protocol Fueling)
-                    (C_TransferDalosFuel kda-sender kda-dalos am2)        ;;75% to KDA-Dalos (to be used for DALOS Gas Station)
+                    (C_TransferDalosFuel kda-sender kda-hov am0)          ;;10% to KDA-HOV
+                    (C_TransferDalosFuel kda-sender kda-cto am1)          ;;20% to KDA-CTO
+                    (C_TransferDalosFuel kda-sender kda-ouroboros am2)    ;;30% to KDA-Ouroboros (to be used for Liquid Kadena Protocol Fueling)
+                    (C_TransferDalosFuel kda-sender kda-dalos am3)        ;;40% to KDA-Dalos (to be used for DALOS Gas Station)
                 )
                 (format "While Kadena Collection is {}, the {} KDA could not be collected" [trigger amount])
             )

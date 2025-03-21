@@ -1153,7 +1153,7 @@
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 0 split-kda)
+                        (at 1 split-kda)
                     )
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
@@ -1163,12 +1163,12 @@
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
 
                     )
                 ]

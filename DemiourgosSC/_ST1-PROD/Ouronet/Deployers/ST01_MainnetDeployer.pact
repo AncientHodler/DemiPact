@@ -187,6 +187,8 @@
 
 ;;Put GAP on, after Deploy, set to false to set to offline
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+n_7d40ccda457e374d8eb07b658fd38c282c545038
+1234567890123456789012345678901234567890
 (let
     (
         (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
@@ -202,6 +204,16 @@
         (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
     )
     (ref-DPL|DALOS::A_Step005)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (patron:string "PatronString")
+        (account:string "AccountString")
+    )
+    (ref-TS01-C1::DPTF|C_ClearDispo patron account)
 )
 
 ;; DPL-AOZ          ;; 61.841

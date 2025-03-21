@@ -122,9 +122,14 @@ https://kdaexplorer.com/tx-details/V3OwGHJahIp0YyE8-fKVf-IqBfHn8lRH4RHo73J9J5c
 TX 037 [645 gas] - Finish this Round of Deployment, by toggling the global Administrative Pause
 https://kdaexplorer.com/tx-details/r9C6xsYjGKWhMeSWeqf8u2JrOggeQyxVCgACI6KlHqU
 
+TX 038 [93.955 gas] - Added Gas Station to DALOS Modules
+https://kdaexplorer.com/tx-details/W-ljnVe-sxD9Z-r4zP1uvcNGjSMpNqo8N13ru46Hi5c
 
+TX 039 [6.956 gas] - Modified DPTF Fee Validation to maximum of 900.0
+https://kdaexplorer.com/tx-details/s-qR_EdI7dKEmphk_71_GiPkteEDWqufVkcbiW5HYVQ
 
-
+TX 040 [127.392 gas] - Modified Turning on and off ATS-Pair Recoveries to not depend on Parameter lock State to be false.
+https://kdaexplorer.com/tx-details/Y-GkUFw2gA7Xvof61lm8OBDsiTJDr2A69PKE0NV_8DI
 
 
 

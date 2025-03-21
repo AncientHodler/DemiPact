@@ -284,3 +284,62 @@
 (print "")
 (print "===^^^===")
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-ATS:module{Autostake} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (vst:string "VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (v-auryn:string "V|AURYN-98c486052a51")
+        (v-e-auryn:string "V|ELITEAURYN-98c486052a51")
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-10-19T00:00:00Z")}
+    )
+    ;(ref-TS01-C2::VST|C_Unsleep patron emma s-vst 36)
+    (ref-TS01-C1::DPTF|C_SetMinMove patron vst 500.0)
+    ;(ref-TS01-C1::DPTF|C_ToggleFee patron vst true)
+    (ref-TS01-C1::DPTF|C_Transfer patron vst emma lumy 400.0 false)
+
+    [
+        ;(format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])
+        ;(format "AH has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst patron)])
+        (format "VST Fee Lock State is {}" [(ref-DPTF::UR_FeeLock vst)])
+        (format "VST Fee Toggle is {}" [(ref-DPTF::UR_FeeToggle vst)])
+        (format "VST Min Move Value is {}" [(ref-DPTF::UR_MinMove vst)])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
+    ]
+    
+)

@@ -190,7 +190,7 @@
             (enforce
                 (or
                     (or (= fee -1.0) (= fee 0.0))
-                    (and (>= fee 1.0) (<= fee 999.0))
+                    (and (>= fee 1.0) (<= fee 900.0))
                 )
                 (format "The fee amount of {} is not a valid fee amount value wise" [fee])
             )
