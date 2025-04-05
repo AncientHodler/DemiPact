@@ -331,7 +331,7 @@
     ;(ref-TS01-C2::VST|C_Unsleep patron emma s-vst 36)
     (ref-TS01-C1::DPTF|C_SetMinMove patron vst 500.0)
     ;(ref-TS01-C1::DPTF|C_ToggleFee patron vst true)
-    (ref-TS01-C1::DPTF|C_Transfer patron vst emma lumy 400.0 false)
+    (ref-TS01-C1::DPTF|C_Transfer patron vst emma lumy 500.0 false)
 
     [
         ;(format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])

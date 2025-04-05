@@ -131,62 +131,186 @@ https://kdaexplorer.com/tx-details/s-qR_EdI7dKEmphk_71_GiPkteEDWqufVkcbiW5HYVQ
 TX 040 [127.392 gas] - Modified Turning on and off ATS-Pair Recoveries to not depend on Parameter lock State to be false.
 https://kdaexplorer.com/tx-details/Y-GkUFw2gA7Xvof61lm8OBDsiTJDr2A69PKE0NV_8DI
 
+TX 041 [600 gas] - Remove Administrative Pause
+https://kdaexplorer.com/tx-details/mHSqE6u-LqfJ_lUg-AhY2CXADaBtRO0Bp8_IKUhSZVw
+
+TX 042 [68.823 gas] - Updated Token and ATS-Pair Names to be issued
+https://kdaexplorer.com/tx-details/3UbZ9GHs4Nrst4t9-ZlyVDIMUYz_YqAUU_3k0x2eN_0
+
+Tx 043 [74.593 gas] - Initialisation Step 8, Issue 6 DPTFs
+https://kdaexplorer.com/tx-details/iTmuQdDGxlEKja07U53UD_lMRIBAYlzPJ4dDyebk5IM
+
+Tx 045 [66.777 gas] - Initialisation Step 9, Create Vesting links for Snake Tokens
+https://kdaexplorer.com/tx-details/--zMxxmmr9AvclpOmZuOjptzLrMzBwrZ1ottPJLHadI
+
+Tx 046 [125.203 gas] - Initi Step 10, Issue 3 Autostake Pools, Auryndex, EliteAuryndex, LiquidKadenaIndex
+https://kdaexplorer.com/tx-details/WkcoTkkd8he3fzdp4YuoyWi6C_jPF1t-zFVieyVbuTk
+
+Tx 047 [17.134 gas] - Init Step 11, Wrap 10 KDA by AH
+https://kdaexplorer.com/tx-details/UsP79lPzIX4XdbjbonG154ah3BSYoycUfqbrkklkNog
+
+Tx 048 [36.166 gas] - Init Step 12, Coil 10 WKDA to LKDA to properly initialise Kadena Liquid Staking
+https://kdaexplorer.com/tx-details/7RLDwktUlVDhVD_xmLQV1SAChlOEEHECdoCD6MnKsbw
+
+Tx 049 [4.750 gas] - Init Step 123, Mint Origin Ouro Amount 823.336,6297
+https://kdaexplorer.com/tx-details/4rZVVIsBsPZG5A69qqEGkLy3Z16MjM7aCTT6EGFXLdA
+
+Tx 050 [41.900 gas] - Init Step 14, Kickstart Auryndex at 2.667462418982333439118095 by injecting 562.061,6641 Ouro in Auryndex and requesting 210.710,2466 Auryn
+https://kdaexplorer.com/tx-details/lHeMn8KWvU0pmx7QiMvhcRwvr6k9ae0JvZpqz6sm-Y4
+
+Tx 051 [39.422 gas] - Init Step 15, Kickstart EliteAuryndex at 1.00 by injecting 162.508,9603 Auryn and requesting the same amount of EliteAuryn
+https://kdaexplorer.com/tx-details/hfVLSA0IfKLEpcwrdzwMLKu4dO1JLUZf2U6EtlavpMQ
+
+Tx 052 [136.206 gas] - Init Step 16, Generating some Ignis that is needed for upcoming steps, by executing 3 Sublimation Functions.
+https://kdaexplorer.com/tx-details/ZApIl69A3woNzFNfUp9piKysf3Vdz0DkRnzIZ_vY_VM
+
+Tx 053 [896 gas] - Init Step 17, Turn On KDA and IGNIS Collection
+https://kdaexplorer.com/tx-details/eK96-E57tjkzPN67dUTQJ7Ftn-7h0VLko3kzJZwY6AU
+
+Tx 054 [20.413 gas] - Init Step 18, Transmute 10.0 Ouroboros, for demonstration purposes.
+https://kdaexplorer.com/tx-details/rUf7nk18p1aT6VrQfXSHxf7nHWDfNxxI8qpKL8sWaFk
+
+Tx 055 [22.101 gas] - Init Step 19, Transfer 10.0 Ouroboros, for demonstration purposes.
+https://kdaexplorer.com/tx-details/Aau9vpUTeTUFBbvkpZIgId04_Gk_8WERjgRYkUpcmAM
+
+Tx 056 [337 gas] - Turn off native KDA Gas Collection, to run Step 20 without KDA Costs.
+https://kdaexplorer.com/tx-details/iAiI1_eZFEq7G_0TegG0gcG5zIi_xbL7j1aUlNYMXPU
+
+Tx 057 [88.031 gas] - Init Step 20, Issue Vesta Tokens and Reserved Ouro.
+https://kdaexplorer.com/tx-details/mpPuJq4NsCC9b0I-9UxXLkGCXLhV9qA_0uicpyfpONs
+
+Tx 058 [526 gas] - Init Step 21
+https://kdaexplorer.com/tx-details/hkSOX68nIDVJXzLTFjvdoKZZ2spJuL1gVqPkosJJzVE
+
+Tx 058 [35.865 gas] - Init Step 22
+https://kdaexplorer.com/tx-details/peUuGeLjHaeWdOZkxjQZy3Rnmfv_KuveqcltLlnzPdg
+
+Tx 058 [17.155 gas] - Wrap 1 kda in WKDA to test unwrap - Unwrap works
+https://kdaexplorer.com/tx-details/a9X7VONmyeMrZQGBHoASzuY402U_4q7bH-S1IL2AUqQ
+
+Tx 059 [2.183 gas] - Dispenser Init 01 Tx
+https://kdaexplorer.com/tx-details/9I5W8yC_Js0XcwZ4VwGJRRwsrM3-WMUVKC8a7T54i90
+
+Tx 060 [11.667 gas ] - Dispenser Init 02 Tx - Create the needed Ouronet Accounts
+https://kdaexplorer.com/tx-details/LcHt65P-EJRrgs1mA-dX4Xwyx0vVEfKUeFZbRno51eM
+
+Tx 061 [10.656 gas] - Dispenser Init 03 Tx - Give Mint Permission to dispenser
+https://kdaexplorer.com/tx-details/29rnA3VjH-SPekkjlRniWFdo16XOwe07Y8Jfs0H6IuU
+
+Tx 062 [135.701 gas] - Mint Daily OURO for the first Time on Kadena (n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP.A_OuroMinterStageOne)
+kdahttps://kdaexplorer.com/tx-details/M-V2EFf1DYzHrCgnvH5tP7HCXaRT84xHFPIBf5x6uXI
+
+Tx 063 [135.843 gas] - Mint Daily Ouro Day 2
+https://kdaexplorer.com/tx-details/Fm8CgtK2xhSSaDGUC0VqQ0NSqT0qfZvE5F44VdGXET8
+
+Tx 064 [135.843 gas] - Mint Daily Ouro Day 3
+https://kdaexplorer.com/tx-details/dbv789ktZKxcvJyDlYiqaMH5fRoMFHALB0GKnSLfWuo
+
+Tx 065 [135.843 gas] - Mint Daily Ouro Day 4
+https://kdaexplorer.com/tx-details/0ZTiwHfxlb1urLdd64nT1SxGE2t371HwNtX79odYKls
+
+TX 066 [2.880 gas] - Deploy AH-Pleb Account
+https://kdaexplorer.com/tx-details/PG30tgP6U4EpY35_ETc94vBe7xI-hPeZJsQMDkdjlNU
+
+TX 067 [23.176 gas] - Transfer all remaining minted OURO to Smart DH Vault (Dispo Treasury)
+https://kdaexplorer.com/tx-details/VC_OZvXIKKJwGSD53TeCqkczU0mqzSnG6kgDoEdmHJ0
+
+TX 068 [31.981 gas] - Vest 1 Auryn from AH to Treasury, to move it without fee.
+https://kdaexplorer.com/tx-details/GpSgEu1APYNZiaHhWa2goiQhHjGp2SuKGSz-f3rlbAk
+
+Tx 069 [27.096 gas] - Unvest the 1 Veste-Auryn immediatly back to 1 Auryn
+https://kdaexplorer.com/tx-details/2TmJD9ajOiNJdvNU5bLujT4VoMAhD8zcW1NfbOIx95c
+
+Tx 070 [39.514 gas] - Update Dispenser Module to Add AOZ Emission Stage 1
+https://kdaexplorer.com/tx-details/RrGZjZjh0Jy0pmAthS-WPIJ0t-kGDvS1iY3vuz7QQ1o
+
+
+AOZ Initialisation
+Tx 071 [152 gas] - AOZ Step 001
+https://kdaexplorer.com/tx-details/MERv9vL6pNY1fzr1JHP2twSW9oeDld5xwUkQExjvekA
+
+Tx 072 [22.809 gas] - AOZ Step 002 - Emit 9 DPTF Kosons
+https://kdaexplorer.com/tx-details/zmw5Sf26wppESe_L2Xfam3ssXNHXZc81RO5P_JLPNCY
+
+Tx 073 [118.858 gas] - AOZ Step 003 - Setup DPTFs
+https://kdaexplorer.com/tx-details/z_cIGYG77dC2_5RMj69blI50lWeysZnNCqCB7FCbhOo
+
+Tx 074 [17.688 gas] - AOZ Step 004 - Issue 6 DPMFs
+https://kdaexplorer.com/tx-details/u_o_-_1bnw3ZjDZxMVk7uWsSD5If8M2cnbWgEs6rfqo
+
+Tx 075 [56.701 gas] - AOZ Step 005 - Issue 2 AST-Pairs
+https://kdaexplorer.com/tx-details/hMOvE7QMHnKTZznJxB4yMwUwCYDzNLL_61Np2DezF7U
+
+Tx 076 [50.636 gas] - AOZ Step 006 - Issue 2 AST-Pairs
+https://kdaexplorer.com/tx-details/X-ZiypbCfRLTPzMmLWdG-6Aa8FJGZH8Y9wU-kcF_-1g
+
+Tx 077 [50.836 gas] - AOZ Step 007 - Issue 2 AST-Pairs
+https://kdaexplorer.com/tx-details/9b49RpeNvUSZkTMs4aLLkNJsOMYMYqLFFogbYdBpPFw
+
+Tx 078 [89.144 gas] - AOZ Step 008 - Setup ATS Pairs no1
+https://kdaexplorer.com/tx-details/daK3ppIVRVGdb3zjutMh-Ld4kCIIFMYLBlA6itwO-mU
+
+Tx 079 [83.419 gas] - AOZ Step 009 - Setup ATS Pairs no2
+https://kdaexplorer.com/tx-details/vC-TLY1OazRgi5XNIYD6dqYKqr4J8qUkr6hib5bl2Gg
+
+Tx 080 [83.565 gas] - AOZ Step 010 - Setup ATS Pairs no3
+https://kdaexplorer.com/tx-details/KrIgwB-p_XwrM3VVi0VH_CzAL-cvfYReHsyIg1Dwi9o
+
+Tx 081 [83.794 gas] - AOZ Step 011 - Setup ATS Pairs no4
+https://kdaexplorer.com/tx-details/jo8uMBkm-xtAeKFwap5PbK4Q-pS_ZAZBqCL-FZ_BY1s
+
+Tx 082 [83.921 gas] - AOZ Step 012 - Setup ATS Pairs no5
+https://kdaexplorer.com/tx-details/lgFg9cy4x-PNHFhJykuIGGW9PIMsu-FRAFi6E5TgKnc
+
+Tx 083 [84.035 gas] - AOZ Step 013 - Setup ATS Pairs no6
+https://kdaexplorer.com/tx-details/eFbNL6d5hRIimvUY2GV3dH1F7Hbm80vWBhMMfwXLcy0
+
+Tx 084 [26.064 gas] - AOZ Step 014 - Mint 1/0.5/0.5 millions Primordial/Esoteric/Ancient Kosons in origin Mode.
+https://kdaexplorer.com/tx-details/ZGLedjkIC9teuhwVFJq5nWxmFcQx-bhh_-8lDrKDc-I
+
+Tx 085 [125.339 gas] - AOZ Step 015 - Mint 90k Plebea RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/jVRbrbcXlqyDHEUdf_695LUuxCEhb89-45BlAtibvyk
+
+Tx 086 [125.029 gas] - AOZ Step 016 - Mint 90k Comati RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/Sr48J6FXZFumHEmkFY8og0x2rYYtPoxspPKaoJifIlI 
+
+Tx 087 [124.934 gas] - AOZ Step 017 - Mint 90k Pileati RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/CSFoSnK79IAzsQuXETPg6yLMPDcoLokqhdEnvv_od08
+
+Tx 088 [125.830 gas] - AOZ Step 018 - Mint 90k Tarabostes RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/NVunpLyIddbHgrpWfPUpmgpWg4PwH9272QFHIofMayM
+
+Tx 089 [125.267 gas] - AOZ Step 019 - Mint 90k Strategon RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/2OdHjJI87Crh2PvqKPLbGYcJ2Ei8lKtyLpLRlAlSoi8
+
+Tx 090 [124.827 gas] - AOZ Step 020 - Mint 90k Basileus RBTs using 30kx3 RT Kosons
+https://kdaexplorer.com/tx-details/Ab0QLbYrXcbD3FSJBVTIKX6ENWbm3QFl85lg0HVY0s0
+
+TX 091 [79.345 gas] - Bulk Transfer 40k of each RBT to Standard Treasury
+https://kdaexplorer.com/tx-details/kfs7mNMOd7Iiw73nGIC0CBQVu1FEYYMT--_3xnJxOl4
+
+Tx 092 [78.148 gas] - Create Vesting Links for the first 3 RBTs
+https://kdaexplorer.com/tx-details/_nJebojC8j-HSgIwRm6RL1cMCAEN2jpowrlT0sYD5r8
+
+Tx 093 [78.119 gas] - Create Vesting Links for the last 3 RBTs
+https://kdaexplorer.com/tx-details/Yhk2ben0Ij1HqffOMW4a6ai7tG9bd9sV7f_qI2MKt94
+
+Tx 092 [111.245 gas] - Vest 50k of the first 3 RBTs with 50 milestones for 5 years.
+https://kdaexplorer.com/tx-details/3-HN10i-05OQ6KV6McYTxA838FFwgf2oZZcTjLxuWFg
+
+Tx 093 [106.227 gas] - Vest 50k of the last 3 RBTs with 50 milestones for 5 years.
+https://kdaexplorer.com/tx-details/k_C3fg0Ku8yhlxxzWq-u2izhrgDlX9DRx5q-cn8n7Aw
+
+TX 094 [28.564 gas] - Run Init 4 and 5 from dispenser to prepare for AOZ Emission
+https://kdaexplorer.com/tx-details/g_dMEt7UVeNnT7qAZGD0s2oLOXJf0PjBS0d3FMnMBNg
 
 
 
+Tx 095 [135.861 gas] - Mint Daily Ouro Day 5 - Monday 31 March 2025
+https://kdaexplorer.com/tx-details/IkIkYuAadm3CfkvdRDeS-3qfPMTEzR1fv_YlMM59ldo
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Tx 096 [135k gas] Mint Dailz Ouro Day 6 - For Tuesday 01 April 2025
+https://kdaexplorer.com/tx-details/GyAwwEH7kCUaIgAf9lH3FV0bVK9MA164IDAdL6qsOpw
 
 
 

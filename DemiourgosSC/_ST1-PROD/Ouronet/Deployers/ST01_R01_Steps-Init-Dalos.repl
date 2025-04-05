@@ -1191,6 +1191,141 @@
 (env-sigs [])
 (commit-tx)
 ;;
+;;Deploy Variant
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 68.4)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 136.8)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 205.2)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 273.6)
+
+
+(DALOS.DALOS|F>OWNER "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL")
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 15.2)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 30.4)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 45.6)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 60.8)
+
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 0.076)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 0.152)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 0.228)
+(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 0.304)
+
+
+(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF)
+(with-capability (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.SECURE)
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.C_Issue
+        "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+        "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+        ["Vesta"]
+        ["VST"]
+        [24]
+        [true]
+        [true]
+        [true]
+        [true]
+        [true]
+        [true]
+    )
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(DALOS.KDA|C_Collect
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    (DALOS.UR_UsagePrice "dptf")
+)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" ,
+          "caps":
+            [
+                (coin.TRANSFER
+                    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+                    "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0"
+                    68.4
+                )
+                (coin.TRANSFER
+                    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+                    "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"
+                    136.8
+                )
+                (coin.TRANSFER
+                    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+                    "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo"
+                    205.2
+                )
+                (coin.TRANSFER
+                    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+                    "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"
+                    273.6
+
+                )
+            ]
+        }
+
+    ]
+)
+
+(install-capability 
+    (coin.TRANSFER
+    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+    "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0"
+    68.4)
+)
+(install-capability 
+    (coin.TRANSFER
+    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+    "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"
+    136.8)
+)
+(install-capability 
+    (coin.TRANSFER
+    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+    "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo"
+    205.2)
+)
+(install-capability 
+  (coin.TRANSFER
+    "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+    "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"
+    273.6)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
+
+        (patron:string DPL-DALOS.DEMIURGOI|AH_NAME)
+        (hov:string DPL-DALOS.DEMIURGOI|HOV_NAME)
+        (cto:string DPL-DALOS.DEMIURGOI|CTO_NAME)
+        (ouroboros:string DPL-DALOS.OUROBOROS|SC_NAME)
+        (dalos:string DPL-DALOS.DALOS|SC_NAME)
+        
+        (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
+        (hov-kda:string (ref-DALOS::UR_AccountKadena hov))
+        (cto-kda:string (ref-DALOS::UR_AccountKadena cto))
+        (ouroboros-kda:string (ref-DALOS::UR_AccountKadena ouroboros))
+        (dalos-kda:string (ref-DALOS::UR_AccountKadena dalos))
+
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (+ (* (ref-DALOS::UR_UsagePrice "dptf") 3.0) (ref-DALOS::UR_UsagePrice "dpmf"))
+            )
+        )
+    )
+    (install-capability (ref-coin::TRANSFER patron-kda hov-kda (at 0 split-kda)))
+    (install-capability (ref-coin::TRANSFER patron-kda cto-kda (at 1 split-kda)))
+    (install-capability (ref-coin::TRANSFER patron-kda ouroboros-kda (at 2 split-kda)))
+    (install-capability (ref-coin::TRANSFER patron-kda dalos-kda (at 3 split-kda)))
+    (ref-DPL|DALOS::A_Step020)
+)
+
+
+;;
 ;;
 (begin-tx "Init STEP 021")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)

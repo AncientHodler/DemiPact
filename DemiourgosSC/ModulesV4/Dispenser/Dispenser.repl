@@ -288,3 +288,54 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;
+(begin-tx "Init STEP 004")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    ((ref-DPL|DSP:module{DeployerDispenser} DSP))
+    (ref-DPL|DSP::A_Step004 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 004 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 005")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+        { "key": "PK_DHV", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    ((ref-DPL|DSP:module{DeployerDispenser} DSP))
+    (ref-DPL|DSP::A_Step005 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 005 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

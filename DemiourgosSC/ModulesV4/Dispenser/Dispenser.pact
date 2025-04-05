@@ -11,10 +11,26 @@
     (defun A_ManualOuroPriceUpdate ())
     (defun A_OuroMinterStageOne:[decimal] ())
 )
+(interface DeployerDispenserV2
+    @doc "Exposes AOZ Dispenser Functions via the DSP Module"
+    ;;
+    (defun UC_KosonicAutostakeSplit:[decimal] (input:decimal ip:integer))
+    (defun UC_TTTF-Split:[decimal] (input:decimal ip:integer))
+    ;;
+    (defun URC_DailyKOSON (iz-game-live:bool))
+    ;;
+    (defun A_Step004 (patron:string))
+    (defun A_Step005 (patron:string))
+    ;;
+    (defun A_KosonMinterStageOne_1of3 ())
+    (defun A_KosonMinterStageOne_2of3 ())
+    (defun A_KosonMinterStageOne_3of3 ())
+)
 (module DSP GOV
     ;;
     (implements OuronetPolicy)
     (implements DeployerDispenser)
+    (implements DeployerDispenserV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -165,6 +181,31 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_KosonicAutostakeSplit:[decimal] (input:decimal ip:integer)
+        (let
+            (
+                (one:decimal 0.0625)
+                (ps:decimal (floor (* one input) ip))
+                (cc:decimal (* ps 2.0))
+                (pp:decimal (* ps 2.5))
+                (tt:decimal (* ps 3.0))
+                (sv:decimal (* ps 3.5))
+                (aa:decimal (- input (fold (+) 0.0 [ps cc pp tt sv])))
+            )
+            [ps cc pp tt sv aa]
+        )
+    )
+    (defun UC_TTTF-Split:[decimal] (input:decimal ip:integer)
+        (let
+            (
+                (s10p:decimal (floor (* 0.1 input) ip))
+                (s20p:decimal (* s10p 2.0))
+                (s30p:decimal (* s10p 3.0))
+                (s40p:decimal (- input (fold (+) 0.0 [s10p s20p s30p])))
+            )
+            [s10p s20p s30p s40p]
+        )
+    )
     ;;{F0}  [UR]
     (defun UR_KDA:decimal ()
         @doc "Retrieves KDA Price in dollars"
@@ -200,6 +241,45 @@
             (floor (* id-in-kda kda-price-in-dollars) id-precision)
         )
     )
+    ;;
+    (defun URC_DailyKOSON (iz-game-live:bool)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+                ;;
+                (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
+                (op0:integer (ref-DPTF::UR_Decimals primordial-koson))
+                ;;
+                (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
+                (current-EK-supply:decimal (ref-DPTF::UR_Supply esoteric-koson))
+                (op1:integer (ref-DPTF::UR_Decimals esoteric-koson))
+                ;;
+                (ancient-koson:string (ref-DPL|AOZ::UR_Assets 1 2))
+                (current-AK-supply:decimal (ref-DPTF::UR_Supply ancient-koson))
+                (op2:integer (ref-DPTF::UR_Decimals ancient-koson))
+                ;;
+                (esoteric-mts:decimal 16180339.887498948482045868343656)
+                (esoteric-speed:decimal 7000.0)
+                (ancient-mts:decimal 31415926.535897932384626433832795)
+                (ancient-speed:decimal 8000.0)
+                ;;
+                (esoteric:decimal (floor (/ (- esoteric-mts current-EK-supply) esoteric-speed) op1))
+                (ancient:decimal (floor (/ (- ancient-mts current-AK-supply) ancient-speed) op2))
+                (primordial:decimal
+                    (if iz-game-live
+                        (floor (/ (+ esoteric ancient) 5.0) op0)
+                        (floor (/ esoteric 5.0) op0)
+                    )
+                )
+            )
+            (if iz-game-live
+                [primordial esoteric ancient]
+                [primordial esoteric]
+            )
+        )
+    )
+
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
@@ -209,7 +289,7 @@
     (defun A_Step001 (patron:string)
         ;;Define Module Policies
         (P|A_Define)
-        ;;Reconfigure DALOS Governor, to be ablle to acces Gassless Patron from Dispenser
+        ;;Reconfigure DALOS Governor, to be able to acces Gassless Patron from Dispenser
         (let
             (
                 (ref-U|G:module{OuronetGuards} U|G)
@@ -257,6 +337,39 @@
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron ouro dispenser true)
         )
     )
+    (defun A_Step004 (patron:string)
+        (let
+            (
+                (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
+                (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
+                (ancient-koson:string (ref-DPL|AOZ::UR_Assets 1 2))
+                (dispenser:string DSP1|SC_NAME)
+            )
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron primordial-koson dispenser true)
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron esoteric-koson dispenser true)
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron ancient-koson dispenser true)
+        )
+    )
+    (defun A_Step005 (patron:string)
+        ;;Reconfigure Smart DHVault Governor to be able to enforce its ownership from DSP Module
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-DALOS:module{OuronetDalos} DALOS)
+                (smart-dhvault-sc:string (ref-DALOS::GOV|DHV2|SC_NAME))
+            )
+            (with-capability (P|DSP|CALLER)
+                (ref-DALOS::C_RotateGovernor
+                    patron
+                    smart-dhvault-sc
+                    (ref-P|DALOS::P|UR "DSP|RemoteDalosGov")
+                )
+            )
+        )
+    )
     ;;
     (defun A_ManualOuroPriceUpdate ()
         @doc "Manualy Updates the OURO Price Using Mainnet Dia Oracle"
@@ -282,17 +395,17 @@
                     (ouro:string (ref-DALOS::UR_OuroborosID))
                     (op:integer (ref-DPTF::UR_Decimals ouro))
                     (daily:decimal (URC_DailyOURO))
-
-                    (s1-10p:decimal (floor (* 0.1 daily) op))
-                    (s1-20p:decimal (* s1-10p 2.0))
-                    (s1-30p:decimal (* s1-10p 3.0))
-                    (folded-sum:decimal (fold (+) 0.0 [s1-10p s1-20p s1-30p]))
-                    (s1-40p:decimal (- daily folded-sum))
-
+                    ;;
+                    (split:[decimal] (UC_TTTF-Split daily op))
+                    (s1-10p:decimal (at 0 split))
+                    (s1-20p:decimal (at 1 split))
+                    (s1-30p:decimal (at 2 split))
+                    (s1-40p:decimal (at 3 split))
+                    ;;
                     (treasury:string (ref-DALOS::GOV|DHV1|SC_NAME))
                     (validators:string CST1|SC_NAME)
                     (dispenser:string DSP1|SC_NAME)
-
+                    ;;
                     (auryn:string (ref-DALOS::UR_AurynID))
                     (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
                     (auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken auryn)))
@@ -313,6 +426,109 @@
                     (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser elite-auryndex auryn c-rbt-amount)
                     [daily s1-10p s1-20p s1-30p s1-40p]
                 )
+            )
+        )
+    )
+    ;;
+    (defun A_KosonMinterStageOne_1of3 ()
+        @doc "Executes Stage One Daily Koson Emission, Part 1 of 3"
+        (with-capability (DSP|STAGE-ONE-MINTER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                    ;;
+                    (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
+                    (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
+                    (op0:integer (ref-DPTF::UR_Decimals primordial-koson))
+                    ;;
+                    (daily:[decimal] (URC_DailyKOSON false))
+                    (ps:[decimal] (UC_TTTF-Split (at 0 daily) op0))
+                    (ps10:decimal (at 0 ps))
+                    (ps20:decimal (at 1 ps))
+                    (ps40:decimal (at 3 ps))
+                    ;;
+                    (standard-treasury:string (ref-DALOS::GOV|DHV1|SC_NAME))
+                    (smart-treasury:string (ref-DALOS::GOV|DHV2|SC_NAME))
+                    (validators:string CST1|SC_NAME)
+                    (dispenser:string DSP1|SC_NAME)
+                )
+                ;;Mints Primordial Koson and Esoteric Koson Amounts
+                (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON primordial-koson dispenser (at 0 daily) false)
+                (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON esoteric-koson dispenser (at 1 daily) false)
+                ;;Moves Primordial Kosons: 10% To Standard-Treasury, 20% to Smart-Treasury, 40% to Custodians(Validators)
+                (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON primordial-koson dispenser [standard-treasury validators] [ps10 ps40] false)
+                (ref-TS01-C1::DPTF|C_Transfer GASLESS-PATRON primordial-koson dispenser smart-treasury ps20 true)
+            )
+        )
+    )
+    (defun A_KosonMinterStageOne_2of3 ()
+        @doc "Continues Stage One Daily Koson Emission, Part 2 of 3"
+        (with-capability (DSP|STAGE-ONE-MINTER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    ;;
+                    (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
+                    (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))
+                    (ComatiCommandID:string (ref-DPL|AOZ::UR_Assets 3 1))
+                    (PileatiPowerID:string (ref-DPL|AOZ::UR_Assets 3 2))
+                    (TarabostesTenacityID:string (ref-DPL|AOZ::UR_Assets 3 3))
+                    (StrategonVigorID:string (ref-DPL|AOZ::UR_Assets 3 4))
+                    (AsAuthorityID:string (ref-DPL|AOZ::UR_Assets 3 5))
+                    ;;
+                    (op0:integer (ref-DPTF::UR_Decimals primordial-koson))
+                    (dispenser:string DSP1|SC_NAME)
+                    ;;
+                    (daily-primordial-left:decimal (ref-DPTF::UR_AccountSupply primordial-koson dispenser))
+                    (primordial-split-for-ats:[decimal] (UC_KosonicAutostakeSplit daily-primordial-left op0))
+                )
+                ;;Fuel the 6 ATS Pools, using Primordial Kosons
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PlebeicStrengthID primordial-koson (at 0 primordial-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser ComatiCommandID primordial-koson (at 1 primordial-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PileatiPowerID primordial-koson (at 2 primordial-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser TarabostesTenacityID primordial-koson (at 3 primordial-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser StrategonVigorID primordial-koson (at 4 primordial-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser AsAuthorityID primordial-koson (at 5 primordial-split-for-ats))
+            )
+        )
+    )
+    (defun A_KosonMinterStageOne_3of3 ()
+        @doc "Finalizes Stage One Daily Koson Emission, Part 3 of 3"
+        (with-capability (DSP|STAGE-ONE-MINTER)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    ;;
+                    (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
+                    (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))
+                    (ComatiCommandID:string (ref-DPL|AOZ::UR_Assets 3 1))
+                    (PileatiPowerID:string (ref-DPL|AOZ::UR_Assets 3 2))
+                    (TarabostesTenacityID:string (ref-DPL|AOZ::UR_Assets 3 3))
+                    (StrategonVigorID:string (ref-DPL|AOZ::UR_Assets 3 4))
+                    (AsAuthorityID:string (ref-DPL|AOZ::UR_Assets 3 5))
+                    ;;
+                    (op1:integer (ref-DPTF::UR_Decimals esoteric-koson))
+                    (dispenser:string DSP1|SC_NAME)
+                    ;;
+                    (daily-esoteric:decimal (ref-DPTF::UR_AccountSupply esoteric-koson dispenser))
+                    (esoteric-split-for-ats:[decimal] (UC_KosonicAutostakeSplit daily-esoteric op1))
+                )
+                ;;Fuel the 6 ATS Pools, using Esoteric Kosons
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PlebeicStrengthID esoteric-koson (at 0 esoteric-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser ComatiCommandID esoteric-koson (at 1 esoteric-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PileatiPowerID esoteric-koson (at 2 esoteric-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser TarabostesTenacityID esoteric-koson (at 3 esoteric-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser StrategonVigorID esoteric-koson (at 4 esoteric-split-for-ats))
+                (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser AsAuthorityID esoteric-koson (at 5 esoteric-split-for-ats))
             )
         )
     )

@@ -350,8 +350,8 @@
                     (ref-TS01-C1::DPTF|C_Issue
                         DEMIURGOI|AH_NAME
                         DALOS|SC_NAME
-                        ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
-                        ["OURO" "AURYN" "ELITEAURYN" "GAS" "DWK" "DLK"]
+                        ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "OuronetWrappedKadena" "OuronetLiquidKadena"]
+                        ["OURO" "AURYN" "ELITEAURYN" "IGNIS" "WKDA" "LKDA"]
                         [24 24 24 24 24 24]
                         [true true true true true true]         ;;can change owner
                         [true true true true true true]         ;;can upgrade
@@ -446,7 +446,7 @@
                     (ref-TS01-C2::ATS|C_Issue
                         patron
                         patron
-                        ["Auryndex" "EliteAuryndex" "KdaLiquindex"]
+                        ["Auryndex" "EliteAuryndex" "LiquidKadenaIndex"]
                         [24 24 24]
                         [OuroID AurynID WrappedKadenaID]
                         [true true false]

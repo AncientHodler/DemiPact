@@ -254,10 +254,11 @@
             (
                 (ref-DALOS:module{OuronetDalos} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (dptf:string (ref-DPTF::UR_Reservation r-dptf))
             )
             (ref-DALOS::UEV_EnforceAccountType unreserver true)
             (ref-DPTF::UEV_Amount r-dptf amount)
-            (ref-DPTF::CAP_Owner r-dptf)
+            (ref-DPTF::CAP_Owner dptf)
             (ref-DPTF::UEV_Reserved r-dptf true)
             (UEV_SpecialTokenRole (ref-DPTF::UR_Reservation r-dptf))
             (compose-capability (P|DT))
@@ -644,7 +645,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (meta-datas:[[object{VST|MetaDataSchema}]] (ref-DPMF::UR_AccountNoncesMetaDatas dpmf nonces account))
+                (meta-datas:[[object{Vesting.VST|MetaDataSchema}]] (ref-DPMF::UR_AccountNoncesMetaDatas dpmf nonces account))
                 (present-time:time (at "block-time" (chain-data)))
             )
             (fold

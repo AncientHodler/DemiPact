@@ -80,7 +80,7 @@
     (defun GOV|OUROBOROS|PBL ())
     (defun GOV|SWP|PBL ())
     (defun GOV|DHV|PBL ())
-    ;;
+    ;;AUTOSTAKE
     (defun DALOS|Info ())
     (defun DALOS|VirtualGasData ())
     (defun DALOS|EmptyIgCum:object{IgnisCumulator} ())
@@ -229,7 +229,13 @@
                 ]
             )
             (enforce (= 1 (length (at "exec-code" (read-msg)))) "Tx of only one Pact Function")
-            (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS Modules allowed")
+            (enforce-one
+                "Payable Modules not satisfied"
+                [
+                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DPS Modules allowed")
+                ]
+            )
         )
     )
     (defun create-gas-payer-guard:guard ()
