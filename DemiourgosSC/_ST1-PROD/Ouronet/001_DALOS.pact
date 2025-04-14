@@ -211,6 +211,210 @@
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
     (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
 )
+(interface OuronetDalosV2
+    @doc "Interface Exposing DALOS Module Functions \
+        \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
+        \ are NOT sorted alphabetically \
+        \ \
+        \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts"
+    ;;
+    ;;
+    (defschema DPTF|BalanceSchema
+        @doc "Schema that Stores Account Balances for DPTF Tokens (True Fungibles)\
+            \ Key for the Table is a string composed of: <DPTF id> + BAR + <account> \
+            \ This ensure a single entry per DPTF id per account. \
+            \ As an Exception OUROBOROS and IGNIS Account Data is Stored at the DALOS Account Level"
+        exist:bool
+        balance:decimal
+        role-burn:bool
+        role-mint:bool
+        role-transfer:bool
+        role-fee-exemption:bool
+        frozen:bool
+    )
+    ;;
+    (defschema PrimedCumulatorV2
+        primed-cumulator:object{CompressedCumulatorV2}
+    )
+    (defschema CompressedCumulatorV2
+        ignis-prices:[decimal]
+        interactors:[string]
+    )
+    (defschema OutputCumulatorV2
+        cumulator-chain:[object{ModularCumulatorV2}]
+        output:list
+    )
+    (defschema ModularCumulatorV2
+        ignis:decimal
+        interactor:string
+    )
+    ;;
+    ;;
+    (defun DALOS|SetGovernor (patron:string))
+    ;;
+    ;;
+    (defun GOV|DALOS|SC_KDA-NAME ())
+    (defun GOV|DALOS|GUARD ())
+    ;;
+    (defun GOV|Demiurgoi ())
+    (defun GOV|DalosKey ())
+    (defun GOV|AutostakeKey ())
+    (defun GOV|VestingKey ())
+    (defun GOV|LiquidKey ())
+    (defun GOV|OuroborosKey ())
+    (defun GOV|SwapKey ())
+    (defun GOV|DHVKey ())
+    ;;
+    (defun GOV|DALOS|SC_NAME ())
+    (defun GOV|ATS|SC_NAME ())
+    (defun GOV|VST|SC_NAME ())
+    (defun GOV|LIQUID|SC_NAME ())
+    (defun GOV|OUROBOROS|SC_NAME ())
+    (defun GOV|SWP|SC_NAME ())
+    (defun GOV|DHV1|SC_NAME ())
+    (defun GOV|DHV2|SC_NAME ())
+    ;;
+    (defun GOV|DALOS|PBL ())
+    (defun GOV|ATS|PBL ())
+    (defun GOV|VST|PBL ())
+    (defun GOV|LIQUID|PBL ())
+    (defun GOV|OUROBOROS|PBL ())
+    (defun GOV|SWP|PBL ())
+    (defun GOV|DHV|PBL ())
+    ;;
+    (defun DALOS|Info ())
+    (defun DALOS|VirtualGasData ())
+    ;;
+    ;;
+    (defun UR_KadenaLedger:[string] (kadena:string))
+    (defun UR_GAP:bool ())
+    (defun UR_DemiurgoiID:[string] ())
+    (defun UR_UnityID:string ())
+    (defun UR_OuroborosID:string ())
+    (defun UR_OuroborosPrice:decimal ())
+    (defun UR_IgnisID:string ())
+    (defun UR_AurynID:string ())
+    (defun UR_EliteAurynID:string ())
+    (defun UR_WrappedKadenaID:string ())
+    (defun UR_LiquidKadenaID:string ())
+    (defun UR_DispoType:integer ())
+    (defun UR_DispoTDP:decimal ())
+    (defun UR_DispoTDS:decimal ())
+    (defun UR_OuroAutoPriceUpdate:bool ())
+    (defun UR_Tanker:string ())
+    (defun UR_VirtualToggle:bool ())
+    (defun UR_VirtualSpent:decimal ())
+    (defun UR_NativeToggle:bool ())
+    (defun UR_NativeSpent:decimal ())
+    (defun UR_AutoFuel:bool ())
+    (defun UR_UsagePrice:decimal (action:string))
+    (defun UR_AccountPublicKey:string (account:string))
+    (defun UR_AccountGuard:guard (account:string))
+    (defun UR_AccountKadena:string (account:string))
+    (defun UR_AccountSovereign:string (account:string))
+    (defun UR_AccountGovernor:guard (account:string))
+    (defun UR_AccountProperties:[bool] (account:string))
+    (defun UR_AccountType:bool (account:string))
+    (defun UR_AccountPayableAs:bool (account:string))
+    (defun UR_AccountPayableBy:bool (account:string))
+    (defun UR_AccountPayableByMethod:bool (account:string))
+    (defun UR_AccountNonce:integer (account:string))
+    (defun UR_Elite (account:string))
+    (defun UR_Elite-Class (account:string))
+    (defun UR_Elite-Name (account:string))
+    (defun UR_Elite-Tier (account:string))
+    (defun UR_Elite-Tier-Major:integer (account:string))
+    (defun UR_Elite-Tier-Minor:integer (account:string))
+    (defun UR_Elite-DEB (account:string))
+    (defun UR_TrueFungible:object{DPTF|BalanceSchema} (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountSupply:decimal (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountRoleBurn:bool (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountRoleMint:bool (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountRoleTransfer:bool (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountRoleFeeExemption:bool (account:string snake-or-gas:bool))
+    (defun UR_TF_AccountFreezeState:bool (account:string snake-or-gas:bool))
+    ;;
+    (defun URC_IgnisGasDiscount:decimal (account:string))
+    (defun URC_KadenaGasDiscount:decimal (account:string))
+    (defun URC_GasDiscount:decimal (account:string native:bool))
+    (defun URC_SplitKDAPrices:[decimal] (account:string kda-price:decimal))
+    (defun URC_Transferability:bool (sender:string receiver:string method:bool))
+    (defun IGNIS|URC_Exception (account:string))
+    (defun IGNIS|URC_ZeroGAZ:bool (id:string sender:string receiver:string))
+    (defun IGNIS|URC_ZeroGAS:bool (id:string sender:string))
+    (defun IGNIS|URC_IsVirtualGasZeroAbsolutely:bool (id:string))
+    (defun IGNIS|URC_IsVirtualGasZero:bool ())
+    (defun IGNIS|URC_IsNativeGasZero:bool ())
+    ;;
+    (defun UEV_StandardAccOwn (account:string))
+    (defun UEV_SmartAccOwn (account:string))
+    (defun UEV_Methodic (account:string method:bool))
+    (defun UEV_EnforceAccountExists (dalos-account:string))
+    (defun UEV_EnforceAccountType (account:string smart:bool))
+    (defun UEV_EnforceTransferability (sender:string receiver:string method:bool))
+    (defun UEV_SenderWithReceiver (sender:string receiver:string))
+    (defun UEV_TwentyFourPrecision (amount:decimal))
+    (defun GLYPH|UEV_DalosAccountCheck (account:string))
+    (defun GLYPH|UEV_DalosAccount (account:string))
+    (defun GLYPH|UEV_MsDc:bool (multi-s:string))
+    (defun IGNIS|UEV_VirtualState (state:bool))
+    (defun IGNIS|UEV_VirtualOnCondition ())
+    (defun IGNIS|UEV_NativeState (state:bool))
+    (defun IGNIS|UEV_Patron (patron:string))
+    ;;
+    (defun UDC_TFTCumulatorV2:object{OutputCumulatorV2} (id:string sender:string receiver:string dptf-transfer-amount:decimal))
+    (defun UDC_BrandingCumulatorV2:object{OutputCumulatorV2} (active-account:string multiplier:decimal))
+    (defun UDC_SmallCumulatorV2:object{OutputCumulatorV2} (active-account:string))
+    (defun UDC_MediumCumulatorV2:object{OutputCumulatorV2} (active-account:string))
+    (defun UDC_BigCumulatorV2:object{OutputCumulatorV2} (active-account:string))
+    (defun UDC_BiggestCumulatorV2:object{OutputCumulatorV2} (active-account:string))
+    ;;
+    (defun UDC_ConstructOutputCumulatorV2:object{OutputCumulatorV2} (price:decimal active-account:string trigger:bool output-lst:list))
+    (defun UDC_MakeModularCumulatorV2:object{ModularCumulatorV2} (price:decimal active-account:string trigger:bool))
+    (defun UDC_MakeOutputCumulatorV2:object{OutputCumulatorV2} (input-modular-cumulator-chain:[object{ModularCumulatorV2}] output-lst:list))
+    (defun UDC_ConcatenateOutputCumulatorsV2:object{OutputCumulatorV2} (input-output-cumulator-chain:[object{OutputCumulatorV2}] new-output-lst:list))
+    (defun UDC_CompressOutputCumulator:object{CompressedCumulatorV2} (input-output-cumulator:object{OutputCumulatorV2}))
+    (defun UDC_PrimeIgnisCumulatorV2:object{PrimedCumulatorV2} (patron:string input:object{CompressedCumulatorV2}))
+    ;;
+    ;;
+    (defun CAP_EnforceAccountOwnership (account:string))
+    ;;
+    ;;
+    (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun A_ToggleOAPU (oapu:bool))
+    (defun A_ToggleGAP (gap:bool))
+    (defun A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
+    (defun A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
+    (defun A_IgnisToggle (native:bool toggle:bool))
+    (defun A_SetIgnisSourcePrice (price:decimal))
+    (defun A_UpdatePublicKey (account:string new-public:string))
+    (defun A_UpdateUsagePrice (action:string new-price:decimal))
+    ;;
+    (defun C_ControlSmartAccount:object{OutputCumulatorV2} (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
+    (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
+    (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string))
+    (defun C_RotateGovernor:object{OutputCumulatorV2} (patron:string account:string governor:guard))
+    (defun C_RotateGuard:object{OutputCumulatorV2} (patron:string account:string new-guard:guard safe:bool))
+    (defun C_RotateKadena:object{OutputCumulatorV2} (patron:string account:string kadena:string))
+    (defun C_RotateSovereign:object{OutputCumulatorV2} (patron:string account:string new-sovereign:string))
+    ;;
+    (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal))
+    (defun IGNIS|C_Collect (patron:string input-output-cumulator:object{OutputCumulatorV2}))
+    (defun KDA|C_Collect (sender:string amount:decimal))
+    (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool))
+
+    (defun XB_UpdateBalance (account:string snake-or-gas:bool new-balance:decimal))
+    (defun XB_UpdateOuroPrice (price:decimal))
+    ;;
+    (defun XE_ClearDispo (account:string))
+    (defun XE_UpdateBurnRole (account:string snake-or-gas:bool new-burn:bool))
+    (defun XE_UpdateElite (account:string amount:decimal))
+    (defun XE_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool))
+    (defun XE_UpdateFreeze (account:string snake-or-gas:bool new-freeze:bool))
+    (defun XE_UpdateMintRole (account:string snake-or-gas:bool new-mint:bool))
+    (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
+    (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
+)
 (module DALOS GOV
     ;;
     ;;Ouronet DALOS Gas-Station
@@ -244,7 +448,8 @@
     ;;
     (implements gas-payer-v1)
     (implements OuronetPolicy)
-    (implements OuronetDalos)
+    ;(implements OuronetDalos)
+    (implements OuronetDalosV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -287,7 +492,7 @@
             (let
                 (
                     (ref-U|G:module{OuronetGuards} U|G)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (C_RotateGovernor
                             patron
                             DALOS|SC_NAME
@@ -301,7 +506,7 @@
                         )
                     )
                 )
-                (IGNIS|C_Collect patron patron (at "price" ico))
+                (IGNIS|C_Collect patron ico)
             )
         )
     )
@@ -440,8 +645,8 @@
 
         nonce:integer
         elite:object{DALOS|EliteSchema}
-        ouroboros:object{OuronetDalos.DPTF|BalanceSchema}
-        ignis:object{OuronetDalos.DPTF|BalanceSchema}
+        ouroboros:object{OuronetDalosV2.DPTF|BalanceSchema}
+        ignis:object{OuronetDalosV2.DPTF|BalanceSchema}
     )
     (defschema DALOS|EliteSchema
         class:string
@@ -459,10 +664,13 @@
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defun DALOS|Info ()            (at 0 ["DalosInformation"]))
     (defun DALOS|VirtualGasData ()  (at 0 ["VirtualGasData"]))
-    (defun DALOS|EmptyIgCum:object{OuronetDalos.IgnisCumulator} ()
-        { "price"                   : 0.0
-        , "trigger"                 : false
-        , "output"                  : [] }
+    (defun DALOS|EmptyOutputCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2} ()
+        {"cumulator-chain"      :
+            [
+                {"ignis"        : 0.0
+                ,"interactor"   : BAR}
+            ]
+        ,"output"               : []}
     )
     (defconst BAR                   (CT_Bar))
     (defconst DALOS|INFO            (DALOS|Info))
@@ -546,6 +754,14 @@
         , "tier"  : "0.0"
         , "deb"   : 0.0 }
     )
+    (defconst EMPTY_CC
+        [
+            {
+                "ignis-prices" : [],
+                "interactors" : []
+            }
+        ]
+    )
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -558,6 +774,10 @@
         (compose-capability (GOV|DALOS_ADMIN))
     )
     ;;{C2}
+    (defcap IGNIS|S>FREE ()
+        @event
+        true
+    )
     (defcap DALOS|S>D-ST (account:string guard:guard kadena:string)
         @event
         (let
@@ -570,6 +790,7 @@
             (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
             (enforce-guard guard)
             (compose-capability (SECURE))
+            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
     (defcap DALOS|S>D-SM (account:string guard:guard kadena:string sovereign:string)
@@ -585,6 +806,7 @@
             (UEV_EnforceAccountType sovereign false)
             (enforce-guard guard)
             (compose-capability (SECURE))
+            ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
     )
     ;;{C3}
@@ -601,9 +823,8 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalos} DALOS)
                 (target-balance:decimal (ref-coin::get-balance migration-target-kda-account))
-                (gap:bool (ref-DALOS::UR_GAP))
+                (gap:bool (UR_GAP))
             )
             (enforce gap (format "Migration can only be executed when Global Administrative Pause is offline"))
             (enforce (= target-balance 0.0) "Migration can only be executed to an empty kda account")
@@ -632,56 +853,28 @@
         (compose-capability (DALOS|F>GOV account))
         (enforce (= (or (or pasc pbsc) pbm) true) "At least one Smart DALOS Account parameter must be true")
     )
-    (defcap IGNIS|C>CLT (patron:string active-account:string amount:decimal)
+    (defcap IGNIS|C>COLLECT (patron:string interactor:string amount:decimal)
+        @event
         (IGNIS|UEV_Patron patron)
         (let
             (
-                (sender-type:bool (UR_AccountType active-account))
-                (account-type:bool (UR_AccountType patron))
+                (first:string (take 1 interactor))
+                (sigma:string "Σ")
+                (tanker:string (UR_Tanker))
             )
-            (if (not account-type)
-                (if sender-type
-                    (compose-capability (IGNIS|C>CLT_SM patron active-account amount))
-                    (compose-capability (IGNIS|C>CLT_ST patron amount))
-                )
-                true
+            (enforce-one
+                "Invalid Interactor"
+                [
+                    (enforce (= interactor BAR) "Interactor is invalid")
+                    (enforce (= first sigma) "Invalid Smart Account as interactor")
+                ]
             )
+            (if (= interactor BAR)
+                (compose-capability (IGNIS|C>TRANSFER patron tanker amount))
+                (compose-capability (IGNIS|C>TRANSFER patron interactor amount))
+            )
+            (compose-capability (SECURE))
         )
-    )
-    (defcap IGNIS|C>CLT_SM (patron:string active-account:string amount:decimal)
-        (let
-            (
-                (gas-id:string (UR_IgnisID))
-            )
-            (if (!= gas-id BAR)
-                (let
-                    (
-                        (gas-pot:string (UR_Tanker))
-                        (quarter:decimal (* amount GAS_QUARTER))
-                        (rest:decimal (- amount quarter))
-                    )
-                    (compose-capability (IGNIS|C>TRANSFER patron gas-pot rest))
-                    (compose-capability (IGNIS|C>TRANSFER patron active-account quarter))
-                    (compose-capability (SECURE))
-                )
-                true
-            )
-        )
-    )
-    (defcap IGNIS|C>CLT_ST (patron:string amount:decimal)
-        (let
-            (
-                (gas-id:string (UR_IgnisID))
-            )
-            (if (!= gas-id BAR)
-                (compose-capability (IGNIS|C>CLT_STX patron amount))
-                true
-            )
-        )
-    )
-    (defcap IGNIS|C>CLT_STX (patron:string amount:decimal)
-        (compose-capability (IGNIS|C>TRANSFER patron (UR_Tanker) amount))
-        (compose-capability (SECURE))
     )
     (defcap IGNIS|C>TRANSFER (sender:string receiver:string ta:decimal)
         (enforce (!= sender receiver) "Sender and Receiver must be different")
@@ -864,7 +1057,7 @@
     (defun UR_Elite-DEB (account:string)
         (at "deb" (UR_Elite account))
     )
-    (defun UR_TrueFungible:object{OuronetDalos.DPTF|BalanceSchema} (account:string snake-or-gas:bool)
+    (defun UR_TrueFungible:object{OuronetDalosV2.DPTF|BalanceSchema} (account:string snake-or-gas:bool)
         (if snake-or-gas
             (with-default-read DALOS|AccountTable account
                 { "ouroboros" : DPTF|BLANK }
@@ -946,16 +1139,16 @@
                 (r-mt:bool (UR_AccountPayableByMethod receiver))
             )
             (if (= s-sc false)
-                (if (= r-sc false)      ;;sender is normal
-                    true                ;;receiver is normal (Normal => Normal | Case 1)
-                    (if (= method true) ;;receiver is smart  (Normal => Smart | Case 3)
+                (if (= r-sc false)              ;;sender is normal
+                    true                        ;;receiver is normal (Normal => Normal | Case 1)
+                    (if (= method true)         ;;receiver is smart  (Normal => Smart | Case 3)
                         r-mt
                         r-pasc
                     )
                 )
-                (if (= r-sc false)      ;;sender is smart
-                    true                ;;receiver is normal (Smart => Normal | Case 4)
-                    (if (= method true) ;;receiver is false (Smart => Smart | Case 2)
+                (if (= r-sc false)              ;;sender is smart
+                    true                        ;;receiver is normal (Smart => Normal | Case 4)
+                    (if (= method true)         ;;receiver is false (Smart => Smart | Case 2)
                         r-mt
                         r-pbsc
                     )
@@ -1203,57 +1396,264 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_AddICO:decimal (input:[object{OuronetDalos.IgnisCumulator}])
-        @doc "Computes the Ignis Price from a Chain of IgnisCumulator Objects"
-        (fold
-            (lambda
-                (acc:decimal item:object{OuronetDalos.IgnisCumulator})
-                (let
-                    (
-                        (amount:decimal (at "price" item))
-                        (tg:bool (at "trigger" item))
-                    )
-                    (if (not tg)
-                        (+ acc amount)
-                        acc
+    (defun UDC_ConstructOutputCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (price:decimal active-account:string trigger:bool output-lst:list)
+        (UDC_MakeOutputCumulatorV2
+            [
+                (UDC_MakeModularCumulatorV2
+                    price
+                    active-account
+                    trigger
+                )
+            ]
+            output-lst
+        )
+    )
+    (defun UDC_TFTCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (id:string sender:string receiver:string dptf-transfer-amount:decimal)
+        (UDC_ConstructOutputCumulatorV2
+            (if (not (and (= id (UR_UnityID))(>= dptf-transfer-amount 10.0)))
+                (UR_UsagePrice "ignis|smallest")
+                0.0
+            )
+            sender
+            (IGNIS|URC_ZeroGAZ id sender receiver)
+            []
+        )
+    )
+    (defun UDC_BrandingCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (active-account:string multiplier:decimal)
+        (UDC_ConstructOutputCumulatorV2
+            (* multiplier (UR_UsagePrice "ignis|branding"))
+            active-account
+            (IGNIS|URC_IsVirtualGasZero)
+            []
+        )
+    )
+    (defun UDC_SmallCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (active-account:string)
+        (UDC_ConstructOutputCumulatorV2
+            (UR_UsagePrice "ignis|small")
+            active-account
+            (IGNIS|URC_IsVirtualGasZero)
+            []
+        )
+    )
+    (defun UDC_MediumCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (active-account:string)
+        (UDC_ConstructOutputCumulatorV2
+            (UR_UsagePrice "ignis|medium")
+            active-account
+            (IGNIS|URC_IsVirtualGasZero)
+            []
+        )
+    )
+    (defun UDC_BigCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (active-account:string)
+        (UDC_ConstructOutputCumulatorV2
+            (UR_UsagePrice "ignis|big")
+            active-account
+            (IGNIS|URC_IsVirtualGasZero)
+            []
+        )
+    )
+    (defun UDC_BiggestCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (active-account:string)
+        (UDC_ConstructOutputCumulatorV2
+            (UR_UsagePrice "ignis|biggest")
+            active-account
+            (IGNIS|URC_IsVirtualGasZero)
+            []
+        )
+    )
+    (defun UDC_MakeModularCumulatorV2:object{OuronetDalosV2.ModularCumulatorV2}
+        (price:decimal active-account:string trigger:bool)
+        (let
+            (
+                (interactor:string
+                    (if (UR_AccountType active-account)
+                        active-account
+                        BAR
                     )
                 )
             )
-            0.0
-            input
+            (if trigger
+                {"ignis"        : 0.0
+                ,"interactor"   : BAR}
+                {"ignis"        : price
+                ,"interactor"   : interactor}
+            )
         )
     )
-    (defun UDC_CompressICO:object{OuronetDalos.IgnisCumulator} (chain-ico:[object{OuronetDalos.IgnisCumulator}] lst-to-be-saved:list)
+    (defun UDC_MakeOutputCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (input-modular-cumulator-chain:[object{OuronetDalosV2.ModularCumulatorV2}] output-lst:list)
+        {"cumulator-chain"  : input-modular-cumulator-chain
+        ,"output"           : output-lst}
+    )
+    (defun UDC_ConcatenateOutputCumulatorsV2:object{OuronetDalosV2.OutputCumulatorV2}
+        (input-output-cumulator-chain:[object{OuronetDalosV2.OutputCumulatorV2}] new-output-lst:list)
         (let
             (
-                (price:decimal (UDC_AddICO chain-ico))
-                (standard-trigger:bool (IGNIS|URC_IsVirtualGasZero))
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (folded-obj:[[object{OuronetDalosV2.ModularCumulatorV2}]]
+                    (fold
+                        (lambda
+                            (acc:[[object{OuronetDalosV2.ModularCumulatorV2}]] idx:integer)
+                            (ref-U|LST::UC_AppL
+                                acc
+                                (at "cumulator-chain" (at idx input-output-cumulator-chain))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length input-output-cumulator-chain) 1))
+                    )
+                )
             )
-            (UDC_Cumulator price standard-trigger lst-to-be-saved)
+            {"cumulator-chain"  : (fold (+) [] folded-obj)
+            ,"output"           : new-output-lst}
         )
     )
-    (defun UDC_TrueFungibleTransferCumulator:object{OuronetDalos.IgnisCumulator} (id:string sender:string receiver:string)
-        (UDC_Cumulator (UR_UsagePrice "ignis|smallest") (IGNIS|URC_ZeroGAZ id sender receiver) [])
+    (defun UDC_CompressOutputCumulator:object{OuronetDalosV2.CompressedCumulatorV2}
+        (input-output-cumulator:object{OuronetDalosV2.OutputCumulatorV2})
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (cumulator-chain-input:[object{OuronetDalosV2.ModularCumulatorV2}] 
+                    (at "cumulator-chain" input-output-cumulator)
+                )
+                (folded-obj:[object{OuronetDalosV2.CompressedCumulatorV2}]
+                    (fold
+                        (lambda
+                            (acc:[object{OuronetDalosV2.CompressedCumulatorV2}] idx:integer)
+                            (ref-U|LST::UC_ReplaceAt
+                                acc
+                                0
+                                (let
+                                    (
+                                        (read-ignis-price:decimal (at "ignis" (at idx cumulator-chain-input)))
+                                        (read-interactor:string (at "interactor" (at idx cumulator-chain-input)))
+                                        (interactor-search:[integer] (ref-U|LST::UC_Search (at "interactors" (at 0 acc)) read-interactor))
+                                        (iz-new:bool 
+                                            (if (= (length interactor-search) 0)
+                                                true
+                                                false
+                                            )
+                                        )
+                                    )
+                                    (if iz-new
+                                        {
+                                            "ignis-prices"  : (ref-U|LST::UC_AppL (at "ignis-prices" (at 0 acc)) read-ignis-price),
+                                            "interactors"   : (ref-U|LST::UC_AppL (at "interactors" (at 0 acc)) read-interactor)
+                                        }
+                                        (let
+                                            (
+                                                (interactor-position-in-acc:integer (at 0 interactor-search))
+                                                (ignis-amount-in-acc:decimal (at interactor-position-in-acc (at "ignis-prices" (at 0 acc))))
+                                                (updated-ignis-amount:decimal (+ read-ignis-price ignis-amount-in-acc))
+                                            )
+                                            {
+                                                "ignis-prices"  : (ref-U|LST::UC_ReplaceAt (at "ignis-prices" (at 0 acc)) interactor-position-in-acc updated-ignis-amount),
+                                                "interactors"   : (at "interactors" (at 0 acc))
+                                            }
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                        EMPTY_CC
+                        (enumerate 0 (- (length cumulator-chain-input) 1))
+                    )
+                )
+            )
+            (at 0 folded-obj)
+        )
     )
+    (defun UDC_PrimeIgnisCumulatorV2:object{OuronetDalosV2.PrimedCumulatorV2}
+        (patron:string input:object{OuronetDalosV2.CompressedCumulatorV2})
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (fll:integer (length (at "ignis-prices" input)))
+                (ignis-discount:decimal (URC_IgnisGasDiscount patron))
+                (folded-obj:[object{OuronetDalosV2.CompressedCumulatorV2}]
+                    (fold
+                        (lambda
+                            (acc:[object{OuronetDalosV2.CompressedCumulatorV2}] idx:integer)
+                            (ref-U|LST::UC_ReplaceAt
+                                acc
+                                0
+                                (let
+                                    (
+                                        (input-ignis-price:decimal (at idx (at "ignis-prices" input)))
+                                        (input-ignis-price-discounted:decimal (* input-ignis-price ignis-discount))
+                                        (input-interactor:string (at idx (at "interactors" input)))
+                                        (iz-interactor-principal:bool
+                                            (if (= input-interactor BAR)
+                                                true
+                                                false
+                                            )
+                                        )
+                                        (smart-ignis-amount:decimal
+                                            (if iz-interactor-principal
+                                                0.0
+                                                (* GAS_QUARTER input-ignis-price-discounted)
+                                            )
+                                        )
+                                        (prime-ignis-amount:decimal (- input-ignis-price-discounted smart-ignis-amount))
 
-    (defun UDC_BigCumulator:object{OuronetDalos.IgnisCumulator} ()
-        (UDC_Cumulator (UR_UsagePrice "ignis|big") (IGNIS|URC_IsVirtualGasZero) [])
-    )
-    (defun UDC_BiggestCumulator:object{OuronetDalos.IgnisCumulator} ()
-        (UDC_Cumulator (UR_UsagePrice "ignis|biggest") (IGNIS|URC_IsVirtualGasZero) [])
-    )
-    (defun UDC_BrandingCumulator:object{OuronetDalos.IgnisCumulator} (multiplier:decimal)
-        (UDC_Cumulator (* multiplier (UR_UsagePrice "ignis|branding")) (IGNIS|URC_IsVirtualGasZero) [])
-    )
-    (defun UDC_MediumCumulator:object{OuronetDalos.IgnisCumulator} ()
-        (UDC_Cumulator (UR_UsagePrice "ignis|medium") (IGNIS|URC_IsVirtualGasZero) [])
-    )
-    (defun UDC_SmallCumulator:object{OuronetDalos.IgnisCumulator} ()
-        (UDC_Cumulator (UR_UsagePrice "ignis|small") (IGNIS|URC_IsVirtualGasZero) [])
-    )
-    (defun UDC_Cumulator:object{OuronetDalos.IgnisCumulator} (price:decimal trigger:bool lst:list)
-        @doc "Composes an IgnisCumulator Object"
-        { "price":price, "trigger":trigger, "output":lst}
+                                        (principal-interactor-search:[integer] (ref-U|LST::UC_Search (at "interactors" (at 0 acc)) BAR))
+                                        (principal-interactor-exists:bool 
+                                            (if (= (length principal-interactor-search) 0)
+                                                false
+                                                true
+                                            )
+                                        )
+                                    )
+                                    (if principal-interactor-exists
+                                        ;;Wen principal interactor already exists
+                                        (let
+                                            (
+                                                (principal-interactor-position:integer (at 0 principal-interactor-search))
+                                                (principal-interactor-current-ignis-amount:decimal (at principal-interactor-position (at "ignis-prices" (at 0 acc))))
+                                                (updated-interactor-ignis-amount:decimal (+ principal-interactor-current-ignis-amount prime-ignis-amount))
+                                            )
+                                            (if iz-interactor-principal
+                                                ;;Wen interactor is principal
+                                                {
+                                                    "ignis-prices"  : (ref-U|LST::UC_ReplaceAt (at "ignis-prices" (at 0 acc)) principal-interactor-position updated-interactor-ignis-amount),
+                                                    "interactors"   : (ref-U|LST::UC_AppL (at "interactors" (at 0 acc)) input-interactor)
+                                                }
+                                                ;;Wen interactor is not principal
+                                                {
+                                                    "ignis-prices"  : (ref-U|LST::UC_AppL (ref-U|LST::UC_ReplaceAt (at "ignis-prices" (at 0 acc)) principal-interactor-position updated-interactor-ignis-amount) smart-ignis-amount),
+                                                    "interactors"   : (ref-U|LST::UC_AppL (at "interactors" (at 0 acc)) input-interactor)
+                                                }
+                                            )
+                                        )
+                                        ;;Wen principal interactor doesnt exit yet
+                                        (if iz-interactor-principal
+                                            ;;Wen interactor is principal
+                                            {
+                                                "ignis-prices"  : (ref-U|LST::UC_AppL (at "ignis-prices" (at 0 acc)) prime-ignis-amount),
+                                                "interactors"   : (ref-U|LST::UC_AppL (at "interactors" (at 0 acc)) input-interactor)
+                                            }
+                                            ;;Wen interactor is not principal
+                                            {
+                                                "ignis-prices"  : (ref-U|LST::UC_AppL (ref-U|LST::UC_AppL (at "ignis-prices" (at 0 acc)) prime-ignis-amount) smart-ignis-amount),
+                                                "interactors"   : (ref-U|LST::UC_AppL (ref-U|LST::UC_AppL (at "interactors" (at 0 acc)) BAR) input-interactor)
+                                            }
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                        EMPTY_CC
+                        (enumerate 0 (- fll 1))
+                    )
+                )
+            )
+            {"primed-cumulator" : (at 0 folded-obj)}
+        )
     )
     ;;{F4}  [CAP]
     (defun CAP_EnforceAccountOwnership (account:string)
@@ -1276,12 +1676,11 @@
             (let
                 (
                     (ref-coin:module{fungible-v2} coin)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
                     (dalos-kda:string DALOS|SC_KDA-NAME)
                     (present-kda-balance:decimal (ref-coin::get-balance dalos-kda))
                 )
                 (install-capability (ref-coin::TRANSFER dalos-kda migration-target-kda-account present-kda-balance))
-                (ref-DALOS::C_TransferDalosFuel dalos-kda migration-target-kda-account present-kda-balance)
+                (C_TransferDalosFuel dalos-kda migration-target-kda-account present-kda-balance)
                 present-kda-balance
             )
         )
@@ -1349,12 +1748,12 @@
         )
     )
     ;;{F6}  [C]
-    (defun C_ControlSmartAccount:object{OuronetDalos.IgnisCumulator}
+    (defun C_ControlSmartAccount:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool)
         (UEV_IMC)
         (with-capability (DALOS|C>CTRL_SM-ACC account payable-as-smart-contract payable-by-smart-contract payable-by-method)
             (XI_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-            (UDC_SmallCumulator)
+            (UDC_SmallCumulatorV2 account)
         )
     )
     (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
@@ -1369,38 +1768,38 @@
             (XI_DeployStandardAccount account guard kadena public)
         )
     )
-    (defun C_RotateGovernor:object{OuronetDalos.IgnisCumulator}
+    (defun C_RotateGovernor:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string account:string governor:guard)
         (UEV_IMC)
         (with-capability (DALOS|C>RT_GOV account)
             (XI_RotateGovernor account governor)
-            (UDC_SmallCumulator)
+            (UDC_SmallCumulatorV2 account)
         )
     )
-    (defun C_RotateGuard:object{OuronetDalos.IgnisCumulator}
+    (defun C_RotateGuard:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string account:string new-guard:guard safe:bool)
         (UEV_IMC)
         (with-capability (DALOS|C>RT_ACC account)
             (XI_RotateGuard account new-guard safe)
-            (UDC_SmallCumulator)
+            (UDC_SmallCumulatorV2 account)
         )
     )
-    (defun C_RotateKadena:object{OuronetDalos.IgnisCumulator}
+    (defun C_RotateKadena:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string account:string kadena:string)
         (UEV_IMC)
         (with-capability (DALOS|C>RT_ACC account)
             (XI_RotateKadena account kadena)
             (XI_UpdateKadenaLedger (UR_AccountKadena account) account false)
             (XI_UpdateKadenaLedger kadena account true)
-            (UDC_SmallCumulator)
+            (UDC_SmallCumulatorV2 account)
         )
     )
-    (defun C_RotateSovereign:object{OuronetDalos.IgnisCumulator}
+    (defun C_RotateSovereign:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string account:string new-sovereign:string)
         (UEV_IMC)
         (with-capability (DALOS|C>RT_SOV account new-sovereign)
             (XI_RotateSovereign account new-sovereign)
-            (UDC_SmallCumulator)
+            (UDC_SmallCumulatorV2 account)
         )
     )
     ;;
@@ -1412,29 +1811,51 @@
             (ref-coin::transfer sender receiver amount)
         )
     )
-    (defun IGNIS|C_Collect (patron:string active-account:string amount:decimal)
-        (IGNIS|C_CollectWT patron active-account amount (IGNIS|URC_IsVirtualGasZero))
-    )
-    (defun IGNIS|C_CollectWT (patron:string active-account:string amount:decimal trigger:bool)
+    (defun IGNIS|C_Collect
+        (patron:string input-output-cumulator:object{OuronetDalosV2.OutputCumulatorV2})
         (let
             (
-                (ignis-discount:decimal (URC_IgnisGasDiscount patron))
-                (discounted-ignis:decimal (* amount ignis-discount))
-            )
-            (enforce (>= amount 1.0) "Minimum Base Ignis Base that can be collected is 1.0")
-            (if (not trigger)
-                (with-capability (IGNIS|C>CLT patron active-account discounted-ignis)
-                    (XI_IgnisCollect patron active-account discounted-ignis)
+                (compressed-cumulator:object{OuronetDalosV2.CompressedCumulatorV2}
+                    (UDC_CompressOutputCumulator input-output-cumulator)
                 )
-                true
+                (primed-cumulator:object{OuronetDalosV2.PrimedCumulatorV2}
+                    (UDC_PrimeIgnisCumulatorV2 patron compressed-cumulator)
+                )
+                (ignis-prices:[decimal] (at "ignis-prices" (at "primed-cumulator" primed-cumulator)))
+                (ignis-sum:decimal (fold (+) 0.0 ignis-prices))
+                (iz-gassles-patron:bool (UR_AccountType patron))
             )
-            (with-read DALOS|AccountTable patron
-                { "nonce" := n }
-                (update DALOS|AccountTable patron { "nonce" : (+ n 1)})
-            )
-            (with-read DALOS|AccountTable active-account
-                { "nonce" := n }
-                (update DALOS|AccountTable active-account { "nonce" : (+ n 1)})
+            (if (and (!= ignis-sum 0.0) (not iz-gassles-patron))
+                (let
+                    (
+                        (icl:integer (length ignis-prices))
+                        (primed-collector:object{OuronetDalosV2.CompressedCumulatorV2} 
+                            (at "primed-cumulator" primed-cumulator)
+                        )
+                    )
+                    (map
+                        (lambda
+                            (idx:integer)
+                            (let
+                                (
+                                    (interactor:string (at idx (at "interactors" primed-collector)))
+                                    (amount:decimal (at idx (at "ignis-prices" primed-collector)))
+                                )
+                                (with-capability (IGNIS|C>COLLECT patron interactor amount)
+                                    (XI_IgnisCollector patron interactor amount)
+                                )
+                            )
+                        )
+                        (enumerate 0 (- icl 1))
+                    )
+                    (with-read DALOS|AccountTable patron
+                        { "nonce" := n }
+                        (update DALOS|AccountTable patron { "nonce" : (+ n 1)})
+                    )
+                )
+                (with-capability (IGNIS|S>FREE)
+                    true
+                )
             )
         )
     )
@@ -1458,10 +1879,10 @@
             )
             (if (not trigger)
                 (do
-                    (C_TransferDalosFuel kda-sender kda-hov am0)          ;;10% to KDA-HOV
-                    (C_TransferDalosFuel kda-sender kda-cto am1)          ;;20% to KDA-CTO
-                    (C_TransferDalosFuel kda-sender kda-ouroboros am2)    ;;30% to KDA-Ouroboros (to be used for Liquid Kadena Protocol Fueling)
-                    (C_TransferDalosFuel kda-sender kda-dalos am3)        ;;40% to KDA-Dalos (to be used for DALOS Gas Station)
+                    (C_TransferDalosFuel kda-sender kda-hov am0)          ;;10% to Demiourgos.Holdings
+                    (C_TransferDalosFuel kda-sender kda-cto am2)          ;;30% to Ouronet Maintenance
+                    (C_TransferDalosFuel kda-sender kda-ouroboros am3)    ;;40% to KDA-Ouroboros (as Pitstop for LiquidKadenaIndex fueling)
+                    (C_TransferDalosFuel kda-sender kda-dalos am1)        ;;20% to KDA-Dalos (Ouronet Gas Station)
                 )
                 (format "While Kadena Collection is {}, the {} KDA could not be collected" [trigger amount])
             )
@@ -1472,8 +1893,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : new-balance
                     ,"role-burn"            : (at "role-burn" obj)
@@ -1505,8 +1926,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : new-burn
@@ -1539,8 +1960,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
@@ -1559,8 +1980,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
@@ -1579,8 +2000,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
@@ -1599,8 +2020,8 @@
         (UEV_IMC)
         (let
             (
-                (obj:object{OuronetDalos.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
-                (new-obj:object{OuronetDalos.DPTF|BalanceSchema}
+                (obj:object{OuronetDalosV2.DPTF|BalanceSchema} (UR_TrueFungible account snake-or-gas))
+                (new-obj:object{OuronetDalosV2.DPTF|BalanceSchema}
                     {"exist"                : (at "exist" obj)
                     ,"balance"              : (at "balance" obj)
                     ,"role-burn"            : (at "role-burn" obj)
@@ -1693,40 +2114,24 @@
                 )
             )
     )
-    (defun XI_IgnisCollect (patron:string active-account:string amount:decimal)
-        (require-capability (IGNIS|C>CLT patron active-account amount))
+    (defun XI_IgnisCollector (patron:string interactor:string amount:decimal)
+        (require-capability (IGNIS|C>COLLECT patron interactor amount))
         (let
             (
-                (sender-type:bool (UR_AccountType active-account))
-                (account-type:bool (UR_AccountType patron))
-            )
-            (if (not account-type)
-                (if (= sender-type false)
-                    (XI_IgnisCollectST patron amount)
-                    (XI_IgnisCollectSM patron active-account amount)
+                (collector:string
+                    (if (= interactor BAR)
+                        (UR_Tanker)
+                        interactor
+                    )
                 )
-                true
             )
-        )
-    )
-    (defun XI_IgnisCollectSM (patron:string active-account:string amount:decimal)
-        @doc "Collects GAS when the <active-account> is a Smart DALOS Account"
-        (require-capability (IGNIS|C>CLT_SM patron active-account amount))
-        (let
-            (
-                (gas-pot:string (UR_Tanker))
-                (quarter:decimal (* amount GAS_QUARTER))
-                (rest:decimal (- amount quarter))
+            (with-read DALOS|AccountTable collector
+                { "nonce" := n }
+                (update DALOS|AccountTable collector { "nonce" : (+ n 1)})
             )
-            (XI_IgnisTransfer patron gas-pot rest)              ;;3/4 to defined Gas-Tanker Account
-            (XI_IgnisTransfer patron active-account quarter)    ;;1/4 to <Active-Account> because its a Smart DALOS Account
-            (XI_IgnisIncrement false amount)                    ;;Increment the amount of Virtual Gas Spent
+            (XI_IgnisTransfer patron collector amount)
+            (XI_IgnisIncrement false amount)
         )
-    )
-    (defun XI_IgnisCollectST (patron:string amount:decimal)
-        (require-capability (IGNIS|C>CLT_ST patron amount))
-        (XI_IgnisTransfer patron (UR_Tanker) amount)
-        (XI_IgnisIncrement false amount)
     )
     (defun XI_IgnisCredit (receiver:string ta:decimal)
         (require-capability (IGNIS|C>CREDIT receiver))
@@ -1853,7 +2258,7 @@
             ,"payable-by-method"            : pbm}
         )
     )
-    (defun XI_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalos.DPTF|BalanceSchema})
+    (defun XI_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalosV2.DPTF|BalanceSchema})
         (require-capability (SECURE))
         (if snake-or-gas
             (update DALOS|AccountTable account

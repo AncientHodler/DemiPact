@@ -149,7 +149,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
-            (ref-DALOS:module{OuronetDalos} DALOS)
+            (ref-DALOS:module{OuronetDalosV2} DALOS)
         )
         ;;Create DSP and transfer to it 25 KDA
         (ref-coin::create-account KC2.KADN_NAME_0008 (read-keyset "KEY_KDA_Dispenser"))
@@ -177,7 +177,7 @@
 (namespace "free")
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
         (dsp1:string (ref-DPL|DSP::GOV|DSP1|SC_NAME))
         (cst1:string (ref-DPL|DSP::GOV|CST1|SC_NAME))
@@ -207,7 +207,7 @@
                     (coin.TRANSFER
                         "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda-dsp)
+                        (at 2 split-kda-dsp)
                     )
                     (coin.TRANSFER
                         "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
@@ -217,12 +217,12 @@
                     (coin.TRANSFER
                         "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda-dsp)
+                        (at 3 split-kda-dsp)
                     )
                     (coin.TRANSFER
                         "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda-dsp)
+                        (at 1 split-kda-dsp)
                     )
                 ]
             }
@@ -233,7 +233,7 @@
                     (coin.TRANSFER
                         "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda-cst)
+                        (at 2 split-kda-cst)
                     )
                     (coin.TRANSFER
                         "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
@@ -243,12 +243,12 @@
                     (coin.TRANSFER
                         "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda-cst)
+                        (at 3 split-kda-cst)
                     )
                     (coin.TRANSFER
                         "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda-cst)
+                        (at 1 split-kda-cst)
                     )
                 ]
             }

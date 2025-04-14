@@ -32,10 +32,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAts} U|ATS)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
 
         (f-vst:string "F|VST-98c486052a51")
@@ -84,10 +84,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAts} U|ATS)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
 
@@ -163,10 +163,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAts} U|ATS)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
 
@@ -242,10 +242,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAts} U|ATS)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (ref-coin:module{fungible-v2} coin)
@@ -287,7 +287,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -305,10 +305,10 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         (ref-U|ATS:module{UtilityAts} U|ATS)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
 
@@ -341,5 +341,15 @@
         (format "VST Min Move Value is {}" [(ref-DPTF::UR_MinMove vst)])
         (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
     ]
-    
 )
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

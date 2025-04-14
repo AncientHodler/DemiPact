@@ -129,7 +129,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C2))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -141,7 +141,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -154,7 +154,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -196,7 +196,7 @@
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|TS01-A:module{TalosStageOne_Admin} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|ATS::P|A_AddIMP mg)
@@ -251,11 +251,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto entity-id)
-                    [(ref-ATS::C_UpdatePendingBranding patron entity-id logo description website social)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATS::C_UpdatePendingBranding patron entity-id logo description website social)
                 )
             )
         )
@@ -265,8 +265,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 )
                 (ref-ATS::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -280,12 +280,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_AddHotRBT patron ats hot-rbt)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_AddHotRBT patron ats hot-rbt)
                 )
             )
         )
@@ -295,12 +294,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_AddSecondary patron ats reward-token rt-nfr)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_AddSecondary patron ats reward-token rt-nfr)
                 )
             )
         )
@@ -310,13 +308,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATSU::C_Coil patron coiler ats rt amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron coiler [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -326,11 +324,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron recoverer
-                    [(ref-ATSU::C_ColdRecovery patron recoverer ats ra)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_ColdRecovery patron recoverer ats ra)
                 )
             )
         )
@@ -340,13 +338,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATSU::C_Cull patron culler ats)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron culler [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at "output" ico)
             )
         )
@@ -357,13 +355,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATSU::C_Curl patron curler ats1 ats2 rt amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron curler [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -373,11 +371,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron fueler
-                    [(ref-ATSU::C_Fuel patron fueler ats reward-token amount)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_Fuel patron fueler ats reward-token amount)
                 )
             )
         )
@@ -387,11 +385,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron recoverer
-                    [(ref-ATSU::C_HotRecovery patron recoverer ats ra)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_HotRecovery patron recoverer ats ra)
                 )
             )
         )
@@ -401,13 +399,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -419,13 +418,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATSU::C_KickStart patron kickstarter ats rt-amounts rbt-request-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron kickstarter [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -435,12 +434,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_ModifyCanChangeOwner patron ats new-boolean)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_ModifyCanChangeOwner patron ats new-boolean)
                 )
             )
         )
@@ -451,11 +449,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron recoverer
-                    [(ref-ATSU::C_RecoverHotRBT patron recoverer id nonce amount)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_RecoverHotRBT patron recoverer id nonce amount)
                 )
             )
         )
@@ -466,11 +464,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron recoverer
-                    [(ref-ATSU::C_RecoverWholeRBTBatch patron recoverer id nonce)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_RecoverWholeRBTBatch patron recoverer id nonce)
                 )
             )
         )
@@ -480,11 +478,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron redeemer
-                    [(ref-ATSU::C_Redeem patron redeemer id nonce)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_Redeem patron redeemer id nonce)
                 )
             )
         )
@@ -496,11 +494,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron remover
-                    [(ref-ATSU::C_RemoveSecondary patron remover ats reward-token)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_RemoveSecondary patron remover ats reward-token)
                 )
             )
         )
@@ -510,12 +508,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_RotateOwnership patron ats new-owner)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_RotateOwnership patron ats new-owner)
                 )
             )
         )
@@ -525,12 +522,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_SetColdFee patron ats fee-positions fee-thresholds fee-array)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_SetColdFee patron ats fee-positions fee-thresholds fee-array)
                 )
             )
         )
@@ -540,12 +536,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_SetCRD patron ats soft-or-hard base growth)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_SetCRD patron ats soft-or-hard base growth)
                 )
             )
         )
@@ -555,12 +550,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_SetHotFee patron ats promile decay)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_SetHotFee patron ats promile decay)
                 )
             )
         )
@@ -571,12 +565,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_Syphon patron syphon-target ats syphon-amounts)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_Syphon patron syphon-target ats syphon-amounts)
                 )
             )
         )
@@ -586,12 +579,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_ToggleElite patron ats toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_ToggleElite patron ats toggle)
                 )
             )
         )
@@ -601,11 +593,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATS::C_ToggleFeeSettings patron ats toggle fee-switch)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATS::C_ToggleFeeSettings patron ats toggle fee-switch)
                 )
             )
         )
@@ -615,15 +607,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATSU::C_ToggleParameterLock patron ats toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XE_ConditionalFuelKDA collect)
             )
         )
@@ -633,12 +625,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_ToggleSyphoning patron ats toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_ToggleSyphoning patron ats toggle)
                 )
             )
         )
@@ -648,11 +639,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATS::C_TurnRecoveryOff patron ats cold-or-hot)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATS::C_TurnRecoveryOff patron ats cold-or-hot)
                 )
             )
         )
@@ -662,12 +653,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_TurnRecoveryOn patron ats cold-or-hot)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_TurnRecoveryOn patron ats cold-or-hot)
                 )
             )
         )
@@ -677,12 +667,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-ATS::UR_OwnerKonto ats)
-                    [(ref-ATSU::C_UpdateSyphon patron ats syphon)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ATSU::C_UpdateSyphon patron ats syphon)
                 )
             )
         )
@@ -709,14 +698,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-VST::C_CreateFrozenLink patron dptf)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -742,14 +731,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-VST::C_CreateReservationLink patron dptf)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -774,14 +763,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-VST::C_CreateVestingLink patron dptf)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -806,14 +795,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-VST::C_CreateSleepingLink patron dptf)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto dptf) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -825,10 +814,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron freezer
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Freeze patron freezer freeze-output dptf amount)
                 )
             )
@@ -839,10 +828,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeFrozen patron dptf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -853,12 +842,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf)
-                    [(ref-VST::C_ToggleTransferRoleFrozenDPTF patron s-dptf target toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-VST::C_ToggleTransferRoleFrozenDPTF patron s-dptf target toggle)
                 )
             )
         )
@@ -869,10 +857,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron reserver
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Reserve patron reserver dptf amount)
                 )
             )
@@ -883,10 +871,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron unreserver
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Unreserve patron unreserver r-dptf amount)
                 )
             )
@@ -897,10 +885,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeReserved patron dptf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -911,12 +899,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto s-dptf)
-                    [(ref-VST::C_ToggleTransferRoleReservedDPTF patron s-dptf target toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-VST::C_ToggleTransferRoleReservedDPTF patron s-dptf target toggle)
                 )
             )
         )
@@ -927,10 +914,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron culler
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Unvest patron culler dpmf nonce)
                 )
             )
@@ -941,10 +928,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron vester
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Vest patron vester target-account dptf amount offset duration milestones)
                 )
             )
@@ -955,10 +942,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeVested patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
                 )
             )
@@ -974,17 +961,20 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ref-VST:module{VestingV2} VST)
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                     (c-rbt-amount:decimal (ref-ATS::URC_RBT ats coil-token amount))
                 )
-                (ref-TS01-A::XE_IgnisCollect patron coiler-vester
-                    (+
-                        [(ref-ATSU::C_Coil patron coiler-vester ats coil-token amount)]
-                        (ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                        [
+                            (ref-ATSU::C_Coil patron coiler-vester ats coil-token amount)
+                            (ref-VST::C_Vest patron coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
+                        ]
+                        []
                     )
                 )
                 c-rbt-amount
@@ -1002,19 +992,23 @@
         (with-capability (P|TS)
             (let*
                 (
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-ATSU:module{AutostakeUsage} ATSU)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-ATSU:module{AutostakeUsageV2} ATSU)
+                    (ref-VST:module{VestingV2} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                     (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
                     (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 curl-token amount))
                     (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
                     (c-rbt2-amount:decimal (ref-ATS::URC_RBT ats2 c-rbt1 c-rbt1-amount))
                 )
-                (ref-TS01-A::XE_IgnisCollect patron curler-vester
-                    (+
-                        [(ref-ATSU::C_Curl patron curler-vester ats1 ats2 curl-token amount)]
-                        (ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                        [
+                            (ref-ATSU::C_Curl patron curler-vester ats1 ats2 curl-token amount)
+                            (ref-VST::C_Vest patron curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
+                        ]
+                        []
                     )
                 )
                 c-rbt2-amount
@@ -1029,10 +1023,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron merger
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Merge patron merger dpmf nonces)
                 )
             )
@@ -1047,10 +1041,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron merger
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_MergeAll patron merger dpmf)
                 )
             )
@@ -1061,10 +1055,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron sleeper
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Sleep patron sleeper target-account dptf amount duration)
                 )
             )
@@ -1075,10 +1069,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron unsleeper
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_Unsleep patron unsleeper dpmf nonce)
                 )
             )
@@ -1089,10 +1083,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeSleeping patron dpmf-to-repurpose nonce repurpose-from repurpose-to)
                 )
             )
@@ -1103,10 +1097,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeMerge patron dpmf-to-repurpose nonces repurpose-from repurpose-to)
                 )
             )
@@ -1117,10 +1111,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron repurpose-from
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-VST::C_RepurposeMergeAll patron dpmf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -1131,12 +1125,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                    (ref-VST:module{Vesting} VST)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-VST:module{VestingV2} VST)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPMF::UR_Konto s-dpmf)
-                    [(ref-VST::C_ToggleTransferRoleSleepingDPMF patron s-dpmf target toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-VST::C_ToggleTransferRoleSleepingDPMF patron s-dpmf target toggle)
                 )
             )
         )
@@ -1147,10 +1140,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-LIQUID:module{KadenaLiquidStakingV2} LIQUID)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron unwrapper
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-LIQUID::C_UnwrapKadena patron unwrapper amount)
                 )
             )
@@ -1161,10 +1154,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStaking} LIQUID)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-LIQUID:module{KadenaLiquidStakingV2} LIQUID)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron wrapper
+                (ref-DALOS::IGNIS|C_Collect patron
                     (ref-LIQUID::C_WrapKadena patron wrapper amount)
                 )
             )
@@ -1179,13 +1172,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ORBR:module{OuroborosV2} OUROBOROS)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ORBR::C_Compress patron client ignis-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron client [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1198,13 +1191,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ORBR:module{OuroborosV2} OUROBOROS)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ORBR::C_Sublimate patron client target ouro-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron client [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1216,12 +1209,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ORBR:module{OuroborosV2} OUROBOROS)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-DPTF::UR_Konto id)
-                    [(ref-ORBR::C_WithdrawFees patron id target)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-ORBR::C_WithdrawFees patron id target)
                 )
             )
         )
@@ -1232,11 +1224,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto entity-id)
-                    [(ref-SWP::C_UpdatePendingBranding patron entity-id logo description website social)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_UpdatePendingBranding patron entity-id logo description website social)
                 )
             )
         )
@@ -1246,8 +1238,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 )
                 (ref-SWP::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -1262,11 +1254,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_UpdatePendingBrandingLPs patron swpair entity-pos logo description website social)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWPU::C_UpdatePendingBrandingLPs patron swpair entity-pos logo description website social)
                 )
             )
         )
@@ -1276,10 +1268,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 )
-                (ref-SWP::C_UpgradeBrandingLPs patron swpair entity-pos months)
+                (ref-SWPU::C_UpgradeBrandingLPs patron swpair entity-pos months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
@@ -1289,11 +1281,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_ChangeOwnership patron swpair new-owner)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_ChangeOwnership patron swpair new-owner)
                 )
             )
         )
@@ -1303,13 +1296,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWP::C_EnableFrozenLP patron swpair)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -1320,13 +1314,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWP::C_EnableSleepingLP patron swpair)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -1341,16 +1336,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights amp p)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -1371,14 +1365,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-ORBR:module{Ouroboros} OUROBOROS)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights -1.0 p)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -1389,11 +1383,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_ModifyCanChangeOwner patron swpair new-boolean)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_ModifyCanChangeOwner patron swpair new-boolean)
                 )
             )
         )
@@ -1403,11 +1397,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_ModifyWeights patron swpair new-weights)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_ModifyWeights patron swpair new-weights)
                 )
             )
         )
@@ -1425,12 +1419,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWPU::C_ToggleAddLiquidity patron swpair toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWPU::C_ToggleAddLiquidity patron swpair toggle)
                 )
             )
         )
@@ -1445,12 +1438,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWPU::C_ToggleSwapCapability patron swpair toggle)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWPU::C_ToggleSwapCapability patron swpair toggle)
                 )
             )
         )
@@ -1461,14 +1453,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair) [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (ref-TS01-A::XE_ConditionalFuelKDA collect)
             )
         )
@@ -1478,11 +1471,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_UpdateAmplifier patron swpair amp)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_UpdateAmplifier patron swpair amp)
                 )
             )
         )
@@ -1499,11 +1492,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_UpdateFee patron swpair new-fee lp-or-special)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_UpdateFee patron swpair new-fee lp-or-special)
                 )
             )
         )
@@ -1513,11 +1506,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{Swapper} SWP)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
-                (ref-TS01-A::XE_IgnisCollect patron (ref-SWP::UR_OwnerKonto swpair)
-                    [(ref-SWP::C_UpdateSpecialFeeTargets patron swpair targets)]
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWP::C_UpdateSpecialFeeTargets patron swpair targets)
                 )
             )
         )
@@ -1529,13 +1522,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPL|C_AddBalancedLiquidity patron account swpair input-id input-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1545,13 +1538,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPL|C_AddFrozenLiquidity patron account swpair frozen-dptf input-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1561,13 +1554,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPL|C_AddSleepingLiquidity patron account swpair sleeping-dpmf nonce)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1584,13 +1577,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPL|C_AddLiquidity patron account swpair input-amounts)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1602,13 +1595,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPL|C_RemoveLiquidity patron account swpair lp-amount)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at "output" ico)
             )
         )
@@ -1633,13 +1626,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|OPU|C_MultiSwap patron account swpair input-ids input-amounts output-id slippage kda-pid)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1658,13 +1651,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|OPU|C_MultiSwapNoSlippage patron account swpair input-ids input-amounts output-id kda-pid)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1685,13 +1678,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|OPU|C_SimpleSwap patron account swpair input-id input-amount output-id slippage kda-pid)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1710,13 +1703,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|OPU|C_SimpleSwapNoSlippage patron account swpair input-id input-amount output-id kda-pid)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1737,13 +1730,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id slippage)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1761,13 +1754,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|C_MultiSwapNoSlippage patron account swpair input-ids input-amounts output-id)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1783,17 +1776,17 @@
             output-id:string
             slippage:object{SwapperUsage.Slippage}
         )
-        @doc "Executes a Swap from one Token to Another Token, unsing the input <swpair>"
+        @doc "Executes a Swap from one Token to Another Token, using the input <swpair>"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|C_SimpleSwap patron account swpair input-id input-amount output-id slippage)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1811,13 +1804,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsage} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-                    (ico:object{OuronetDalos.IgnisCumulator}
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-SWPU::SWPS|C_SimpleSwapNoSlippage patron account swpair input-id input-amount output-id)
                     )
                 )
-                (ref-TS01-A::XE_IgnisCollect patron account [ico])
+                (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )

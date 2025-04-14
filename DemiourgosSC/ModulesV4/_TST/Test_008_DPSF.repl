@@ -1,0 +1,45 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "REPL_Test_000x - TX03 - Accounts Display")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+    )
+    [
+        (format "ANHD Kadena is {}" [(ref-DALOS::UR_AccountKadena KST.ANHD)])
+        (format "CTO is {}" [(ref-DALOS::UR_AccountKadena (at 0 (ref-DALOS::UR_DemiurgoiID)))])
+        (format "HOV is {}" [(ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID)))])
+        (format "OUROBOROS is {}" [(ref-DALOS::UR_AccountKadena ouroboros)])
+        (format "DALOS is {}" [(ref-DALOS::UR_AccountKadena dalos)])
+        (format "LIQUID is {}" [(ref-DALOS::UR_AccountKadena liquid)])
+    ]
+)
+
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

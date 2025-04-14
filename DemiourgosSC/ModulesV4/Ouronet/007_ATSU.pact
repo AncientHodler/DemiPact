@@ -27,10 +27,40 @@
     (defun C_TurnRecoveryOn:object{OuronetDalos.IgnisCumulator} (patron:string ats:string cold-or-hot:bool))
     (defun C_UpdateSyphon:object{OuronetDalos.IgnisCumulator} (patron:string ats:string syphon:decimal))
 )
+(interface AutostakeUsageV2
+    @doc "Exposes the last Batch of Client Autostake Functions \ 
+        \ \
+        \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts"
+    ;;
+    (defun C_AddHotRBT:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string hot-rbt:string))
+    (defun C_AddSecondary:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string reward-token:string rt-nfr:bool))
+    (defun C_Coil:object{OuronetDalosV2.OutputCumulatorV2} (patron:string coiler:string ats:string rt:string amount:decimal))
+    (defun C_ColdRecovery:object{OuronetDalosV2.OutputCumulatorV2} (patron:string recoverer:string ats:string ra:decimal))
+    (defun C_Cull:object{OuronetDalosV2.OutputCumulatorV2} (patron:string culler:string ats:string))
+    (defun C_Curl:object{OuronetDalosV2.OutputCumulatorV2} (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
+    (defun C_Fuel:object{OuronetDalosV2.OutputCumulatorV2} (patron:string fueler:string ats:string reward-token:string amount:decimal))
+    (defun C_HotRecovery:object{OuronetDalosV2.OutputCumulatorV2} (patron:string recoverer:string ats:string ra:decimal))
+    (defun C_KickStart:object{OuronetDalosV2.OutputCumulatorV2} (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
+    (defun C_ModifyCanChangeOwner:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string new-boolean:bool))
+    (defun C_RecoverHotRBT:object{OuronetDalosV2.OutputCumulatorV2} (patron:string recoverer:string id:string nonce:integer amount:decimal))
+    (defun C_RecoverWholeRBTBatch:object{OuronetDalosV2.OutputCumulatorV2} (patron:string recoverer:string id:string nonce:integer))
+    (defun C_Redeem:object{OuronetDalosV2.OutputCumulatorV2} (patron:string redeemer:string id:string nonce:integer))
+    (defun C_RemoveSecondary:object{OuronetDalosV2.OutputCumulatorV2} (patron:string remover:string ats:string reward-token:string))
+    (defun C_RotateOwnership:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string new-owner:string))
+    (defun C_SetColdFee:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
+    (defun C_SetCRD:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
+    (defun C_SetHotFee:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string promile:decimal decay:integer))
+    (defun C_Syphon:object{OuronetDalosV2.OutputCumulatorV2} (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
+    (defun C_ToggleElite:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string toggle:bool))
+    (defun C_ToggleParameterLock:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string toggle:bool))
+    (defun C_ToggleSyphoning:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string toggle:bool))
+    (defun C_TurnRecoveryOn:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string cold-or-hot:bool))
+    (defun C_UpdateSyphon:object{OuronetDalosV2.OutputCumulatorV2} (patron:string ats:string syphon:decimal))
+)
 (module ATSU GOV
     ;;
     (implements OuronetPolicy)
-    (implements AutostakeUsage)
+    (implements AutostakeUsageV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -49,8 +79,8 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
     ;;
     ;;<====>
     ;;POLICY
@@ -80,7 +110,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -149,8 +179,8 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_EmptyIgnisCumulator ()(let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::DALOS|EmptyIgCum)))
-    (defconst EIC                   (CT_EmptyIgnisCumulator))
+    (defun CT_EmptyCumulator        ()(let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::DALOS|EmptyOutputCumulatorV2)))
+    (defconst EOC                   (CT_EmptyCumulator))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -165,8 +195,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_RecoveryState ats true true)
@@ -178,8 +208,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership culler)
             (ref-ATS::UEV_id ats)
@@ -190,8 +220,8 @@
     (defcap ATSC|C>DEPLOY (ats:string acc:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-DALOS::UEV_EnforceAccountExists acc)
             (ref-ATS::UEV_id ats)
@@ -201,8 +231,8 @@
     (defcap ATSC|C>NORM_LEDGER (ats:string acc:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (dalos-admin:guard GOV|MD_ATSU)
                 (autos-admin:guard GOV|SC_ATSU)
                 (acc-g:guard (ref-DALOS::UR_AccountGuard acc))
@@ -228,8 +258,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_id ats)
@@ -241,8 +271,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
                 (iz-rbt:bool (ref-DPMF::URC_IzRBT id))
             )
             (ref-DALOS::UEV_EnforceAccountType redeemer false)
@@ -255,8 +285,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
                 (iz-rbt:bool (ref-DPMF::URC_IzRBT id))
                 (nonce-max-amount:decimal (ref-DPMF::UR_AccountNonceBalance id nonce recoverer))
             )
@@ -271,7 +301,7 @@
         @event
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-ATS::CAP_Owner ats)
             (ref-ATS::UEV_UpdateColdAndHot ats)
@@ -289,7 +319,7 @@
         @event
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
             (compose-capability (P|TT))
@@ -299,7 +329,7 @@
         @event
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats reward-token true)
@@ -311,7 +341,7 @@
         @event
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l0:integer (length syphon-amounts))
@@ -344,8 +374,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l1:integer (length rt-amounts))
@@ -370,14 +400,14 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_AddHotRBT:object{OuronetDalos.IgnisCumulator}
+    (defun C_AddHotRBT:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string hot-rbt:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
@@ -388,26 +418,26 @@
                 (ref-ATS::XE_AddHotRBT ats hot-rbt)
                 (let
                     (
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-ATS::XB_EnsureActivationRoles patron ats false)
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
+                            (ref-DALOS::UDC_ConstructOutputCumulatorV2 price ats-sc trigger [])
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO (+ ico1 [ico2]) [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2] [])
                 )
             )
         )
     )
-    (defun C_AddSecondary:object{OuronetDalos.IgnisCumulator}
+    (defun C_AddSecondary:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string reward-token:string rt-nfr:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
@@ -419,33 +449,33 @@
                 (let
                     (
                         (iz-hot-rbt-present:bool (ref-ATS::URC_IzPresentHotRBT ats))
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-ATS::XB_EnsureActivationRoles patron ats true)
                         )
-                        (ico2:[object{OuronetDalos.IgnisCumulator}]
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (if iz-hot-rbt-present
                                 (ref-ATS::XB_EnsureActivationRoles patron ats false)
-                                [EIC]
+                                EOC
                             )
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
+                            (ref-DALOS::UDC_ConstructOutputCumulatorV2 price ats-sc trigger [])
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO (fold (+) [] [ico1 ico2 [ico3]]) [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3] [])
                 )
             )
         )
     )
-    (defun C_Coil:object{OuronetDalos.IgnisCumulator}
+    (defun C_Coil:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string coiler:string ats:string rt:string amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (c-rbt-amount:decimal (ref-ATS::URC_RBT ats rt amount))
@@ -453,23 +483,23 @@
             (with-capability (ATSU|C>COIL_OR_CURL ats rt)
                 (let
                     (
-                        (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron rt coiler ats-sc amount true)
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPTF::C_Mint patron c-rbt ats-sc c-rbt-amount false)
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron c-rbt ats-sc coiler c-rbt-amount true)
                         )
                     )
                     (ref-ATS::XE_UpdateRoU ats rt true true amount)
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3] [c-rbt-amount])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3] [c-rbt-amount])
                 )
             )
         )
     )
-    (defun C_ColdRecovery:object{OuronetDalos.IgnisCumulator}
+    (defun C_ColdRecovery:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string recoverer:string ats:string ra:decimal)
         (UEV_IMC)
         (with-capability (ATSC|C>COLD_REC recoverer ats ra)
@@ -478,10 +508,10 @@
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|ATS:module{UtilityAts} U|ATS)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -499,14 +529,14 @@
                     (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                     (price:decimal (* 2.0 biggest))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    (ico1:object{OuronetDalos.IgnisCumulator}
+                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-TFT::XB_FeelesTransfer patron c-rbt recoverer ats-sc ra true)
                     )
-                    (ico2:object{OuronetDalos.IgnisCumulator}
+                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-DPTF::C_Burn patron c-rbt ats-sc ra)
                     )
-                    (ico3:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    (ico3:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_ConstructOutputCumulatorV2 price ats-sc trigger [])
                     )
                 )
                 (map
@@ -519,17 +549,26 @@
                 )
                 (let
                     (
-                        (ico4:[object{OuronetDalos.IgnisCumulator}]
+                        (ico4:object{OuronetDalosV2.OutputCumulatorV2}
                             (if (not c-fr)
-                                (fold
-                                    (lambda
-                                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                                        (ref-U|LST::UC_AppL acc (ref-DPTF::C_Burn patron (at idx rt-lst) ats-sc (at idx ng-c-fr)))
+                                (let
+                                    (
+                                        (folded-lst:[object{OuronetDalosV2.OutputCumulatorV2}]
+                                            (fold
+                                                (lambda
+                                                    (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
+                                                    (ref-U|LST::UC_AppL acc 
+                                                        (ref-DPTF::C_Burn patron (at idx rt-lst) ats-sc (at idx ng-c-fr))
+                                                    )
+                                                )
+                                                []
+                                                (enumerate 0 (- (length rt-lst) 1))
+                                            )
+                                        )
                                     )
-                                    []
-                                    (enumerate 0 (- (length rt-lst) 1))
+                                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-lst [])
                                 )
-                                [EIC]
+                                EOC
                             )
                         )
                     )
@@ -538,12 +577,12 @@
                         , "cull-time"       : cull-time}
                     )
                     (XI_Normalize ats recoverer)
-                    (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico1] [ico2] [ico3] ico4]) [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4] [])
                 )
             )
         )
     )
-    (defun C_Cull:object{OuronetDalos.IgnisCumulator}
+    (defun C_Cull:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string culler:string ats:string)
         (UEV_IMC)
         (with-capability (ATSC|C>CULL culler ats)
@@ -551,9 +590,9 @@
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|DEC:module{OuronetDecimals} U|DEC)
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-ATS:module{Autostake} ATS)
-                    (ref-TFT:module{TrueFungibleTransfer} TFT)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c0:[decimal] (XI_MultiCull ats culler))
@@ -571,20 +610,20 @@
                     (price:decimal (* 2.0 biggest))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     ;;
-                    (ico1:object{OuronetDalos.IgnisCumulator}
-                        (ref-DALOS::UDC_Cumulator price trigger [])
+                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_ConstructOutputCumulatorV2 price ats-sc trigger [])
                     )
-                    (ico2:[object{OuronetDalos.IgnisCumulator}]
+                    (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
                         (fold
                             (lambda
-                                (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                                (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
                                 (ref-U|LST::UC_AppL acc
                                     (if (!= (at idx cw) 0.0)
                                         (do
                                             (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) false false (at idx cw))
                                             (ref-TFT::XB_FeelesTransfer patron (at idx rt-lst) ats-sc culler (at idx cw) true)
                                         )
-                                        EIC
+                                        EOC
                                     )
                                 )
                             )
@@ -592,20 +631,24 @@
                             (enumerate 0 (- (length rt-lst) 1))
                         )
                     )
+                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])
+                    )
                 )
                 (XI_Normalize ats culler)
-                (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico1] ico2]) cw)
+                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2] cw)
             )
         )
     )
-    (defun C_Curl:object{OuronetDalos.IgnisCumulator}
+    (defun C_Curl:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string curler:string ats1:string ats2:string rt:string amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
                 (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 rt amount))
@@ -615,35 +658,33 @@
             (with-capability (ATSU|C>COIL_OR_CURL ats1 rt)
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron rt curler ats-sc amount true)
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPTF::C_Mint patron c-rbt1 ats-sc c-rbt1-amount false)
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPTF::C_Mint patron c-rbt2 ats-sc c-rbt2-amount false)
                         )
-                        (ico4:object{OuronetDalos.IgnisCumulator}
+                        (ico4:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron c-rbt2 ats-sc curler c-rbt2-amount true)
                         )
                     )
                     (ref-ATS::XE_UpdateRoU ats1 rt true true amount)
                     (ref-ATS::XE_UpdateRoU ats2 c-rbt1 true true c-rbt1-amount)
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4] [c-rbt2-amount])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4] [c-rbt2-amount])
                 )
             )
         )
     )
-    (defun C_Fuel:object{OuronetDalos.IgnisCumulator}
+    (defun C_Fuel:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string fueler:string ats:string reward-token:string amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (with-capability (ATSF|C>FUEL ats reward-token)
@@ -652,120 +693,124 @@
             )
         )
     )
-    (defun C_HotRecovery:object{OuronetDalos.IgnisCumulator}
+    (defun C_HotRecovery:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string recoverer:string ats:string ra:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-
+                ;;
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (h-rbt:string (ref-ATS::UR_HotRewardBearingToken ats))
                 (present-time:time (at "block-time" (chain-data)))
-                (meta-data-obj:object{Autostake.ATS|Hot} { "mint-time" : present-time})
+                (meta-data-obj:object{AutostakeV2.ATS|Hot} { "mint-time" : present-time})
                 (meta-data:[object] [meta-data-obj])
                 (new-nonce:integer (+ (ref-DPMF::UR_NoncesUsed h-rbt) 1))
+                ;;
             )
             (with-capability (ATSH|C>HOT_REC recoverer ats ra)
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
-                        (price:decimal (* 3.0 biggest))
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico1:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
+                            (ref-DALOS::UDC_ConstructOutputCumulatorV2 
+                                (* 3.0 (ref-DALOS::UR_UsagePrice "ignis|biggest"))
+                                ats-sc
+                                (ref-DALOS::IGNIS|URC_IsVirtualGasZero)
+                                []
+                            )
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron c-rbt recoverer ats-sc ra true)
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPTF::C_Burn patron c-rbt ats-sc ra)
                         )
-                        (ico4:object{OuronetDalos.IgnisCumulator}
+                        (ico4:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Mint patron h-rbt ats-sc ra meta-data)
                         )
-                        (ico5:object{OuronetDalos.IgnisCumulator}
+                        (ico5:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Transfer patron h-rbt new-nonce ats-sc recoverer ra true)
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4 ico5] [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4 ico5] [])
                 )
             )
         )
     )
-    (defun C_KickStart:object{OuronetDalos.IgnisCumulator}
+    (defun C_KickStart:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal)
         (UEV_IMC)
-        (let
-            (
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
-                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
-            )
-            (with-capability (ATSU|C>KICKSTART kickstarter ats rt-amounts rbt-request-amount)
-                (let
-                    (
-                        (ref-U|LST:module{StringProcessor} U|LST)
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (ico1:[object{OuronetDalos.IgnisCumulator}]
-                            (fold
-                                (lambda
-                                    (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                                    (do
-                                        (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true true (at idx rt-amounts))
-                                        (ref-U|LST::UC_AppL acc
-                                            (ref-TFT::XB_FeelesTransfer patron (at idx rt-lst) kickstarter ats-sc (at idx rt-amounts) true)
-                                        )
+        (with-capability (ATSU|C>KICKSTART kickstarter ats rt-amounts rbt-request-amount)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                    (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                    (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                    ;;
+                    (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
+                        (fold
+                            (lambda
+                                (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
+                                (do
+                                    (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true true (at idx rt-amounts))
+                                    (ref-U|LST::UC_AppL acc 
+                                        (ref-TFT::XB_FeelesTransfer patron (at idx rt-lst) kickstarter ats-sc (at idx rt-amounts) true)
                                     )
                                 )
-                                []
-                                (enumerate 0 (- (length rt-lst) 1))
                             )
+                            []
+                            (enumerate 0 (- (length rt-lst) 1))
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-DPTF::C_Mint patron rbt-id ats-sc rbt-request-amount false)
-                        )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
-                            (ref-TFT::XB_FeelesTransfer patron rbt-id ats-sc kickstarter rbt-request-amount true)
-                        )
-                        (index:decimal (ref-ATS::URC_Index ats))
                     )
-                    (ref-DALOS::UDC_CompressICO (fold (+) [] [ico1 [ico2] [ico3]]) [index])
+                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])      
+                    )
+                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DPTF::C_Mint patron rbt-id ats-sc rbt-request-amount false)
+                    )
+                    (ico3:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-TFT::XB_FeelesTransfer patron rbt-id ats-sc kickstarter rbt-request-amount true)
+                    )
+                    (index:decimal (ref-ATS::URC_Index ats))
                 )
+                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3] [index])  
             )
         )
     )
-    (defun C_ModifyCanChangeOwner:object{OuronetDalos.IgnisCumulator}
+    (defun C_ModifyCanChangeOwner:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string new-boolean:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ModifyCanChangeOwner ats new-boolean)
-                (ref-DALOS::UDC_BiggestCumulator)
+                (ref-DALOS::UDC_BigCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_RecoverHotRBT:object{OuronetDalos.IgnisCumulator}
+    (defun C_RecoverHotRBT:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string recoverer:string id:string nonce:integer amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (ats:string (ref-DPMF::UR_RewardBearingToken id))
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -773,60 +818,61 @@
             (with-capability (ATSH|C>RECOVER recoverer id nonce amount)
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Transfer patron id nonce recoverer ats-sc amount true)
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Burn patron id nonce ats-sc amount)
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPTF::C_Mint patron c-rbt ats-sc amount false)
                         )
-                        (ico4:object{OuronetDalos.IgnisCumulator}
+                        (ico4:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XB_FeelesTransfer patron c-rbt ats-sc recoverer amount true)
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3 ico4] [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4] [])
                 )
             )
         )
     )
-    (defun C_RecoverWholeRBTBatch:object{OuronetDalos.IgnisCumulator}
+    (defun C_RecoverWholeRBTBatch:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string recoverer:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
             )
             (C_RecoverHotRBT patron recoverer id nonce (ref-DPMF::UR_AccountNonceBalance id nonce recoverer))
         )
     )
-    (defun C_Redeem:object{OuronetDalos.IgnisCumulator}
+    (defun C_Redeem:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string redeemer:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-TFT:module{TrueFungibleTransferV2} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-
+                ;;
                 (precision:integer (ref-DPMF::UR_Decimals id))
                 (current-nonce-balance:decimal (ref-DPMF::UR_AccountNonceBalance id nonce redeemer))
                 (meta-data (ref-DPMF::UR_AccountNonceMetaData id nonce redeemer))
-
+                ;;
                 (birth-date:time (at "mint-time" (at 0 meta-data)))
                 (present-time:time (at "block-time" (chain-data)))
                 (elapsed-time:decimal (diff-time present-time birth-date))
-
+                ;;
                 (ats:string (ref-DPMF::UR_RewardBearingToken id))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (h-promile:decimal (ref-ATS::UR_HotRecoveryStartingFeePromile ats))
                 (h-decay:integer (ref-ATS::UR_HotRecoveryDecayPeriod ats))
                 (h-fr:bool (ref-ATS::UR_HotRecoveryFeeRedirection ats))
-
+                ;;
                 (total-time:decimal (* 86400.0 (dec h-decay)))
                 (end-time:time (add-time birth-date (hours (* 24 h-decay))))
                 (earned-rbt:decimal
@@ -842,33 +888,34 @@
             (with-capability (ATSH|C>REDEEM redeemer id)
                 (let
                     (
-                        (ref-U|LST:module{StringProcessor} U|LST)
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (ico1:object{OuronetDalos.IgnisCumulator}
+                        (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Transfer patron id nonce redeemer ats-sc current-nonce-balance true)
                         )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
+                        (ico2:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-DPMF::C_Burn patron id nonce ats-sc current-nonce-balance)
                         )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
+                        (ico3:object{OuronetDalosV2.OutputCumulatorV2}
                             (ref-TFT::XE_FeelesMultiTransfer patron rt-lst ats-sc redeemer earned-rts true)
                         )
-                        (ico4:[object{OuronetDalos.IgnisCumulator}]
-                            (if (and (not h-fr) (!= earned-rbt current-nonce-balance))
-                                (fold
-                                    (lambda
-                                        (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                                        (do
-                                            (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true false (at idx fee-rts))
-                                            (ref-U|LST::UC_AppL acc
-                                                (ref-DPTF::C_Burn patron (at idx rt-lst) ats-sc (at idx fee-rts))
-                                            )idx
+                        (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
+                            (fold
+                                (lambda
+                                    (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
+                                    (do
+                                        (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true false (at idx fee-rts))
+                                        (ref-U|LST::UC_AppL acc
+                                            (ref-DPTF::C_Burn patron (at idx rt-lst) ats-sc (at idx fee-rts))
                                         )
                                     )
-                                    []
-                                    (enumerate 0 (- (length rt-lst) 1))
                                 )
-                                [EIC]
+                                []
+                                (enumerate 0 (- (length rt-lst) 1))
+                            )
+                        )
+                        (ico4:object{OuronetDalosV2.OutputCumulatorV2}
+                            (if (and (not h-fr) (!= earned-rbt current-nonce-balance))
+                                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])
+                                EOC
                             )
                         )
                     )
@@ -879,51 +926,52 @@
                         )
                         (enumerate 0 (- (length rt-lst) 1))
                     )
-                    (ref-DALOS::UDC_CompressICO (fold (+) [] [[ico1] [ico2] [ico3] ico4]) [])
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4] [])
                 )
             )
         )
     )
-    (defun C_RemoveSecondary:object{OuronetDalos.IgnisCumulator}
+    (defun C_RemoveSecondary:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string remover:string ats:string reward-token:string)
         (UEV_IMC)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-
-                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
-                (remove-position:integer (at 0 (ref-U|LST::UC_Search rt-lst reward-token)))
-                (primal-rt:string (at 0 rt-lst))
-                (resident-sum:decimal (at remove-position (ref-ATS::UR_RoUAmountList ats true)))
-                (unbound-sum:decimal (at remove-position (ref-ATS::UR_RoUAmountList ats false)))
-                (remove-sum:decimal (+ resident-sum unbound-sum))
-                (accounts-with-ats-data:[string] (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo ats 3 false))
-            )
-            (with-capability (ATSU|C>RM_SCND ats reward-token)
-                (let
-                    (
-                        (ref-DALOS:module{OuronetDalos} DALOS)
-                        (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico1:object{OuronetDalos.IgnisCumulator}
-                            (ref-TFT::XB_FeelesTransfer patron reward-token ats-sc remover remove-sum true)
-                        )
-                        (ico2:object{OuronetDalos.IgnisCumulator}
-                            (ref-TFT::XB_FeelesTransfer patron primal-rt remover ats-sc remove-sum true)
-                        )
-                        (ico3:object{OuronetDalos.IgnisCumulator}
-                            (ref-DALOS::UDC_Cumulator price trigger [])
+        (with-capability (ATSU|C>RM_SCND ats reward-token)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                    ;;
+                    (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                    (remove-position:integer (at 0 (ref-U|LST::UC_Search rt-lst reward-token)))
+                    (primal-rt:string (at 0 rt-lst))
+                    (resident-sum:decimal (at remove-position (ref-ATS::UR_RoUAmountList ats true)))
+                    (unbound-sum:decimal (at remove-position (ref-ATS::UR_RoUAmountList ats false)))
+                    (remove-sum:decimal (+ resident-sum unbound-sum))
+                    (accounts-with-ats-data:[string] (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo ats 3 false))
+                    ;;
+                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_ConstructOutputCumulatorV2 
+                            (ref-DALOS::UR_UsagePrice "ignis|token-issue") 
+                            ats-sc
+                            (ref-DALOS::IGNIS|URC_IsVirtualGasZero) 
+                            []
                         )
                     )
+                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-TFT::XB_FeelesTransfer patron reward-token ats-sc remover remove-sum true)
+                    )
+                    (ico3:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-TFT::XB_FeelesTransfer patron primal-rt remover ats-sc remove-sum true)
+                    )
+                )
                 ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
-                    ;via ico1
-                ;;2]The amount removed is added back as Primal-RT
-                    ;via ico2
-                ;;3]ROU Table is updated with the new DATA, now as primal RT
+                        ;via ico2
+                    ;;2]The amount removed is added back as Primal-RT
+                        ;via ico3
+                    ;;3]ROU Table is updated with the new DATA, now as primal RT
                     (ref-ATS::XE_UpdateRoU ats primal-rt true true resident-sum)
                     (ref-ATS::XE_UpdateRoU ats primal-rt false true unbound-sum)
                 ;;4]Client Accounts are modified to remove the RT Token and update balances with Primal RT
@@ -939,129 +987,126 @@
                 ;;6]Update Data in the DPTF Token Properties
                     (ref-DPTF::XE_UpdateRewardToken ats reward-token false)
                 ;;7]Output ICO
-                    (ref-DALOS::UDC_CompressICO [ico1 ico2 ico3] [])
-                )
+                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3] [])
             )
         )
     )
-    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator}
+    (defun C_RotateOwnership:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string new-owner:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ChangeOwnership ats new-owner)
-                (ref-DALOS::UDC_BiggestCumulator)
+                (ref-DALOS::UDC_BiggestCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_SetColdFee:object{OuronetDalos.IgnisCumulator}
+    (defun C_SetColdFee:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetColdFee ats fee-positions fee-thresholds fee-array)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_SetCRD:object{OuronetDalos.IgnisCumulator}
+    (defun C_SetCRD:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string soft-or-hard:bool base:integer growth:integer)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetCRD ats soft-or-hard base growth)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_SetHotFee:object{OuronetDalos.IgnisCumulator}
+    (defun C_SetHotFee:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string promile:decimal decay:integer)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_SetHotFee ats promile decay)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_Syphon:object{OuronetDalos.IgnisCumulator}
+    (defun C_Syphon:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string syphon-target:string ats:string syphon-amounts:[decimal])
         (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
-                (ref-TFT:module{TrueFungibleTransfer} TFT)
-                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
-                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
-            )
-            (with-capability (ATSU|C>SYPHON ats syphon-amounts)
-                (let
-                    (
-                        (ref-U|LST:module{StringProcessor} U|LST)
-                        (ico:[object{OuronetDalos.IgnisCumulator}]
-                            (fold
-                                (lambda
-                                    (acc:[object{OuronetDalos.IgnisCumulator}] idx:integer)
-                                    (ref-U|LST::UC_AppL acc
-                                        (if (> (at idx syphon-amounts) 0.0)
-                                            (do
-                                                (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true false (at idx syphon-amounts))
-                                                (ref-TFT::XB_FeelesTransfer patron (at idx rt-lst) ats-sc syphon-target (at idx syphon-amounts) true)
-                                            )
-                                            EIC
+        (with-capability (ATSU|C>SYPHON ats syphon-amounts)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                    (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                    ;;
+                    (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
+                        (fold
+                            (lambda
+                                (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
+                                (ref-U|LST::UC_AppL acc
+                                    (if (> (at idx syphon-amounts) 0.0)
+                                        (do
+                                            (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true false (at idx syphon-amounts))
+                                            (ref-TFT::XB_FeelesTransfer patron (at idx rt-lst) ats-sc syphon-target (at idx syphon-amounts) true)
                                         )
-
+                                        EOC
                                     )
+
                                 )
-                                []
-                                (enumerate 0 (- (length rt-lst) 1))
                             )
+                            []
+                            (enumerate 0 (- (length rt-lst) 1))
                         )
                     )
-                    (ref-DALOS::UDC_CompressICO ico [])
                 )
+                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])
             )
         )
     )
-    (defun C_ToggleElite:object{OuronetDalos.IgnisCumulator}
+    (defun C_ToggleElite:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ToggleElite ats toggle)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_ToggleParameterLock:object{OuronetDalos.IgnisCumulator}
+    (defun C_ToggleParameterLock:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string toggle:bool)
         (UEV_IMC)
         (with-capability (P|ATSU|CALLER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-ATS:module{Autostake} ATS)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (toggle-costs:[decimal] (ref-ATS::XE_ToggleParameterLock ats toggle))
                     (g:decimal (at 0 toggle-costs))
                     (gas-costs:decimal (+ (ref-DALOS::UR_UsagePrice "ignis|small") g))
@@ -1076,52 +1121,55 @@
                     )
                     true
                 )
-                (ref-DALOS::UDC_Cumulator gas-costs trigger [output])
+                (ref-DALOS::UDC_ConstructOutputCumulatorV2 gas-costs ats-sc trigger [output])
             )
         )
     )
-    (defun C_ToggleSyphoning:object{OuronetDalos.IgnisCumulator}
+    (defun C_ToggleSyphoning:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_ToggleSyphoning ats toggle)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
-    (defun C_TurnRecoveryOn:object{OuronetDalos.IgnisCumulator}
+    (defun C_TurnRecoveryOn:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string cold-or-hot:bool)
         (UEV_IMC)
         (with-capability (P|ATSU|CALLER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-ATS:module{Autostake} ATS)
-                    (ico1:[object{OuronetDalos.IgnisCumulator}]
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-ATS::XB_EnsureActivationRoles patron ats cold-or-hot)
+                    )
+                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DALOS::UDC_BiggestCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
                     )
                 )
                 (ref-ATS::XE_TurnRecoveryOn ats cold-or-hot)
-                (ref-DALOS::UDC_CompressICO (+ ico1 [(ref-DALOS::UDC_BiggestCumulator)]) [])
+                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2] [])
             )
         )
     )
-    (defun C_UpdateSyphon:object{OuronetDalos.IgnisCumulator}
+    (defun C_UpdateSyphon:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string ats:string syphon:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (with-capability (P|ATSU|CALLER)
                 (ref-ATS::XE_UpdateSyphon ats syphon)
-                (ref-DALOS::UDC_SmallCumulator)
+                (ref-DALOS::UDC_SmallCumulatorV2 (ref-ATS::UR_OwnerKonto ats))
             )
         )
     )
@@ -1130,7 +1178,7 @@
         (require-capability (ATSC|C>DEPLOY ats acc))
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-ATS::XE_SpawnAutostakeAccount ats acc)
             (XI_Normalize ats acc)
@@ -1143,7 +1191,7 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (zr:object{UtilityAts.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
                 (ng:object{UtilityAts.Awo} (ref-ATS::UDC_MakeNegativeUnstakeObject ats))
                 (p0:[object{UtilityAts.Awo}] (ref-ATS::UR_P0 ats acc))
@@ -1212,8 +1260,8 @@
         (require-capability (ATSC|C>NORM_LEDGER ats acc))
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (p0:[object{UtilityAts.Awo}] (ref-ATS::UR_P0 ats acc))
                 (p1:object{UtilityAts.Awo} (ref-ATS::UR_P1-7 ats acc 1))
                 (p2:object{UtilityAts.Awo} (ref-ATS::UR_P1-7 ats acc 2))
@@ -1279,7 +1327,7 @@
     (defun XI_SingleCull:[decimal] (ats:string acc:string position:integer)
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l:integer (length rt-lst))
                 (empty:[decimal] (make-list l 0.0))
@@ -1300,7 +1348,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
                 (p0:[object{UtilityAts.Awo}] (ref-ATS::UR_P0 ats acc))
             )
             (if (= position -1)
@@ -1330,7 +1378,7 @@
     (defun XI_UUP (ats:string acc:string data:[object{UtilityAts.Awo}])
         (let
             (
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-ATS::XE_UpP0 ats acc (drop -7 data))
             (ref-ATS::XE_UpP1 ats acc (at 0 (take 1 (take -7 data))))

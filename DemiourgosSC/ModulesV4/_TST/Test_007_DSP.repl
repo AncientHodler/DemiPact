@@ -1,5 +1,5 @@
 (print "")
-(print "===================Last Vesting Tests============================")
+(print "===================Last Dispenser Tests============================")
 (begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
 (namespace "free")
 (env-chain-data
@@ -30,9 +30,9 @@
 (let
     (
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-ATS:module{Autostake} ATS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-ATS:module{AutostakeV2} ATS)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
         (ouro:string (ref-DALOS::UR_OuroborosID))
         (os:decimal (ref-DPTF::UR_Supply ouro))
@@ -150,10 +150,30 @@
 (namespace "free")
 (let
     (
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ats:string KST.ATSTK)
+        (vst:string KST.VESTG)
+        (orb:string KST.OURBR)
+        (tls:string KST.TALOS)
+        (swp:string KST.SWAPR)
+        (ignis:string (ref-DALOS::UR_IgnisID))
+        (ignis1:decimal (ref-DPTF::UR_AccountSupply ignis ats))
+        (ignis2:decimal (ref-DPTF::UR_AccountSupply ignis vst))
+        (ignis3:decimal (ref-DPTF::UR_AccountSupply ignis orb))
+        (ignis4:decimal (ref-DPTF::UR_AccountSupply ignis tls))
+        (ignis5:decimal (ref-DPTF::UR_AccountSupply ignis swp))
     )
     ;(ref-DPL|DSP::A_OuroMinterStageOne)
     (ref-DPL|DSP::A_KosonMinterStageOne_3of3)
+    [
+        ignis1
+        ignis2
+        ignis3
+        ignis4
+        ignis5
+    ]
 )
 
 (print "")

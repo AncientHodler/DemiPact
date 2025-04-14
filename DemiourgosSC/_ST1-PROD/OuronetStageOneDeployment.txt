@@ -309,28 +309,119 @@ https://kdaexplorer.com/tx-details/g_dMEt7UVeNnT7qAZGD0s2oLOXJf0PjBS0d3FMnMBNg
 Tx 095 [135.861 gas] - Mint Daily Ouro Day 5 - Monday 31 March 2025
 https://kdaexplorer.com/tx-details/IkIkYuAadm3CfkvdRDeS-3qfPMTEzR1fv_YlMM59ldo
 
-Tx 096 [135k gas] Mint Dailz Ouro Day 6 - For Tuesday 01 April 2025
+Tx 096 [135k gas] Mint Daily Ouro Day 6 - For Tuesday 01 April 2025
 https://kdaexplorer.com/tx-details/GyAwwEH7kCUaIgAf9lH3FV0bVK9MA164IDAdL6qsOpw
 
+Tx 097 [94.572 gas] Update Gas Station to include DSP Module.
+https://kdaexplorer.com/tx-details/IYekM7tFNdxfQprUbxQp_qQafmecw0Hb6bJYQipdLXQ
 
+Tx 098 [] Added 1 KDA to the Gas Station
+https://kdaexplorer.com/tx-details/NiQ24gLmGKZHzdP5iwUQ1sjUkCibwqwjGAlWScylsuE
 
+Tx 096 [135k gas] Mint Daily Ouro Day 6 - For Wendsday 02 April 2025
+https://kdaexplorer.com/tx-details/4qv-9dudewTH6ehJ9j12EJMCb1j-zn2Nt2GIpcZqfb8
 
+Tx 097 [282 gas] Update Dispenser Key to be accesible from Offset Node.
+https://kdaexplorer.com/tx-details/W_8GUuzcOPFKeHtQEmjjS_i4uJ61WheVyWF5vM-yaWs
 
+Tx 098 [82.621 gas] Update Vesting Module to allow Unreserve enforcing account ownership of the DPTF Token, and correct a minor bug
+https://kdaexplorer.com/tx-details/2lbPtmCtQEhaA7v-UQURu9-a9JMh0hMl4nI21x9V2eU
 
+Tx 099 [gas] Transmute 127.916177438073721963 Auryn and 124.089682597330476507 EA raising EliteAuryndex from 1.007989714902466127809098 to 1.008591200881282724906303 and then to 1.009180050455958626277692
+https://kdaexplorer.com/tx-details/1mcWlUp5CB22TetqkEGNb5liQ116wKl-mbbQd9G_F4g
 
+Tx 100 [2165 gas] Pay 20 KDA from the 9520 KDA required for initialisation (left to be paid 9500 KDA) with thie method.
+Ancient Pleb Account is being used, which has zero discount for KDA payments, in order to pay the full amount.
+https://kdaexplorer.com/tx-details/a16A6iRfnjoVUQyX8_tDNpjtsKAyPj0FFXzy7wTIIQE
 
+Tx 101 [94.572 gas] Update Dalos to change KDA Split Ratio (10% DH, 20% GasStation, 30% Devs, 40% LiquidStaking)
+https://kdaexplorer.com/tx-details/zlrk0FE42qgbciG2HMhy0xAV9tNWVlsKUiIa8ZI0jpo
 
+Tx 102 [] Pay 2000 KDA Initialisation Fee (7650 KDA Left)
+https://kdaexplorer.com/tx-details/JaiW0VnpmcIzP3XhhXVATlnj9Tx0csyy-mmknrWxdq4
 
+Tx 103 [25.309 gas] Move 60k Ouroboros to AH in preparation for the Primal Liquidity Pool Creation.
+https://kdaexplorer.com/tx-details/dj2N14R-285aUjMtBjBIRY2rvfbtaDqF73bzjQU8LcM
 
+Tx 104 [17.176 gas]  Wrap 8000 KDA to WKDA on AH Account in preparation for the Primal Liquidity Pool Creation.
+https://kdaexplorer.com/tx-details/OGwvC9Bok0cV9R9tL-RDhDLFQebU1QXW9frHVfJN3hU
 
+Tx 105 [40.596 gas] Coil 4500 WKDA to LKDA on AH Account in preparation for the Primal Liquidity Pool Creation.
+https://kdaexplorer.com/tx-details/v_eyHj09QkDwWc2vKCHJRi1nTDyR1DwW9QPVz5gUtDw
 
+Tx 106 [73.827 gas] Issue Wigthed Pool LKDA-OURO-WKDA with 4500 LKDA, 60000 OURO and 3500 WKDA
+https://kdaexplorer.com/tx-details/yeG5MreXHMhUFoKJnNGpftCsiWSqPOGGHBsvcnYWc3o
 
+Tx 107 [6.345 gas] Add 5.0 special fee to the Pool
+https://kdaexplorer.com/tx-details/fu6UuD1uGVBp-G9jR9n8TOuCK26agNucQVce0vy7tKE
 
+TX 108 [7.280 gas] Set Special Fee Targets
+https://kdaexplorer.com/tx-details/d_aAkVx_3P8ZmEzfkZDtkkrYhpiP-f2xE0b9R-tm9xk
 
+TX 109 [186 gas] Turn global Liquid Boost to ON for all SWP-Pairs
+https://kdaexplorer.com/tx-details/D97uMsKAnnhtb9ay7BnNYJRl592OihhJDNkc0nuKYr0
 
+======================================================
 
+Tx 110 [113.668 gas] Upgrade DALOS and add OuronetDalosV2 interface
+https://kdaexplorer.com/tx-details/tk-LITPxQyAs_0ort4e8lgZsZLESFz92CUMf5ajbTps
 
+Tx 111 [32.110 gas] Upgrade BRD and add BrandingUsageV2 and BrandingUsageV3 interfaces
+https://kdaexplorer.com/tx-details/VqAiZh1cuaLlPat5y_Ibxj-VlO9zQqF1Wd6UKbUQZJI
 
+Tx 112 [133.279 gas] Upgrade DPTF and add DemiourgosPactTrueFungibleV2 interface
+https://kdaexplorer.com/tx-details/i5OhJXhxAQ-0qiOtVu1Q2WnopQeFKtLVvDIqI4cgZzY
+
+Tx 113 [124.884 gas] Upgrade DPMF and add DemiourgosPactMetaFungibleV2 interface
+https://kdaexplorer.com/tx-details/svWozHC60jyPG66gHa-5H3kwOYRB9E_ggwC2i-uNpm8
+
+Tx 114 [144.018 gas] Upgrade ATS and add AutostakeV2 interface
+https://kdaexplorer.com/tx-details/0li8w0615GXNknE6wkJr8MN3ecTWOxBOvmWYXEII6dU
+
+Tx 115 [114.636 gas] Upgrade TFT and add TrueFungibleTransferV2 interface
+https://kdaexplorer.com/tx-details/ZJpjETJNaOQZlxFjYvILIP_lmWpTgLnv53zjojxCtwk
+
+Tx 116 [112.535 gas] Upgrade ATSU and add AutostakeUsageV2 interface
+https://kdaexplorer.com/tx-details/
+
+Tx 117 [96.418 gas] Upgrade VST and add VestingV2 interface
+https://kdaexplorer.com/tx-details/GnMQkK1IRbN9uENKofMJz9Do1SZ78JrQS1twjln5snI
+
+Tx 118 [24.942 gas] Upgrade LIQUID and add KadenaLiquidStakingV2 interface
+https://kdaexplorer.com/tx-details/HmaGSAd3TFEaLE29jgjXKyN6VY9fbCzdt2mN_UKKIuo
+
+Tx 119 [37.557 gas] Upgrade OUROBOROS and add OuroborosV2 interface
+https://kdaexplorer.com/tx-details/DD3DCEvzBV74Gdiq0CspLq6kgGnkiym55o-jYfotJEk
+
+Tx 120 [28.760 gas] Upgrade SWPT module
+https://kdaexplorer.com/tx-details/73xvjj72_Jjd1Enx17nVDw1FgjQeeBQLVdYlbQxsNkE
+
+Tx 121 [94.304 gas] Upgrade SWP module and add SwapperV2 interface
+https://kdaexplorer.com/tx-details/AJ7nMmJSEL3uui168UyaBi66cHKcGMpodvHYzsCOacs
+
+Tx 122 [136.035 gas] Upgrade SWPU module and add SwapperUsageV2 interface
+https://kdaexplorer.com/tx-details/uczNyzWRuCIlKm4RZ9vdkggpnSDXbZMJI1ibi1yCevk
+
+Tx 123 [20.833 gas] Upgrade TS01-A module and add TalosStageOne_AdminV2 interface
+https://kdaexplorer.com/tx-details/mbI6tDdkGws7tJ5fKC40HuHvRr6DcHIvs2jcS2Wak9M
+
+Tx 124 [66.078 gas] Upgrade TS01-C1 module
+https://kdaexplorer.com/tx-details/r5IsUO_k1QtWOUmY-jsJmOFi-o-Z2NOxRVC6vaNTNaw
+
+Tx 125 [103.767 gas] Upgrade TS01-C2 module
+https://kdaexplorer.com/tx-details/I0shFecmkv9_0Y9Ya6wX1vA1qCRoJstFRjjrP-fMD88
+
+Tx 126 [11.296 gas] Upgrade TS01-CP module
+https://kdaexplorer.com/tx-details/PNX9bXrSzK91TtHzq48oBgih-Hs9U1UnA5KT-Rpp9hU
+
+Tx 127 [68.233 gas] Upgrade DPL-DALOS module
+https://kdaexplorer.com/tx-details/Cy-1dFHgdIbN0rHKKH0D_3q2HnH56QtIjWhBjVA0_-M
+
+Tx 128 [38.420 gas] Upgrade DPL-AOZ module
+https://kdaexplorer.com/tx-details/i_gW-n0fkLsOtiE2qq7_HzGGXrp8nTR6j_KGtQ5_jJU
+
+Tx 129 [39.085 gas] Upgrade DSP module
+https://kdaexplorer.com/tx-details/GfNQLQjZ-p9JSscm_IVs8SjkAJbD_3gqzUtsnqwQJ-s
 
 
 

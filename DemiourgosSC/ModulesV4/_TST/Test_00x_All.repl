@@ -14,6 +14,10 @@
 
 ;;Tests after Primary and Secondary Modules
 (print "")
+(load "Test_000_Cumulator.repl")
+(print "************************DPTF Tests LOADED**********************************************")
+
+(print "")
 (load "Test_001_DPTF.repl")
 (print "************************DPTF Tests LOADED**********************************************")
 

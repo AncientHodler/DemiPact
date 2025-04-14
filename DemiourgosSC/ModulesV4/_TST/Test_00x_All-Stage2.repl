@@ -1,0 +1,18 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load all Mockup Enviroment Modules
+
+;;Primary Modules - Ecosystem initialisation
+(print "")
+(load "Test_000_Barebone.repl")
+(print "************************Demiourgos Ecosystem LOADED**********************************************")
+
+;;Secondary Modules - After Ecosystem Initialisation
+(print "")
+(load "../Dispenser/Dispenser.repl")
+(print "************************Demiourgos Ecosystem LOADED**********************************************")
+
+;;Tests after Primary and Secondary Modules
+(print "")
+(load "Test_008_DPSF.repl")
+(print "************************DPSF Tests LOADED**********************************************")

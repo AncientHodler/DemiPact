@@ -51,6 +51,23 @@
     (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])) ;;4
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer)) ;;4
 )
+(interface BrandingUsageV2
+    @doc "Interface Exposing the Actual Branding Functions, that must exist within each Entitys main Module \
+    \ such that said Entity can benefit from Branding. \
+    \ Stage 1 deployment launches following entities: DPTF, DPMF, ATSPairs, SWPairs \
+    \ \
+    \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts"
+    ;;
+    (defun C_UpdatePendingBranding:object{OuronetDalosV2.OutputCumulatorV2} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
+)
+(interface BrandingUsageV3
+    @doc "Interface Exposing the Branding Functions for DPTF LP Tokens \
+    \ Using the IgnisCUmulatorV2 Architecture which repairs the collection of Ignis for Smart Ouronet Accounts"
+    ;;
+    (defun C_UpdatePendingBrandingLPs:object{OuronetDalosV2.OutputCumulatorV2} (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
+)
 (module BRD GOV
     ;;
     (implements OuronetPolicy)
@@ -64,7 +81,7 @@
     (defcap GOV ()                  (compose-capability (GOV|BRD_ADMIN)))
     (defcap GOV|BRD_ADMIN ()        (enforce-guard GOV|MD_DPTF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -78,7 +95,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -177,7 +194,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (mp:integer (URC_MaxBluePayment entity-owner-account))
                 (flag:integer (UR_Flag entity-id false))
                 (premium:time (UR_PremiumUntil entity-id false))
@@ -238,7 +255,7 @@
     (defun URC_MaxBluePayment (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (mt:integer (ref-DALOS::UR_Elite-Tier-Major account))
             )
             (if (<= mt 2)
@@ -396,7 +413,7 @@
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (blue:decimal (ref-DALOS::UR_UsagePrice "blue"))
                     (branding:object{Branding.Schema} (UR_Branding entity-id false))
                     (branding-pending:object{Branding.Schema} (UR_Branding entity-id true))

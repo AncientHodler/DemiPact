@@ -662,7 +662,7 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
     )
 
     ;;Create AH and transfer to it 25000 KDA
@@ -734,7 +734,7 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
     )
 
     (ref-TS01-A::DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
@@ -1136,7 +1136,7 @@
 (namespace "free")
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KC.ANCIENTHODLER
@@ -1153,7 +1153,7 @@
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
@@ -1163,12 +1163,12 @@
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
 
                     )
                 ]

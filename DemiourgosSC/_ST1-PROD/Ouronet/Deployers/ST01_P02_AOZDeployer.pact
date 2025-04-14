@@ -62,7 +62,7 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
     ;;
     ;;<====>
@@ -157,7 +157,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -178,7 +178,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
             )
             (ref-DPMF::UEV_id mf)
             (with-read AOZ|Assets AOZ|INFO
@@ -199,7 +199,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{Autostake} ATS)
+                (ref-ATS:module{AutostakeV2} ATS)
             )
             (ref-ATS::UEV_id atspair)
             (with-read AOZ|Assets AOZ|INFO
@@ -220,7 +220,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -241,7 +241,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
             )
             (ref-DPMF::UEV_id mf)
             (with-read AOZ|Assets AOZ|INFO

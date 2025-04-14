@@ -1,0 +1,91 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 001 Cumulator Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ats:string KST.ATSTK)
+        (vst:string KST.VESTG)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+
+        (cum1:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 patron false))
+        (cum2:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 7.0 receiver false))
+        (cum3:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 8.0 ats false))
+        (cum4:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 ats false))
+        (cum5:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 17.0 vst false))
+        (l1:[object{OuronetDalosV2.ModularCumulatorV2}] [cum3 cum4 cum1 cum2 cum5])
+        (lst:list ["coco" "poco" 1])
+        (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
+        ;;
+        (ocv2:object{OuronetDalosV2.OutputCumulatorV2}
+            (ref-DALOS::UDC_MakeOutputCumulatorV2 l1 lst)
+        )
+        (ccv2:object{OuronetDalosV2.CompressedCumulatorV2}
+            (ref-DALOS::UDC_CompressOutputCumulator ocv2)
+        )
+        (pcv2:object{OuronetDalosV2.PrimedCumulatorV2}
+            (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron ccv2)
+        )
+        (oc1:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum1] []))
+        (oc2:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum2] []))
+        (oc3:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum3] []))
+        (oc4:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum4] []))
+        (oc5:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum5] []))
+
+        (try:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
+        (try2:object{OuronetDalosV2.CompressedCumulatorV2}
+            (ref-DALOS::UDC_CompressOutputCumulator try)
+        )
+        (try3:object{OuronetDalosV2.PrimedCumulatorV2}
+            (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron try2)
+        )
+    )
+    [
+        ;cum1
+        ;cum2
+        ;cum3
+        ;cum4
+        ;cum5
+
+        ;oc1
+        ;oc3
+        ;try
+    ]
+    try3
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Cumulator Tests costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

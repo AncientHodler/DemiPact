@@ -125,6 +125,10 @@
 ;;DALOS Principal (Gas Station)                     c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ
 ;;LIQUID Principal (Holding Liquid Staking Funds)   c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY
 
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena
+    "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ"
+)
+
 ;;Liquid Staking
 (coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 10.0)
 (coin.TRANSFER "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" 1.0)
@@ -133,6 +137,33 @@
 (coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 136.8)
 (coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 205.2)
 (coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 273.6)
+
+;;Paying 20 KDA for initialisation - 9500 left.
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.KDA|C_CollectWT
+    "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc"
+    2000.0
+    false
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 200.0)    ;;10%
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 400.0)                         ;;20%
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 600.0)    ;;30%
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 800.0)                         ;;40%
+
+
+;;LiquidStaking Projection
+(let
+    (
+        (values:[decimal] (n_7d40ccda457e374d8eb07b658fd38c282c545038.OUROBOROS.URC_ProjectedKdaLiquindex))
+        (v1:decimal (at 0 values))
+        (v2:decimal (at 1 values))
+        (v3:decimal (at 2 values))
+    )
+    (format "Current KadenaLiquidIndex is {}; Projected Index is {}, and LiquidStaking holds {} KDA"
+        [v1 v2 v3]
+    )
+)
 
 (print "END STEP 003")
 ;;
@@ -426,3 +457,46 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 ;;Vest last 3
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.ATS.URC_Index "Auryndex-ds4il5rO7vDC")
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.ATS.URC_Index "EliteAuryndex-ds4il5rO7vDC")
+
+;;Tried but already exists
+(define-keyset "n_7d40ccda457e374d8eb07b658fd38c282c545038.dh_ah-pleb-keyset" (read-keyset "dh_ah-pleb-keyset"))
+(describe-keyset "n_7d40ccda457e374d8eb07b658fd38c282c545038.dh_ah-pleb-keyset")
+
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DALOS|C_DeployStandardAccount
+    "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc"
+    (keyset-ref-guard "n_7d40ccda457e374d8eb07b658fd38c282c545038.dh_ah-pleb-keyset")
+    "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca"
+    "9G.5CcaAB1scxhx5BcbpsChFhf9xhlGws8F9jh5axgCJrmve8xdfaaBn14HffLKzFb6uBcKaB8g6phvhgvCgtkmysA8ApxF6kqKwK4Fu2Efx2neannhB66Lf89rsyAHwj5B6Ic6bz1cmCKpzhnuG0j2b9mstlg7yBnfmzIpFKbd0t2h0FE2M8bLDAsgEyiBsbMG0ADJcC2mx1KqLyreBH6pHB1cwcIxvJqr5jkv601ipsw32mnfoyd84M97yxB6v0q8MlBn9m9G3AocfokCHwbkCs20x8cKwKoxFjA8Hh5dDa8iwicmJeABvGD6xylvB6IJnsyknGqcDmFuGCtrDyqD3JmxvcKAwbz32a48MuIaiJad1IFtIs1kGqBIA7gudnl8nA9iE4lq4n15wAjqdLbEfa9zthzHbc52I7ezwHyxxqmEwnuyBmd2HpFiadm6qrl14K0fouo24Ioacab4xq7g03AFEr4KCy9jrb4eDdao1cJocm8y9buAC40iAILs85H8i2cbKoECnjHpK5KmMKfGknIqDf5DkEMEvEKDs4jsn39Bn86e8jIg7e0v62dp"
+)
+
+;;Issue weigthed Pools
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.SWP|C_IssueWeighted
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        { "token-id": "LKDA-slLyzPPCo22W", "token-supply": 4500.0}
+        { "token-id": "OURO-slLyzPPCo22W", "token-supply": 60000.0}
+        { "token-id": "WKDA-slLyzPPCo22W", "token-supply": 3500.0}
+    ]
+    2.5
+    [0.3 0.5 0.2]
+    true
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.SWP|C_UpdateFee
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W"
+    7.5
+    false
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.SWP|C_UpdateSpecialFeeTargets
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W"
+    [
+        {"target": "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ", "value":16}
+        {"target": "Ѻ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ", "value":32}
+        {"target": "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL", "value":16}
+    ]
+)

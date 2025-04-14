@@ -23,10 +23,10 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{Swapper} SWP)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-SWP:module{SwapperV2} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (patron:string KST.ANHD)
@@ -171,10 +171,10 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{Swapper} SWP)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-SWP:module{SwapperV2} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (patron:string KST.ANHD)
         (patron:string KST.EMMA)
@@ -227,11 +227,11 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (months:integer 3)
@@ -253,7 +253,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -263,12 +263,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -336,11 +336,11 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{Swapper} SWP)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-SWP:module{SwapperV2} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)

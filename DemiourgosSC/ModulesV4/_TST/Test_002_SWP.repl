@@ -57,9 +57,9 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
 
         (dwk-id:string (ref-DALOS::UR_WrappedKadenaID))
@@ -135,8 +135,8 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -154,7 +154,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -164,12 +164,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -213,8 +213,8 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -232,7 +232,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -242,12 +242,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -256,7 +256,7 @@
     (let
         (
             (ref-U|SWP:module{UtilitySwp} U|SWP)
-            (ref-SWPU:module{SwapperUsage} SWPU)
+            (ref-SWPU:module{SwapperUsageV2} SWPU)
             (t1:string (ref-DALOS::UR_LiquidKadenaID))
             (t2:string (ref-DALOS::UR_OuroborosID))
             (t3:string (ref-DALOS::UR_WrappedKadenaID))
@@ -304,8 +304,8 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -323,7 +323,7 @@
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
@@ -333,12 +333,12 @@
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -385,8 +385,8 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -404,7 +404,7 @@
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
@@ -414,12 +414,12 @@
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -469,8 +469,8 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        ;(ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        ;(ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -488,7 +488,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -498,12 +498,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -584,8 +584,8 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -603,7 +603,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -613,12 +613,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -666,8 +666,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (ref-TS01-CP:module{TalosStageOne_ClientPacts} TS01-CP)
         (patron:string KST.ANHD)
         (pool-tokens:[object{Swapper.PoolTokens}]
@@ -735,7 +735,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -752,7 +752,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -762,12 +762,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -814,8 +814,8 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -833,7 +833,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -843,12 +843,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -1011,7 +1011,7 @@
 
 (let
     (
-        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
         (patron:string KST.ANHD)
         (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
         (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
@@ -1151,8 +1151,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
     )
     [
@@ -1192,10 +1192,10 @@
 
 (let
     (
-        ;(ref-DALOS:module{OuronetDalos} DALOS)
-        ;(ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        ;(ref-DALOS:module{OuronetDalosV2} DALOS)
+        ;(ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        ;(ref-SWP:module{Swapper} SWP)
+        ;(ref-SWP:module{SwapperV2} SWP)
         ;(swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (patron:string KST.ANHD)
         ;(pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
@@ -1251,9 +1251,9 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (patron:string KST.ANHD)
         ;(pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
@@ -1310,11 +1310,11 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-ATS:module{Autostake} ATS)
-        (ref-SWP:module{Swapper} SWP)
-        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-ATS:module{AutostakeV2} ATS)
+        (ref-SWP:module{SwapperV2} SWP)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
         (pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
         (pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
         (pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
@@ -1380,8 +1380,8 @@
 
 (let
     (
-        (ref-ORBR:module{Ouroboros} OUROBOROS)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-ORBR:module{OuroborosV2} OUROBOROS)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
         (indices:[decimal] (ref-ORBR::URC_ProjectedKdaLiquindex))
     )
     [
@@ -1390,9 +1390,9 @@
     (ref-TS01-A::ORBR|A_Fuel)
     (let
         (
-            (ref-DALOS:module{OuronetDalos} DALOS)
-            (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-            (ref-ATS:module{Autostake} ATS)
+            (ref-DALOS:module{OuronetDalosV2} DALOS)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+            (ref-ATS:module{AutostakeV2} ATS)
 
             (dlk-id:string (ref-DALOS::UR_LiquidKadenaID))
             (ats-pairs-with-dlk-id:[string] (ref-DPTF::UR_RewardBearingToken dlk-id))
@@ -1425,7 +1425,7 @@
     (
         (ref-coin:module{fungible-v2} coin)
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalos} DALOS)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (patron:string KST.ANHD)
         
@@ -1452,7 +1452,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -1462,12 +1462,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -1505,10 +1505,10 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-TFT:module{TrueFungibleTransfer} TFT)
-        (ref-VST:module{Vesting} VST)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-TFT:module{TrueFungibleTransferV2} TFT)
+        (ref-VST:module{VestingV2} VST)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -1578,11 +1578,11 @@
     (
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-VST:module{Vesting} VST)
+        (ref-VST:module{VestingV2} VST)
         (vst:string "VST-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
         (f-vst:string (ref-DPTF::UR_Frozen vst))
         
     )
@@ -1623,13 +1623,13 @@
 
 (let
     (
-        (ref-VST:module{Vesting} VST)
+        (ref-VST:module{VestingV2} VST)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (vst:string "VST-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (s-vst:string (ref-DPTF::UR_Sleeping vst))
         (p:string ".")
         
@@ -1713,8 +1713,8 @@
 
 (let
     (
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
     )
     ;(ref-TS01-C2::VST|C_Merge KST.EMMA KST.EMMA "Z|VST-98c486052a51" (enumerate 1 30))
@@ -1753,8 +1753,8 @@
 
 (let
     (
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (ouro:string "OURO-98c486052a51")
         (v-ouro:string "V|OURO-98c486052a51")
@@ -1794,9 +1794,9 @@
 
 (let
     (
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-VST:module{Vesting} VST)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-VST:module{VestingV2} VST)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (ouro:string "OURO-98c486052a51")
         (v-ouro:string "V|OURO-98c486052a51")
@@ -1872,9 +1872,9 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
     )
@@ -1918,9 +1918,9 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-VST:module{Vesting} VST)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-VST:module{VestingV2} VST)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -1945,7 +1945,7 @@
                     (coin.TRANSFER 
                         "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" 
@@ -1955,12 +1955,12 @@
                     (coin.TRANSFER 
                         "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ]
             }
@@ -1996,16 +1996,16 @@
     (
         
         ;
-        ;(ref-VST:module{Vesting} VST)
+        ;(ref-VST:module{VestingV2} VST)
         ;(emma:string KST.EMMA)
         ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         ;(lp-id "P|OURO-VST|LP-98c486052a51")
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-SWPU:module{SwapperUsage} SWPU)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
+        (ref-SWP:module{SwapperV2} SWP)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (f-vst:string "F|VST-98c486052a51")
@@ -2056,16 +2056,16 @@
     (
         
         ;
-        ;(ref-VST:module{Vesting} VST)
+        ;(ref-VST:module{VestingV2} VST)
         ;(emma:string KST.EMMA)
         ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         ;(lp-id "P|OURO-VST|LP-98c486052a51")
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-SWPU:module{SwapperUsage} SWPU)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
+        (ref-SWP:module{SwapperV2} SWP)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (f-vst:string "F|VST-98c486052a51")
@@ -2153,8 +2153,8 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
         (patron:string KST.ANHD)
@@ -2175,7 +2175,7 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 1 split-kda)
+                        (at 2 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
@@ -2185,12 +2185,12 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 2 split-kda)
+                        (at 3 split-kda)
                     )
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 3 split-kda)
+                        (at 1 split-kda)
                     )
                 ] 
             }
@@ -2247,18 +2247,18 @@
     (
         
         ;
-        ;(ref-VST:module{Vesting} VST)
+        ;(ref-VST:module{VestingV2} VST)
         ;(emma:string KST.EMMA)
         ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         ;(lp-id "P|OURO-VST|LP-98c486052a51")
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-SWPU:module{SwapperUsage} SWPU)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
+        (ref-SWP:module{SwapperV2} SWP)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
@@ -2354,19 +2354,19 @@
     (
         
         ;
-        ;(ref-VST:module{Vesting} VST)
+        ;(ref-VST:module{VestingV2} VST)
         ;(emma:string KST.EMMA)
         ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         ;(lp-id "P|OURO-VST|LP-98c486052a51")
         (ref-coin:module{fungible-v2} coin)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-SWPU:module{SwapperUsage} SWPU)
-        (ref-SWP:module{Swapper} SWP)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
+        (ref-SWP:module{SwapperV2} SWP)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
@@ -2421,24 +2421,24 @@
 
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
-        (ref-DALOS:module{OuronetDalos} DALOS)
-        (ref-SWPU:module{SwapperUsage} SWPU)
+        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-SWPU:module{SwapperUsageV2} SWPU)
         (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
         (ouro:string (ref-DALOS::UR_OuroborosID))
 
-        ;(ref-VST:module{Vesting} VST)
+        ;(ref-VST:module{VestingV2} VST)
         (emma:string KST.EMMA)
         ;(pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         ;(lp-id "P|OURO-VST|LP-98c486052a51")
         ;(ref-coin:module{fungible-v2} coin)
         
-        (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        ;(ref-DPMF:module{DemiourgosPactMetaFungible} DPMF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        ;(ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         ;(ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        ;(ref-SWPU:module{SwapperUsage} SWPU)
-        ;(ref-SWP:module{Swapper} SWP)
+        ;(ref-SWPU:module{SwapperUsageV2} SWPU)
+        ;(ref-SWP:module{SwapperV2} SWP)
         ;(lumy:string KST.LUMY)
         ;(coca:string KST.COCA)
         ;(kiss:string KST.KISS)
