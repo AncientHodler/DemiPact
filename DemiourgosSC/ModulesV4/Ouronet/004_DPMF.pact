@@ -528,7 +528,7 @@
             (compose-capability (SECURE))
         )
     )
-    (defcap DPMF|FC>FRZ-ACC (id:string account:string frozen:bool)
+    (defcap DPMF|C>FRZ-ACC (id:string account:string frozen:bool)
         @event
         (compose-capability (DPMF|S>X_FRZ-ACC id account frozen))
         (compose-capability (BASIS|C>X_WRITE-ROLES id account 5))
@@ -1575,7 +1575,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV2} DALOS)
             )
-            (with-capability (DPMF|FC>FRZ-ACC id account toggle)
+            (with-capability (DPMF|C>FRZ-ACC id account toggle)
                 (XI_ToggleFreezeAccount id account toggle)
                 (XB_WriteRoles id account 5 toggle)
                 (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))

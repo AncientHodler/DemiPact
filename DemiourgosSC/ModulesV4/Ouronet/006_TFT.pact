@@ -97,10 +97,15 @@
     (defun PS|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     (defun PS|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
 )
+(interface TrueFungibleTransferV3
+    @doc "Add Virtual Ouro Computation Function"
+    (defun URC_VirtualOuro:decimal (account:string))
+)
 (module TFT GOV
     ;;
     (implements OuronetPolicy)
     (implements TrueFungibleTransferV2)
+    (implements TrueFungibleTransferV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -518,6 +523,20 @@
                 0.0
                 (- 0.0 max-dispo)
             )
+        )
+    )
+    (defun URC_VirtualOuro:decimal (account:string)
+        @doc "Computes the Account Virtual Ouro. \
+            \ The Virtual Ouro is the maximum Ouro the Account is able to spend"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ouro:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
+                (zero:decimal (URC_MinimumOuro account))
+            )
+            (+ (abs zero) ouro)
         )
     )
     (defun URCX_CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal)

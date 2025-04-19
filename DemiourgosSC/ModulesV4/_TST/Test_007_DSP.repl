@@ -164,15 +164,28 @@
         (ignis3:decimal (ref-DPTF::UR_AccountSupply ignis orb))
         (ignis4:decimal (ref-DPTF::UR_AccountSupply ignis tls))
         (ignis5:decimal (ref-DPTF::UR_AccountSupply ignis swp))
+        (discount:decimal 0.415)
+        (ds:string (ref-DALOS::UDC_MakeIDP discount))
+        (p1:decimal 0.00037241)
+        (p2:decimal 0.01032241)
+        (p3:decimal 1.31038241)
+        (p4:decimal 1.0)
+        (p5:decimal 1.329321)
+        (p6:decimal 0.012)
+        (p7:decimal 0.000002321)
     )
     ;(ref-DPL|DSP::A_OuroMinterStageOne)
     (ref-DPL|DSP::A_KosonMinterStageOne_3of3)
+    ;[ds]
     [
-        ignis1
-        ignis2
-        ignis3
-        ignis4
-        ignis5
+        (ref-DPL|DSP::UC_ConvertPrice p1)
+        ;(ref-DPL|DSP::UC_ConvertDecimalToString p1 3)
+        (ref-DPL|DSP::UC_ConvertPrice p2)
+        (ref-DPL|DSP::UC_ConvertPrice p3)
+        (ref-DPL|DSP::UC_ConvertPrice p4)
+        (ref-DPL|DSP::UC_ConvertPrice p5)
+        (ref-DPL|DSP::UC_ConvertPrice p6)
+        (ref-DPL|DSP::UC_ConvertPrice p7)
     ]
 )
 

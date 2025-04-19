@@ -449,7 +449,6 @@
     ;;
     (implements gas-payer-v1)
     (implements OuronetPolicy)
-    ;(implements OuronetDalos)
     (implements OuronetDalosV2)
     ;;
     ;;<========>
@@ -775,6 +774,13 @@
         (compose-capability (GOV|DALOS_ADMIN))
     )
     ;;{C2}
+    (defcap IGNIS|C>DC (patron:string)
+        (compose-capability (IGNIS|S>DISCOUNT patron (UDC_MakeIDP (URC_IgnisGasDiscount patron))))
+    )
+    (defcap IGNIS|S>DISCOUNT (patron:string idp:string)
+        @event
+        true
+    )
     (defcap IGNIS|S>FREE ()
         @event
         true
@@ -1397,6 +1403,9 @@
         )
     )
     ;;{F3}  [UDC]
+    (defun UDC_MakeIDP:string (ignis-discount:decimal)
+        (format "{}{}" [(* (- 1.0 ignis-discount) 100.0) "%"])
+    )
     (defun UDC_ConstructOutputCumulatorV2:object{OuronetDalosV2.OutputCumulatorV2}
         (price:decimal active-account:string trigger:bool output-lst:list)
         (UDC_MakeOutputCumulatorV2
@@ -1827,31 +1836,33 @@
                 (iz-gassles-patron:bool (UR_AccountType patron))
             )
             (if (and (!= ignis-sum 0.0) (not iz-gassles-patron))
-                (let
-                    (
-                        (icl:integer (length ignis-prices))
-                        (primed-collector:object{OuronetDalosV2.CompressedCumulatorV2} 
-                            (at "primed-cumulator" primed-cumulator)
-                        )
-                    )
-                    (map
-                        (lambda
-                            (idx:integer)
-                            (let
-                                (
-                                    (interactor:string (at idx (at "interactors" primed-collector)))
-                                    (amount:decimal (at idx (at "ignis-prices" primed-collector)))
-                                )
-                                (with-capability (IGNIS|C>COLLECT patron interactor amount)
-                                    (XI_IgnisCollector patron interactor amount)
-                                )
+                (with-capability (IGNIS|C>DC patron)
+                    (let
+                        (
+                            (icl:integer (length ignis-prices))
+                            (primed-collector:object{OuronetDalosV2.CompressedCumulatorV2} 
+                                (at "primed-cumulator" primed-cumulator)
                             )
                         )
-                        (enumerate 0 (- icl 1))
-                    )
-                    (with-read DALOS|AccountTable patron
-                        { "nonce" := n }
-                        (update DALOS|AccountTable patron { "nonce" : (+ n 1)})
+                        (map
+                            (lambda
+                                (idx:integer)
+                                (let
+                                    (
+                                        (interactor:string (at idx (at "interactors" primed-collector)))
+                                        (amount:decimal (at idx (at "ignis-prices" primed-collector)))
+                                    )
+                                    (with-capability (IGNIS|C>COLLECT patron interactor amount)
+                                        (XI_IgnisCollector patron interactor amount)
+                                    )
+                                )
+                            )
+                            (enumerate 0 (- icl 1))
+                        )
+                        (with-read DALOS|AccountTable patron
+                            { "nonce" := n }
+                            (update DALOS|AccountTable patron { "nonce" : (+ n 1)})
+                        )
                     )
                 )
                 (with-capability (IGNIS|S>FREE)

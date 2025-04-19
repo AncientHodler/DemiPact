@@ -26,11 +26,20 @@
     (defun A_KosonMinterStageOne_2of3 ())
     (defun A_KosonMinterStageOne_3of3 ())
 )
+(interface DeployerDispenserV3
+    @doc "Add Primordial Prices Computation"
+    ;;
+    (defun UC_ConvertPrice:string (input-price:decimal))
+    ;;
+    (defun URC_PrimordialPrices:[decimal] ())
+
+)
 (module DSP GOV
     ;;
     (implements OuronetPolicy)
     (implements DeployerDispenser)
     (implements DeployerDispenserV2)
+    (implements DeployerDispenserV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -206,6 +215,30 @@
             [s10p s20p s30p s40p]
         )
     )
+    (defun UC_ConvertPrice:string (input-price:decimal)
+        (let
+            (
+                (number-of-decimals:integer (if (<= input-price 1.00) 3 2))
+                (converted:decimal
+                    (if (< input-price 1.00)
+                        (floor (* input-price 100.0) 3)
+                        (floor input-price 2)
+                    )
+                )
+                (s:string
+                    (if (< input-price 1.00)
+                        "¢"
+                        "$"
+                    )
+                )
+                (ss:string "<0.001¢")
+            )
+            (if (< input-price 0.00001)
+                (format "{}" [ss])
+                (format "{}{}" [converted s])    
+            )
+        )
+    )
     ;;{F0}  [UR]
     (defun UR_KDA:decimal ()
         @doc "Retrieves KDA Price in dollars"
@@ -225,6 +258,39 @@
                 (speed:decimal 10000.0)
             )
             (floor (/ (- maximum-theorethical-supply current-ouro-supply) speed) op)
+        )
+    )
+    (defun URC_PrimordialPrices:[decimal] ()
+        @doc "Returns the Prices for Ouronet Primordial Tokens \
+        \ [WKDA LKDA OURO AURYN ELITEAURYN]"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-ATS:module{AutostakeV2} ATS)
+                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+                (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (auryn:string (ref-DALOS::UR_AurynID))
+                (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
+                (auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken auryn)))
+                (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken elite-auryn)))
+                (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
+                (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
+                ;;
+                (dollar-wkda:decimal (URC_TokenDollarPrice wkda))
+                (dollar-lkda:decimal (URC_TokenDollarPrice lkda))
+                (dollar-ouro:decimal (URC_TokenDollarPrice ouro))
+                (dollar-auryn:decimal (floor (* auryndex-value dollar-ouro) 24))
+                (dollar-elite-auryn:decimal (floor (* elite-auryndex-value dollar-auryn) 24))
+            )
+            [
+                dollar-wkda
+                dollar-lkda
+                dollar-ouro
+                dollar-auryn
+                dollar-elite-auryn
+            ]
         )
     )
     (defun URC_TokenDollarPrice (id:string)

@@ -96,10 +96,15 @@
     (defun PS|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     (defun PS|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
 )
+(interface TrueFungibleTransferV3
+    @doc "Add Virtual Ouro Computation Function"
+    (defun URC_VirtualOuro:decimal (account:string))
+)
 (module TFT GOV
     ;;
     (implements OuronetPolicy)
     (implements TrueFungibleTransferV2)
+    (implements TrueFungibleTransferV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -365,7 +370,7 @@
     ;;{F0}  [UR]
     (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer)
         @doc "Returns a List of DPTF, DPMF or ATS-Unstaking-Accounts that exist for <account> \
-        \ <table-to-query>: 1 = DPTF, 2 = DPMF, 3 = ATS-Unstaking-Accounts"
+            \ <table-to-query>: 1 = DPTF, 2 = DPMF, 3 = ATS-Unstaking-Accounts"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -483,10 +488,10 @@
     ;;{F1}  [URC]
     (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string)
         @doc "Computes the Unbonding Amount existing for a given <reward-token> of an <atspair>; \
-        \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
-        \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
-        \ and adds found balances up. \
-        \ Output of these 2 functions must match to the last decimal."
+            \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
+            \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
+            \ and adds found balances up. \
+            \ Output of these 2 functions must match to the last decimal."
         (let
             (
                 (ref-ATS:module{AutostakeV2} ATS)
@@ -504,7 +509,7 @@
     )
     (defun URC_MinimumOuro:decimal (account:string)
         @doc "Computes the minimum Negative Ouroboros amount an Account is able to overconsume \
-        \ Using the Standard Dispo mechanics"
+            \ Using the Standard Dispo mechanics"
         (let
             (
                 (ref-U|DPTF:module{UtilityDptf} U|DPTF)
@@ -517,6 +522,21 @@
                 0.0
                 (- 0.0 max-dispo)
             )
+        )
+    )
+    (defun URC_VirtualOuro:decimal (account:string)
+        @doc "Computes the Account Virtual Ouro. \
+            \ The Virtual Ouro is the maximum Ouro the Account is able to spend"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ouro:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
+                (zero:decimal (URC_MinimumOuro account))
+                (my-ouro:decimal (+ (- 0.0 zero) ouro))
+            )
+            (+ (abs zero) ouro)
         )
     )
     (defun URCX_CPF_RT-RBT:[decimal] (id:string native-fee-amount:decimal)

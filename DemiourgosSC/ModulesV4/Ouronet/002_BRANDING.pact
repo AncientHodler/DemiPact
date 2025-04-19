@@ -69,6 +69,13 @@
     (defun C_UpdatePendingBrandingLPs:object{OuronetDalosV2.OutputCumulatorV2} (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
 )
+(interface BrandingUsageV4
+    @doc "Interface Exposing the Branding Functions for DPSF and DPNF Tokens \
+    \ Using the IgnisCUmulatorV2 Architecture which repairs the collection of Ignis for Smart Ouronet Accounts"
+    ;;
+    (defun C_UpdatePendingBranding:object{OuronetDalosV2.OutputCumulatorV2} (patron:string entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBranding (patron:string entity-id:string sft-or-nft:bool  months:integer))
+)
 (module BRD GOV
     ;;
     (implements OuronetPolicy)

@@ -1,0 +1,39 @@
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 01 - Stage2 Module Load Up
+(print "")
+(print "===================Initialise Ouronet_TX-001-...========================")
+
+(print "")
+(begin-tx "INIT TX 001 - 014a_DPDC.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../014a_DPDC.pact")
+(format "<<<<<<<DemiourgosPactDigitalCollectibles Interface Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 002 - 014_DPDC.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../014_DPDC.pact")
+(format "<<<<<<<DPDC Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 002 - 014_DPDC.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../015_DPDC-CD.pact")
+(format "<<<<<<<DPDC Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "Main Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
