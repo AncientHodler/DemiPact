@@ -20,6 +20,7 @@
     )
     (defschema DPDC|RolesSchema
         frozen:bool                     ;; multiple
+        role-exemption:bool             ;; multiple
         role-nft-burn:bool              ;; multiple
         role-nft-create:bool            ;; single
         role-nft-recreate:bool          ;; single
@@ -31,6 +32,7 @@
     )
     (defschema DPDC|RolesStorageSchema
         a-frozen:[string]
+        r-exemption:[string]
         r-nft-add-quantity:[string]
         r-nft-burn:[string]
         r-nft-create:[string]
@@ -110,6 +112,7 @@
     ;;
     (defun UR_ER-AddQuantity:[string] (id:string))
     (defun UR_ER-Frozen:[string] (id:string sft-or-nft:bool))
+    (defun UR_ER-Exemption:[string] (id:string sft-or-nft:bool))
     (defun UR_ER-Burn:[string] (id:string sft-or-nft:bool))
     (defun UR_ER-Create:[string] (id:string sft-or-nft:bool))
     (defun UR_ER-Recreate:[string] (id:string sft-or-nft:bool))
@@ -126,6 +129,7 @@
         ;;
     (defun UR_CA|R-AddQuantity:bool (id:string account:string))
     (defun UR_CA|R-Frozen:bool (id:string sft-or-nft:bool account:string))
+    (defun UR_CA|R-Exemption:bool (id:string sft-or-nft:bool account:string))
     (defun UR_CA|R-Burn:bool (id:string sft-or-nft:bool account:string))
     (defun UR_CA|R-Create:bool (id:string sft-or-nft:bool account:string))
     (defun UR_CA|R-Recreate:bool (id:string sft-or-nft:bool account:string))
@@ -147,6 +151,7 @@
     (defun UEV_PauseState (id:string sft-or-nft:bool state:bool))
     (defun UEV_AccountAddQuantityState (id:string account:string state:bool))
     (defun UEV_AccountFreezeState (id:string sft-or-nft:bool account:string state:bool))
+    (defun UEV_AccountExemptionState (id:string sft-or-nft:bool account:string state:bool))
     (defun UEV_AccountBurnState (id:string sft-or-nft:bool account:string state:bool))
     (defun UEV_AccountUpdateState (id:string sft-or-nft:bool account:string state:bool))
     (defun UEV_AccountModifyCreatorState (id:string sft-or-nft:bool account:string state:bool))
@@ -196,6 +201,7 @@
     (defun C_TogglePause:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool toggle:bool))
     (defun C_ToggleAddQuantityRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string account:string toggle:bool))
     (defun C_ToggleFreezeAccount:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleExemptionRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
     (defun C_ToggleBurnRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
     (defun C_ToggleUpdateRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
     (defun C_ToggleModifyCreatorRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))

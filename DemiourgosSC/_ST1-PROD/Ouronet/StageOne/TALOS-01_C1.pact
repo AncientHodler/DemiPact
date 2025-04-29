@@ -739,11 +739,13 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    [(ref-DPTF::C_Wipe patron id atbw)]
+                    (ref-DPTF::C_Wipe patron id atbw)
                 )
+                ;;Update Elite Account
+                (ref-DPMF::XB_UpdateEliteSingle id atbw)
             )
         )
     )
@@ -754,11 +756,13 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-DPTF::C_WipePartial patron id atbw amtbw)
                 )
+                ;;Update Elite Account
+                (ref-DPMF::XB_UpdateEliteSingle id atbw)
             )
         )
     )
@@ -1050,10 +1054,13 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DPMF-V3:module{DemiourgosPactMetaFungibleV3} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-DPMF::C_Wipe patron id atbw)
                 )
+                ;;Update Elite Account
+                (ref-DPMF-V3::XB_UpdateEliteSingle id atbw)
             )
         )
     )
@@ -1064,10 +1071,13 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DPMF-V3:module{DemiourgosPactMetaFungibleV3} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-DPMF::C_WipePartial patron id atbw nonces)
                 )
+                ;;Update Elite Account
+                (ref-DPMF-V3::XB_UpdateEliteSingle id atbw)
             )
         )
     )

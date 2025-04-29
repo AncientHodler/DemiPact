@@ -3,7 +3,7 @@
     ;;
     (defun C_Create:object{OuronetDalosV2.OutputCumulatorV2}
         (
-            patron:string id:string
+            patron:string id:string amount:integer
             royalty:decimal ignis:decimal description:string meta-data:[object]
             image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
             image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
@@ -13,7 +13,7 @@
     )
 )
 
-(module DPDC_CD GOV
+(module DPDC-CD GOV
     ;;
     (implements OuronetPolicy)
     (implements DemiourgosPactDigitalCollectibles-CreateDestroy)
@@ -108,11 +108,29 @@
         true
     )
     ;;{C2}
+    (defcap DPSF|S>CREATE (id:string royalty:decimal ignis:decimal)
+        @event
+        (let
+            (
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                (ignis-id:string (ref-DALOS::UR_IgnisID))
+                (ignis-decimals:integer (ref-DALOS::UR_Decimals ignis-id))
+            )
+            (enforce
+                (= (floor ignis ignis-decimals) ignis)
+                (format "{} is not conform with the {} prec." [ignis ignis-id])
+            )
+            (ref-U|DALOS::UEV_Fee royalty)
+        )
+    )
     (defcap DPSF|S>CREDIT (id:string nonce:integer)
         (let
             (
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
             )
+            (enforce (!= nonce 0) "Nonce 0 cant be used for operation")
             (ref-DPDC::UEV_NonceExists id true nonce)
         )
     )
@@ -121,6 +139,7 @@
             (
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
             )
+            (enforce (!= nonce 0) "Nonce 0 cant be used for operation")
             (ref-DPDC::UEV_NonceExists id false nonce)
         )
     )
@@ -134,6 +153,7 @@
                 (nonce-position:integer (at 0 (ref-U|LST::UC_Search existing-nonces nonce)))
                 (current-nonce-supply:integer (at nonce-position existing-nonces-balances))
             )
+            (enforce (!= nonce 0) "Nonce 0 cant be used for operation")
             (ref-DPDC::UEV_NonceExists id true nonce)
             (enforce (<= amount current-nonce-supply) (format "Debiting SFT {} is not allowed with {} amount" [id amount]))
         )
@@ -145,6 +165,7 @@
                 (existing-nonces:[integer] (ref-DPDC::UR_CA|OwnedNonces id false account))
                 (iz-nonce-present:bool (contains nonce existing-nonces))
             )
+            (enforce (!= nonce 0) "Nonce 0 cant be used for operation")
             (ref-DPDC::UEV_NonceExists id false nonce)
             (enforce iz-nonce-present (format "NFT {} nonce {} is not Present on Account {}" [id nonce account]))
         )
@@ -164,42 +185,53 @@
     ;;{F6}  [C]
     (defun C_Create:object{OuronetDalosV2.OutputCumulatorV2}
         (
-            patron:string id:string
+            patron:string id:string amount:integer
             royalty:decimal ignis:decimal description:string meta-data:[object]
             image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
             image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
             image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
             image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
         )
-        @doc "Creates a new SFT Collection element, with Zero Supply"
+        @doc "Creates a new SFT Collection element of amount <amount>, on the <creator> account"
         (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                (creator:string (ref-DPDC::UR_CreatorKonto id))
+                (new-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id true) 1))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
                 (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
             )
-            (XI_Create
-                id true royalty ignis description meta-data
-                image-t audio-t video-t document-t archive-t model-t exotic-t
-                image-s1 audio-s1 video-s1 document-s1 archive-s1 model-s1 exotic-s1
-                image-s2 audio-s2 video-s2 document-s2 archive-s2 model-s2 exotic-s2
-                image-s3 audio-s3 video-s3 document-s3 archive-s3 model-s3 exotic-s3
+            ;;Adds Entry in the Properties Table
+            (with-capability (DPSF|S>CREATE id royalty ignis)
+                (XI_CreateSemiFungibleNonce
+                    id true amount
+                    royalty ignis description meta-data
+                    image-t audio-t video-t document-t archive-t model-t exotic-t
+                    image-s1 audio-s1 video-s1 document-s1 archive-s1 model-s1 exotic-s1
+                    image-s2 audio-s2 video-s2 document-s2 archive-s2 model-s2 exotic-s2
+                    image-s3 audio-s3 video-s3 document-s3 archive-s3 model-s3 exotic-s3
+                )
+            )
+            ;;Adds Entry in the Balance Table for the Creator
+            (with-capability (DPSF|S>CREDIT id new-nonce)
+                (XI_CreditSFT id creator new-nonce amount)
             )
             (ref-DALOS::UDC_ConstructOutputCumulatorV2 price (ref-DPDC::UR_OwnerKonto id true) trigger [])
         )
     )
     ;;{F7}  [X]
-    (defun XI_Create
+    (defun XI_CreateSemiFungibleNonce
         (
-            id:string sft-or-nft:bool
+            id:string sft-or-nft:bool amount:integer
             royalty:decimal ignis:decimal description:string meta-data:[object]
             image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
             image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
             image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
             image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
         )
+        (require-capability (DPSF|S>CREATE id royalty ignis))
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -224,7 +256,7 @@
                 )
                 (new-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id sft-or-nft) 1))
                 (collectible:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (ref-DPDC::UDC_NonceElement new-nonce 0 collectible-data)
+                    (ref-DPDC::UDC_NonceElement new-nonce amount collectible-data)
                 )
                 (current-existing-nonces:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
                     (if sft-or-nft
@@ -240,7 +272,7 @@
         )
     )
     (defun XI_CreditSFT (id:string account:string nonce:integer amount:integer)
-        @doc "Credits <amount> of SFT <id> and <nonce> to <account>"
+        @doc "Credits <amount> of SFT <id> and <nonce> to <account>, only Adding Entry in the Balance Table"
         (require-capability (DPSF|S>CREDIT id nonce))
         (let
             (
@@ -271,7 +303,6 @@
                     (ref-DPDC::XB_UAD|NoncesBalances id account updated-nonces-balances)
                 )
             )
-            ;;Must add supply change in Properties as well
         )
     )
     (defun XI_DebitSFT (id:string account:string nonce:integer amount:integer)

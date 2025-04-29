@@ -370,7 +370,7 @@
     ;;{F0}  [UR]
     (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer)
         @doc "Returns a List of DPTF, DPMF or ATS-Unstaking-Accounts that exist for <account> \
-            \ <table-to-query>: 1 = DPTF, 2 = DPMF, 3 = ATS-Unstaking-Accounts"
+        \ <table-to-query>: 1 = DPTF, 2 = DPMF, 3 = ATS-Unstaking-Accounts"
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -488,10 +488,10 @@
     ;;{F1}  [URC]
     (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string)
         @doc "Computes the Unbonding Amount existing for a given <reward-token> of an <atspair>; \
-            \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
-            \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
-            \ and adds found balances up. \
-            \ Output of these 2 functions must match to the last decimal."
+        \ Similar to (ATS.UR_RT-Data atspair reward-token 3); \
+        \ Instead of reading the Data directly from the ATS Pair, scans all Unstaking Accounts for <reward-toke> \
+        \ and adds found balances up. \
+        \ Output of these 2 functions must match to the last decimal."
         (let
             (
                 (ref-ATS:module{AutostakeV2} ATS)
@@ -509,7 +509,7 @@
     )
     (defun URC_MinimumOuro:decimal (account:string)
         @doc "Computes the minimum Negative Ouroboros amount an Account is able to overconsume \
-            \ Using the Standard Dispo mechanics"
+        \ Using the Standard Dispo mechanics"
         (let
             (
                 (ref-U|DPTF:module{UtilityDptf} U|DPTF)
@@ -534,7 +534,6 @@
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
                 (zero:decimal (URC_MinimumOuro account))
-                (my-ouro:decimal (+ (- 0.0 zero) ouro))
             )
             (+ (abs zero) ouro)
         )
@@ -934,6 +933,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
                     (ref-ATS:module{AutostakeV2} ATS)
 
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -976,6 +976,7 @@
                     (ico5:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
                     )
+                    (final-ea-amount:decimal (ref-DPMF::URC_EliteAurynzSupply account))
                 )
             ;;1] Freeze EA on account
                 ;;via ico1
@@ -991,7 +992,8 @@
                 (ref-ATS::XE_UpdateRoU auryndex ouro-id true false ouro-amount)
             ;;6] Finally clears dispo setting OURO <acount> amount to zero
                 (ref-DALOS::XE_ClearDispo account)
-            ;;7] Constructing the Output: Pleasure doing business with you !
+            ;;7] Updating Elite Account and Constructing the Output: Pleasure doing business with you !
+                (ref-DALOS::XE_UpdateElite account final-ea-amount)
                 (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3  ico4 ico5] [])
             )
         )
@@ -1004,9 +1006,11 @@
             (
                 (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
             )
             (with-capability (DPTF|C>TRANSMUTE id transmuter)
                 (XI_Transmute id transmuter transmute-amount)
+                (ref-DPMF::XB_UpdateEliteSingle id transmuter)
                 (ref-DALOS::UDC_ConstructOutputCumulatorV2 
                     (ref-DALOS::UR_UsagePrice "ignis|smallest")
                     transmuter

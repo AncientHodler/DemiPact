@@ -183,6 +183,19 @@
         (CAP_Owner id sft-or-nft)
         (compose-capability (SECURE))
     )
+    (defcap DPDC|C>TG_EXEMPTION-R (id:string sft-or-nft:bool account:string toggle:bool)
+        @event
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (type:bool (ref-DALOS::UR_AccountType account))
+            )
+            (enforce type "Only Smart Ouronet Accounts can get this role")
+            (UEV_AccountExemptionState id sft-or-nft account (not toggle))
+            (CAP_Owner id sft-or-nft)
+            (compose-capability (SECURE))
+        )
+    )
     (defcap DPDC|C>TG_BURN-R (id:string sft-or-nft:bool account:string toggle:bool)
         @event
         (UEV_ToggleSpecialRole id sft-or-nft toggle)
@@ -246,6 +259,40 @@
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
+    (defun DPDC|UR_FilterKeysForInfo:[string] (account-or-token-id:string sft-or-nft:bool mode:bool)
+        @doc "Returns a List of either: \
+        \           Direct-Mode(true):      <account-or-token-id> is <account> Name: \
+        \                                   Returns Semi-Fungible or Non-Fungible held by Account <account> OR \
+        \           Inverse-Mode(false):    <account-or-token-id> is DPSF|DPNF Designation Name \
+        \                                   Returns Accounts that exist for a specific Semi-Fungible or Non-Fungible \
+        \           MODE Boolean is only used for validation, \
+        \ Accesing the DPSF or DPNF Collection table is done via the <sft-or-nft> boolean"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+            )
+            (if mode
+                (ref-DALOS::GLYPH|UEV_DalosAccount account-or-token-id)
+                (UEV_id account-or-token-id sft-or-nft)
+            )
+            (let
+                (
+                    (keyz:[string]
+                        (if sft-or-nft
+                            (keys DPSF|BalanceTable)
+                            (keys DPNF|BalanceTable)
+                        )
+                    )
+                    (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
+                    (output:[string] (ref-U|DALOS::UC_FilterId listoflists account-or-token-id))
+                )
+                output
+            )
+        )
+    )
+    ;;
     ;;Read Nonces
     (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer)
         (UEV_Nonce dpsf-id true nonce)
@@ -399,6 +446,9 @@
     (defun UR_ER-Frozen:[string] (id:string sft-or-nft:bool)
         (at "a-frozen" (UR_CollectionRoles id sft-or-nft))
     )
+    (defun UR_ER-Exemption:[string] (id:string sft-or-nft:bool)
+        (at "r-exemption" (UR_CollectionRoles id sft-or-nft))
+    )
     (defun UR_ER-Burn:[string] (id:string sft-or-nft:bool)
         (at "r-nft-burn" (UR_CollectionRoles id sft-or-nft))
     )
@@ -464,6 +514,9 @@
     )
     (defun UR_CA|R-Frozen:bool (id:string sft-or-nft:bool account:string)
         (at "frozen" (UR_CA|R id sft-or-nft account))
+    )
+    (defun UR_CA|R-Exemption:bool (id:string sft-or-nft:bool account:string)
+        (at "role-exemption" (UR_CA|R id sft-or-nft account))
     )
     (defun UR_CA|R-Burn:bool (id:string sft-or-nft:bool account:string)
         (at "role-nft-burn" (UR_CA|R id sft-or-nft account))
@@ -597,6 +650,14 @@
                 (x:bool (UR_CA|R-Frozen id sft-or-nft account))
             )
             (enforce (= x state) (format "Frozen for {} on Account {} must be set to {} for exec" [id account state]))
+        )
+    )
+    (defun UEV_AccountExemptionState (id:string sft-or-nft:bool account:string state:bool)
+        (let
+            (
+                (x:bool (UR_CA|R-Exemption id sft-or-nft account))
+            )
+            (enforce (= x state) (format "Exemption Role for {} on Account {} must be set to {} for exec" [id account state]))
         )
     )
     (defun UEV_AccountBurnState (id:string sft-or-nft:bool account:string state:bool)
@@ -1002,6 +1063,22 @@
             (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
         )
     )
+    (defun C_ToggleExemptionRole:object{OuronetDalosV2.OutputCumulatorV2}
+        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+            )
+            (with-capability (SECURE)
+                (XI_DeployAccountWNE id sft-or-nft account)
+            )
+            (with-capability (DPDC|C>TG_EXEMPTION-R id sft-or-nft account toggle)
+                (XI_ToggleExemptionRole id account toggle)
+            )
+            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
+        )
+    )
     (defun C_ToggleBurnRole:object{OuronetDalosV2.OutputCumulatorV2}
         (patron:string id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
@@ -1366,6 +1443,31 @@
                     (+
                         {"frozen"   : toggle}
                         (remove "frozen" (UR_CA|R id sft-or-nft account))
+                    )
+                )
+            )
+            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
+        )
+    )
+    (defun XI_ToggleExemptionRole (id:string sft-or-nft:bool account:string toggle:bool)
+        (require-capability (DPDC|C>TG_EXEMPTION-R id sft-or-nft account toggle))
+        (let
+            (
+                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                ;;
+                (exemption-r-accounts:[string] (UR_ER-Exemption id sft-or-nft))
+                (updated-exemption-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList exemption-r-accounts account toggle))
+                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
+                    (+
+                        {"r-exemption" : updated-exemption-r-accounts}
+                        (remove "r-exemption" (UR_CollectionRoles id sft-or-nft))
+                    )
+                )
+                ;;
+                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
+                    (+
+                        {"role-exemption"   : toggle}
+                        (remove "role-exemption" (UR_CA|R id sft-or-nft account))
                     )
                 )
             )

@@ -14,7 +14,7 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../014a_DPDC.pact")
-(format "<<<<<<<DemiourgosPactDigitalCollectibles Interface Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Interfaces {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -28,11 +28,22 @@
 (print "")
 
 (print "")
-(begin-tx "INIT TX 002 - 014_DPDC.pact")
+(begin-tx "INIT TX 003 - 014_DPDC-CD.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../015_DPDC-CD.pact")
-(format "<<<<<<<DPDC Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<DPDC-CD Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+;;TALOS Modules Stage 2
+
+(print "")
+(begin-tx "INIT TX 004 - TALOS-02_C1.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../StageTwo/TALOS-02_C1.pact")
+(format "<<<<<<<TALOS Stage 2 - C1 Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 

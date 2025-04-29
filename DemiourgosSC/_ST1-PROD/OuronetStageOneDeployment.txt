@@ -423,6 +423,33 @@ https://kdaexplorer.com/tx-details/i_gW-n0fkLsOtiE2qq7_HzGGXrp8nTR6j_KGtQ5_jJU
 Tx 129 [39.085 gas] Upgrade DSP module
 https://kdaexplorer.com/tx-details/GfNQLQjZ-p9JSscm_IVs8SjkAJbD_3gqzUtsnqwQJ-s
 
+Tx 130 [26.138 gas] Test trasnferring 10 OURO.
+https://kdaexplorer.com/tx-details/PLAJXhdgqNfy7jSJbSkwnfs_uNhSkF_0wkwJ207LmXY
 
+Tx 131 [59.047 gas] Test curling 10 OURO
+https://kdaexplorer.com/tx-details/xSQHfYFNHnfD4W8w8__-vXs2RV0MUpWo8IaJI44CkvA
 
+TX 132 [104.031 gas] Added Discount Event for IGNIS Collection
+https://kdaexplorer.com/tx-details/2fq3yO-oOVZEJ744tbaLWmgyqLfkzpaJ8Zo-oi24Bz8
+
+Tx 133 [] Check another 10 OURO Transfer
+https://kdaexplorer.com/tx-details/WPFE6p7ZuzVmc7rU9TilMiG4ChSw-vdQYlvQQSKUKx4
+
+Tx 134 [] Add Virtual Ouro Function
+AFO0eTAdP92VbnrauoRlWeLCXRNzVa6lVLl0QfMuq1o
+
+Tx 135 [41.982 gas] Add Primordial Prices computation
+OaeauU0ZDr7Hv9pWG3Ckd5H_NI8wGSjfxEYCuGxXudY
+
+Tx 136[] Remake Dalos IDP Function
+XgyUV_b8AiZkTu_glYvWPqP-zVwJLXyaf5lGL-BFlws
+
+Tx 137 [117.406  gas] Added DPMF V3 and Single Elite Update
+htfpwwShWxxi6L9wMqYlBsMMddKIosSZN8zdvKGfxws
+
+Tx 138 [111.168 gas] Updated TFT Module to update Elite for Transmute and Clear Dispo.
+qSVNO0r1L4QAhLs9BzqhN9DXC9ZnTXI8FzJVAfTIEns
+
+Tx 139 [68.883 gas] Update Talos C1 Module DPTF and DPMG Wiping Functions
+ruPsGY68AMOkfFYTU-yeg3Iieht6yN5u27z4fvy8Xo4
 

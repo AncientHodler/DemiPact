@@ -250,11 +250,19 @@
     (defun XE_UpdateRewardBearingToken (atspair:string id:string))
     (defun XE_UpdateSpecialMetaFungible:object{OuronetDalosV2.OutputCumulatorV2} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
 )
+(interface DemiourgosPactMetaFungibleV3
+    @doc "V3 adds 2 Functions related to single Elite Account Update."
+    ;;
+    (defun URC_IzIdEA:bool (id:string))
+    ;;
+    (defun XB_UpdateEliteSingle (id:string account:string))
+)
 (module DPMF GOV
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV2)
     (implements DemiourgosPactMetaFungibleV2)
+    (implements DemiourgosPactMetaFungibleV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -1114,6 +1122,20 @@
             )
         )
     )
+    (defun URC_IzIdEA:bool (id:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                (fea:string (ref-DPTF::UR_Frozen ea-id))
+                (rea:string (ref-DPTF::UR_Reservation ea-id))
+                (vea:string (ref-DPTF::UR_Vesting ea-id))
+                (sea:string (ref-DPTF::UR_Sleeping ea-id))
+            )
+            (contains id [ea-id fea rea vea sea])
+        )
+    )
     ;;{F2}  [UEV]
     (defun UEV_ParentOwnership (dpmf:string)
         @doc "Enforces: \
@@ -1725,32 +1747,43 @@
             )
         )
     )
+    (defun XB_UpdateEliteSingle (id:string account:string)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (iz-elite-auryn:bool (URC_IzIdEA id))
+                (a-type:bool (ref-DALOS::UR_AccountType account))
+            )
+            (if iz-elite-auryn
+                (with-capability (P|DPMF|CALLER)
+                    (if (not a-type)
+                        (ref-DALOS::XE_UpdateElite account (URC_EliteAurynzSupply account))
+                        true
+                    )
+                )
+                true
+            )
+        )
+    )
     (defun XB_UpdateElite (id:string sender:string receiver:string)
         (UEV_IMC)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ea-id:string (ref-DALOS::UR_EliteAurynID))
-                (fea:string (ref-DPTF::UR_Frozen ea-id))
-                (rea:string (ref-DPTF::UR_Reservation ea-id))
-                (vea:string (ref-DPTF::UR_Vesting ea-id))
-                (sea:string (ref-DPTF::UR_Sleeping ea-id))
-                (iz-elite-auryn:bool (contains id [ea-id fea rea vea sea]))
+                (iz-elite-auryn:bool (URC_IzIdEA id))
                 (s-type:bool (ref-DALOS::UR_AccountType sender))
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))
             )
             (if iz-elite-auryn
                 (with-capability (P|DPMF|CALLER)
-                    (do
-                        (if (not s-type)
-                            (ref-DALOS::XE_UpdateElite sender (URC_EliteAurynzSupply sender))
-                            true
-                        )
-                        (if (not r-type)
-                            (ref-DALOS::XE_UpdateElite receiver (URC_EliteAurynzSupply receiver))
-                            true
-                        )
+                    (if (not s-type)
+                        (ref-DALOS::XE_UpdateElite sender (URC_EliteAurynzSupply sender))
+                        true
+                    )
+                    (if (not r-type)
+                        (ref-DALOS::XE_UpdateElite receiver (URC_EliteAurynzSupply receiver))
+                        true
                     )
                 )
                 true

@@ -420,7 +420,7 @@
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \
-            \                               Returns True-Fungible, Meta-Fungible IDs or ATS-Pairs held by an Accounts <account> OR \
+            \                               Returns True-Fungible, Meta-Fungible IDs or ATS-Pairs held by Account <account> OR \
             \       Inverse-Mode(false):    <account-or-token-id> is DPTF|DPMF|ATS-Pair Designation Name \
             \                               Returns Accounts that exists for a specific True-Fungible, Meta-Fungible or ATS-Pair \
             \       MODE Boolean is only used for proper validation, to accees the needed table, use the proper integer: \
@@ -439,13 +439,11 @@
             (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
             (if mode
                 (ref-DALOS::GLYPH|UEV_DalosAccount account-or-token-id)
-                (do
-                    (if (= table-to-query 1)
-                        (ref-DPTF::UEV_id account-or-token-id)
-                        (if (= table-to-query 2)
-                            (ref-DPMF::UEV_id account-or-token-id)
-                            (ref-ATS::UEV_id account-or-token-id)
-                        )
+                (if (= table-to-query 1)
+                    (ref-DPTF::UEV_id account-or-token-id)
+                    (if (= table-to-query 2)
+                        (ref-DPMF::UEV_id account-or-token-id)
+                        (ref-ATS::UEV_id account-or-token-id)
                     )
                 )
             )
@@ -934,6 +932,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
                     (ref-ATS:module{AutostakeV2} ATS)
 
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -976,6 +975,7 @@
                     (ico5:object{OuronetDalosV2.OutputCumulatorV2}
                         (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
                     )
+                    (final-ea-amount:decimal (ref-DPMF::URC_EliteAurynzSupply account))
                 )
             ;;1] Freeze EA on account
                 ;;via ico1
@@ -991,7 +991,8 @@
                 (ref-ATS::XE_UpdateRoU auryndex ouro-id true false ouro-amount)
             ;;6] Finally clears dispo setting OURO <acount> amount to zero
                 (ref-DALOS::XE_ClearDispo account)
-            ;;7] Constructing the Output: Pleasure doing business with you !
+            ;;7] Updating Elite Account and Constructing the Output: Pleasure doing business with you !
+                (ref-DALOS::XE_UpdateElite account final-ea-amount)
                 (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3  ico4 ico5] [])
             )
         )
@@ -1004,9 +1005,11 @@
             (
                 (ref-DALOS:module{OuronetDalosV2} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
             )
             (with-capability (DPTF|C>TRANSMUTE id transmuter)
                 (XI_Transmute id transmuter transmute-amount)
+                (ref-DPMF::XB_UpdateEliteSingle id transmuter)
                 (ref-DALOS::UDC_ConstructOutputCumulatorV2 
                     (ref-DALOS::UR_UsagePrice "ignis|smallest")
                     transmuter

@@ -1,0 +1,723 @@
+(interface TalosStageTwo_ClientOne
+    ;;
+    ;;DPSF Functions
+    (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer))
+    ;;
+    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
+    (defun DPSF|C_DeployAccount (patron:string id:string account:string))
+    (defun DPSF|C_Issue
+        (
+            patron:string 
+            owner-account:string creator-account:string collection-name:string collection-ticker:string
+            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
+            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+        )
+    )
+    ;;
+    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool))
+    (defun DPSF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleUpdateRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleModifyCreatorRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleModifyRoyaltiesRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
+    (defun DPSF|C_MoveCreateRole (patron:string id:string new-account:string))
+    (defun DPSF|C_MoveRecreateRole (patron:string id:string new-account:string))
+    (defun DPSF|C_MoveSetUriRole (patron:string id:string new-account:string))
+    ;;
+    (defun DPSF|C_Create
+        (
+            patron:string id:string amount:integer
+            royalty:decimal ignis:decimal description:string meta-data:[object]
+            image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
+            image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
+            image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
+            image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
+        )
+    )
+    ;;
+    ;;DPNF Functions
+    (defun DPNF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun DPNF|C_UpgradeBranding (patron:string entity-id:string months:integer))
+    ;;
+    (defun DPNF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
+    (defun DPNF|C_DeployAccount (patron:string id:string account:string))
+    (defun DPNF|C_Issue
+        (
+            patron:string 
+            owner-account:string creator-account:string collection-name:string collection-ticker:string
+            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
+            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+        )
+    )
+    (defun DPNF|C_TogglePause (patron:string id:string toggle:bool))
+    (defun DPNF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleUpdateRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleModifyCreatorRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleModifyRoyaltiesRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
+    (defun DPNF|C_MoveCreateRole (patron:string id:string new-account:string))
+    (defun DPNF|C_MoveRecreateRole (patron:string id:string new-account:string))
+    (defun DPNF|C_MoveSetUriRole (patron:string id:string new-account:string))
+
+)
+(module TS02-C1 GOV
+    @doc "TALOS Stage 2 Client Functiones Part 1"
+    ;;
+    (implements OuronetPolicy)
+    (implements TalosStageTwo_ClientOne)
+    ;;
+    ;;<========>
+    ;;GOVERNANCE
+    ;;{G1}
+    (defconst GOV|MD_TS02-C1        (keyset-ref-guard (GOV|Demiurgoi)))
+    ;;{G2}
+    (defcap GOV ()                  (compose-capability (GOV|TS02-C1_ADMIN)))
+    (defcap GOV|TS02-C1_ADMIN ()    (enforce-guard GOV|MD_TS02-C1))
+    ;;{G3}
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    ;;
+    ;;<====>
+    ;;POLICY
+    ;;{P1}
+    ;;{P2}
+    (deftable P|T:{OuronetPolicy.P|S})
+    (deftable P|MT:{OuronetPolicy.P|MS})
+    ;;{P3}
+    (defcap P|TS ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (gap:bool (ref-DALOS::UR_GAP))
+            )
+            (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
+            (compose-capability (P|TALOS-SUMMONER))
+        )
+    )
+    (defcap P|TALOS-SUMMONER ()
+        @doc "Talos Summoner Capability"
+        true
+    )
+    ;;{P4}
+    (defconst P|I                   (P|Info))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|UR:guard (policy-name:string)
+        (at "policy" (read P|T policy-name ["policy"]))
+    )
+    (defun P|UR_IMP:[guard] ()
+        (at "m-policies" (read P|MT P|I ["m-policies"]))
+    )
+    (defun P|A_Add (policy-name:string policy-guard:guard)
+        (with-capability (GOV|TS02-C1_ADMIN)
+            (write P|T policy-name
+                {"policy" : policy-guard}
+            )
+        )
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        (with-capability (GOV|TS02-C1_ADMIN)
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (dg:guard (create-capability-guard (SECURE)))
+                )
+                (with-default-read P|MT P|I
+                    {"m-policies" : [dg]}
+                    {"m-policies" := mp}
+                    (write P|MT P|I
+                        {"m-policies" : (ref-U|LST::UC_AppL mp policy-guard)}
+                    )
+                )
+            )
+        )
+    )
+    (defun P|A_Define ()
+        (let
+            (
+                (ref-P|TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-P|DPDC:module{OuronetPolicy} DPDC)
+                ;(ref-P|DPDC-CD:module{OuronetPolicy} DPDC-CD)
+                (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
+            )
+            (ref-P|TS01-A::P|A_AddIMP mg)
+            (ref-P|DPDC::P|A_AddIMP mg)
+            ;(ref-P|DPDC-CD::P|A_AddIMP mg)
+        )
+    )
+    (defun UEV_IMC ()
+        (let
+            (
+                (ref-U|G:module{OuronetGuards} U|G)
+            )
+            (ref-U|G::UEV_Any (P|UR_IMP))
+        )
+    )
+    ;;
+    ;;<======================>
+    ;;SCHEMAS-TABLES-CONSTANTS
+    ;;{1}
+    ;;{2}
+    ;;{3}
+    ;;
+    ;;<==========>
+    ;;CAPABILITIES
+    ;;{C1}
+    (defcap SECURE ()
+        true
+    )
+    ;;{C2}
+    ;;{C3}
+    ;;{C4}
+    ;;
+    ;;<=======>
+    ;;FUNCTIONS
+    ;;{F0}  [UR]
+    ;;{F1}  [URC]
+    ;;{F2}  [UEV]
+    ;;{F3}  [UDC]
+    ;;{F4}  [CAP]
+    ;;
+    ;;{F5}  [A]
+    ;;{F6}  [C]
+    ;;  [DPSF_Client]
+    (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for DPSF Token <entity-id> costing 400 IGNIS"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_UpdatePendingBranding patron entity-id true logo description website social)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer)
+        @doc "Upgrades Branding for DPSF Token, making it a premium Branding. \
+            \ Also sets pending-branding to live branding if its branding is not live yet"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                )
+                (ref-DPDC::C_UpgradeBranding patron entity-id true months)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+            )
+        )
+    )
+    ;;
+    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
+        @doc "Controls DPSF Properties"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_Control patron id true cu cco ccc casr ctncr cf cw cp)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_DeployAccount (patron:string id:string account:string)
+        @doc "Deploys a DPSF Account. Stand Alone Deployment costs 2 IGNIS"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DPDC::C_DeployAccountSFT id account)
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DALOS::UDC_SmallCumulatorV2 account)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_Issue
+        (
+            patron:string 
+            owner-account:string creator-account:string collection-name:string collection-ticker:string
+            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
+            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+        )
+        @doc "Issues a new DPSF (Demiourgos Pact Semi-Fungible) Digital Collection: <SFT> \
+            \ Costs 5x<ignis|token-issue> = 2500 IGNIS and 400 KDA"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_IssueDigitalCollection
+                        patron true 
+                        owner-account creator-account collection-name collection-ticker
+                        can-upgrade can-change-owner can-change-creator can-add-special-role
+                        can-transfer-nft-create-role can-freeze can-wipe can-pause
+                    )
+                )
+            )
+        )
+    )
+    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool)
+        @doc "Pauses a DPSF Collection. Paused Collections can no longer be transfered"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_TogglePause patron id true toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles the add quantity role for a DPTF Token on a given Ouronet Account"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleAddQuantityRole patron id account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
+        @doc "Freezes a given account for a given DPSF Token. Frozen Accounts can no longer send or receive that DPSF Token"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleFreezeAccount patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles exemption Role for a given DPSF on a given Smart Ouronet Account (Only Smart Ouronet Accounts can accept this role) \
+            \ When sending to or receiving from such Accounts, the flat IGNIS Royalty fee must not be paid."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleExemptionRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles burn Role for a given DPSF on any Ouronet Account. \
+            \ Such Accounts can then burn the DPSF"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleBurnRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleUpdateRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles update Role for a given DPSF on any Ouronet Account. \
+            \ Such Accounts can then update (modify) the Metadata on any DPSF nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleUpdateRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleModifyCreatorRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles Modify Creator Role for a given DPSF on any Ouronet Account. \
+            \ Such Accounts can proceed to modify the Creator of the DPSF Collection"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleModifyCreatorRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleModifyRoyaltiesRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles Modify Royalties Role for a given DPSF on any Ouronet Account. \
+            \ Such Accounts can proceed to modify the Permille Royalty of any nonce in the  DPSF Collection"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleModifyRoyaltiesRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+        @doc "Toggles Transfer Role for a given DPSF on any Ouronet Account. \
+            \ Transfers for any Nonce in the DPSF Collection are then restricted only to and from these accounts"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleTransferRole patron id true account toggle)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_MoveCreateRole (patron:string id:string new-account:string)
+        @doc "Moves the Create Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can issue new SFTs in the Collection"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveCreateRole patron id true new-account)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_MoveRecreateRole (patron:string id:string new-account:string)
+        @doc "Moves the Recreate Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can recreate any existing SFT in the Collection \
+            \ Recreation reffers to a complete update (modification) of all SFT properties of a given nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveRecreateRole patron id true new-account)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_MoveSetUriRole (patron:string id:string new-account:string)
+        @doc "Moves the Set URI Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can modify the URIs of any nonce in the SFT Collection"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveSetUriRole patron id true new-account)
+                )
+            )
+        )
+    )
+    ;;
+    (defun DPSF|C_Create
+        (
+            patron:string id:string amount:integer
+            royalty:decimal ignis:decimal description:string meta-data:[object]
+            image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
+            image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
+            image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
+            image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
+        )
+        @doc "Creates a new SFT Collection element (with a new nonce) of amount <amount>, on the <creator> account"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC-CD:module{DemiourgosPactDigitalCollectibles-CreateDestroy} DPDC-CD)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-CD::C_Create 
+                        patron id amount
+                        royalty ignis description meta-data
+                        image-t audio-t video-t document-t archive-t model-t exotic-t
+                        image-s1 audio-s1 video-s1 document-s1 archive-s1 model-s1 exotic-s1
+                        image-s2 audio-s2 video-s2 document-s2 archive-s2 model-s2 exotic-s2
+                        image-s3 audio-s3 video-s3 document-s3 archive-s3 model-s3 exotic-s3
+                    )
+                )
+            )
+        )
+    )
+    ;;  [DPNF_Client]
+    (defun DPNF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+        @doc "Updates <pending-branding> for DPNF Token <entity-id> costing 500 IGNIS"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_UpdatePendingBranding patron entity-id false logo description website social)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_UpgradeBranding (patron:string entity-id:string months:integer)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                )
+                (ref-DPDC::C_UpgradeBranding patron entity-id false months)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+            )
+        )
+    )
+    ;;
+    (defun DPNF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
+        @doc "Controls DPNF Properties"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_Control patron id false cu cco ccc casr ctncr cf cw cp)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_DeployAccount (patron:string id:string account:string)
+        @doc "Deploys a DPNF Account. Stand Alone Deployment costs 3 IGNIS"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DPDC::C_DeployAccountNFT id account)
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DALOS::UDC_MediumCumulatorV2 account)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_Issue
+        (
+            patron:string 
+            owner-account:string creator-account:string collection-name:string collection-ticker:string
+            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
+            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+        )
+        @doc "Issues a new DPNF (Demiourgos Pact Non-Fungible) Digital Collection: <NFT> \
+            \ Costs 10x<ignis|token-issue> = 5000 IGNIS and 500 KDA"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_IssueDigitalCollection
+                        patron false 
+                        owner-account creator-account collection-name collection-ticker
+                        can-upgrade can-change-owner can-change-creator can-add-special-role
+                        can-transfer-nft-create-role can-freeze can-wipe can-pause
+                    )
+                )
+            )
+        )
+    )
+    (defun DPNF|C_TogglePause (patron:string id:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_TogglePause patron id false toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleFreezeAccount patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleExemptionRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleBurnRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleUpdateRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleUpdateRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleModifyCreatorRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleModifyCreatorRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleModifyRoyaltiesRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleModifyRoyaltiesRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_ToggleTransferRole patron id false account toggle)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_MoveCreateRole (patron:string id:string new-account:string)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveCreateRole patron id false new-account)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_MoveRecreateRole (patron:string id:string new-account:string)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveRecreateRole patron id false new-account)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_MoveSetUriRole (patron:string id:string new-account:string)
+        @doc "Similar to its DPSF counterpart"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC::C_MoveSetUriRole patron id false new-account)
+                )
+            )
+        )
+    )
+    ;;{F7}  [X]
+    ;;
+)
+
+(create-table P|T)
+(create-table P|MT)
