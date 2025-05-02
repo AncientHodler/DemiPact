@@ -30,9 +30,9 @@
 (let
     (
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-        (ref-ATS:module{AutostakeV2} ATS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+        (ref-ATS:module{AutostakeV3} ATS)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
         (ouro:string (ref-DALOS::UR_OuroborosID))
         (os:decimal (ref-DPTF::UR_Supply ouro))
@@ -150,8 +150,8 @@
 (namespace "free")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)

@@ -28,7 +28,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-CP_ADMIN)))
     (defcap GOV|TS01-CP_ADMIN ()    (enforce-guard GOV|MD_TS01-CP))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -40,7 +40,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -53,7 +53,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -139,7 +139,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-TFT::PS|C_BulkTransfer81-160 patron id sender receiver-lst transfer-amount-lst method)
             )
@@ -153,7 +153,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-TFT::PS|C_BulkTransfer41-80 patron id sender receiver-lst transfer-amount-lst method)
             )
@@ -167,7 +167,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-TFT::PS|C_BulkTransfer13-40 patron id sender receiver-lst transfer-amount-lst method)
             )
@@ -181,7 +181,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-TFT::PS|C_MultiTransfer41-80 patron id-lst sender receiver transfer-amount-lst method)
             )
@@ -195,7 +195,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-TFT::PS|C_MultiTransfer13-40 patron id-lst sender receiver transfer-amount-lst method)
             )
@@ -213,7 +213,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-SWPU:module{SwapperUsageV3} SWPU)
                 )
                 (ref-SWPU::PS|C_IssueStableMultiStep patron account pool-tokens fee-lp amp p)
             )
@@ -224,7 +224,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-SWPU:module{SwapperUsageV3} SWPU)
                 )
                 (ref-SWPU::PS|C_IssueStandardMultiStep patron account pool-tokens fee-lp p)
             )
@@ -235,7 +235,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV2} SWPU)
+                    (ref-SWPU:module{SwapperUsageV3} SWPU)
                 )
                 (ref-SWPU::PS|C_IssueWeightedMultiStep patron account pool-tokens fee-lp weights p)
             )

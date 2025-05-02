@@ -47,6 +47,7 @@
     (defschema DC|DataSchema
         royalty:decimal
         ignis:decimal
+        name:string
         description:string
         meta-data:[object]
         asset-type:object{DC|URI|Type}
@@ -82,6 +83,7 @@
     (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer))
     (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceIgnis:decimal (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceName:string (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceDescription:string (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceMetaData:[object] (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceAssetType:object{DC|URI|Type} (id:string sft-or-nft:bool nonce:integer))
@@ -170,11 +172,11 @@
         )
     )
     (defun UDC_Control:object{DPDC|PropertiesSchema} (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
-    (defun UDC_ExistingRoles:object{DPDC|RolesStorageSchema} (a:[string] b:[string] c:[string] d:[string] e:[string] f:[string] g:[string] h:[string] i:[string] j:[string]))
+    (defun UDC_ExistingRoles:object{DPDC|RolesStorageSchema} (a:[string] b:[string] c:[string] d:[string] e:[string] f:[string] g:[string] h:[string] i:[string] j:[string] k:[string]))
         ;;Account UDCs
-    (defun UDC_AccountRoles:object{DPDC|RolesSchema} (f:bool rnb:bool rnc:bool rnr:bool rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool))
+    (defun UDC_AccountRoles:object{DPDC|RolesSchema} (f:bool re:bool rnb:bool rnc:bool rnr:bool rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool))
     (defun UDC_NonceElement:object{DPDC|NonceElementSchema} (a:integer b:integer c:object{DC|DataSchema}))
-    (defun UDC_DataDC:object{DC|DataSchema} (royalty:decimal ignis:decimal description:string meta-data:[object] asset-type:object{DC|URI|Type} uri-primary:object{DC|URI|Schema} uri-secondary:object{DC|URI|Schema} uri-tertiary:object{DC|URI|Schema}))
+    (defun UDC_DataDC:object{DC|DataSchema} (royalty:decimal ignis:decimal name:string description:string meta-data:[object] asset-type:object{DC|URI|Type} uri-primary:object{DC|URI|Schema} uri-secondary:object{DC|URI|Schema} uri-tertiary:object{DC|URI|Schema}))
     (defun UDC_UriType:object{DC|URI|Type} (a:bool b:bool c:bool d:bool e:bool f:bool g:bool))
     (defun UDC_UriString:object{DC|URI|Schema} (a:string b:string c:string d:string e:string f:string g:string))
         ;;Empty UDCs
@@ -211,12 +213,14 @@
     (defun C_MoveRecreateRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool new-account:string))
     (defun C_MoveSetUriRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool new-account:string))
     ;;
-    (defun XB_UP|SftOrNft (id:string sft-or-nft:bool sft-and-nft:[object{DPDC|NonceElementSchema}]))
+    (defun XE_UP|SftOrNft (id:string sft-or-nft:bool sft-and-nft:[object{DPDC|NonceElementSchema}]))
     (defun XB_UP|Specs (id:string sft-or-nft:bool specs:object{DPDC|PropertiesSchema}))
     (defun XB_UP|ExistingRoles (id:string sft-or-nft:bool er:object{DPDC|RolesStorageSchema}))
         ;;
-    (defun XB_UAD|OwnedNonces (id:string sft-or-nft:bool account:string owned-nonces:[integer]))
-    (defun XB_UAD|NoncesBalances (id:string account:string nonces-balances:[integer]))
+    (defun XE_UAD|OwnedNonces (id:string sft-or-nft:bool account:string owned-nonces:[integer]))
+    (defun XE_UAD|NoncesBalances (id:string account:string nonces-balances:[integer]))
     (defun XB_UAD|Roles (id:string sft-or-nft:bool account:string roles:object{DPDC|RolesSchema}))
     (defun XB_UAD|Rnaq (id:string account:string role-nft-add-quantity:bool))
+    ;;
+    (defun XE_DeployAccountWNE (id:string sft-or-nft:bool account:string))
 )

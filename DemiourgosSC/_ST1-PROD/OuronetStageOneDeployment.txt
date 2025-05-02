@@ -453,3 +453,63 @@ qSVNO0r1L4QAhLs9BzqhN9DXC9ZnTXI8FzJVAfTIEns
 Tx 139 [68.883 gas] Update Talos C1 Module DPTF and DPMG Wiping Functions
 ruPsGY68AMOkfFYTU-yeg3Iieht6yN5u27z4fvy8Xo4
 
+==============2nd Interface Upgrade
+Tx 140 [114.108 gas] Dalos and DalosV3
+V6Q_BYgyT9Waqq_jImfjzf_q2iPvj3g5MlRx2CzVzkQ
+
+Tx 141 [33.039 gas] BRD and Branding V4 V5 V6
+kvwuEhRL6ZPcC4BVD1OLfUSuloaWHKRTiBKOnL1kTpY
+
+Tx 142 [132.519 gas] DPTF and DemiourgosPactTrueFungibleV3
+2vjArwvCuxS6T9AueCoOSGSTNvvHnAF8OXtlMmpUPxY
+
+Tx 143 [125.536 gas] DPMF and DemiourgosPactMetaFungibleV4
+RhoNkPvhic0W6M9MAxmG_5jmuOi7AKQ4jS13sMp85fo
+
+Tx 144 [143.035 gas] ATS and AutostakeV3
+Y9RBNf2GgyDFb2v6-Vv13aQsTwdA5EwMsn5TEwn_0NA
+
+Tx 145 [115.501 gas] TFT and TrueFungibleTransferV4
+HfaanxHltx9SAHDETRtoho2cwghUqzdhWMBOQXOno3w
+
+Tx 146 [111.111 gas] ATSU and AutostakeUsageV3
+SEzmVo4lG9BsIdBJiVBMdsIzW4rqIwu7-SEgnEWexlU
+
+Tx 147 [94.539 gas] VST and VestingV3
+5NA5Ry36gtAoi2faArnJcW5ISoOJ0ewQ8zvgsIscAaA
+
+Tx 148 [24.844 gas] LIQUID and KadenaLiquidStakingV3
+Te5uTBw9xUgIAdGwAp16EiUnY1pK__W6iqT9kNGbS3c
+
+Tx 149 [37.024 gas] OUROBOROS and OuroborosV3
+lP-8EqeTK7fjO6KISXpYAA5HiEkJNJvWOrBndis_dxs
+
+Tx 150 [28.828 gas] SWPT
+8SvnaiOA6u_QPd2wJSiIltiExo9mehxgjstGlkuybEw
+
+Tx 151 [94.023 gas] SWP and SwapperV3
+PkRfDkuxp5ExxHYOVi9RU9aD75SojcxOS1epgXQ048Q
+
+Tx 152 [135.169 gas] SWPU SwapperUsageV3
+ToV8AssTWWUsiGtRsNrUp6Bh2YUi0JBey7twNfggDyk
+
+Tx 153 [20.676 gas] TS01-A TalosStageOne_AdminV2
+DtY_3JGufMpZ_cnLmKzS6odstUhiwBoAl3ZWRDRCPSw
+
+Tx 154 [65.626 gas] TS01-C1
+kNgwMOoeyRWYI_PFBQKlPcTNWgB8i28yu35p6yvyBOE
+
+Tx 155 [111.482 gas] TS01-C2 and TalosStageOne_ClientTwoV2
+CmmUyzdwHKHHCKluQYnSJHfYgwGr_0pBFZizEVhpcZ4
+
+Tx 156 [11.307 gas] TS01-CP
+ymKg8KYdp2mBRkqcqoSblyO6EpwQlzm3K2hY2KEpB2E
+
+Tx 157 [68.303 gas] DPL-DALOS
+ACPyiCVqzj6EU5aANGJcf9oxw29utL0Nd--5SpP1Zpg
+
+Tx 158 [38.482 gas] DPL-AOZ
+EyKHThDQ1hJ0Yfn15aZvJPUhshyqTTgKN1qo4RPlsO4
+
+Tx 159 [41.780 gas] DSP
+r_9b2Yo_Fjn_g2Dsy5vIV9kVCbCy2vje0VUQQYy7njI

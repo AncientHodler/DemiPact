@@ -23,12 +23,12 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV2} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+        (ref-SWP:module{SwapperV3} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
         (patron:string KST.ANHD)
     )
     (ref-TS01-A::DALOS|A_SetIgnisSourcePrice 1.2)
@@ -171,10 +171,10 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV2} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+        (ref-SWP:module{SwapperV3} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (patron:string KST.ANHD)
         (patron:string KST.EMMA)
@@ -227,11 +227,11 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (months:integer 3)
@@ -336,11 +336,11 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV2} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-SWP:module{SwapperV3} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)

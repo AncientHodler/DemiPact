@@ -23,8 +23,8 @@
 )
 (module DPL-DALOS GOV
     @doc "Contains Functions needed for Ouronet Initialisation \
-        \ Initialisation costs 3510 KDA, only 900 KDA needed, \
-        \ Remaining 2610 KDA, to be added later with <DALOS::KDA|C_CollectWT sender amount false>"
+        \ Initialisation costs 3520 KDA, only 900 KDA needed, \
+        \ Paid 20 KDA, 3500 KDA to be added later with <DALOS::KDA|C_CollectWT sender amount false>"
     ;;
     (implements DeployerDalos)
     ;;
@@ -34,11 +34,11 @@
     (defconst GOV|MD_DPL-DALOS              (keyset-ref-guard (GOV|Demiurgoi)))
     ;;
     ;;  [KDA Accounts]
-    (defconst DALOS|SC_KDA-NAME             (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DALOS|SC_KDA-NAME)))
+    (defconst DALOS|SC_KDA-NAME             (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|SC_KDA-NAME)))
     (defconst ATS|SC_KDA-NAME               "k:725d6ad18c7e4ef6e2773f6bb315bde13437872d0235f6404c0c99d9d900bbb4")
     (defconst VST|SC_KDA-NAME               "k:5047d039d1d918e3489f42a52a46b54cb5b3b259e42dd2e43c071fe2b77863f2")
-    (defconst LQD|SC_KDA-NAME               (let ((ref-LQD:module{KadenaLiquidStakingV2} LIQUID)) (ref-LQD::GOV|LIQUID|SC_KDA-NAME)))
-    (defconst OUROBOROS|SC_KDA-NAME         (let ((ref-ORBR:module{OuroborosV2} OUROBOROS)) (ref-ORBR::GOV|ORBR|SC_KDA-NAME)))
+    (defconst LQD|SC_KDA-NAME               (let ((ref-LQD:module{KadenaLiquidStakingV3} LIQUID)) (ref-LQD::GOV|LIQUID|SC_KDA-NAME)))
+    (defconst OUROBOROS|SC_KDA-NAME         (let ((ref-ORBR:module{OuroborosV3} OUROBOROS)) (ref-ORBR::GOV|ORBR|SC_KDA-NAME)))
     (defconst SWP|SC_KDA-NAME               "k:572bd2e1a7e126c1072d328bbac3064ffadf96cc20fd0752f1c5875d549c2b31")
     (defconst DHV|SC_KDA-NAME               "k:013b30abebdae21d5afd6e2d5b6486f6fae2b5aa6d8495a2aa3131ab8d292836")
     ;;
@@ -50,39 +50,39 @@
     (defconst PLEB|LUMY_KDA-NAME            "k:2df04179bfcddf22dd3d79c7d4afd9651e5f8e2a9dfbb8ba6fd9e77e2b432710")
     ;;
     ;;  [Autonomic Guards]
-    (defconst DALOS|GUARD                   (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DALOS|GUARD)))
-    (defconst OUROBOROS|GUARD               (let ((ref-ORBR:module{OuroborosV2} OUROBOROS)) (ref-ORBR::GOV|ORBR|GUARD)))
-    (defconst LQD|GUARD                     (let ((ref-LQD:module{KadenaLiquidStakingV2} LIQUID)) (ref-LQD::GOV|LIQUID|GUARD)))
+    (defconst DALOS|GUARD                   (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|GUARD)))
+    (defconst OUROBOROS|GUARD               (let ((ref-ORBR:module{OuroborosV3} OUROBOROS)) (ref-ORBR::GOV|ORBR|GUARD)))
+    (defconst LQD|GUARD                     (let ((ref-LQD:module{KadenaLiquidStakingV3} LIQUID)) (ref-LQD::GOV|LIQUID|GUARD)))
     ;;
     ;;  [DALOS]
-    (defconst DALOS|SC_KEY                  (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DalosKey)))
-    (defconst DALOS|SC_NAME                 (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
-    (defconst DALOS|PBL                     (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DALOS|PBL)))
+    (defconst DALOS|SC_KEY                  (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DalosKey)))
+    (defconst DALOS|SC_NAME                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defconst DALOS|PBL                     (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|PBL)))
     ;;  [AUTOSTAKE]
-    (defconst ATS|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
-    (defconst ATS|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
-    (defconst ATS|PBL                       (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|ATS|PBL)))
+    (defconst ATS|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
+    (defconst ATS|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
+    (defconst ATS|PBL                       (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|ATS|PBL)))
     ;;  [VESTING]
-    (defconst VST|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|VestingKey)))
-    (defconst VST|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
-    (defconst VST|PBL                       (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|VST|PBL)))
+    (defconst VST|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|VestingKey)))
+    (defconst VST|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
+    (defconst VST|PBL                       (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|VST|PBL)))
     ;;  LIQUID-STAKING
-    (defconst LQD|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|LiquidKey)))
-    (defconst LQD|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
-    (defconst LQD|PBL                       (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|LIQUID|PBL)))
+    (defconst LQD|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|LiquidKey)))
+    (defconst LQD|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
+    (defconst LQD|PBL                       (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|LIQUID|PBL)))
     ;;  [OUROBOROS]
-    (defconst OUROBOROS|SC_KEY              (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
-    (defconst OUROBOROS|SC_NAME             (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
-    (defconst OUROBOROS|PBL                 (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|OUROBOROS|PBL)))
+    (defconst OUROBOROS|SC_KEY              (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
+    (defconst OUROBOROS|SC_NAME             (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defconst OUROBOROS|PBL                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|OUROBOROS|PBL)))
     ;;  [SWAPPER]
-    (defconst SWP|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|SwapKey)))
-    (defconst SWP|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
-    (defconst SWP|PBL                       (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|SWP|PBL)))
+    (defconst SWP|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|SwapKey)))
+    (defconst SWP|SC_NAME                   (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defconst SWP|PBL                       (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|SWP|PBL)))
     ;;  [DHVault]
-    (defconst DHV|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DHVKey)))
-    (defconst DHV1|SC_NAME                  (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DHV1|SC_NAME)))
-    (defconst DHV2|SC_NAME                  (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DHV2|SC_NAME)))
-    (defconst DHV|PBL                       (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DHV|PBL)))
+    (defconst DHV|SC_KEY                    (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DHVKey)))
+    (defconst DHV1|SC_NAME                  (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DHV1|SC_NAME)))
+    (defconst DHV2|SC_NAME                  (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DHV2|SC_NAME)))
+    (defconst DHV|PBL                       (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DHV|PBL)))
     ;;
     ;;  [Demiurgoi]
     (defconst DEMIURGOI|AH_KEY              (+ (GOV|NS_Use) ".dh_ah-keyset"))
@@ -114,7 +114,7 @@
     (defcap GOV|DPL_DALOS_ADMIN ()          (enforce-guard GOV|MD_DPL-DALOS))
     ;;{G3}
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -151,7 +151,7 @@
     (defun A_Step005 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
             )
             ;;DEMIURGOIS Accounts
             (ref-TS01-A::DALOS|A_DeployStandardAccount
@@ -215,9 +215,9 @@
                 (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
                 (ref-P|TS01-CP:module{OuronetPolicy} TS01-CP)
                 ;;
-                (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (bar:string (ref-U|CT::CT_BAR))
                 (info:string (ref-DALOS::DALOS|Info))
                 (vgd:string (ref-DALOS::DALOS|VirtualGasData))
@@ -300,13 +300,13 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-ATS:module{AutostakeV2} ATS)
-                (ref-VST:module{VestingV2} VST)
-                (ref-LIQUID:module{KadenaLiquidStakingV2} LIQUID)
-                (ref-ORBR:module{OuroborosV2} OUROBOROS)
-                (ref-SWP:module{SwapperV2} SWP)
-                (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-ATS:module{AutostakeV3} ATS)
+                (ref-VST:module{VestingV3} VST)
+                (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
+                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                (ref-SWP:module{SwapperV3} SWP)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-A::DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
@@ -342,7 +342,7 @@
         (acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (info:string (ref-DALOS::DALOS|Info))
@@ -417,8 +417,8 @@
         @doc "900 KDA Cost; doesnt get collected"
         (let*
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
@@ -434,8 +434,8 @@
         @doc "300 KDA Cost; doesnt get collected"
         (let*
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
@@ -488,7 +488,7 @@
     (defun A_Step011 (wrap-amount:decimal)
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-C2::LQD|C_WrapKadena patron patron wrap-amount)
@@ -497,9 +497,9 @@
     (defun A_Step012 (coil-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-C2::ATS|C_Coil
@@ -514,7 +514,7 @@
     (defun A_Step013 (ouro-origin-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
             )
@@ -530,9 +530,9 @@
     (defun A_Step014 (ouro-in:decimal requested-auryn-out:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
                 (rt-amounts:[decimal] [ouro-in])
@@ -544,9 +544,9 @@
     (defun A_Step015 (auryn-in:decimal)
         (let*
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
                 (rt-amounts:[decimal] [auryn-in])
@@ -558,20 +558,20 @@
     (defun A_Step016 (a1:decimal a2:decimal a3:decimal)
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
             )
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron patron a1) ;;1000.0
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron aozt a2)   ;;750.0    
-            (ref-TS01-C2::ORBR|C_Sublimate patron patron emma a3)   ;;10.0
+            (ref-TS01-C2::ORBR|C_Sublimate patron patron a1) ;;1000.0
+            (ref-TS01-C2::ORBR|C_Sublimate patron aozt a2)   ;;750.0    
+            (ref-TS01-C2::ORBR|C_Sublimate patron emma a3)   ;;10.0
         )
     )
     (defun A_Step017 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
             )
             (ref-TS01-A::DALOS|A_IgnisToggle false true)
             (ref-TS01-A::DALOS|A_IgnisToggle true true)
@@ -580,7 +580,7 @@
     (defun A_Step018 (am:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -592,7 +592,7 @@
     (defun A_Step019 (am:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
             )
@@ -610,9 +610,9 @@
         @doc "900 KDA Cost; must be collected"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (ids:list
@@ -642,7 +642,7 @@
         (acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.SWP)
         (let
             (
-                (ref-SWP:module{SwapperV2} SWP)
+                (ref-SWP:module{SwapperV3} SWP)
                 (u:[string] [BAR])
             )
             (insert ref-SWP::SWP|Properties ref-SWP::SWP|INFO
@@ -693,9 +693,9 @@
         (let
             (
                 (patron:string DEMIURGOI|AH_NAME)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-                (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 (p1:string (ref-DALOS::UR_LiquidKadenaID))
                 (p2:string (ref-DALOS::UR_OuroborosID))
             )

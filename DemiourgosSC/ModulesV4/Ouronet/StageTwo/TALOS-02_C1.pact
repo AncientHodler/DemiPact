@@ -1,12 +1,12 @@
 (interface TalosStageTwo_ClientOne
     ;;
-    ;;DPSF Functions
+    ;;DPSF (SFTs) Functions
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun DPSF|C_DeployAccount (patron:string id:string account:string))
-    (defun DPSF|C_Issue
+    (defun DPSF|C_Issue:string
         (
             patron:string 
             owner-account:string creator-account:string collection-name:string collection-ticker:string
@@ -28,24 +28,20 @@
     (defun DPSF|C_MoveRecreateRole (patron:string id:string new-account:string))
     (defun DPSF|C_MoveSetUriRole (patron:string id:string new-account:string))
     ;;
-    (defun DPSF|C_Create
+    (defun DPSF|C_Create:string
         (
-            patron:string id:string amount:integer
-            royalty:decimal ignis:decimal description:string meta-data:[object]
-            image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
-            image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
-            image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
-            image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
+            patron:string id:string amount:[integer]
+            input-nonce-data:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
     )
     ;;
-    ;;DPNF Functions
+    ;;DPNF (NFTs) Functions
     (defun DPNF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPNF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
     (defun DPNF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun DPNF|C_DeployAccount (patron:string id:string account:string))
-    (defun DPNF|C_Issue
+    (defun DPNF|C_Issue:string
         (
             patron:string 
             owner-account:string creator-account:string collection-name:string collection-ticker:string
@@ -141,12 +137,12 @@
             (
                 (ref-P|TS01-A:module{TalosStageOne_AdminV2} TS01-A)
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
-                ;(ref-P|DPDC-CD:module{OuronetPolicy} DPDC-CD)
+                (ref-P|DPDC-CD:module{OuronetPolicy} DPDC-CD)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
             (ref-P|DPDC::P|A_AddIMP mg)
-            ;(ref-P|DPDC-CD::P|A_AddIMP mg)
+            (ref-P|DPDC-CD::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -243,7 +239,7 @@
             )
         )
     )
-    (defun DPSF|C_Issue
+    (defun DPSF|C_Issue:string
         (
             patron:string 
             owner-account:string creator-account:string collection-name:string collection-ticker:string
@@ -257,15 +253,19 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
-                )
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC::C_IssueDigitalCollection
-                        patron true 
-                        owner-account creator-account collection-name collection-ticker
-                        can-upgrade can-change-owner can-change-creator can-add-special-role
-                        can-transfer-nft-create-role can-freeze can-wipe can-pause
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DPDC::C_IssueDigitalCollection
+                            patron true 
+                            owner-account creator-account collection-name collection-ticker
+                            can-upgrade can-change-owner can-change-creator can-add-special-role
+                            can-transfer-nft-create-role can-freeze can-wipe can-pause
+                        )
                     )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (at 0 (at "output" ico))
             )
         )
     )
@@ -448,31 +448,33 @@
         )
     )
     ;;
-    (defun DPSF|C_Create
+    (defun DPSF|C_Create:string
         (
-            patron:string id:string amount:integer
-            royalty:decimal ignis:decimal description:string meta-data:[object]
-            image-t:bool audio-t:bool video-t:bool document-t:bool archive-t:bool model-t:bool exotic-t:bool
-            image-s1:string audio-s1:string video-s1:string document-s1:string archive-s1:string model-s1:string exotic-s1:string
-            image-s2:string audio-s2:string video-s2:string document-s2:string archive-s2:string model-s2:string exotic-s2:string
-            image-s3:string audio-s3:string video-s3:string document-s3:string archive-s3:string model-s3:string exotic-s3:string
+            patron:string id:string amount:[integer]
+            input-nonce-data:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
-        @doc "Creates a new SFT Collection element (with a new nonce) of amount <amount>, on the <creator> account"
+        @doc "Creates a new SFT Collection Element(s), having a new nonce, \
+            \ of amount <amount>, on the <creator> account."
         (with-capability (P|TS)
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPDC-CD:module{DemiourgosPactDigitalCollectibles-CreateDestroy} DPDC-CD)
-                )
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-CD::C_Create 
-                        patron id amount
-                        royalty ignis description meta-data
-                        image-t audio-t video-t document-t archive-t model-t exotic-t
-                        image-s1 audio-s1 video-s1 document-s1 archive-s1 model-s1 exotic-s1
-                        image-s2 audio-s2 video-s2 document-s2 archive-s2 model-s2 exotic-s2
-                        image-s3 audio-s3 video-s3 document-s3 archive-s3 model-s3 exotic-s3
+                    (l:integer (length amount))
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                        (if (= l 1)
+                            (ref-DPDC-CD::C_CreateNewSemiFungibleNonce
+                                patron id (at 0 amount) (at 0 input-nonce-data)
+                            )
+                            (ref-DPDC-CD::C_CreateNewSemiFungibleNonces
+                                patron id amount input-nonce-data
+                            )
+                        )
                     )
+                )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (format "Created {} SemiFungible(s) within the {} DPSF Collection"
+                    [(at "output" ico) id]
                 )
             )
         )
@@ -535,7 +537,7 @@
             )
         )
     )
-    (defun DPNF|C_Issue
+    (defun DPNF|C_Issue:string
         (
             patron:string 
             owner-account:string creator-account:string collection-name:string collection-ticker:string
@@ -549,15 +551,19 @@
                 (
                     (ref-DALOS:module{OuronetDalosV2} DALOS)
                     (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
-                )
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC::C_IssueDigitalCollection
-                        patron false 
-                        owner-account creator-account collection-name collection-ticker
-                        can-upgrade can-change-owner can-change-creator can-add-special-role
-                        can-transfer-nft-create-role can-freeze can-wipe can-pause
+                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                        (ref-DPDC::C_IssueDigitalCollection
+                            patron false 
+                            owner-account creator-account collection-name collection-ticker
+                            can-upgrade can-change-owner can-change-creator can-add-special-role
+                            can-transfer-nft-create-role can-freeze can-wipe can-pause
+                        )
                     )
                 )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (at 0 (at "output" ico))
             )
         )
     )

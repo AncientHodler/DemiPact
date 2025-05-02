@@ -73,23 +73,23 @@
     (defun UEV_MultiTransferMultiData (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal]))
     ;;
     (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
-    (defun UDC_BulkTransferICO:object{OuronetDalosV2.OutputCumulatorV2} (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string]))
-    (defun UDC_MultiTransferICO:object{OuronetDalosV2.OutputCumulatorV2} (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string))
+    (defun UDC_BulkTransferICO:object{OuronetDalosV3.OutputCumulatorV2} (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string]))
+    (defun UDC_MultiTransferICO:object{OuronetDalosV3.OutputCumulatorV2} (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string))
     ;;
-    (defun C_ClearDispo:object{OuronetDalosV2.OutputCumulatorV2} (patron:string account:string))
-    (defun C_Transmute:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string transmuter:string transmute-amount:decimal))
+    (defun C_ClearDispo:object{OuronetDalosV3.OutputCumulatorV2} (patron:string account:string))
+    (defun C_Transmute:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string transmuter:string transmute-amount:decimal))
     ;;
-    (defun C_Transfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun C_ExemptionTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun XB_FeelesTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_Transfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_ExemptionTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun XB_FeelesTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
     ;;
-    (defun C_MultiTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun C_ExemptionMultiTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun XE_FeelesMultiTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun C_MultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun C_ExemptionMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun XE_FeelesMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     ;;
-    (defun C_BulkTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun C_ExemptionBulkTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun XE_FeelesBulkTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun C_BulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun C_ExemptionBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun XE_FeelesBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     ;;
     (defun PS|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
     (defun PS|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
@@ -101,11 +101,65 @@
     @doc "Add Virtual Ouro Computation Function"
     (defun URC_VirtualOuro:decimal (account:string))
 )
+(interface TrueFungibleTransferV4
+    @doc "Exposes DPTF Related Transfer Functions. Due to the complex nature of the DPTF Transfer \
+        \ a whole module had to be dedicated to it, as a mere DPTF Transfer has to take following parameters into account: \
+        \   *] If the DPTF is part of ATS Pair, and if so, specific to its setup, how it must be handeld \
+        \   *] If Transfer Fees are in place, and if so, where they must be redirected, als o tying in the ATSPair involvement \
+        \   *] When handling OUROBOROS, take note of Ouro-Dispo mechanics, which tie into the Elite-Account \
+        \ Also includes Multi and Bulk Transfer Functions. Commented Functions are internal module only.\
+        \ No alphabetic sorting for the functions, to better observe their connections \
+        \ \
+        \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
+        \ \
+        \ V3 addd Virtual Ouro Computation Function \
+        \ \
+        \ V4 Removes <patron> input variable where it is not needed"
+    ;;
+    (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer))
+    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
+    (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
+    ;;
+    (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string))
+    (defun URC_MinimumOuro:decimal (account:string))
+    (defun URC_VirtualOuro:decimal (account:string))
+    ;;
+    (defun UEV_BulkTransfer (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun UEV_BulkTransferSingleData (id:string sender:string))
+    (defun UEV_BulkTransferMultiData (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun UEV_MultiTransfer (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun UEV_MultiTransferSingleData (sender:string receiver:string method:bool))
+    (defun UEV_MultiTransferMultiData (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal]))
+    ;;
+    (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
+    (defun UDC_BulkTransferICO:object{OuronetDalosV3.OutputCumulatorV2} (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string]))
+    (defun UDC_MultiTransferICO:object{OuronetDalosV3.OutputCumulatorV2} (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string))
+    ;;
+    (defun C_ClearDispo:object{OuronetDalosV3.OutputCumulatorV2} (account:string))
+    (defun C_Transmute:object{OuronetDalosV3.OutputCumulatorV2} (id:string transmuter:string transmute-amount:decimal))
+    ;;
+    (defun C_Transfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_ExemptionTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun XB_FeelesTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    ;;
+    (defun C_MultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun C_ExemptionMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun XE_FeelesMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    ;;
+    (defun C_BulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun C_ExemptionBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun XE_FeelesBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    ;;
+    (defun PS|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun PS|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+)
 (module TFT GOV
     ;;
     (implements OuronetPolicy)
-    (implements TrueFungibleTransferV2)
-    (implements TrueFungibleTransferV3)
+    (implements TrueFungibleTransferV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -115,7 +169,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TFT_ADMIN)))
     (defcap GOV|TFT_ADMIN ()        (enforce-guard GOV|MD_TFT))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -141,7 +195,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -220,7 +274,7 @@
     ;;{2}
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
-    (defun CT_EmptyCumulator        ()(let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::DALOS|EmptyOutputCumulatorV2)))
+    (defun CT_EmptyCumulator        ()(let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     ;;
@@ -234,7 +288,7 @@
     (defcap DPTF|S>EA-DISPO-LOCKER (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ouro-amount:decimal (ref-DALOS::UR_TF_AccountSupply account true))
             )
             (enforce (not (< ouro-amount 0.0)) "When Account has negative OURO, Elite-Auryn is dispo-locked and cannot be moved")
@@ -246,7 +300,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro-amount:decimal (ref-DALOS::UR_TF_AccountSupply account true))
                 (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
@@ -267,7 +321,7 @@
     (defcap DPTF|C>X_TRANSMUTE (id:string transmuter:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (= id ea-id)
@@ -282,8 +336,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
                 (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
@@ -349,7 +403,7 @@
     (defcap DPTF|C>X_MULTI-TRANSFER (id-lst:[string] sender:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (map
@@ -376,9 +430,9 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Invalid Ownership Position")
             (let
@@ -431,10 +485,10 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (ref-U|INT::UEV_PositionalVariable table-to-query 3 "Table To Query can only be 1 2 or 3")
             (if mode
@@ -461,9 +515,9 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (ref-U|INT::UEV_PositionalVariable position 3 "Invalid Ownership Position")
             (if poi
@@ -493,7 +547,7 @@
         \ Output of these 2 functions must match to the last decimal."
         (let
             (
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (ref-ATS::UEV_RewardTokenExistance atspair reward-token true)
             (fold
@@ -512,7 +566,7 @@
         (let
             (
                 (ref-U|DPTF:module{UtilityDptf} U|DPTF)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData account))
                 (max-dispo:decimal (ref-U|DPTF::UC_OuroDispo dispo-data))
                 (account-type:bool (ref-DALOS::UR_AccountType account))
@@ -528,8 +582,8 @@
             \ The Virtual Ouro is the maximum Ouro the Account is able to spend"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
                 (zero:decimal (URC_MinimumOuro account))
@@ -541,8 +595,8 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
                 (rt-ats-pairs:[string] (ref-DPTF::UR_RewardToken id))
                 (rbt-ats-pairs:[string] (ref-DPTF::UR_RewardBearingToken id))
                 (length-rt:integer (length rt-ats-pairs))
@@ -595,7 +649,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ats-pairs:[string] (ref-DPTF::UR_RewardBearingToken id))
                 (ats-pairs-bool:[bool] (URCX_NFR-Boolean_RT-RBT id ats-pairs false))
                 (milestones:integer (length (ref-U|LST::UC_Search ats-pairs-bool true)))
@@ -610,8 +664,8 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
                 (ats-pairs:[string] (ref-DPTF::UR_RewardToken id))
                 (ats-pairs-bool:[bool] (URCX_NFR-Boolean_RT-RBT id ats-pairs true))
                 (milestones:integer (length (ref-U|LST::UC_Search ats-pairs-bool true)))
@@ -643,7 +697,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (fold
                 (lambda
@@ -668,7 +722,7 @@
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (prec:integer (ref-DPTF::UR_Decimals id))
             )
             (ref-U|ATS::UC_SplitBalanceWithBooleans prec amount milestones boolean)
@@ -685,8 +739,8 @@
         @doc "Bulk Transfer Validation for single Data"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership sender)
             (ref-DPTF::UEV_PauseState id false)
@@ -700,8 +754,8 @@
     (defun UEVX_BulkTransferMapper (ra-obj:[object{DPTF|Receiver-Amount}] sender:string id:string method:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (tra:integer (ref-DPTF::UR_TransferRoleAmount id))
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
@@ -754,8 +808,8 @@
         @doc "Multi Transfer Validation for single Data"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))
             )
             (ref-DALOS::CAP_EnforceAccountOwnership sender)
@@ -773,8 +827,8 @@
     (defun UEVX_MultiTransferMapper (pid-obj:[object{DPTF|ID-Amount}] sender:string receiver:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (l:integer (length pid-obj))
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
@@ -823,9 +877,9 @@
     (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
                 (a-id:string (ref-DALOS::UR_AurynID))
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -860,22 +914,22 @@
             (zip (lambda (x:string y:decimal) { "id": x, "amount": y }) id-lst transfer-amount-lst)
         )
     )
-    (defun UDC_BulkTransferICO:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun UDC_BulkTransferICO:object{OuronetDalosV3.OutputCumulatorV2}
         (id:string transfer-amount-lst:[decimal] sender:string receiver-lst:[string])
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (l:integer (length transfer-amount-lst))
-                (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
+                (folded-obj:[object{OuronetDalosV3.OutputCumulatorV2}]
                     (fold
                         (lambda
-                            (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
+                            (acc:[object{OuronetDalosV3.OutputCumulatorV2}] idx:integer)
                             (let
                                 (
                                     (transfer-amount:decimal (at idx transfer-amount-lst))
                                     (receiver:string (at idx receiver-lst))
-                                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                                         (ref-DALOS::UDC_TFTCumulatorV2 id sender receiver transfer-amount)
                                     )
                                 )
@@ -890,22 +944,22 @@
             (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])
         )
     )
-    (defun UDC_MultiTransferICO:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun UDC_MultiTransferICO:object{OuronetDalosV3.OutputCumulatorV2}
         (id-lst:[string] transfer-amount-lst:[decimal] sender:string receiver:string)
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (l:integer (length transfer-amount-lst))
-                (folded-obj:[object{OuronetDalosV2.OutputCumulatorV2}]
+                (folded-obj:[object{OuronetDalosV3.OutputCumulatorV2}]
                     (fold
                         (lambda
-                            (acc:[object{OuronetDalosV2.OutputCumulatorV2}] idx:integer)
+                            (acc:[object{OuronetDalosV3.OutputCumulatorV2}] idx:integer)
                             (let
                                 (
                                     (id:string (at idx id-lst))
                                     (transfer-amount:decimal (at idx transfer-amount-lst))
-                                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                                         (ref-DALOS::UDC_TFTCumulatorV2 id sender receiver transfer-amount)
                                     )
                                 )
@@ -924,16 +978,16 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_ClearDispo:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string account:string)
+    (defun C_ClearDispo:object{OuronetDalosV3.OutputCumulatorV2}
+        (account:string)
         (UEV_IMC)
         (with-capability (DPTF|C>CLEAR-DISPO account)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ref-ATS:module{AutostakeV3} ATS)
 
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
                     (a-id:string (ref-DALOS::UR_AurynID))
@@ -957,23 +1011,23 @@
                     (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
 
                     ;;Ignis Cumulation
-                    (ico1:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ico1:object{OuronetDalosV3.OutputCumulatorV2}
                         (if (not frozen-state)
-                            (ref-DPTF::C_ToggleFreezeAccount patron ea-id account true)
+                            (ref-DPTF::C_ToggleFreezeAccount ea-id account true)
                             EOC
                         )
                     )
-                    (ico2:object{OuronetDalosV2.OutputCumulatorV2}
-                        (ref-DPTF::C_WipePartial patron ea-id account total-ea)
+                    (ico2:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPTF::C_WipePartial ea-id account total-ea)
                     )
-                    (ico3:object{OuronetDalosV2.OutputCumulatorV2}
-                        (ref-DPTF::C_ToggleFreezeAccount patron ea-id account false)
+                    (ico3:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPTF::C_ToggleFreezeAccount ea-id account false)
                     )
-                    (ico4:object{OuronetDalosV2.OutputCumulatorV2}
-                        (ref-DPTF::C_Burn patron a-id ats-sc burn-auryn-amount)
+                    (ico4:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPTF::C_Burn a-id ats-sc burn-auryn-amount)
                     )
-                    (ico5:object{OuronetDalosV2.OutputCumulatorV2}
-                        (ref-DPTF::C_Burn patron ouro-id ats-sc ouro-amount)
+                    (ico5:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPTF::C_Burn ouro-id ats-sc ouro-amount)
                     )
                     (final-ea-amount:decimal (ref-DPMF::URC_EliteAurynzSupply account))
                 )
@@ -998,14 +1052,14 @@
         )
     )
     ;;  [Transmute]
-    (defun C_Transmute:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string transmuter:string transmute-amount:decimal)
+    (defun C_Transmute:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string transmuter:string transmute-amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
             )
             (with-capability (DPTF|C>TRANSMUTE id transmuter)
                 (XI_Transmute id transmuter transmute-amount)
@@ -1020,12 +1074,12 @@
         )
     )
     ;;  [Transfer]
-    (defun C_Transfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun C_Transfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_Transfer id sender receiver transfer-amount method)
@@ -1033,12 +1087,12 @@
             )
         )
     )
-    (defun C_ExemptionTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun C_ExemptionTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_ExemptionTransfer id sender receiver transfer-amount method)
@@ -1046,12 +1100,12 @@
             )
         )
     )
-    (defun XB_FeelesTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool)
+    (defun XB_FeelesTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (with-capability (DPTF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_SimpleTransfer id sender receiver transfer-amount method)
@@ -1060,30 +1114,30 @@
         )
     )
     ;;  [Multi-Transfer]
-    (defun C_MultiTransferAsPactStep (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+    (defun C_MultiTransferAsPactStep (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (require-capability (SECURE))
         (with-capability (DPTF|PACT|C>MULTI-TRANSFER id-lst sender)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDCX_Pair_ID-Amount id-lst transfer-amount-lst))
         )
     )
-    (defun C_MultiTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+    (defun C_MultiTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_MultiTransfer sender receiver x method)) (UDCX_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )
-    (defun C_ExemptionMultiTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+    (defun C_ExemptionMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_ExemptionMultiTransfer sender receiver x method)) (UDCX_Pair_ID-Amount id-lst transfer-amount-lst))
             (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
         )
     )
-    (defun XE_FeelesMultiTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
+    (defun XE_FeelesMultiTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>MULTI-TRANSFER id-lst sender receiver transfer-amount-lst method)
             (map (lambda (x:object{DPTF|ID-Amount}) (XIH_FeelesMultiTransfer sender receiver x method)) (UDCX_Pair_ID-Amount id-lst transfer-amount-lst))
@@ -1091,30 +1145,30 @@
         )
     )
     ;;  [Bulk-Transfer]
-    (defun C_BulkTransferAsPactStep (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+    (defun C_BulkTransferAsPactStep (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (require-capability (SECURE))
         (with-capability (DPTF|PACT|C>BULK-TRANSFER id sender)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDCX_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
         )
     )
-    (defun C_BulkTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+    (defun C_BulkTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_BulkTransfer id sender x method)) (UDCX_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
     )
-    (defun C_ExemptionBulkTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+    (defun C_ExemptionBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_ExemptionBulkTransfer id sender x method)) (UDCX_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
             (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
         )
     )
-    (defun XE_FeelesBulkTransfer:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
+    (defun XE_FeelesBulkTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+        (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
         (UEV_IMC)
         (with-capability (DPTF|C>BULK-TRANSFER id sender receiver-lst transfer-amount-lst method)
             (map (lambda (x:object{DPTF|Receiver-Amount}) (XIH_FeelesBulkTransfer id sender x method)) (UDCX_Pair_Receiver-Amount receiver-lst transfer-amount-lst))
@@ -1152,7 +1206,7 @@
         (require-capability (DPTF|C>TRANSMUTE id transmuter))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData transmuter))
             )
             (ref-DPTF::XB_DebitStandard id transmuter transmute-amount dispo-data)
@@ -1162,7 +1216,7 @@
     (defun XI_Transfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (fee-toggle:bool (ref-DPTF::UR_FeeToggle id))
                 (iz-exception:bool (ref-DPTF::URC_TrFeeMinExc id sender receiver))
                 (iz-full-credit:bool
@@ -1181,7 +1235,7 @@
     (defun XI_ExemptionTransfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (sender-fee-exemption:bool (ref-DPTF::UR_AccountRoleFeeExemption id sender))
                 (receiver-fee-exemption:bool (ref-DPTF::UR_AccountRoleFeeExemption id receiver))
                 (iz-exception:bool (or sender-fee-exemption receiver-fee-exemption))
@@ -1195,8 +1249,8 @@
     (defun XI_SimpleTransfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData sender))
             )
             (ref-DPTF::XB_DebitStandard id sender transfer-amount dispo-data)
@@ -1207,8 +1261,8 @@
     (defun XI_ComplexTransfer (id:string sender:string receiver:string transfer-amount:decimal method:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (dispo-data:object{UtilityDptf.DispoData} (UDC_GetDispoData sender))
             )
             (ref-DPTF::XB_DebitStandard id sender transfer-amount dispo-data)
@@ -1219,8 +1273,8 @@
     (defun XI_ComplexCredit (id:string receiver:string transfer-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
                 (fees:[decimal] (ref-DPTF::URC_Fee id transfer-amount))
                 (primary-fee:decimal (at 0 fees))
@@ -1307,7 +1361,7 @@
     (defun XI_CreditPrimaryFee (id:string pf:decimal native:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (rt:bool (ref-DPTF::URC_IzRT id))
                 (rbt:bool (ref-DPTF::URC_IzRBT id))
                 (target:string (ref-DPTF::UR_FeeTarget id))
@@ -1356,7 +1410,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
             (if (!= still-fee 0.0)
                 (ref-DPTF::XB_Credit id target still-fee)
@@ -1368,8 +1422,8 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
                 (ats:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (if (!= burn-fee 0.0)
@@ -1385,8 +1439,8 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
                 (ats:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (if (!= credit-fee 0.0)
@@ -1401,7 +1455,7 @@
         (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal])
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-DALOS::IGNIS|C_Collect patron
                 (UDC_BulkTransferICO id transfer-amount-lst sender receiver-lst)
@@ -1494,7 +1548,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v0 receiver-lst)
                         (take v0 transfer-amount-lst)
                         method
@@ -1513,7 +1567,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v1 (drop v0 receiver-lst))
                         (take v1 (drop v0 transfer-amount-lst))
                         method
@@ -1534,7 +1588,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v2 (drop v3 receiver-lst))
                         (take v2 (drop v3 transfer-amount-lst))
                         method
@@ -1556,7 +1610,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v3 (drop v4 receiver-lst))
                         (take v3 (drop v4 transfer-amount-lst))
                         method
@@ -1579,7 +1633,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v4 (drop v5 receiver-lst))
                         (take v4 (drop v5 transfer-amount-lst))
                         method
@@ -1603,7 +1657,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v5 (drop v6 receiver-lst))
                         (take v5 (drop v6 transfer-amount-lst))
                         method
@@ -1628,7 +1682,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v6 (drop v7 receiver-lst))
                         (take v6 (drop v7 transfer-amount-lst))
                         method
@@ -1646,7 +1700,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (drop v receiver-lst)
                         (drop v transfer-amount-lst)
                         method
@@ -1705,7 +1759,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v0 receiver-lst)
                         (take v0 transfer-amount-lst)
                         method
@@ -1724,7 +1778,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v1 (drop v0 receiver-lst))
                         (take v1 (drop v0 transfer-amount-lst))
                         method
@@ -1745,7 +1799,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v2 (drop v3 receiver-lst))
                         (take v2 (drop v3 transfer-amount-lst))
                         method
@@ -1763,7 +1817,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (drop v receiver-lst)
                         (drop v transfer-amount-lst)
                         method
@@ -1793,7 +1847,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (take v0 receiver-lst)
                         (take v0 transfer-amount-lst)
                         method
@@ -1811,7 +1865,7 @@
                 )
                 (with-capability (SECURE)
                     (C_BulkTransferAsPactStep
-                        patron id sender
+                        id sender
                         (drop v1 receiver-lst)
                         (drop v1 transfer-amount-lst)
                         method
@@ -1825,7 +1879,7 @@
         (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal])
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-DALOS::IGNIS|C_Collect patron
                 (UDC_MultiTransferICO id-lst transfer-amount-lst sender receiver)
@@ -1882,7 +1936,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (take v0 id-lst)
                         sender receiver
                         (take v0 transfer-amount-lst)
@@ -1902,7 +1955,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (take v1 (drop v0 id-lst))
                         sender receiver
                         (take v1 (drop v0 transfer-amount-lst))
@@ -1924,7 +1976,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (take v2 (drop v3 id-lst))
                         sender receiver
                         (take v2 (drop v3 transfer-amount-lst))
@@ -1943,7 +1994,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (drop v id-lst)
                         sender receiver
                         (drop v transfer-amount-lst)
@@ -1975,7 +2025,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (take v0 id-lst)
                         sender receiver
                         (take v0 transfer-amount-lst)
@@ -1994,7 +2043,6 @@
                 )
                 (with-capability (SECURE)
                     (C_MultiTransferAsPactStep
-                        patron
                         (drop v1 id-lst)
                         sender receiver
                         (drop v1 transfer-amount-lst)

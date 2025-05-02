@@ -89,13 +89,59 @@
     (defun XB_DynamicFuelKDA ())
     (defun XE_ConditionalFuelKDA (condition:bool))
 )
+(interface TalosStageOne_AdminV3
+    @doc "V2 removes <XE_IgnisCollect> with the implementation of IgnisCumulatorV2 Architecture \
+        \ V3 Removes <patron> input variable where it is not needed"
+    ;;
+    ;;DALOS Functions
+    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun DALOS|A_ToggleOAPU (oapu:bool))
+    (defun DALOS|A_ToggleGAP (gap:bool))
+    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
+    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
+    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
+    (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
+    (defun DALOS|A_SetAutoFueling (toggle:bool))
+    (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
+    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
+    ;;
+    ;;
+    ;;BRD Functions
+    (defun BRD|A_Live (entity-id:string))
+    (defun BRD|A_SetFlag (entity-id:string flag:integer))
+    ;;
+    ;;
+    ;;DPTF Functions
+    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
+    (defun DPTF|A_WipeTreasuryDebt ())
+    (defun DPTF|A_WipeTreasuryDebtPartial (debt-to-be-wiped:decimal))
+    ;;
+    ;;
+    ;;LIQUID Functions
+    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    ;;
+    ;;
+    ;;ORBR Functions
+    (defun ORBR|A_Fuel ())
+    ;;
+    ;;
+    ;;SWP Functions
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
+    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
+    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
+    ;;
+    ;;
+    ;;Fueling Functions
+    (defun XB_DynamicFuelKDA ())
+    (defun XE_ConditionalFuelKDA (condition:bool))
+)
 (module TS01-A GOV
     @doc "TALOS Stage 1 Administrator Functions \
     \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
     \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_AdminV2)
+    (implements TalosStageOne_AdminV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -105,7 +151,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-A_ADMIN)))
     (defcap GOV|TS01-A_ADMIN ()     (enforce-guard GOV|MD_TS01-A))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -136,7 +182,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -204,7 +250,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
     (defconst GASLESS-PATRON        (TALOS|Gassless))
     ;;
     ;;<==========>
@@ -234,7 +280,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_MigrateLiquidFunds migration-target-kda-account)
             )
@@ -245,7 +291,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_ToggleOAPU oapu)
             )
@@ -256,7 +302,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_ToggleGAP gap)
             )
@@ -267,7 +313,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
             )
@@ -279,7 +325,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_DeployStandardAccount account guard kadena public)
             )
@@ -292,7 +338,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_IgnisToggle native toggle)
             )
@@ -303,7 +349,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_SetIgnisSourcePrice price)
             )
@@ -314,7 +360,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_SetAutoFueling toggle)
             )
@@ -325,7 +371,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_UpdatePublicKey account new-public)
             )
@@ -336,7 +382,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::A_UpdateUsagePrice action new-price)
             )
@@ -385,33 +431,33 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DPTF::A_UpdateTreasury type tdp tds)
             )
         )
     )
-    (defun DPTF|A_WipeTreasuryDebt (patron:string)
+    (defun DPTF|A_WipeTreasuryDebt ()
         @doc "Wipes all Treasury Debt, increasing OURO supply by the Debt Amount, \
             \ and setting Treasury Dispo Parameters to neutral (no overspend capability)"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
-                (ref-DPTF::A_WipeTreasuryDebt patron)
+                (ref-DPTF::A_WipeTreasuryDebt)
             )
         )
     )
-    (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal)
+    (defun DPTF|A_WipeTreasuryDebtPartial (debt-to-be-wiped:decimal)
         @doc "Wipes all partialy the Treasury Debt, increasing OURO supply by the <debt-to-be-wiped> amount \
         \ Treasury Dispo Parameters are left as they are, this function simply wipe a part of the Treasury Debt through mint."
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
-                (ref-DPTF::A_WipeTreasuryDebtPartial patron debt-to-be-wiped)
+                (ref-DPTF::A_WipeTreasuryDebtPartial debt-to-be-wiped)
             )
         )
     )
@@ -423,7 +469,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStakingV2} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
                 )
                 (ref-LIQUID::A_MigrateLiquidFunds migration-target-kda-account)
             )
@@ -434,7 +480,7 @@
         @doc "Uses up all collected Native KDA on the Ouroboros Account, wraps it, and fuels the Kadena Liquid Index \
             \ Transaction fee must be paid for by the Ouronet Gas Station, so that all available balance may be used. \
             \ Is Part of all the Functions that collect native KDA as fee, \
-            \ boosting the KDA Liquid Index, from 15% of the collected KDA \
+            \ boosting the KDA Liquid Index, from 40% of the collected KDA \
             \ As Stand-Alone Function, can only be used by the Admin. \
             \ In normal condition, there is no need for using it on itself, as all collected KDA is automatically used up \
             \ by implementing this function at the end of those funtions that collect the KDA. \
@@ -451,7 +497,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-SWP:module{SwapperV3} SWP)
                 )
                 (ref-SWP::A_UpdatePrincipal principal add-or-remove)
             )
@@ -464,7 +510,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-SWP:module{SwapperV3} SWP)
                 )
                 (ref-SWP::A_UpdateLimit limit spawn)
             )
@@ -476,7 +522,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV2} SWP)
+                    (ref-SWP:module{SwapperV3} SWP)
                 )
                 (ref-SWP::A_UpdateLiquidBoost new-boost-variable)
             )
@@ -490,7 +536,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (if (ref-DALOS::UR_AutoFuel)
                 (with-capability (SECURE)
@@ -515,10 +561,10 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-ORBR:module{OuroborosV2} OUROBOROS)
+                (ref-ORBR:module{OuroborosV3} OUROBOROS)
             )
-            (with-capability (P|GOVERNING-SUMMONER)
-                (ref-ORBR::C_Fuel GASLESS-PATRON)
+            (with-capability (P|TS)
+                (ref-ORBR::C_Fuel)
             )
         )
     )

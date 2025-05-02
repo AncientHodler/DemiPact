@@ -27,39 +27,39 @@
         (receiver:string KST.EMMA)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
 
-        (cum1:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 patron false))
-        (cum2:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 7.0 receiver false))
-        (cum3:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 8.0 ats false))
-        (cum4:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 ats false))
-        (cum5:object{OuronetDalosV2.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 17.0 vst false))
-        (l1:[object{OuronetDalosV2.ModularCumulatorV2}] [cum3 cum4 cum1 cum2 cum5])
+        (cum1:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 patron false))
+        (cum2:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 7.0 receiver false))
+        (cum3:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 8.0 ats false))
+        (cum4:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 ats false))
+        (cum5:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 17.0 vst false))
+        (l1:[object{OuronetDalosV3.ModularCumulatorV2}] [cum3 cum4 cum1 cum2 cum5])
         (lst:list ["coco" "poco" 1])
         (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
         ;;
-        (ocv2:object{OuronetDalosV2.OutputCumulatorV2}
+        (ocv2:object{OuronetDalosV3.OutputCumulatorV2}
             (ref-DALOS::UDC_MakeOutputCumulatorV2 l1 lst)
         )
-        (ccv2:object{OuronetDalosV2.CompressedCumulatorV2}
+        (ccv2:object{OuronetDalosV3.CompressedCumulatorV2}
             (ref-DALOS::UDC_CompressOutputCumulator ocv2)
         )
-        (pcv2:object{OuronetDalosV2.PrimedCumulatorV2}
+        (pcv2:object{OuronetDalosV3.PrimedCumulatorV2}
             (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron ccv2)
         )
-        (oc1:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum1] []))
-        (oc2:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum2] []))
-        (oc3:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum3] []))
-        (oc4:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum4] []))
-        (oc5:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum5] []))
+        (oc1:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum1] []))
+        (oc2:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum2] []))
+        (oc3:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum3] []))
+        (oc4:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum4] []))
+        (oc5:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum5] []))
 
-        (try:object{OuronetDalosV2.OutputCumulatorV2} (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
-        (try2:object{OuronetDalosV2.CompressedCumulatorV2}
+        (try:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
+        (try2:object{OuronetDalosV3.CompressedCumulatorV2}
             (ref-DALOS::UDC_CompressOutputCumulator try)
         )
-        (try3:object{OuronetDalosV2.PrimedCumulatorV2}
+        (try3:object{OuronetDalosV3.PrimedCumulatorV2}
             (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron try2)
         )
     )

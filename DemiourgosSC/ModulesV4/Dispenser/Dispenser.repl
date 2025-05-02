@@ -149,7 +149,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
-            (ref-DALOS:module{OuronetDalosV2} DALOS)
+            (ref-DALOS:module{OuronetDalosV3} DALOS)
         )
         ;;Create DSP and transfer to it 25 KDA
         (ref-coin::create-account KC2.KADN_NAME_0008 (read-keyset "KEY_KDA_Dispenser"))
@@ -177,7 +177,7 @@
 (namespace "free")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
         (dsp1:string (ref-DPL|DSP::GOV|DSP1|SC_NAME))
         (cst1:string (ref-DPL|DSP::GOV|CST1|SC_NAME))

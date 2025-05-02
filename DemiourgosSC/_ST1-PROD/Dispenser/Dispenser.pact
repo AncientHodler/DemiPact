@@ -27,11 +27,20 @@
     (defun A_KosonMinterStageOne_2of3 ())
     (defun A_KosonMinterStageOne_3of3 ())
 )
+(interface DeployerDispenserV3
+    @doc "Add Primordial Prices Computation"
+    ;;
+    (defun UC_ConvertPrice:string (input-price:decimal))
+    ;;
+    (defun URC_PrimordialPrices:[decimal] ())
+
+)
 (module DSP GOV
     ;;
     (implements OuronetPolicy)
     (implements DeployerDispenser)
     (implements DeployerDispenserV2)
+    (implements DeployerDispenserV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -40,8 +49,8 @@
     (defconst GOV|SC_DSP                    (keyset-ref-guard DSP|SC_KEY))
     ;;
     ;; KDA Accounts
-    (defconst DSP|SC_KDA-NAME               "k:05654aee733a30bfdc2fd36461276c74e3a8a52b9065cc01bc2f1c947d3d8fab")
-    (defconst CST|SC_KDA-NAME               "k:5a082d160fd3fcb61f168ccfd78b19443880fb9d1952bc9bd6d289db1ad4075d")
+    (defconst DSP|SC_KDA-NAME               "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99")
+    (defconst CST|SC_KDA-NAME               "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7")
     ;;
     ;;  Dispenser
     (defconst DSP|SC_KEY                    (GOV|DSPKey))
@@ -72,7 +81,7 @@
     )
     ;;{G3}
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;  [Keys]
     (defun GOV|DSPKey ()                    (+ (GOV|NS_Use) ".dh_sc_dispenser-keyset"))
@@ -104,7 +113,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -162,7 +171,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun TALOS|Gassless ()                (let ((ref-DALOS:module{OuronetDalos} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defun TALOS|Gassless ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
     (defconst GASLESS-PATRON                (TALOS|Gassless))
     ;;
     ;;<==========>
@@ -207,6 +216,30 @@
             [s10p s20p s30p s40p]
         )
     )
+    (defun UC_ConvertPrice:string (input-price:decimal)
+        (let
+            (
+                (number-of-decimals:integer (if (<= input-price 1.00) 3 2))
+                (converted:decimal
+                    (if (< input-price 1.00)
+                        (floor (* input-price 100.0) 3)
+                        (floor input-price 2)
+                    )
+                )
+                (s:string
+                    (if (< input-price 1.00)
+                        "¢"
+                        "$"
+                    )
+                )
+                (ss:string "<0.001¢")
+            )
+            (if (< input-price 0.00001)
+                (format "{}" [ss])
+                (format "{}{}" [converted s])    
+            )
+        )
+    )
     ;;{F0}  [UR]
     (defun UR_KDA:decimal ()
         @doc "Retrieves KDA Price in dollars"
@@ -216,8 +249,8 @@
     (defun URC_DailyOURO ()
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (current-ouro-supply:decimal (ref-DPTF::UR_Supply ouro))
                 (op:integer (ref-DPTF::UR_Decimals ouro))
@@ -227,13 +260,46 @@
             (floor (/ (- maximum-theorethical-supply current-ouro-supply) speed) op)
         )
     )
+    (defun URC_PrimordialPrices:[decimal] ()
+        @doc "Returns the Prices for Ouronet Primordial Tokens \
+        \ [WKDA LKDA OURO AURYN ELITEAURYN]"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-ATS:module{AutostakeV3} ATS)
+                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+                (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+                (ouro:string (ref-DALOS::UR_OuroborosID))
+                (auryn:string (ref-DALOS::UR_AurynID))
+                (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
+                (auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken auryn)))
+                (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken elite-auryn)))
+                (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
+                (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
+                ;;
+                (dollar-wkda:decimal (URC_TokenDollarPrice wkda))
+                (dollar-lkda:decimal (URC_TokenDollarPrice lkda))
+                (dollar-ouro:decimal (URC_TokenDollarPrice ouro))
+                (dollar-auryn:decimal (floor (* auryndex-value dollar-ouro) 24))
+                (dollar-elite-auryn:decimal (floor (* elite-auryndex-value dollar-auryn) 24))
+            )
+            [
+                dollar-wkda
+                dollar-lkda
+                dollar-ouro
+                dollar-auryn
+                dollar-elite-auryn
+            ]
+        )
+    )
     (defun URC_TokenDollarPrice (id:string)
         @doc "Retrieves Token Price in Dollars, via DIA Oracle that outputs KDA Price"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                (ref-SWPU:module{SwapperUsage} SWPU)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-SWPU:module{SwapperUsageV3} SWPU)
                 (id-in-kda:decimal (ref-SWPU::URC_SingleWorthDWK id))
                 (kda-price-in-dollars:decimal (UR_KDA))
                 (id-precision:integer (ref-DPTF::UR_Decimals id))
@@ -245,7 +311,7 @@
     (defun URC_DailyKOSON (iz-game-live:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
                 ;;
                 (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
@@ -294,12 +360,11 @@
             (
                 (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (dalos-sc:string (ref-DALOS::GOV|DALOS|SC_NAME))
             )
             (with-capability (P|DSP|CALLER)
                 (ref-DALOS::C_RotateGovernor
-                    patron
                     dalos-sc
                     (ref-U|G::UEV_GuardOfAny
                         [
@@ -316,7 +381,7 @@
     (defun A_Step002 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
             )
             ;;
             (ref-TS01-A::DALOS|A_DeployStandardAccount DSP1|SC_NAME (keyset-ref-guard DSP|SC_KEY) DSP|SC_KDA-NAME DSP|PBL)
@@ -329,7 +394,7 @@
     (defun A_Step003 (patron:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (dispenser:string DSP1|SC_NAME)
@@ -358,12 +423,11 @@
             (
                 (ref-U|G:module{OuronetGuards} U|G)
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (smart-dhvault-sc:string (ref-DALOS::GOV|DHV2|SC_NAME))
             )
             (with-capability (P|DSP|CALLER)
                 (ref-DALOS::C_RotateGovernor
-                    patron
                     smart-dhvault-sc
                     (ref-P|DALOS::P|UR "DSP|RemoteDalosGov")
                 )
@@ -375,7 +439,7 @@
         @doc "Manualy Updates the OURO Price Using Mainnet Dia Oracle"
         (let
             (
-                (ref-DALOS:module{OuronetDalos} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
                 (price:decimal (URC_TokenDollarPrice (ref-DALOS::UR_OuroborosID)))
             )
@@ -387,11 +451,11 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-                    (ref-ATS:module{Autostake} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-ATS:module{AutostakeV3} ATS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     (ouro:string (ref-DALOS::UR_OuroborosID))
                     (op:integer (ref-DPTF::UR_Decimals ouro))
                     (daily:decimal (URC_DailyOURO))
@@ -435,8 +499,8 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
                     (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
                     ;;
@@ -469,10 +533,10 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     ;;
                     (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
                     (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))
@@ -503,10 +567,10 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalos} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     ;;
                     (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
                     (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))

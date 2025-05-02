@@ -85,7 +85,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C1))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -97,7 +97,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -110,7 +110,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -149,7 +149,7 @@
                 (ref-P|DPMF:module{OuronetPolicy} DPMF)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -201,10 +201,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::C_ControlSmartAccount patron account payable-as-smart-contract payable-by-smart-contract payable-by-method)
+                    (ref-DALOS::C_ControlSmartAccount account payable-as-smart-contract payable-by-smart-contract payable-by-method)
                 )
             )
         )
@@ -214,8 +214,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DALOS::C_DeploySmartAccount account guard kadena sovereign public)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -227,8 +227,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DALOS::C_DeployStandardAccount account guard kadena public)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -241,10 +241,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::C_RotateGovernor patron account governor)
+                    (ref-DALOS::C_RotateGovernor account governor)
                 )
             )
         )
@@ -254,10 +254,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::C_RotateGuard patron account new-guard safe)
+                    (ref-DALOS::C_RotateGuard account new-guard safe)
                 )
             )
         )
@@ -268,10 +268,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::C_RotateKadena patron account kadena)
+                    (ref-DALOS::C_RotateKadena account kadena)
                 )
             )
         )
@@ -282,10 +282,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::C_RotateSovereign patron account new-sovereign)
+                    (ref-DALOS::C_RotateSovereign account new-sovereign)
                 )
             )
         )
@@ -296,11 +296,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{BrandingUsageV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{BrandingUsageV4} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_UpdatePendingBranding patron entity-id logo description website social)
+                    (ref-DPTF::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
         )
@@ -311,8 +311,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{BrandingUsageV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DPTF:module{BrandingUsageV4} DPTF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DPTF::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -328,11 +328,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_BulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+                    (ref-TFT::C_BulkTransfer id sender receiver-lst transfer-amount-lst method)
                 )
             )
         )
@@ -342,11 +342,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_ExemptionBulkTransfer patron id sender receiver-lst transfer-amount-lst method)
+                    (ref-TFT::C_ExemptionBulkTransfer id sender receiver-lst transfer-amount-lst method)
                 )
             )
         )
@@ -356,11 +356,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_Burn patron id account amount)
+                    (ref-DPTF::C_Burn id account amount)
                 )
             )
         )
@@ -370,11 +370,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_ClearDispo patron account)
+                    (ref-TFT::C_ClearDispo account)
                 )
             )
         )
@@ -385,11 +385,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_Control patron id cco cu casr cf cw cp)
+                    (ref-DPTF::C_Control id cco cu casr cf cw cp)
                 )
             )
         )
@@ -399,7 +399,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DPTF::C_DeployAccount id account)
             )
@@ -411,11 +411,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_SetFeeTarget patron id (ref-DALOS::GOV|DALOS|SC_NAME))
+                    (ref-DPTF::C_SetFeeTarget id (ref-DALOS::GOV|DALOS|SC_NAME))
                 )
             )
         )
@@ -426,10 +426,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
-                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
                     )
                 )
@@ -444,11 +444,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_Mint patron id account amount origin)
+                    (ref-DPTF::C_Mint id account amount origin)
                 )
             )
         )
@@ -459,11 +459,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_MultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+                    (ref-TFT::C_MultiTransfer id-lst sender receiver transfer-amount-lst method)
                 )
             )
         )
@@ -473,11 +473,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_ExemptionMultiTransfer patron id-lst sender receiver transfer-amount-lst method)
+                    (ref-TFT::C_ExemptionMultiTransfer id-lst sender receiver transfer-amount-lst method)
                 )
             )
         )
@@ -488,11 +488,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_SetFeeTarget patron id (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+                    (ref-DPTF::C_SetFeeTarget id (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 )
             )
         )
@@ -502,11 +502,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_RotateOwnership patron id new-owner)
+                    (ref-DPTF::C_RotateOwnership id new-owner)
                 )
             )
         )
@@ -516,11 +516,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_SetFee patron id fee)
+                    (ref-DPTF::C_SetFee id fee)
                 )
             )
         )
@@ -530,11 +530,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_SetFeeTarget patron id target)
+                    (ref-DPTF::C_SetFeeTarget id target)
                 )
             )
         )
@@ -544,11 +544,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_SetMinMove patron id min-move-value)
+                    (ref-DPTF::C_SetMinMove id min-move-value)
                 )
             )
         )
@@ -558,11 +558,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPTF|C_ToggleBurnRole patron id account toggle)
+                    (ref-ATS::DPTF|C_ToggleBurnRole id account toggle)
                 )
             )
         )
@@ -573,11 +573,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_ToggleFee patron id toggle)
+                    (ref-DPTF::C_ToggleFee id toggle)
                 )
             )
         )
@@ -587,11 +587,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPTF|C_ToggleFeeExemptionRole patron id account toggle)
+                    (ref-ATS::DPTF|C_ToggleFeeExemptionRole id account toggle)
                 )
             )
         )
@@ -601,10 +601,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
-                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-DPTF::C_ToggleFeeLock patron id toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
@@ -619,11 +619,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_ToggleFreezeAccount patron id account toggle)
+                    (ref-DPTF::C_ToggleFreezeAccount id account toggle)
                 )
             )
         )
@@ -633,11 +633,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPTF|C_ToggleMintRole patron id account toggle)
+                    (ref-ATS::DPTF|C_ToggleMintRole id account toggle)
                 )
             )
         )
@@ -647,11 +647,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_TogglePause patron id toggle)
+                    (ref-DPTF::C_TogglePause id toggle)
                 )
             )
         )
@@ -661,12 +661,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_ToggleReservation patron id toggle)
+                    (ref-DPTF::C_ToggleReservation id toggle)
                 )
             )
         )
@@ -676,11 +676,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_ToggleTransferRole patron id account toggle)
+                    (ref-DPTF::C_ToggleTransferRole id account toggle)
                 )
             )
         )
@@ -690,11 +690,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_Transfer patron id sender receiver transfer-amount method)
+                    (ref-TFT::C_Transfer id sender receiver transfer-amount method)
                 )
             )
         )
@@ -707,11 +707,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_ExemptionTransfer patron id sender receiver transfer-amount method)
+                    (ref-TFT::C_ExemptionTransfer id sender receiver transfer-amount method)
                 )
             )
         )
@@ -722,11 +722,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV2} TFT)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-TFT::C_Transmute patron id transmuter transmute-amount)
+                    (ref-TFT::C_Transmute id transmuter transmute-amount)
                 )
             )
         )
@@ -737,12 +737,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_Wipe patron id atbw)
+                    (ref-DPTF::C_Wipe id atbw)
                 )
                 ;;Update Elite Account
                 (ref-DPMF::XB_UpdateEliteSingle id atbw)
@@ -754,12 +754,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV3} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPTF::C_WipePartial patron id atbw amtbw)
+                    (ref-DPTF::C_WipePartial id atbw amtbw)
                 )
                 ;;Update Elite Account
                 (ref-DPMF::XB_UpdateEliteSingle id atbw)
@@ -772,11 +772,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{BrandingUsageV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{BrandingUsageV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_UpdatePendingBranding patron entity-id logo description website social)
+                    (ref-DPMF::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
         )
@@ -786,8 +786,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPMF:module{BrandingUsageV2} DPMF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DPMF:module{BrandingUsageV4} DPMF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DPMF::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -800,11 +800,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_AddQuantity patron id nonce account amount)
+                    (ref-DPMF::C_AddQuantity id nonce account amount)
                 )
             )
         )
@@ -814,11 +814,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_Burn patron id nonce account amount)
+                    (ref-DPMF::C_Burn id nonce account amount)
                 )
             )
         )
@@ -828,11 +828,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_Control patron id cco cu casr cf cw cp ctncr)
+                    (ref-DPMF::C_Control id cco cu casr cf cw cp ctncr)
                 )
             )
         )
@@ -842,11 +842,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (with-capability (P|TS)
-                            (ref-DPMF::C_Create patron id account meta-data)
+                            (ref-DPMF::C_Create id account meta-data)
                         )
                     )
                 )
@@ -860,8 +860,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DPMF::C_DeployAccount id account)
             )
@@ -872,10 +872,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
-                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
                     )
                 )
@@ -891,11 +891,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ico:object{OuronetDalosV2.OutputCumulatorV2}
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (with-capability (P|TS)
-                            (ref-DPMF::C_Mint patron id account amount meta-data)
+                            (ref-DPMF::C_Mint id account amount meta-data)
                         )
                     )
                 )
@@ -910,11 +910,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPMF|C_MoveCreateRole patron id receiver)
+                    (ref-ATS::DPMF|C_MoveCreateRole id receiver)
                 )
             )
         )
@@ -924,11 +924,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_MultiBatchTransfer patron id nonces sender receiver method)
+                    (ref-DPMF::C_MultiBatchTransfer id nonces sender receiver method)
                 )
             )
         )
@@ -938,11 +938,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_RotateOwnership patron id new-owner)
+                    (ref-DPMF::C_RotateOwnership id new-owner)
                 )
             )
         )
@@ -952,11 +952,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_SingleBatchTransfer patron id nonce sender receiver method)
+                    (ref-DPMF::C_SingleBatchTransfer id nonce sender receiver method)
                 )
             )
         )
@@ -966,11 +966,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPMF|C_ToggleAddQuantityRole patron id account toggle)
+                    (ref-ATS::DPMF|C_ToggleAddQuantityRole id account toggle)
                 )
             )
         )
@@ -980,11 +980,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-ATS:module{AutostakeV2} ATS)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-ATS:module{AutostakeV3} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::DPMF|C_ToggleBurnRole patron id account toggle)
+                    (ref-ATS::DPMF|C_ToggleBurnRole id account toggle)
                 )
             )
         )
@@ -994,12 +994,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_ToggleFreezeAccount patron id account toggle)
+                    (ref-DPMF::C_ToggleFreezeAccount id account toggle)
                 )
             )
         )
@@ -1009,12 +1009,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV2} TS01-A)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_TogglePause patron id toggle)
+                    (ref-DPMF::C_TogglePause id toggle)
                 )
             )
         )
@@ -1024,11 +1024,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_ToggleTransferRole patron id account toggle)
+                    (ref-DPMF::C_ToggleTransferRole id account toggle)
                 )
             )
         )
@@ -1038,11 +1038,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_Transfer patron id nonce sender receiver transfer-amount method)
+                    (ref-DPMF::C_Transfer id nonce sender receiver transfer-amount method)
                 )
             )
         )
@@ -1052,15 +1052,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-DPMF-V3:module{DemiourgosPactMetaFungibleV3} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_Wipe patron id atbw)
+                    (ref-DPMF::C_Wipe id atbw)
                 )
                 ;;Update Elite Account
-                (ref-DPMF-V3::XB_UpdateEliteSingle id atbw)
+                (ref-DPMF::XB_UpdateEliteSingle id atbw)
             )
         )
     )
@@ -1069,15 +1068,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
-                    (ref-DPMF-V3:module{DemiourgosPactMetaFungibleV3} DPMF)
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPMF::C_WipePartial patron id atbw nonces)
+                    (ref-DPMF::C_WipePartial id atbw nonces)
                 )
                 ;;Update Elite Account
-                (ref-DPMF-V3::XB_UpdateEliteSingle id atbw)
+                (ref-DPMF::XB_UpdateEliteSingle id atbw)
             )
         )
     )

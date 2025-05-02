@@ -35,7 +35,7 @@
 )
 (module DPL-AOZ GOV
     @doc "Contains Functions needed for AOZ Initialisation \
-        \ Initialisation costs 4200 KDA, which is needed if KDA Collection is turned on \
+        \ Initialisation costs 6000 KDA (2000 paid), which is needed if KDA Collection is turned on \
         \ Otherwise it will need to be added via <DALOS::KDA|C_CollectWT sender amount false>"
     ;;
     (implements DeployerAoz)
@@ -62,7 +62,7 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
     ;;
     ;;<====>
@@ -157,7 +157,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -178,7 +178,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
             )
             (ref-DPMF::UEV_id mf)
             (with-read AOZ|Assets AOZ|INFO
@@ -199,7 +199,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{AutostakeV2} ATS)
+                (ref-ATS:module{AutostakeV3} ATS)
             )
             (ref-ATS::UEV_id atspair)
             (with-read AOZ|Assets AOZ|INFO
@@ -220,7 +220,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -241,7 +241,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV2} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
             )
             (ref-DPMF::UEV_id mf)
             (with-read AOZ|Assets AOZ|INFO
@@ -418,7 +418,7 @@
         @doc "200 KDA Cost"
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -456,7 +456,7 @@
         @doc "200 KDA Cost"
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -494,7 +494,7 @@
         @doc "200 KDA Cost"
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -532,7 +532,7 @@
         (with-capability (GOV|DPL_AOZ_ADMIN)
             (let
                 (
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     (PlebeicStrengthID:string (UR_Assets 3 0))
                     (DenariusDebilisID:string (UR_Assets 2 0))
                     (decay:integer 0)
@@ -669,7 +669,7 @@
         (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
@@ -688,7 +688,7 @@
         (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwo} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
