@@ -1288,11 +1288,14 @@
         (atsc:string KST.ATSTK)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
         (ref-U|ATS:module{UtilityAts} U|ATS)
         (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
         (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
         (ref-ATS:module{AutostakeV3} ATS)
+        (ref-TFT:module{TrueFungibleTransferV4} TFT)
         (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
 
         (p-k:string "PKOSON-98c486052a51")
@@ -1310,14 +1313,25 @@
         (a-idx:string "Auryndex-98c486052a51")
         (ea-idx:string "EliteAuryndex-98c486052a51")
         (ouro:string "OURO-98c486052a51")
+        ;;
+        (keyz:[string] (ref-TFT::DPTF-DPMF-ATS|UR_TableKeys 3 false))
+        (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString "|" x)) keyz))
+        (fl:[string] (ref-U|DALOS::UC_InverseFilterId listoflists ps))
     )
     (print "Remove Secondary++++++++++++++++++++")
+    (print "NOOOOOOOOOOOOOOOOT Remove Secondary++++++++++++++++++++")
+    
     (ref-P|TS01-C2::ATS|C_RemoveSecondary aoz aoz ps a-k)
     [
+        ;keyz
+        ;listoflists
+        (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo ps 3 false)
         (format "{} has as RTs: {}" [ps (ref-ATS::UR_RewardTokenList ps)])
     ]
     
 )
+
+;
 
 (print "")
 (print "")
@@ -1568,7 +1582,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
     [   
@@ -1645,7 +1659,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

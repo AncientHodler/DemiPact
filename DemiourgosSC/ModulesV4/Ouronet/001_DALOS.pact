@@ -1313,7 +1313,7 @@
         @doc "Computes Gas Discount Values, a value of 1.00 means no discount"
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (major:integer (UR_Elite-Tier-Major account))
                 (minor:integer (UR_Elite-Tier-Minor account))
             )
@@ -1327,7 +1327,7 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-discount:decimal (URC_KadenaGasDiscount account))
                 (discounted-kda:decimal (floor (* kda-discount kda-price) kda-prec))

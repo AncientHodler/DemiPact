@@ -442,7 +442,7 @@
                         (fold
                             (lambda
                                 (acc:[string] item:string)
-                                (ref-U|LST::UC_AppendLast
+                                (ref-U|LST::UC_AppL
                                     acc
                                     (if (= table-to-query 1)
                                         (ref-DPTF::UR_Konto item)
@@ -458,16 +458,19 @@
                         )
                     )
                     (owner-pos:[integer] (ref-U|LST::UC_Search owners-lst account))
+                    (l:integer (length owner-pos))
                 )
-                (fold
-                    (lambda
-                        (acc:[string] idx:integer)
-                        (ref-U|LST::UC_AppendLast acc (at (at idx owner-pos) keyz))
+                (if (!= l 0)
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (ref-U|LST::UC_AppL acc (at (at idx owner-pos) keyz))
+                        )
+                        []
+                        (enumerate 0 (- (length owner-pos) 1))
                     )
                     []
-                    (enumerate 0 (- (length owner-pos) 1))
                 )
-
             )
         )
     )
@@ -484,7 +487,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
@@ -505,7 +508,13 @@
                 (
                     (keyz:[string] (DPTF-DPMF-ATS|UR_TableKeys table-to-query false))
                     (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
-                    (output:[string] (ref-U|DALOS::UC_FilterId listoflists account-or-token-id))
+                    (output:[string]
+                        (if mode
+                            (ref-U|DALOS::UC_DirectFilterId listoflists account-or-token-id)
+                            (ref-U|DALOS::UC_InverseFilterId listoflists account-or-token-id)
+                        )
+                        
+                    )
                 )
                 output
             )

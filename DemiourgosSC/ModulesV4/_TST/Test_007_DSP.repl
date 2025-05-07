@@ -153,6 +153,8 @@
         (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
         (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ref-P|TFT:module{OuronetPolicy} TFT)
+        (patron:string  KST.ANHD)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
         (orb:string KST.OURBR)
@@ -187,6 +189,16 @@
         (ref-DPL|DSP::UC_ConvertPrice p6)
         (ref-DPL|DSP::UC_ConvertPrice p7)
     ]
+    ;[
+    ;    (ref-P|TFT::DPTF-DPMF-ATS|UR_OwnedTokens vst 1)
+    ;    (ref-P|TFT::DPTF-DPMF-ATS|UR_OwnedTokens vst 2)
+    ;    (ref-P|TFT::DPTF-DPMF-ATS|UR_OwnedTokens vst 3)
+    ;]
+    
+    
+    (ref-P|TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo patron 1 true)
+    
+    
 )
 
 (print "")

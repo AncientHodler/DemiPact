@@ -11,10 +11,14 @@
 (load "../Ouronet/Deployers/Test_000_Stage2.repl")
 (print "************************Demiourgos Stage 2 LOADED**********************************************")
 
-;;Secondary Modules - After Ecosystem Initialisation
 (print "")
-(load "../Dispenser/Dispenser.repl")
-(print "************************Demiourgos Ecosystem LOADED**********************************************")
+(load "../Ouronet/Deployers/ST02_P01_NFTsDeployer.repl")
+(print "************************Demiourgos Stage 2 LOADED**********************************************")
+
+;;Secondary Modules - After Ecosystem Initialisation
+;(print "")
+;(load "../Dispenser/Dispenser.repl")
+;(print "************************Demiourgos Ecosystem LOADED**********************************************")
 
 ;;Tests after Primary and Secondary Modules
 (print "")

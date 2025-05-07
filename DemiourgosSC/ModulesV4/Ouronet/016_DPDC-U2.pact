@@ -1,46 +1,18 @@
-(interface DemiourgosPactDigitalCollectibles-CreateDestroy
-    @doc "Hold Exported Functions from the DPDC-DestroyCreate Module"
-    ;;
-    (defun C_CreateNewSemiFungibleNonce:object{OuronetDalosV2.OutputCumulatorV2}
-        (
-            patron:string id:string amount:integer
-            ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
-        )
-    )
-    (defun C_CreateNewSemiFungibleNonces:object{OuronetDalosV2.OutputCumulatorV2}
-        (
-            patron:string id:string amount:[integer]
-            ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
-        )
-    )
-    ;;
-    (defun C_CreateNewNonFungibleNonce:object{OuronetDalosV2.OutputCumulatorV2}
-        (
-            patron:string id:string
-            ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
-        )
-    )
-    (defun C_CreateNewNonFungibleNonces:object{OuronetDalosV2.OutputCumulatorV2}
-        (
-            patron:string id:string
-            ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
-        )
-    )
-)
-(module DPDC-CD GOV
+
+(module DPDC-U2 GOV
     ;;
     (implements OuronetPolicy)
-    (implements DemiourgosPactDigitalCollectibles-CreateDestroy)
+    (implements DemiourgosPactDigitalCollectibles-UtilityTwo)
     ;;
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defconst GOV|MD_DPDC-CD        (keyset-ref-guard (GOV|Demiurgoi)))
+    (defconst GOV|MD_DPDC-U2        (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
-    (defcap GOV ()                  (compose-capability (GOV|DPDC-CD_ADMIN)))
-    (defcap GOV|DPDC-CD_ADMIN ()    (enforce-guard GOV|MD_DPDC-CD))
+    (defcap GOV ()                  (compose-capability (GOV|DPDC-U2_ADMIN)))
+    (defcap GOV|DPDC-U2_ADMIN ()    (enforce-guard GOV|MD_DPDC-U2))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -49,16 +21,16 @@
     (deftable P|T:{OuronetPolicy.P|S})
     (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
-    (defcap P|DPDC-CD|CALLER ()
+    (defcap P|DPDC-U2|CALLER ()
         true
     )
     (defcap P|SECURE-CALLER ()
-        (compose-capability (P|DPDC-CD|CALLER))
+        (compose-capability (P|DPDC-U2|CALLER))
         (compose-capability (SECURE))
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -66,14 +38,14 @@
         (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
-        (with-capability (GOV|DPDC-CD_ADMIN)
+        (with-capability (GOV|DPDC-U2_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun P|A_AddIMP (policy-guard:guard)
-        (with-capability (GOV|DPDC-CD_ADMIN)
+        (with-capability (GOV|DPDC-U2_ADMIN)
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
@@ -93,7 +65,7 @@
         (let
             (
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
-                (mg:guard (create-capability-guard (P|DPDC-CD|CALLER)))
+                (mg:guard (create-capability-guard (P|DPDC-U2|CALLER)))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
         )
@@ -126,9 +98,9 @@
         (id:string sft-or-nft:bool amount:[integer] ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}])
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV2} DPTF)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (l1:integer (length amount))
@@ -243,64 +215,68 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     ;;      SFT
-    (defun C_CreateNewSemiFungibleNonce:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun C_CreateNewSemiFungibleNonce:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string amount:integer
+            patron:string id:string set-class:integer amount:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
+        @doc "Definition includes nonce-set-class"
         (UEV_IMC)
         (with-capability (DPDC|C>CREATE-NONCE id true amount ind) 
-            (XI_CreateCollectableNonce patron id true amount ind)
+            (XI_CreateCollectableNonce patron id true set-class amount ind)
         )
     )
-    (defun C_CreateNewSemiFungibleNonces:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun C_CreateNewSemiFungibleNonces:object{OuronetDalosV3.OutputCumulatorV2}
         (
             patron:string id:string amount:[integer]
             ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
+        @doc "Definition doesnt include nonce-set-class as multiple Nonces are created always with nonce-set-class 0"
         (UEV_IMC)
         (with-capability (DPDC|C>CREATE-NONCES id true amount ind)
-            (XI_CreateCollectableNonces patron id true amount ind)
+            (XI_CreateCollectableNonces patron id true (make-list (length ind) 0) amount ind)
         )
     )
     ;;      NFT
-    (defun C_CreateNewNonFungibleNonce:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun C_CreateNewNonFungibleNonce:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string
+            patron:string id:string set-class:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
+        @doc "Definition includes nonce-set-class"
         (UEV_IMC)
         (with-capability (DPDC|C>CREATE-NONCE id false 1 ind) 
-            (XI_CreateCollectableNonce patron id false 1 ind)
+            (XI_CreateCollectableNonce patron id false set-class 1 ind)
         )
     )
-    (defun C_CreateNewNonFungibleNonces:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun C_CreateNewNonFungibleNonces:object{OuronetDalosV3.OutputCumulatorV2}
         (
             patron:string id:string
             ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
+        @doc "Definition doesnt include nonce-set-class as multiple Nonces are created always with nonce-set-class 0"
         (UEV_IMC)
         (with-capability (DPDC|C>CREATE-NONCES id false (make-list (length ind) 1) ind) 
-            (XI_CreateCollectableNonces patron id false (make-list (length ind) 1) ind)
+            (XI_CreateCollectableNonces patron id false (make-list (length ind) 0) (make-list (length ind) 1) ind)
         )
     )
     ;;{F7}  [X]
-    (defun XI_CreateCollectableNonce:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun XI_CreateCollectableNonce:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string sft-or-nft:bool amount:integer
+            patron:string id:string sft-or-nft:bool set-class:integer amount:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
         @doc "Creates a new Nonce Element for a given Digital Collection (SFT or NFT)"
-        (XI_CreateCollectableNonces patron id sft-or-nft [amount] [ind])
+        (XI_CreateCollectableNonces patron id sft-or-nft [set-class] [amount] [ind])
     )
-    (defun XI_CreateCollectableNonces:object{OuronetDalosV2.OutputCumulatorV2}
+    (defun XI_CreateCollectableNonces:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string sft-or-nft:bool amount:[integer]
+            patron:string id:string sft-or-nft:bool set-class:[integer] amount:[integer]
             ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 (creator:string (ref-DPDC::UR_CreatorKonto id sft-or-nft))
                 ;;
@@ -316,8 +292,8 @@
                 )
                 (collectable-names:[string]
                     (if (= l 1)
-                        [(XI_SpawnNewNonce id sft-or-nft (at 0 amount) (at 0 ind))]
-                        (XI_SpawnNewNonces id sft-or-nft amount ind)
+                        [(XI_SpawnNewNonce id sft-or-nft (at 0 set-class) (at 0 amount) (at 0 ind))]
+                        (XI_SpawnNewNonces id sft-or-nft set-class amount ind)
                     )
                 )
             )
@@ -341,7 +317,7 @@
     ;;
     (defun XI_SpawnNewNonces:[string]
         (
-            id:string sft-or-nft:bool amount:[integer]
+            id:string sft-or-nft:bool set-class:[integer] amount:[integer]
             ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
         (require-capability (DPDC|C>CREATE-NONCES id sft-or-nft amount ind))
@@ -355,11 +331,12 @@
                         (acc:[string] idx:integer)
                         (let
                             (
+                                (nonce-set-class:integer (at idx set-class))
                                 (nonce-amount:integer (at idx amount))
                                 (nonce-ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema} (at idx ind))
                             )
                             (ref-U|LST::UC_AppL acc
-                                (XI_SpawnRawNonce id sft-or-nft nonce-amount nonce-ind)
+                                (XI_SpawnRawNonce id sft-or-nft nonce-set-class nonce-amount nonce-ind)
                             )
                         )
                     )
@@ -371,17 +348,17 @@
     )
     (defun XI_SpawnNewNonce:string
         (
-            id:string sft-or-nft:bool amount:integer
+            id:string sft-or-nft:bool set-class:integer amount:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
         (require-capability (DPDC|C>CREATE-NONCE id sft-or-nft amount ind))
         (with-capability (SECURE)
-            (XI_SpawnRawNonce id sft-or-nft amount ind)
+            (XI_SpawnRawNonce id sft-or-nft set-class amount ind)
         )
     )
     (defun XI_SpawnRawNonce:string
         (
-            id:string sft-or-nft:bool amount:integer
+            id:string sft-or-nft:bool set-class:integer amount:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
         (require-capability (SECURE))
@@ -452,7 +429,7 @@
                 )
                 (new-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id sft-or-nft) 1))
                 (collectible:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (ref-DPDC::UDC_NonceElement new-nonce amount collectible-data)
+                    (ref-DPDC::UDC_NonceElement set-class new-nonce amount collectible-data)
                 )
                 (current-existing-nonces:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
                     (if sft-or-nft
@@ -471,7 +448,8 @@
                     (remove "nonces-used" (ref-DPDC::UR_CollectionSpecs id sft-or-nft))
                 )
             )
-            name
+            (format "{} <{}>" [amount name])
+            ;name
         )
     )
     ;;Credit

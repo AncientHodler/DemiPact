@@ -16,9 +16,29 @@
     (defun UDC_Makeid:string (ticker:string))
     (defun UDC_MakeMVXNonce:string (nonce:integer))
 )
+(interface UtilityDalosV2
+    @doc "Exported Utility Functions for the DALOS Module"
+    ;;
+    (defun UC_DirectFilterId:[string] (listoflists:[[string]] account:string))
+    (defun UC_InverseFilterId:[string] (listoflists:[[string]] account:string))
+    (defun UC_ConcatWithBar:string (input:[string]))
+    ;;
+    (defun UC_GasCost (base-cost:decimal major:integer minor:integer native:bool))
+    (defun UC_GasDiscount (major:integer minor:integer native:bool))
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-special:bool))
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-special:bool))
+    (defun UC_NewRoleList (current-lst:[string] account:string direction:bool))
+    ;;
+    (defun UEV_Decimals:bool (decimals:integer))
+    (defun UEV_Fee (fee:decimal))
+    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-special:bool))
+    ;;
+    (defun UDC_Makeid:string (ticker:string))
+    (defun UDC_MakeMVXNonce:string (nonce:integer))
+)
 (module U|DALOS GOV
     ;;
-    (implements UtilityDalos)
+    (implements UtilityDalosV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -58,7 +78,7 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_FilterId:[string] (listoflists:[[string]] account:string)
+    (defun UC_DirectFilterId:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let
             (
@@ -67,8 +87,13 @@
                     (fold
                         (lambda
                             (acc:[string] item:[string])
-                            (if (= (ref-U|LST::UC_FE item) account)
-                                (ref-U|LST::UC_AppL acc (ref-U|LST::UC_LE item))
+                            (if (= (ref-U|LST::UC_LE item) account)
+                                (ref-U|LST::UC_AppL acc
+                                    (if (= (length item) 2)
+                                        (ref-U|LST::UC_FE item)
+                                        (UC_ConcatWithBar (drop -1 item))
+                                    )
+                                )
                                 acc
                             )
                         )
@@ -78,6 +103,54 @@
                 )
             )
             result
+        )
+    )
+    (defun UC_InverseFilterId:[string] (listoflists:[[string]] account:string)
+        @doc "Helper Function needed for returning DALOS ids for Account <account>"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (result
+                    (fold
+                        (lambda
+                            (acc:[string] item:[string])
+                            (if (= (UC_ConcatWithBar (drop -1 item)) account)
+                                (ref-U|LST::UC_AppL acc
+                                    (ref-U|LST::UC_LE item)
+                                )
+                                acc
+                            )  
+                        )
+                        []
+                        listoflists
+                    )
+                )
+            )
+            result
+        )
+    )
+    (defun UC_ConcatWithBar:string (input:[string])
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (b:string (ref-U|CT::CT_BAR))
+                (folded-lst:[string]
+                    (fold
+                        (lambda
+                            (acc:[string] idx:integer)
+                            (if (!= idx (- (length input) 1))
+                                (ref-U|LST::UC_AppL acc (+ (at idx input) b))
+                                (ref-U|LST::UC_AppL acc (at idx input))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length input) 1))
+                    )
+                )
+            )
+            (fold (+) "" folded-lst)
+            
         )
     )
     (defun UC_GasCost (base-cost:decimal major:integer minor:integer native:bool)
@@ -190,7 +263,7 @@
             (enforce
                 (or
                     (or (= fee -1.0) (= fee 0.0))
-                    (and (>= fee 1.0) (<= fee 900.0))
+                    (and (>= fee 1.0) (<= fee 999.0))
                 )
                 (format "The fee amount of {} is not a valid fee amount value wise" [fee])
             )

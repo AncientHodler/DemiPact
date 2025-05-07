@@ -120,7 +120,7 @@
     )
     (defun UC_MakeSoftIntervals:[integer] (start:integer growth:integer)
         @doc "Creates a Soft Interval List of Integers \
-            \ Used when creating|setting-up an Autostake Pair"
+        \ Used when creating|setting-up an Autostake Pair"
         (enforce (= (mod start growth) 0) (format "{} must be divisible by {} and it is not" [start growth]))
         (enforce (= (mod growth 3) 0) (format "{} must be divisible by 3 and it is not" [growth]))
         (let*
@@ -208,7 +208,7 @@
     )
     (defun UC_SplitBalanceWithBooleans:[decimal] (precision:integer amount:decimal milestones:integer boolean:[bool])
         @doc "Splits an Amount according to specific ATS-Pair Parameters related to the list of Reward Tokens \
-            \ Helper function used in the Autostake Module"
+        \ Helper function used in the Autostake Module"
         (enforce (> milestones 0) "Cannot split with zero milestones")
         (let
             (
@@ -328,7 +328,7 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
                 (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
                 (max:integer (ref-U|CT::CT_ACCOUNT_ID_MAX_LENGTH))
@@ -357,7 +357,7 @@
     )
     (defun UEV_UniqueAtspair (ats:string)
         @doc "Enforces that an Unique Account designating an <ats> ID meets charset and length requirements \
-            \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
+        \ Unique Accounts are ATS-IDs (composed of the Index Name - Unique Identifier)"
         (UEV_AutostakeIndex (take (- (length ats) 13) ats))
     )
     ;;{F3}  [UDC]

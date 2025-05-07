@@ -1,7 +1,7 @@
 (module DPDC GOV
     ;;
     (implements OuronetPolicy)
-    (implements BrandingUsageV4)
+    (implements BrandingUsageV6)
     (implements DemiourgosPactDigitalCollectibles)
     ;;
     ;;<========>
@@ -12,7 +12,7 @@
     (defcap GOV ()                  (compose-capability (GOV|DPDC_ADMIN)))
     (defcap GOV|DPDC_ADMIN ()       (enforce-guard GOV|MD_DPDC))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -30,7 +30,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV2} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -88,6 +88,7 @@
         exist:bool
         sft:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
         sft-specs:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
+        sft-sets:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}]
         existing-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
     )
     (defschema DPSF|BalanceSchema
@@ -105,6 +106,7 @@
         exist:bool
         nft:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
         nft-specs:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
+        nft-sets:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}]
         existing-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
     )
     (defschema DPNF|BalanceSchema
@@ -131,26 +133,6 @@
     )
     ;;{C2}
     ;;{C3}
-    (defcap DPDC|S>CTRL (id:string sft-or-nft:bool)
-        @event
-        (CAP_Owner id sft-or-nft)
-        (UEV_CanUpgradeON id sft-or-nft)
-    )
-    (defcap DPDC|S>TG_PAUSE (id:string sft-or-nft:bool toggle:bool)
-        @event
-        (if toggle
-            (UEV_CanPauseON id sft-or-nft)
-            true
-        )
-        (UEV_PauseState id sft-or-nft (not toggle))
-        (CAP_Owner id sft-or-nft)
-    )
-    (defcap DPDC|S>TG_ADD-QTY-R (id:string account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id true toggle)
-        (UEV_AccountAddQuantityState id account (not toggle))
-        (CAP_Owner id true)
-    )
     ;;{C4}
     (defcap DPDC|C>UPDATE-BRD (entity-id:string sft-or-nft:bool)
         @event
@@ -161,99 +143,6 @@
         @event
         (CAP_Owner entity-id sft-or-nft)
         (compose-capability (P|DPDC|CALLER))
-    )
-    (defcap DPDC|C>ISSUE (account:string creator-account:string collection-name:string collection-ticker:string)
-        @event
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (ref-U|DALOS::UEV_NameOrTicker collection-name true false)
-            (ref-U|DALOS::UEV_NameOrTicker collection-ticker false false)
-            (ref-DALOS::CAP_EnforceAccountOwnership account)
-            (ref-DALOS::UEV_EnforceAccountType creator-account false)
-            (compose-capability (P|SECURE-CALLER))
-        )
-    )
-    (defcap DPDC|C>FRZ-ACC (id:string sft-or-nft:bool account:string frozen:bool)
-        @event
-        (UEV_CanFreezeON id sft-or-nft)
-        (UEV_AccountFreezeState id sft-or-nft account (not frozen))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>TG_EXEMPTION-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (type:bool (ref-DALOS::UR_AccountType account))
-            )
-            (enforce type "Only Smart Ouronet Accounts can get this role")
-            (UEV_AccountExemptionState id sft-or-nft account (not toggle))
-            (CAP_Owner id sft-or-nft)
-            (compose-capability (SECURE))
-        )
-    )
-    (defcap DPDC|C>TG_BURN-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id sft-or-nft toggle)
-        (UEV_AccountBurnState id sft-or-nft account (not toggle))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>TG_UPDATE-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id sft-or-nft toggle)
-        (UEV_AccountUpdateState sft-or-nft id account (not toggle))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>TG_MODIFY-CREATOR-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id sft-or-nft toggle)
-        (UEV_AccountModifyCreatorState id sft-or-nft account (not toggle))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>TG_MODIFY-ROYALTIES-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id sft-or-nft toggle)
-        (UEV_AccountModifyRoyaltiesState id sft-or-nft account (not toggle))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>TG_TRANSFER-R (id:string sft-or-nft:bool account:string toggle:bool)
-        @event
-        (UEV_ToggleSpecialRole id sft-or-nft toggle)
-        (UEV_AccountTransferState id sft-or-nft account (not toggle))
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>MV_CREATE-R (id:string sft-or-nft:bool old-account:string new-account:string)
-        @event
-        (UEV_CanAddSpecialRoleON id sft-or-nft)
-        (UEV_AccountCreateState id sft-or-nft old-account true)
-        (UEV_AccountCreateState id sft-or-nft new-account false)
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>MV_RECREATE-R (id:string sft-or-nft:bool old-account:string new-account:string)
-        @event
-        (UEV_CanAddSpecialRoleON id sft-or-nft)
-        (UEV_AccountRecreateState id sft-or-nft old-account true)
-        (UEV_AccountRecreateState id sft-or-nft new-account false)
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
-    )
-    (defcap DPDC|C>MV_SET-URI-R (id:string sft-or-nft:bool old-account:string new-account:string)
-        @event
-        (UEV_CanAddSpecialRoleON id sft-or-nft)
-        (UEV_AccountSetUriState id sft-or-nft old-account true)
-        (UEV_AccountSetUriState id sft-or-nft new-account false)
-        (CAP_Owner id sft-or-nft)
-        (compose-capability (SECURE))
     )
     ;;
     ;;<=======>
@@ -270,8 +159,8 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (if mode
                 (ref-DALOS::GLYPH|UEV_DalosAccount account-or-token-id)
@@ -286,7 +175,13 @@
                         )
                     )
                     (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
-                    (output:[string] (ref-U|DALOS::UC_FilterId listoflists account-or-token-id))
+                    (output:[string]
+                        (if mode
+                            (ref-U|DALOS::UC_DirectFilterId listoflists account-or-token-id)
+                            (ref-U|DALOS::UC_InverseFilterId listoflists account-or-token-id)
+                        )
+                        
+                    )
                 )
                 output
             )
@@ -393,6 +288,13 @@
         (if sft-or-nft
             (at "sft-specs" (read DPSF|PropertiesTable id ["sft-specs"]))
             (at "nft-specs" (read DPNF|PropertiesTable id ["nft-specs"]))
+        )
+    )
+    (defun UR_CollectionSets:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}]
+        (id:string sft-or-nft:bool)
+        (if sft-or-nft
+            (at "sft-sets" (read DPSF|PropertiesTable id ["sft-sets"]))
+            (at "nft-sets" (read DPNF|PropertiesTable id ["nft-sets"]))
         )
     )
     (defun UR_CollectionRoles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
@@ -726,7 +628,7 @@
     (defun UEV_AccountSetUriState (id:string sft-or-nft:bool account:string state:bool)
         (let
             (
-                (x:bool (UR_CA|R-Recreate id sft-or-nft account))
+                (x:bool (UR_CA|R-SetUri id sft-or-nft account))
             )
             (enforce (= x state) (format "Set Uri Role for {} on Account {} must be set to {} for exec" [id account state]))
         )
@@ -738,18 +640,21 @@
             sft-or-nft:bool a:bool 
             b:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
             c:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
-            d:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
+            d:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}]
+            e:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
         )
         @doc "Does not appear in Interface"
         (if sft-or-nft
             {"exist"            : a
             ,"sft"              : b
             ,"sft-specs"        : c
-            ,"existing-roles"   : d}
+            ,"sft-sets"         : d
+            ,"existing-roles"   : e}
             {"exist"            : a
             ,"nft"              : b
             ,"nft-specs"        : c
-            ,"existing-roles"   : d}
+            ,"nft-sets"         : d
+            ,"existing-roles"   : e}
         )
     )
     (defun UDC_Properties:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
@@ -837,10 +742,11 @@
         ,"role-transfer"                : rt}
     )
     (defun UDC_NonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema} 
-        (a:integer b:integer c:object{DemiourgosPactDigitalCollectibles.DC|DataSchema})
-        {"nonce-value"      : a
-        ,"nonce-supply"     : b
-        ,"nonce-data"       : c}
+        (a:integer b:integer c:integer d:object{DemiourgosPactDigitalCollectibles.DC|DataSchema})
+        {"nonce-set-class"  : a
+        ,"nonce-value"      : b
+        ,"nonce-supply"     : c
+        ,"nonce-data"       : d}
     )
     (defun UDC_DataDC:object{DemiourgosPactDigitalCollectibles.DC|DataSchema} 
         (
@@ -880,9 +786,21 @@
         ,"model"    : f
         ,"exotic"   : g}
     )
+    ;;
+    (defun UDC_SetSingleElement:object{DemiourgosPactDigitalCollectibles.DPDC|SetSingleElement} 
+        (set-class:integer set-nonce:integer)
+        {"set-class"    : set-class
+        ,"set-nonce"    : set-nonce}
+    )
+    (defun UDC_ZeroSet:object{DemiourgosPactDigitalCollectibles.DPDC|Set} ()
+        {"class"            : 0
+        ,"name"             : "ZERO"
+        ,"set"              : [{"set-element" : [(UDC_SetSingleElement 0 0)]}]
+        ,"active"           : false}
+    )
     ;;Empty UDCs
     (defun UDC_NonceZeroElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema} ()
-        (UDC_NonceElement 0 0 (UDC_EmptyDataDC))
+        (UDC_NonceElement 0 0 0 (UDC_EmptyDataDC))
     )
     (defun UDC_EmptyDataDC:object{DemiourgosPactDigitalCollectibles.DC|DataSchema} ()
         (let
@@ -906,7 +824,7 @@
         @doc "Enforces DPSF or DPNF Token ID Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_OwnerKonto id sft-or-nft))
         )
@@ -914,12 +832,12 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_UpdatePendingBranding:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}])
+    (defun C_UpdatePendingBranding:object{OuronetDalosV3.OutputCumulatorV2}
+        (entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-BRD:module{Branding} BRD)
                 (owner:string (UR_OwnerKonto entity-id sft-or-nft))
                 (multiplier:decimal (if sft-or-nft 4.0 5.0))
@@ -934,7 +852,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-BRD:module{Branding} BRD)
                 (owner:string (UR_OwnerKonto entity-id sft-or-nft))
                 (kda-payment:decimal
@@ -947,280 +865,32 @@
         )
     )
     ;;
-    (defun C_Control:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (owner:string (UR_OwnerKonto id sft-or-nft))
-            )
-            (with-capability (DPDC|S>CTRL id sft-or-nft)
-                (XI_Control id sft-or-nft cu cco ccc casr ctncr cf cw cp)
-                (if sft-or-nft
-                    (ref-DALOS::UDC_BigCumulatorV2 owner)
-                    (ref-DALOS::UDC_BiggestCumulatorV2 owner)
-                )
-            )
-        )
-    )
     (defun C_DeployAccountSFT (id:string account:string)
-        (UEV_IMC)
-        (with-capability (SECURE)
-            (XI_DeployAccountSFT id account false false false false false false false false false false false)
-        )
+        (XB_DeployAccountSFT id account false false false false false false false false false false false)
     )
     (defun C_DeployAccountNFT (id:string account:string)
-        (UEV_IMC)
-        (with-capability (SECURE)
-            (XI_DeployAccountNFT id account false false false false false false false false false false)
-        )
+        (XB_DeployAccountNFT id account false false false false false false false false false false)
     )
-    (defun C_IssueDigitalCollection:object{OuronetDalosV2.OutputCumulatorV2}
-        (
-            patron:string sft-or-nft:bool
-            owner-account:string creator-account:string collection-name:string collection-ticker:string
-            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
-            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
-        )
-        (UEV_IMC)
-        (with-capability (DPDC|C>ISSUE owner-account creator-account collection-name collection-ticker)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalosV2} DALOS)
-                    (ref-BRD:module{Branding} BRD)
-
-                    (multiplier:decimal (if sft-or-nft 5.0 10.0))
-                    (ti:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                    (ignis-price:decimal (* ti multiplier))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-
-                    (kda-cost:decimal
-                        (if sft-or-nft
-                            (ref-DALOS::UR_UsagePrice "dpsf")
-                            (ref-DALOS::UR_UsagePrice "dpsf")
-                        )
-                    )
-                    (id:string
-                        (XI_IssueDigitalCollection
-                            sft-or-nft
-                            owner-account creator-account collection-name collection-ticker
-                            can-upgrade can-change-owner can-change-creator can-add-special-role 
-                            can-transfer-nft-create-role can-freeze can-wipe can-pause
-                        )
-                    )
-                )
-                (ref-BRD::XE_Issue id)
-                ;;Deploy Collection Accounts for Owner and Creator
-                (if sft-or-nft
-                    (do
-                        (XI_DeployAccountSFT id owner-account true false false false true true false false false true false)
-                        (C_DeployAccountSFT id creator-account)
-                    )
-                    (do
-                        (XI_DeployAccountNFT id owner-account false false false true true false false false true false)
-                        (C_DeployAccountNFT id creator-account)
-                    )
-                )
-                (ref-DALOS::KDA|C_Collect patron kda-cost)
-                (ref-DALOS::UDC_ConstructOutputCumulatorV2 ignis-price owner-account trigger [id])
-            )
-        )
-    )
-    (defun C_TogglePause:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (DPDC|S>TG_PAUSE id sft-or-nft toggle)
-                (XI_TogglePause id sft-or-nft toggle)
-                (ref-DALOS::UDC_MediumCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-            )
-        )
-    )
-    ;;Role Toggling
-    (defun C_ToggleAddQuantityRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id true account)
-            )
-            (with-capability (DPDC|S>TG_ADD-QTY-R id account toggle)
-                (XI_ToggleAddQuantityRole id account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id true))
-        )
-    )
-    (defun C_ToggleFreezeAccount:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>FRZ-ACC id sft-or-nft account toggle)
-                (XI_ToggleFreezeAccount id account toggle)
-            )
-            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleExemptionRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_EXEMPTION-R id sft-or-nft account toggle)
-                (XI_ToggleExemptionRole id account toggle)
-            )
-            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleBurnRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_BURN-R id sft-or-nft account toggle)
-                (XI_ToggleBurnRole id sft-or-nft account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleUpdateRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_UPDATE-R id sft-or-nft account toggle)
-                (XI_ToggleUpdateRole id sft-or-nft account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleModifyCreatorRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_MODIFY-CREATOR-R id sft-or-nft account toggle)
-                (XI_ToggleModifyCreatorRole id sft-or-nft account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleModifyRoyaltiesRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id sft-or-nft account toggle)
-                (XI_ToggleModifyRoyaltiesRole id sft-or-nft account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_ToggleTransferRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft account)
-            )
-            (with-capability (DPDC|C>TG_TRANSFER-R id sft-or-nft account toggle)
-                (XI_ToggleTransferRole id sft-or-nft account toggle)
-            )
-            (ref-DALOS::UDC_BigCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_MoveCreateRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (old-account:string (at 0 (UR_ER-Create id sft-or-nft)))
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft new-account)
-            )
-            (with-capability (DPDC|C>MV_CREATE-R id sft-or-nft old-account new-account)
-                (XI_MoveCreateRole id sft-or-nft old-account new-account)
-            )
-            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_MoveRecreateRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (old-account:string (at 0 (UR_ER-Recreate id sft-or-nft)))
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft new-account)
-            )
-            (with-capability (DPDC|C>MV_RECREATE-R id sft-or-nft old-account new-account)
-                (XI_MoveRecreateRole id sft-or-nft old-account new-account)
-            )
-            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
-    (defun C_MoveSetUriRole:object{OuronetDalosV2.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
-        (UEV_IMC)
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (old-account:string (at 0 (UR_ER-SetUri id sft-or-nft)))
-            )
-            (with-capability (SECURE)
-                (XE_DeployAccountWNE id sft-or-nft new-account)
-            )
-            (with-capability (DPDC|C>MV_SET-URI-R id sft-or-nft old-account new-account)
-                (XI_MoveSetUriRole id sft-or-nft old-account new-account)
-            )
-            (ref-DALOS::UDC_BiggestCumulatorV2 (UR_OwnerKonto id sft-or-nft))
-        )
-    )
+    ;;
     ;;{F7}  [X]
+    (defun XE_InsertNewCollection
+        (   
+            id:string sft-or-nft:bool
+            b:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
+            c:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
+            d:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}]
+            e:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
+        )
+        (UEV_IMC)
+        (if sft-or-nft
+            (insert DPSF|PropertiesTable id
+                (UDC_AllProperties sft-or-nft true b c d e)
+            )
+            (insert DPNF|PropertiesTable id
+                (UDC_AllProperties sft-or-nft true b c d e)
+            )
+        )
+    )
     ;;Pure Update Functions
     (defun XE_UP|SftOrNft (id:string sft-or-nft:bool sft-and-nft:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}])
         (UEV_IMC)
@@ -1241,6 +911,17 @@
             )
             (update DPNF|PropertiesTable id
                 { "nft-specs"           : specs}
+            )
+        )
+    )
+    (defun XB_UP|Sets (id:string sft-or-nft:bool sets:[object{DemiourgosPactDigitalCollectibles.DPDC|Set}])
+        (UEV_IMC)
+        (if sft-or-nft
+            (update DPSF|PropertiesTable id
+                { "sft-sets"            : sets}
+            )
+            (update DPNF|PropertiesTable id
+                { "nft-sets"            : sets}
             )
         )
     )
@@ -1291,31 +972,16 @@
         )
     )
     ;;
-    (defun XE_DeployAccountWNE (id:string sft-or-nft:bool account:string)
-        (let
-            (
-                (collection-account-exists:bool (UR_CA|Exists id sft-or-nft account))
-            )
-            (if (not collection-account-exists)
-                (if sft-or-nft
-                    (C_DeployAccountSFT id account)
-                    (C_DeployAccountNFT id account)
-                )
-                true
-            )
-        )
-    )
-    ;;Interal Auxiliary
-    (defun XI_DeployAccountSFT 
+    (defun XB_DeployAccountSFT
         (
             id:string account:string
             input-rnaq:bool f:bool re:bool rnb:bool rnc:bool rnr:bool
             rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool
         )
-        (require-capability (SECURE))
+        (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id true)
@@ -1332,16 +998,16 @@
             )
         )
     )
-    (defun XI_DeployAccountNFT 
+    (defun XB_DeployAccountNFT 
         (
             id:string account:string
             f:bool re:bool rnb:bool rnc:bool rnr:bool
             rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool
         )
-        (require-capability (SECURE))
+        (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id false)
@@ -1356,366 +1022,22 @@
             )
         )
     )
-    (defun XI_Control (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
-        (require-capability (DPDC|S>CTRL id sft-or-nft))
-        (XB_UP|Specs id sft-or-nft (UDC_Control id sft-or-nft cu cco ccc casr ctncr cf cw cp))
-    )
-    (defun XI_IssueDigitalCollection:string
-        (
-            sft-or-nft:bool
-            owner-account:string creator-account:string collection-name:string collection-ticker:string
-            can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
-            can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
-        )
-        (require-capability (DPDC|C>ISSUE owner-account creator-account collection-name collection-ticker))
+    (defun XE_DeployAccountWNE (id:string sft-or-nft:bool account:string)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV2} DALOS)
-                (id:string (ref-U|DALOS::UDC_Makeid collection-ticker))
-                (specifications:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
-                    (UDC_Properties
-                        owner-account creator-account collection-name collection-ticker
-                        can-upgrade can-change-owner can-change-creator can-add-special-role
-                        can-transfer-nft-create-role can-freeze can-wipe can-pause
-                        false 0
-                    )
-                )
-                (existing-roles-sft:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (UDC_ExistingRoles [BAR] [BAR] [owner-account] [BAR] [owner-account] [owner-account] [BAR] [BAR] [BAR] [owner-account] [BAR])
-                )
-                (existing-roles-nft:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (UDC_ExistingRoles [BAR] [BAR] [BAR] [BAR] [owner-account] [owner-account] [BAR] [BAR] [BAR] [owner-account] [BAR])
-                )
-                (zne:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
-                    [(UDC_NonceZeroElement)]
-                )
+                (collection-account-exists:bool (UR_CA|Exists id sft-or-nft account))
             )
-            (if sft-or-nft
-                (insert DPSF|PropertiesTable id
-                    (UDC_AllProperties true true zne specifications existing-roles-sft)
+            (if (not collection-account-exists)
+                (if sft-or-nft
+                    (C_DeployAccountSFT id account)
+                    (C_DeployAccountNFT id account)
                 )
-                (insert DPNF|PropertiesTable id
-                    (UDC_AllProperties false true zne specifications existing-roles-nft)
-                )
+                true
             )
-            id
         )
     )
-    (defun XI_TogglePause (id:string sft-or-nft:bool toggle:bool)
-        (require-capability (DPDC|S>TG_PAUSE id sft-or-nft toggle))
-        (let
-            (
-                (new-specs:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
-                    (+
-                        {"is-paused" : toggle}
-                        (remove "is-paused" (UR_CollectionSpecs id sft-or-nft))
-                    )
-                )
-            )
-            (XB_UP|Specs id sft-or-nft new-specs)
-        )
-    )
-    ;;
-    (defun XI_ToggleAddQuantityRole (id:string account:string toggle:bool)
-        (require-capability (DPDC|S>TG_ADD-QTY-R id account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                (add-q-accounts:[string] (UR_ER-AddQuantity id))
-                (updated-add-q-accounts:[string] (ref-U|DALOS::UC_NewRoleList add-q-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-nft-add-quantity" : updated-add-q-accounts}
-                        (remove "r-nft-add-quantity" (UR_CollectionRoles id true))
-                    )
-                )
-            )
-            (XB_UAD|Rnaq id account toggle)
-            (XB_UP|ExistingRoles id true prp-roles)
-        )
-    )
-    (defun XI_ToggleFreezeAccount (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>FRZ-ACC id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (frozen-accounts:[string] (UR_ER-Frozen id sft-or-nft))
-                (updated-frozen-accounts:[string] (ref-U|DALOS::UC_NewRoleList frozen-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"a-frozen" : updated-frozen-accounts}
-                        (remove "a-frozen" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"frozen"   : toggle}
-                        (remove "frozen" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleExemptionRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_EXEMPTION-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (exemption-r-accounts:[string] (UR_ER-Exemption id sft-or-nft))
-                (updated-exemption-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList exemption-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-exemption" : updated-exemption-r-accounts}
-                        (remove "r-exemption" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-exemption"   : toggle}
-                        (remove "role-exemption" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleBurnRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_BURN-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (burn-r-accounts:[string] (UR_ER-Burn id sft-or-nft))
-                (updated-burn-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList burn-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-nft-burn" : updated-burn-r-accounts}
-                        (remove "r-nft-burn" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-burn"   : toggle}
-                        (remove "role-nft-burn" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleUpdateRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_UPDATE-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (update-r-accounts:[string] (UR_ER-Update id sft-or-nft))
-                (updated-update-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList update-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-nft-update" : updated-update-r-accounts}
-                        (remove "r-nft-update" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-update"   : toggle}
-                        (remove "role-nft-update" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleModifyCreatorRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_MODIFY-CREATOR-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (modc-r-accounts:[string] (UR_ER-Update id sft-or-nft))
-                (updated-modc-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList modc-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-modify-creator" : updated-modc-r-accounts}
-                        (remove "r-modify-creator" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-modify-creator"   : toggle}
-                        (remove "role-modify-creator" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleModifyRoyaltiesRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (modr-r-accounts:[string] (UR_ER-ModifyRoyalties id sft-or-nft))
-                (updated-modr-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList modr-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-modify-royalties" : updated-modr-r-accounts}
-                        (remove "r-modify-royalties" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-modify-royalties"   : toggle}
-                        (remove "role-modify-royalties" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_ToggleTransferRole (id:string sft-or-nft:bool account:string toggle:bool)
-        (require-capability (DPDC|C>TG_TRANSFER-R id sft-or-nft account toggle))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (transfer-r-accounts:[string] (UR_ER-Transfer id sft-or-nft))
-                (updated-transfer-r-accounts:[string] (ref-U|DALOS::UC_NewRoleList transfer-r-accounts account toggle))
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-transfer" : updated-transfer-r-accounts}
-                        (remove "r-transfer" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-transfer"   : toggle}
-                        (remove "role-transfer" (UR_CA|R id sft-or-nft account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRoles id sft-or-nft account prp-roles acc-roles)
-        )
-    )
-    (defun XI_MoveCreateRole (id:string sft-or-nft:bool old-account:string new-account:string)
-        (require-capability (DPDC|C>MV_CREATE-R id sft-or-nft old-account new-account))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-create" : [new-account]}
-                        (remove "r-create" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (old-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-create"   : false}
-                        (remove "role-nft-create" (UR_CA|R id sft-or-nft old-account))
-                    )
-                )
-                (new-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-create"   : true}
-                        (remove "role-nft-create" (UR_CA|R id sft-or-nft new-account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRolesSingle id sft-or-nft old-account new-account prp-roles old-acc-roles new-acc-roles)
-        )
-    )
-    (defun XI_MoveRecreateRole (id:string sft-or-nft:bool old-account:string new-account:string)
-        (require-capability (DPDC|C>MV_RECREATE-R id sft-or-nft old-account new-account))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-recreate" : [new-account]}
-                        (remove "r-recreate" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (old-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-recreate"   : false}
-                        (remove "role-nft-recreate" (UR_CA|R id sft-or-nft old-account))
-                    )
-                )
-                (new-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-nft-recreate"   : true}
-                        (remove "role-nft-recreate" (UR_CA|R id sft-or-nft new-account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRolesSingle id sft-or-nft old-account new-account prp-roles old-acc-roles new-acc-roles)
-        )
-    )
-    (defun XI_MoveSetUriRole (id:string sft-or-nft:bool old-account:string new-account:string)
-        (require-capability (DPDC|C>MV_SET-URI-R id sft-or-nft old-account new-account))
-        (let
-            (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
-                ;;
-                (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-                    (+
-                        {"r-set-new-uri" : [new-account]}
-                        (remove "r-set-new-uri" (UR_CollectionRoles id sft-or-nft))
-                    )
-                )
-                ;;
-                (old-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-set-new-uri"   : false}
-                        (remove "role-set-new-uri" (UR_CA|R id sft-or-nft old-account))
-                    )
-                )
-                (new-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema}
-                    (+
-                        {"role-set-new-uri"   : true}
-                        (remove "role-set-new-uri" (UR_CA|R id sft-or-nft new-account))
-                    )
-                )
-            )
-            (XI_UpdateRolesAndExistingRolesSingle id sft-or-nft old-account new-account prp-roles old-acc-roles new-acc-roles)
-        )
-    )
-    (defun XI_UpdateRolesAndExistingRolesSingle
-        (
-            id:string sft-or-nft:bool old-account:string new-account:string
-            prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-            old-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema} 
-            new-acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema} 
-        )
-        (XI_UpdateRolesAndExistingRoles id sft-or-nft new-account prp-roles new-acc-roles)
-        (XB_UAD|Roles id sft-or-nft old-account old-acc-roles)
-    )
-    (defun XI_UpdateRolesAndExistingRoles
-        (
-            id:string sft-or-nft:bool account:string 
-            prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
-            acc-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesSchema} 
-        )
-        (XB_UAD|Roles id sft-or-nft account acc-roles)
-        (XB_UP|ExistingRoles id sft-or-nft prp-roles)
-    )
+    ;;Interal Auxiliary
+    
     ;;
 )
 

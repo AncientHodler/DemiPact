@@ -654,7 +654,7 @@
         @event
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
             )
             (ref-U|DALOS::UEV_Fee fee)
             (CAP_Owner id)
@@ -2158,7 +2158,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
             )
             (with-capability (BASIS|C>X_WRITE-ROLES id account rp)
                 (with-default-read DPTF|RoleTable id
@@ -2503,7 +2503,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (id:string (ref-U|DALOS::UDC_Makeid ticker))
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))

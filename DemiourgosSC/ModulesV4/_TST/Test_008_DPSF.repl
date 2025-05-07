@@ -24,7 +24,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -46,6 +46,16 @@
 (print "")
 (print "===^^^===")
 (commit-tx)
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+
+
+
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
@@ -56,20 +66,81 @@
     [   
         { "key": "PK_AncientHodler", "caps": [] }
         { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
     ]
 )
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-P|DPDC:module{OuronetPolicy} DPDC)
-        (ref-P|DPDC-CD:module{OuronetPolicy} DPDC-CD)
-        ;;
-        (ref-P|TS02-C1:module{OuronetPolicy} TS02-C1)
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (orbr:string KST.OURBR)
+        (lumy:string KST.LUMY)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
     )
-    (ref-P|DPDC::P|A_Define)
-    (ref-P|DPDC-CD::P|A_Define)
+    (ref-TS02-C1::DPSF|C_Control patron id t f t t t t t t)
+    (ref-TS02-C1::DPSF|C_TogglePause patron id t)
+    (ref-TS02-C1::DPSF|C_ToggleAddQuantityRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
+    (ref-TS02-C1::DPSF|C_DeployAccount patron id orbr)
+    (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr t)
+    (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr f)
+    (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma f)
     ;;
-    (ref-P|TS02-C1::P|A_Define)
+    (ref-TS02-C1::DPSF|C_MoveCreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveRecreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveSetUriRole patron id emma)
+    [
+        [
+            (ref-DPDC::UR_CA|R-AddQuantity id lumy)
+            (ref-DPDC::UR_CA|R-AddQuantity id emma)
+            (ref-DPDC::UR_CA|R-Frozen id t emma)
+            (ref-DPDC::UR_CA|R-Exemption id t emma)
+            (ref-DPDC::UR_CA|R-Exemption id t orbr)
+            (ref-DPDC::UR_CA|R-Burn id t emma)
+            (ref-DPDC::UR_CA|R-Update id t emma)
+            (ref-DPDC::UR_CA|R-ModifyCreator id t emma)
+            (ref-DPDC::UR_CA|R-ModifyRoyalties id t emma)
+            (ref-DPDC::UR_CA|R-Transfer id t emma)
+        ]
+        [
+            (ref-DPDC::UR_CA|R-Create id t lumy)
+            (ref-DPDC::UR_CA|R-Recreate id t lumy)
+            (ref-DPDC::UR_CA|R-SetUri id t lumy)
+        ]
+        [
+            (ref-DPDC::UR_CA|R-Create id t emma)
+            (ref-DPDC::UR_CA|R-Recreate id t emma)
+            (ref-DPDC::UR_CA|R-SetUri id t emma)
+        ]
+        [
+            ;;
+            (ref-DPDC::UR_CanUpgrade id t)
+            (ref-DPDC::UR_CanChangeOwner id t)
+            (ref-DPDC::UR_CanChangeCreator id t)
+            (ref-DPDC::UR_CanAddSpecialRole id t)
+            (ref-DPDC::UR_CanTransferNftCreateRole id t)
+            (ref-DPDC::UR_CanFreeze id t)
+            (ref-DPDC::UR_CanWipe id t)
+            (ref-DPDC::UR_CanPause id t)
+            (ref-DPDC::UR_IsPaused id t)
+        ]
+    ]
 )
 
 (print "")
@@ -82,283 +153,3 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "REPL_Test_0001 - TX01 - Issue SFT")
-(namespace "free")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_Lumy", "caps": [] }
-        { "key": "PK_Emma", "caps": [] }
-    ]
-)
-(print "=============================================BEGIN DPSF TESTS==========================================")
-(let
-    (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
-        (patron:string KST.ANHD)
-        (lumy:string KST.LUMY)
-        (emma:string KST.EMMA)
-        (split-kda:[decimal]
-            (ref-DALOS::URC_SplitKDAPrices
-                patron
-                (ref-DALOS::UR_UsagePrice "dpsf")
-            )
-        )
-    )
-    (env-sigs
-        [   
-            { "key": "PK_AncientHodler", "caps": [] }
-            { "key": "PK_Lumy", "caps": [] }
-            { "key": "PK_Emma", "caps": [] }
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
-              "caps": 
-                [
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 2 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        (at 0 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 3 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 1 split-kda)
-                    )
-                ]
-            }
-        ]
-    )
-    (ref-TS02-C1::DPSF|C_Issue
-        patron
-        lumy emma "DemiourgosHoldingsCodingDivision" "DHCD"
-        true true true true
-        true true true true
-    )
-)
-
-(print "")
-(print "")
-(format "<<<<<<<Issue Collection Costs {} GAS>>>>>>>" [(env-gas)])
-(print "")
-(print "")
-(print "===^^^===")
-(commit-tx)
-;;
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;
-(begin-tx "REPL_Test_0001 - TX01 - Issue SFT")
-(namespace "free")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_Lumy", "caps": [] }
-        { "key": "PK_Emma", "caps": [] }
-    ]
-)
-(print "=============================================BEGIN DPSF TESTS==========================================")
-(let
-    (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
-        (patron:string KST.ANHD)
-        (lumy:string KST.LUMY)
-        (emma:string KST.EMMA)
-    )
-    [
-        (ref-TS02-C1::DPSF|C_Create
-            patron "DHCD-98c486052a51" [500]
-            [
-                {"royalty"      : 150.0
-                ,"ignis"        : 50.0
-                ,"name"         : "Snake Eye"
-                ,"description"  : "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creator."
-                ,"meta-data"    : [{}]
-                ,"asset-type"   :
-                    {"image"    : false
-                    ,"audio"    : false
-                    ,"video"    : true
-                    ,"document" : false
-                    ,"archive"  : false
-                    ,"model"    : false
-                    ,"exotic"   : false}
-                ,"uri-primary"  :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://crimson-giant-bobcat-181.mypinata.cloud/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/1.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-secondary":
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/1.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-tertiary" :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "|"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                }
-            ]
-        )
-        (ref-DPDC::UR_CA|OwnedNonces "DHCD-98c486052a51" true emma)
-        (ref-DPDC::UR_CA|NoncesBalances "DHCD-98c486052a51" emma)
-    ]
-)
-
-(print "")
-(print "")
-(format "<<<<<<<Issue SFT Nonce Costs {} GAS>>>>>>>" [(env-gas)])
-(print "")
-(print "")
-(print "===^^^===")
-(commit-tx)
-;;
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;
-(begin-tx "REPL_Test_0001 - TX01 - Issue SFT")
-(namespace "free")
-(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-(env-sigs 
-    [   
-        { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_Lumy", "caps": [] }
-        { "key": "PK_Emma", "caps": [] }
-    ]
-)
-(print "=============================================BEGIN DPSF TESTS==========================================")
-(let
-    (
-        (ref-DALOS:module{OuronetDalosV2} DALOS)
-        (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
-        (patron:string KST.ANHD)
-        (lumy:string KST.LUMY)
-        (emma:string KST.EMMA)
-    )
-    [
-        (ref-TS02-C1::DPSF|C_Create
-            patron "DHCD-98c486052a51" [500 500]
-            [
-                {"royalty"      : 150.0
-                ,"ignis"        : 50.0
-                ,"name"         : "Rudis"
-                ,"description"  : "Of Japanese origin, Rudis was forced by the Yakuza to leave his homeland. His ancestors were traced back to the 47 Ronin riot on the 14th of December 1702. Abounty is placed on his head for \"bad genetics\". He found shelter at our Coding Division. Works remote."
-                ,"meta-data"    : [{}]
-                ,"asset-type"   :
-                    {"image"    : false
-                    ,"audio"    : false
-                    ,"video"    : true
-                    ,"document" : false
-                    ,"archive"  : false
-                    ,"model"    : false
-                    ,"exotic"   : false}
-                ,"uri-primary"  :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://crimson-giant-bobcat-181.mypinata.cloud/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/2.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-secondary":
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/2.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-tertiary" :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "|"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                }
-                {"royalty"      : 150.0
-                ,"ignis"        : 50.0
-                ,"name"         : "Gwen"
-                ,"description"  : "After the great nuclear war between East and West, Gwen was forced to leave her homeland. She comes from the East and met her love in the West. Together they trz to prove that East and West can love each other. She joined our Coding Division shortly after her runaway in Europe."
-                ,"meta-data"    : [{}]
-                ,"asset-type"   :
-                    {"image"    : false
-                    ,"audio"    : false
-                    ,"video"    : true
-                    ,"document" : false
-                    ,"archive"  : false
-                    ,"model"    : false
-                    ,"exotic"   : false}
-                ,"uri-primary"  :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://crimson-giant-bobcat-181.mypinata.cloud/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/3.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-secondary":
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/3.mp4"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                ,"uri-tertiary" :
-                    {"image"    : "|"
-                    ,"audio"    : "|"
-                    ,"video"    : "|"
-                    ,"document" : "|"
-                    ,"archive"  : "|"
-                    ,"model"    : "|"
-                    ,"exotic"   : "|"}
-                }
-            ]
-        )
-        ;(ref-DPDC::UR_CA|OwnedNonces "DHCD-98c486052a51" true emma)
-        ;(ref-DPDC::UR_CA|NoncesBalances "DHCD-98c486052a51" emma)
-        ;(ref-DPDC::UR_NoncesUsed "DHCD-98c486052a51" true)
-
-        ;(ref-DPDC::UR_NonceSupply "DHCD-98c486052a51" 1)
-        ;(ref-DPDC::UR_NonceRoyalty "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceIgnis "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceName "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceDescription "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceMetaData "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceAssetType "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceUriOne "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceUriTwo "DHCD-98c486052a51" true 1)
-        ;(ref-DPDC::UR_NonceUriThree "DHCD-98c486052a51" true 1)
-    ]
-)
-
-(print "")
-(print "")
-(format "<<<<<<<Issue SFT Nonce Costs {} GAS>>>>>>>" [(env-gas)])
-(print "")
-(print "")
-(print "===^^^===")
-(commit-tx)

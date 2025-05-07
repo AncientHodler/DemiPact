@@ -46,6 +46,8 @@
 (ref-SWP:module{Swapper} SWP)
 (ref-SWPU:module{SwapperUsage} SWPU)
 
+(ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+
 (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
 (ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
 (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)

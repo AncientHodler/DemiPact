@@ -327,7 +327,7 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalos} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
                 (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
                 (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
                 (max:integer (ref-U|CT::CT_ACCOUNT_ID_MAX_LENGTH))
