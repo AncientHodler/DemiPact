@@ -189,76 +189,75 @@
     )
     ;;
     ;;Read Nonces
+    (defun UR_NonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
+        (id:string sft-or-nft:bool nonce:integer)
+        (UR_PositionalNonceElement id sft-or-nft (UR_GetNoncePosition id sft-or-nft nonce))
+    )
+    (defun UR_PositionalNonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
+        (id:string sft-or-nft:bool element-position:integer)
+        (if sft-or-nft
+            (at element-position (UR_ElementsSFT id))
+            (at element-position (UR_ElementsNFT id))
+        )
+    )
+    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer)
+        (- nonce (at "nonce-value" (UR_PositionalNonceElement id sft-or-nft 0)))
+    )
+
+    (defun UR_NonceValue:integer (id:string sft-or-nft:bool nonce:integer)
+        (at "nonce-value" (UR_NonceElement id sft-or-nft nonce))
+    )
+    (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer)
+        (UEV_Nonce id sft-or-nft nonce)
+        (at "nonce-set-class" (UR_NonceElement id sft-or-nft nonce))
+    )
     (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer)
         (UEV_Nonce dpsf-id true nonce)
-        (at "nonce-supply" (at nonce (UR_ElementsSFT dpsf-id)))
+        (at "nonce-set-class" (UR_NonceElement dpsf-id true nonce))
     )
-    (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer)
+    (defun UR_NonceData:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+        (id:string sft-or-nft:bool nonce:integer)
         (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "royalty" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "royalty" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "nonce-data" (UR_NonceElement id sft-or-nft nonce))
+    )
+    ;;
+    (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer)
+        (at "royalty" (UR_NonceData id sft-or-nft nonce))
     )
     (defun UR_NonceIgnis:decimal (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "ignis" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "ignis" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "ignis" (UR_NonceData id sft-or-nft nonce))
     )
     (defun UR_NonceName:string (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "name" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "name" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "name" (UR_NonceData id sft-or-nft nonce))
     )
     (defun UR_NonceDescription:string (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "description" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "description" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "description" (UR_NonceData id sft-or-nft nonce))
     )
-    (defun UR_NonceMetaData:[object] (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "meta-data" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "meta-data" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+    (defun UR_NonceMetaDataRaw:[object] (id:string sft-or-nft:bool nonce:integer)
+        (at "meta-data" (UR_NonceData id sft-or-nft nonce))
+    )
+    (defun UR_NonceMetaDataCustom:[object] (id:string sft-or-nft:bool nonce:integer)
+        (drop 1 (UR_NonceMetaDataRaw id sft-or-nft nonce))
+    )
+    (defun UR_NonceScore:decimal (id:string sft-or-nft:bool nonce:integer)
+        (at "score" (at 0 (UR_NonceMetaDataRaw id sft-or-nft nonce)))
     )
     (defun UR_NonceAssetType:object{DemiourgosPactDigitalCollectibles.DC|URI|Type} 
         (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "asset-type" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "asset-type" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "asset-type" (UR_NonceData id sft-or-nft nonce))
     )
     (defun UR_NonceUriOne:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
         (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "uri-primary" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "uri-primary" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "uri-primary" (UR_NonceData id sft-or-nft nonce))
     )
     (defun UR_NonceUriTwo:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema} 
         (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "uri-secondary" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "uri-secondary" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "uri-secondary" (UR_NonceData id sft-or-nft nonce))
     )
+    
     (defun UR_NonceUriThree:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema} 
         (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (if sft-or-nft
-            (at "uri-tertiary" (at "nonce-data" (at nonce (UR_ElementsSFT id))))
-            (at "uri-tertiary" (at "nonce-data" (at nonce (UR_ElementsNFT id))))
-        )
+        (at "uri-tertiary" (UR_NonceData id sft-or-nft nonce))
     )
     ;;Read Specs
     (defun UR_C|Exists:bool (id:string sft-or-nft:bool)
@@ -468,31 +467,12 @@
         )
     )
     (defun UEV_Nonce (id:string sft-or-nft:bool nonce:integer)
-        (enforce (!= nonce 0) "Invalid Nonce Value")
         (let
             (
-                (read-nonce:integer
-                    (if sft-or-nft
-                        (at "nonce-value" (at nonce (UR_ElementsSFT id)))
-                        (at "nonce-value" (at nonce (UR_ElementsNFT id)))
-                    )
-                )
+                (nv:integer (UR_NonceValue id sft-or-nft nonce))
             )
-            (enforce (= read-nonce nonce) "Invalid DPDC Structure")
-        )
-    )
-    (defun UEV_NonceExists (id:string sft-or-nft:bool nonce:integer)
-        (let
-            (
-                (existing-nonces:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
-                    (if sft-or-nft
-                        (UR_ElementsSFT id)
-                        (UR_ElementsNFT id)
-                    )
-                )
-                (l:integer (length existing-nonces))
-            )
-            (enforce (< nonce l) (format "Nonce {} doesnt exist for {} {}" [nonce (if sft-or-nft "SFT" "NFT") id]))
+            (enforce (= nonce nv) "Invalid DPDC Data Set")
+            (enforce (!= nonce 0) "Invalid Nonce Value")
         )
     )
     (defun UEV_CanUpgradeON (id:string sft-or-nft:bool)
@@ -631,6 +611,29 @@
                 (x:bool (UR_CA|R-SetUri id sft-or-nft account))
             )
             (enforce (= x state) (format "Set Uri Role for {} on Account {} must be set to {} for exec" [id account state]))
+        )
+    )
+    (defun UEV_Royalty (royalty:decimal)
+        (let
+            (
+                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+            )
+            (ref-U|DALOS::UEV_Fee royalty)
+        )
+    )
+    (defun UEV_IgnisRoyalty (royalty:decimal)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                ;;
+                (ignis-id:string (ref-DALOS::UR_IgnisID))
+                (ignis-pr:integer (ref-DPTF::UR_Decimals ignis-id))
+            )
+            (enforce
+                (= (floor royalty ignis-pr) royalty)
+                (format "The Ignis input amount of {} is not conform with its precision" [royalty])
+            )
         )
     )
     ;;{F3}  [UDC]
@@ -787,16 +790,27 @@
         ,"exotic"   : g}
     )
     ;;
-    (defun UDC_SetSingleElement:object{DemiourgosPactDigitalCollectibles.DPDC|SetSingleElement} 
+    (defun UDC_SetSingleElement:object{DemiourgosPactDigitalCollectibles.DPDC|SetSingleElement}
         (set-class:integer set-nonce:integer)
         {"set-class"    : set-class
         ,"set-nonce"    : set-nonce}
     )
-    (defun UDC_ZeroSet:object{DemiourgosPactDigitalCollectibles.DPDC|Set} ()
-        {"class"            : 0
-        ,"name"             : "ZERO"
-        ,"set"              : [{"set-element" : [(UDC_SetSingleElement 0 0)]}]
-        ,"active"           : false}
+    (defun UDC_SetElement:object{DemiourgosPactDigitalCollectibles.DPDC|SetElement}
+        (input:[object{DemiourgosPactDigitalCollectibles.DPDC|SetSingleElement}])
+        {"set-element"  : input}
+    )
+    (defun UDC_Set:object{DemiourgosPactDigitalCollectibles.DPDC|Set}
+        (   
+            class:integer name:string active:bool
+            set:[object{DemiourgosPactDigitalCollectibles.DPDC|SetElement}]
+        )
+        {"class"    : class
+        ,"name"     : name
+        ,"active"   : active
+        ,"set"      : set}
+    )
+    (defun UDC_Score:object{DemiourgosPactDigitalCollectibles.DPDC|Score} (score:decimal)
+        {"score"    : score}
     )
     ;;Empty UDCs
     (defun UDC_NonceZeroElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema} ()
@@ -817,6 +831,15 @@
     )
     (defun UDC_EmptyUriString:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema} ()
         (UDC_UriString BAR BAR BAR BAR BAR BAR BAR)
+    )
+    (defun UDC_ZeroSet:object{DemiourgosPactDigitalCollectibles.DPDC|Set} ()
+        {"class"    : 0
+        ,"name"     : "ZERO"
+        ,"active"   : false
+        ,"set"      : [{"set-element" : [(UDC_SetSingleElement 0 0)]}]}
+    )
+    (defun UDC_NoScore:object{DemiourgosPactDigitalCollectibles.DPDC|Score} ()
+        (UDC_Score -1.0)
     )
     ;;
     ;;{F4}  [CAP]

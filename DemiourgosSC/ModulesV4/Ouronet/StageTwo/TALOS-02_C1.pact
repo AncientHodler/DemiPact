@@ -76,12 +76,14 @@
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
                 (ref-P|DPDC-U1:module{OuronetPolicy} DPDC-U1)
                 (ref-P|DPDC-U2:module{OuronetPolicy} DPDC-U2)
+                (ref-P|DPDC-U3:module{OuronetPolicy} DPDC-U3)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
             (ref-P|DPDC::P|A_AddIMP mg)
             (ref-P|DPDC-U1::P|A_AddIMP mg)
             (ref-P|DPDC-U2::P|A_AddIMP mg)
+            (ref-P|DPDC-U3::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -158,7 +160,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_Control patron id true cu cco ccc casr ctncr cf cw cp)
+                    (ref-DPDC-U1::C_Control id true cu cco ccc casr ctncr cf cw cp)
                 )
             )
         )
@@ -217,7 +219,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_TogglePause patron id true toggle)
+                    (ref-DPDC-U1::C_TogglePause id true toggle)
                 )
             )
         )
@@ -231,7 +233,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleAddQuantityRole patron id account toggle)
+                    (ref-DPDC-U1::C_ToggleAddQuantityRole id account toggle)
                 )
             )
         )
@@ -245,7 +247,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleFreezeAccount patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleFreezeAccount id true account toggle)
                 )
             )
         )
@@ -260,7 +262,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleExemptionRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleExemptionRole id true account toggle)
                 )
             )
         )
@@ -275,7 +277,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleBurnRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleBurnRole id true account toggle)
                 )
             )
         )
@@ -290,7 +292,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleUpdateRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleUpdateRole id true account toggle)
                 )
             )
         )
@@ -305,7 +307,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleModifyCreatorRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleModifyCreatorRole id true account toggle)
                 )
             )
         )
@@ -320,7 +322,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleModifyRoyaltiesRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleModifyRoyaltiesRole id true account toggle)
                 )
             )
         )
@@ -335,7 +337,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleTransferRole patron id true account toggle)
+                    (ref-DPDC-U1::C_ToggleTransferRole id true account toggle)
                 )
             )
         )
@@ -350,7 +352,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveCreateRole patron id true new-account)
+                    (ref-DPDC-U1::C_MoveCreateRole id true new-account)
                 )
             )
         )
@@ -366,7 +368,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveRecreateRole patron id true new-account)
+                    (ref-DPDC-U1::C_MoveRecreateRole id true new-account)
                 )
             )
         )
@@ -381,7 +383,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveSetUriRole patron id true new-account)
+                    (ref-DPDC-U1::C_MoveSetUriRole id true new-account)
                 )
             )
         )
@@ -399,14 +401,14 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPDC-U2:module{DemiourgosPactDigitalCollectibles-UtilityTwo} DPDC-U2)
-                    (l:integer (length amount))
+                    (l:integer (length input-nonce-data))
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (if (= l 1)
-                            (ref-DPDC-U2::C_CreateNewSemiFungibleNonce
-                                patron id 0 (at 0 amount) (at 0 input-nonce-data)
+                            (ref-DPDC-U2::C_CreateNewNonce
+                                id true 0 (at 0 amount) (at 0 input-nonce-data)
                             )
-                            (ref-DPDC-U2::C_CreateNewSemiFungibleNonces
-                                patron id amount input-nonce-data
+                            (ref-DPDC-U2::C_CreateNewNonces
+                                id true amount input-nonce-data
                             )
                         )
                     )
@@ -414,6 +416,123 @@
                 (ref-DALOS::IGNIS|C_Collect patron ico)
                 (format "Created {} Clas 0 SemiFungible(s) within the {} DPSF Collection"
                     [(at "output" ico) id]
+                )
+            )
+        )
+    )
+    ;;
+    (defun DPSF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal)
+        @doc "Updates the Royalty of an SFT Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-U3::C_UpdateNonceRoyalty id true account nonce royalty)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal)
+        @doc "Updates the Royalty of an SFT Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-U3::C_UpdateNonceIgnisRoyalty id true account nonce ignis-royalty)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string)
+        @doc "Updates the Name of an SFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-U3::C_UpdateNonceNameOrDescription id true account nonce true name)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string)
+        @doc "Updates the Description of an SFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-U3::C_UpdateNonceNameOrDescription id true account nonce false description)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal)
+        @doc "Updates the Score of an SFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPDC-U3::C_UpdateNonceScore id true account nonce score)
+                    )
+                )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (format "Update Nonce {} of SFT Collection {} with a score of {}"
+                    [nonce id score]
+                )
+            )
+        )
+    )
+    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer)
+        @doc "Removes the Score of an SFT nonce, setting it to -1.0"
+        (DPSF|C_SetNonceScore patron id account nonce -1.0)
+    )
+    (defun DPSF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object])
+        @doc "Updates the MEtadata of an SFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                        (ref-DPDC-U3::C_UpdateNonceMetadata id true account nonce meta-data)
+                    )
+                )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (format "Update Meta-Data of Nonce {} of SFT Collection {}"
+                    [nonce id]
+                )
+            )
+        )
+    )
+    (defun DPSF|C_SetNonceUri
+        (
+            patron:string id:string account:string nonce:integer
+            ay:object{DemiourgosPactDigitalCollectibles.DC|URI|Type}
+            u1:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u2:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u3:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+        )
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U3:module{DemiourgosPactDigitalCollectibles-UtilityThree} DPDC-U3)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-DPDC-U3::C_UpdateNonceUri id true account nonce ay u1 u2 u3)
                 )
             )
         )
@@ -428,7 +547,7 @@
                     (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC::C_UpdatePendingBranding patron entity-id false logo description website social)
+                    (ref-DPDC::C_UpdatePendingBranding entity-id false logo description website social)
                 )
             )
         )
@@ -456,7 +575,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_Control patron id false cu cco ccc casr ctncr cf cw cp)
+                    (ref-DPDC-U1::C_Control id false cu cco ccc casr ctncr cf cw cp)
                 )
             )
         )
@@ -515,7 +634,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_TogglePause patron id false toggle)
+                    (ref-DPDC-U1::C_TogglePause id false toggle)
                 )
             )
         )
@@ -529,7 +648,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleFreezeAccount patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleFreezeAccount id false account toggle)
                 )
             )
         )
@@ -543,7 +662,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleExemptionRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleExemptionRole id false account toggle)
                 )
             )
         )
@@ -557,7 +676,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleBurnRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleBurnRole id false account toggle)
                 )
             )
         )
@@ -571,7 +690,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleUpdateRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleUpdateRole id false account toggle)
                 )
             )
         )
@@ -585,7 +704,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleModifyCreatorRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleModifyCreatorRole id false account toggle)
                 )
             )
         )
@@ -599,7 +718,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleModifyRoyaltiesRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleModifyRoyaltiesRole id false account toggle)
                 )
             )
         )
@@ -613,7 +732,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_ToggleTransferRole patron id false account toggle)
+                    (ref-DPDC-U1::C_ToggleTransferRole id false account toggle)
                 )
             )
         )
@@ -627,7 +746,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveCreateRole patron id false new-account)
+                    (ref-DPDC-U1::C_MoveCreateRole id false new-account)
                 )
             )
         )
@@ -641,7 +760,7 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveRecreateRole patron id false new-account)
+                    (ref-DPDC-U1::C_MoveRecreateRole id false new-account)
                 )
             )
         )
@@ -655,7 +774,39 @@
                     (ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DPDC-U1::C_MoveSetUriRole patron id false new-account)
+                    (ref-DPDC-U1::C_MoveSetUriRole id false new-account)
+                )
+            )
+        )
+    )
+    ;;
+    (defun DPNF|C_Create:string
+        (
+            patron:string id:string
+            input-nonce-data:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
+        )
+        @doc "Creates a new NFT Collection Element(s), having a new nonce, \
+            \ of amount 1, on the <creator> account."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DPDC-U2:module{DemiourgosPactDigitalCollectibles-UtilityTwo} DPDC-U2)
+                    (l:integer (length input-nonce-data))
+                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                        (if (= l 1)
+                            (ref-DPDC-U2::C_CreateNewNonce
+                                id false 0 1 (at 0 input-nonce-data)
+                            )
+                            (ref-DPDC-U2::C_CreateNewNonces
+                                id false (make-list l 1) input-nonce-data
+                            )
+                        )
+                    )
+                )
+                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (format "Created {} Clas 0 NonFungible(s) within the {} DPNF Collection"
+                    [(at "output" ico) id]
                 )
             )
         )

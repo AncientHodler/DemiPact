@@ -46,16 +46,9 @@
 (print "")
 (print "===^^^===")
 (commit-tx)
-
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-;;
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;
-
-
-
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
@@ -94,11 +87,11 @@
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma t)
-    (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
+    ;(ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma t)
-    (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
+    ;(ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma f)
     ;;
@@ -153,3 +146,92 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
+(begin-tx "REPL_Test_000x - TX02 - Initialise IMC for Stage 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (orbr:string KST.OURBR)
+        (lumy:string KST.LUMY)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
+    )
+    (ref-TS02-C1::DPSF|C_SetNonceScore patron id emma 1 25.0)
+    ;(ref-TS02-C1::DPSF|C_RemoveNonceScore patron id emma 1)
+    (ref-TS02-C1::DPSF|C_SetNonceMetaData patron id emma 1
+        [
+            {"eye"      : "red"
+            ,"age"      : 24.3
+            ,"value"    : 123.3}
+        ]
+    )
+    (ref-TS02-C1::DPSF|C_SetNonceName patron id emma 1 "Snake Eyez")
+    (ref-TS02-C1::DPSF|C_SetNonceDescription patron id emma 1 "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
+    (ref-TS02-C1::DPSF|C_SetNonceRoyalty patron id emma 1 133.0)
+    (ref-TS02-C1::DPSF|C_SetNonceIgnisRoyalty patron id emma 1 49.0)
+    ;(ref-TS02-C1::DPSF|C_SetNonceUri patron id emma 1
+    ;    {"image"    : t
+    ;    ,"audio"    : t
+    ;    ,"video"    : t
+    ;    ,"document" : t
+    ;    ,"archive"  : t
+    ;    ,"model"    : t
+    ;    ,"exotic"   : t}
+    ;    {"image"    : "i1"
+    ;    ,"audio"    : "a1" 
+    ;    ,"video"    : "v1"
+    ;    ,"document" : "d1"
+    ;    ,"archive"  : "b1"
+    ;    ,"model"    : "m1"
+    ;    ,"exotic"   : "e1"}
+    ;    {"image"    : "i2"
+    ;    ,"audio"    : "a2" 
+    ;    ,"video"    : "v2"
+    ;    ,"document" : "d2"
+    ;    ,"archive"  : "b2"
+    ;    ,"model"    : "m2"
+    ;    ,"exotic"   : "e2"}
+    ;    {"image"    : "i3"
+    ;    ,"audio"    : "a3" 
+    ;    ,"video"    : "v3"
+    ;    ,"document" : "d3"
+    ;    ,"archive"  : "b3"
+    ;    ,"model"    : "m3"
+    ;    ,"exotic"   : "e3"}
+    ;)
+    [
+        (ref-DPDC::UR_NonceRoyalty id true 1)
+        (ref-DPDC::UR_NonceIgnis id true 1)
+        (ref-DPDC::UR_NonceName id true 1)
+        (ref-DPDC::UR_NonceDescription id true 1)
+        (ref-DPDC::UR_NonceScore id true 1)
+        (ref-DPDC::UR_NonceMetaDataRaw id true 1)
+        (ref-DPDC::UR_NonceValue id true 1)
+        (ref-DPDC::UR_NonceAssetType id true 1)
+        (ref-DPDC::UR_NonceUriOne id true 1)
+        (ref-DPDC::UR_NonceUriTwo id true 1)
+        (ref-DPDC::UR_NonceUriThree id true 1)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Stage 3 IMC costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)

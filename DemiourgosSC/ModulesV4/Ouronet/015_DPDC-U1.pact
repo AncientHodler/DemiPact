@@ -285,7 +285,7 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
+        (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
         (UEV_IMC)
         (let
             (
@@ -356,7 +356,7 @@
     )
     ;;
     (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool toggle:bool)
+        (id:string sft-or-nft:bool toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -371,7 +371,7 @@
     )
     ;;Role Toggling
     (defun C_ToggleAddQuantityRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string account:string toggle:bool)
+        (id:string account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -386,7 +386,7 @@
         )
     )
     (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -401,7 +401,7 @@
         )
     )
     (defun C_ToggleExemptionRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -416,7 +416,7 @@
         )
     )
     (defun C_ToggleBurnRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -431,7 +431,7 @@
         )
     )
     (defun C_ToggleUpdateRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -446,7 +446,7 @@
         )
     )
     (defun C_ToggleModifyCreatorRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -461,7 +461,7 @@
         )
     )
     (defun C_ToggleModifyRoyaltiesRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -476,7 +476,7 @@
         )
     )
     (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool account:string toggle:bool)
+        (id:string sft-or-nft:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
@@ -492,7 +492,7 @@
     )
     ;;
     (defun C_MoveCreateRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
+        (id:string sft-or-nft:bool new-account:string)
         (UEV_IMC)
         (let
             (
@@ -508,7 +508,7 @@
         )
     )
     (defun C_MoveRecreateRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
+        (id:string sft-or-nft:bool new-account:string)
         (UEV_IMC)
         (let
             (
@@ -524,7 +524,7 @@
         )
     )
     (defun C_MoveSetUriRole:object{OuronetDalosV3.OutputCumulatorV2}
-        (patron:string id:string sft-or-nft:bool new-account:string)
+        (id:string sft-or-nft:bool new-account:string)
         (UEV_IMC)
         (let
             (

@@ -45,6 +45,15 @@
 (commit-tx)
 (print "")
 
+(print "")
+(begin-tx "INIT TX 005 - 017_DPDC-U3.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../017_DPDC-U3.pact")
+(format "<<<<<<<DPDC-U3 Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
 ;;TALOS Modules Stage 2
 
 (print "")

@@ -89,17 +89,29 @@
     (defschema DPDC|Set
         class:integer
         name:string
-        set:[object{DPDC|SetElement}]
         active:bool
+        set:[object{DPDC|SetElement}]
+    )
+    (defschema DPDC|Score
+        score:decimal
     )
     ;;
     ;;
+    (defun UR_NonceElement:object{DPDC|NonceElementSchema} (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_PositionalNonceElement:object{DPDC|NonceElementSchema} (id:string sft-or-nft:bool element-position:integer))
+    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceValue:integer (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer))
+    (defun UR_NonceData:object{DC|DataSchema} (id:string sft-or-nft:bool nonce:integer))
+        ;;
     (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceIgnis:decimal (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceName:string (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceDescription:string (id:string sft-or-nft:bool nonce:integer))
-    (defun UR_NonceMetaData:[object] (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceMetaDataRaw:[object] (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceMetaDataCustom:[object] (id:string sft-or-nft:bool nonce:integer))
+    (defun UR_NonceScore:decimal (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceAssetType:object{DC|URI|Type} (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceUriOne:object{DC|URI|Schema} (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceUriTwo:object{DC|URI|Schema} (id:string sft-or-nft:bool nonce:integer))
@@ -160,7 +172,6 @@
     ;;
     (defun UEV_id (id:string sft-or-nft:bool))
     (defun UEV_Nonce (id:string sft-or-nft:bool nonce:integer))
-    (defun UEV_NonceExists (id:string sft-or-nft:bool nonce:integer))
     (defun UEV_CanUpgradeON (id:string sft-or-nft:bool))
     (defun UEV_CanPauseON (id:string sft-or-nft:bool))
     (defun UEV_CanAddSpecialRoleON (id:string sft-or-nft:bool))
@@ -194,12 +205,19 @@
     (defun UDC_DataDC:object{DC|DataSchema} (royalty:decimal ignis:decimal name:string description:string meta-data:[object] asset-type:object{DC|URI|Type} uri-primary:object{DC|URI|Schema} uri-secondary:object{DC|URI|Schema} uri-tertiary:object{DC|URI|Schema}))
     (defun UDC_UriType:object{DC|URI|Type} (a:bool b:bool c:bool d:bool e:bool f:bool g:bool))
     (defun UDC_UriString:object{DC|URI|Schema} (a:string b:string c:string d:string e:string f:string g:string))
+        ;;
+    (defun UDC_SetSingleElement:object{DPDC|SetSingleElement} (set-class:integer set-nonce:integer))
+    (defun UDC_SetElement:object{DPDC|SetElement} (input:[object{DPDC|SetSingleElement}]))
+    (defun UDC_Set:object{DPDC|Set} (class:integer name:string active:bool set:[object{DPDC|SetElement}]))
+        ;;
+    (defun UDC_Score:object{DPDC|Score} (score:decimal))
         ;;Empty UDCs
     (defun UDC_NonceZeroElement:object{DPDC|NonceElementSchema} ())
     (defun UDC_EmptyDataDC:object{DC|DataSchema} ())
     (defun UDC_EmptyUriType:object{DC|URI|Type} ())
     (defun UDC_EmptyUriString:object{DC|URI|Schema} ())
-
+    (defun UDC_ZeroSet:object{DPDC|Set} ())
+    (defun UDC_NoScore:object{DPDC|Score} ())
     ;;
     (defun CAP_Owner (id:string sft-or-nft:bool))
     ;;
@@ -236,7 +254,7 @@
 ;;
 (interface DemiourgosPactDigitalCollectibles-UtilityOne
     @doc "Contains exported Functions from DPDC-UtilityOne Module"
-    (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
+    (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun C_IssueDigitalCollection:object{OuronetDalosV3.OutputCumulatorV2}
         (
             patron:string sft-or-nft:bool
@@ -245,53 +263,60 @@
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
         )
     )
-    (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool toggle:bool))
-    (defun C_ToggleAddQuantityRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string account:string toggle:bool))
-    (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleExemptionRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleBurnRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleUpdateRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleModifyCreatorRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleModifyRoyaltiesRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool account:string toggle:bool))
-    (defun C_MoveCreateRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool new-account:string))
-    (defun C_MoveRecreateRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool new-account:string))
-    (defun C_MoveSetUriRole:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string sft-or-nft:bool new-account:string))
+    (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool toggle:bool))
+    (defun C_ToggleAddQuantityRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string toggle:bool))
+    (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleExemptionRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleBurnRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleUpdateRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleModifyCreatorRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleModifyRoyaltiesRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string toggle:bool))
+    (defun C_MoveCreateRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool new-account:string))
+    (defun C_MoveRecreateRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool new-account:string))
+    (defun C_MoveSetUriRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool new-account:string))
 )
 ;;
 (interface DemiourgosPactDigitalCollectibles-UtilityTwo
     @doc "Contains exported Functions from DPDC-UtilityTwo Module"
     ;;
-    (defun C_CreateNewSemiFungibleNonce:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_CreateNewNonce:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string set-class:integer amount:integer
+            id:string sft-or-nft:bool set-class:integer amount:integer
             ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         )
     )
-    (defun C_CreateNewSemiFungibleNonces:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_CreateNewNonces:object{OuronetDalosV3.OutputCumulatorV2}
         (
-            patron:string id:string amount:[integer]
-            ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
-        )
-    )
-    ;;
-    (defun C_CreateNewNonFungibleNonce:object{OuronetDalosV3.OutputCumulatorV2}
-        (
-            patron:string id:string set-class:integer
-            ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
-        )
-    )
-    (defun C_CreateNewNonFungibleNonces:object{OuronetDalosV3.OutputCumulatorV2}
-        (
-            patron:string id:string
+            id:string sft-or-nft:bool amount:[integer]
             ind:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
         )
     )
 )
 ;;
+(interface DemiourgosPactDigitalCollectibles-UtilityThree
+    @doc "Contains exported Functions from DPDC-UtilityTwo Module"
+    ;;
+    (defun C_UpdateNonceRoyalty:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string nonce:integer royalty:decimal))
+    (defun C_UpdateNonceIgnisRoyalty:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string nonce:integer ignis-royalty:decimal))
+    (defun C_UpdateNonceNameOrDescription:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string nonce:integer name-or-description:bool name-description:string))
+    (defun C_UpdateNonceScore:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string nonce:integer score:decimal))
+    (defun C_UpdateNonceMetadata:object{OuronetDalosV3.OutputCumulatorV2} (id:string sft-or-nft:bool account:string nonce:integer meta-data:[object]))
+    (defun C_UpdateNonceUri:object{OuronetDalosV3.OutputCumulatorV2}
+        (
+            id:string sft-or-nft:bool account:string nonce:integer
+            ay:object{DemiourgosPactDigitalCollectibles.DC|URI|Type}
+            u1:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u2:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u3:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+        )
+    )
+    ;;
+)
+;;
 (interface TalosStageTwo_ClientOne
     ;;
-    ;;DPSF (SFTs) Functions
+    ;;[1] DPSF (SFTs) Functions
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
@@ -326,7 +351,26 @@
         )
     ) ;x
     ;;
-    ;;DPNF (NFTs) Functions
+    (defun DPSF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal))
+    (defun DPSF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal))
+    (defun DPSF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string))
+    (defun DPSF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string))
+    (defun DPSF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal))
+    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer))
+    (defun DPSF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object]))
+    (defun DPSF|C_SetNonceUri 
+        (
+            patron:string id:string account:string nonce:integer
+            ay:object{DemiourgosPactDigitalCollectibles.DC|URI|Type}
+            u1:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u2:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+            u3:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema}
+        )
+    )
+    ;;
+    ;;
+    ;;
+    ;;[2] DPNF (NFTs) Functions
     (defun DPNF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPNF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
@@ -351,5 +395,12 @@
     (defun DPNF|C_MoveCreateRole (patron:string id:string new-account:string))
     (defun DPNF|C_MoveRecreateRole (patron:string id:string new-account:string))
     (defun DPNF|C_MoveSetUriRole (patron:string id:string new-account:string))
-
+    ;;
+    (defun DPNF|C_Create:string
+        (
+            patron:string id:string
+            input-nonce-data:[object{DemiourgosPactDigitalCollectibles.DC|DataSchema}]
+        )
+    )
+    ;;
 )
