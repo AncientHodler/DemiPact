@@ -486,7 +486,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
@@ -594,7 +594,13 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro:decimal (ref-DPTF::UR_AccountSupply ouro-id account))
-                (zero:decimal (URC_MinimumOuro account))
+                (smart-treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
+                (zero:decimal 
+                    (if (= account smart-treasury)
+                        (ref-DPTF::URC_TreasuryLowestDispo)
+                        (URC_MinimumOuro account)
+                    )
+                ) 
             )
             (+ (abs zero) ouro)
         )

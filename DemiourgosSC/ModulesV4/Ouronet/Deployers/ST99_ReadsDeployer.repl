@@ -1,0 +1,11 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Load AOZ Module
+(print "")
+(begin-tx "INIT TX xxx - ST99_ReadsDeployer.pact.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "ST99_ReadsDeployer.pact")
+(format "<<<<<<<DPL|UR Costs {} GAS>>>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")

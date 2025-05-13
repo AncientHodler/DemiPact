@@ -1745,7 +1745,7 @@
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                    (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                     (ref-U|SWP:module{UtilitySwp} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)

@@ -513,3 +513,67 @@ EyKHThDQ1hJ0Yfn15aZvJPUhshyqTTgKN1qo4RPlsO4
 
 Tx 159 [41.780 gas] DSP
 r_9b2Yo_Fjn_g2Dsy5vIV9kVCbCy2vje0VUQQYy7njI
+
+============ Fix UR Read Function
+Tx 160 [109.884 gas] fix TFT UR Function
+xooR9ucoPANzQV5mjhs07cDpppjFaD5fSIVKL5BPOYA
+
+Tx 161 [] Update U|DALOS Module and its interface
+GCZ8UkBeukIcx6yNlIL-kptmtzf4yXRlBLOVj-Breeo
+
+Tx 162 [] Update U|ATS
+P33XPurKd7PRQWl3uESd9HQmfzDoEg2OC79dGKF0Itk
+
+Tx 161 [] Update DALOS
+efkiJp1G8Ay7wkMvwBAknRjxzJPr4q_lQ2pzVB5jGKY
+
+Tx 162 [] Update DPTF
+YJohNRHiVtH4pycyUK-C1dmIHH2ZsfKpn_wgqMYB3pw
+
+Tx 163 [] Update DPMF
+E_8f-_x_spQfGn06KxBbGxl6CIJnR3k2zCuHQY1koEg
+
+Tx 164 [] Update ATS
+hJQUoSCOf6iBXjpU_5Dso_c2wHk417P8iYCuVfcti5Q
+
+Tx 165 [] Update TFT
+cK99DPDZIO8EphGYmwOMRI8ZtZZ8-4n_fK1rKolDchk
+
+Tx 166 [] Update SWPU
+Yjp3jtyb2H4ZVc20YUhw5EOXDLbyiPBGCOLx2xIcscU
+
+====
+Tx 167 [74.625 gas] Rotating Kadena Accounts and update Keysets to be different and allow for proper usage.
+5vxLHRue7fY9_WLrAWk6VRIugDTHsHKAySpx2izT_Rk
+
+Tx 168 and 169 [105.351 24.345 gas] Added Read Functions in DALOS and LIQUID
+WR6RigCSVVJD_rqH7VnNGBjl90lbU5stZ392b9sd5EU
+deMMxy_W19gzNbxQMfmXoS-du0rEP5_WTtk131GlKGk
+
+Tx 170 [124 gas] Write dh_sc_dpdc-keyset on the namespace
+https://kdaexplorer.com/tx-details/Qw2FAwV-0ff4q0mf96_R0XvP0fNMoqoONozbk1M_IeA
+
+Tx 171 [5.567 gas] Deploy Smart Account for NFT management
+https://kdaexplorer.com/tx-details/Letc6YnH9MSehE-mR87rvIerRelPtwHlmWJQGjacYz8
+
+Tx 172 [] Update Virtual Ouro to include Treasury on TFT Module
+XqmTtoAzQq8XnwkRsUGPay86u8wLZbWVcudLROXygrY
+
+Tx 173 [] DPL-UR Module deployment
+dL_YR6mAjhwMmkZo7ZSn_fThrblLB279zIlUD5-wvAM
+SxM6GsD6JE-3uc5K2xwJ8EqRhX27P1gqf8ag8w6LDCI
+UaShUze6a5Z_HnlUx5vGscH-HzoxibQKwlpr4neKUV0
+WVyuIxS3LB9Ig1EbJYERvQ-NW2MvheAQG7T6h-l0sd0
+
+=================================
+Tx 174 [143.225 gas] U|DalosV3, DeployerReadsV1, U|Dalos, U|ATS, DALOS in one TX
+GE3R8FoI5cWyjadtMws7Bi535SddH3jnEWb0oFMDHo0
+
+Tx 175 [122.926 gas] DPTF update
+Myppf-l_D4DIPZxof_dl1m_sh3Wtj5sRpf2v7_uuTNA
+
+Tx 176 [116.693 gas] DPMF update
+XzwD5qC3BkGJnlAdohRBbPb0uu4DGNC8gPxoPCBL3OE
+
+Tx 177 [133.424 gas] ATS update
+D-CcbmUEqCg2m1x-vZx6h5jkhcsiowyylxImTy_5TLA

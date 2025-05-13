@@ -109,7 +109,7 @@
 (namespace "free")
 (let
     (
-        (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
     )
     (ref-DPL|DSP::A_Step001 KST.ANHD)
 )
@@ -178,7 +178,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV3} DALOS)
-        (ref-DPL|DSP:module{DeployerDispenser} DSP)
+        (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
         (dsp1:string (ref-DPL|DSP::GOV|DSP1|SC_NAME))
         (cst1:string (ref-DPL|DSP::GOV|CST1|SC_NAME))
 
@@ -277,7 +277,7 @@
 )
 (namespace "free")
 (let
-    ((ref-DPL|DSP:module{DeployerDispenser} DSP))
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
     (ref-DPL|DSP::A_Step003 KST.ANHD)
 )
 (print "")
@@ -302,7 +302,7 @@
 )
 (namespace "free")
 (let
-    ((ref-DPL|DSP:module{DeployerDispenser} DSP))
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
     (ref-DPL|DSP::A_Step004 KST.ANHD)
 )
 (print "")
@@ -328,7 +328,7 @@
 )
 (namespace "free")
 (let
-    ((ref-DPL|DSP:module{DeployerDispenser} DSP))
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
     (ref-DPL|DSP::A_Step005 KST.ANHD)
 )
 (print "")

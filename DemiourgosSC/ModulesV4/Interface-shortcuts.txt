@@ -1,3 +1,8 @@
+	
+(UDC_ConstructOutputCumulatorV2 price active-account trigger output-lst)
+(UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3] output-lst)
+
+
 (ref-U|CT:module{OuronetConstants} U|CT)
 (ref-U|G:module{OuronetGuards} U|G)
 (ref-U|ST:module{OuronetGasStation} U|ST)
@@ -47,6 +52,8 @@
 (ref-SWPU:module{SwapperUsage} SWPU)
 
 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+(ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityOne} DPDC-U1)
+(ref-DPDC-U1:module{DemiourgosPactDigitalCollectibles-UtilityTwo} DPDC-U2)
 
 (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
 (ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
@@ -65,6 +72,7 @@ ref-TS01-CP::
 
 (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
+(ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
 
 
 
@@ -164,3 +172,5 @@ ref-B|SWP::
 (fold (+) [] [[ico0] ico1 [ico2] ico3 ico4 ico5])
 
 (auto-fuel:bool (ref-DALOS::UR_AutoFuel))
+
+2,[123.332.112.221]

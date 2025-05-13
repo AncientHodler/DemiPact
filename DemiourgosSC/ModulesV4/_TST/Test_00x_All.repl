@@ -12,6 +12,13 @@
 (load "../Dispenser/Dispenser.repl")
 (print "************************Demiourgos Ecosystem LOADED**********************************************")
 
+;;Secondary Modules - After Ecosystem Initialisation
+(print "")
+(load "../Ouronet/Deployers/ST99_ReadsDeployer.repl")
+(print "************************Demiourgos Ecosystem LOADED**********************************************")
+;;
+;;
+;;
 ;;Tests after Primary and Secondary Modules
 (print "")
 (load "Test_000_Cumulator.repl")

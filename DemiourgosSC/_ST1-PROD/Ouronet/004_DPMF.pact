@@ -1923,7 +1923,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
             )
             (with-capability (BASIS|C>X_WRITE-ROLES id account rp)
                 (with-default-read DPMF|RoleTable id
@@ -2304,7 +2304,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (id:string (ref-U|DALOS::UDC_Makeid ticker))
             )
             (ref-U|DALOS::UEV_Decimals decimals)

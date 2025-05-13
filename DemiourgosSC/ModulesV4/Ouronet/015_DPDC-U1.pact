@@ -109,7 +109,7 @@
         @event
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (ref-U|DALOS::UEV_NameOrTicker collection-name true false)
@@ -561,7 +561,7 @@
         (require-capability (DPDC|C>ISSUE owner-account creator-account collection-name collection-ticker))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 (id:string (ref-U|DALOS::UDC_Makeid collection-ticker))
@@ -610,7 +610,7 @@
         (require-capability (DPDC|C>TG_ADD-QTY-R id account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 (add-q-accounts:[string] (ref-DPDC::UR_ER-AddQuantity id))
                 (updated-add-q-accounts:[string] (ref-U|DALOS::UC_NewRoleList add-q-accounts account toggle))
@@ -629,7 +629,7 @@
         (require-capability (DPDC|C>FRZ-ACC id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (frozen-accounts:[string] (ref-DPDC::UR_ER-Frozen id sft-or-nft))
@@ -655,7 +655,7 @@
         (require-capability (DPDC|C>TG_EXEMPTION-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (exemption-r-accounts:[string] (ref-DPDC::UR_ER-Exemption id sft-or-nft))
@@ -681,7 +681,7 @@
         (require-capability (DPDC|C>TG_BURN-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (burn-r-accounts:[string] (ref-DPDC::UR_ER-Burn id sft-or-nft))
@@ -707,7 +707,7 @@
         (require-capability (DPDC|C>TG_UPDATE-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (update-r-accounts:[string] (ref-DPDC::UR_ER-Update id sft-or-nft))
@@ -733,7 +733,7 @@
         (require-capability (DPDC|C>TG_MODIFY-CREATOR-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (modc-r-accounts:[string] (ref-DPDC::UR_ER-Update id sft-or-nft))
@@ -759,7 +759,7 @@
         (require-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (modr-r-accounts:[string] (ref-DPDC::UR_ER-ModifyRoyalties id sft-or-nft))
@@ -785,7 +785,7 @@
         (require-capability (DPDC|C>TG_TRANSFER-R id sft-or-nft account toggle))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (transfer-r-accounts:[string] (ref-DPDC::UR_ER-Transfer id sft-or-nft))
@@ -812,7 +812,7 @@
         (require-capability (DPDC|C>MV_CREATE-R id sft-or-nft old-account new-account))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
@@ -842,7 +842,7 @@
         (require-capability (DPDC|C>MV_RECREATE-R id sft-or-nft old-account new-account))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}
@@ -872,7 +872,7 @@
         (require-capability (DPDC|C>MV_SET-URI-R id sft-or-nft old-account new-account))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
                 ;;
                 (prp-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}

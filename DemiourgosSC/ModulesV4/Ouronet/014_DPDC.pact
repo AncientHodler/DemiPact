@@ -7,12 +7,26 @@
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defconst GOV|MD_DPDC           (keyset-ref-guard (GOV|Demiurgoi)))
+    (defconst GOV|MD_DPDC                   (keyset-ref-guard (GOV|Demiurgoi)))
+    ;;
+    (defconst DPDC|SC_KEY                   (GOV|CollectiblesKey))
+    (defconst DPDC|SC_NAME                  (GOV|DPDC|SC_NAME))
+    (defconst DPDC|SC_KDA-NAME              "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
     ;;{G2}
-    (defcap GOV ()                  (compose-capability (GOV|DPDC_ADMIN)))
-    (defcap GOV|DPDC_ADMIN ()       (enforce-guard GOV|MD_DPDC))
+    (defcap GOV ()                          (compose-capability (GOV|DPDC_ADMIN)))
+    (defcap GOV|DPDC_ADMIN ()               (enforce-guard GOV|MD_DPDC))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    ;;
+    ;; [Keys]
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|CollectiblesKey ()           (+ (GOV|NS_Use) ".dh_sc_dpdc-keyset"))
+    ;;
+    ;; [SC-Names]
+    (defun GOV|DPDC|SC_NAME ()              (at 0 ["Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4"]))
+    ;;
+    ;; [PBLs]
+    (defun GOV|DPDC|PBL ()                  (at 0 ["9G.2j95rkomKqd207CDg5yycyKcAy1AqFhjy6D0rCr0Kbwe9E6libtveIHsAIw9F2c43v6IHILIBf62r2LD58xHE09kypyoevL62E81wHL4zj9tIyspf5df82upuBGGKmIsHGuvH86fHMMi99n0htsypL9h3dMHFCIx8ogeynkmCIghxK871rlkas8iDfce7AwAbiajr7H1LHi17mLD7aJu6m7xmcAABkhxtwb4Kqbk8xLpehakyu3AvajgJvtfeysoH67irvplA0as86Jls1r3d3oHms9Maaja9856wzybpthMGs6qDAzacE24skcA30wvm77BLhrdh0ymkl3vbJ9lG641J7ofg5K9gEbHD4ioFHLEajL28qsD4cFEhdDthDzwF8EnBBc74Dikqn9xixFap5Jxhl7D0owz5d9MDJzfjgx3jbdpD3zglsq83iC4fhcpbz3KeAi11Ig2pgIqnmwwqA0Exr5073w7lgzlrw3Ff7Co9uuxbnLuJvlFzgfGeIwM2Dmev1JskqEGK0Ck0B87iagsHFI76HC6sKnwrHnkl0sl8pAf0pbBaw9MbqLs"]))
     ;;
     ;;<====>
     ;;POLICY
@@ -124,6 +138,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
+    (defconst FRG                   1000)
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -159,7 +174,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
             )
             (if mode
@@ -191,34 +206,32 @@
     ;;Read Nonces
     (defun UR_NonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
         (id:string sft-or-nft:bool nonce:integer)
-        (UR_PositionalNonceElement id sft-or-nft (UR_GetNoncePosition id sft-or-nft nonce))
-    )
-    (defun UR_PositionalNonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-        (id:string sft-or-nft:bool element-position:integer)
         (if sft-or-nft
-            (at element-position (UR_ElementsSFT id))
-            (at element-position (UR_ElementsNFT id))
+            (at nonce (UR_ElementsSFT id))
+            (at nonce (UR_ElementsNFT id))
         )
     )
-    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer)
-        (- nonce (at "nonce-value" (UR_PositionalNonceElement id sft-or-nft 0)))
-    )
-
     (defun UR_NonceValue:integer (id:string sft-or-nft:bool nonce:integer)
-        (at "nonce-value" (UR_NonceElement id sft-or-nft nonce))
+        (at "nonce-value" (UR_NonceElement id sft-or-nft (abs nonce)))
     )
     (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (at "nonce-set-class" (UR_NonceElement id sft-or-nft nonce))
+        ;(UEV_Nonce id sft-or-nft nonce)
+        (at "nonce-set-class" (UR_NonceElement id sft-or-nft (abs nonce)))
     )
-    (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer)
-        (UEV_Nonce dpsf-id true nonce)
-        (at "nonce-set-class" (UR_NonceElement dpsf-id true nonce))
+    (defun UR_NonceSupply:integer (id:string sft-or-nft:bool nonce:integer)
+        ;(UEV_Nonce id sft-or-nft nonce)
+        (if (< nonce 0)
+            FRG
+            (at "nonce-supply" (UR_NonceElement id sft-or-nft nonce))
+        )
     )
     (defun UR_NonceData:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         (id:string sft-or-nft:bool nonce:integer)
-        (UEV_Nonce id sft-or-nft nonce)
-        (at "nonce-data" (UR_NonceElement id sft-or-nft nonce))
+        ;(UEV_Nonce id sft-or-nft nonce)
+        (if (< nonce 0)
+            (at "split-data" (UR_NonceElement id sft-or-nft (abs nonce)))
+            (at "nonce-data" (UR_NonceElement id sft-or-nft nonce))
+        )
     )
     ;;
     (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer)
@@ -471,8 +484,34 @@
             (
                 (nv:integer (UR_NonceValue id sft-or-nft nonce))
             )
-            (enforce (= nonce nv) "Invalid DPDC Data Set")
             (enforce (!= nonce 0) "Invalid Nonce Value")
+            (if (> nonce 0)
+                (enforce (= nonce nv) "Invalid DPDC Data Set")
+                (let
+                    (
+                        (iz-fragmented:bool (UEV_IzNonceFragmented id sft-or-nft (abs nonce)))
+                    )
+                    (enforce iz-fragmented "Negative Nonce doesnt exist, as no split-data is detected!")
+                    (enforce (= (abs nonce) nv) "Invalid DPDC Data Set")
+                )  
+            )
+        )
+    )
+    (defun UEV_IzNonceFragmented:bool (id:string sft-or-nft:bool nonce:integer)
+        (enforce (> nonce 0) "Only greater than 0 nonces can be checked for fragmentation")
+        (let
+            (
+                (split-nonce-data:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+                    (at "split-data" (UR_NonceElement id sft-or-nft nonce))
+                )
+                (empty-nonce-data:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+                    (UDC_EmptyDataDC)
+                )
+            )
+            (if (@= split-nonce-data empty-nonce-data)
+                true
+                false
+            )
         )
     )
     (defun UEV_CanUpgradeON (id:string sft-or-nft:bool)
@@ -616,7 +655,7 @@
     (defun UEV_Royalty (royalty:decimal)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
             )
             (ref-U|DALOS::UEV_Fee royalty)
         )
@@ -745,11 +784,16 @@
         ,"role-transfer"                : rt}
     )
     (defun UDC_NonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema} 
-        (a:integer b:integer c:integer d:object{DemiourgosPactDigitalCollectibles.DC|DataSchema})
+        (   
+            a:integer b:integer c:integer 
+            d:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+            e:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+        )
         {"nonce-set-class"  : a
         ,"nonce-value"      : b
         ,"nonce-supply"     : c
-        ,"nonce-data"       : d}
+        ,"nonce-data"       : d
+        ,"split-data"       : e}
     )
     (defun UDC_DataDC:object{DemiourgosPactDigitalCollectibles.DC|DataSchema} 
         (
@@ -814,7 +858,7 @@
     )
     ;;Empty UDCs
     (defun UDC_NonceZeroElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema} ()
-        (UDC_NonceElement 0 0 0 (UDC_EmptyDataDC))
+        (UDC_NonceElement 0 0 0 (UDC_EmptyDataDC) (UDC_EmptyDataDC))
     )
     (defun UDC_EmptyDataDC:object{DemiourgosPactDigitalCollectibles.DC|DataSchema} ()
         (let

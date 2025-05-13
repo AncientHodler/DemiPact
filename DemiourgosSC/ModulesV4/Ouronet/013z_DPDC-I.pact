@@ -78,6 +78,7 @@
         nonce-value:integer
         nonce-supply:integer
         nonce-data:object{DC|DataSchema}
+        split-data:object{DC|DataSchema}
     )
     (defschema DPDC|SetSingleElement
         set-class:integer
@@ -98,8 +99,6 @@
     ;;
     ;;
     (defun UR_NonceElement:object{DPDC|NonceElementSchema} (id:string sft-or-nft:bool nonce:integer))
-    (defun UR_PositionalNonceElement:object{DPDC|NonceElementSchema} (id:string sft-or-nft:bool element-position:integer))
-    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceValue:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer))
@@ -172,6 +171,7 @@
     ;;
     (defun UEV_id (id:string sft-or-nft:bool))
     (defun UEV_Nonce (id:string sft-or-nft:bool nonce:integer))
+    
     (defun UEV_CanUpgradeON (id:string sft-or-nft:bool))
     (defun UEV_CanPauseON (id:string sft-or-nft:bool))
     (defun UEV_CanAddSpecialRoleON (id:string sft-or-nft:bool))

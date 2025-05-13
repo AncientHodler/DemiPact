@@ -395,7 +395,7 @@
                 )
                 (new-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id sft-or-nft) 1))
                 (collectible:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (ref-DPDC::UDC_NonceElement set-class new-nonce amount collectible-data)
+                    (ref-DPDC::UDC_NonceElement set-class new-nonce amount collectible-data (ref-DPDC::UDC_EmptyDataDC))
                 )
                 (current-existing-nonces:[object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}]
                     (if sft-or-nft

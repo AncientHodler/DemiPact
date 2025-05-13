@@ -237,6 +237,15 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     ;;{F1}  [URC]
+    (defun URC_WrapKadena:list (wrap-amount:decimal)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (receiver:string (ref-DALOS::UR_AccountKadena LIQUID|SC_NAME))
+            )
+            [receiver wrap-amount]
+        )
+    )
     ;;{F2}  [UEV]
     (defun UEV_IzLiquidStakingLive ()
         @doc "Enforces Liquid Staking is live with an existing Autostake Pair"

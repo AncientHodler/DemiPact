@@ -1,3 +1,4 @@
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 ;;Contains Code needed to run when Setting Up Ouronet in Main Kadena Live Net
 ;;Code is sequenced in Steps, these needed to be run one after another.
 ;;Once all Steps are run, Ouronet is Live
@@ -136,10 +137,11 @@
 
 (coin.TRANSFER "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" 1.0)
 ;;KDA Collection for 900 KDA with 0.76 Rabat
-(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 68.4)
-(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 136.8)
-(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 205.2)
-(coin.TRANSFER "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 273.6)
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 2.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  4.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  6.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 8.0)
 
 ;;Paying 20 KDA for initialisation - 9500 left.
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.KDA|C_CollectWT
@@ -603,3 +605,59 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TFT.URC_VirtualOuro
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
 )
+
+
+;;Receiver Targets for KDA Transfer Capabilities
+(let
+    (
+        (10p:string (at 2 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_DemiurgoiID)))
+        (20p:string "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ")
+        (30p:string (at 1 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_DemiurgoiID)))
+        (40p:string "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ")
+        (lqs:string "Σ.śκν9₿ŻşYЙΣJΘÊO9jпF₿wŻ¥уPэõΣÑïoγΠθßÙzěŃ∇éÖиțșφΦτşэßιBιśiĘîéòюÚY$êFЬŤØ$868дyβT0ςъëÁwRγПŠτËMĚRПMaäЗэiЪiςΨoÞDŮěŠβLé4čØHπĂŃŻЫΣÀmăĐЗżłÄăiĞ₿йÎEσțłGΛЖΔŞx¥ÁiÙNğÅÌlγ¢ĎwдŃ")
+    )
+    [
+        ;;10% receiver
+        (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena 10p)     ;;k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0
+        ;;20% receiver
+        (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena 20p)     ;;c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ
+        ;;30% receiver
+        (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena 30p)     ;;k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8
+        ;;40% receiver
+        (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena 40p)     ;;c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo
+        ;;Wrapping Receiver
+        (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena lqs)     ;;c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY
+    ]
+)
+
+;;10%
+(coin.TRANSFER 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "<Ouronet Standard Account>") 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena (at 2 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_DemiurgoiID))) 
+    1.0
+)
+;;20%
+(coin.TRANSFER 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "<Ouronet Standard Account>") 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "Σ.W∇ЦwÏξБØnζΦψÕłěîбηжÛśTã∇țâĆã4ЬĚIŽȘØíÕlÛřбΩцμCšιÄиMkλ€УщшàфGřÞыÎäY8È₳BDÏÚmßOozBτòÊŸŹjПкцğ¥щóиś4h4ÑþююqςA9ÆúÛȚβжéÑψéУoЭπÄЩψďşõшżíZtZuψ4ѺËxЖψУÌбЧλüșěđΔjÈt0ΛŽZSÿΞЩŠ") 
+    2.0
+)
+;;30%
+(coin.TRANSFER 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "<Ouronet Standard Account>") 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena (at 1 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_DemiurgoiID))) 
+    3.0
+)
+;;40%
+(coin.TRANSFER 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "<Ouronet Standard Account>") 
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.UR_AccountKadena "Σ.4M0èÞbøXśαiΠ€NùÇèφqλËãØÓNCнÌπпЬ4γTмыżěуàđЫъмéLUœa₿ĞЬŒѺrËQęíùÅЬ¥τ9£φď6pÙ8ìжôYиșîŻøbğůÞχEшäΞúзêŻöŃЮüŞöućЗßřьяÉżăŹCŸNÅìŸпĐżwüăŞãiÜą1ÃγänğhWg9ĚωG₳R0EùçGΨфχЗLπшhsMτξ") 
+    4.0
+)
+
+
+
+
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 400.0)                         ;;20%
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 600.0)    ;;30%
+(coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 800.0)                         ;;40%

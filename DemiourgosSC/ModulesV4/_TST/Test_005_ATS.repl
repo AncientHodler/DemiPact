@@ -1289,7 +1289,7 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|LST:module{StringProcessor} U|LST)
-        (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+        (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
         (ref-U|ATS:module{UtilityAts} U|ATS)
         (ref-DALOS:module{OuronetDalosV3} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)

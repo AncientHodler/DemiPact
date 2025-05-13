@@ -694,7 +694,7 @@
         (let
             (
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
@@ -782,7 +782,7 @@
         @event
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
             )
             (ref-U|DALOS::UEV_Fee promile)
             (UEV_UpdateColdOrHot atspair false)
@@ -880,7 +880,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (l1:integer (length atspair))
                 (l2:integer (length index-decimals))
@@ -1584,7 +1584,7 @@
     (defun UEV_IssueData (atspair:string index-decimals:integer reward-token:string reward-bearing-token:string)
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
             )
             (ref-U|DALOS::UEV_Decimals index-decimals)
@@ -2369,7 +2369,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ats-sc:string ATS|SC_NAME)

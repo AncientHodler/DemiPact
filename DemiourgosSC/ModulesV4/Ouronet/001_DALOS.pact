@@ -621,6 +621,7 @@
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
     (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
 )
+;;Interface v4 to add: nothing
 (module DALOS GOV
     ;;
     ;;Ouronet DALOS Gas-Station
@@ -1301,6 +1302,7 @@
         (at "frozen" (UR_TrueFungible account snake-or-gas))
     )
     ;;{F1}  [URC]
+    ;;
     (defun URC_IgnisGasDiscount:decimal (account:string)
         @doc "Computes the Discount for Ignis Gas Costs. A value of 1.00 means no discount"
         (URC_GasDiscount account false)
@@ -1313,7 +1315,7 @@
         @doc "Computes Gas Discount Values, a value of 1.00 means no discount"
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (major:integer (UR_Elite-Tier-Major account))
                 (minor:integer (UR_Elite-Tier-Minor account))
             )
@@ -1327,16 +1329,12 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalosV2} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-discount:decimal (URC_KadenaGasDiscount account))
-                (discounted-kda:decimal (floor (* kda-discount kda-price) kda-prec))
-                (v1:decimal (* 0.1 discounted-kda))
-                (v2:decimal (* 0.2 discounted-kda))
-                (v3:decimal (* 0.3 discounted-kda))
-                (v4:decimal (- discounted-kda (fold (+) 0.0 [v1 v2 v3])))
+                (discounted-kda:decimal (* kda-discount kda-price))
             )
-            [v1 v2 v3 v4]
+            (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit discounted-kda kda-prec)
         )
     )
     (defun URC_Transferability:bool (sender:string receiver:string method:bool)

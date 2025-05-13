@@ -35,12 +35,32 @@
     (defun URC_PrimordialPrices:[decimal] ())
 
 )
+(interface DeployerDispenserV4
+    @doc "Concatenates V1 V2 V3 interfaces and removes 3 Functions"
+    ;;
+    ;;
+    (defun UC_KosonicAutostakeSplit:[decimal] (input:decimal ip:integer))
+    ;;
+    (defun URC_DailyOURO ())
+    (defun URC_TokenDollarPrice (id:string))
+    (defun URC_DailyKOSON (iz-game-live:bool))
+    ;;
+    (defun A_Step001 (patron:string))
+    (defun A_Step002 ())
+    (defun A_Step003 (patron:string))
+    (defun A_Step004 (patron:string))
+    (defun A_Step005 (patron:string))
+    ;;
+    (defun A_ManualOuroPriceUpdate ())
+    (defun A_OuroMinterStageOne:[decimal] ())
+    (defun A_KosonMinterStageOne_1of3 ())
+    (defun A_KosonMinterStageOne_2of3 ())
+    (defun A_KosonMinterStageOne_3of3 ())
+)
 (module DSP GOV
     ;;
     (implements OuronetPolicy)
-    (implements DeployerDispenser)
-    (implements DeployerDispenserV2)
-    (implements DeployerDispenserV3)
+    (implements DeployerDispenserV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -203,41 +223,6 @@
                 (aa:decimal (- input (fold (+) 0.0 [ps cc pp tt sv])))
             )
             [ps cc pp tt sv aa]
-        )
-    )
-    (defun UC_TTTF-Split:[decimal] (input:decimal ip:integer)
-        (let
-            (
-                (s10p:decimal (floor (* 0.1 input) ip))
-                (s20p:decimal (* s10p 2.0))
-                (s30p:decimal (* s10p 3.0))
-                (s40p:decimal (- input (fold (+) 0.0 [s10p s20p s30p])))
-            )
-            [s10p s20p s30p s40p]
-        )
-    )
-    (defun UC_ConvertPrice:string (input-price:decimal)
-        (let
-            (
-                (number-of-decimals:integer (if (<= input-price 1.00) 3 2))
-                (converted:decimal
-                    (if (< input-price 1.00)
-                        (floor (* input-price 100.0) 3)
-                        (floor input-price 2)
-                    )
-                )
-                (s:string
-                    (if (< input-price 1.00)
-                        "¢"
-                        "$"
-                    )
-                )
-                (ss:string "<0.001¢")
-            )
-            (if (< input-price 0.00001)
-                (format "{}" [ss])
-                (format "{}{}" [converted s])    
-            )
         )
     )
     ;;{F0}  [UR]
@@ -451,6 +436,7 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
+                    (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                     (ref-ATS:module{AutostakeV3} ATS)
@@ -460,7 +446,7 @@
                     (op:integer (ref-DPTF::UR_Decimals ouro))
                     (daily:decimal (URC_DailyOURO))
                     ;;
-                    (split:[decimal] (UC_TTTF-Split daily op))
+                    (split:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit daily op))
                     (s1-10p:decimal (at 0 split))
                     (s1-20p:decimal (at 1 split))
                     (s1-30p:decimal (at 2 split))
@@ -499,6 +485,7 @@
         (with-capability (DSP|STAGE-ONE-MINTER)
             (let
                 (
+                    (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
@@ -509,7 +496,7 @@
                     (op0:integer (ref-DPTF::UR_Decimals primordial-koson))
                     ;;
                     (daily:[decimal] (URC_DailyKOSON false))
-                    (ps:[decimal] (UC_TTTF-Split (at 0 daily) op0))
+                    (ps:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit (at 0 daily) op0))
                     (ps10:decimal (at 0 ps))
                     (ps20:decimal (at 1 ps))
                     (ps40:decimal (at 3 ps))

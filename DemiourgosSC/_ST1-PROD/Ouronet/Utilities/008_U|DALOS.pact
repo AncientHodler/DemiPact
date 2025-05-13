@@ -36,9 +36,32 @@
     (defun UDC_Makeid:string (ticker:string))
     (defun UDC_MakeMVXNonce:string (nonce:integer))
 )
+(interface UtilityDalosV3
+    @doc "Exported Utility Functions for the DALOS Module \
+    \ \
+    \ Added <UC_TenTwentyThirtyFourtySplit>"
+    ;;
+    (defun UC_TenTwentyThirtyFourtySplit:[decimal] (input:decimal ip:integer))
+    (defun UC_DirectFilterId:[string] (listoflists:[[string]] account:string))
+    (defun UC_InverseFilterId:[string] (listoflists:[[string]] account:string))
+    (defun UC_ConcatWithBar:string (input:[string]))
+    ;;
+    (defun UC_GasCost (base-cost:decimal major:integer minor:integer native:bool))
+    (defun UC_GasDiscount (major:integer minor:integer native:bool))
+    (defun UC_IzCharacterANC:bool (c:string capital:bool iz-special:bool))
+    (defun UC_IzStringANC:bool (s:string capital:bool iz-special:bool))
+    (defun UC_NewRoleList (current-lst:[string] account:string direction:bool))
+    ;;
+    (defun UEV_Decimals:bool (decimals:integer))
+    (defun UEV_Fee (fee:decimal))
+    (defun UEV_NameOrTicker:bool (name-ticker:string name-or-ticker:bool iz-special:bool))
+    ;;
+    (defun UDC_Makeid:string (ticker:string))
+    (defun UDC_MakeMVXNonce:string (nonce:integer))
+)
 (module U|DALOS GOV
     ;;
-    (implements UtilityDalosV2)
+    (implements UtilityDalosV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -78,6 +101,17 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_TenTwentyThirtyFourtySplit:[decimal] (input:decimal ip:integer)
+        (let
+            (
+                (v1:decimal (floor (* 0.1 input) ip))
+                (v2:decimal (* 2.0 v1))
+                (v3:decimal (* 3.0 v1))
+                (v4:decimal (- input(fold (+) 0.0 [v1 v2 v3])))
+            )
+            [v1 v2 v3 v4]
+        )
+    )
     (defun UC_DirectFilterId:[string] (listoflists:[[string]] account:string)
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let
