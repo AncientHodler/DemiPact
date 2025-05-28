@@ -17,6 +17,7 @@
         ;;
         is-paused:bool
         nonces-used:integer
+        set-classes-used:integer
     )
     (defschema DPDC|RolesSchema
         frozen:bool                     ;; multiple
@@ -92,16 +93,19 @@
         name:string
         active:bool
         set:[object{DPDC|SetElement}]
+        nonce-data:object{DC|DataSchema}
+        split-data:object{DC|DataSchema}
     )
     (defschema DPDC|Score
         score:decimal
     )
     ;;
     ;;
+    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceElement:object{DPDC|NonceElementSchema} (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceValue:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer))
-    (defun UR_NonceSupply:integer (dpsf-id:string nonce:integer))
+    (defun UR_NonceSupply:integer (id:string sft-or-nft:bool nonce:integer))
     (defun UR_NonceData:object{DC|DataSchema} (id:string sft-or-nft:bool nonce:integer))
         ;;
     (defun UR_NonceRoyalty:decimal (id:string sft-or-nft:bool nonce:integer))
@@ -137,6 +141,7 @@
     (defun UR_CanPause:bool (id:string sft-or-nft:bool))
     (defun UR_IsPaused:bool (id:string sft-or-nft:bool))
     (defun UR_NoncesUsed:integer (id:string sft-or-nft:bool))
+    (defun UR_SetClassesUsed:integer (id:string sft-or-nft:bool))
     ;;
     (defun UR_ER-AddQuantity:[string] (id:string))
     (defun UR_ER-Frozen:[string] (id:string sft-or-nft:bool))
@@ -171,7 +176,6 @@
     ;;
     (defun UEV_id (id:string sft-or-nft:bool))
     (defun UEV_Nonce (id:string sft-or-nft:bool nonce:integer))
-    
     (defun UEV_CanUpgradeON (id:string sft-or-nft:bool))
     (defun UEV_CanPauseON (id:string sft-or-nft:bool))
     (defun UEV_CanAddSpecialRoleON (id:string sft-or-nft:bool))
@@ -194,14 +198,14 @@
             owner-konto:string creator-konto:string name:string ticker:string
             can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
-            is-paused:bool nonces-used:integer
+            is-paused:bool nonces-used:integer set-classes-used:integer
         )
     )
     (defun UDC_Control:object{DPDC|PropertiesSchema} (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun UDC_ExistingRoles:object{DPDC|RolesStorageSchema} (a:[string] b:[string] c:[string] d:[string] e:[string] f:[string] g:[string] h:[string] i:[string] j:[string] k:[string]))
         ;;Account UDCs
     (defun UDC_AccountRoles:object{DPDC|RolesSchema} (f:bool re:bool rnb:bool rnc:bool rnr:bool rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool))
-    (defun UDC_NonceElement:object{DPDC|NonceElementSchema} (a:integer b:integer c:integer d:object{DC|DataSchema}))
+    (defun UDC_NonceElement:object{DPDC|NonceElementSchema} (a:integer b:integer c:integer d:object{DC|DataSchema} e:object{DC|DataSchema}))
     (defun UDC_DataDC:object{DC|DataSchema} (royalty:decimal ignis:decimal name:string description:string meta-data:[object] asset-type:object{DC|URI|Type} uri-primary:object{DC|URI|Schema} uri-secondary:object{DC|URI|Schema} uri-tertiary:object{DC|URI|Schema}))
     (defun UDC_UriType:object{DC|URI|Type} (a:bool b:bool c:bool d:bool e:bool f:bool g:bool))
     (defun UDC_UriString:object{DC|URI|Schema} (a:string b:string c:string d:string e:string f:string g:string))

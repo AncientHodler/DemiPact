@@ -1366,6 +1366,15 @@
     (defun IGNIS|URC_Exception (account:string)
         (contains account GAS_EXCEPTION)
     )
+    (defun IGNIS|URC_ZeroEliteGAZ (sender:string receiver:string)
+        (let
+            (
+                (t1:bool (IGNIS|URC_Exception sender))
+                (t2:bool (IGNIS|URC_Exception receiver))
+            )
+            (or t1 t2)
+        )
+    )
     (defun IGNIS|URC_ZeroGAZ:bool (id:string sender:string receiver:string)
         (let
             (
@@ -1375,6 +1384,7 @@
             (or t1 t2)
         )
     )
+    
     (defun IGNIS|URC_ZeroGAS:bool (id:string sender:string)
         (let
             (

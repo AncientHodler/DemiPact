@@ -661,3 +661,181 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 (coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ" 400.0)                         ;;20%
 (coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8" 600.0)    ;;30%
 (coin.TRANSFER "k:1dacecf4d6fb57c68385b1da961f463e8b35275a13dd484f592a8a5a722224ca" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 800.0)                         ;;40%
+
+(TS01-C2.SWP|C_AddLiquidity
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W"
+    [3600.0 0.0 2800.0]
+)
+(DPL-UR.URC_0001_Header
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+)
+
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ouro-a:decimal 0.699654373570670287)
+        (auryn-a:decimal 2128.371735198974273291)
+        (e-auryn-a:decimal (+ 2000.163661810516387693 3255.991405487361316048068883))
+        (ignis-bonus-a:decimal 1000.0)
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (client:string "Ѻ.ÙÉlgЖ2ЦζGČŃчΔ7ÈehĂpУΨΛжXчNøÒäεИbôłξ6σæ₱þğÕнwŸêτńsιφÏþfÏŘÿQθкшμΦgiЗΣωõásŒΦ€ýюĄBнчěþЧαsČÅyȘИöSŁÁVSłßДgNЩиřβÅMΦöÞXšÞbQЫбzĎŮe₿ñÔŚďæğЖžCDìÿ7ÒÆB2knΩúÓcíŮłŸnκΓÒΩBÅĄÂБΣ")
+        (standard-treasury:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (smart-treasury:string "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (ouro:string "OURO-slLyzPPCo22W")
+        (auryn:string "AURYN-slLyzPPCo22W")
+        (e-auryn:string "ELITEAURYN-slLyzPPCo22W")
+        (ignis:string "IGNIS-slLyzPPCo22W")
+    )
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ignis patron smart-treasury ignis-bonus-a true)
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ignis smart-treasury client ignis-bonus-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron auryn standard-treasury smart-treasury auryn-a true)
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron auryn smart-treasury client auryn-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron e-auryn standard-treasury smart-treasury e-auryn-a true)
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron e-auryn smart-treasury client e-auryn-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ouro smart-treasury client ouro-a false)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (standard-treasury:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (smart-treasury:string "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (auryn:string "AURYN-slLyzPPCo22W")
+        (e-auryn:string "ELITEAURYN-slLyzPPCo22W")
+        (standard-auryn-amount:decimal (DPTF.UR_AccountSupply auryn standard-treasury))
+        (standard-e-auryn-amount:decimal (DPTF.UR_AccountSupply e-auryn standard-treasury))
+    )
+    ;;
+    (DPTF|C_Transfer patron auryn standard-treasury smart-treasury standard-auryn-amount true)
+    (DPTF|C_Transfer patron e-auryn standard-treasury smart-treasury standard-e-auryn-amount true)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ouro-a:decimal (fold (+) 0.0 [1.118369268944905688 1.118]))
+        (auryn-a:decimal (fold (+) 0.0 [0.532609777201760467 3.148]))
+        (e-auryn-a:decimal (fold (+) 0.0 [11683.71345623554649896 14788.048811860500400586262034 130.618455594495381960865678 515.148232028355659524220165]))
+        (ignis-bonus-a:decimal 1000.0)
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (client:string "Ѻ.ÛęфΨÍßø5IиεжѺđΔďÈшηłJńαśΦFeŘŽЫákpçbéŹ4Чă8тĞÁγÎăQιПσÓ∇VÕαCęłÔβΨжxăŹΦßğşpTяуЦÛhBTÇgÆзšü5çêŽÌŤèфȚюÁůqéÊ0RЬЪŤŃZĞøĄŁПł₳Đœ£řXmQSHeßûĄŚÞŒàïîщVвÜkβЖYš9cдБuô45kàkQэИξпβæ")
+        ;(standard-treasury:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (smart-treasury:string "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (ouro:string "OURO-slLyzPPCo22W")
+        (auryn:string "AURYN-slLyzPPCo22W")
+        (e-auryn:string "ELITEAURYN-slLyzPPCo22W")
+        (ignis:string "IGNIS-slLyzPPCo22W")
+    )
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ignis patron smart-treasury ignis-bonus-a true)
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ignis smart-treasury client ignis-bonus-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron ouro smart-treasury client ouro-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron auryn smart-treasury client auryn-a true)
+    ;;
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer patron e-auryn smart-treasury client e-auryn-a true)
+    ;;
+)
+
+[
+    (DPTF.UR_AccountSupply ouro standard-treasury)
+    (DPTF.UR_AccountSupply ouro smart-treasury)
+    (DPTF.UR_AccountSupply auryn standard-treasury)
+    (DPTF.UR_AccountSupply auryn smart-treasury)
+    (DPTF.UR_AccountSupply e-auryn standard-treasury)
+    (DPTF.UR_AccountSupply e-auryn smart-treasury)
+]
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_BulkTransfer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" 
+    "ELITEAURYN-slLyzPPCo22W"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        "Ѻ.ÙÉlgЖ2ЦζGČŃчΔ7ÈehĂpУΨΛжXчNøÒäεИbôłξ6σæ₱þğÕнwŸêτńsιφÏþfÏŘÿQθкшμΦgiЗΣωõásŒΦ€ýюĄBнчěþЧαsČÅyȘИöSŁÁVSłßДgNЩиřβÅMΦöÞXšÞbQЫбzĎŮe₿ñÔŚďæğЖžCDìÿ7ÒÆB2knΩúÓcíŮłŸnκΓÒΩBÅĄÂБΣ"
+        "Ѻ.ÛęфΨÍßø5IиεжѺđΔďÈшηłJńαśΦFeŘŽЫákpçbéŹ4Чă8тĞÁγÎăQιПσÓ∇VÕαCęłÔβΨжxăŹΦßğşpTяуЦÛhBTÇgÆзšü5çêŽÌŤèфȚюÁůqéÊ0RЬЪŤŃZĞøĄŁПł₳Đœ£řXmQSHeßûĄŚÞŒàïîщVвÜkβЖYš9cдБuô45kàkQэИξпβæ"
+        "Ѻ.ȚșyÅпiRkŽOγSχżiFΞÓÍÝŞьsÓюóη1πþΩÍŚúboÓśřnчцúDÞбõìÁõÍÿãDČýЮ₿ȘЧžd3WëŒцÄΘuþΣzЪžLŠ7ΨaδğĂaMЩk₿ńЖ£ЗåXUğÙÊ7ÉVŞżwțЙ$φØêΘŽŁȘDXżUKsкøťžșΘÒzÖÒvШeçδЯШДУŚΦîzñЛBÆßæeλrκΦůbbDÄξ"
+        "Ѻ.ιQdЙșγYYЫŽxŠoÜΩьËνp¥2UÁÑÉÙșДșěц0YфѺηźřθЬaïψBЙFËÕпîËwSOтдŮ2Яv5ŮNóдřΘoyòâĘIβЯπâôťσûÝšÁΘŻθяÆxuTç9ŁвýΓŃмъýЦΔйÁń6ÕΩNväãτŁșSςуμωöUσËÙõąвÿΓЗÍΠșχн3ρμτțþÌÑÊĚúÑççѺğьQĄΩыÞ"
+        "Ѻ.¢ZçûИďÚшÇxЗSÆŻÔȘcBŹпÛÖσπńœþÌлфνЪÜŃЛÀRØèИÔшξëèbзnчFćâȘвуûĆ∇ηôΠΔÀμûoĐğЦ₿õÎ6zI₿0Ź∇ΘżĂbúśУ₿шûÿĐšÉĚdρ0óчŹséΓΩμŮëξØ€âĄДßΛáĂ9aaq£ΦjÄ6я₱ALŞπe₿IюďîΓĂσõȘAì2ĆăЗЧγДφ0MîîñЭы"
+        "Ѻ.ĄÀтмωωàŹČлďÜhÍηЛνÙνûĘõțЫåÒÛHážNÍЧψξïžŹЬΛξП¥ЮςĄEйNĄЧ9óпиÃЗ2äÔвœ₿£ČóΩÞдréě7νшDÅЬXтBørŸĂBςąЙęìvÆлμЛáΩγĘЗôåУțτжéδÚνpÍżȘĘï4ąŹȘkφNθþÀωΞÀWžIи5ь€ÊOôΣëñэÔÿνÜw1юÔzźцξńѺfś"
+        "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW"
+        "Ѻ.ůćSØťξçřVÎЙïИW₿YeHйťçкÌÿнŃηèŽЪ¥лfđЧÁÕ3ęЛöц₿ΘИÆĐâЫAř€łιÈŻ∇τŘNΩď¢øöÁťLЮWqŞ0₱đЖ₳tчĚaμЫÞŽÅÒęëzČśçõÖыÏŻЪю30qpΔZσĆÖÀχcôσU₱şÿšTΨjÀωHцĚШΔØÖuŤÍ¢ÆèŤþÁĞńεÈÏŁŸaXêÃφôΣVjşßgA"
+        "Ѻ.βœÔζĘïл82țrγsmιìΠĐà₿ЪRЫÆìÇæVЫΘÛØżЦξżòωâÁůwđøĞäѺмfρ9ŁЦNžźτFąÈτÁďÞUGàmĚaρńkŻlĎуUsùŘτфτéGÕÇŁπßz¢χõwșЭõαđч2мμëůõßdĂЩě7дDÄĎÈĞșLÊKnošĞДõOч∇čЬεOcĎùșđłΨĞúИğÑY5Ş¥ЪΛďď9γL"
+        "Ѻ.0ΓĆřrξ∇ŞëõЭøźûřУĆИяeςTEČφŃыщΘhâЪ4d£ÌêãcЛ9уěŹюς1Nуz7ÅЬγ5ĆρóUΦæŽΣΨщνŮЩoyzaŚÀŤЙΨÆØзяŚúжěκđqш9rŤùPR4ČNŚUãwÒÝïжoaYIΦccÎËĘOkKΩγęŞAźÛЪ£Ąù3ЬżxЖШÕ₳IŮΠŚqΓЗĄWCíü7Șč6ŽżΦΦÕr"
+        "Ѻ.łścĞȚôd1ôżδĎOςUжęъóиŠIBÎЭцкøÒ2γlHñЦèĆQ9ȚκιëńÏζD£íÌЦlÇBпhŹșŸÒÜмKêŞàÀΨâѺyÔÈ6ýÃûfĂÖЮψяиъ£òΨΦQżDфÜςCБnθÜÂôşńåĐδàтRx₿bзμăÍŻÒΣþμãмck7ŹzçtòÞÇFjПàθыæΓÚ₱YÀχșŞπfË6ИйØβЬЫm"
+        "Ѻ.yaCДψζνкΠфXżoдĂærIœđóÓøRČsΩÖRșědșθQдÞ7ÅțŁαUÛfтЭůццòŸĆÊΔcЪkTBčaHЭ£LĄ∇FcбùσăünΠåö8JeÖaЛ¢ИŘÞćåœюûȚДζÁš5TĞξ6ρÔЮØã£â8úйthĂŚďşZѺэШвиTřŘvЮQûńУôцwЧSââ8ζчùπćèîRèřiъfлЪÈă"
+        "Ѻ.łfЮêγωćgMŠЧbτЧuÁwмÇńŮыÛИđŸφãЖŤčvĐØLD£ΩńOÔηȚÑпŮťSэbЧgaJëĘRлσöEOв$ŁÔfșË$жNЪЗŸληćVIй$8nΣξń₱ŞŮyB$ÂρgliÇΛ7ŚmüγεвÀÎțRΦуэÞΩáVEяÿŠ$șòтΠpĚΛÁàPŤζFИЬΓâбğœhtmÛΘλιÌΘåБwÞ∇Δcą"
+        "Ѻ.jZÑ£₳€Δςф5wφÒнîÔßκŘзïцököşrÛęûÍžтżYȘεťθMΦЫèłêЦюŚřóIъЖøf¥bЙeȘÌΘòИкąÅòÒiGăэηêòΔoьĆΠÚЙÎζzøXу0NÂѺWэřqóÁC£ÑŮγψíΣBΓìć∇η¥ΛЭτČùøθпμÇťÓΛρуs0¥ÇăΓüáÓ€ÏΦтŤнÆĎ15ěObδûÙgPÏ₱₿ď"
+        "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+    ]
+    (make-list 15 1.0)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_MultiBulkTransfer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        "OURO-slLyzPPCo22W"
+        "AURYN-slLyzPPCo22W"
+        "ELITEAURYN-slLyzPPCo22W"
+    ]
+    "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    [
+        [
+        "Ѻ.Áуžж02ÔğyεØγăŻвŤεцćsŹу0Ú€òΨÖΨĂjŃПYnмkšρÁÜΦωwφΦÔ¥юüĄÔíëçîζŒFνCÍlЬмζízłŒGêòPτčjdÍПЦTцÈyBЖj€ÿDЮlȘęŮŽДwĆЮòÒÅ2f1η7ЦËĆëzìчÅτóýGéзĄвîbşкĆÑÕÌЪΞ¢БЗ0μQýěэgŽGŠклЪĄč₿uiΨÆΓÍ"
+        "Ѻ.ȚÁ$òßôñПWšπÙvçÉcXЙщjDуłвțfËѺÏeRбдêûüÄuЗ∇Ö₳₱Ж3ΘÞóΔÛЪφэУSØлÈΣβȚцCзμązιDťÈĂτЛмŽRšxy¢WÄťåNβœфÑÌyЧ2sθβŞŸЫĚδČgÓ$RMиUЪźMËÀя9ÙγwØнÂцąя7BŮÂ9χHΘDιžβ3ПÝÍąÜÖжεìςKëδïȘmýEЮżм"
+        "Ѻ.VIлáпøàğβÇáÕζ₱ßŸvĞaŁλŠȚæŠßĄñ¥ΦvîÿЧÊ7юΘŸдĆÁÔYлk8ûCÖΣЫÕŚкÃÒPČΞńźΣΦ9ÅĄȚΦń3QØcÃÉRđÚKůшûžßДâTΓ0ÀÜядCoČżòφ5œ5σòÇĎÇĎwвцzùпйтSγдřńÜЯÜxYтŹÜëqЙÑŒÒмςÞμÄÛPèŁ5ŮtkAiPoП2ΦřÈЗ3"
+        "Ѻ.ůćSØťξçřVÎЙïИW₿YeHйťçкÌÿнŃηèŽЪ¥лfđЧÁÕ3ęЛöц₿ΘИÆĐâЫAř€łιÈŻ∇τŘNΩď¢øöÁťLЮWqŞ0₱đЖ₳tчĚaμЫÞŽÅÒęëzČśçõÖыÏŻЪю30qpΔZσĆÖÀχcôσU₱şÿšTΨjÀωHцĚШΔØÖuŤÍ¢ÆèŤþÁĞńεÈÏŁŸaXêÃφôΣVjşßgA"
+        "Ѻ.yaCДψζνкΠфXżoдĂærIœđóÓøRČsΩÖRșědșθQдÞ7ÅțŁαUÛfтЭůццòŸĆÊΔcЪkTBčaHЭ£LĄ∇FcбùσăünΠåö8JeÖaЛ¢ИŘÞćåœюûȚДζÁš5TĞξ6ρÔЮØã£â8úйthĂŚďşZѺэШвиTřŘvЮQûńУôцwЧSââ8ζчùπćèîRèřiъfлЪÈă"
+        "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+        "Ѻ.łfЮêγωćgMŠЧbτЧuÁwмÇńŮыÛИđŸφãЖŤčvĐØLD£ΩńOÔηȚÑпŮťSэbЧgaJëĘRлσöEOв$ŁÔfșË$жNЪЗŸληćVIй$8nΣξń₱ŞŮyB$ÂρgliÇΛ7ŚmüγεвÀÎțRΦуэÞΩáVEяÿŠ$șòтΠpĚΛÁàPŤζFИЬΓâбğœhtmÛΘλιÌΘåБwÞ∇Δcą"
+        "Ѻ.ъбąRдqμζøþśĘĐÅДьöщн4ÚÔFòŞå2α£mhΦÁ6ZȘfČZρэЩΘιЗJ7ЖŁ₳69£ânğΩÊÏïñŚvÉtgБBÃșЩБìììфλëΩAïWmaFFVþ$źźSêρQQкѺæρĞюεGîGşđдПȘșψEźβΩT3ìтŚкř£жÖП8ăąźÎξů4ŸЮΩB₳šÝЙ∇řÇwíčăb4₱ďĚOςÉм"
+        ]
+        [
+        "Ѻ.VIлáпøàğβÇáÕζ₱ßŸvĞaŁλŠȚæŠßĄñ¥ΦvîÿЧÊ7юΘŸдĆÁÔYлk8ûCÖΣЫÕŚкÃÒPČΞńźΣΦ9ÅĄȚΦń3QØcÃÉRđÚKůшûžßДâTΓ0ÀÜядCoČżòφ5œ5σòÇĎÇĎwвцzùпйтSγдřńÜЯÜxYтŹÜëqЙÑŒÒмςÞμÄÛPèŁ5ŮtkAiPoП2ΦřÈЗ3"
+        "Ѻ.ůćSØťξçřVÎЙïИW₿YeHйťçкÌÿнŃηèŽЪ¥лfđЧÁÕ3ęЛöц₿ΘИÆĐâЫAř€łιÈŻ∇τŘNΩď¢øöÁťLЮWqŞ0₱đЖ₳tчĚaμЫÞŽÅÒęëzČśçõÖыÏŻЪю30qpΔZσĆÖÀχcôσU₱şÿšTΨjÀωHцĚШΔØÖuŤÍ¢ÆèŤþÁĞńεÈÏŁŸaXêÃφôΣVjşßgA"
+        "Ѻ.yaCДψζνкΠфXżoдĂærIœđóÓøRČsΩÖRșědșθQдÞ7ÅțŁαUÛfтЭůццòŸĆÊΔcЪkTBčaHЭ£LĄ∇FcбùσăünΠåö8JeÖaЛ¢ИŘÞćåœюûȚДζÁš5TĞξ6ρÔЮØã£â8úйthĂŚďşZѺэШвиTřŘvЮQûńУôцwЧSââ8ζчùπćèîRèřiъfлЪÈă"
+        "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+        "Ѻ.ъбąRдqμζøþśĘĐÅДьöщн4ÚÔFòŞå2α£mhΦÁ6ZȘfČZρэЩΘιЗJ7ЖŁ₳69£ânğΩÊÏïñŚvÉtgБBÃșЩБìììфλëΩAïWmaFFVþ$źźSêρQQкѺæρĞюεGîGşđдПȘșψEźβΩT3ìтŚкř£жÖП8ăąźÎξů4ŸЮΩB₳šÝЙ∇řÇwíčăb4₱ďĚOςÉм"
+        "Ѻ.âΛλШXρлÿИτüĄĎÍòπLRœnÍβîroяqbцjÀxłйœЮuÊУhÅпуçвbΓρȚжyčIĐáùH7íšьyτйÄκмΓQxŮγè0ÍΨΠúpdŒúcØП0ЫшûfȚѺęđnteòźŁμüηoΨ€ÀъÛÿ1ÌöÛùÁc∇ПźщΓÙKэĄйĐğÈÔÄĐěì5зäÆsQćŚμлÒη₳đ8νБŞŞ9ÁìĚΨZ"
+        ]
+        [
+        "Ѻ.yaCДψζνкΠфXżoдĂærIœđóÓøRČsΩÖRșědșθQдÞ7ÅțŁαUÛfтЭůццòŸĆÊΔcЪkTBčaHЭ£LĄ∇FcбùσăünΠåö8JeÖaЛ¢ИŘÞćåœюûȚДζÁš5TĞξ6ρÔЮØã£â8úйthĂŚďşZѺэШвиTřŘvЮQûńУôцwЧSââ8ζчùπćèîRèřiъfлЪÈă"    
+        "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+        "Ѻ.łfЮêγωćgMŠЧbτЧuÁwмÇńŮыÛИđŸφãЖŤčvĐØLD£ΩńOÔηȚÑпŮťSэbЧgaJëĘRлσöEOв$ŁÔfșË$жNЪЗŸληćVIй$8nΣξń₱ŞŮyB$ÂρgliÇΛ7ŚmüγεвÀÎțRΦуэÞΩáVEяÿŠ$șòтΠpĚΛÁàPŤζFИЬΓâбğœhtmÛΘλιÌΘåБwÞ∇Δcą"
+        ]
+    ]
+    [
+        (make-list 8 1.0)
+        (make-list 6 1.0)
+        (make-list 3 1.0)
+    ]
+)
+
+[
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.UR_AccountSupply
+        "OURO-slLyzPPCo22W"
+        "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    )
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.UR_AccountSupply
+        "OURO-slLyzPPCo22W"
+        "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    )
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.UR_AccountSupply
+        "AURYN-slLyzPPCo22W"
+        "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    )
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.DPTF.UR_AccountSupply
+        "ELITEAURYN-slLyzPPCo22W"
+        "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    )
+]

@@ -134,13 +134,62 @@
     (defun XB_DynamicFuelKDA ())
     (defun XE_ConditionalFuelKDA (condition:bool))
 )
+(interface TalosStageOne_AdminV4
+    @doc "V2 removes <XE_IgnisCollect> with the implementation of IgnisCumulatorV2 Architecture \
+        \ V3 Removes <patron> input variable where it is not needed \
+        \ V4 Adds 2 more SWP Admin Functions"
+    ;;
+    ;;DALOS Functions
+    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun DALOS|A_ToggleOAPU (oapu:bool))
+    (defun DALOS|A_ToggleGAP (gap:bool))
+    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
+    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
+    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
+    (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
+    (defun DALOS|A_SetAutoFueling (toggle:bool))
+    (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
+    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
+    ;;
+    ;;
+    ;;BRD Functions
+    (defun BRD|A_Live (entity-id:string))
+    (defun BRD|A_SetFlag (entity-id:string flag:integer))
+    ;;
+    ;;
+    ;;DPTF Functions
+    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
+    (defun DPTF|A_WipeTreasuryDebt ())
+    (defun DPTF|A_WipeTreasuryDebtPartial (debt-to-be-wiped:decimal))
+    ;;
+    ;;
+    ;;LIQUID Functions
+    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    ;;
+    ;;
+    ;;ORBR Functions
+    (defun ORBR|A_Fuel ())
+    ;;
+    ;;
+    ;;SWP Functions
+    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
+    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
+    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
+    (defun SWP|A_DefinePrimordialPool (primordial-pool:string))
+    (defun SWP|A_ToggleAsymetricLiquidityAddition (toggle:bool))
+    ;;
+    ;;
+    ;;Fueling Functions
+    (defun XB_DynamicFuelKDA ())
+    (defun XE_ConditionalFuelKDA (condition:bool))
+)
 (module TS01-A GOV
     @doc "TALOS Stage 1 Administrator Functions \
     \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
     \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_AdminV3)
+    (implements TalosStageOne_AdminV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -430,7 +479,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_UpdateTreasury type tdp tds)
             )
@@ -442,7 +491,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebt)
             )
@@ -454,7 +503,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebtPartial debt-to-be-wiped)
             )
@@ -496,7 +545,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-SWP::A_UpdatePrincipal principal add-or-remove)
             )
@@ -509,7 +558,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-SWP::A_UpdateLimit limit spawn)
             )
@@ -521,12 +570,33 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-SWP::A_UpdateLiquidBoost new-boost-variable)
             )
         )
-
+    )
+    (defun SWP|A_DefinePrimordialPool (primordial-pool:string)
+        @doc "Updates the Primordial Pool"
+        (with-capability (P|ADMINISTRATIVE-SUMMONER)
+            (let
+                (
+                    (ref-SWP:module{SwapperV4} SWP)
+                )
+                (ref-SWP::A_DefinePrimordialPool primordial-pool)
+            )
+        )
+    )
+    (defun SWP|A_ToggleAsymetricLiquidityAddition (toggle:bool)
+        @doc "Updates the Primordial Pool"
+        (with-capability (P|ADMINISTRATIVE-SUMMONER)
+            (let
+                (
+                    (ref-SWP:module{SwapperV4} SWP)
+                )
+                (ref-SWP::A_ToggleAsymetricLiquidityAddition toggle)
+            )
+        )
     )
     ;;{F6}  [C]
     ;;{F7}  [X]

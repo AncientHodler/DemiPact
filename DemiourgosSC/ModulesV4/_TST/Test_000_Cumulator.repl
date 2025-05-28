@@ -28,8 +28,8 @@
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
         (ref-DALOS:module{OuronetDalosV3} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-        (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
 
         (cum1:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 patron false))
         (cum2:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 7.0 receiver false))

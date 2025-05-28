@@ -99,6 +99,15 @@
         (format "{}" [(floor amount 4)])
     )
     ;;{F0}  [UR]
+    (defun URC_TrueFungibleAmountPrice:decimal (id:string amount:decimal price:decimal)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (idp:integer (ref-DPTF::UR_Decimals id))
+            )
+            (floor (* amount price) idp)
+        )
+    )
     (defun URC_PrimordialIDs:[string] ()
         (let
             (
@@ -119,7 +128,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (ref-DSP:module{DeployerDispenserV4} DSP)
                 ;;
@@ -190,13 +199,13 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (ref-ORBR:module{OuroborosV3} OUROBOROS)
                 ;;
                 (payment-key:string (ref-DALOS::UR_AccountKadena account))
-                (payment-key-kda:decimal (ref-coin::get-balance payment-key))
+                (payment-key-kda:decimal (try 0.0 (ref-coin::get-balance payment-key)))
                 ;;
                 (pp:[decimal] (URC_PrimordialPrices))
                 (p-ids:[string] (URC_PrimordialIDs))
@@ -241,7 +250,7 @@
             ,"wallet-wkda-supply-display"       : (UC_FormatTokenAmount wallet-wkda-supply)
             ,"wallet-lkda-supply-display"       : (UC_FormatTokenAmount wallet-lkda-supply)
             ,"global-wkda-supply-display"       : (UC_FormatTokenAmount global-wkda-supply)
-            ,"global-lkda-supply-display"       : (UC_FormatTokenAmount global-wkda-supply)
+            ,"global-lkda-supply-display"       : (UC_FormatTokenAmount global-lkda-supply)
             ;;
             ,"auryndex-display"                 : (UC_FormatIndex auryndex-value)
             ,"eauryndex-display"                : (UC_FormatIndex elite-auryndex-value)
@@ -287,9 +296,9 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
                 (ouro:string (at 0 p-ids))
@@ -299,12 +308,23 @@
                 (wkda:string (at 4 p-ids))
                 (lkda:string (at 5 p-ids))
                 ;;
+                (pp:[decimal] (URC_PrimordialPrices))
+                (p0:decimal (at 0 pp))
+                (p1:decimal (at 1 pp))
+                (p2:decimal (at 2 pp))
+                (p3:decimal (at 3 pp))
+                (p4:decimal (at 4 pp))
+                (p5:decimal (at 5 pp))
+                ;;
                 (ouro-supply:decimal (ref-DPTF::UR_Supply ouro))
                 (wallet-ouro:decimal (ref-DPTF::UR_AccountSupply ouro account))
+                (wallet-ouro-value:decimal (URC_TrueFungibleAmountPrice ouro wallet-ouro p0))
                 (wallet-vouro:decimal (ref-TFT::URC_VirtualOuro account))
+                (wallet-vouro-value:decimal (URC_TrueFungibleAmountPrice ouro wallet-vouro p0))
                 ;;
                 (ignis-supply:decimal (ref-DPTF::UR_Supply ignis))
                 (wallet-ignis:decimal (ref-DPTF::UR_AccountSupply ignis account))
+                (wallet-ignis-value:decimal (URC_TrueFungibleAmountPrice ignis wallet-ignis p1))
                 (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount account))
                 (ignis-discount-text:string
                     (format 
@@ -315,12 +335,15 @@
                 ;;
                 (auryn-supply:decimal (ref-DPTF::UR_Supply auryn))
                 (wallet-auryn:decimal (ref-DPTF::UR_AccountSupply auryn account))
+                (wallet-auryn-value:decimal (URC_TrueFungibleAmountPrice auryn wallet-auryn p2))
                 ;;
                 (eauryn-supply:decimal (ref-DPTF::UR_Supply elite-auryn))
                 (wallet-eauryn:decimal (ref-DPTF::UR_AccountSupply elite-auryn account))
+                (wallet-eauryn-value:decimal (URC_TrueFungibleAmountPrice elite-auryn wallet-eauryn p3))
                 ;;
                 (wkda-supply:decimal (ref-DPTF::UR_Supply wkda))
                 (wallet-wkda:decimal (ref-DPTF::UR_AccountSupply wkda account))
+                (wallet-wkda-value:decimal (URC_TrueFungibleAmountPrice wkda wallet-wkda p4))
                 (kadena-discount:decimal (ref-DALOS::URC_KadenaGasDiscount account))
                 (kadena-discount-text:string
                     (format 
@@ -331,39 +354,58 @@
                 ;;
                 (lkda-supply:decimal (ref-DPTF::UR_Supply lkda))
                 (wallet-lkda:decimal (ref-DPTF::UR_AccountSupply lkda account))
+                (wallet-lkda-value:decimal (URC_TrueFungibleAmountPrice lkda wallet-lkda p5))
                 (lkda-index:string (at 0 (ref-DPTF::UR_RewardToken wkda)))
                 (wkda-in-ls:decimal (ref-ATS::URC_ResidentSum lkda-index))
+                (total-value:decimal (fold (+) 0.0 [wallet-ouro-value wallet-ignis-value wallet-auryn-value wallet-eauryn-value wallet-wkda-value wallet-lkda-value]))
+                (total-value-with-vouro:decimal (fold (+) 0.0 [wallet-vouro-value wallet-ignis-value wallet-auryn-value wallet-eauryn-value wallet-wkda-value wallet-lkda-value]))
             )
-            {"ouro-supply-display"              : (UC_FormatTokenAmount ouro-supply)
+            {"total-value-display"              : (UC_ConvertPrice total-value)
+            ,"total-value-with-vouro-display"   : (UC_ConvertPrice total-value-with-vouro)
+            ;;
+            ,"ouro-supply-display"              : (UC_FormatTokenAmount ouro-supply)
             ,"wallet-ouro-display"              : (UC_FormatTokenAmount wallet-ouro)
             ,"wallet-vouro-display"             : (UC_FormatTokenAmount wallet-vouro)
+            ,"ouro-price-display"               : (UC_ConvertPrice p0)
+            ,"wallet-ouro-value-display"        : (UC_ConvertPrice wallet-ouro-value)
+            ,"wallet-vouro-value-display"       : (UC_ConvertPrice wallet-vouro-value)
             ,"ouro-id"                          : ouro
             ,"ouro-name"                        : (ref-DPTF::UR_Name ouro)
             ;;
             ,"ignis-supply-display"             : (UC_FormatTokenAmount ignis-supply)
             ,"wallet-ignis-display"             : (UC_FormatTokenAmount wallet-ignis)
+            ,"ignis-price-display"              : (UC_ConvertPrice p1)
+            ,"wallet-ignis-value-display"       : (UC_ConvertPrice wallet-ignis-value)
             ,"ignis-id"                         : ignis
             ,"ignis-name"                       : (ref-DPTF::UR_Name ignis)
             ,"ignis-text"                       : ignis-discount-text
             ;;
             ,"auryn-supply-display"             : (UC_FormatTokenAmount auryn-supply)
             ,"wallet-auryn-display"             : (UC_FormatTokenAmount wallet-auryn)
+            ,"auryn-price-display"              : (UC_ConvertPrice p2)
+            ,"wallet-auryn-value-display"       : (UC_ConvertPrice wallet-auryn-value)
             ,"auryn-id"                         : auryn
             ,"auryn-name"                       : (ref-DPTF::UR_Name auryn)
             ;;
             ,"eauryn-supply-display"            : (UC_FormatTokenAmount eauryn-supply)
             ,"wallet-eauryn-display"            : (UC_FormatTokenAmount wallet-eauryn)
+            ,"eauryn-price-display"             : (UC_ConvertPrice p3)
+            ,"wallet-eauryn-value-display"      : (UC_ConvertPrice wallet-eauryn-value)
             ,"eauryn-id"                        : elite-auryn
             ,"eauryn-name"                      : (ref-DPTF::UR_Name elite-auryn)
             ;;
             ,"wkda-supply-display"              : (UC_FormatTokenAmount wkda-supply)
             ,"wallet-wkda-display"              : (UC_FormatTokenAmount wallet-wkda)
+            ,"wkda-price-display"               : (UC_ConvertPrice p4)
+            ,"wallet-wkda-value-display"        : (UC_ConvertPrice wallet-wkda-value)
             ,"wkda-id"                          : wkda
             ,"wkda-name"                        : (ref-DPTF::UR_Name wkda)
             ,"wkda-text"                        : kadena-discount-text
             ;;
             ,"lkda-supply-display"              : (UC_FormatTokenAmount lkda-supply)
-            ,"wallet-wkda-display"              : (UC_FormatTokenAmount wallet-lkda)
+            ,"wallet-lkda-display"              : (UC_FormatTokenAmount wallet-lkda)
+            ,"lkda-price-display"               : (UC_ConvertPrice p5)
+            ,"wallet-lkda-value-display"        : (UC_ConvertPrice wallet-lkda-value)
             ,"lkda-id"                          : lkda
             ,"lkda-name"                        : (ref-DPTF::UR_Name lkda)
             ,"wkda-in-ls"                       : wkda-in-ls

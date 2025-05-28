@@ -12,13 +12,25 @@
     (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
     (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
     (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-
+    ;;
+)
+(interface TalosStageOne_ClientPactsV2
+    @doc "Removes DPTF Bulk and Multi Transfer in Multistep, to be added later on \
+    \ Due to the optimization of DPTF Transfers there are no longer needed in the near future"
+    ;;
+    ;;
+    ;;SWP (Swap-Pair) Pact Initiating Functions
+    ;;Issue
+    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    ;;
 )
 (module TS01-CP GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientPacts)
+    (implements TalosStageOne_ClientPactsV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -88,10 +100,10 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|SWPU:module{OuronetPolicy} SWPU)
+                (ref-P|SWPI:module{OuronetPolicy} SWPI)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
-            (ref-P|SWPU::P|A_AddIMP mg)
+            (ref-P|SWPI::P|A_AddIMP mg)
             (ref-P|TFT::P|A_AddIMP mg)
         )
     )
@@ -130,77 +142,6 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    ;;  [DPTF PactStarters]
-    (defun DPTF|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 81-160 DPTFs in Bulk or 41-80 Elite Auryns in Bulk over 13 Steps\
-            \ Steps 0|1|2|3 Validation in 4 Steps \
-            \ Step 4 Collects the required IGNIS in 1 Step\
-            \ Step 5|6|7|8|9|10|11|12 BulkTransfer in 8 Steps"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                )
-                (ref-TFT::PS|C_BulkTransfer81-160 patron id sender receiver-lst transfer-amount-lst method)
-            )
-        )
-    )
-    (defun DPTF|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 41-80 DPTFs in Bulk or 21-40 Elite Auryns in Bulk over 7 Steps\
-            \ Steps 0|1| Validation in 2 Steps \
-            \ Step 2 Collects the required IGNIS in 1 Step\
-            \ Step 3|4|5|6 BulkTransfer in 4 Steps"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                )
-                (ref-TFT::PS|C_BulkTransfer41-80 patron id sender receiver-lst transfer-amount-lst method)
-            )
-        )
-    )
-    (defun DPTF|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool)
-        @doc "Transfer 13-40 DPTFs in Bulk or 9-20 Elite Auryns in Bulk over 4 Steps\
-            \ Steps 0 Validation in 1 Step \
-            \ Step 1 Collects the required IGNIS in 1 Step\
-            \ Step 2|3 BulkTransfer in 2 Steps"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                )
-                (ref-TFT::PS|C_BulkTransfer13-40 patron id sender receiver-lst transfer-amount-lst method)
-            )
-        )
-    )
-    (defun DPTF|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Multi Transfers 15-40 DPTFs over 7 Steps \
-            \ Steps 0|1 Validation in 2 Steps \
-            \ Step 2 Collects the required IGNIS in 1 Step\
-            \ Step 3|4|5|6 BulkTransfer in 4 Steps"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                )
-                (ref-TFT::PS|C_MultiTransfer41-80 patron id-lst sender receiver transfer-amount-lst method)
-            )
-        )
-    )
-    (defun DPTF|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool)
-        @doc "Multi Transfers 13-40 DPTFs over 4 Steps\
-            \ Steps 0 Validation in 1 Step \
-            \ Step 1 Collects the required IGNIS in 1 Step\
-            \ Step 2|3 BulkTransfer in 2 Steps"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                )
-                (ref-TFT::PS|C_MultiTransfer13-40 patron id-lst sender receiver transfer-amount-lst method)
-            )
-        )
-    )
     ;;  [SWP PactStarters]
     (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
         @doc "Similar outcome to <ref-TS01-C2::SWP|C_IssueStable>, but over 3 <steps> (0|1|2) via <defpact> \
@@ -213,9 +154,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPI:module{SwapperIssue} SWPI)
                 )
-                (ref-SWPU::PS|C_IssueStableMultiStep patron account pool-tokens fee-lp amp p)
+                (ref-SWPI::PS|C_IssueStable patron account pool-tokens fee-lp amp p)
             )
         )
     )
@@ -224,9 +165,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPI:module{SwapperIssue} SWPI)
                 )
-                (ref-SWPU::PS|C_IssueStandardMultiStep patron account pool-tokens fee-lp p)
+                (ref-SWPI::PS|C_IssueStandard patron account pool-tokens fee-lp p)
             )
         )
     )
@@ -235,9 +176,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPI:module{SwapperIssue} SWPI)
                 )
-                (ref-SWPU::PS|C_IssueWeightedMultiStep patron account pool-tokens fee-lp weights p)
+                (ref-SWPI::PS|C_IssueWeighted patron account pool-tokens fee-lp weights p)
             )
         )
     )

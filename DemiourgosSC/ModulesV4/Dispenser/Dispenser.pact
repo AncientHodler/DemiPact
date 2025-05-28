@@ -235,7 +235,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (current-ouro-supply:decimal (ref-DPTF::UR_Supply ouro))
                 (op:integer (ref-DPTF::UR_Decimals ouro))
@@ -251,7 +251,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (wkda:string (ref-DALOS::UR_WrappedKadenaID))
                 (lkda:string (ref-DALOS::UR_LiquidKadenaID))
@@ -283,7 +283,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-SWPU:module{SwapperUsageV3} SWPU)
                 (id-in-kda:decimal (ref-SWPU::URC_SingleWorthDWK id))
                 (kda-price-in-dollars:decimal (UR_KDA))
@@ -296,7 +296,7 @@
     (defun URC_DailyKOSON (iz-game-live:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
                 ;;
                 (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
@@ -366,7 +366,7 @@
     (defun A_Step002 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
             )
             ;;
             (ref-TS01-A::DALOS|A_DeployStandardAccount DSP1|SC_NAME (keyset-ref-guard DSP|SC_KEY) DSP|SC_KDA-NAME DSP|PBL)
@@ -380,7 +380,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (dispenser:string DSP1|SC_NAME)
             )
@@ -391,7 +391,7 @@
         (let
             (
                 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
                 (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
                 (ancient-koson:string (ref-DPL|AOZ::UR_Assets 1 2))
@@ -438,9 +438,9 @@
                 (
                     (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                     (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     (ouro:string (ref-DALOS::UR_OuroborosID))
                     (op:integer (ref-DPTF::UR_Decimals ouro))
@@ -464,7 +464,7 @@
                 ;;Mints whole daily on Dispencer
                 (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON ouro dispenser daily false)
                 ;;Moves 10% To Treasury and 20% to Validators
-                (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON ouro dispenser [treasury validators] [s1-10p s1-20p] false)
+                (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON ouro dispenser [treasury validators] [s1-10p s1-20p])
                 ;;Uses 30% to Fuel the Auryndex
                 (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser auryndex ouro s1-30p)
                 ;;Uses 40% to Coil to Auryn and then use Auryn to Fuel Elite-Auryndex
@@ -487,9 +487,9 @@
                 (
                     (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                    (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                     ;;
                     (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
                     (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
@@ -510,7 +510,7 @@
                 (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON primordial-koson dispenser (at 0 daily) false)
                 (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON esoteric-koson dispenser (at 1 daily) false)
                 ;;Moves Primordial Kosons: 10% To Standard-Treasury, 20% to Smart-Treasury, 40% to Custodians(Validators)
-                (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON primordial-koson dispenser [standard-treasury validators] [ps10 ps40] false)
+                (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON primordial-koson dispenser [standard-treasury validators] [ps10 ps40])
                 (ref-TS01-C1::DPTF|C_Transfer GASLESS-PATRON primordial-koson dispenser smart-treasury ps20 true)
             )
         )
@@ -521,7 +521,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
                     (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     ;;
@@ -555,7 +555,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
                     (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                     ;;

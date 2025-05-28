@@ -256,7 +256,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (ref-DPTF::CAP_Owner id)
@@ -275,7 +275,7 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (orb-sc ORBR|SC_NAME)
                 (present-kda-balance:decimal (ref-coin::get-balance (ref-DALOS::UR_AccountKadena orb-sc)))
@@ -304,7 +304,7 @@
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
             (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
@@ -328,7 +328,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (enforce (>= ouro-amount 0.99) "Only amounts greater than or equal to 1.0 (1% conversion fee included) can be used to make gas!")
             (ref-DPTF::UEV_Amount (ref-DALOS::UR_OuroborosID) ouro-amount)
@@ -357,7 +357,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (orb-sc ORBR|SC_NAME)
 
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -388,8 +388,8 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (orbr-sc:string ORBR|SC_NAME)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -402,13 +402,13 @@
                 (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                     [
                         ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart Ouronet Account
-                        (ref-TFT::XB_FeelesTransfer ignis-id client orbr-sc ignis-amount true)
+                        (ref-TFT::C_Transfer ignis-id client orbr-sc ignis-amount true)
                         ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
                         (ref-DPTF::C_Burn ignis-id orbr-sc ignis-amount)
                         ;;03]Ouroboros mints OURO <ouro-remainder-amount>
                         (ref-DPTF::C_Mint ouro-id orbr-sc ouro-remainder-amount false)
                         ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
-                        (ref-TFT::XB_FeelesTransfer ouro-id orbr-sc client ouro-remainder-amount true)
+                        (ref-TFT::C_Transfer ouro-id orbr-sc client ouro-remainder-amount true)
                     ]
                     [ouro-remainder-amount]
                 )
@@ -421,7 +421,7 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
                 (orb-sc ORBR|SC_NAME)
@@ -461,8 +461,8 @@
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (orbr-sc:string ORBR|SC_NAME)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
@@ -477,13 +477,13 @@
                 (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                     [
                         ;;01]Client sends OURO <ouro-amount> to the Ouroboros Smart Ouronet Account
-                        (ref-TFT::XB_FeelesTransfer ouro-id client orbr-sc ouro-amount true)
+                        (ref-TFT::C_Transfer ouro-id client orbr-sc ouro-amount true)
                         ;;02]Ouroboros burns OURO <ouro-amount>
                         (ref-DPTF::C_Burn ouro-id orbr-sc ouro-amount)
                         ;;03]Ouroboros mints GAS(Ignis) <ignis-amount>
                         (ref-DPTF::C_Mint ignis-id orbr-sc ignis-amount false)
                         ;;04]Ouroboros transfers GAS(Ignis) <ignis-amount> to <target>
-                        (ref-TFT::XB_FeelesTransfer ignis-id orbr-sc target ignis-amount true)
+                        (ref-TFT::C_Transfer ignis-id orbr-sc target ignis-amount true)
                     ]
                     [ignis-amount]
                 )
@@ -496,8 +496,8 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (orbr-sc:string ORBR|SC_NAME)
                 (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id orbr-sc))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -510,7 +510,7 @@
                         ;;00]Compose base withdraw IGNIS Price
                         (ref-DALOS::UDC_ConstructOutputCumulatorV2 price orbr-sc trigger [])
                         ;;01]Patron withdraws Fees from Ouroboros Smart DALOS Account to a target Normal Ouronet Account
-                        (ref-TFT::XB_FeelesTransfer id orbr-sc target withdraw-amount true)
+                        (ref-TFT::C_Transfer id orbr-sc target withdraw-amount true)
                     ]
                     []
                 )

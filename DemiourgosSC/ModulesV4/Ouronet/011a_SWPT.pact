@@ -194,7 +194,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwp} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (swpair-tokens:[string] (ref-U|SWP::UC_TokensFromSwpairString swpair))
                 (has-principals:bool (URC_ContainsPrincipals swpair principals-lst))
                 (current-element-zero-swpairs:[string] (UC_PSwpairsFTO old-path-tracer id BAR principals-lst))
@@ -262,7 +262,7 @@
     (defun URC_ContainsPrincipals:bool (swpair:string principals-lst:[string])
         (let
             (
-                (ref-U|SWP:module{UtilitySwp} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (swpair-tokens:[string] (ref-U|SWP::UC_TokensFromSwpairString swpair))
             )
             (fold
@@ -333,7 +333,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwp} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (nodes:[string] (ref-U|SWP::UC_MakeGraphNodes input output swpairs))
             )
             (fold
@@ -356,7 +356,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwp} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (token-swpairs:[string] (URC_TokenSwpairs token-id principal-lst))
                 (unique-tokens:[string] (ref-U|SWP::UC_UniqueTokens token-swpairs))
             )
@@ -402,7 +402,7 @@
     (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])
         (let
             (
-                (ref-U|SWP:module{UtilitySwp} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (swp1:[string] (URC_TokenSwpairs t1 principal-lst))
                 (swp2:[string] (URC_TokenSwpairs t2 principal-lst))
                 (swps:[string] (+ swp1 swp2))
@@ -434,7 +434,7 @@
         (with-capability (SECURE)
             (let
                 (
-                    (ref-U|SWP:module{UtilitySwp} U|SWP)
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 )
                 (map
                     (lambda

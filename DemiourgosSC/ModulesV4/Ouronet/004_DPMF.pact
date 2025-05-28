@@ -792,7 +792,7 @@
     (defcap DPMF|C>UPDATE-SPECIAL (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (main-special-id:string
                     (if vesting-or-sleeping
                         (ref-DPTF::UR_Vesting main-dptf)
@@ -1169,7 +1169,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
@@ -1241,7 +1241,7 @@
             (enforce (!= fourth BAR) "Sleeping LP Tokens not allowed for this operation")
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (first-two:string (take 2 dpmf))
                 )
                 (if (= first-two "V|")
@@ -1258,7 +1258,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (fea:string (ref-DPTF::UR_Frozen ea-id))
                 (rea:string (ref-DPTF::UR_Reservation ea-id))
@@ -1277,7 +1277,7 @@
             \ While ensuring a Sleeping LP cant be used for this operation."
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (parent:string (URC_Parent dpmf))
             )
             (if (= parent dpmf)
@@ -1528,7 +1528,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (parent:string (URC_Parent entity-id))
                 (parent-owner:string
                     (if (= parent entity-id)
@@ -2031,7 +2031,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (if vesting-or-sleeping
                     (do

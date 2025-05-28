@@ -431,7 +431,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_UpdateTreasury type tdp tds)
             )
@@ -443,7 +443,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebt)
             )
@@ -455,7 +455,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebtPartial debt-to-be-wiped)
             )

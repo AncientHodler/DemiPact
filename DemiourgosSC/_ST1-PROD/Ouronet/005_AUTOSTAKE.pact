@@ -694,7 +694,7 @@
                 (ref-U|DEC:module{OuronetDecimals} U|DEC)
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (UEV_UpdateColdOrHot atspair true)
             (UEV_ParameterLockState atspair false)
@@ -828,7 +828,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DPTF::CAP_Owner reward-token)
             (UEV_IzTokenUnique atspair reward-token)
@@ -1036,7 +1036,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (fold
                 (lambda
@@ -1091,7 +1091,7 @@
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (index:decimal (URC_Index atspair))
                 (syphon:decimal (UR_Syphon atspair))
                 (resident-rt-amounts:[decimal] (UR_RoUAmountList atspair true))
@@ -1183,7 +1183,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (existance-check:bool (ref-DPTF::URC_IzRTg atspair reward-token))
             )
             (enforce (= existance-check true) (format "{} Existance isnt verified for Token {} as RT with ATS Pair {}" [true reward-token atspair]))
@@ -1207,7 +1207,7 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (positions:integer (UR_ColdRecoveryPositions atspair))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
@@ -1403,7 +1403,7 @@
     (defun URC_PairRBTSupply:decimal (atspair:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 (c-rbt-supply:decimal (ref-DPTF::UR_Supply c-rbt))
@@ -1423,7 +1423,7 @@
     (defun URC_RBT:decimal (atspair:string rt:string rt-amount:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (index:decimal (abs (URC_Index atspair)))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 (p-rbt:integer (ref-DPTF::UR_Decimals c-rbt))
@@ -1457,7 +1457,7 @@
     (defun UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (existance-check:bool (ref-DPTF::URC_IzRTg atspair reward-token))
             )
             (enforce (= existance-check existance) (format "{} Existance isnt verified for Token {} as RT with ATS Pair {}" [existance reward-token atspair]))
@@ -1466,7 +1466,7 @@
     (defun UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (existance-check:bool
                     (if cold-or-hot
@@ -1569,7 +1569,7 @@
     (defun UEV_IzTokenUnique (atspair:string reward-token:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (rtl:[string] (UR_RewardTokenList atspair))
             )
             (ref-DPTF::UEV_id reward-token)
@@ -1583,7 +1583,7 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-U|DALOS::UEV_Decimals index-decimals)
             (ref-DPTF::CAP_Owner reward-token)
@@ -1819,7 +1819,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (with-capability (P|SECURE-CALLER)
                 (ref-DPTF::XB_DeployAccountWNE id account)
@@ -1848,7 +1848,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (with-capability (P|SECURE-CALLER)
                 (ref-DPTF::XB_DeployAccountWNE id account)
@@ -1877,7 +1877,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (with-capability (P|SECURE-CALLER)
                 (ref-DPTF::XB_DeployAccountWNE id account)
@@ -1908,7 +1908,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (ats-sc:string ATS|SC_NAME)
                 (rt-lst:[string] (UR_RewardTokenList atspair))
@@ -2324,7 +2324,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (fold
                 (lambda
@@ -2368,7 +2368,7 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ats-sc:string ATS|SC_NAME)
                 (id:string (ref-U|DALOS::UDC_Makeid atspair))
@@ -2421,7 +2421,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ats-lst:[string] (ref-DPTF::UR_RewardBearingToken id))
             )
             (with-capability (SECURE)
@@ -2458,7 +2458,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (iz-rt:bool (ref-DPTF::URC_IzRT id))
                 (ats-lst:[string] (ref-DPTF::UR_RewardToken id))
@@ -2536,7 +2536,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (iz-rt:bool (ref-DPTF::URC_IzRT id))
             )
             (if iz-rt
@@ -2551,7 +2551,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (iz-rbt:bool (ref-DPTF::URC_IzRBT id))
             )
             (if iz-rbt
@@ -2569,7 +2569,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ats-sc:string ATS|SC_NAME)
                 (rt-lst:[string] (UR_RewardTokenList atspair))
             )

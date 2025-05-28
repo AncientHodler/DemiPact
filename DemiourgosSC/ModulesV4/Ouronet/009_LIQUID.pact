@@ -254,7 +254,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
                 (l-kda:string (ref-DALOS::UR_LiquidKadenaID))
             )
@@ -299,8 +299,8 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena unwrapper))
@@ -312,7 +312,7 @@
                         (output:object{OuronetDalosV3.OutputCumulatorV2}
                             (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                                 [
-                                    (ref-TFT::XB_FeelesTransfer w-kda-id unwrapper lq-sc amount true)
+                                    (ref-TFT::C_Transfer w-kda-id unwrapper lq-sc amount true)
                                     (ref-DPTF::C_Burn w-kda-id lq-sc amount)
                                 ]
                                 []
@@ -333,8 +333,8 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
@@ -347,7 +347,7 @@
                             (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                                 [
                                     (ref-DPTF::C_Mint w-kda-id lq-sc amount false)
-                                    (ref-TFT::XB_FeelesTransfer w-kda-id lq-sc wrapper amount true)
+                                    (ref-TFT::C_Transfer w-kda-id lq-sc wrapper amount true)
                                 ]
                                 []
                             )

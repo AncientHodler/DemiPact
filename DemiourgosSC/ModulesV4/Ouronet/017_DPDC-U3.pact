@@ -210,6 +210,27 @@
             )
         )
     )
+    (defun URDC_NewNonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
+        (
+            id:string sft-or-nft:bool nonce:integer
+            input-nonce-data:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+        )
+        (let
+            (
+                (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+            )
+            (if (< nonce 0)
+                (+
+                    {"split-data" : input-nonce-data}
+                    (remove "split-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
+                )
+                (+
+                    {"nonce-data" : input-nonce-data}
+                    (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
+                )
+            )
+        )
+    )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
@@ -300,10 +321,7 @@
                     ) 
                 )
                 (new-nonce-element:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (+
-                        {"nonce-data" : nonce-data-new}
-                        (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
-                    )
+                    (URDC_NewNonceElement id sft-or-nft nonce nonce-data-new)
                 )
             )
             (ref-DPDC::XE_UP|SftOrNft id sft-or-nft
@@ -340,10 +358,7 @@
                     ) 
                 )
                 (new-nonce-element:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (+
-                        {"nonce-data" : nonce-data-new}
-                        (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
-                    )
+                    (URDC_NewNonceElement id sft-or-nft nonce nonce-data-new)
                 )
             )
             (ref-DPDC::XE_UP|SftOrNft id sft-or-nft
@@ -376,10 +391,7 @@
                     ) 
                 )
                 (new-nonce-element:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (+
-                        {"nonce-data" : nonce-data-new}
-                        (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
-                    )
+                    (URDC_NewNonceElement id sft-or-nft nonce nonce-data-new)
                 )
             )
             (ref-DPDC::XE_UP|SftOrNft id sft-or-nft
@@ -409,10 +421,7 @@
                     )
                 )
                 (new-nonce-element:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (+
-                        {"nonce-data" : nonce-data-new}
-                        (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
-                    )
+                    (URDC_NewNonceElement id sft-or-nft nonce nonce-data-new)
                 )
             )
             (ref-DPDC::XE_UP|SftOrNft id sft-or-nft
@@ -442,10 +451,7 @@
                     )
                 )
                 (new-nonce-element:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
-                    (+
-                        {"nonce-data" : nonce-data-new}
-                        (remove "nonce-data" (ref-DPDC::UR_NonceElement id sft-or-nft nonce))
-                    )
+                    (URDC_NewNonceElement id sft-or-nft nonce nonce-data-new)
                 )
             )
             (ref-DPDC::XE_UP|SftOrNft id sft-or-nft

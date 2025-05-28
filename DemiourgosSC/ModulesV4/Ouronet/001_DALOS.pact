@@ -621,7 +621,11 @@
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
     (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
 )
-;;Interface v4 to add: nothing
+
+;;Interface v4 to add/remove
+;;RM UDC_TFTCumulatorV2
+;;AD UDC_SmallestCumulatorV2
+;;AD IGNIS|URC_ZeroEliteGAZ
 (module DALOS GOV
     ;;
     ;;Ouronet DALOS Gas-Station
@@ -704,8 +708,8 @@
                             (ref-U|G::UEV_GuardOfAny
                                 [
                                     (P|UR "TFT|RemoteDalosGov")
-                                    (P|UR "SWPU|RemoteDalosGov")
                                     (P|UR "TS01-A|RemoteDalosGov")
+                                    ;(P|UR "SWPU|RemoteDalosGov")
                                 ]
                             )
                         )
@@ -1015,8 +1019,8 @@
             )
             (enforce account-validation (format "Account {} isn't a valid DALOS Account" [account]))
             (enforce (= first sigma) (format "Account {} doesn|t have the corrrect Format for a Smart DALOS Account" [account]))
-            (UEV_EnforceAccountType sovereign false)
             (enforce-guard guard)
+            (UEV_EnforceAccountType sovereign false)
             (compose-capability (SECURE))
             ;(UTILS.UTILS|UEV_EnforceReserved kadena guard)
         )
@@ -1368,6 +1372,15 @@
     (defun IGNIS|URC_Exception (account:string)
         (contains account GAS_EXCEPTION)
     )
+    (defun IGNIS|URC_ZeroEliteGAZ (sender:string receiver:string)
+        (let
+            (
+                (t1:bool (IGNIS|URC_Exception sender))
+                (t2:bool (IGNIS|URC_Exception receiver))
+            )
+            (or t1 t2)
+        )
+    )
     (defun IGNIS|URC_ZeroGAZ:bool (id:string sender:string receiver:string)
         (let
             (
@@ -1377,6 +1390,7 @@
             (or t1 t2)
         )
     )
+    
     (defun IGNIS|URC_ZeroGAS:bool (id:string sender:string)
         (let
             (

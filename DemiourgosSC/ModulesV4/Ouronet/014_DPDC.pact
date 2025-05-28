@@ -204,6 +204,10 @@
     )
     ;;
     ;;Read Nonces
+    (defun UR_GetNoncePosition:integer (id:string sft-or-nft:bool nonce:integer)
+        (UEV_Nonce id sft-or-nft nonce)
+        (abs nonce)
+    )
     (defun UR_NonceElement:object{DemiourgosPactDigitalCollectibles.DPDC|NonceElementSchema}
         (id:string sft-or-nft:bool nonce:integer)
         (if sft-or-nft
@@ -215,11 +219,11 @@
         (at "nonce-value" (UR_NonceElement id sft-or-nft (abs nonce)))
     )
     (defun UR_NonceSetClass:integer (id:string sft-or-nft:bool nonce:integer)
-        ;(UEV_Nonce id sft-or-nft nonce)
+        (UEV_Nonce id sft-or-nft nonce)
         (at "nonce-set-class" (UR_NonceElement id sft-or-nft (abs nonce)))
     )
     (defun UR_NonceSupply:integer (id:string sft-or-nft:bool nonce:integer)
-        ;(UEV_Nonce id sft-or-nft nonce)
+        (UEV_Nonce id sft-or-nft nonce)
         (if (< nonce 0)
             FRG
             (at "nonce-supply" (UR_NonceElement id sft-or-nft nonce))
@@ -227,7 +231,7 @@
     )
     (defun UR_NonceData:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
         (id:string sft-or-nft:bool nonce:integer)
-        ;(UEV_Nonce id sft-or-nft nonce)
+        (UEV_Nonce id sft-or-nft nonce)
         (if (< nonce 0)
             (at "split-data" (UR_NonceElement id sft-or-nft (abs nonce)))
             (at "nonce-data" (UR_NonceElement id sft-or-nft nonce))
@@ -267,7 +271,6 @@
         (id:string sft-or-nft:bool nonce:integer)
         (at "uri-secondary" (UR_NonceData id sft-or-nft nonce))
     )
-    
     (defun UR_NonceUriThree:object{DemiourgosPactDigitalCollectibles.DC|URI|Schema} 
         (id:string sft-or-nft:bool nonce:integer)
         (at "uri-tertiary" (UR_NonceData id sft-or-nft nonce))
@@ -359,6 +362,9 @@
     )
     (defun UR_NoncesUsed:integer (id:string sft-or-nft:bool)
         (at "nonces-used" (UR_CollectionSpecs id sft-or-nft))
+    )
+    (defun UR_SetClassesUsed:integer (id:string sft-or-nft:bool)
+        (at "set-classes-used" (UR_CollectionSpecs id sft-or-nft))
     )
     ;;Read Existing Roles
     (defun UR_ER-AddQuantity:[string] (id:string)
@@ -508,7 +514,7 @@
                     (UDC_EmptyDataDC)
                 )
             )
-            (if (@= split-nonce-data empty-nonce-data)
+            (if (!= split-nonce-data empty-nonce-data)
                 true
                 false
             )
@@ -704,7 +710,7 @@
             owner-konto:string creator-konto:string name:string ticker:string
             can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
-            is-paused:bool nonces-used:integer
+            is-paused:bool nonces-used:integer set-classes-used:integer
         )
         {"owner-konto"                  : owner-konto
         ,"creator-konto"                : creator-konto
@@ -719,7 +725,8 @@
         ,"can-wipe"                     : can-wipe
         ,"can-pause"                    : can-pause
         ,"is-paused"                    : is-paused
-        ,"nonces-used"                  : nonces-used}
+        ,"nonces-used"                  : nonces-used
+        ,"set-classes-used"             : set-classes-used}
     )
     (defun UDC_Control:object{DemiourgosPactDigitalCollectibles.DPDC|PropertiesSchema}
         (id:string sft-or-nft:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
@@ -731,6 +738,7 @@
             cu cco ccc casr ctncr cf cw cp
             (UR_IsPaused id sft-or-nft)
             (UR_NoncesUsed id sft-or-nft)
+            (UR_SetClassesUsed id sft-or-nft)
         )
     )
     (defun UDC_ExistingRoles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}

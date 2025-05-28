@@ -577,3 +577,157 @@ XzwD5qC3BkGJnlAdohRBbPb0uu4DGNC8gPxoPCBL3OE
 
 Tx 177 [133.424 gas] ATS update
 D-CcbmUEqCg2m1x-vZx6h5jkhcsiowyylxImTy_5TLA
+
+Tx 178 [110.298 gas] TFT Update
+2BDiBwtIuU_x24Yt8JTVOC_iKJODdi4o5jXS194zTG0
+
+Tx 179 [127.142 gas] SWPU Update
+ilOUFY4er4kp7Zq0-WuNoN2Q1deYYAl7G-v3ODgolGE
+
+Tx 180 [65.717 gas] DSP and DSPV4 and DPL|UR update
+QWh_DyzFRzIEp15cxDDPfE2FXbOmtdSeXIdY5u32M_0
+
+================================
+Tx 181 [101.604 gas] Enable Add Liq and Remove 80% (8mil LP) of Liquiduity on Triple Kda Pool
+AgX37mprlrLAcOqgowXHuKDmKh5ClL-cAxSsgLb-98U
+
+Tx 182 [65.489 gas] Re-add the Kadena back into the pool, getting back 4 mil LP.
+ksx1MfRdlusdh2WHiyE5WEykhyiLESvB1T_-0k6Q6Sc
+
+Tx 183 [] Re-Add 12k OURO, getting back 3 mil LP.
+vgykSXEklBpZmTJZBkpDabX02mit-DIrXqZx6erQIQs
+
+Tx 183 [46.027 gas] Move back 36k OURO to Standard Treasury, then empty Standard Treasury to Smart Treasury
+Vsm4ZiPVAyM0o835sOWxI_argAjNgoBzfh7fuq8BNTk
+
+Tx 184 [30.020 gas] Update DPL-UR to add Price Display
+4Q8XxR0H16svk_-Uiei0tfYmIfefUCsXUe1Qcrt6UO4
+
+TX 185 [gas] Trasnfering a single OURO to show how TX works.
+V1 Costs
+vXyCm8IbPlDW3rFyX5MnqCwGOEnRMtwcNOMBrgWlSiM [26.707 gas] OURO (Smart Treasury to AH)
+SwwI5W5eVz2AMqGB_SLHowYIYeRNqtDvRuxaXY42YOg [22.066 gas] OURO (AH to EMMA)
+nQborKvNv8qqpRADB4UG7EYllRIIChCFNsMZlVebgrU [29.289 gas] EA (AH to EMMA)
+I8aHXq1T7TkfXaS4sQFMsLa4XlezoxYO4cAnAREkxA0 [28.626 gas] EA (EMMA to Smart Treasury)
+h0UwUIcFigehXt9grsKaqhf-jKB4BI4UBrnM_fegh1A [31.278 gas] EA (Smart Treasury to EMMA)
+
+V2 Costs
+ucPNfYsroFZX71m_nW24___p8gzkgmiBEX9KEHhy95g [23.778 gas] OURO (Smart Treasury to AH)
+DNdlhTmm8JEElMDhSy4-KpgXJHm3bjE1ZPpruAJmv5I [19.320 gas] OURO (AH to EMMA)
+HgNbnB-f17emY-E-wh1vjDgYMbahomlloKcaUuUqFNI [28.910 gas] EA (AH to EMMA)
+jqGlqyHz9VgOv-ttiKvk85K7cvkXgnwmvRLimJnzxVw [29.689 gas] EA (EMMA to Smart Treasury)
+UD6eXKgtADXZcmKl7UgT8sInXPaF0DvPiSTerbme7JE [32.343 gas] EA (Smart Treasury to EMMA)
+
+V3 Costs
+AUTONOMOUS
+++++++++++
+L2xTRH0mu9jrcFhZDr2-9af3ynsVHadYwMDOS7jaocM [23.413 gas] OURO (Smart Treasury to AH) (2 Ignis)
+JcgN8o4Q7ywdIDmAPdHg1TDCQ4G1GOdUQCYAqYMyq5A [18.775 gas] OURO (AH to EMMA) (1 Ignis)
+WvDv6_Q3Hh5u-POBL_sfu0vslWJ4krsVeymaNjZpxxo [29.857 gas] AURYN AH To Smart Treasury (1 Ignis)
+pvgP0F9cQvFwxc4UugO4KBEY7BLOFgjgrFoo5UJdLdw [32.623 gas] AURYN Smart Treasury to AH (2 Ignis)
+P6Hin8Kl83KQAzWQvpGb7ZBvWCyoBpOkcQ131p_qGdc [31.336 gas] EA (AH to EMMA - 1 Ignis, 2 Elite)
+VV7tIG5m3an_HqYrFr5udnJqU3PVQNEMQePwIm4EkoU [30.399 gas] EA (EMMA to SmTr- 1 Ignis, 1 Elite)
+LVY991gNrLCFq9L_nR7PU9lHre-dbYrDZoglEiO7_w0 [33.055 gas] EA (SmTr to EMMA- 2 Ignis, 1 Elite)
+========
+DISCRETE
+++++++++
+fa0S9oPzmZ0AXbtvFrm1NaUleqVneVqIgcKpzUYhOmA [23.147 gas] OURO (Smart Treasury to AH) (2 Ignis)
+UcAtJt0D85yQ71ZKw60SZ2QwVYQ-K6i2s9U1Q_eguEA [18.510 gas] OURO (AH to EMMA) (1 Ignis)
+COF5wC5yalHMlJ5I1NHxOIA_qcP_SeCK9AlUSnU_NRo [27.860 gas] AURYN AH To Smart Treasury (1 Ignis)
+X9uywTdW_OjcGgj-zV6vpIGUE7fqthj-jvbeFpTAl_k [30.518 gas] AURYN Smart Treasury to AH (2 Ignis)
+HoT_7OY17FuQ8KJJs6A-TpxgxexpAq7Mi1ywzAdquLw [29.053 gas] EA (AH to EMMA - 1 Ignis, 2 Elite)
+f05FrS2cVZtGrf-Td9Gr2qhFXpgw9CWzP-dVAQ9p6Ok [28.295 gas] EA (EMMA to SmTr- 1 Ignis, 1 Elite)
+rPKFSsRv8O4uOnuah2kOQ9AcAzc0c3ePGD7BoUgvGCU [30.948 gas] EA (SmTr to EMMA- 2 Ignis, 1 Elite)
+
+================================================================================================
+NEW TFT Architecture
+SVckcExMzJZWGZdYJNLB7MuoUka6GT4QaxoJdauSB9A [24.908 gas] OURO (Smart Treasury to AH) (2 Ignis)
+fQvwQWJhcPheKu18u3Hd-LUm9r0fwkYBZ3gQMB8AYVQ [20.273 gas] OURO (AH to EMMA) (1 Ignis)
+e-xvlSoPvbpHH_sv08KtNBOPCy-yKGod6S498NYSWI8 [20.695 gas] AURYN AH To Smart Treasury (1 Ignis)
+gtfScXSlA3yv0Vl7M97lnl5vnCsJuLCkRSSHrCvFR1Y [22.091 gas] AURYN Smart Treasury to AH (2 Ignis)
+EqW8kjI8yLn-1hlrBBV4iH2uksdRgc-ltLO08fRprh4 [29.277 gas] AURYN (AH to EMMA) (1 Ignis + Tr Fee)							
+tUbK6k77IjmRmuif_t2eKlhMYYJ6kzLfytULcp6eqQY [31.505 gas] EA (AH to EMMA - 1 Ignis, 2 Elite)
+3Ng7SXJan-HqNRH_0F1SWOi_yficUb7RZcEIDzH3bmY [23.210 gas] EA (EMMA to SmTr- 1 Ignis, 1 Elite)
+_nghk_lx5cQKtMVELD2AdoaQSUdVIoIVzaN-rs8ySPI [24.610 gas] EA (SmTr to EMMA- 2 Ignis, 1 Elite)
+
+
+Bulk 15 Elite Auryn
+tFQMo8BnOPOcYCqnH1Q3c6r3sxMneYP0ssPNslcsQLQ
+
+gmIKZFgeeVDGX9G40Jv4-496QpQ4eUB-lzvG7KAWs3M [] make some Auryn
+===============================
+Upload DPTF TransferV2
+Tx 186 [116.816 gas] TFT
+pmttV5fttQZejzqqJFX2vTfMLazEWiiqfowpIuxCM4o
+Tx 187 [] TS01-C1
+bz9IgwJa1i748x2dWikSSrGJQZHip41cobGiFuN_Nuw
+
+Tx 188 [137.223 gas] DPTF TransferV3
+FRncNXHbCueBdgpcVojErV3VczW2XUocWkfO3HtiWHQ
+Tx 189 [70.421 gas] TS01-C1
+uFrDZWPebOdC-Ujcfqr4KNWMAJkdAYva6SUBW5_UI08
+
+TrueFungibleTransfer Update
+===========================================
+TX 190 [103.573 gas] DALOS Update
+2qMs54RjIMMteDYAkFt4nAiYz8d083vCrTAlomXfygw
+TX 191 [] Toggle GAP true
+TX 192 [130.198 gas] DPTF Update and V4 Interface
+ZFQqtXGHNCR2WZpRhEsL8cS5YtVgYM7taHldfTo2X_o
+Tx 193 [116.689 gas] DPMF Update
+2MAtUXi5EJ-aAMuL9OQRCoVFswvRJraHUI8oNx7_xkQ
+Tx 194 [133.417 gas] ATS Update
+KwHY3ubEo_4E_5YlCBiaT9EVQo0xwWLzijPzLWq0qJg
+Tx 195 [130.591 gas] TFT and V5 Interface
+kinogRKa1wlB7QdQJUe4iESjDnbla1YDw0a3bRetSwg
+Tx 196 [105.089 gas] ATSU Update
+nVevns72rADGXW7LgFS8V5Un95J1Kj4ofwKYoKmw-oc
+Tx 197 [88.048 gas] VST Update
+TXIS-hPbJhe61-ESgFxJnltKT-WaHR1FzSnE8Yhy5I8
+Tx 198 [24.583 gas] LIQUID Update
+jgBmO3VkIereBCC3zK_QlzWAP2_H7TADPZf4JfykG38
+Tx 199 [35.826 gas] OUROBOROS Update
+OJRUjpP2b0UCcwlqe92_Ly1yfUIh4z0AZiD0rxkTVt0
+Tx 200 [88.053 gas ] SWP Update
+I-FGaOklitNWd3lchJBmbUCmxlxdpyndsv_MitFXFuk
+Tx 201 [127.449 gas] SWPU Update
+U6HuTgVsIMWuDo-ZDDnDB8aQHTVFj9WKErKHnrWgoXg
+
+Tx 201 [19.473 gas] TS01-A Update
+xBkX-E5wa4rpfyC9as5POXZ_Mtua2TA7F_5X4ScpqEk
+Tx 202 [70.647 gas] TS01-C1 Update and Interface
+vyLiohbAA2i8m6UUVa0lpkAabMh_MeWi0pOVHu7Xxjc
+Tx 203 [70.249] DPL-DALOS Update and V2 Interface
+tXIXD68kiL-CGTsAsK_uyomL7t_aEAhLyf2R0HJqJ4A
+Tx 204 [38.474] DPL-AOZ
+8M11SR8h2PFTuD3KA1WBRFFyIgoSmGbFw0ZvDnb7dg8
+Tx 205 [41.123 gas] DSP Update
+GnQ9Jqp-EtC3DcZ_DwQNpINoRq5dU16FSZhaXjjGTgM
+Tx 206 [32.253 gas] DPL-UR Update
+JG4joZ8tAenI6m7g1sZPHF00VpuUVezwAyYLIkGIP5k
+
+TFT MultiBulk Upgrade
+============================================
+Tx 207 [119.051 gas] TFT and V6 Interface
+55BrgasQyfue5KYkEYZafuzDiXh2d7ngGiUkBV5g6c4
+Tx 208 [104.970 gas] ATSU update
+rrSQr6I21Yo9R0ORv7fM-f-WlOkh1m4j_aKPLw9aFTg
+Tx 209 [87.912 gas] VST update
+YMiEh4cUn7ThtftG62UUfpKFDAQIg6IYPNiDaPGlm8A
+Tx 210 [24.432 gas] LIQUID update
+iblWSMMMFSCuZFOqAfO3u3jPi6Eb3R9By4l69o6_aUU
+Tx 211 [35.665 gas] OUROBOROS update
+pRZpp5O4iSV7xsm41ShCQzy7OSLr1uVSPmC0rM_TMf0
+Tx 212 [127.282 gas] SWPU update
+5KnPzfPRLWL-b4d6cNL5nlxgT9Phl3T0VsgNFr7rxHA
+
+Tx 213 [71.580 gas] TS01-C1 Update and Interface
+z8ZgDw3F6xg7VmKdaBIs_8PH5E3EaqbV3dy5oq4MvjU
+Tx 214 [69.445 gas] DPL-DALOS Update
+1JqaiDflaVUUhtcu3NqvmePJwZkDZ0x_cN_EzDE8G2Q
+Tx 215 [] DPL-AOZ, DSP, and DPL-UR update
+9AAQsVKr5L14UT8O77FFQ2O24zAGMT3U7EdJcyvgfMY
+
+
+
+

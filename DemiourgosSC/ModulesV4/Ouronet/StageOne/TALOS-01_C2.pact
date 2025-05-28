@@ -216,10 +216,9 @@
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
     (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
     ;;Liquidity
-    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
-    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
-    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
     (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
+    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
     ;;Swap
     (defun SWP|OPU|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage} kda-pid:decimal))
@@ -313,8 +312,10 @@
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
+                (ref-P|SWPI:module{OuronetPolicy} SWPI)
+                (ref-P|SWPL:module{OuronetPolicy} SWPL)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|ATS::P|A_AddIMP mg)
@@ -322,8 +323,11 @@
             (ref-P|VST::P|A_AddIMP mg)
             (ref-P|LIQUID::P|A_AddIMP mg)
             (ref-P|ORBR::P|A_AddIMP mg)
+
             (ref-P|SWPT::P|A_AddIMP mg)
             (ref-P|SWP::P|A_AddIMP mg)
+            (ref-P|SWPI::P|A_AddIMP mg)
+            (ref-P|SWPL::P|A_AddIMP mg)
             (ref-P|SWPU::P|A_AddIMP mg)
             (ref-P|TS01-A::P|A_AddIMP mg)
         )
@@ -370,10 +374,10 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-ATS:module{BrandingUsageV4} ATS)
+                    (ref-B|ATS:module{BrandingUsageV4} ATS)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-ATS::C_UpdatePendingBranding entity-id logo description website social)
+                    (ref-B|ATS::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
         )
@@ -383,10 +387,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{BrandingUsageV4} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-B|ATS:module{BrandingUsageV4} ATS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-ATS::C_UpgradeBranding patron entity-id months)
+                (ref-B|ATS::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
@@ -519,7 +523,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
@@ -727,7 +731,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-ATSU::C_ToggleParameterLock patron ats toggle)
                     )
@@ -818,7 +822,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-VST:module{VestingV3} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-VST::C_CreateFrozenLink patron dptf)
                     )
@@ -851,7 +855,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-VST:module{VestingV3} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-VST::C_CreateReservationLink patron dptf)
                     )
@@ -883,7 +887,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-VST:module{VestingV3} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-VST::C_CreateVestingLink patron dptf)
                     )
@@ -915,7 +919,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-VST:module{VestingV3} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-VST::C_CreateSleepingLink patron dptf)
                     )
@@ -1114,7 +1118,7 @@
                     (ref-ATS:module{AutostakeV3} ATS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                     (ref-VST:module{VestingV3} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
                     (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 curl-token amount))
                     (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
@@ -1341,10 +1345,10 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{BrandingUsageV4} SWP)
+                    (ref-B|SWP:module{BrandingUsageV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-SWP::C_UpdatePendingBranding entity-id logo description website social)
+                    (ref-B|SWP::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
         )
@@ -1354,10 +1358,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP:module{BrandingUsageV4} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-B|SWP:module{BrandingUsageV4} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-SWP::C_UpgradeBranding patron entity-id months)
+                (ref-B|SWP::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
@@ -1371,10 +1375,10 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{BrandingUsageV5} SWPU)
+                    (ref-B|SWPL:module{BrandingUsageV5} SWPL)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-SWPU::C_UpdatePendingBrandingLPs swpair entity-pos logo description website social)
+                    (ref-B|SWPL::C_UpdatePendingBrandingLPs swpair entity-pos logo description website social)
                 )
             )
         )
@@ -1384,10 +1388,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPU:module{BrandingUsageV5} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-B|SWPL:module{BrandingUsageV5} SWPL)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-SWPU::C_UpgradeBrandingLPs patron swpair entity-pos months)
+                (ref-B|SWPL::C_UpgradeBrandingLPs patron swpair entity-pos months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
@@ -1398,8 +1402,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWP:module{SwapperV4} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_ChangeOwnership swpair new-owner)
@@ -1413,8 +1417,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWP:module{SwapperV4} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-SWP::C_EnableFrozenLP patron swpair)
                     )
@@ -1431,8 +1435,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWP:module{SwapperV4} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-SWP::C_EnableSleepingLP patron swpair)
                     )
@@ -1453,11 +1457,11 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWPI:module{SwapperIssue} SWPI)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights amp p)
+                        (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights amp p)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1482,10 +1486,10 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWPI:module{SwapperIssue} SWPI)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPI|C_Issue patron account pool-tokens fee-lp weights -1.0 p)
+                        (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1500,7 +1504,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_ModifyCanChangeOwner swpair new-boolean)
@@ -1514,7 +1518,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_ModifyWeights swpair new-weights)
@@ -1536,10 +1540,10 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-SWPU::C_ToggleAddLiquidity swpair toggle)
+                    (ref-SWPL::C_ToggleAddLiquidity swpair toggle)
                 )
             )
         )
@@ -1555,7 +1559,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWPU::C_ToggleSwapCapability swpair toggle)
@@ -1570,8 +1574,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                    (ref-SWP:module{SwapperV4} SWP)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
                     )
@@ -1588,7 +1592,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_UpdateAmplifier swpair amp)
@@ -1598,7 +1602,7 @@
     )
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool)
         @doc "Updates Fees Values for an SWPair \
-            \ The <lp-or-special> boolesn defines whether its the LP-Fee or Special-Fee that is changed \
+            \ The <lp-or-special> boolean defines whether its the LP-Fee or Special-Fee that is changed \
             \ THe LP Fee is the amount of Swap Output kept by the Liquidity Pool, increasing the Value of its LP Token(s) \
             \ The Special-Fee is the Fee that is collected to the Special-Fee-Targets \
             \ The Fee must be between 0.0001 - 320.0 (promile, that would be 32%) \
@@ -1609,7 +1613,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_UpdateFee swpair new-fee lp-or-special)
@@ -1623,7 +1627,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWP:module{SwapperV3} SWP)
+                    (ref-SWP:module{SwapperV4} SWP)
                 )
                 (ref-DALOS::IGNIS|C_Collect patron
                     (ref-SWP::C_UpdateSpecialFeeTargets swpair targets)
@@ -1632,32 +1636,15 @@
         )
     )
     ;;
-    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal)
-        @doc "Using input only an <input-id> and its <input-amount> \
-            \ Adds Liquidity in a balanced mode, on the <swpair>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPL|C_AddBalancedLiquidity account swpair input-id input-amount)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
     (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)
         @doc "Adds liquidity with a <frozen-dptf> Token to an <swpair>"
         (with-capability (P|TS)
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPL|C_AddFrozenLiquidity account swpair frozen-dptf input-amount)
+                        (ref-SWPL::C_AddFrozenLiquidity account swpair frozen-dptf input-amount)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1671,13 +1658,30 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPL|C_AddSleepingLiquidity account swpair sleeping-dpmf nonce)
+                        (ref-SWPL::C_AddSleepingLiquidity account swpair sleeping-dpmf nonce)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
                 (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun SWP|C_Fuel
+        (patron:string account:string swpair:string input-amounts:[decimal])
+        @doc "Fuels the <swpair> with <input-amounts> of Tokens. \
+        \ Must contain values for all pool tokens, with zero for Tokens that arent used \
+        \ Fueling increases Liquidity without issuing LP, therefore increasing LP Value"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
+                )
+                (ref-DALOS::IGNIS|C_Collect patron
+                    (ref-SWPL::C_Fuel account swpair input-amounts true true)
+                )
             )
         )
     )
@@ -1694,9 +1698,9 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPL|C_AddLiquidity account swpair input-amounts)
+                        (ref-SWPL::C_AddLiquidity account swpair input-amounts)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1712,9 +1716,9 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPL|C_RemoveLiquidity account swpair lp-amount)
+                        (ref-SWPL::C_RemoveLiquidity account swpair lp-amount)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1742,10 +1746,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|OPU|C_MultiSwap patron account swpair input-ids input-amounts output-id slippage kda-pid)
+                        (ref-SWPU::OPU|C_MultiSwap account swpair dsid slippage kda-pid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1767,10 +1775,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|OPU|C_MultiSwapNoSlippage patron account swpair input-ids input-amounts output-id kda-pid)
+                        (ref-SWPU::OPU|C_MultiSwapNoSlippage account swpair dsid kda-pid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1794,10 +1806,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|OPU|C_SimpleSwap patron account swpair input-id input-amount output-id slippage kda-pid)
+                        (ref-SWPU::OPU|C_SimpleSwap account swpair dsid slippage kda-pid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1819,10 +1835,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|OPU|C_SimpleSwapNoSlippage patron account swpair input-id input-amount output-id kda-pid)
+                        (ref-SWPU::OPU|C_SimpleSwapNoSlippage account swpair dsid kda-pid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1846,10 +1866,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|C_MultiSwap patron account swpair input-ids input-amounts output-id slippage)
+                        (ref-SWPU::C_MultiSwap account swpair dsid slippage)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1870,10 +1894,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|C_MultiSwapNoSlippage patron account swpair input-ids input-amounts output-id)
+                        (ref-SWPU::C_MultiSwapNoSlippage account swpair dsid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1896,10 +1924,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|C_SimpleSwap patron account swpair input-id input-amount output-id slippage)
+                        (ref-SWPU::C_SimpleSwap account swpair dsid slippage)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)
@@ -1920,10 +1952,14 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV3} SWPU)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
+                    )
                     (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::SWPS|C_SimpleSwapNoSlippage patron account swpair input-id input-amount output-id)
+                        (ref-SWPU::C_SimpleSwapNoSlippage account swpair dsid)
                     )
                 )
                 (ref-DALOS::IGNIS|C_Collect patron ico)

@@ -154,7 +154,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -217,7 +217,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DPTF::UEV_id tf)
             (with-read AOZ|Assets AOZ|INFO
@@ -307,7 +307,7 @@
     (defun A_Step002:[string] ()
         (let
             (
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (tf-ids:[string]
                     (ref-TS01-C1::DPTF|C_Issue
@@ -340,7 +340,7 @@
     (defun A_Step003 ()
         (let
             (
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (PlebiumDenariusID:string (UR_Assets 1 3))
                 (ComatusAureusID:string (UR_Assets 1 4))
@@ -378,7 +378,7 @@
     (defun A_Step004:[string] ()
         (let*
             (
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (mf-ids:[string]
                     (ref-TS01-C1::DPMF|C_Issue
@@ -608,7 +608,7 @@
     (defun A_Step014 ()
         (let
             (
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))

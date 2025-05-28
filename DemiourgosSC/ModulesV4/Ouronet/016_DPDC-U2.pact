@@ -118,11 +118,11 @@
                     (let
                         (
                             (nonce-amount:integer (at idx amount))
-                            (royalty:decimal (at "royalty" (at idx ind)))
-                            (ignis:decimal (at "ignis" (at idx ind)))
+                            (input-nonce-data:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+                                (at idx ind)
+                            )
                         )
-                        (ref-DPDC::UEV_Royalty royalty)     ;; Royalty can be set at -1.0 enabling Volumetric Royalty Fee.
-                        (ref-DPDC::UEV_IgnisRoyalty ignis)
+                        (UEV_NonceDataForCreation input-nonce-data)
                         ;;Amount enforcement
                         (if sft-or-nft
                             (enforce (>= nonce-amount 1) (format "For an SFT Collectable the {} must be greater or equal to 1" [amount]))
@@ -132,6 +132,7 @@
                 )
                 (enumerate 0 (- l2 1))
             )
+            (ref-DPDC::CAP_Owner id sft-or-nft)
         )
     )
     ;;Credit
@@ -175,7 +176,6 @@
     )
     ;;{C3}
     ;;{C4}
-    
     ;;
     (defcap DPDC|C>CREATE-NONCE
         (id:string sft-or-nft:bool amount:integer ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema})
@@ -203,6 +203,44 @@
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
+    (defun UEV_NonceDataForCreation (ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema})
+        @doc "Validates the ind for creation of new nonce"
+        (let
+            (
+                (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                ;;
+                (empty-data-dc:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+                    (ref-DPDC::UDC_EmptyDataDC)
+                )
+                (royalty:decimal (at "royalty" ind))
+                (ignis:decimal (at "ignis" ind))
+            )
+            (enforce (!= empty-data-dc ind) "Incorrect Fragmentation Data")
+            (ref-DPDC::UEV_Royalty royalty)     ;; Royalty can be set at -1.0 enabling Volumetric Royalty Fee.
+            (ref-DPDC::UEV_IgnisRoyalty ignis)
+        )
+    )
+    (defcap DPDC|C>FRAGMENT
+        (
+            id:string sft-or-nft:bool nonce:integer
+            fragmentation-ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+        )
+        @event
+        (let
+            (
+                (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
+                ;;
+                (iz-fragmented:bool (ref-DPDC::UEV_IzNonceFragmented id sft nonce))
+                (empty-data-dc:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+                    (ref-DPDC::UDC_EmptyDataDC)
+                )
+            )
+            (enforce (not iz-fragmented) "Nonce must not be fragmented")
+            (UEV_NonceDataForCreation fragmentation-ind)
+            (ref-DPDC::UEV_Nonce id sft-or-nft nonce)
+            (ref-DPDC::CAP_Owner id sft-or-nft)
+        )
+    )
     ;;{F6}  [C]
     ;;
     (defun C_CreateNewNonce:object{OuronetDalosV3.OutputCumulatorV2}
@@ -222,6 +260,15 @@
         )
         (with-capability (DPDC|C>CREATE-NONCES id sft-or-nft amount ind)
             (XI_CreateCollectableNonces id sft-or-nft (make-list (length ind) 0) amount ind)
+        )
+    )
+    (defun C_EnableNonceFragmentation:object{OuronetDalosV3.OutputCumulatorV2}
+        (
+            id:string sft-or-nft:bool nonce:integer
+            fragmentation-ind:object{DemiourgosPactDigitalCollectibles.DC|DataSchema}
+        )
+        (with-capability (DPDC|C>FRAGMENT id sft-or-nft nonce fragmentation-ind)
+            (XI_FragmentNonce id sft-or-nft nonce fragmentation-ind)
         )
     )
     ;;{F7}  [X]

@@ -570,7 +570,7 @@
                         owner-account creator-account collection-name collection-ticker
                         can-upgrade can-change-owner can-change-creator can-add-special-role
                         can-transfer-nft-create-role can-freeze can-wipe can-pause
-                        false 0
+                        false 0 0
                     )
                 )
                 (existing-roles:object{DemiourgosPactDigitalCollectibles.DPDC|RolesStorageSchema}

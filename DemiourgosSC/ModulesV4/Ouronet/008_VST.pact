@@ -203,7 +203,8 @@
                             (ref-U|G::UEV_GuardOfAny
                                 [
                                     (create-capability-guard (VST|GOV))
-                                    (P|UR "SWPU|RemoteSwpGov")
+                                    (P|UR "SWPL|RemoteSwpGov")
+                                    ;(P|UR "SWPI|RemoteSwpGov")
                                 ]
                             )
                         )
@@ -327,7 +328,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType freeze-output false)
             (ref-DALOS::CAP_EnforceAccountOwnership freezer)
@@ -347,7 +348,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (iz-reservation:bool (ref-DPTF::UR_IzReservationOpen dptf))
             )
             (ref-DALOS::UEV_EnforceAccountType reserver false)
@@ -364,7 +365,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (dptf:string (ref-DPTF::UR_Reservation r-dptf))
             )
             (ref-DALOS::UEV_EnforceAccountType unreserver true)
@@ -385,7 +386,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType vester false)
             (ref-DALOS::UEV_EnforceAccountType target-account false)
@@ -421,7 +422,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target-account false)
             (ref-DALOS::CAP_EnforceAccountOwnership sleeper)
@@ -436,7 +437,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (initial-amount:decimal (ref-DPMF::UR_AccountNonceBalance dpmf nonce unsleeper))
                 (dptf:string (ref-DPMF::UR_Sleeping dpmf))
@@ -501,7 +502,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (dptf:string
                     (if frozen-or-reserved
                         (ref-DPTF::UR_Frozen dptf-to-repurpose)
@@ -529,7 +530,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (dptf:string
                     (if vesting-or-sleeping
@@ -548,7 +549,7 @@
     (defcap VST|C>LINK (dptf:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DPTF::CAP_Owner dptf)
         )
@@ -565,7 +566,7 @@
     (defcap VST|X>TOGGLE-SDPTF-TR (s-dptf:string target:string frozen-or-reserved:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (dptf:string
                     (if frozen-or-reserved
                         (ref-DPTF::UR_Frozen s-dptf)
@@ -582,7 +583,7 @@
     (defcap VST|C>TOGGLE-SLEEPING-TR (s-dpmf:string target:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (dptf:string (ref-DPMF::UR_Sleeping s-dpmf))
                 (vst-sc:string VST|SC_NAME)
@@ -784,7 +785,7 @@
     (defun UEV_SpecialTokenRole (dptf:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (vst-sc:string VST|SC_NAME)
                 (t:bool (ref-DPTF::UR_AccountRoleFeeExemption dptf vst-sc))
             )
@@ -797,7 +798,7 @@
         (let
             (
                 (ref-U|VST:module{UtilityVst} U|VST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (amount-lst:[decimal] (ref-U|VST::UC_SplitBalanceForVesting (ref-DPTF::UR_Decimals dptf) amount milestones))
                 (date-lst:[time] (ref-U|VST::UC_MakeVestingDateList offset duration milestones))
                 (meta-data:[object{VestingV3.VST|MetaDataSchema}] (zip (lambda (x:decimal y:time) { "release-amount": x, "release-date": y }) amount-lst date-lst))
@@ -848,8 +849,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (f-dptf:string (ref-DPTF::UR_Frozen dptf))
                 )
@@ -857,13 +858,13 @@
                     [
                         ;;1]Freezer sends dptf to VST|SC_NAME, if its not already there
                         (if (!= freezer vst-sc)
-                            (ref-TFT::XB_FeelesTransfer dptf freezer vst-sc amount true)
+                            (ref-TFT::C_Transfer dptf freezer vst-sc amount true)
                             EOC
                         )
                         ;;2]VST|SC_NAME mints F|dptf
                         (ref-DPTF::C_Mint f-dptf vst-sc amount false)
                         ;;3|VST|SC_Name sends F|dptf to freeze-output
-                        (ref-TFT::XB_FeelesTransfer f-dptf vst-sc freeze-output amount true)
+                        (ref-TFT::C_Transfer f-dptf vst-sc freeze-output amount true)
                     ]
                     []
                 )
@@ -883,7 +884,7 @@
         (with-capability (VST|C>TOGGLE-FROZEN_TR s-dptf target)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::C_ToggleTransferRole s-dptf target toggle)
             )
@@ -897,8 +898,8 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (r-dptf:string (ref-DPTF::UR_Reservation dptf))
                 )
@@ -906,13 +907,13 @@
                     [
                         ;;1]Reserver sends dptf to VST|SC_NAME if its not already tehre
                         (if (!= reserver vst-sc)
-                            (ref-TFT::XB_FeelesTransfer dptf reserver vst-sc amount true)
+                            (ref-TFT::C_Transfer dptf reserver vst-sc amount true)
                             EOC
                         )
                         ;;2]VST|SC_NAME mint R|dptf
                         (ref-DPTF::C_Mint r-dptf vst-sc amount false)
                         ;;3]VST|SC_NAME sends R|dptf to reserver
-                        (ref-TFT::XB_FeelesTransfer r-dptf vst-sc reserver amount true)
+                        (ref-TFT::C_Transfer r-dptf vst-sc reserver amount true)
                     ]
                     []
                 )
@@ -926,19 +927,19 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dptf:string (ref-DPTF::UR_Reservation r-dptf))
                 )
                 (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                     [
                         ;;1]Unreserver sends R|dptf to VST|SC_NAME
-                        (ref-TFT::XB_FeelesTransfer r-dptf unreserver vst-sc amount true)
+                        (ref-TFT::C_Transfer r-dptf unreserver vst-sc amount true)
                         ;;2]VST|SC_NAME burns R|dptf
                         (ref-DPTF::C_Burn r-dptf vst-sc amount)
                         ;;3]VST|SC_NAME sends dptf back to unreserver
-                        (ref-TFT::XB_FeelesTransfer dptf vst-sc unreserver amount true)
+                        (ref-TFT::C_Transfer dptf vst-sc unreserver amount true)
                     ]
                     []
                 )
@@ -958,7 +959,7 @@
         (with-capability (VST|C>TOGGLE-RESERVED_TR s-dptf target)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::C_ToggleTransferRole s-dptf target toggle)
             )
@@ -973,7 +974,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dptf-id:string (ref-DPMF::UR_Vesting dpmf))
                     (initial-amount:decimal (ref-DPMF::UR_AccountNonceBalance dpmf nonce unvester))
@@ -993,11 +994,11 @@
                     (ico2:object{OuronetDalosV3.OutputCumulatorV2}
                         (if (= return-amount 0.0)
                             ;;1]VST|SC_NAME transfers the whole dptf back to the unvester, when there is no return amount
-                            (ref-TFT::XB_FeelesTransfer dptf-id vst-sc unvester initial-amount true)
+                            (ref-TFT::C_Transfer dptf-id vst-sc unvester initial-amount true)
                             (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
                                 [
                                     ;;1]Only the ready to unvest dptf is trasnfered back to unvester
-                                    (ref-TFT::XB_FeelesTransfer dptf-id vst-sc unvester culled-amount true)
+                                    (ref-TFT::C_Transfer dptf-id vst-sc unvester culled-amount true)
                                     ;;2]If return amount is non zero, it is minted as a new DPMF
                                     (ref-DPMF::C_Mint dpmf vst-sc return-amount md-remint)
                                     ;;3]Together with the newly minted remainder, still vested, dpmf
@@ -1032,9 +1033,9 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dpmf-id:string (ref-DPTF::UR_Vesting dptf))
                     (meta-data:[object{VestingV3.VST|MetaDataSchema}] (UDC_ComposeVestingMetaData dptf amount offset duration milestones))
@@ -1046,7 +1047,7 @@
                         (ref-DPMF::C_Mint dpmf-id vst-sc amount meta-data)
                         ;;2]Vester transfers the DPTF Token to the VST|SC_NAME if its not already there
                         (if (!= vester vst-sc)
-                            (ref-TFT::XB_FeelesTransfer dptf vester vst-sc amount true)
+                            (ref-TFT::C_Transfer dptf vester vst-sc amount true)
                             EOC
                         )
                         ;;3]VST|SC_NAME transfers the DPMF Vested Token to target-account
@@ -1092,9 +1093,9 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dpmf-id:string (ref-DPTF::UR_Sleeping dptf))
                     (meta-data:[object{VestingV3.VST|MetaDataSchema}] (UDC_ComposeVestingMetaData dptf amount 0 duration 1))
@@ -1106,7 +1107,7 @@
                         (ref-DPMF::C_Mint dpmf-id vst-sc amount meta-data)
                         ;;2]Sleeper transfers the DPTF Token to the VST|SC_NAME if its not already there
                         (if (!= sleeper vst-sc)
-                            (ref-TFT::XB_FeelesTransfer dptf sleeper vst-sc amount true)
+                            (ref-TFT::C_Transfer dptf sleeper vst-sc amount true)
                             EOC
                         )
                         ;;3]VST|SC_NAME transfers the DPMF Sleeping Token to target-account
@@ -1125,7 +1126,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (vst-sc:string VST|SC_NAME)
                     (dptf-id:string (ref-DPMF::UR_Sleeping dpmf))
                     (initial-amount:decimal (ref-DPMF::UR_AccountNonceBalance dpmf nonce unsleeper))
@@ -1137,7 +1138,7 @@
                         ;;2]Which is then burned in its entirety
                         (ref-DPMF::C_Burn dpmf nonce vst-sc initial-amount)
                         ;;3]VST|SC_NAME transfers in return the initial amount of the dpmf, as the dptf counterpart
-                        (ref-TFT::XB_FeelesTransfer dptf-id vst-sc unsleeper initial-amount true)
+                        (ref-TFT::C_Transfer dptf-id vst-sc unsleeper initial-amount true)
                     ]
                     []
                 )
@@ -1191,7 +1192,7 @@
             (
                 (ref-U|VST:module{UtilityVst} U|VST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (vst-sc:string VST|SC_NAME)
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
                 (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
@@ -1270,7 +1271,7 @@
             (
                 (ref-U|VST:module{UtilityVst} U|VST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (vst-sc:string VST|SC_NAME)
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
@@ -1347,8 +1348,8 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (amount:decimal (ref-DPTF::UR_AccountSupply dptf-to-repurpose repurpose-from))
                 (vst-sc:string VST|SC_NAME)
             )
@@ -1363,7 +1364,7 @@
                     ;;4]Mint <dptf-to-repurpose> anew
                     (ref-DPTF::C_Mint dptf-to-repurpose vst-sc amount false)
                     ;;5]Transfer it to <repurpose-to>
-                    (ref-TFT::XB_FeelesTransfer dptf-to-repurpose vst-sc repurpose-to amount true)
+                    (ref-TFT::C_Transfer dptf-to-repurpose vst-sc repurpose-to amount true)
                 ]
                 []
             )
@@ -1404,7 +1405,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (vst-sc:string VST|SC_NAME)
                 (dptf:string (ref-DPMF::UR_Sleeping dpmf))
                 (nonces-balances:[decimal] (ref-DPMF::UR_AccountNoncesBalances dpmf nonces merger))
@@ -1433,7 +1434,7 @@
                         ;;3]Unfreeze <merger>
                         (ref-DPMF::C_ToggleFreezeAccount dpmf merger false)
                         ;;4]Retrieve the <wake-amount> to <target>
-                        (ref-TFT::XB_FeelesTransfer dptf VST|SC_NAME target wake-amount true)
+                        (ref-TFT::C_Transfer dptf VST|SC_NAME target wake-amount true)
                         ;;5]Add Merging IGNIS Costs
                         ico-mic
                     ]
@@ -1461,7 +1462,7 @@
                             (ref-DPMF::C_ToggleFreezeAccount dpmf merger false)
                             ;;4]Retrieve the <wake-amount> to <target> if its greater than zero
                             (if (> wake-amount 0.0)
-                                (ref-TFT::XB_FeelesTransfer dptf VST|SC_NAME target wake-amount true)
+                                (ref-TFT::C_Transfer dptf VST|SC_NAME target wake-amount true)
                                 EOC
                             )
                             ;;5]Retrieve the minted <dpmf> to <target>

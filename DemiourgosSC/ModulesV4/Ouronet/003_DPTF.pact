@@ -415,11 +415,150 @@
     (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool))
     (defun XE_UpdateRewardToken (atspair:string id:string direction:bool))
 )
+(interface DemiourgosPactTrueFungibleV4
+    @doc "Exposes most of the Functions of the DPTF Module. \
+    \ Later deployed modules (ATS and TFT), contain the rest of the DPTF Functions \
+    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
+    \ are NOT sorted alphabetically \ 
+    \ \
+    \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
+    \ Removes the 2 Branding Functions from this Interface, since they are in their own interface \
+    \ \
+    \ V3 Removes <patron> input variable where it is not needed \
+    \ V4 Removes <URC_TrFeeMinExc> <UEV_EnforceMinimumAmount>"
+    ;;
+    ;;
+    (defun UC_VolumetricTax (id:string amount:decimal))
+    (defun UC_TreasuryLowestDispo (ouro-supply:decimal ouro-precision:integer dispo-type:integer tdp:decimal tds:decimal))
+    ;;
+    (defun UR_P-KEYS:[string] ())
+    (defun UR_KEYS:[string] ())
+    ;;
+    (defun UR_Konto:string (id:string))
+    (defun UR_Name:string (id:string))
+    (defun UR_Ticker:string (id:string))
+    (defun UR_Decimals:integer (id:string))
+    (defun UR_CanChangeOwner:bool (id:string))
+    (defun UR_CanUpgrade:bool (id:string))
+    (defun UR_CanAddSpecialRole:bool (id:string))
+    (defun UR_CanFreeze:bool (id:string))
+    (defun UR_CanWipe:bool (id:string))
+    (defun UR_CanPause:bool (id:string))
+    (defun UR_Paused:bool (id:string))
+    (defun UR_Supply:decimal (id:string))
+    (defun UR_OriginMint:bool (id:string))
+    (defun UR_OriginAmount:decimal (id:string))
+    (defun UR_TransferRoleAmount:integer (id:string))
+    (defun UR_FeeToggle:bool (id:string))
+    (defun UR_MinMove:decimal (id:string))
+    (defun UR_FeePromile:decimal (id:string))
+    (defun UR_FeeTarget:string (id:string))
+    (defun UR_FeeLock:bool (id:string))
+    (defun UR_FeeUnlocks:integer (id:string))
+    (defun UR_PrimaryFeeVolume:decimal (id:string))
+    (defun UR_SecondaryFeeVolume:decimal (id:string))
+    (defun UR_RewardToken:[string] (id:string))
+    (defun UR_RewardBearingToken:[string] (id:string))
+    (defun UR_Vesting:string (id:string))
+    (defun UR_Sleeping:string (id:string))
+    (defun UR_Frozen:string (id:string))
+    (defun UR_Reservation:string (id:string))
+    (defun UR_IzReservationOpen:bool (id:string))
+    (defun UR_Roles:[string] (id:string rp:integer))
+    (defun UR_AccountSupply:decimal (id:string account:string))
+    (defun UR_AccountRoleBurn:bool (id:string account:string))
+    (defun UR_AccountRoleMint:bool (id:string account:string))
+    (defun UR_AccountRoleTransfer:bool (id:string account:string))
+    (defun UR_AccountRoleFeeExemption:bool (id:string account:string))
+    (defun UR_AccountFrozenState:bool (id:string account:string))
+    ;;
+    (defun URC_IzRT:bool (reward-token:string))
+    (defun URC_IzRTg:bool (atspair:string reward-token:string))
+    (defun URC_IzRBT:bool (reward-bearing-token:string))
+    (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
+    (defun URC_IzCoreDPTF:bool (id:string))
+    (defun URC_AccountExist:bool (id:string account:string))
+    (defun URC_Fee:[decimal] (id:string amount:decimal))
+    (defun URC_HasVesting:bool (id:string))
+    (defun URC_HasSleeping:bool (id:string))
+    (defun URC_HasFrozen:bool (id:string))
+    (defun URC_HasReserved:bool (id:string))
+    (defun URC_Parent:string (dptf:string))
+    (defun URC_TreasuryLowestDispo:decimal ())
+    ;;
+    (defun UEV_ParentOwnership (dptf:string))
+    (defun UEV_id (id:string))
+    (defun UEV_CheckID:bool (id:string))
+    (defun UEV_Amount (id:string amount:decimal))
+    (defun UEV_CheckAmount:bool (id:string amount:decimal))
+    (defun UEV_CanChangeOwnerON (id:string))
+    (defun UEV_CanUpgradeON (id:string))
+    (defun UEV_CanAddSpecialRoleON (id:string))
+    (defun UEV_CanFreezeON (id:string))
+    (defun UEV_CanWipeON (id:string))
+    (defun UEV_CanPauseON (id:string))
+    (defun UEV_PauseState (id:string state:bool))
+    (defun UEV_AccountBurnState (id:string account:string state:bool))
+    (defun UEV_AccountTransferState (id:string account:string state:bool))
+    (defun UEV_AccountFreezeState (id:string account:string state:bool))
+    (defun UEV_Virgin (id:string))
+    (defun UEV_FeeLockState (id:string state:bool))
+    (defun UEV_FeeToggleState (id:string state:bool))
+    (defun UEV_AccountMintState (id:string account:string state:bool))
+    (defun UEV_AccountFeeExemptionState (id:string account:string state:bool))
+    (defun UEV_Vesting (id:string existance:bool))
+    (defun UEV_Sleeping (id:string existance:bool))
+    (defun UEV_Frozen (id:string existance:bool))
+    (defun UEV_Reserved (id:string existance:bool))
+    ;;
+    ;;
+    (defun CAP_Owner (id:string))
+    ;;
+    (defun A_UpdateTreasury (type:integer tdp:decimal tds:decimal))
+    (defun A_WipeTreasuryDebt ())
+    (defun A_WipeTreasuryDebtPartial (debt-to-be-wiped:decimal))
+    ;;
+    (defun C_Burn:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string amount:decimal))
+    (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2} (id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
+    (defun C_DeployAccount (id:string account:string))
+    (defun C_Issue:object{OuronetDalosV3.OutputCumulatorV2} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
+    (defun C_Mint:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string amount:decimal origin:bool))
+    (defun C_RotateOwnership:object{OuronetDalosV3.OutputCumulatorV2} (id:string new-owner:string))
+    (defun C_SetFee:object{OuronetDalosV3.OutputCumulatorV2} (id:string fee:decimal))
+    (defun C_SetFeeTarget:object{OuronetDalosV3.OutputCumulatorV2} (id:string target:string))
+    (defun C_SetMinMove:object{OuronetDalosV3.OutputCumulatorV2} (id:string min-move-value:decimal))
+    (defun C_ToggleFee:object{OuronetDalosV3.OutputCumulatorV2} (id:string toggle:bool))
+    (defun C_ToggleFeeLock:object{OuronetDalosV3.OutputCumulatorV2} (patron:string id:string toggle:bool))
+    (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string toggle:bool))
+    (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2} (id:string toggle:bool))
+    (defun C_ToggleReservation:object{OuronetDalosV3.OutputCumulatorV2} (id:string toggle:bool))
+    (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string toggle:bool))
+    (defun C_Wipe:object{OuronetDalosV3.OutputCumulatorV2} (id:string atbw:string))
+    (defun C_WipePartial:object{OuronetDalosV3.OutputCumulatorV2} (id:string atbw:string amtbw:decimal))
+    ;;
+    (defun XB_DeployAccountWNE (id:string account:string))
+    (defun XB_Credit (id:string account:string amount:decimal))
+    (defun XB_DebitStandard (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData}))
+    (defun XB_IssueFree:object{OuronetDalosV3.OutputCumulatorV2} (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] iz-special:[bool]))
+    (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
+    ;;
+    (defun XE_Burn (id:string account:string amount:decimal))
+    (defun XE_IssueLP:object{OuronetDalosV3.OutputCumulatorV2} (name:string ticker:string))
+    (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
+    (defun XE_ToggleFeeExemptionRole (id:string account:string toggle:bool))
+    (defun XE_ToggleMintRole (id:string account:string toggle:bool))
+    (defun XE_UpdateRewardBearingToken (atspair:string id:string))
+    (defun XE_UpdateSpecialTrueFungible:object{OuronetDalosV3.OutputCumulatorV2} (main-dptf:string secondary-dptf:string frozen-or-reserved:bool))
+    (defun XE_UpdateVesting (dptf:string dpmf:string))
+    (defun XE_UpdateSleeping (dptf:string dpmf:string))
+    (defun XE_UpdateFeeVolume (id:string amount:decimal primary:bool))
+    (defun XE_UpdateRewardToken (atspair:string id:string direction:bool))
+)
 (module DPTF GOV
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV4)
-    (implements DemiourgosPactTrueFungibleV3)
+    (implements DemiourgosPactTrueFungibleV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -1330,30 +1469,6 @@
             )
         )
     )
-    (defun URC_TrFeeMinExc:bool (id:string sender:string receiver:string)
-        @doc "Computes if there is an exception for DPTF Id regarding <fee-exemption>\
-        \ <OUROBOROS|SC_NAME> and <DALOS|SC_NAME> are fee-exempted by default (as both senders or receivers) \
-        \ Fee-exemption also does not apply when Token-Owner sends or receives the token"
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
-                (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
-
-                (sender-fee-exemption:bool (UR_AccountRoleFeeExemption id sender))
-                (receiver-fee-exemption:bool (UR_AccountRoleFeeExemption id receiver))
-                (token-owner:string (UR_Konto id))
-                (sender-t1:bool (or (= sender ouroboros) (= sender dalos)))
-                (sender-t2:bool (or (= sender token-owner)(= sender-fee-exemption true)))
-                (iz-sender-exception:bool (or sender-t1 sender-t2))
-                (receiver-t1:bool (or (= receiver ouroboros) (= receiver dalos)))
-                (receiver-t2:bool (or (= receiver token-owner)(= receiver-fee-exemption true)))
-                (iz-receiver-exception:bool (or receiver-t1 receiver-t2))
-                (are-members-exception (or iz-sender-exception iz-receiver-exception))
-            )
-            are-members-exception
-        )
-    )
     (defun URC_HasVesting:bool (id:string)
         @doc "Returns a boolean if DPTF has a vesting counterpart"
         (if (= (UR_Vesting id) BAR)
@@ -1613,21 +1728,6 @@
                 (x:bool (UR_AccountRoleFeeExemption id account))
             )
             (enforce (= x state) (format "Fee-Exemption Role for {} on Account {} must be set to {} for exec" [id account state]))
-        )
-    )
-    (defun UEV_EnforceMinimumAmount (id:string transfer-amount:decimal)
-        (let
-            (
-                (min-move-read:decimal (UR_MinMove id))
-                (precision:integer (UR_Decimals id))
-                (min-move:decimal
-                    (if (= min-move-read -1.0)
-                        (floor (/ 1.0 (^ 10.0 (dec precision))) precision)
-                        min-move-read
-                    )
-                )
-            )
-            (enforce (>= transfer-amount min-move) (format "{} is not a valid {} min move amount" [transfer-amount id]))
         )
     )
     (defun UEV_Vesting (id:string existance:bool)

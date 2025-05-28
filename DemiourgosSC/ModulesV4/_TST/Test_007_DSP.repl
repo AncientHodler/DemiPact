@@ -31,7 +31,7 @@
     (
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
         (ref-DALOS:module{OuronetDalosV3} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-ATS:module{AutostakeV3} ATS)
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
         (ouro:string (ref-DALOS::UR_OuroborosID))
@@ -151,8 +151,8 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV3} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-        (ref-TFT:module{TrueFungibleTransferV4} TFT)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
         (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
         (patron:string  KST.ANHD)
@@ -174,7 +174,7 @@
         (p3:decimal 1.31038241)
         (p4:decimal 1.0)
         (p5:decimal 1.329321)
-        (p6:decimal 0.012)
+        (p6:decimal 22342.012)
         (p7:decimal 0.000002321)
     )
     ;(ref-DPL|DSP::A_OuroMinterStageOne)
@@ -196,7 +196,7 @@
     ;    (ref-TFT::DPTF-DPMF-ATS|UR_OwnedTokens vst 3)
     ;]
     
-    (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo patron 1 true)
+    ;(ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo patron 1 true)
     
     
 )
@@ -226,14 +226,15 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV3} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
         (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
         (patron:string  KST.ANHD)
     )
     [
-        (ref-DPL|UR::URC_0001_Header patron)
-        (ref-DPL|UR::URC_0002_Primordials patron)
+        ;(ref-DPL|UR::URC_0001_Header patron)
+        ;(ref-DPL|UR::URC_0002_Primordials patron)
+        true
     ]
     
 )
@@ -245,3 +246,165 @@
 (print "")
 (print "===^^^===")
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "UR Reader Testing")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (patron:string  KST.ANHD)
+        (emma:string  KST.EMMA)
+        (ouro:string "OURO-98c486052a51")
+        (auryn:string "AURYN-98c486052a51")
+        (e-auryn:string "ELITEAURYN-98c486052a51")
+    )
+    ;(format "Ouro FeePromile is {}" [id-fee])
+    (ref-TS01-C1::DPTF|C_Transfer patron ouro patron emma 1.0 false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TransferV3 for Ouro costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "UR Reader Testing")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (patron:string  KST.ANHD)
+        (emma:string  KST.EMMA)
+        (ouro:string "OURO-98c486052a51")
+        (auryn:string "AURYN-98c486052a51")
+        (e-auryn:string "ELITEAURYN-98c486052a51")
+    )
+    ;(format "Ouro FeePromile is {}" [id-fee])
+    (ref-TS01-C1::DPTF|C_Transfer patron auryn patron emma 1.0 false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TransferV3 for AURYN costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "UR Reader Testing")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (patron:string  KST.ANHD)
+        (emma:string  KST.EMMA)
+        (ouro:string "OURO-98c486052a51")
+        (auryn:string "AURYN-98c486052a51")
+        (e-auryn:string "ELITEAURYN-98c486052a51")
+    )
+    ;(format "Ouro FeePromile is {}" [id-fee])
+    (ref-TS01-C1::DPTF|C_Transfer patron e-auryn patron emma 1.0 false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TransferV3 for ELITEAURYN costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TransmuteV2")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (patron:string  KST.ANHD)
+        (emma:string  KST.EMMA)
+        (ignis:string "GAS-98c486052a51")
+        (e-auryn:string "ELITEAURYN-98c486052a51")
+    )
+    (ref-TS01-C1::DPTF|C_Transmute patron ignis patron 1200.0)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TransmuteV2 with OURO costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TransmuteV2")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (patron:string  KST.ANHD)
+        (emma:string  KST.EMMA)
+        (ignis:string "GAS-98c486052a51")
+        (e-auryn:string "ELITEAURYN-98c486052a51")
+    )
+    (ref-TS01-C1::DPTF|C_Transmute patron e-auryn patron 1.0)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TransmuteV2 with EA costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

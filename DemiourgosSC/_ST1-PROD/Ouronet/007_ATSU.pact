@@ -468,7 +468,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -506,8 +506,8 @@
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (c-rbt-amount:decimal (ref-ATS::URC_RBT ats rt amount))
@@ -516,13 +516,13 @@
                 (let
                     (
                         (ico1:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer rt coiler ats-sc amount true)
+                            (ref-TFT::C_Transfer rt coiler ats-sc amount true)
                         )
                         (ico2:object{OuronetDalosV3.OutputCumulatorV2}
                             (ref-DPTF::C_Mint c-rbt ats-sc c-rbt-amount false)
                         )
                         (ico3:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer c-rbt ats-sc coiler c-rbt-amount true)
+                            (ref-TFT::C_Transfer c-rbt ats-sc coiler c-rbt-amount true)
                         )
                     )
                     (ref-ATS::XE_UpdateRoU ats rt true true amount)
@@ -541,9 +541,9 @@
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|ATS:module{UtilityAts} U|ATS)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -562,7 +562,7 @@
                     (price:decimal (* 2.0 biggest))
                     (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
                     (ico1:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-TFT::XB_FeelesTransfer c-rbt recoverer ats-sc ra true)
+                        (ref-TFT::C_Transfer c-rbt recoverer ats-sc ra true)
                     )
                     (ico2:object{OuronetDalosV3.OutputCumulatorV2}
                         (ref-DPTF::C_Burn c-rbt ats-sc ra)
@@ -624,7 +624,7 @@
                     (ref-U|DEC:module{OuronetDecimals} U|DEC)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c0:[decimal] (XI_MultiCull ats culler))
@@ -653,7 +653,7 @@
                                     (if (!= (at idx cw) 0.0)
                                         (do
                                             (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) false false (at idx cw))
-                                            (ref-TFT::XB_FeelesTransfer (at idx rt-lst) ats-sc culler (at idx cw) true)
+                                            (ref-TFT::C_Transfer (at idx rt-lst) ats-sc culler (at idx cw) true)
                                         )
                                         EOC
                                     )
@@ -679,8 +679,8 @@
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (c-rbt1:string (ref-ATS::UR_ColdRewardBearingToken ats1))
                 (c-rbt1-amount:decimal (ref-ATS::URC_RBT ats1 rt amount))
@@ -691,7 +691,7 @@
                 (let
                     (
                         (ico1:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer rt curler ats-sc amount true)
+                            (ref-TFT::C_Transfer rt curler ats-sc amount true)
                         )
                         (ico2:object{OuronetDalosV3.OutputCumulatorV2}
                             (ref-DPTF::C_Mint c-rbt1 ats-sc c-rbt1-amount false)
@@ -700,7 +700,7 @@
                             (ref-DPTF::C_Mint c-rbt2 ats-sc c-rbt2-amount false)
                         )
                         (ico4:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer c-rbt2 ats-sc curler c-rbt2-amount true)
+                            (ref-TFT::C_Transfer c-rbt2 ats-sc curler c-rbt2-amount true)
                         )
                     )
                     (ref-ATS::XE_UpdateRoU ats1 rt true true amount)
@@ -716,12 +716,12 @@
         (let
             (
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (with-capability (ATSF|C>FUEL ats reward-token)
                 (ref-ATS::XE_UpdateRoU ats reward-token true true amount)
-                (ref-TFT::XB_FeelesTransfer reward-token fueler ats-sc amount true)
+                (ref-TFT::C_Transfer reward-token fueler ats-sc amount true)
             )
         )
     )
@@ -731,10 +731,10 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -757,7 +757,7 @@
                             )
                         )
                         (ico2:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer c-rbt recoverer ats-sc ra true)
+                            (ref-TFT::C_Transfer c-rbt recoverer ats-sc ra true)
                         )
                         (ico3:object{OuronetDalosV3.OutputCumulatorV2}
                             (ref-DPTF::C_Burn c-rbt ats-sc ra)
@@ -783,8 +783,8 @@
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -796,7 +796,7 @@
                                 (do
                                     (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true true (at idx rt-amounts))
                                     (ref-U|LST::UC_AppL acc 
-                                        (ref-TFT::XB_FeelesTransfer (at idx rt-lst) kickstarter ats-sc (at idx rt-amounts) true)
+                                        (ref-TFT::C_Transfer (at idx rt-lst) kickstarter ats-sc (at idx rt-amounts) true)
                                     )
                                 )
                             )
@@ -811,7 +811,7 @@
                         (ref-DPTF::C_Mint rbt-id ats-sc rbt-request-amount false)
                     )
                     (ico3:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-TFT::XB_FeelesTransfer rbt-id ats-sc kickstarter rbt-request-amount true)
+                        (ref-TFT::C_Transfer rbt-id ats-sc kickstarter rbt-request-amount true)
                     )
                     (index:decimal (ref-ATS::URC_Index ats))
                 )
@@ -839,10 +839,10 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 (ats:string (ref-DPMF::UR_RewardBearingToken id))
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -860,7 +860,7 @@
                             (ref-DPTF::C_Mint c-rbt ats-sc amount false)
                         )
                         (ico4:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::XB_FeelesTransfer c-rbt ats-sc recoverer amount true)
+                            (ref-TFT::C_Transfer c-rbt ats-sc recoverer amount true)
                         )
                     )
                     (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4] [])
@@ -885,10 +885,10 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 (precision:integer (ref-DPMF::UR_Decimals id))
@@ -971,9 +971,9 @@
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -993,10 +993,10 @@
                         )
                     )
                     (ico2:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-TFT::XB_FeelesTransfer reward-token ats-sc remover remove-sum true)
+                        (ref-TFT::C_Transfer reward-token ats-sc remover remove-sum true)
                     )
                     (ico3:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-TFT::XB_FeelesTransfer primal-rt remover ats-sc remove-sum true)
+                        (ref-TFT::C_Transfer primal-rt remover ats-sc remove-sum true)
                     )
                 )
                 ;;1]The RT to be removed, is transfered to the remover, from the ATS|SC_NAME
@@ -1088,7 +1088,7 @@
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-DALOS:module{OuronetDalosV3} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV4} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     ;;
@@ -1100,7 +1100,7 @@
                                     (if (> (at idx syphon-amounts) 0.0)
                                         (do
                                             (ref-ATS::XE_UpdateRoU ats (at idx rt-lst) true false (at idx syphon-amounts))
-                                            (ref-TFT::XB_FeelesTransfer (at idx rt-lst) ats-sc syphon-target (at idx syphon-amounts) true)
+                                            (ref-TFT::C_Transfer (at idx rt-lst) ats-sc syphon-target (at idx syphon-amounts) true)
                                         )
                                         EOC
                                     )

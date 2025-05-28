@@ -147,7 +147,7 @@
     (defun A_Step005 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
             )
             (ref-TS01-A::DALOS|A_DeployStandardAccount
                 DEMIURGOI|AH_NAME
@@ -201,8 +201,11 @@
                 (ref-P|VST:module{OuronetPolicy} VST)
                 (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
                 (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
-                (ref-P|SWP:module{OuronetPolicy} SWP)
+                ;;
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
+                (ref-P|SWP:module{OuronetPolicy} SWP)
+                (ref-P|SWPI:module{OuronetPolicy} SWPI)
+                (ref-P|SWPL:module{OuronetPolicy} SWPL)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
                 ;;
                 (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
@@ -210,7 +213,7 @@
                 (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
                 (ref-P|TS01-CP:module{OuronetPolicy} TS01-CP)
                 ;;
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
                 (bar:string (ref-U|CT::CT_BAR))
@@ -226,8 +229,11 @@
             (ref-P|VST::P|A_Define)
             (ref-P|LIQUID::P|A_Define)
             (ref-P|ORBR::P|A_Define)
-            (ref-P|SWP::P|A_Define)
+            ;;
             (ref-P|SWPT::P|A_Define)
+            (ref-P|SWP::P|A_Define)
+            (ref-P|SWPI::P|A_Define)
+            (ref-P|SWPL::P|A_Define)
             (ref-P|SWPU::P|A_Define)
             ;;
             (ref-P|TS01-A::P|A_Define)
@@ -299,8 +305,8 @@
                 (ref-VST:module{VestingV3} VST)
                 (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
                 (ref-ORBR:module{OuroborosV3} OUROBOROS)
-                (ref-SWP:module{SwapperV3} SWP)
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-SWP:module{SwapperV4} SWP)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-A::DALOS|A_DeploySmartAccount DALOS|SC_NAME (keyset-ref-guard DALOS|SC_KEY) DALOS|SC_KDA-NAME patron DALOS|PBL)
@@ -336,7 +342,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (info:string (ref-DALOS::DALOS|Info))
                 (ids:list
@@ -372,10 +378,6 @@
                 , "liquid-kda-id"           : StakedKadenaID
                 }
             )
-            (ref-TS01-C1::DPTF|C_DeployAccount AurynID ATS|SC_NAME)
-            (ref-TS01-C1::DPTF|C_DeployAccount EliteAurynID ATS|SC_NAME)
-            (ref-TS01-C1::DPTF|C_DeployAccount WrappedKadenaID LQD|SC_NAME)
-            (ref-TS01-C1::DPTF|C_DeployAccount StakedKadenaID LQD|SC_NAME)
             ;;
             ;;Set Token Roles Part I
             (ref-TS01-C1::DPTF|C_SetFee patron AurynID 50.0)
@@ -395,16 +397,8 @@
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID OUROBOROS|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID OUROBOROS|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID OUROBOROS|SC_NAME true)
-
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury-sc true)
-
             ;;
-            ;;Set Token Roles Part III
-            (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)
-            (ref-TS01-C1::DPTF|C_ToggleFee patron StakedKadenaID true)
-            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StakedKadenaID true)
-            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)
-            (ref-TS01-C1::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)
             ids
         )
     )
@@ -482,34 +476,8 @@
     (defun A_Step011 ()
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
-                (patron:string DEMIURGOI|AH_NAME)
-            )
-            (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
-        )
-    )
-    (defun A_Step012 ()
-        (let
-            (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
-                (patron:string DEMIURGOI|AH_NAME)
-            )
-            (ref-TS01-C2::ATS|C_Coil
-                patron
-                patron
-                (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
-                (ref-DALOS::UR_WrappedKadenaID)
-                1.0
-            )
-        )
-    )
-    (defun A_Step013 ()
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-amount:decimal 2000000.0)
             )
@@ -522,35 +490,7 @@
             )
         )
     )
-    (defun A_Step014 ()
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
-                (patron:string DEMIURGOI|AH_NAME)
-                (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
-                (rt-amounts:[decimal] [418414.8824])
-                (rbt-request-amount:decimal 159016.8713)
-            )
-            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
-        )
-    )
-    (defun A_Step015 ()
-        (let*
-            (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
-                (patron:string DEMIURGOI|AH_NAME)
-                (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
-                (rt-amounts:[decimal] [114907.2904])
-                (rbt-request-amount:decimal (at 0 rt-amounts))
-            )
-            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
-        )
-    )
-    (defun A_Step016 ()
+    (defun A_Step012 ()
         (let
             (
                 (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
@@ -563,20 +503,92 @@
             (ref-TS01-C2::ORBR|C_Sublimate patron emma 10.0)
         )
     )
-    (defun A_Step017 ()
+    (defun A_Step013 ()
         (let
             (
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+                (patron:string DEMIURGOI|AH_NAME)
+                (AurynID:string (ref-DALOS::UR_AurynID))
+                (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
+                (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
+                (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
             )
             (ref-TS01-A::DALOS|A_IgnisToggle false true)
             (ref-TS01-A::DALOS|A_IgnisToggle true true)
+            ;;
+            (ref-TS01-C1::DPTF|C_DeployAccount patron AurynID ATS|SC_NAME)
+            (ref-TS01-C1::DPTF|C_DeployAccount patron EliteAurynID ATS|SC_NAME)
+            (ref-TS01-C1::DPTF|C_DeployAccount patron WrappedKadenaID LQD|SC_NAME)
+            (ref-TS01-C1::DPTF|C_DeployAccount patron StakedKadenaID LQD|SC_NAME)
+            ;;Set Token Roles Part III
+            (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)
+            (ref-TS01-C1::DPTF|C_ToggleFee patron StakedKadenaID true)
+            (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron WrappedKadenaID LQD|SC_NAME true)
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron WrappedKadenaID LQD|SC_NAME true)
+        )
+    )
+    (defun A_Step014 ()
+        (let
+            (
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (patron:string DEMIURGOI|AH_NAME)
+            )
+            (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
+        )
+    )
+    (defun A_Step015 ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (patron:string DEMIURGOI|AH_NAME)
+            )
+            (ref-TS01-C2::ATS|C_Coil
+                patron
+                patron
+                (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
+                (ref-DALOS::UR_WrappedKadenaID)
+                1.0
+            )
+        )
+    )
+    (defun A_Step016 ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (patron:string DEMIURGOI|AH_NAME)
+                (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
+                (rt-amounts:[decimal] [418414.8824])
+                (rbt-request-amount:decimal 159016.8713)
+            )
+            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
+        )
+    )
+    (defun A_Step017 ()
+        (let*
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (patron:string DEMIURGOI|AH_NAME)
+                (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
+                (rt-amounts:[decimal] [114907.2904])
+                (rbt-request-amount:decimal (at 0 rt-amounts))
+            )
+            (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
         )
     )
     (defun A_Step018 ()
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (patron:string DEMIURGOI|AH_NAME)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
 
@@ -588,7 +600,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
             )
             (ref-TS01-C1::DPTF|C_Transfer
@@ -605,7 +617,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
                 (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -636,11 +648,13 @@
         (acquire-module-admin free.SWP)
         (let
             (
-                (ref-SWP:module{SwapperV3} SWP)
+                (ref-SWP:module{SwapperV4} SWP)
                 (u:[string] [BAR])
             )
             (insert ref-SWP::SWP|Properties ref-SWP::SWP|INFO
-                {"principals"           : u
+                {"asymetric"            : false
+                ,"principals"           : u
+                ,"primordial-pool"      : BAR
                 ,"liquid-boost"         : false
                 ,"spawn-limit"          : 1000.0
                 ,"inactive-limit"       : 100.0}
@@ -688,19 +702,19 @@
             (
                 (patron:string DEMIURGOI|AH_NAME)
                 (ref-DALOS:module{OuronetDalosV3} DALOS)
-                (ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
-                (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 (p1:string (ref-DALOS::UR_LiquidKadenaID))
                 (p2:string (ref-DALOS::UR_OuroborosID))
             )
             (ref-TS01-A::SWP|A_UpdatePrincipal p1 true)
             (ref-TS01-A::SWP|A_UpdatePrincipal p2 true)
 
-            (ref-TS01-C1::DPTF|C_DeployAccount p1 SWP|SC_NAME)
+            (ref-TS01-C1::DPTF|C_DeployAccount patron p1 SWP|SC_NAME)
             (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p1 SWP|SC_NAME true)
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron p1 SWP.SWP|SC_NAME true)
 
-            (ref-TS01-C1::DPTF|C_DeployAccount p2 SWP|SC_NAME)
+            (ref-TS01-C1::DPTF|C_DeployAccount patron p2 SWP|SC_NAME)
             (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p2 SWP|SC_NAME true)
         )
     )

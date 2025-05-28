@@ -473,45 +473,54 @@
 (format "<<<<<<<OUROBOROS Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
-
+;;
+;;Swapper Modules
 (print "")
-(begin-tx "INIT TX 026 - 011_SWPT.pact")
+(begin-tx "INIT TX 026 - 011a_SWPT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "../011_SWPT.pact")
+(load "../011a_SWPT.pact")
 (format "<<<<<<<SWPT Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
 (print "")
-(begin-tx "INIT TX 027 - 012_SWP.pact")
+(begin-tx "INIT TX 027 - 011b_SWP.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "../012_SWP.pact")
+(load "../011b_SWP.pact")
 (format "<<<<<<<SWP Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
 (print "")
-(begin-tx "INIT TX 028 - 013_SWPU.pact")
+(begin-tx "INIT TX 028 - 011c_SWPI.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(load "../013_SWPU.pact")
+(load "../011c_SWPI.pact")
+(format "<<<<<<<SWPI Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 029 - 011d_SWPL.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../011d_SWPL.pact")
+(format "<<<<<<<SWPL Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 030 - 011e_SWPU.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../011e_SWPU.pact")
 (format "<<<<<<<SWPU Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
 (print "Main Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-;(print "")
-;(begin-tx "INIT TX 029 - X01_TALOS.pact")
-;(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
-;(namespace "free")
-;(load "../X01_TALOS-01.pact")
-;(format "<<<<<<<TALOS Costs {} GAS>>>>>>>" [(env-gas)])
-;(commit-tx)
-;(print "")
-;;
 ;;
 ;;
 (print "")
@@ -734,7 +743,7 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
     )
 
     (ref-TS01-A::DALOS|A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
@@ -912,22 +921,17 @@
 (commit-tx)
 ;;
 ;;
+;;
+;;
 (begin-tx "Init STEP 011")
-(namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
-        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263",
-          "caps":
-            [
-                (coin.TRANSFER
-                "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                1.0)
-            ]
-        }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
     ]
 )
+(namespace "free")
 
 (let
     ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
@@ -971,7 +975,6 @@
 (env-sigs
     [
         { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_GasTanker", "caps": [] }
     ]
 )
 (namespace "free")
@@ -991,14 +994,21 @@
 ;;
 ;;
 (begin-tx "Init STEP 014")
+(namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
-        { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_GasTanker", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263",
+          "caps":
+            [
+                (coin.TRANSFER
+                "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                1.0)
+            ]
+        }
     ]
 )
-(namespace "free")
 
 (let
     ((ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS))
@@ -1019,7 +1029,6 @@
 (env-sigs
     [
         { "key": "PK_AncientHodler", "caps": [] }
-        { "key": "PK_GasTanker", "caps": [] }
     ]
 )
 (namespace "free")
@@ -1036,6 +1045,16 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+
+
+
+
+
+
+
+
+
+
 ;;
 ;;
 (begin-tx "Init STEP 016")
@@ -1043,6 +1062,7 @@
 (env-sigs
     [
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
     ]
 )
 (namespace "free")
@@ -1066,6 +1086,7 @@
 (env-sigs
     [
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
     ]
 )
 (namespace "free")
