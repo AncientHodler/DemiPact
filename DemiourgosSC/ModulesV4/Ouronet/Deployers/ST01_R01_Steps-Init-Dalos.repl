@@ -476,6 +476,15 @@
 ;;
 ;;Swapper Modules
 (print "")
+(begin-tx "INIT TX 026-Prime - 011_SWP-Interfaces.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../011_SWP-Interfaces.pact")
+(format "<<<<<<<SWP Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
 (begin-tx "INIT TX 026 - 011a_SWPT.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -517,6 +526,15 @@
 (namespace "free")
 (load "../011e_SWPU.pact")
 (format "<<<<<<<SWPU Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 031 - 011f_SWP-MTX.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../011f_SWP-MTX.pact")
+(format "<<<<<<<SWP-MTX Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -605,7 +623,10 @@
 
 (use SWPT)          ;; 46.731
 (use SWP)           ;;103.513
+(use SWPI)          ;;103.513
+(use SWPL)          ;;103.513
 (use SWPU)          ;;130.187
+(use SWP-MTX)       ;;130.187
 
 (use TS01-A)        ;; 23.845
 (use TS01-C1)       ;; 78.521
@@ -671,7 +692,7 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
     )
 
     ;;Create AH and transfer to it 25000 KDA
@@ -1157,7 +1178,7 @@
 (namespace "free")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KC.ANCIENTHODLER

@@ -839,3 +839,379 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
         "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
     )
 ]
+
+
+;;Payload Data
+{
+    "dh_ah-keyset": {
+        "keys": [
+            "35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f",
+            "2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_master-keyset": {
+        "keys": [
+            "35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8",
+            "625ad78ab8c1df826d69e1f0e6457334b8e085b7d256d10be41726ced17fdf74"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_dhvault-keyset": {
+        "keys": [
+            "013b30abebdae21d5afd6e2d5b6486f6fae2b5aa6d8495a2aa3131ab8d292836",
+            "d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_dispenser-keyset": {
+        "keys": [
+            "05654aee733a30bfdc2fd36461276c74e3a8a52b9065cc01bc2f1c947d3d8fab",
+            "263202ccaad0b917426286afa15f258143a904512139a970257ed4a5d24c1394",
+            "ca3cff28ea3c3d80a0ac2801ecab0320b7dbf6545ea0ab5b6e8dcacc72787af8",
+            "c2ccc05fa2eab6c6c32b01a0a110aff600bebb16392926a4cfffcb5dfb126ee9",
+            "d303cd666c3a1105958c1e0d35c48c20c928d5e45c7d0a2d16a6ba839a40ef23",
+            "b48fdcbe39294fd6d97eb548689b28588ea1ad6fae3f19f6327164ef21e68645",
+            "1b440c72007c81f3b2659067d61f95035c53a60dc2ae7a5ea8979d6b6d9fa009",
+            "bca20d83e88ea7918b2b8b3244da50c7020d612e3c52a28fa808656f66a290e1",
+            "e4243cba743d86521fbd292ede863d7e866bd90e00d35e6188c38a26127d1254",
+            "60bb284698c72e0be439b2a125dc7566408ac80a342f0f36342ba06f3897e719",
+            "86d2e874d76099adec26ec87b954d5ca30b147df236c785840bfebd7506c70d1",
+            "fdbaf985f034e13961fc48c54849040d586225dac1889e6041d1847442b50e7c",
+            "9cd8abd3beae75e9b8f9a8913b5bebefed0dddc96e4eb8aafe3054225e243ede"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_ouroboros-keyset": {
+        "keys": [
+            "1f6398b1f501992a470efc27707c1b3980f55e602d79755ccdd87afc2b7f03ee",
+            "428a0ed942d266d84e6bf995d1612c009777eda858e92c0c9bc3ef8932d4e44d"
+        ],
+        "pred": "keys-any"
+    },
+    "us-0000_aozt-keyset": {
+        "keys": [
+            "2cdc20de30022f52756a6077077eb2e5cb23fd942d4107f8845345d510ca25df",
+            "ad620c6759112c10a26519cc4e9a440721c04f1684f3c123f670d1c51f4bb4df"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_ah-pleb-keyset": {
+        "keys": [
+            "45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9",
+            "3a7c4c0fe8d2bfa68497f569cc33ef821511ec017c151c35f046ed504649d477"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_dpdc-keyset": {
+        "keys": [
+            "6c95ec3c3c30cb1c1842955c17f7d3a80c454c8cddb588e154e0166f90f354f1",
+            "5329770bb45912546454852cea64d468e60460a69cdea83e9f4cc0e2b368fa20"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_vesting-keyset": {
+        "keys": [
+            "10e05871c5a2ef3f0f7dca9edd8e96e4ef0952175a4a2621895d2c4402a7b56a",
+            "5047d039d1d918e3489f42a52a46b54cb5b3b259e42dd2e43c071fe2b77863f2"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_custodians-keyset": {
+        "keys": [
+            "45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9",
+            "5a082d160fd3fcb61f168ccfd78b19443880fb9d1952bc9bd6d289db1ad4075d"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_autostake-keyset": {
+        "keys": [
+            "1a4e15d3c51e0b73e92644600487ba8eaae312e1a178b91801d54e13c1b350a5",
+            "725d6ad18c7e4ef6e2773f6bb315bde13437872d0235f6404c0c99d9d900bbb4"
+        ],
+        "pred": "keys-any"
+    },
+    "us-0002_lumy-keyset": {
+        "keys": [
+            "c4f10bb533db3690ce86e27102dc9b98907c8a83786ca16a727c9a8ebfbe716c",
+            "2df04179bfcddf22dd3d79c7d4afd9651e5f8e2a9dfbb8ba6fd9e77e2b432710"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_swapper-keyset": {
+        "keys": [
+            "d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3",
+            "572bd2e1a7e126c1072d328bbac3064ffadf96cc20fd0752f1c5875d549c2b31"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_dalos-keyset": {
+        "keys": [
+            "625ad78ab8c1df826d69e1f0e6457334b8e085b7d256d10be41726ced17fdf74",
+            "10b998049806491ec3e26f7507020554441e6b9271cfee1779d85230139c92df"
+        ],
+        "pred": "keys-any"
+    },
+    "us-0001_emma-keyset": {
+        "keys": [
+            "9ea91a7a6af95159274f7950763b3bc2f82c00e79d41b94063a8ef1f42327246",
+            "08786a657018b620ffce173a2071f85135ed9f4d7a67938a34b8d72f5c0763b1"
+        ],
+        "pred": "keys-any"
+    },
+    "dh_sc_kadenaliquidstaking-keyset": {
+        "keys": [
+            "b836c5c6b989d97737c954934c24686b876b78082bd03475878c245794d6ef80",
+            "6a084a59d1485b4b41661ec05be6ebe9475f1fe1a19ba77018b9d176927611c9"
+        ],
+        "pred": "keys-any"
+    }
+}
+
+(DALOS|C_RotateKadena)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
+(let
+    (
+        (ons:string "n_7d40ccda457e374d8eb07b658fd38c282c545038.")
+        (k00:string "dh_master-keyset")
+        (k01:string "dh_sc_dalos-keyset")
+        (k02:string "dh_sc_autostake-keyset")
+        (k03:string "dh_sc_vesting-keyset")
+        (k04:string "dh_sc_kadenaliquidstaking-keyset")
+        (k05:string "dh_sc_ouroboros-keyset")
+        (k06:string "dh_sc_swapper-keyset")
+        (k07:string "dh_sc_dhvault-keyset")
+        (k08:string "dh_sc_custodians-keyset")
+        (k09:string "dh_sc_dispenser-keyset")
+        (k10:string "dh_sc_dpdc-keyset")
+        ;;Demiurgoi Keys
+        (k11:string "dh_ah-keyset")
+        (k12:string "dh_ah-pleb-keyset")
+        ;;User Keys
+        (k13:string "us-0000_aozt-keyset")
+        (k14:string "us-0001_emma-keyset")
+        (k15:string "us-0002_lumy-keyset")
+        ;;
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (ats:string "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+        (vst:string "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+        (swp:string "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
+        (dhvault:string "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (custodians:string "Σ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ")
+        (dsp:string "Σ.hÜ5ĞÊÜεŞΓõè1Ă₳äàÄìãÓЦφLÕзЯŮμĞ₿мK6àŘуVćχδдзηφыβэÎχUHRêγBğΛ∇VŒižďЬШ£îOÜøE4ÖFSõЩЩAłκè1ččΨΦŻЖэч6Iчη₱ØćнúŒψУćÀyпãЗцÚäδÏÍtςřïçγț6γÎęôigFzÝûηы₿ÏЬüБэΞčмŃт₳ŘчjζsŠȚHъĘïЦ0")
+        (dpdc:string "Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4")
+        (dhvault-n:string (+ "Ѻ" (drop 1 dhvault)))
+        (custodians-n:string (+ "Ѻ" (drop 1 custodians)))
+        (dsp-n:string (+ "Ѻ" (drop 1 dsp)))
+        (ah-pleb:string "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc")
+        (aoz:string "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+        (emma:string "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+        (lumy:string "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+    )
+    ;;Ouronet Keys
+    (define-keyset (+ ons k00) (read-keyset k00))
+    (define-keyset (+ ons k01) (read-keyset k01))
+    (define-keyset (+ ons k02) (read-keyset k02))
+    (define-keyset (+ ons k03) (read-keyset k03))
+    (define-keyset (+ ons k04) (read-keyset k04))
+    (define-keyset (+ ons k05) (read-keyset k05))
+    (define-keyset (+ ons k06) (read-keyset k06))
+    (define-keyset (+ ons k07) (read-keyset k07))
+    (define-keyset (+ ons k08) (read-keyset k08))
+    (define-keyset (+ ons k09) (read-keyset k09))
+    (define-keyset (+ ons k10) (read-keyset k10))
+    ;;
+    (define-keyset (+ ons k11) (read-keyset k11))
+    (define-keyset (+ ons k12) (read-keyset k12))
+
+    (define-keyset (+ ons k13) (read-keyset k13))
+    (define-keyset (+ ons k14) (read-keyset k14))
+    (define-keyset (+ ons k15) (read-keyset k15))
+    ;;
+    (with-capability (DALOS.SECURE)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ico0:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena ats "k:10e05871c5a2ef3f0f7dca9edd8e96e4ef0952175a4a2621895d2c4402a7b56a")
+                )
+                (ico1:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena patron vst "k:1a4e15d3c51e0b73e92644600487ba8eaae312e1a178b91801d54e13c1b350a5")
+                )
+                (ico2:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena swp "k:1f6398b1f501992a470efc27707c1b3980f55e602d79755ccdd87afc2b7f03ee")
+                )
+                (ico3:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena dhvault "k:d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3")
+                )
+                (ico4:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena custodians "k:41cf258202856ffd66858e13c9bda0e1399ed6b40f67140c975d44b6afa3a039")
+                )
+                (ico5:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena dsp "k:45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9")
+                )
+                (ico6:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena dpdc "k:b836c5c6b989d97737c954934c24686b876b78082bd03475878c245794d6ef80")
+                )
+                (ico7:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena dhvault-n "k:d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3")
+                )
+                (ico8:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena custodians-n "k:41cf258202856ffd66858e13c9bda0e1399ed6b40f67140c975d44b6afa3a039")
+                )
+                (ico9:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena dsp-n "k:45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9")
+                )
+                (ico10:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena ah-pleb "k:11cd20672e0b414864b3b55f81f3980a74a021928c80b607d9e678043b34da80")
+                )
+                (ico11:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena patron "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f")
+                )
+                (ico12:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena aoz "k:cc68ca8410bf580323937b323b389ad5664e304e7aabb3df4a2ecd7cab40c38d")
+                )
+                (ico13:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena emma "k:2cc72ef06136150f52c01dcc3a135dbd03e5328fafd71442a933619b9337456c")
+                )
+                (ico14:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-DALOS::C_RotateKadena lumy "k:afa4d5ec4f1070e58badaac237fbf16c19c0b08dd4b981b3e91937943714138d")
+                )
+            )
+            (ref-DALOS::IGNIS|C_Collect patron
+                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 
+                    [ico0 ico1 ico2 ico3 ico4 ico5 ico6 ico7 ico8 ico9 ico10 ico11 ico12 ico13 ico14] []
+                )
+            )
+        )
+    )
+)
+(with-capability (DALOS.SECURE)
+    (DALOS.IGNIS|C_Collect 
+        "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+        (DALOS.UDC_ConcatenateOutputCumulatorsV2 
+            [
+                (DALOS.C_RotateKadena "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ" "k:10e05871c5a2ef3f0f7dca9edd8e96e4ef0952175a4a2621895d2c4402a7b56a")
+            ]
+            []
+        )
+    )
+)
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
+(with-capability (DALOS.SECURE)
+    (let
+        (
+            (ons:string "n_7d40ccda457e374d8eb07b658fd38c282c545038.")
+            (k00:string "dh_master-keyset")
+            (k01:string "dh_sc_dalos-keyset")
+            (k02:string "dh_sc_autostake-keyset")
+            (k03:string "dh_sc_vesting-keyset")
+            (k04:string "dh_sc_kadenaliquidstaking-keyset")
+            (k05:string "dh_sc_ouroboros-keyset")
+            (k06:string "dh_sc_swapper-keyset")
+            (k07:string "dh_sc_dhvault-keyset")
+            (k08:string "dh_sc_custodians-keyset")
+            (k09:string "dh_sc_dispenser-keyset")
+            (k10:string "dh_sc_dpdc-keyset")
+            ;;Demiurgoi Keys
+            (k11:string "dh_ah-keyset")
+            (k12:string "dh_ah-pleb-keyset")
+            ;;User Keys
+            (k13:string "us-0000_aozt-keyset")
+            (k14:string "us-0001_emma-keyset")
+            (k15:string "us-0002_lumy-keyset")
+            ;;
+            (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            (ats:string "Σ.ëŤΦșźUÉM89ŹïuÆÒÕ£żíëцΘЯнŹÿxжöwΨ¥Пууhďíπ₱nιrŹÅöыыidõd7ì₿ипΛДĎĎйĄшΛŁPMȘïõμîμŻIцЖljÃαbäЗŸÖéÂЫèpAДuÿPσ8ÎoŃЮнsŤΞìтČ₿Ñ8üĞÕPșчÌșÄG∇MZĂÒЖь₿ØDCПãńΛЬõŞŤЙšÒŸПĘЛΠws9€ΦуêÈŽŻ")
+            (vst:string "Σ.şZïζhЛßdяźπПЧDΞZülΦпφßΣитœŸ4ó¥ĘкÌЦ₱₱AÚюłćβρèЬÍŠęgĎwтäъνFf9źdûъtJCλúp₿ÌнË₿₱éåÔŽvCOŠŃpÚKюρЙΣΩìsΞτWpÙŠŹЩпÅθÝØpтŮыØșþшу6GтÃêŮĞбžŠΠŞWĆLτЙđнòZЫÏJÿыжU6ŽкЫVσ€ьqθtÙѺSô€χ")
+            (swp:string "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
+            (dhvault:string "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+            (custodians:string "Σ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ")
+            (dsp:string "Σ.hÜ5ĞÊÜεŞΓõè1Ă₳äàÄìãÓЦφLÕзЯŮμĞ₿мK6àŘуVćχδдзηφыβэÎχUHRêγBğΛ∇VŒižďЬШ£îOÜøE4ÖFSõЩЩAłκè1ččΨΦŻЖэч6Iчη₱ØćнúŒψУćÀyпãЗцÚäδÏÍtςřïçγț6γÎęôigFzÝûηы₿ÏЬüБэΞčмŃт₳ŘчjζsŠȚHъĘïЦ0")
+            (dpdc:string "Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4")
+            (dhvault-n:string (+ "Ѻ" (drop 1 dhvault)))
+            (custodians-n:string (+ "Ѻ" (drop 1 custodians)))
+            (dsp-n:string (+ "Ѻ" (drop 1 dsp)))
+            (ah-pleb:string "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc")
+            (aoz:string "Ѻ.ÅτhGźνΣhςвiàÁĘĚДÏWÉΨTěCÃŒnæi9цéŘQí¢лΞÛIчмfÓeżÜýЯàDÖ5αȚÞVđσγ₱0ęЬÔĄsĄLлKùvåH£ΞMFУûÊyđÜqdŽŚЖsĘъsПÂÔØŹÞŮγŚΣЧ6Ïж¢чPyòлБ14ÚęŃĄåîêтηΛbΦđkûÇĂζsБúĎdŸUЛзÙÂÚJηXťćж¥zщòÁŸRĘ")
+            (emma:string "Ѻ.A0ěьπΨтÎșπЦĐđŽ6ЫêÀεÅĐȘдÞЩ4Ł2ďй5žömiτsλÚÇдěÒaV₱ÏûιЩД₳îJÍşыyÜŹżęìvAЙsÄ¢ÿnΦIťQůЮ7ĄвaèďíoáнõÎLJθÆEáПiXÿÒÀĘ14цU1çΞêSťüIψчèι₱ê9ŽчΓüЦrÀÓμĆ99κQťqPÖшŮ1ÈČSĐŁÌбÝàŞbPσŃĎ8ĄW")
+            (lumy:string "Ѻ.œâσzüştŒhłσćØTöõúoвþçЧлρËШđюλ2ÙPeжŘťȚŤtθËûrólþŘß₿øuŁdáNÎČȘřΦĘbχλΩĄ¢ц2ŹθõĐLcÑÁäăå₿ξЭжулxòΘηĂœŞÝUËcω∇ß$ωoñД7θÁяЯéEU¢CЮxÃэJĘčÎΠ£αöŮЖбlćшbăÙЦÎAдŃЭб$ĞцFδŃËúHãjÁÝàĘSt")
+            ;;
+            (ico0:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena ats "k:10e05871c5a2ef3f0f7dca9edd8e96e4ef0952175a4a2621895d2c4402a7b56a")
+            )
+            (ico1:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena  vst "k:1a4e15d3c51e0b73e92644600487ba8eaae312e1a178b91801d54e13c1b350a5")
+            )
+            (ico2:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena swp "k:1f6398b1f501992a470efc27707c1b3980f55e602d79755ccdd87afc2b7f03ee")
+            )
+            (ico3:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena dhvault "k:d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3")
+            )
+            (ico4:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena custodians "k:41cf258202856ffd66858e13c9bda0e1399ed6b40f67140c975d44b6afa3a039")
+            )
+            (ico5:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena dsp "k:45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9")
+            )
+            (ico6:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena dpdc "k:b836c5c6b989d97737c954934c24686b876b78082bd03475878c245794d6ef80")
+            )
+            (ico7:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena dhvault-n "k:d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3")
+            )
+            (ico8:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena custodians-n "k:41cf258202856ffd66858e13c9bda0e1399ed6b40f67140c975d44b6afa3a039")
+            )
+            (ico9:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena dsp-n "k:45b2f2b7088264e432a42a57e27ec11a17fa33e5c3637c4911f312a74386a0c9")
+            )
+            (ico10:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena ah-pleb "k:11cd20672e0b414864b3b55f81f3980a74a021928c80b607d9e678043b34da80")
+            )
+            (ico11:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena patron "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f")
+            )
+            (ico12:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena aoz "k:cc68ca8410bf580323937b323b389ad5664e304e7aabb3df4a2ecd7cab40c38d")
+            )
+            (ico13:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena emma "k:2cc72ef06136150f52c01dcc3a135dbd03e5328fafd71442a933619b9337456c")
+            )
+            (ico14:object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.C_RotateKadena lumy "k:afa4d5ec4f1070e58badaac237fbf16c19c0b08dd4b981b3e91937943714138d")
+            )
+            (final-ico::object{OuronetDalosV3.OutputCumulatorV2}
+                (DALOS.UDC_ConcatenateOutputCumulatorsV2 
+                    [ico0 ico1 ico2 ico3 ico4 ico5 ico6 ico7 ico8 ico9 ico10 ico11 ico12 ico13 ico14] []
+                )
+            )
+        )
+        ;;Ouronet Keys
+        (define-keyset (+ ons k00) (read-keyset k00))
+        (define-keyset (+ ons k01) (read-keyset k01))
+        (define-keyset (+ ons k02) (read-keyset k02))
+        (define-keyset (+ ons k03) (read-keyset k03))
+        (define-keyset (+ ons k04) (read-keyset k04))
+        (define-keyset (+ ons k05) (read-keyset k05))
+        (define-keyset (+ ons k06) (read-keyset k06))
+        (define-keyset (+ ons k07) (read-keyset k07))
+        (define-keyset (+ ons k08) (read-keyset k08))
+        (define-keyset (+ ons k09) (read-keyset k09))
+        (define-keyset (+ ons k10) (read-keyset k10))
+        ;;
+        (define-keyset (+ ons k11) (read-keyset k11))
+        (define-keyset (+ ons k12) (read-keyset k12))
+    
+        (define-keyset (+ ons k13) (read-keyset k13))
+        (define-keyset (+ ons k14) (read-keyset k14))
+        (define-keyset (+ ons k15) (read-keyset k15))
+        (DALOS.IGNIS|C_Collect patron final-ico)
+    )
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.LQD|C_UnwrapKadena patron unwrapper amount)

@@ -1,58 +1,3 @@
-(interface SwapperIssue
-    @doc "Exposes SWP Issuing Functions. \
-    \ Also contains Swap Computation Functions, and the Hopper Function"
-    ;;
-    (defschema Hopper
-        nodes:[string]
-        edges:[string]
-        output-values:[decimal]    
-    )
-    ;;
-    (defun UC_BareboneSwap:decimal (pool-type:string drsi:object{UtilitySwpV2.DirectRawSwapInput}))
-    (defun UC_BareboneInverseSwap:decimal (pool-type:string irsi:object{UtilitySwpV2.InverseRawSwapInput}))
-    (defun UC_PoolTokenPositions:[integer] (swpair:string input-ids:[string]))
-    ;;
-    (defun URC_PoolTokenPositions:[integer] (swpair:string input-ids:[string]))
-    (defun URC_DirectRawSwapInput:object{UtilitySwpV2.DirectRawSwapInput} (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
-    (defun URC_InverseRawSwapInput:object{UtilitySwpV2.InverseRawSwapInput} (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
-        ;;
-    (defun URC_Swap:decimal (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} validation:bool))
-    (defun URC_S-Swap:decimal (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
-    (defun URC_W-Swap:decimal (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
-    (defun URC_P-Swap:decimal (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
-        ;;
-    (defun URC_InverseSwap:decimal (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData} validation:bool))
-    (defun URC_S-InverseSwap:decimal (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
-    (defun URC_W-InverseSwap:decimal (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
-    (defun URC_P-InverseSwap (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
-        ;;
-    (defun URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
-    (defun URC_BestEdge:string (ia:decimal i:string o:string))
-        ;;
-    (defun URC_TokenDollarPrice (id:string kda-pid:decimal))
-    (defun URC_SingleWorthDWK (id:string))
-    (defun URC_WorthDWK (id:string amount:decimal))
-    (defun URC_PoolValue:[decimal] (swpair:string))
-    ;;
-    (defun UEV_SwapData (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
-    (defun UEV_InverseSwapData (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
-        ;;
-    (defun UEV_Issue (account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
-    ;;
-    (defun UDC_DirectRawSwapInput:object{UtilitySwpV2.DirectRawSwapInput} 
-        (dsid:object{UtilitySwpV2.DirectSwapInputData} A:decimal X:[decimal] input-positions:[integer] output-position:integer weights:[decimal])
-    )
-    (defun UDC_InverseRawSwapInput:object{UtilitySwpV2.InverseRawSwapInput} 
-        (rsid:object{UtilitySwpV2.ReverseSwapInputData} A:decimal X:[decimal] output-position:integer input-position:integer weights:[decimal])
-    )
-    (defun UDC_Hopper:object{Hopper} (a:[string] b:[string] c:[decimal]))
-    ;;
-    (defun C_Issue:object{OuronetDalosV3.OutputCumulatorV2} (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
-    (defun PS|C_IssueStable (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun PS|C_IssueStandard (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool))
-    (defun PS|C_IssueWeighted (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-)
-
 (module SWPI GOV
     ;;
     (implements OuronetPolicy)
@@ -62,11 +7,14 @@
     ;;GOVERNANCE
     ;;{G1}
     (defconst GOV|MD_SWPI           (keyset-ref-guard (GOV|Demiurgoi)))
+    (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|SWPI_ADMIN)))
     (defcap GOV|SWPI_ADMIN ()       (enforce-guard GOV|MD_SWPI))
+    ;;
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -91,7 +39,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -182,18 +130,10 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
-    (defcap SWPI|C>ISSUE-MULTISTEP (p:bool)
-        @event
-        (compose-capability (SWPI|X>ISSUE p))
-    )
     (defcap SWPI|C>ISSUE (account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
         @event
         (UEV_Issue account pool-tokens fee-lp weights amp p)
-        (compose-capability (SWPI|X>ISSUE p))
-    )
-    (defcap SWPI|X>ISSUE (p:bool)
-        (compose-capability (P|SWPI|CALLER))
-        (compose-capability (P|SWPI|REMOTE-GOV))
+        (compose-capability (P|DT))
         (if p
             (compose-capability (GOV|SWPI_ADMIN))
             true
@@ -202,6 +142,285 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_DeviationInValueShares:decimal (pool-reserves:[decimal] asymmetric-liq:[decimal] w:[decimal])
+        @doc "Maximum Pool Deviation is (n-1)/n, and max allowed deviation for asymmetric liq is 40% of this value"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|INT:module{OuronetIntegers} U|INT)
+                (l1:integer (length pool-reserves))
+                (l2:integer (length asymmetric-liq))
+                (l3:integer (length w))
+                (iz-asymmetric:bool (contains 0.0 asymmetric-liq))
+            )
+            (ref-U|INT::UEV_UniformList [l1 l2 l3])
+            (enforce iz-asymmetric "Invalid Values to Compute Deviation In Value Shares")
+            (let
+                (
+                    (ref-U|VST:module{UtilityVst} U|VST)
+                    (sw:decimal (fold (+) 0.0 w))
+                    (iz-weigthed:bool (if (= sw 1.0) true false))
+                    ;;
+                    (initial-shares:[decimal] (UC_PoolShares pool-reserves w))
+                    (asymmetric-shares:[decimal] (zip (*) initial-shares asymmetric-liq))
+                    (new-total-shares:decimal (+ 5040000.0 (fold (+) 0.0 asymmetric-shares)))
+                    (new-supply:[decimal] (zip (+) pool-reserves asymmetric-liq))
+                    ;;
+                    (aw:[decimal] (if iz-weigthed w (ref-U|VST::UC_SplitBalanceForVesting 24 1.0 l1)))
+                    (deviated-shares:[decimal] (UC_DeviatedShares new-supply initial-shares new-total-shares))
+                    (diff-with-deviated-shares:[decimal] (zip (-) aw deviated-shares))
+                    (abs-dwds:[decimal]
+                        (fold
+                            (lambda
+                                (acc:[decimal] idx:integer)
+                                (ref-U|LST::UC_AppL acc (abs (at idx diff-with-deviated-shares )))
+                            )
+                            []
+                            (enumerate 0 (- l1 1))
+                        )
+                    )
+                    ;;Total Deviation must be divided by 2, to account for gain and losses in share variation
+                    (total-deviation:decimal (floor (/ (fold (+) 0.0 abs-dwds) 2.0) 24))
+                )
+                total-deviation
+            )
+        )
+    )
+    (defun UC_DeviatedShares:[decimal] (pool-reserves:[decimal] pool-shares:[decimal] new-total-shares:decimal)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL acc
+                        (floor (/ (* (at idx pool-reserves)(at idx pool-shares)) new-total-shares) 24)
+                    )
+                )
+                []
+                (enumerate 0 (- (length pool-reserves) 1))
+            )
+        )
+    )
+    (defun UC_PoolShares:[decimal] (pool-reserves:[decimal] w:[decimal])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (size:decimal (dec (length pool-reserves)))
+                (sw:decimal (fold (+) 0.0 w))
+                (iz-weigthed:bool (if (= sw 1.0) true false))
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (let
+                        (
+                            (amount:decimal (at idx pool-reserves))
+                            (position-share:decimal
+                                (if iz-weigthed
+                                    (* 5040000.0 (at idx w))
+                                    (/ 5040000.0 size)
+                                )
+                            )
+                            (amount-share:decimal
+                                (floor (/ position-share amount) 24)
+                            )
+                        )
+                        (ref-U|LST::UC_AppL acc amount-share)
+                    )
+                )
+                []
+                (enumerate 0 (- (length w) 1))
+            )
+        )
+    )
+    (defun UC_VirtualSwap:object{UtilitySwpV2.VirtualSwapEngine} 
+        (vse:object{UtilitySwpV2.VirtualSwapEngine} dsid:object{UtilitySwpV2.DirectSwapInputData})
+        @doc "Executes a Virtual Swap, saving data in the Output Object"
+        (let
+            (
+                ;;Unwrap Input Objects
+                (v-tokens:[string] (at "v-tokens" vse))
+                (v-prec:[integer] (at "v-prec" vse))
+                (account:string (at "account" vse))
+                (account-supply:[decimal] (at "account-supply" vse))
+                (swpair:string (at "swpair" vse))
+                (X:[decimal] (at "X" vse))
+                (A:decimal (at "A" vse))
+                (W:[decimal] (at "W" vse))
+                (F:object{UtilitySwpV2.SwapFeez} (at "F" vse))
+                (fuel:[decimal] (at "fuel" vse))
+                (special:[decimal] (at "special" vse))
+                (boost:[decimal] (at "boost" vse))
+                (swaps:[object{UtilitySwpV2.DirectSwapInputData}] (at "swaps" vse))
+                ;;
+                (input-ids:[string] (at "input-ids" dsid))
+                (input-amounts:[decimal] (at "input-amounts" dsid))
+                (output-id:string (at "output-id" dsid))
+                ;;
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-SWP:module{SwapperV4} SWP)
+                (ref-SWPI:module{SwapperIssue} SWPI)
+                ;;
+                (pool-type:string (ref-U|SWP::UC_PoolType swpair))
+                (input-positions:[integer] (UC_PoolTokenPositions swpair input-ids))
+                (output-position:integer (at 0 (UC_PoolTokenPositions swpair [output-id])))
+                ;;
+                (swap-result:object{UtilitySwpV2.DirectTaxedSwapOutput}
+                    (UC_BareboneSwapWithFeez account pool-type dsid F A X v-prec input-positions output-position W)
+                )
+                (tsoa:decimal (fold (+) 0.0 [(at "o-id-special" swap-result) (at "o-id-liquid" swap-result) (at "o-id-netto" swap-result)]))
+                (tsoa-filled:[decimal] (URC_IndirectRefillAmounts X [output-position] [tsoa]))
+                (remainder-filled:[decimal] (URC_IndirectRefillAmounts X [output-position] [(at "o-id-netto" swap-result)]))
+                (input-amounts-filled:[decimal] (URC_IndirectRefillAmounts X input-positions input-amounts))
+            )
+            (ref-U|SWP::UDC_VirtualSwapEngine
+                v-tokens v-prec account
+                (zip (+) remainder-filled (zip (-) account-supply input-amounts-filled)) 
+                swpair 
+                (zip (-) (zip (+) X input-amounts-filled) remainder-filled)
+                A W F
+                (zip (+) fuel (at "lp-fuel" swap-result))
+                (ref-U|LST::UC_ReplaceAt special output-position (+ (at output-position special) (at "o-id-special" swap-result)))
+                (ref-U|LST::UC_ReplaceAt boost output-position (+ (at output-position boost) (at "o-id-liquid" swap-result)))
+                (ref-U|LST::UC_AppL swaps dsid)
+            )
+        )
+    )
+    (defun UC_BareboneSwapWithFeez:object{UtilitySwpV2.DirectTaxedSwapOutput}
+        (
+            account:string pool-type:string 
+            dsid:object{UtilitySwpV2.DirectSwapInputData} fees:object{UtilitySwpV2.SwapFeez}
+            A:decimal X:[decimal] X-prec:[integer] input-positions:[integer] output-position:integer weights:[decimal]
+        )
+        @doc "Performs a Direct Swap with Fees Computation, outputing results in an object{UtilitySwpV2.DirectTaxedSwapOutput} \
+            \ Given proper inputs, can be used for an actual Swap Functions, to save redundant code."
+        (let
+            (
+                ;;Unwrap Object Data
+                (input-ids:[string] (at "input-ids" dsid))
+                (input-amounts:[decimal] (at "input-amounts" dsid))
+                (output-id:string (at "output-id" dsid))
+                ;;
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                ;;
+                ;;Get Working fees
+                (reduced-fees:object{UtilitySwpV2.SwapFeez} (URC_EliteFeeReduction account fees))
+                (f1:decimal (at "lp" reduced-fees))
+                (f2:decimal (at "special" reduced-fees))
+                (f3:decimal (at "boost" reduced-fees))
+                (o-prec:integer (at output-position X-prec))
+                ;;
+                ;;From the input amounts, compute FeeSharesExcludingLpFee <fselp>
+                (fselp:decimal (- 1000.0 f1))
+                (input-amounts-for-swap:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (ref-U|LST::UC_AppL
+                                acc
+                                (floor
+                                    (* (at idx input-amounts) (/ fselp 1000.0))
+                                    (at (at idx input-positions) X-prec)
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length input-amounts) 1))
+                    )
+                )
+                (dsid-for-swap:object{UtilitySwpV2.DirectSwapInputData}
+                    (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts-for-swap output-id)
+                )
+                (drsi:object{UtilitySwpV2.DirectRawSwapInput}
+                    (UDC_DirectRawSwapInput dsid-for-swap A X input-positions output-position weights)
+                )
+                (input-amounts-for-lp:[decimal] (zip (-) input-amounts input-amounts-for-swap))
+                (input-amounts-for-lp-filled:[decimal] (URC_IndirectRefillAmounts X input-positions input-amounts-for-lp))
+                ;;
+                ;;Total-Swap-Output-Amount <tsoa> is computed without them, then splited into 3 parts: 
+                ;;special, boost, remainder
+                (tsoa:decimal (UC_BareboneSwap pool-type drsi))
+                (special:decimal (floor (* (/ f2 fselp) tsoa) o-prec))
+                (boost:decimal (floor (* (/ f3 fselp) tsoa) o-prec))
+                (remainder:decimal (- tsoa (+ special boost)))
+                (output:object{UtilitySwpV2.DirectTaxedSwapOutput}
+                    (ref-U|SWP::UDC_DirectTaxedSwapOutput
+                        input-amounts-for-lp-filled
+                        output-id
+                        special
+                        boost
+                        remainder
+                    )
+                )
+            )
+            output
+        )
+    )
+    (defun UC_InverseBareboneSwapWithFeez:object{UtilitySwpV2.InverseTaxedSwapOutput}
+        
+        (
+            account:string pool-type:string 
+            rsid:object{UtilitySwpV2.ReverseSwapInputData} fees:object{UtilitySwpV2.SwapFeez}
+            A:decimal X:[decimal] X-prec:[integer] output-position:integer input-position:integer weights:[decimal]
+        )
+        @doc "Performs a Reverse Swap with Fees Computation, outputing results in an object{UtilitySwpV2.InverseTaxedSwapOutput} \
+            \ Use Case is displaying Input Amounts for a Swap when the desired Output Amount of a Token is entered first. \
+            \ However not only the input required can be displayed, but also the susequent fees that would be incurred"
+        (let
+            (
+                ;;Unwrap Object Data
+                (output-id:string (at "output-id" rsid))
+                (output-amount:decimal (at "output-amount" rsid))
+                (input-id:string (at "input-id" rsid))
+                ;;
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                ;;
+                ;;Get Working fees
+                (reduced-fees:object{UtilitySwpV2.SwapFeez} (URC_EliteFeeReduction account fees))
+                (f1:decimal (at "lp" reduced-fees))
+                (f2:decimal (at "special" reduced-fees))
+                (f3:decimal (at "boost" reduced-fees))
+                (o-prec:integer (at output-position X-prec))
+                (i-prec:integer (at input-position X-prec))
+                ;;
+                ;;Star by computing the Output fee shares <ofs>
+                (ofs:decimal (- 1000.0 (fold (+) 0.0 [f1 f2 f3])))
+                ;;Compute Output-Amount per fee Share <oapfs>
+                (oapfs:decimal (floor (/ output-amount ofs) o-prec))
+                (boost:decimal (floor (* f3 oapfs) o-prec))
+                (special:decimal (floor (* f2 oapfs) o-prec))
+                ;;Then Compute Total-Swap-Output-Amount <tsoa>
+                (tsoa:decimal (fold (+) 0.0 [output-amount boost special]))
+                ;:Remake a new rsid
+                (new-rsid:object{UtilitySwpV2.ReverseSwapInputData} 
+                    (ref-U|SWP::UDC_ReverseSwapInputData output-id tsoa input-id)
+                )
+                (irsi:object{UtilitySwpV2.InverseRawSwapInput}
+                    (UDC_InverseRawSwapInput new-rsid A X output-position input-position weights)
+                )
+                ;;Now Compute the Input Amount needed to get the <tsoa>, the Partial-Input-Amount <pia>
+                ;;<pia> is part of the TotalInputAmount, that would be used for a direct swap, after LP fees have been retained
+                (pia:decimal (UC_BareboneInverseSwap pool-type irsi))
+                ;;Now Compute the Total-Input-Amouant <tia>
+                (tia:decimal (floor (/ (* 1000.0 pia) (- 1000.0 f1)) i-prec))
+                (output:object{UtilitySwpV2.InverseTaxedSwapOutput}
+                    (ref-U|SWP::UDC_InverseTaxedSwapOutput
+                        boost
+                        special
+                        (URC_IndirectRefillAmounts X [input-position] [(- tia pia)])
+                        input-id
+                        tia
+                    )
+                )
+            )
+            output
+        )
+    )
+    ;;
     (defun UC_BareboneSwap:decimal
         (pool-type:string drsi:object{UtilitySwpV2.DirectRawSwapInput})
         (let
@@ -262,6 +481,22 @@
     )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
+    (defun URC_EliteFeeReduction:object{UtilitySwpV2.SwapFeez} (account:string fees:object{UtilitySwpV2.SwapFeez})
+        (let
+            (
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+                (major:integer (ref-DALOS::UR_Elite-Tier-Major account))
+                (minor:integer (ref-DALOS::UR_Elite-Tier-Minor account))
+            )
+            (ref-U|SWP::UDC_SwapFeez
+                (ref-U|DALOS::UC_GasCost (at "lp" fees) major minor false)
+                (ref-U|DALOS::UC_GasCost (at "special" fees) major minor false)
+                (ref-U|DALOS::UC_GasCost (at "boost" fees) major minor false)
+            )
+        )
+    )
     (defun URC_PoolTokenPositions:[integer] (swpair:string input-ids:[string])
         (let
             (
@@ -592,7 +827,7 @@
         ;;This function is structured like this, to allow price retrieval from any source.
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (id-in-kda:decimal (URC_SingleWorthDWK id))
                 (id-precision:integer (ref-DPTF::UR_Decimals id))
@@ -606,7 +841,7 @@
     (defun URC_WorthDWK (id:string amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (dwk:string (ref-DALOS::UR_WrappedKadenaID))
                 (dlk:string (ref-DALOS::UR_LiquidKadenaID))
             )
@@ -690,6 +925,106 @@
                 )
             )
             [pool-worth lp-worth]
+        )
+    )
+    (defun URC_DirectRefillAmounts:[decimal] (swpair:string ids:[string] amounts:[decimal])
+        @doc "Refill incomplete amount values with zeros, to create an amount list equal to the <swpair> token number"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-SWP:module{SwapperV4} SWP)
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (let
+                        (
+                            (pt:string (at idx pool-tokens))
+                            (spt:[integer] (ref-U|LST::UC_Search ids pt))
+                            (pos:integer
+                                (if (> (length spt) 0)
+                                    (at 0 spt)
+                                    -1
+                                )
+                            )
+                            (value:decimal
+                                (if (= pos -1)
+                                    0.0
+                                    (at pos amounts)
+                                )
+                            )
+                        )
+                        (ref-U|LST::UC_AppL acc value)
+                    )
+                )
+                []
+                (enumerate 0 (- (length pool-tokens) 1))
+            )
+        )
+    )
+    (defun URC_IndirectRefillAmounts:[decimal] (X:[decimal] positions:[integer] amounts:[decimal])
+        @doc "Refill incomplete amount values with zeros, to create an amount equal to the <X> positions number"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (let
+                        (
+                            (spt:[integer] (ref-U|LST::UC_Search positions idx))
+                            (pos:integer
+                                (if (> (length spt) 0)
+                                    (at 0 spt)
+                                    -1
+                                )
+                            )
+                            (value:decimal
+                                (if (= pos -1)
+                                    0.0
+                                    (at pos amounts)
+                                )
+                            )
+                        )
+                        (ref-U|LST::UC_AppL acc value)
+                    )
+                )
+                []
+                (enumerate 0 (- (length X) 1))
+            )
+        )
+    )
+    (defun URC_TrimIdsWithZeroAmounts:[string] (swpair:string input-amounts:[decimal])
+        @doc "From a complete list of input amounts, also containing zeroes, \
+            \ creates a list of Pool Token IDs for the amounts greater than zero."
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-SWP:module{SwapperV4} SWP)
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                (zero-positions:[integer] (ref-U|LST::UC_Search input-amounts 0.0))
+            )
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (let
+                        (
+                            (iz-index-zero:bool (contains idx zero-positions))
+                        )
+                        (if (not iz-index-zero)
+                            (ref-U|LST::UC_AppL
+                                acc
+                                (at idx pool-tokens)
+                            )
+                            acc
+                        )
+                    )
+                )
+                []
+                (enumerate 0 (- (length input-amounts) 1))
+            )
         )
     )
     ;;{F2}  [UEV]
@@ -817,7 +1152,7 @@
             (if (and (> amp 0.0) (not contains-principals))
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalosV3} DALOS)
+                        (ref-DALOS:module{OuronetDalosV4} DALOS)
                         (dlk:string (ref-DALOS::UR_LiquidKadenaID))
                         (h-obj:object{SwapperIssue.Hopper} (URC_Hopper first-pool-token dlk 1.0))
                     )
@@ -914,20 +1249,21 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Issue:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Issue:object{IgnisCollector.OutputCumulator}
         (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
         @doc "Issues a new SWPair (Liquidty Pool)"
         (UEV_IMC)
         (with-capability (SWPI|C>ISSUE account pool-tokens fee-lp weights amp p)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-BRD:module{Branding} BRD)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                     (ref-SWPT:module{SwapTracer} SWPT)
                     (ref-SWP:module{SwapperV4} SWP)
-                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
+                    ;;
                     (kda-dptf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
                     (kda-swp-cost:decimal (ref-DALOS::UR_UsagePrice "swp"))
                     (kda-costs:decimal (+ kda-dptf-cost kda-swp-cost))
@@ -935,7 +1271,7 @@
                     (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
                     (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
                     (lp-name-ticker:[string] (ref-SWP::URC_LpComposer pool-tokens weights amp))
-                    (ico1:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico1:object{IgnisCollector.OutputCumulator}
                         (ref-DPTF::XE_IssueLP (at 0 lp-name-ticker) (at 1 lp-name-ticker))
                     )
                     (token-lp:string (at 0 (at "output" ico1)))
@@ -944,155 +1280,23 @@
                 (ref-BRD::XE_Issue swpair)
                 (let
                     (
-                        (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                        (ico2:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::C_MultiTransfer pool-token-ids account swp-sc pool-token-amounts true)
+                        (trigger:bool (ref-IGNIS::IC|URC_IsVirtualGasZero))
+                        (ico2:object{IgnisCollector.OutputCumulator}
+                            (ref-TFT::C_MultiTransfer pool-token-ids account SWP|SC_NAME pool-token-amounts true)
                         )
-                        (ico3:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-DPTF::C_Mint token-lp swp-sc 10000000.0 true)
+                        (ico3:object{IgnisCollector.OutputCumulator}
+                            (ref-DPTF::C_Mint token-lp SWP|SC_NAME 10000000.0 true)
                         )
-                        (ico4:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-TFT::C_Transfer token-lp swp-sc account 10000000.0 true)
+                        (ico4:object{IgnisCollector.OutputCumulator}
+                            (ref-TFT::C_Transfer token-lp SWP|SC_NAME account 10000000.0 true)
                         )
-                        (ico5:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-DALOS::UDC_ConstructOutputCumulatorV2 gas-swp-cost swp-sc trigger [])
+                        (ico5:object{IgnisCollector.OutputCumulator}
+                            (ref-IGNIS::IC|UDC_ConstructOutputCumulator gas-swp-cost SWP|SC_NAME trigger [])
                         )
                     )
                     (ref-SWPT::XE_MultiPathTracer swpair (ref-SWP::UR_Principals))
                     (ref-DALOS::KDA|C_Collect patron kda-costs)
-                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico1 ico2 ico3 ico4 ico5] [swpair token-lp])
-                )
-            )
-        )
-    )
-    ;;PS (Pact Starter) Functions for Issuing an SWPair using Multistep Transactions
-    ;;Running PS Functions must be finalized by running the subsequent pact stepts.
-    (defun PS|C_IssueStable
-        (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
-        (UEV_IMC)
-        (CP_Issue
-            patron account pool-tokens fee-lp
-            (make-list (length pool-tokens) 1.0)
-            amp p
-        )
-    )
-    (defun PS|C_IssueStandard
-        (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool)
-        (UEV_IMC)
-        (CP_Issue
-            patron account pool-tokens fee-lp
-            (make-list (length pool-tokens) 1.0)
-            -1.0 p
-        )
-    )
-    (defun PS|C_IssueWeighted
-        (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
-        (UEV_IMC)
-        (CP_Issue
-            patron account pool-tokens fee-lp
-            weights
-            -1.0 p
-        )
-    )
-    ;;CP - Client Pact Functions
-    (defpact CP_Issue
-        (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool)
-        ;;Issues an SWPair, as MultiStep Transaction, to be used in case <C_Issue> cant fit inside one TX.
-        ;;
-        ;;Step 1 Validation
-        (step
-            (UEV_Issue account pool-tokens fee-lp weights amp p)
-        )
-        ;;Step 2 Ignis Collection and KDA Fuel Processing
-        (step
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                    (ref-SWP:module{SwapperV4} SWP)
-                    (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
-                    (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
-                    (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
-                    ;;
-                    (sum-ignis:decimal 
-                        (fold (+) 0.0 
-                            [
-                                (ref-DALOS::UR_UsagePrice "ignis|swp-issue")
-                                (ref-DALOS::UR_UsagePrice "ignis|token-issue")
-                                (ref-DALOS::UR_UsagePrice "ignis|biggest")
-                                (ref-DALOS::UR_UsagePrice "ignis|smallest")
-                            ]
-                        )
-                    )
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
-                    ;;
-                    (ico0:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-DALOS::UDC_ConstructOutputCumulatorV2 sum-ignis swp-sc trigger [])
-                    )
-                    (ico1:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-TFT::UDC_MultiTransferCumulator pool-token-ids account swp-sc pool-token-amounts)
-                    )
-                    ;;
-                    (kda-costs:decimal 
-                        (+ 
-                            (ref-DALOS::UR_UsagePrice "dptf")
-                            (ref-DALOS::UR_UsagePrice "swp")
-                        )
-                    )
-                )
-                ;;Collect IGNIS for Issuance
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [ico0 ico1] [])
-                )
-                ;;Collect KDA for Issuance
-                (ref-DALOS::KDA|C_Collect patron kda-costs)
-                (let
-                    (
-                        (ref-ORBR:module{OuroborosV3} OUROBOROS)
-                        (auto-fuel:bool (ref-DALOS::UR_AutoFuel))
-                    )
-                    (if auto-fuel
-                        (do
-                            (with-capability (P|DT)
-                                (ref-ORBR::C_Fuel)
-                            )
-                            (format "{} IGNIS and {} KDA collected (raising DLK Index) succesfully." [sum-ignis kda-costs])
-                        )
-                        (format "{} IGNIS collected, with {} KDA collected (in reserves) succesfully" [sum-ignis kda-costs])
-                    )
-                )
-            )
-        )
-        ;;Step 3 Issuance
-        (step
-            (with-capability (SWPI|C>ISSUE-MULTISTEP p)
-                (let
-                    (
-                        (ref-DALOS:module{OuronetDalosV3} DALOS)
-                        (ref-BRD:module{Branding} BRD)
-                        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                        (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                        (ref-SWPT:module{SwapTracer} SWPT)
-                        (ref-SWP:module{SwapperV4} SWP)
-                        (principals:[string] (ref-SWP::UR_Principals))
-                        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
-                        (pool-token-ids:[string] (ref-SWP::UC_ExtractTokens pool-tokens))
-                        (pool-token-amounts:[decimal] (ref-SWP::UC_ExtractTokenSupplies pool-tokens))
-                        (lp-name-ticker:[string] (ref-SWP::URC_LpComposer pool-tokens weights amp))
-                        (lp-name:string (at 0 lp-name-ticker))
-                        (lp-ticker:string (at 1 lp-name-ticker))
-                        (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                            (ref-DPTF::XE_IssueLP lp-name lp-ticker)
-                        )
-                        (token-lp:string (at 0 (at "output" ico)))
-                        (swpair:string (ref-SWP::XE_Issue account pool-tokens token-lp fee-lp weights amp p))
-                    )
-                    (ref-BRD::XE_Issue swpair)
-                    (ref-TFT::C_MultiTransfer pool-token-ids account swp-sc pool-token-amounts true)
-                    (ref-DPTF::C_Mint token-lp swp-sc 10000000.0 true)
-                    (ref-TFT::C_Transfer token-lp swp-sc account 10000000.0 true)
-                    (ref-SWPT::XE_MultiPathTracer swpair principals)
-                    (format "Swpair with ID {} and LP Token {} ID created succesfully" [swpair token-lp])
+                    (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico1 ico2 ico3 ico4 ico5] [swpair token-lp])
                 )
             )
         )

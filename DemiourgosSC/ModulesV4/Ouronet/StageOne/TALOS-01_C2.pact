@@ -1,122 +1,7 @@
-(interface TalosStageOne_ClientTwo
-    ;;
-    ;;ATS (Autostake) Functions
-    (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun ATS|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun ATS|C_AddHotRBT (patron:string ats:string hot-rbt:string))
-    (defun ATS|C_AddSecondary (patron:string ats:string reward-token:string rt-nfr:bool))
-    (defun ATS|C_Coil:decimal (patron:string coiler:string ats:string rt:string amount:decimal))
-    (defun ATS|C_ColdRecovery (patron:string recoverer:string ats:string ra:decimal))
-    (defun ATS|C_Cull:[decimal] (patron:string culler:string ats:string))
-    (defun ATS|C_Curl:decimal (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
-    (defun ATS|C_Fuel (patron:string fueler:string ats:string reward-token:string amount:decimal))
-    (defun ATS|C_HotRecovery (patron:string recoverer:string ats:string ra:decimal))
-    (defun ATS|C_Issue:list (patron:string account:string ats:[string] index-decimals:[integer] reward-token:[string] rt-nfr:[bool] reward-bearing-token:[string] rbt-nfr:[bool]))
-    (defun ATS|C_KickStart:decimal (patron:string kickstarter:string ats:string rt-amounts:[decimal] rbt-request-amount:decimal))
-    (defun ATS|C_ModifyCanChangeOwner (patron:string ats:string new-boolean:bool))
-    (defun ATS|C_RecoverHotRBT (patron:string recoverer:string id:string nonce:integer amount:decimal))
-    (defun ATS|C_RecoverWholeRBTBatch (patron:string recoverer:string id:string nonce:integer))
-    (defun ATS|C_Redeem (patron:string redeemer:string id:string nonce:integer))
-    (defun ATS|C_RemoveSecondary (patron:string remover:string ats:string reward-token:string))
-    (defun ATS|C_RotateOwnership (patron:string ats:string new-owner:string))
-    (defun ATS|C_SetColdFee (patron:string ats:string fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]]))
-    (defun ATS|C_SetCRD (patron:string ats:string soft-or-hard:bool base:integer growth:integer))
-    (defun ATS|C_SetHotFee (patron:string ats:string promile:decimal decay:integer))
-    (defun ATS|C_Syphon (patron:string syphon-target:string ats:string syphon-amounts:[decimal]))
-    (defun ATS|C_ToggleElite (patron:string ats:string toggle:bool))
-    (defun ATS|C_ToggleFeeSettings (patron:string ats:string toggle:bool fee-switch:integer))
-    (defun ATS|C_ToggleParameterLock (patron:string ats:string toggle:bool))
-    (defun ATS|C_ToggleSyphoning (patron:string ats:string toggle:bool))
-    (defun ATS|C_TurnRecoveryOff (patron:string ats:string cold-or-hot:bool))
-    (defun ATS|C_TurnRecoveryOn (patron:string ats:string cold-or-hot:bool))
-    (defun ATS|C_UpdateSyphon (patron:string ats:string syphon:decimal))
-    ;;
-    ;;
-    ;;VST (Vesting) Functions
-    (defun VST|C_CreateFrozenLink:string (patron:string dptf:string))
-    (defun VST|C_CreateReservationLink:string (patron:string dptf:string))
-    (defun VST|C_CreateVestingLink:string (patron:string dptf:string))
-    (defun VST|C_CreateSleepingLink:string (patron:string dptf:string))
-    ;;Frozen
-    (defun VST|C_Freeze (patron:string freezer:string freeze-output:string dptf:string amount:decimal))
-    (defun VST|C_RepurposeFrozen (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
-    (defun VST|C_ToggleTransferRoleFrozenDPTF (patron:string s-dptf:string target:string toggle:bool))
-    ;;Reservation
-    (defun VST|C_Reserve (patron:string reserver:string dptf:string amount:decimal))
-    (defun VST|C_Unreserve (patron:string unreserver:string r-dptf:string amount:decimal))
-    (defun VST|C_RepurposeReserved (patron:string dptf-to-repurpose:string repurpose-from:string repurpose-to:string))
-    (defun VST|C_ToggleTransferRoleReservedDPTF (patron:string s-dptf:string target:string toggle:bool))
-    ;;Vesting
-    (defun VST|C_Unvest (patron:string culler:string dpmf:string nonce:integer))
-    (defun VST|C_Vest (patron:string vester:string target-account:string dptf:string amount:decimal offset:integer duration:integer milestones:integer))
-    (defun VST|C_RepurposeVested (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
-    (defun VST|C_CoilAndVest:decimal (patron:string coiler-vester:string ats:string coil-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
-    (defun VST|C_CurlAndVest:decimal (patron:string curler-vester:string ats1:string ats2:string curl-token:string amount:decimal target-account:string offset:integer duration:integer milestones:integer))
-    ;;Sleeping
-    (defun VST|C_Merge(patron:string merger:string dpmf:string nonces:[integer]))
-    (defun VST|C_MergeAll(patron:string merger:string dpmf:string))
-    (defun VST|C_Sleep (patron:string sleeper:string target-account:string dptf:string amount:decimal duration:integer))
-    (defun VST|C_Unsleep (patron:string unsleeper:string dpmf:string nonce:integer))
-    (defun VST|C_RepurposeSleeping (patron:string dpmf-to-repurpose:string nonce:integer repurpose-from:string repurpose-to:string))
-    (defun VST|C_RepurposeMerge (patron:string dpmf-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string))
-    (defun VST|C_RepurposeMergeAll (patron:string dpmf-to-repurpose:string repurpose-from:string repurpose-to:string))
-    (defun VST|C_ToggleTransferRoleSleepingDPMF (patron:string s-dpmf:string target:string toggle:bool))
-    ;;
-    ;;
-    ;;LQD (Liquid-Staking KDA) Functions
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal))
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal))
-    ;;
-    ;;
-    ;;ORBR (Ouroboros) Functions
-    (defun ORBR|C_Compress:decimal (patron:string client:string ignis-amount:decimal))
-    (defun ORBR|C_Sublimate:decimal (patron:string client:string target:string ouro-amount:decimal))
-    (defun ORBR|C_WithdrawFees (patron:string id:string target:string))
-    ;;
-    ;;
-    ;;SWP (Swap-Pair) Functions
-    (defun SWP|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun SWP|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    (defun SWP|C_UpdatePendingBrandingLPs (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun SWP|C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
-    ;;
-    (defun SWP|C_ChangeOwnership (patron:string swpair:string new-owner:string))
-    (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
-    (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
-    ;;Issue
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    ;;Management
-    (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
-    (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
-    (defun SWP|C_ToggleAddLiquidity (patron:string swpair:string toggle:bool))
-    (defun SWP|C_ToggleSwapCapability (patron:string swpair:string toggle:bool))
-    (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool))
-    (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
-    (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
-    ;;Liquidity
-    (defun SWP|C_AddBalancedLiquidity:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal))
-    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
-    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
-    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
-    (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
-    ;;Swap
-    (defun SWP|OPU|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage} kda-pid:decimal))
-    (defun SWP|OPU|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string kda-pid:decimal))
-    (defun SWP|OPU|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage} kda-pid:decimal))
-    (defun SWP|OPU|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string kda-pid:decimal))
-    ;;
-    (defun SWP|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-    (defun SWP|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
-
-)
-(interface TalosStageOne_ClientTwoV2
-    @doc "V2 Removes <patron> input variable where it is not needed"
+(interface TalosStageOne_ClientTwoV3
+    @doc "V2 Removes <patron> input variable where it is not needed \
+        \ V3 brings the improved liquidity engine, two 2 liquidity addition types \
+        \ and improved Swap Logistics"
     ;;
     ;;ATS (Autostake) Functions
     (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
@@ -203,9 +88,9 @@
     (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
     (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
     ;;Issue
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     ;;Management
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
@@ -214,29 +99,25 @@
     (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool))
     (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}]))
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV4.FeeSplit}]))
     ;;Liquidity
-    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal]))
-    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
-    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
+    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal kda-pid:decimal))
+    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer kda-pid:decimal))
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
     ;;Swap
-    (defun SWP|OPU|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage} kda-pid:decimal))
-    (defun SWP|OPU|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string kda-pid:decimal))
-    (defun SWP|OPU|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage} kda-pid:decimal))
-    (defun SWP|OPU|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string kda-pid:decimal))
-    ;;
-    (defun SWP|C_MultiSwap:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_MultiSwapNoSlippage:decimal (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
-    (defun SWP|C_SimpleSwap:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:object{SwapperUsage.Slippage}))
-    (defun SWP|C_SimpleSwapNoSlippage:decimal (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
-
+    (defun SWP|C_SingleSwapWithSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:decimal))
+    (defun SWP|C_SingleSwapNoSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
+    (defun SWP|C_MultiSwapWithSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal))
+    (defun SWP|C_MultiSwapNoSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
 )
 (module TS01-C2 GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientTwoV2)
+    (implements TalosStageOne_ClientTwoV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -246,7 +127,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C2))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -258,7 +139,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -271,7 +152,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -346,6 +227,8 @@
     ;;{1}
     ;;{2}
     ;;{3}
+    (defun CT_KdaPid ()             (let ((ref-U|CT|DIA:module{DiaKdaPid} U|CT)) (ref-U|CT|DIA::UR|KDA-PID)))
+    (defconst KDAPID                (CT_KdaPid))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -373,10 +256,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-B|ATS:module{BrandingUsageV4} ATS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-B|ATS:module{BrandingUsageV6} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-B|ATS::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
@@ -387,7 +270,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|ATS:module{BrandingUsageV4} ATS)
+                    (ref-B|ATS:module{BrandingUsageV6} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-B|ATS::C_UpgradeBranding patron entity-id months)
@@ -402,10 +285,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_AddHotRBT ats hot-rbt)
                 )
             )
@@ -416,10 +299,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_AddSecondary ats reward-token rt-nfr)
                 )
             )
@@ -430,13 +313,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATSU::C_Coil coiler ats rt amount)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -446,10 +329,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_ColdRecovery recoverer ats ra)
                 )
             )
@@ -460,13 +343,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATSU::C_Cull culler ats)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at "output" ico)
             )
         )
@@ -477,13 +360,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATSU::C_Curl curler ats1 ats2 rt amount)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -493,10 +376,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_Fuel fueler ats reward-token amount)
                 )
             )
@@ -507,10 +390,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_HotRecovery recoverer ats ra)
                 )
             )
@@ -521,14 +404,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -540,13 +423,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATSU::C_KickStart kickstarter ats rt-amounts rbt-request-amount)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -556,10 +439,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_ModifyCanChangeOwner ats new-boolean)
                 )
             )
@@ -571,10 +454,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_RecoverHotRBT recoverer id nonce amount)
                 )
             )
@@ -586,10 +469,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_RecoverWholeRBTBatch recoverer id nonce)
                 )
             )
@@ -600,10 +483,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_Redeem redeemer id nonce)
                 )
             )
@@ -616,10 +499,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_RemoveSecondary remover ats reward-token)
                 )
             )
@@ -630,10 +513,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_RotateOwnership ats new-owner)
                 )
             )
@@ -644,10 +527,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_SetColdFee ats fee-positions fee-thresholds fee-array)
                 )
             )
@@ -658,10 +541,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_SetCRD ats soft-or-hard base growth)
                 )
             )
@@ -672,10 +555,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_SetHotFee ats promile decay)
                 )
             )
@@ -687,10 +570,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_Syphon syphon-target ats syphon-amounts)
                 )
             )
@@ -701,10 +584,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_ToggleElite ats toggle)
                 )
             )
@@ -715,10 +598,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::C_ToggleFeeSettings ats toggle fee-switch)
                 )
             )
@@ -729,15 +612,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ATSU::C_ToggleParameterLock patron ats toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XE_ConditionalFuelKDA collect)
             )
         )
@@ -747,10 +630,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_ToggleSyphoning ats toggle)
                 )
             )
@@ -761,10 +644,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::C_TurnRecoveryOff ats cold-or-hot)
                 )
             )
@@ -775,10 +658,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_TurnRecoveryOn ats cold-or-hot)
                 )
             )
@@ -789,10 +672,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATSU::C_UpdateSyphon ats syphon)
                 )
             )
@@ -820,14 +703,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-VST::C_CreateFrozenLink patron dptf)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -853,14 +736,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-VST::C_CreateReservationLink patron dptf)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -885,14 +768,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-VST::C_CreateVestingLink patron dptf)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -917,14 +800,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-VST::C_CreateSleepingLink patron dptf)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -936,10 +819,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Freeze freezer freeze-output dptf amount)
                 )
             )
@@ -950,10 +833,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeFrozen dptf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -964,10 +847,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_ToggleTransferRoleFrozenDPTF s-dptf target toggle)
                 )
             )
@@ -979,10 +862,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Reserve reserver dptf amount)
                 )
             )
@@ -993,10 +876,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Unreserve unreserver r-dptf amount)
                 )
             )
@@ -1007,10 +890,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeReserved dptf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -1021,10 +904,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_ToggleTransferRoleReservedDPTF s-dptf target toggle)
                 )
             )
@@ -1036,10 +919,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Unvest culler dpmf nonce)
                 )
             )
@@ -1050,10 +933,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Vest vester target-account dptf amount offset duration milestones)
                 )
             )
@@ -1064,10 +947,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeVested dpmf-to-repurpose nonce repurpose-from repurpose-to)
                 )
             )
@@ -1083,15 +966,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                     (ref-VST:module{VestingV3} VST)
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                     (c-rbt-amount:decimal (ref-ATS::URC_RBT ats coil-token amount))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                         [
                             (ref-ATSU::C_Coil coiler-vester ats coil-token amount)
                             (ref-VST::C_Vest coiler-vester target-account c-rbt c-rbt-amount offset duration milestones)
@@ -1114,7 +997,7 @@
         (with-capability (P|TS)
             (let*
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                     (ref-ATSU:module{AutostakeUsageV3} ATSU)
                     (ref-VST:module{VestingV3} VST)
@@ -1124,8 +1007,8 @@
                     (c-rbt2:string (ref-ATS::UR_ColdRewardBearingToken ats2))
                     (c-rbt2-amount:decimal (ref-ATS::URC_RBT ats2 c-rbt1 c-rbt1-amount))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                         [
                             (ref-ATSU::C_Curl curler-vester ats1 ats2 curl-token amount)
                             (ref-VST::C_Vest curler-vester target-account c-rbt2 c-rbt2-amount offset duration milestones)
@@ -1145,10 +1028,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Merge merger dpmf nonces)
                 )
             )
@@ -1163,10 +1046,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_MergeAll merger dpmf)
                 )
             )
@@ -1177,10 +1060,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Sleep sleeper target-account dptf amount duration)
                 )
             )
@@ -1191,10 +1074,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_Unsleep unsleeper dpmf nonce)
                 )
             )
@@ -1205,10 +1088,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeSleeping dpmf-to-repurpose nonce repurpose-from repurpose-to)
                 )
             )
@@ -1219,10 +1102,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeMerge patron dpmf-to-repurpose nonces repurpose-from repurpose-to)
                 )
             )
@@ -1233,10 +1116,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_RepurposeMergeAll dpmf-to-repurpose repurpose-from repurpose-to)
                 )
             )
@@ -1247,10 +1130,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-VST:module{VestingV3} VST)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-VST::C_ToggleTransferRoleSleepingDPMF s-dpmf target toggle)
                 )
             )
@@ -1262,10 +1145,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-LIQUID::C_UnwrapKadena unwrapper amount)
                 )
             )
@@ -1276,10 +1159,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-LIQUID::C_WrapKadena wrapper amount)
                 )
             )
@@ -1294,9 +1177,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ORBR:module{OuroborosV3} OUROBOROS)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ORBR::C_Compress client ignis-amount)
                     )
                 )
@@ -1312,9 +1195,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ORBR:module{OuroborosV3} OUROBOROS)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-ORBR::C_Sublimate client target ouro-amount)
                     )
                 )
@@ -1329,10 +1212,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ORBR:module{OuroborosV3} OUROBOROS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ORBR::C_WithdrawFees id target)
                 )
             )
@@ -1344,10 +1227,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-B|SWP:module{BrandingUsageV4} SWP)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-B|SWP:module{BrandingUsageV6} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-B|SWP::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
@@ -1358,7 +1241,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|SWP:module{BrandingUsageV4} SWP)
+                    (ref-B|SWP:module{BrandingUsageV6} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-B|SWP::C_UpgradeBranding patron entity-id months)
@@ -1374,10 +1257,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-B|SWPL:module{BrandingUsageV5} SWPL)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-B|SWPL:module{BrandingUsageV7} SWPL)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-B|SWPL::C_UpdatePendingBrandingLPs swpair entity-pos logo description website social)
                 )
             )
@@ -1388,7 +1271,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|SWPL:module{BrandingUsageV5} SWPL)
+                    (ref-B|SWPL:module{BrandingUsageV7} SWPL)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-B|SWPL::C_UpgradeBrandingLPs patron swpair entity-pos months)
@@ -1401,11 +1284,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_ChangeOwnership swpair new-owner)
                 )
             )
@@ -1416,14 +1299,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWP::C_EnableFrozenLP patron swpair)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
@@ -1434,20 +1317,20 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWP::C_EnableSleepingLP patron swpair)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at 0 (at "output" ico))
             )
         )
     )
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
         @doc "Issues a Stable Liquidity Pool. First Token in the liquidity Pool must have a connection to a principal Token \
             \ Stable Pools have the S designation. \
             \ Stable Pools can be created with up to 7 Tokens, and have by design equal weighting. \
@@ -1456,28 +1339,28 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPI:module{SwapperIssue} SWPI)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights amp p)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
         )
     )
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool)
         @doc "Issues a Standard, Constant Product Pool. \
             \ Constant Product Pools have the P Designation, and they are by design equal weigthed \
             \ Can also be created with up to 7 Tokens, also the <p> boolean determines if its a Principal Pool or not \
             \ The First Token must be a Principal Token"
         (SWP|C_IssueStable patron account pool-tokens fee-lp -1.0 p)
     )
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
         @doc "Issues a Weigthed Constant Liquidity Pool \
             \ Weigthed Pools have the W Designation, and the weights can be changed at will. \
             \ Can also be created with up to 7 Tokens, <p> boolean determines if its a Principal Pool or not \
@@ -1485,14 +1368,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPI:module{SwapperIssue} SWPI)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -1503,10 +1386,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_ModifyCanChangeOwner swpair new-boolean)
                 )
             )
@@ -1517,10 +1400,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_ModifyWeights swpair new-weights)
                 )
             )
@@ -1539,10 +1422,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPL:module{SwapperLiquidity} SWPL)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWPL::C_ToggleAddLiquidity swpair toggle)
                 )
             )
@@ -1558,10 +1441,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPU:module{SwapperUsageV4} SWPU)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWPU::C_ToggleSwapCapability swpair toggle)
                 )
             )
@@ -1573,15 +1456,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XE_ConditionalFuelKDA collect)
             )
         )
@@ -1591,10 +1474,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_UpdateAmplifier swpair amp)
                 )
             )
@@ -1612,62 +1495,30 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_UpdateFee swpair new-fee lp-or-special)
                 )
             )
         )
     )
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{Swapper.FeeSplit}])
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV4.FeeSplit}])
         @doc "Updates the Special Fee Targets, along with their Split, for an SWPair"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWP:module{SwapperV4} SWP)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWP::C_UpdateSpecialFeeTargets swpair targets)
                 )
             )
         )
     )
     ;;
-    (defun SWP|C_AddFrozenLiquidity:decimal (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)
-        @doc "Adds liquidity with a <frozen-dptf> Token to an <swpair>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPL:module{SwapperLiquidity} SWPL)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPL::C_AddFrozenLiquidity account swpair frozen-dptf input-amount)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    (defun SWP|C_AddSleepingLiquidity:decimal (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer)
-        @doc "Adds liquidity with a <sleeping-dpmf> Token to an <swpair>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPL:module{SwapperLiquidity} SWPL)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPL::C_AddSleepingLiquidity account swpair sleeping-dpmf nonce)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
     (defun SWP|C_Fuel
         (patron:string account:string swpair:string input-amounts:[decimal])
         @doc "Fuels the <swpair> with <input-amounts> of Tokens. \
@@ -1676,122 +1527,169 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPL:module{SwapperLiquidity} SWPL)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-SWPL::C_Fuel account swpair input-amounts true true)
                 )
             )
         )
     )
-    (defun SWP|C_AddLiquidity:decimal (patron:string account:string swpair:string input-amounts:[decimal])
-        @doc "Using custom <input-amounts>, add liquidity on the <swpair> \
-            \ Can be used to add both asymetric and balanced liquidity \
-            \ For Tokens that arent used, the decimal value must be set at 0.0 \
-            \ The order of the values in <input-amounts> must correspond to the Pool Token order, \
-            \ as this determines how much liquidity for which token is added \
+    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+        @doc "Adds Liquidity using <input-amounts> on <swpair>, in its default Standard Mode. \
+            \ Must Contain 0.0 for Tokens not used; Pool Token Order must be followed for desired <input-amounts> \
+            \ 1000 IGNIS Flat Fee Cost for adding liquidity to deincentivize addition of small values \
             \ \
-            \ Liquidity can also be added on an otherwise completely empty Liquidty Pool \
-            \ In this case, the original Token Ratios are used, the SWPair was created with."
+            \ Liquidity can also be added on a completely empty pool, \
+            \ if no asymetric liquidity exists in the <input-amounts> \
+            \ In this case, the original Token Ratios are used, the SWPair was created with. \
+            \ \
+            \ DEFAULT MODE \
+            \ \
+            \ If Asymmetric LP is detected, further IGNIS costs are enforced \
+            \ <ignis-gaseous-tax>, <deficit-ignis-tax>, <boost-ignis-tax> \
+            \ Also a specific quantity of LP is relinquished as <fuel-lp-tax>"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPL:module{SwapperLiquidity} SWPL)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPL::C_AddLiquidity account swpair input-amounts)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPL::C|KDA-PID_AddStandardLiquidity account swpair input-amounts kda-pid)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Generated {} Native LP Tokens for Swpair {}"
+                    [(at 0 (at "output" ico)) swpair]
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+        @doc "Same as <SWP|C_AddLiquidity>, but using ICED Mode \
+            \ \
+            \ ICED MODE \
+            \ Returns a part of the <asymmetric-lp-amount> as Frozen LP \
+            \ <Swpair> must be enabled for Frozen LP for this feature \
+            \ Only works when asymetric-liquidity exists in <input-amounts> \
+            \ if <input-amounts> have balanced-liquidity, Native LP is returned for it \
+            \ \
+            \ In ICED MODE, only the IGNIS <ignis-gaseous-tax> is paid \
+            \ Therefore the <asymmetric-lp-fee-amount> is returned as native LP \
+            \ While the rest of the <asymmetric-lp-amount> is returned as Frozen LP"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPL::C|KDA-PID_AddIcedLiquidity account swpair input-amounts kda-pid)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Generated {} Native and {} Frozen LP Tokens for Swpair {}"
+                    [(at 0 (at "output" ico)) (at 1 (at "output" ico)) swpair]
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+        @doc "Same as <SWP|C_AddLiquidity>, but using GLACIAL Mode \
+            \ \
+            \ GLACIAL MODE \
+            \ Returns all of the <asymmetric-lp-amount> as Frozen LP \
+            \ <Swpair> must be enabled for Frozen LP for this feature \
+            \ Only works when asymetric-liquidity exists in <input-amounts> \
+            \ if <input-amounts> have balanced-liquidity, Native LP is returned for it \
+            \ \
+            \ In GLACIAL MODE, no further IGNIS taxes are paid"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPL::C|KDA-PID_AddGlacialLiquidity account swpair input-amounts kda-pid)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Generated {} Native and {} Frozen LP Tokens for Swpair {}"
+                    [(at 0 (at "output" ico)) (at 1 (at "output" ico)) swpair]
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal kda-pid:decimal)
+        @doc "Adds Liquidity using a single <input-amount> of a single <frozen-dptf> \
+            \ Since this is an asymetric-liquidity-amount, it is bound by max. deviation rules \
+            \ 1000 IGNIS Flat Fee Cost for adding liquidity. \
+            \ \
+            \ FROZEN MODE \
+            \ Returns all LP Tokens as Frozen LP Tokens \
+            \ <Swpair> must be enabled for Frozen LP for this feature \
+            \ Also, a frozen link for one of the <swpair> Pool Tokens must have been previously created."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPL::C|KDA-PID_AddFrozenLiquidity account swpair frozen-dptf input-amount kda-pid)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Generated {} Frozen LP Tokens for Swpair {}"
+                    [(at 0 (at "output" ico)) swpair]
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer kda-pid:decimal)
+        @doc "Adds Liquidity using a single <input-amount> of a single <sleeping-dpmf> \
+        \ Since this is an asymetric-liquidity-amount, it is bound by max. deviation rules \
+        \ 1000 IGNIS Flat Fee Cost for adding liquidity. \
+        \ \
+        \ SLEEPING MODE \
+        \ Returns all LP Tokens as Sleeping LP tokens \
+        \ <Swpair> must be enabled for Sleeping LP for this feature \
+        \ Also, a sleeping link for one of the <swpair> Pool Tokens must have been previously created."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPL:module{SwapperLiquidity} SWPL)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPL::C|KDA-PID_AddSleepingLiquidity account swpair sleeping-dpmf nonce kda-pid)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Generated {} Leeping LP Tokens for Swpair {}"
+                    [(at 0 (at "output" ico)) swpair]
+                )  
             )
         )
     )
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal)
-        @doc "Removes Liquidity from a Liquidity Pool \
-            \ Removing Liquidty is always done at the current Token Ratio. \
+        @doc "Removes <swpair> Liquidity using <lp-amount> of LP Tokens \
+            \ Always returns all Pool Tokens at current Pool Token Ratio \
             \ Removing Liquidty complety leaving the pool exactly empty (0.0 tokens) is fully supported"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPL:module{SwapperLiquidity} SWPL)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPL::C_RemoveLiquidity account swpair lp-amount)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at "output" ico)
             )
         )
     )
-    ;;  [Swaps with KDA-PID, aka OPU Swaps: when given <kda-pid>, and OURO Price update Takes place if conditions are met]
-    (defun SWP|OPU|C_MultiSwap:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-ids:[string]
-            input-amounts:[decimal]
-            output-id:string
-            slippage:object{SwapperUsage.Slippage}
-            kda-pid:decimal
-        )
-        @doc "Similar to their non OPU equivalents, it uses an additiona Input of KDA Price; \
-            \ Will run the same Function, but with an Update Function at the End, if conditions are met, \
-            \ for Automatic OUROBOROS Price Update. kda-pid can be retrieved with \
-            \ commented line below, to be fed to function input"
-        ;;(at "value" (n_bfb76eab37bf8c84359d6552a1d96a309e030b71.dia-oracle.get-value "KDA/USD")
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::OPU|C_MultiSwap account swpair dsid slippage kda-pid)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    (defun SWP|OPU|C_MultiSwapNoSlippage:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-ids:[string]
-            input-amounts:[decimal]
-            output-id:string
-            kda-pid:decimal
-        )
-        @doc "OPU Variant of the <SWP|C_MultiSwapNoSlippage>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::OPU|C_MultiSwapNoSlippage account swpair dsid kda-pid)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-
-    )
-    (defun SWP|OPU|C_SimpleSwap:decimal
+    ;;Swaps
+    (defun SWP|C_SingleSwapWithSlippage
         (
             patron:string
             account:string
@@ -1799,147 +1697,24 @@
             input-id:string
             input-amount:decimal
             output-id:string
-            slippage:object{SwapperUsage.Slippage}
-            kda-pid:decimal
+            slippage:decimal
         )
-        @doc "OPU Variant of the <SWP|C_SimpleSwap>"
+        @doc "Executes A Swap from <input-id> with <input-amount> to <output-id> with <slippage>"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::OPU|C_SimpleSwap account swpair dsid slippage kda-pid)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPU::C_Swap account swpair [input-id] [input-amount] output-id slippage KDAPID)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
     )
-    (defun SWP|OPU|C_SimpleSwapNoSlippage:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-id:string
-            input-amount:decimal
-            output-id:string
-            kda-pid:decimal
-        )
-        @doc "OPU Variant of the <SWP|C_SimpleSwapNoSlippage>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::OPU|C_SimpleSwapNoSlippage account swpair dsid kda-pid)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    ;;  [Swaps without KDA-PID, aka Native Swaps: They dont update OURO Price, even if conditions are met]
-    (defun SWP|C_MultiSwap:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-ids:[string]
-            input-amounts:[decimal]
-            output-id:string
-            slippage:object{SwapperUsage.Slippage}
-        )
-        @doc "Executes a Swap between one or multiple input tokens to an output token, on an <swpair> \
-            \ Up to <n-1> input ids can be used for a swap, where <n> is the number of pool Tokens"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::C_MultiSwap account swpair dsid slippage)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    (defun SWP|C_MultiSwapNoSlippage:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-ids:[string]
-            input-amounts:[decimal]
-            output-id:string
-        )
-        @doc "Same as <SWP|C_MultiSwap>, but with no Slippage Protection"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::C_MultiSwapNoSlippage account swpair dsid)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-
-    )
-    (defun SWP|C_SimpleSwap:decimal
-        (
-            patron:string
-            account:string
-            swpair:string
-            input-id:string
-            input-amount:decimal
-            output-id:string
-            slippage:object{SwapperUsage.Slippage}
-        )
-        @doc "Executes a Swap from one Token to Another Token, using the input <swpair>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::C_SimpleSwap account swpair dsid slippage)
-                    )
-                )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
-                (at 0 (at "output" ico))
-            )
-        )
-    )
-    (defun SWP|C_SimpleSwapNoSlippage:decimal
+    (defun SWP|C_SingleSwapNoSlippage
         (
             patron:string
             account:string
@@ -1948,21 +1723,66 @@
             input-amount:decimal
             output-id:string
         )
-        @doc "Same as <SWP|C_SimpleSwap>, but with no Slippage Protection"
+        @doc "Executes A Swap from <input-id> with <input-amount> to <output-id> without slippage"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-SWPU:module{SwapperUsageV4} SWPU)
-                    (dsid:object{UtilitySwpV2.DirectSwapInputData}
-                        (ref-U|SWP::UDC_DirectSwapInputData [input-id] [input-amount] output-id)
-                    )
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
-                        (ref-SWPU::C_SimpleSwapNoSlippage account swpair dsid)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPU::C_Swap account swpair [input-id] [input-amount] output-id -1.0 KDAPID)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun SWP|C_MultiSwapWithSlippage
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-ids:[string]
+            input-amounts:[decimal]
+            output-id:string
+            slippage:decimal
+        )
+        @doc "Executes A Swap from <input-ids> with <input-amounts> to <output-id> with <slippage>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPU::C_Swap account swpair input-ids input-amounts output-id slippage KDAPID)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun SWP|C_MultiSwapNoSlippage
+        (
+            patron:string
+            account:string
+            swpair:string
+            input-ids:[string]
+            input-amounts:[decimal]
+            output-id:string
+        )
+        @doc "Executes A Swap from <input-id> with <input-amount> to <output-id> without slippage"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-SWPU:module{SwapperUsageV4} SWPU)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-SWPU::C_Swap account swpair input-ids input-amounts output-id -1.0 KDAPID)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )

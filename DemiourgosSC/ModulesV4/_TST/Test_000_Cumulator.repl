@@ -27,40 +27,41 @@
         (receiver:string KST.EMMA)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-IGNIS:module{IgnisCollector} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
 
-        (cum1:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 patron false))
-        (cum2:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 7.0 receiver false))
-        (cum3:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 8.0 ats false))
-        (cum4:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 5.0 ats false))
-        (cum5:object{OuronetDalosV3.ModularCumulatorV2} (ref-DALOS::UDC_MakeModularCumulatorV2 17.0 vst false))
-        (l1:[object{OuronetDalosV3.ModularCumulatorV2}] [cum3 cum4 cum1 cum2 cum5])
+        (cum1:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 5.0 patron false))
+        (cum2:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 7.0 receiver false))
+        (cum3:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 8.0 ats false))
+        (cum4:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 5.0 ats false))
+        (cum5:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 17.0 vst false))
+        (l1:[object{IgnisCollector.ModularCumulator}] [cum3 cum4 cum1 cum2 cum5])
         (lst:list ["coco" "poco" 1])
         (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
         ;;
-        (ocv2:object{OuronetDalosV3.OutputCumulatorV2}
-            (ref-DALOS::UDC_MakeOutputCumulatorV2 l1 lst)
+        (ocv2:object{IgnisCollector.OutputCumulator}
+            (ref-IGNIS::IC|UDC_MakeOutputCumulator l1 lst)
         )
-        (ccv2:object{OuronetDalosV3.CompressedCumulatorV2}
-            (ref-DALOS::UDC_CompressOutputCumulator ocv2)
+        (ccv2:object{IgnisCollector.CompressedCumulator}
+            (ref-IGNIS::IC|UDC_CompressOutputCumulator ocv2)
         )
-        (pcv2:object{OuronetDalosV3.PrimedCumulatorV2}
-            (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron ccv2)
+        (pcv2:object{IgnisCollector.PrimedCumulator}
+            (ref-IGNIS::IC|UDC_PrimeIgnisCumulator patron ccv2)
         )
-        (oc1:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum1] []))
-        (oc2:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum2] []))
-        (oc3:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum3] []))
-        (oc4:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum4] []))
-        (oc5:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_MakeOutputCumulatorV2 [cum5] []))
+        (oc1:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum1] []))
+        (oc2:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum2] []))
+        (oc3:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum3] []))
+        (oc4:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum4] []))
+        (oc5:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum5] []))
 
-        (try:object{OuronetDalosV3.OutputCumulatorV2} (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
-        (try2:object{OuronetDalosV3.CompressedCumulatorV2}
-            (ref-DALOS::UDC_CompressOutputCumulator try)
+        (try:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
+        (try2:object{IgnisCollector.CompressedCumulator}
+            (ref-IGNIS::IC|UDC_CompressOutputCumulator try)
         )
-        (try3:object{OuronetDalosV3.PrimedCumulatorV2}
-            (ref-DALOS::UDC_PrimeIgnisCumulatorV2 patron try2)
+        (try3:object{IgnisCollector.PrimedCumulator}
+            (ref-IGNIS::IC|UDC_PrimeIgnisCumulator patron try2)
         )
     )
     [

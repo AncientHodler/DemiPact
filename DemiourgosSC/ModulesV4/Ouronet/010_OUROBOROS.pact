@@ -1,47 +1,4 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-(interface Ouroboros
-    @doc "Exposes Functions related to the OUROBOROS Module"
-    ;;
-    (defun GOV|ORBR|SC_KDA-NAME ())
-    (defun GOV|ORBR|GUARD ())
-    ;;
-    (defun URC_ProjectedKdaLiquindex:[decimal] ())
-    (defun URC_Compress:[decimal] (ignis-amount:decimal))
-    (defun URC_Sublimate:decimal (ouro-amount:decimal))
-    ;;
-    (defun UEV_AccountsAsStandard (accounts:[string]))
-    (defun UEV_Exchange ())
-    ;;
-    (defun C_Compress:object{OuronetDalos.IgnisCumulator} (patron:string client:string ignis-amount:decimal))
-    (defun C_Fuel:[object{OuronetDalos.IgnisCumulator}] (patron:string))
-    (defun C_Sublimate:object{OuronetDalos.IgnisCumulator} (patron:string client:string target:string ouro-amount:decimal))
-    (defun C_WithdrawFees:object{OuronetDalos.IgnisCumulator} (patron:string id:string target:string))
-)
-(interface OuroborosV2
-    @doc "Exposes Functions related to the OUROBOROS Module \
-        \ \
-        \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts"
-    ;;
-    (defun OUROBOROS|SetGovernor (patron:string))
-    ;;
-    ;;
-    (defun GOV|ORBR|SC_KDA-NAME ())
-    (defun GOV|ORBR|GUARD ())
-    ;;
-    ;;
-    (defun URC_ProjectedKdaLiquindex:[decimal] ())
-    (defun URC_Compress:[decimal] (ignis-amount:decimal))
-    (defun URC_Sublimate:decimal (ouro-amount:decimal))
-    ;;
-    (defun UEV_AccountsAsStandard (accounts:[string]))
-    (defun UEV_Exchange ())
-    ;;
-    ;;
-    (defun C_Compress:object{OuronetDalosV2.OutputCumulatorV2} (patron:string client:string ignis-amount:decimal))
-    (defun C_Fuel:object{OuronetDalosV2.OutputCumulatorV2} (patron:string))
-    (defun C_Sublimate:object{OuronetDalosV2.OutputCumulatorV2} (patron:string client:string target:string ouro-amount:decimal))
-    (defun C_WithdrawFees:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string target:string))
-)
 (interface OuroborosV3
     @doc "Exposes Functions related to the OUROBOROS Module \
         \ \
@@ -63,10 +20,10 @@
     (defun UEV_Exchange ())
     ;;
     ;;
-    (defun C_Compress:object{OuronetDalosV3.OutputCumulatorV2} (client:string ignis-amount:decimal))
-    (defun C_Fuel:object{OuronetDalosV3.OutputCumulatorV2} ())
-    (defun C_Sublimate:object{OuronetDalosV3.OutputCumulatorV2} (client:string target:string ouro-amount:decimal))
-    (defun C_WithdrawFees:object{OuronetDalosV3.OutputCumulatorV2} (id:string target:string))
+    (defun C_Compress:object{IgnisCollector.OutputCumulator} (client:string ignis-amount:decimal))
+    (defun C_Fuel:object{IgnisCollector.OutputCumulator} ())
+    (defun C_Sublimate:object{IgnisCollector.OutputCumulator} (client:string target:string ouro-amount:decimal))
+    (defun C_WithdrawFees:object{IgnisCollector.OutputCumulator} (id:string target:string))
 )
 (module OUROBOROS GOV
     ;;
@@ -102,24 +59,25 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
-    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
+    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
     (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (GOV|ORBR|GUARD)))
     (defun GOV|ORBR|GUARD ()        (create-capability-guard (ORBR|NATIVE-AUTOMATIC)))
     (defun OUROBOROS|SetGovernor (patron:string)
         (with-capability (P|ORBR|CALLER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-DALOS::C_RotateGovernor
                             ORBR|SC_NAME
                             (create-capability-guard (ORBR|GOV))
                         )
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
             )
         )
     )
@@ -136,7 +94,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -207,7 +165,7 @@
     ;;{2}
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
-    (defun CT_EmptyCumulator        ()(let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::DALOS|EmptyOutputCumulatorV2)))
+    (defun CT_EmptyCumulator        ()(let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     ;;
@@ -230,7 +188,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (compose-capability (IGNIS|C>CONVERT client))
@@ -243,7 +201,7 @@
     (defcap IGNIS|C>CONVERT(client:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType client false)
             (UEV_Exchange)
@@ -255,7 +213,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
@@ -274,7 +232,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (orb-sc ORBR|SC_NAME)
@@ -303,7 +261,7 @@
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
             (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
@@ -327,10 +285,10 @@
     (defun URC_Sublimate:decimal (ouro-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
             )
-            (enforce (>= ouro-amount 0.99) "Only amounts greater than or equal to 1.0 (1% conversion fee included) can be used to make gas!")
+            (enforce (>= ouro-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
             (ref-DPTF::UEV_Amount (ref-DALOS::UR_OuroborosID) ouro-amount)
             (let
                 (
@@ -350,13 +308,12 @@
                 )
             )
         )
-
     )
     ;;{F2}  [UEV]
     (defun UEV_Exchange ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (orb-sc ORBR|SC_NAME)
 
@@ -382,15 +339,15 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Compress:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Compress:object{IgnisCollector.OutputCumulator}
         (client:string ignis-amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                (orbr-sc:string ORBR|SC_NAME)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
@@ -399,28 +356,29 @@
                 (total-ouro:decimal (fold (+) 0.0 ignis-to-ouro))
             )
             (with-capability (IGNIS|C>COMPRESS client)
-                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                     [
                         ;;01]Client sends GAS(Ignis) <ignis-amount> to the Ouroboros Smart Ouronet Account
-                        (ref-TFT::C_Transfer ignis-id client orbr-sc ignis-amount true)
+                        (ref-TFT::C_Transfer ignis-id client ORBR|SC_NAME ignis-amount true)
                         ;;02]Ouroboros burns GAS(Ignis) <ignis-amount>
-                        (ref-DPTF::C_Burn ignis-id orbr-sc ignis-amount)
+                        (ref-DPTF::C_Burn ignis-id ORBR|SC_NAME ignis-amount)
                         ;;03]Ouroboros mints OURO <ouro-remainder-amount>
-                        (ref-DPTF::C_Mint ouro-id orbr-sc ouro-remainder-amount false)
+                        (ref-DPTF::C_Mint ouro-id ORBR|SC_NAME ouro-remainder-amount false)
                         ;;04]Ouroboros transfers OURO <ouro-remainder-amount> to <client>
-                        (ref-TFT::C_Transfer ouro-id orbr-sc client ouro-remainder-amount true)
+                        (ref-TFT::C_Transfer ouro-id ORBR|SC_NAME client ouro-remainder-amount true)
                     ]
                     [ouro-remainder-amount]
                 )
             )
         )
     )
-    (defun C_Fuel:object{OuronetDalosV3.OutputCumulatorV2} ()
+    (defun C_Fuel:object{IgnisCollector.OutputCumulator} ()
         (UEV_IMC)
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATSU:module{AutostakeUsageV3} ATSU)
                 (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
@@ -439,7 +397,7 @@
                     (if (> present-kda-balance 0.0)
                         (with-capability (LIQUIDFUEL|C>ADMIN_FUEL)
                             (install-capability (ref-coin::TRANSFER orb-kda lq-kda present-kda-balance))
-                            (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                            (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                                 [
                                     (ref-LIQUID::C_WrapKadena orb-sc present-kda-balance)
                                     (ref-ATSU::C_Fuel orb-sc liquid-idx w-kda present-kda-balance)
@@ -454,16 +412,16 @@
             )
         )
     )
-    (defun C_Sublimate:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Sublimate:object{IgnisCollector.OutputCumulator}
         (client:string target:string ouro-amount:decimal)
         (UEV_IMC)
         (let
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                (orbr-sc:string ORBR|SC_NAME)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -474,43 +432,43 @@
                 (ignis-amount:decimal (URC_Sublimate ouro-remainder-amount))
             )
             (with-capability (IGNIS|C>SUBLIMATE client target)
-                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                     [
                         ;;01]Client sends OURO <ouro-amount> to the Ouroboros Smart Ouronet Account
-                        (ref-TFT::C_Transfer ouro-id client orbr-sc ouro-amount true)
+                        (ref-TFT::C_Transfer ouro-id client ORBR|SC_NAME ouro-amount true)
                         ;;02]Ouroboros burns OURO <ouro-amount>
-                        (ref-DPTF::C_Burn ouro-id orbr-sc ouro-amount)
+                        (ref-DPTF::C_Burn ouro-id ORBR|SC_NAME ouro-amount)
                         ;;03]Ouroboros mints GAS(Ignis) <ignis-amount>
-                        (ref-DPTF::C_Mint ignis-id orbr-sc ignis-amount false)
+                        (ref-DPTF::C_Mint ignis-id ORBR|SC_NAME ignis-amount false)
                         ;;04]Ouroboros transfers GAS(Ignis) <ignis-amount> to <target>
-                        (ref-TFT::C_Transfer ignis-id orbr-sc target ignis-amount true)
+                        (ref-TFT::C_Transfer ignis-id ORBR|SC_NAME target ignis-amount true)
                     ]
                     [ignis-amount]
                 )
             )
         )
     )
-    (defun C_WithdrawFees:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_WithdrawFees:object{IgnisCollector.OutputCumulator}
         (id:string target:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                (orbr-sc:string ORBR|SC_NAME)
-                (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id orbr-sc))
+                (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id ORBR|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                (trigger:bool (ref-IGNIS::IC|URC_IsVirtualGasZero))
             )
-            (enforce (> withdraw-amount 0.0) (format "There are no {} fees to be withdrawn from {}" [id orbr-sc]))
+            (enforce (> withdraw-amount 0.0) (format "There are no {} fees to be withdrawn from {}" [id ORBR|SC_NAME]))
             (with-capability (OUROBOROS|C>WITHDRAW id target)
-                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators
                     [
                         ;;00]Compose base withdraw IGNIS Price
-                        (ref-DALOS::UDC_ConstructOutputCumulatorV2 price orbr-sc trigger [])
+                        (ref-IGNIS::IC|UDC_ConstructOutputCumulator price ORBR|SC_NAME trigger [])
                         ;;01]Patron withdraws Fees from Ouroboros Smart DALOS Account to a target Normal Ouronet Account
-                        (ref-TFT::C_Transfer id orbr-sc target withdraw-amount true)
+                        (ref-TFT::C_Transfer id ORBR|SC_NAME target withdraw-amount true)
                     ]
                     []
                 )

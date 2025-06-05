@@ -44,55 +44,29 @@
     (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{SocialSchema}]))
     (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer))
 )
-(interface BrandingUsage
-    @doc "Interface Exposing the Actual Branding Functions, that must exist within each Entitys main Module \
-    \ such that said Entity can benefit from Branding. \
-    \ Stage 1 deployment launches following entities: DPTF, DPMF, ATSPairs, SWPairs"
-    ;;
-    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
-)
 ;;
-(interface BrandingUsageV2
-    @doc "Interface Exposing the Actual Branding Functions, that must exist within each Entitys main Module \
-    \ such that said Entity can benefit from Branding. \
-    \ Stage 1 deployment launches following entities: DPTF, DPMF, ATSPairs, SWPairs \
-    \ \
-    \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts"
-    ;;
-    (defun C_UpdatePendingBranding:object{OuronetDalosV2.OutputCumulatorV2} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
-)
-(interface BrandingUsageV3
-    @doc "Interface Exposing the Branding Functions for DPTF LP Tokens \
-    \ Using the IgnisCUmulatorV2 Architecture which repairs the collection of Ignis for Smart Ouronet Accounts"
-    ;;
-    (defun C_UpdatePendingBrandingLPs:object{OuronetDalosV2.OutputCumulatorV2} (patron:string swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
-)
-;;
-(interface BrandingUsageV4
+(interface BrandingUsageV6
     @doc "Exposes Branding Functions for True-Fungibles (T), Meta-Fungibles (M), ATS-Pairs (A) and SWP-Pairs (S) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts) \
         \ V4 Removes <patron> input variable where it is not needed"
     ;;
-    (defun C_UpdatePendingBranding:object{OuronetDalosV3.OutputCumulatorV2} (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator} (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
 )
-(interface BrandingUsageV5
+(interface BrandingUsageV7
     @doc "Exposes Branding Functions for True-Fungible LP Tokens \
         \ <entity-pos>: 1 (Native LP), 2 (Freezing LP), 3 (Sleeping LP) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts) \
         \ V5 Removes <patron> input variable where it is not needed"
     ;;
-    (defun C_UpdatePendingBrandingLPs:object{OuronetDalosV3.OutputCumulatorV2} (swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBrandingLPs:object{IgnisCollector.OutputCumulator} (swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
 )
-(interface BrandingUsageV6
+(interface BrandingUsageV8
     @doc "Exposes Branding Functions for Semi-Fungibles (S) and Non-Fungibles (N) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts)"
     ;;
-    (defun C_UpdatePendingBranding:object{OuronetDalosV3.OutputCumulatorV2} (entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator} (entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string sft-or-nft:bool  months:integer))
 )
 
@@ -109,7 +83,7 @@
     (defcap GOV ()                  (compose-capability (GOV|BRD_ADMIN)))
     (defcap GOV|BRD_ADMIN ()        (enforce-guard GOV|MD_DPTF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -123,7 +97,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -222,7 +196,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (mp:integer (URC_MaxBluePayment entity-owner-account))
                 (flag:integer (UR_Flag entity-id false))
                 (premium:time (UR_PremiumUntil entity-id false))
@@ -283,7 +257,7 @@
     (defun URC_MaxBluePayment (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (mt:integer (ref-DALOS::UR_Elite-Tier-Major account))
             )
             (if (<= mt 2)
@@ -441,7 +415,7 @@
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (blue:decimal (ref-DALOS::UR_UsagePrice "blue"))
                     (branding:object{Branding.Schema} (UR_Branding entity-id false))
                     (branding-pending:object{Branding.Schema} (UR_Branding entity-id true))

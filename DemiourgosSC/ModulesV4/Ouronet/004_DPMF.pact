@@ -1,262 +1,4 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
-(interface DemiourgosPactMetaFungible
-    @doc "Exposes most of the Functions of the DPMF Module. \
-    \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically"
-    ;;
-    (defschema DPMF|Schema
-        nonce:integer
-        balance:decimal
-        meta-data:[object]
-    )
-    (defschema DPMF|Nonce-Balance
-        nonce:integer
-        balance:decimal
-    )
-    ;;
-    (defun UR_P-KEYS:[string] ())
-    (defun UR_KEYS:[string] ())
-    ;;
-    (defun UR_Konto:string (id:string))
-    (defun UR_Name:string (id:string))
-    (defun UR_Ticker:string (id:string))
-    (defun UR_Decimals:integer (id:string))
-    (defun UR_CanChangeOwner:bool (id:string))
-    (defun UR_CanUpgrade:bool (id:string))
-    (defun UR_CanAddSpecialRole:bool (id:string))
-    (defun UR_CanFreeze:bool (id:string))
-    (defun UR_CanWipe:bool (id:string))
-    (defun UR_CanPause:bool (id:string))
-    (defun UR_Paused:bool (id:string))
-    (defun UR_Supply:decimal (id:string))
-    (defun UR_TransferRoleAmount:integer (id:string))
-    (defun UR_Vesting:string (id:string))
-    (defun UR_Sleeping:string (id:string))
-    (defun UR_Roles:[string] (id:string rp:integer))
-    (defun UR_CanTransferNFTCreateRole:bool (id:string))
-    (defun UR_CreateRoleAccount:string (id:string))
-    (defun UR_NoncesUsed:integer (id:string))
-    (defun UR_RewardBearingToken:string (id:string))
-    (defun UR_AccountSupply:decimal (id:string account:string))
-    (defun UR_AccountRoleBurn:bool (id:string account:string))
-    (defun UR_AccountRoleCreate:bool (id:string account:string))
-    (defun UR_AccountRoleNFTAQ:bool (id:string account:string))
-    (defun UR_AccountRoleTransfer:bool (id:string account:string))
-    (defun UR_AccountFrozenState:bool (id:string account:string))
-    ;;
-    (defun UR_AccountUnit:[object{DPMF|Schema}] (id:string account:string))
-    (defun UR_AccountNonces:[integer] (id:string account:string))
-    (defun UR_AccountBalances:[decimal] (id:string account:string))
-    (defun UR_AccountMetaDatas:[[object]] (id:string account:string))
-
-    (defun UR_AccountNonceBalance:decimal (id:string nonce:integer account:string))
-    (defun UR_AccountNonceMetaData:[object] (id:string nonce:integer account:string))
-
-    (defun UR_AccountNoncesBalances:[decimal] (id:string nonces:[integer] account:string))
-    (defun UR_AccountNoncesMetaDatas:[[object]] (id:string nonces:[integer] account:string))
-    ;;
-    (defun URC_IzRBT:bool (reward-bearing-token:string))
-    (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
-    (defun URC_EliteAurynzSupply (account:string))
-    (defun URC_AccountExist:bool (id:string account:string))
-    (defun URC_HasVesting:bool (id:string))
-    (defun URC_HasSleeping:bool (id:string))
-    (defun URC_Parent:string (dpmf:string))
-    ;;
-    (defun UEV_ParentOwnership (dpmf:string))
-    (defun UEV_NoncesToAccount (id:string account:string nonces:[integer]))
-    (defun UEV_id (id:string))
-    (defun UEV_CheckID:bool (id:string))
-    (defun UEV_Amount (id:string amount:decimal))
-    (defun UEV_CheckAmount:bool (id:string amount:decimal))
-    (defun UEV_UpdateRewardBearingToken (id:string))
-    (defun UEV_CanChangeOwnerON (id:string))
-    (defun UEV_CanUpgradeON (id:string))
-    (defun UEV_CanAddSpecialRoleON (id:string))
-    (defun UEV_CanFreezeON (id:string))
-    (defun UEV_CanWipeON (id:string))
-    (defun UEV_CanPauseON (id:string))
-    (defun UEV_PauseState (id:string state:bool))
-    (defun UEV_AccountBurnState (id:string account:string state:bool))
-    (defun UEV_AccountTransferState (id:string account:string state:bool))
-    (defun UEV_AccountFreezeState (id:string account:string state:bool))
-    (defun UEV_CanTransferNFTCreateRoleON (id:string))
-    (defun UEV_AccountAddQuantityState (id:string account:string state:bool))
-    (defun UEV_AccountCreateState (id:string account:string state:bool))
-    (defun UEV_Vesting (id:string existance:bool))
-    (defun UEV_Sleeping (id:string existance:bool))
-    ;;
-    (defun UDC_Compose:object{DPMF|Schema} (nonce:integer balance:decimal meta-data:[object]))
-    (defun UDC_Nonce-Balance:[object{DPMF|Nonce-Balance}] (nonce-lst:[integer] balance-lst:[decimal]))
-    ;;
-    (defun CAP_Owner (id:string))
-    ;;
-    (defun C_UpdatePendingBranding:object{OuronetDalos.IgnisCumulator} (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun C_AddQuantity:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Burn:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Control:object{OuronetDalos.IgnisCumulator} (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun C_Create:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string meta-data:[object]))
-    (defun C_DeployAccount (id:string account:string))
-    (defun C_Issue:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun C_Mint:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun C_MultiBatchTransfer:[object{OuronetDalos.IgnisCumulator}] (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun C_RotateOwnership:object{OuronetDalos.IgnisCumulator} (patron:string id:string new-owner:string))
-    (defun C_SingleBatchTransfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string method:bool))
-    (defun C_ToggleFreezeAccount:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
-    (defun C_TogglePause:object{OuronetDalos.IgnisCumulator}  (patron:string id:string toggle:bool))
-    (defun C_ToggleTransferRole:object{OuronetDalos.IgnisCumulator} (patron:string id:string account:string toggle:bool))
-    (defun C_Transfer:object{OuronetDalos.IgnisCumulator} (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)) ;;6
-    (defun C_Wipe:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string))
-    (defun C_WipePartial:object{OuronetDalos.IgnisCumulator} (patron:string id:string atbw:string nonces:[integer]))
-    ;;
-    (defun XB_DeployAccountWNE (id:string account:string))
-    (defun XB_IssueFree:object{OuronetDalos.IgnisCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool])) ;;1
-    (defun XB_UpdateElite (id:string sender:string receiver:string))
-    (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
-    ;;
-    (defun XE_MoveCreateRole (id:string receiver:string))
-    (defun XE_ToggleAddQuantityRole (id:string account:string toggle:bool))
-    (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
-    (defun XE_UpdateRewardBearingToken (atspair:string id:string))
-    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalos.IgnisCumulator} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
-)
-(interface DemiourgosPactMetaFungibleV2
-    @doc "Exposes most of the Functions of the DPMF Module. \
-    \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
-    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically \
-    \ \
-    \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
-    \ Removes the 2 Branding Functions from this Interface, since they are in their own interface."
-    ;;
-    ;;
-    (defschema DPMF|Schema
-        nonce:integer
-        balance:decimal
-        meta-data:[object]
-    )
-    (defschema DPMF|Nonce-Balance
-        nonce:integer
-        balance:decimal
-    )
-    ;;
-    ;;
-    (defun UR_P-KEYS:[string] ())
-    (defun UR_KEYS:[string] ())
-    ;;
-    (defun UR_Konto:string (id:string))
-    (defun UR_Name:string (id:string))
-    (defun UR_Ticker:string (id:string))
-    (defun UR_Decimals:integer (id:string))
-    (defun UR_CanChangeOwner:bool (id:string))
-    (defun UR_CanUpgrade:bool (id:string))
-    (defun UR_CanAddSpecialRole:bool (id:string))
-    (defun UR_CanFreeze:bool (id:string))
-    (defun UR_CanWipe:bool (id:string))
-    (defun UR_CanPause:bool (id:string))
-    (defun UR_Paused:bool (id:string))
-    (defun UR_Supply:decimal (id:string))
-    (defun UR_TransferRoleAmount:integer (id:string))
-    (defun UR_Vesting:string (id:string))
-    (defun UR_Sleeping:string (id:string))
-    (defun UR_Roles:[string] (id:string rp:integer))
-    (defun UR_CanTransferNFTCreateRole:bool (id:string))
-    (defun UR_CreateRoleAccount:string (id:string))
-    (defun UR_NoncesUsed:integer (id:string))
-    (defun UR_RewardBearingToken:string (id:string))
-    (defun UR_AccountSupply:decimal (id:string account:string))
-    (defun UR_AccountRoleBurn:bool (id:string account:string))
-    (defun UR_AccountRoleCreate:bool (id:string account:string))
-    (defun UR_AccountRoleNFTAQ:bool (id:string account:string))
-    (defun UR_AccountRoleTransfer:bool (id:string account:string))
-    (defun UR_AccountFrozenState:bool (id:string account:string))
-    ;;
-    (defun UR_AccountUnit:[object{DPMF|Schema}] (id:string account:string))
-    (defun UR_AccountNonces:[integer] (id:string account:string))
-    (defun UR_AccountBalances:[decimal] (id:string account:string))
-    (defun UR_AccountMetaDatas:[[object]] (id:string account:string))
-        ;;
-    (defun UR_AccountNonceBalance:decimal (id:string nonce:integer account:string))
-    (defun UR_AccountNonceMetaData:[object] (id:string nonce:integer account:string))
-        ;;
-    (defun UR_AccountNoncesBalances:[decimal] (id:string nonces:[integer] account:string))
-    (defun UR_AccountNoncesMetaDatas:[[object]] (id:string nonces:[integer] account:string))
-    ;;
-    (defun URC_IzRBT:bool (reward-bearing-token:string))
-    (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
-    (defun URC_EliteAurynzSupply (account:string))
-    (defun URC_AccountExist:bool (id:string account:string))
-    (defun URC_HasVesting:bool (id:string))
-    (defun URC_HasSleeping:bool (id:string))
-    (defun URC_Parent:string (dpmf:string))
-    ;;
-    (defun UEV_ParentOwnership (dpmf:string))
-    (defun UEV_NoncesToAccount (id:string account:string nonces:[integer]))
-    (defun UEV_id (id:string))
-    (defun UEV_CheckID:bool (id:string))
-    (defun UEV_Amount (id:string amount:decimal))
-    (defun UEV_CheckAmount:bool (id:string amount:decimal))
-    (defun UEV_UpdateRewardBearingToken (id:string))
-    (defun UEV_CanChangeOwnerON (id:string))
-    (defun UEV_CanUpgradeON (id:string))
-    (defun UEV_CanAddSpecialRoleON (id:string))
-    (defun UEV_CanFreezeON (id:string))
-    (defun UEV_CanWipeON (id:string))
-    (defun UEV_CanPauseON (id:string))
-    (defun UEV_PauseState (id:string state:bool))
-    (defun UEV_AccountBurnState (id:string account:string state:bool))
-    (defun UEV_AccountTransferState (id:string account:string state:bool))
-    (defun UEV_AccountFreezeState (id:string account:string state:bool))
-    (defun UEV_CanTransferNFTCreateRoleON (id:string))
-    (defun UEV_AccountAddQuantityState (id:string account:string state:bool))
-    (defun UEV_AccountCreateState (id:string account:string state:bool))
-    (defun UEV_Vesting (id:string existance:bool))
-    (defun UEV_Sleeping (id:string existance:bool))
-    ;;
-    (defun UDC_Compose:object{DPMF|Schema} (nonce:integer balance:decimal meta-data:[object]))
-    (defun UDC_Nonce-Balance:[object{DPMF|Nonce-Balance}] (nonce-lst:[integer] balance-lst:[decimal]))
-    ;;
-    ;;
-    (defun CAP_Owner (id:string))
-    ;;
-    (defun C_AddQuantity:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Burn:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun C_Control:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun C_Create:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string account:string meta-data:[object]))
-    (defun C_DeployAccount (id:string account:string))
-    (defun C_Issue:object{OuronetDalosV2.OutputCumulatorV2} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun C_Mint:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun C_MultiBatchTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun C_RotateOwnership:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string new-owner:string))
-    (defun C_SingleBatchTransfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string nonce:integer sender:string receiver:string method:bool))
-    (defun C_ToggleFreezeAccount:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string account:string toggle:bool))
-    (defun C_TogglePause:object{OuronetDalosV2.OutputCumulatorV2}  (patron:string id:string toggle:bool))
-    (defun C_ToggleTransferRole:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string account:string toggle:bool))
-    (defun C_Transfer:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun C_Wipe:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string atbw:string))
-    (defun C_WipePartial:object{OuronetDalosV2.OutputCumulatorV2} (patron:string id:string atbw:string nonces:[integer]))
-    ;;
-    (defun XB_DeployAccountWNE (id:string account:string))
-    (defun XB_IssueFree:object{OuronetDalosV2.OutputCumulatorV2} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool]))
-    (defun XB_UpdateElite (id:string sender:string receiver:string))
-    (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
-    ;;
-    (defun XE_MoveCreateRole (id:string receiver:string))
-    (defun XE_ToggleAddQuantityRole (id:string account:string toggle:bool))
-    (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
-    (defun XE_UpdateRewardBearingToken (atspair:string id:string))
-    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalosV2.OutputCumulatorV2} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
-)
-(interface DemiourgosPactMetaFungibleV3
-    @doc "V3 adds 2 Functions related to single Elite Account Update."
-    ;;
-    (defun URC_IzIdEA:bool (id:string))
-    ;;
-    (defun XB_UpdateEliteSingle (id:string account:string))
-)
 (interface DemiourgosPactMetaFungibleV4
     @doc "Exposes most of the Functions of the DPMF Module. \
     \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
@@ -361,25 +103,25 @@
     ;;
     (defun CAP_Owner (id:string))
     ;;
-    (defun C_AddQuantity:object{OuronetDalosV3.OutputCumulatorV2} (id:string nonce:integer account:string amount:decimal))
-    (defun C_Burn:object{OuronetDalosV3.OutputCumulatorV2} (id:string nonce:integer account:string amount:decimal))
-    (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2} (id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun C_Create:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string meta-data:[object]))
+    (defun C_AddQuantity:object{IgnisCollector.OutputCumulator} (id:string nonce:integer account:string amount:decimal))
+    (defun C_Burn:object{IgnisCollector.OutputCumulator} (id:string nonce:integer account:string amount:decimal))
+    (defun C_Control:object{IgnisCollector.OutputCumulator} (id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
+    (defun C_Create:object{IgnisCollector.OutputCumulator} (id:string account:string meta-data:[object]))
     (defun C_DeployAccount (id:string account:string))
-    (defun C_Issue:object{OuronetDalosV3.OutputCumulatorV2} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun C_Mint:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string amount:decimal meta-data:[object]))
-    (defun C_MultiBatchTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun C_RotateOwnership:object{OuronetDalosV3.OutputCumulatorV2} (id:string new-owner:string))
-    (defun C_SingleBatchTransfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string nonce:integer sender:string receiver:string method:bool))
-    (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string toggle:bool))
-    (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2}  (id:string toggle:bool))
-    (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2} (id:string account:string toggle:bool))
-    (defun C_Transfer:object{OuronetDalosV3.OutputCumulatorV2} (id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun C_Wipe:object{OuronetDalosV3.OutputCumulatorV2} (id:string atbw:string))
-    (defun C_WipePartial:object{OuronetDalosV3.OutputCumulatorV2} (id:string atbw:string nonces:[integer]))
+    (defun C_Issue:object{IgnisCollector.OutputCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
+    (defun C_Mint:object{IgnisCollector.OutputCumulator} (id:string account:string amount:decimal meta-data:[object]))
+    (defun C_MultiBatchTransfer:object{IgnisCollector.OutputCumulator} (id:string nonces:[integer] sender:string receiver:string method:bool))
+    (defun C_RotateOwnership:object{IgnisCollector.OutputCumulator} (id:string new-owner:string))
+    (defun C_SingleBatchTransfer:object{IgnisCollector.OutputCumulator} (id:string nonce:integer sender:string receiver:string method:bool))
+    (defun C_ToggleFreezeAccount:object{IgnisCollector.OutputCumulator} (id:string account:string toggle:bool))
+    (defun C_TogglePause:object{IgnisCollector.OutputCumulator}  (id:string toggle:bool))
+    (defun C_ToggleTransferRole:object{IgnisCollector.OutputCumulator} (id:string account:string toggle:bool))
+    (defun C_Transfer:object{IgnisCollector.OutputCumulator} (id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_Wipe:object{IgnisCollector.OutputCumulator} (id:string atbw:string))
+    (defun C_WipePartial:object{IgnisCollector.OutputCumulator} (id:string atbw:string nonces:[integer]))
     ;;
     (defun XB_DeployAccountWNE (id:string account:string))
-    (defun XB_IssueFree:object{OuronetDalosV3.OutputCumulatorV2} (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool]))
+    (defun XB_IssueFree:object{IgnisCollector.OutputCumulator} (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool]))
     (defun XB_UpdateEliteSingle (id:string account:string))
     (defun XB_UpdateElite (id:string sender:string receiver:string))
     (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
@@ -388,12 +130,12 @@
     (defun XE_ToggleAddQuantityRole (id:string account:string toggle:bool))
     (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
     (defun XE_UpdateRewardBearingToken (atspair:string id:string))
-    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalosV3.OutputCumulatorV2} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
+    (defun XE_UpdateSpecialMetaFungible:object{IgnisCollector.OutputCumulator} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
 )
 (module DPMF GOV
     ;;
     (implements OuronetPolicy)
-    (implements BrandingUsageV4)
+    (implements BrandingUsageV6)
     (implements DemiourgosPactMetaFungibleV4)
     ;;
     ;;<========>
@@ -404,7 +146,7 @@
     (defcap GOV ()                  (compose-capability (GOV|DPMF_ADMIN)))
     (defcap GOV|DPMF_ADMIN ()       (enforce-guard GOV|MD_DPMF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -422,7 +164,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -555,7 +297,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_Konto id) new-owner)
             (ref-DALOS::UEV_EnforceAccountExists new-owner)
@@ -595,7 +337,7 @@
     (defcap DPMF|S>X_TG_TRANSFER-R (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
             )
@@ -613,7 +355,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_CreateRoleAccount id) receiver)
             (CAP_Owner id)
@@ -648,7 +390,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-U|INT::UEV_PositionalVariable rp 5 "Invalid Role Position")
             (ref-DALOS::UEV_EnforceAccountExists account)
@@ -660,7 +402,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_Amount id amount)
@@ -679,7 +421,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegers} U|INT)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (l1:integer (length name))
                 (l2:integer (length ticker))
                 (l3:integer (length decimals))
@@ -724,7 +466,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_Amount id amount)
@@ -736,7 +478,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_AccountCreateState id client true)
@@ -752,7 +494,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
             )
@@ -1168,7 +910,7 @@
     (defun URC_EliteAurynzSupply (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
@@ -1257,7 +999,7 @@
     (defun URC_IzIdEA:bool (id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (fea:string (ref-DPTF::UR_Frozen ea-id))
@@ -1500,7 +1242,7 @@
         @doc "Enforces DPMF Token ID Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
@@ -1508,17 +1250,17 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_UpdatePendingBranding:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator}
         (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-BRD:module{Branding} BRD)
             )
             (with-capability (DPMF|C>UPDATE-BRD entity-id)
                 (ref-BRD::XE_UpdatePendingBranding entity-id logo description website social)
-                (ref-DALOS::UDC_BrandingCumulatorV2 (UR_Konto entity-id) 1.5)
+                (ref-IGNIS::IC|UDC_BrandingCumulator (UR_Konto entity-id) 1.5)
             )
         )
     )
@@ -1526,7 +1268,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-BRD:module{Branding} BRD)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (parent:string (URC_Parent entity-id))
@@ -1546,67 +1288,68 @@
         )
     )
     ;;
-    (defun C_AddQuantity:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_AddQuantity:object{IgnisCollector.OutputCumulator}
         (id:string nonce:integer account:string amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>ADD-QTY id account amount)
                 (XI_AddQuantity id nonce account amount)
-                (ref-DALOS::UDC_SmallCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_SmallCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_Burn:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Burn:object{IgnisCollector.OutputCumulator}
         (id:string nonce:integer account:string amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>BURN id account amount)
                 (XI_Burn id nonce account amount)
-                (ref-DALOS::UDC_SmallCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_SmallCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_Control:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Control:object{IgnisCollector.OutputCumulator}
         (id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|S>CTRL id)
                 (XI_Control id cco cu casr cf cw cp ctncr)
-                (ref-DALOS::UDC_MediumCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_MediumCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_Create:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Create:object{IgnisCollector.OutputCumulator}
         (id:string account:string meta-data:[object])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                (trigger:bool (ref-IGNIS::IC|URC_IsVirtualGasZero))
                 (new-nonce:integer
                     (with-capability (DPMF|C>CREATE id account)
                         (XI_Create id account meta-data)
                     )
                 )
             )
-            (ref-DALOS::UDC_ConstructOutputCumulatorV2 price (UR_Konto id) trigger [new-nonce])
+            (ref-IGNIS::IC|UDC_ConstructOutputCumulator price (UR_Konto id) trigger [new-nonce])
         )
     )
     (defun C_DeployAccount (id:string account:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (create-role-account:string (UR_CreateRoleAccount id))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
@@ -1639,17 +1382,17 @@
             )
         )
     )
-    (defun C_Issue:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Issue:object{IgnisCollector.OutputCumulator}
         (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (l1:integer (length name))
                 (mf-cost:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
                 (kda-costs:decimal (* (dec l1) mf-cost))
                 (iz-special:[bool] (make-list l1 false))
-                (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                (ico:object{IgnisCollector.OutputCumulator}
                     (with-capability (SECURE)
                         (XB_IssueFree account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role iz-special)
                     )
@@ -1659,12 +1402,13 @@
             ico
         )
     )
-    (defun C_Mint:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Mint:object{IgnisCollector.OutputCumulator}
         (id:string account:string amount:decimal meta-data:[object])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (new-nonce:integer
                     (with-capability (DPMF|C>MINT id account amount)
                         (XI_Mint id account amount meta-data)
@@ -1673,23 +1417,23 @@
                 (medium:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
                 (small:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
                 (price:decimal (+ medium small))
-                (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                (trigger:bool (ref-IGNIS::IC|URC_IsVirtualGasZero))
             )
-            (ref-DALOS::UDC_ConstructOutputCumulatorV2 price (UR_Konto id) trigger [new-nonce])
+            (ref-IGNIS::IC|UDC_ConstructOutputCumulator price (UR_Konto id) trigger [new-nonce])
         )
     )
-    (defun C_MultiBatchTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_MultiBatchTransfer:object{IgnisCollector.OutputCumulator}
         (id:string nonces:[integer] sender:string receiver:string method:bool)
         (UEV_IMC)
         (with-capability (DPMF|S>MULTI-BATCH-TRANSFER id nonces sender)
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (folded-obj:[object{OuronetDalosV3.OutputCumulatorV2}]
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (folded-obj:[object{IgnisCollector.OutputCumulator}]
                         (fold
                             (lambda
-                                (acc:[object{OuronetDalosV3.OutputCumulatorV2}] idx:integer)
+                                (acc:[object{IgnisCollector.OutputCumulator}] idx:integer)
                                 (ref-U|LST::UC_AppL
                                     acc
                                     (C_SingleBatchTransfer id (at idx nonces) sender receiver method)
@@ -1700,107 +1444,107 @@
                         )
                     )
                 )
-                (ref-DALOS::UDC_ConcatenateOutputCumulatorsV2 folded-obj [])
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators folded-obj [])
             )
         )
     )
-    (defun C_RotateOwnership:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_RotateOwnership:object{IgnisCollector.OutputCumulator}
         (id:string new-owner:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|S>RT_OWN id new-owner)
                 (XI_ChangeOwnership id new-owner)
-                (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_SingleBatchTransfer:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_SingleBatchTransfer:object{IgnisCollector.OutputCumulator}
         (id:string nonce:integer sender:string receiver:string method:bool)
         (UEV_IMC)
         (C_Transfer id nonce sender receiver (UR_AccountNonceBalance id nonce sender) method)
     )
-    (defun C_ToggleFreezeAccount:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_ToggleFreezeAccount:object{IgnisCollector.OutputCumulator}
         (id:string account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>FRZ-ACC id account toggle)
                 (XI_ToggleFreezeAccount id account toggle)
                 (XB_WriteRoles id account 5 toggle)
-                (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_TogglePause:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_TogglePause:object{IgnisCollector.OutputCumulator}
         (id:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|S>TG_PAUSE id toggle)
                 (XI_TogglePause id toggle)
-                (ref-DALOS::UDC_MediumCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_MediumCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_ToggleTransferRole:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_ToggleTransferRole:object{IgnisCollector.OutputCumulator}
         (id:string account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>TG_TRANSFER-R id account toggle)
                 (XB_DeployAccountWNE id account)
                 (XI_ToggleTransferRole id account toggle)
                 (XI_UpdateRoleTransferAmount id toggle)
                 (XB_WriteRoles id account 4 toggle)
-                (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_Transfer:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Transfer:object{IgnisCollector.OutputCumulator}
         (id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>TRANSFER id sender receiver transfer-amount method)
                 (XI_Transfer id nonce sender receiver transfer-amount method)
-                (ref-DALOS::UDC_SmallCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_SmallCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_Wipe:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_Wipe:object{IgnisCollector.OutputCumulator}
         (id:string atbw:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>TOTAL-WIPE id atbw)
                 (XI_Wipe id atbw)
-                (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (UR_Konto id))
             )
         )
     )
-    (defun C_WipePartial:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun C_WipePartial:object{IgnisCollector.OutputCumulator}
         (id:string atbw:string nonces:[integer])
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-IGNIS:module{IgnisCollector} DALOS)
             )
             (with-capability (DPMF|C>PARTIAL-WIPE id atbw nonces)
                 (XI_WipePartial id atbw nonces)
-                (ref-DALOS::UDC_BiggestCumulatorV2 (UR_Konto id))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (UR_Konto id))
             )
         )
     )
@@ -1817,7 +1561,7 @@
             )
         )
     )
-    (defun XB_IssueFree:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun XB_IssueFree:object{IgnisCollector.OutputCumulator}
         (
             account:string
             name:[string]
@@ -1836,12 +1580,13 @@
         (with-capability (DPMF|C>ISSUE account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-BRD:module{Branding} BRD)
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (l1:integer (length name))
                     (gas-costs:decimal (* (dec l1) (ref-DALOS::UR_UsagePrice "ignis|token-issue")))
-                    (trigger:bool (ref-DALOS::IGNIS|URC_IsVirtualGasZero))
+                    (trigger:bool (ref-IGNIS::IC|URC_IsVirtualGasZero))
                     (folded-lst:[string]
                         (fold
                             (lambda
@@ -1874,7 +1619,7 @@
                         )
                     )
                 )
-                (ref-DALOS::UDC_ConstructOutputCumulatorV2 gas-costs account trigger folded-lst)
+                (ref-IGNIS::IC|UDC_ConstructOutputCumulator gas-costs account trigger folded-lst)
             )
         )
     )
@@ -1882,7 +1627,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (a-type:bool (ref-DALOS::UR_AccountType account))
             )
@@ -1901,7 +1646,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (s-type:bool (ref-DALOS::UR_AccountType sender))
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))
@@ -2024,13 +1769,13 @@
             {"reward-bearing-token" : atspair}
         )
     )
-    (defun XE_UpdateSpecialMetaFungible:object{OuronetDalosV3.OutputCumulatorV2}
+    (defun XE_UpdateSpecialMetaFungible:object{IgnisCollector.OutputCumulator}
         (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool)
         (UEV_IMC)
         (with-capability (DPMF|C>UPDATE-SPECIAL main-dptf secondary-dpmf vesting-or-sleeping)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (if vesting-or-sleeping
@@ -2043,7 +1788,7 @@
                         (XI_UpdateSleeping main-dptf secondary-dpmf)
                     )
                 )
-                (ref-DALOS::UDC_BiggestCumulatorV2 (ref-DPTF::UR_Konto main-dptf))
+                (ref-IGNIS::IC|UDC_BiggestCumulator (ref-DPTF::UR_Konto main-dptf))
             )
         )
     )
@@ -2275,7 +2020,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (XI_DebitPure id nonce account amount)
@@ -2371,7 +2116,7 @@
         (require-capability (DPMF|C>TRANSFER id sender receiver transfer-amount method))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (current-nonce-meta-data (UR_AccountNonceMetaData id nonce sender))
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )

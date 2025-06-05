@@ -24,7 +24,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -65,7 +65,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
         (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
         (id:string "DHCD-98c486052a51")
@@ -159,7 +159,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)
         (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
         (id:string "DHCD-98c486052a51")

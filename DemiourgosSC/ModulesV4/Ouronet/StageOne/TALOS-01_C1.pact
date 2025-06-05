@@ -1,150 +1,3 @@
-(interface TalosStageOne_ClientOne
-    ;;
-    ;;DALOS Functions
-    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
-    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string)) ;i
-    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard)) ;i
-    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool))
-    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string))
-    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string))
-    ;;
-    ;;
-    ;;DPTF (Demiourgos Pact True Fungible) Functions
-    (defun DPTF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun DPTF|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun DPTF|C_OLD_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_ExemptionBulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal))
-    (defun DPTF|C_ClearDispo (patron:string account:string))
-    (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
-    (defun DPTF|C_DeployAccount (id:string account:string))
-    (defun DPTF|C_DonateFees (patron:string id:string))
-    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
-    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool))
-    (defun DPTF|C_OLD_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_ExemptionMultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_ResetFeeTarget (patron:string id:string))
-    (defun DPTF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPTF|C_SetFee (patron:string id:string fee:decimal))
-    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string))
-    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal))
-    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_TogglePause (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_OLD_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPTF|C_ExemptionTransfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPTF|C_OLD_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
-    (defun DPTF|C_Wipe (patron:string id:string atbw:string))
-    (defun DPTF|C_WipePartial (patron:string id:string atbw:string amtbw:decimal))
-    ;;
-    ;;
-    ;;DPMF (Demiourgos Pact Meta Fungible) Functions
-    (defun DPMF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]))
-    (defun DPMF|C_DeployAccount (id:string account:string)) ;i
-    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string))
-    (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun DPMF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool))
-    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool))
-    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPMF|C_Wipe (patron:string id:string atbw:string))
-    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer]))
-)
-(interface TalosStageOne_ClientOneV2
-    @doc "Supports new TFT Architecture \
-    \ V2 Adds manual Update for Elite Account Data, and IGNIS Cost for manualy creating DPTF and DPMF Account"
-    ;;
-    ;;DALOS Functions
-    (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
-    (defun DALOS|C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|C_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|C_RotateGovernor (patron:string account:string governor:guard))
-    (defun DALOS|C_RotateGuard (patron:string account:string new-guard:guard safe:bool))
-    (defun DALOS|C_RotateKadena (patron:string account:string kadena:string))
-    (defun DALOS|C_RotateSovereign (patron:string account:string new-sovereign:string))
-    (defun DALOS|C_UpdateEliteAccount (patron:string account:string))
-    (defun DALOS|C_UpdateEliteAccountSquared (patron:string sender:string receiver:string))
-    ;;
-    ;;
-    ;;DPTF (Demiourgos Pact True Fungible) Functions
-    (defun DPTF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun DPTF|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun DPTF|C_Burn (patron:string id:string account:string amount:decimal))
-    (defun DPTF|C_ClearDispo (patron:string account:string))
-    (defun DPTF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool))
-    (defun DPTF|C_DeployAccount (patron:string id:string account:string))
-    (defun DPTF|C_DonateFees (patron:string id:string))
-    (defun DPTF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool]))
-    (defun DPTF|C_Mint (patron:string id:string account:string amount:decimal origin:bool))
-    (defun DPTF|C_ResetFeeTarget (patron:string id:string))
-    (defun DPTF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPTF|C_SetFee (patron:string id:string fee:decimal))
-    (defun DPTF|C_SetFeeTarget (patron:string id:string target:string))
-    (defun DPTF|C_SetMinMove (patron:string id:string min-move-value:decimal))
-    (defun DPTF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFee (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleFeeExemptionRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleFeeLock (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_ToggleMintRole (patron:string id:string account:string toggle:bool))
-    (defun DPTF|C_TogglePause (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleReservation (patron:string id:string toggle:bool))
-    (defun DPTF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-        ;;
-    (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal))
-    (defun DPTF|C_Transfer (patron:string id:string sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPTF|C_MultiTransfer (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_BulkTransfer (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal]))
-        ;;
-    (defun DPTF|C_Wipe (patron:string id:string atbw:string))
-    (defun DPTF|C_WipePartial (patron:string id:string atbw:string amtbw:decimal))
-    ;;
-    ;;
-    ;;DPMF (Demiourgos Pact Meta Fungible) Functions
-    (defun DPMF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun DPMF|C_UpgradeBranding (patron:string entity-id:string months:integer))
-    ;;
-    (defun DPMF|C_AddQuantity (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Burn (patron:string id:string nonce:integer account:string amount:decimal))
-    (defun DPMF|C_Control (patron:string id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
-    (defun DPMF|C_Create:integer (patron:string id:string account:string meta-data:[object]))
-    (defun DPMF|C_DeployAccount (patron:string id:string account:string))
-    (defun DPMF|C_Issue:list (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
-    (defun DPMF|C_Mint:integer (patron:string id:string account:string amount:decimal meta-data:[object]))
-    (defun DPMF|C_MoveCreateRole (patron:string id:string receiver:string))
-    (defun DPMF|C_MultiBatchTransfer (patron:string id:string nonces:[integer] sender:string receiver:string method:bool))
-    (defun DPMF|C_RotateOwnership (patron:string id:string new-owner:string))
-    (defun DPMF|C_SingleBatchTransfer (patron:string id:string nonce:integer sender:string receiver:string method:bool))
-    (defun DPMF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_TogglePause (patron:string id:string toggle:bool))
-    (defun DPMF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool))
-    (defun DPMF|C_Transfer (patron:string id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
-    (defun DPMF|C_Wipe (patron:string id:string atbw:string))
-    (defun DPMF|C_WipePartial (patron:string id:string atbw:string nonces:[integer]))
-)
 (interface TalosStageOne_ClientOneV3
     @doc "Supports new TFT Architecture \
     \ V2 Adds manual Update for Elite Account Data, and IGNIS Cost for manualy creating DPTF and DPMF Account \
@@ -236,7 +89,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C1))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -248,7 +101,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -261,7 +114,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -352,9 +205,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::C_ControlSmartAccount account payable-as-smart-contract payable-by-smart-contract payable-by-method)
                 )
             )
@@ -365,7 +219,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-DALOS::C_DeploySmartAccount account guard kadena sovereign public)
@@ -378,7 +232,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-DALOS::C_DeployStandardAccount account guard kadena public)
@@ -392,9 +246,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::C_RotateGovernor account governor)
                 )
             )
@@ -405,9 +260,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::C_RotateGuard account new-guard safe)
                 )
             )
@@ -419,9 +275,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::C_RotateKadena account kadena)
                 )
             )
@@ -433,9 +290,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::C_RotateSovereign account new-sovereign)
                 )
             )
@@ -447,13 +305,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                     (ea-id:string (ref-DALOS::EliteAurynID))
                 )
                 (ref-DPMF::XB_UpdateEliteSingle ea-id account)
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_SmallCumulatorV2 patron)
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-IGNIS::IC|UDC_SmallCumulator patron)
                 )
             )
         )
@@ -464,12 +323,13 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                     (ea-id:string (ref-DALOS::EliteAurynID))
                 )
                 (ref-DPMF::XB_UpdateElite ea-id sender receiver)
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DALOS::UDC_MediumCumulatorV2 patron)
                 )
             )
@@ -481,10 +341,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-B|DPTF:module{BrandingUsageV4} DPTF)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-B|DPTF:module{BrandingUsageV6} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-B|DPTF::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
@@ -496,7 +356,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|DPTF:module{BrandingUsageV4} DPTF)
+                    (ref-B|DPTF:module{BrandingUsageV6} DPTF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-B|DPTF::C_UpgradeBranding patron entity-id months)
@@ -510,10 +370,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_Burn id account amount)
                 )
             )
@@ -524,10 +384,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_ClearDispo account)
                 )
             )
@@ -539,10 +399,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_Control id cco cu casr cf cw cp)
                 )
             )
@@ -553,12 +413,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
                 (ref-DPTF::C_DeployAccount id account)
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_SmallCumulatorV2 account)
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-IGNIS::IC|UDC_SmallCumulator account)
                 )
             )
         )
@@ -569,10 +429,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_SetFeeTarget id (ref-DALOS::GOV|DALOS|SC_NAME))
                 )
             )
@@ -584,14 +445,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -602,10 +463,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_Mint id account amount origin)
                 )
             )
@@ -618,10 +479,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_SetFeeTarget id (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 )
             )
@@ -632,10 +494,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_RotateOwnership id new-owner)
                 )
             )
@@ -646,10 +508,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_SetFee id fee)
                 )
             )
@@ -660,10 +522,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_SetFeeTarget id target)
                 )
             )
@@ -674,10 +536,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_SetMinMove id min-move-value)
                 )
             )
@@ -688,10 +550,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPTF|C_ToggleBurnRole id account toggle)
                 )
             )
@@ -703,10 +565,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_ToggleFee id toggle)
                 )
             )
@@ -717,10 +579,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPTF|C_ToggleFeeExemptionRole id account toggle)
                 )
             )
@@ -731,15 +593,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-DPTF::C_ToggleFeeLock patron id toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XE_ConditionalFuelKDA collect)
             )
         )
@@ -749,10 +611,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_ToggleFreezeAccount id account toggle)
                 )
             )
@@ -763,10 +625,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPTF|C_ToggleMintRole id account toggle)
                 )
             )
@@ -777,10 +639,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_TogglePause id toggle)
                 )
             )
@@ -791,11 +653,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_ToggleReservation id toggle)
                 )
             )
@@ -806,16 +667,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_ToggleTransferRole id account toggle)
                 )
             )
         )
     )
-    ;;V3 Transfers
     (defun DPTF|C_Transmute (patron:string id:string transmuter:string transmute-amount:decimal)
         @doc "Transmutes a DPTF Token. Transmuting Uses the whole amount as it if were Primary Fee \
         \ without adding to the Primary Fee Counter. \
@@ -829,10 +689,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_Transmute id transmuter transmute-amount)
                 )
             )
@@ -855,10 +715,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_Transfer id sender receiver transfer-amount method)
                 )
             )
@@ -872,10 +732,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_MultiTransfer id-lst sender receiver transfer-amount-lst method)
                 )
             )
@@ -903,10 +763,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_MultiBulkTransfer [id] sender [receiver-lst] [transfer-amount-lst])
                 )
             )
@@ -917,10 +777,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-TFT:module{TrueFungibleTransferV6} TFT)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-TFT::C_MultiBulkTransfer id sender receiver-array transfer-amount-array)
                 )
             )
@@ -932,11 +792,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_Wipe id atbw)
                 )
                 ;;Update Elite Account
@@ -949,11 +809,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPTF::C_WipePartial id atbw amtbw)
                 )
                 ;;Update Elite Account
@@ -967,10 +827,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
-                    (ref-B|DPMF:module{BrandingUsageV4} DPMF)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-B|DPMF:module{BrandingUsageV6} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-B|DPMF::C_UpdatePendingBranding entity-id logo description website social)
                 )
             )
@@ -981,7 +841,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|DPMF:module{BrandingUsageV4} DPMF)
+                    (ref-B|DPMF:module{BrandingUsageV6} DPMF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
                 (ref-B|DPMF::C_UpgradeBranding patron entity-id months)
@@ -995,10 +855,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_AddQuantity id nonce account amount)
                 )
             )
@@ -1009,10 +869,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_Burn id nonce account amount)
                 )
             )
@@ -1023,10 +883,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_Control id cco cu casr cf cw cp ctncr)
                 )
             )
@@ -1037,15 +897,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (with-capability (P|TS)
                             (ref-DPMF::C_Create id account meta-data)
                         )
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1055,12 +915,12 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
                 (ref-DPMF::C_DeployAccount id account)
-                (ref-DALOS::IGNIS|C_Collect patron
-                    (ref-DALOS::UDC_SmallCumulatorV2 account)
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-IGNIS::IC|UDC_SmallCumulator account)
                 )
             )
         )
@@ -1070,14 +930,14 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (ref-DPMF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause can-transfer-nft-create-role)
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 (at "output" ico)
             )
@@ -1089,15 +949,15 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
-                    (ico:object{OuronetDalosV3.OutputCumulatorV2}
+                    (ico:object{IgnisCollector.OutputCumulator}
                         (with-capability (P|TS)
                             (ref-DPMF::C_Mint id account amount meta-data)
                         )
                     )
                 )
-                (ref-DALOS::IGNIS|C_Collect patron ico)
+                (ref-IGNIS::IC|C_Collect patron ico)
                 (at 0 (at "output" ico))
             )
         )
@@ -1108,10 +968,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPMF|C_MoveCreateRole id receiver)
                 )
             )
@@ -1122,10 +982,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_MultiBatchTransfer id nonces sender receiver method)
                 )
             )
@@ -1136,10 +996,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_RotateOwnership id new-owner)
                 )
             )
@@ -1150,10 +1010,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_SingleBatchTransfer id nonce sender receiver method)
                 )
             )
@@ -1164,10 +1024,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPMF|C_ToggleAddQuantityRole id account toggle)
                 )
             )
@@ -1178,10 +1038,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-ATS:module{AutostakeV3} ATS)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-ATS::DPMF|C_ToggleBurnRole id account toggle)
                 )
             )
@@ -1192,11 +1052,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_ToggleFreezeAccount id account toggle)
                 )
             )
@@ -1207,11 +1067,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_TogglePause id toggle)
                 )
             )
@@ -1222,10 +1082,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_ToggleTransferRole id account toggle)
                 )
             )
@@ -1236,10 +1096,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_Transfer id nonce sender receiver transfer-amount method)
                 )
             )
@@ -1250,10 +1110,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_Wipe id atbw)
                 )
                 ;;Update Elite Account
@@ -1266,10 +1126,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
                 )
-                (ref-DALOS::IGNIS|C_Collect patron
+                (ref-IGNIS::IC|C_Collect patron
                     (ref-DPMF::C_WipePartial id atbw nonces)
                 )
                 ;;Update Elite Account

@@ -1,139 +1,3 @@
-(interface TalosStageOne_Admin
-    ;;
-    ;;DALOS Functions
-    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    (defun DALOS|A_ToggleOAPU (oapu:bool))
-    (defun DALOS|A_ToggleGAP (gap:bool))
-    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
-    (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
-    (defun DALOS|A_SetAutoFueling (toggle:bool))
-    (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
-    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
-    ;;
-    ;;
-    ;;BRD Functions
-    (defun BRD|A_Live (entity-id:string))
-    (defun BRD|A_SetFlag (entity-id:string flag:integer))
-    ;;
-    ;;
-    ;;DPTF Functions
-    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
-    (defun DPTF|A_WipeTreasuryDebt (patron:string))
-    (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal))
-    ;;
-    ;;
-    ;;LIQUID Functions
-    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    ;;
-    ;;
-    ;;ORBR Functions
-    (defun ORBR|A_Fuel ())
-    ;;
-    ;;
-    ;;SWP Functions
-    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
-    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
-    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
-    ;;
-    ;;
-    ;;Fueling Functions
-    (defun XB_DynamicFuelKDA ())
-    (defun XE_IgnisCollect (patron:string account:string input-ico:[object{OuronetDalos.IgnisCumulator}]))
-    (defun XE_ConditionalFuelKDA (condition:bool))
-)
-(interface TalosStageOne_AdminV2
-    @doc "V2 removes <XE_IgnisCollect> with the implementation of IgnisCumulatorV2 Architecture"
-    ;;
-    ;;DALOS Functions
-    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    (defun DALOS|A_ToggleOAPU (oapu:bool))
-    (defun DALOS|A_ToggleGAP (gap:bool))
-    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
-    (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
-    (defun DALOS|A_SetAutoFueling (toggle:bool))
-    (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
-    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
-    ;;
-    ;;
-    ;;BRD Functions
-    (defun BRD|A_Live (entity-id:string))
-    (defun BRD|A_SetFlag (entity-id:string flag:integer))
-    ;;
-    ;;
-    ;;DPTF Functions
-    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
-    (defun DPTF|A_WipeTreasuryDebt (patron:string))
-    (defun DPTF|A_WipeTreasuryDebtPartial (patron:string debt-to-be-wiped:decimal))
-    ;;
-    ;;
-    ;;LIQUID Functions
-    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    ;;
-    ;;
-    ;;ORBR Functions
-    (defun ORBR|A_Fuel ())
-    ;;
-    ;;
-    ;;SWP Functions
-    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
-    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
-    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
-    ;;
-    ;;
-    ;;Fueling Functions
-    (defun XB_DynamicFuelKDA ())
-    (defun XE_ConditionalFuelKDA (condition:bool))
-)
-(interface TalosStageOne_AdminV3
-    @doc "V2 removes <XE_IgnisCollect> with the implementation of IgnisCumulatorV2 Architecture \
-        \ V3 Removes <patron> input variable where it is not needed"
-    ;;
-    ;;DALOS Functions
-    (defun DALOS|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    (defun DALOS|A_ToggleOAPU (oapu:bool))
-    (defun DALOS|A_ToggleGAP (gap:bool))
-    (defun DALOS|A_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string))
-    (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string))
-    (defun DALOS|A_IgnisToggle (native:bool toggle:bool))
-    (defun DALOS|A_SetIgnisSourcePrice (price:decimal))
-    (defun DALOS|A_SetAutoFueling (toggle:bool))
-    (defun DALOS|A_UpdatePublicKey (account:string new-public:string))
-    (defun DALOS|A_UpdateUsagePrice (action:string new-price:decimal))
-    ;;
-    ;;
-    ;;BRD Functions
-    (defun BRD|A_Live (entity-id:string))
-    (defun BRD|A_SetFlag (entity-id:string flag:integer))
-    ;;
-    ;;
-    ;;DPTF Functions
-    (defun DPTF|A_UpdateTreasuryDispoParameters (type:integer tdp:decimal tds:decimal))
-    (defun DPTF|A_WipeTreasuryDebt ())
-    (defun DPTF|A_WipeTreasuryDebtPartial (debt-to-be-wiped:decimal))
-    ;;
-    ;;
-    ;;LIQUID Functions
-    (defun LIQUID|A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
-    ;;
-    ;;
-    ;;ORBR Functions
-    (defun ORBR|A_Fuel ())
-    ;;
-    ;;
-    ;;SWP Functions
-    (defun SWP|A_UpdatePrincipal (principal:string add-or-remove:bool))
-    (defun SWP|A_UpdateLimit (limit:decimal spawn:bool))
-    (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool))
-    ;;
-    ;;
-    ;;Fueling Functions
-    (defun XB_DynamicFuelKDA ())
-    (defun XE_ConditionalFuelKDA (condition:bool))
-)
 (interface TalosStageOne_AdminV4
     @doc "V2 removes <XE_IgnisCollect> with the implementation of IgnisCumulatorV2 Architecture \
         \ V3 Removes <patron> input variable where it is not needed \
@@ -199,7 +63,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-A_ADMIN)))
     (defcap GOV|TS01-A_ADMIN ()     (enforce-guard GOV|MD_TS01-A))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -230,7 +94,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -298,7 +162,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
     (defconst GASLESS-PATRON        (TALOS|Gassless))
     ;;
     ;;<==========>
@@ -328,7 +192,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_MigrateLiquidFunds migration-target-kda-account)
             )
@@ -339,7 +203,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_ToggleOAPU oapu)
             )
@@ -350,7 +214,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_ToggleGAP gap)
             )
@@ -361,7 +225,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
             )
@@ -373,7 +237,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_DeployStandardAccount account guard kadena public)
             )
@@ -386,7 +250,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_IgnisToggle native toggle)
             )
@@ -397,7 +261,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_SetIgnisSourcePrice price)
             )
@@ -408,7 +272,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_SetAutoFueling toggle)
             )
@@ -419,7 +283,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_UpdatePublicKey account new-public)
             )
@@ -430,7 +294,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV3} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
                 )
                 (ref-DALOS::A_UpdateUsagePrice action new-price)
             )
@@ -605,7 +469,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
             (if (ref-DALOS::UR_AutoFuel)
                 (with-capability (SECURE)

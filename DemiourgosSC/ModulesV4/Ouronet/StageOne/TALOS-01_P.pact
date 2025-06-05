@@ -1,36 +1,24 @@
-(interface TalosStageOne_ClientPacts
-    ;;
-    ;;
-    ;;DPTF (Demiourgos Pact True Fungible) Pact Initiating Functions
-    (defun DPTF|C_BulkTransfer81-160 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_BulkTransfer41-80 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_BulkTransfer13-40 (patron:string id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_MultiTransfer41-80 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    (defun DPTF|C_MultiTransfer13-40 (patron:string id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
-    ;;SWP (Swap-Pair) Pact Initiating Functions
-    ;;Issue
-    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    ;;
-)
-(interface TalosStageOne_ClientPactsV2
+(interface TalosStageOne_ClientPactsV3
     @doc "Removes DPTF Bulk and Multi Transfer in Multistep, to be added later on \
-    \ Due to the optimization of DPTF Transfers there are no longer needed in the near future"
+    \ Due to the optimization of DPTF Transfers there are no longer needed in the near future \
+    \ V3 Adds Liquidity Addition and moves all Defpacts in MTX Modules"
+
     ;;
     ;;
     ;;SWP (Swap-Pair) Pact Initiating Functions
     ;;Issue
-    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool))
+    ;;
+    (defun SWP|C_AddLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
     ;;
 )
 (module TS01-CP GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientPactsV2)
+    (implements TalosStageOne_ClientPactsV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -40,7 +28,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-CP_ADMIN)))
     (defcap GOV|TS01-CP_ADMIN ()    (enforce-guard GOV|MD_TS01-CP))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -52,7 +40,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -65,7 +53,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -100,10 +88,10 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|SWPI:module{OuronetPolicy} SWPI)
+                (ref-P|SWP-MTX:module{OuronetPolicy} SWP-MTX)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
-            (ref-P|SWPI::P|A_AddIMP mg)
+            (ref-P|SWP-MTX::P|A_AddIMP mg)
             (ref-P|TFT::P|A_AddIMP mg)
         )
     )
@@ -121,6 +109,8 @@
     ;;{1}
     ;;{2}
     ;;{3}
+    (defun CT_KdaPid ()             (let ((ref-U|CT|DIA:module{DiaKdaPid} U|CT)) (ref-U|CT|DIA::UR|KDA-PID)))
+    (defconst KDAPID                (CT_KdaPid))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -143,7 +133,7 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     ;;  [SWP PactStarters]
-    (defun SWP|C_IssueStableMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
         @doc "Similar outcome to <ref-TS01-C2::SWP|C_IssueStable>, but over 3 <steps> (0|1|2) via <defpact> \
             \ Calling this function runs the Step 0 of 2. To finalize SWPair creation, Steps 1 and 2 must also be executed \
             \ \
@@ -154,31 +144,43 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPI:module{SwapperIssue} SWPI)
+                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
                 )
-                (ref-SWPI::PS|C_IssueStable patron account pool-tokens fee-lp amp p)
+                (ref-SWP-MTX::C_IssueStablePool patron account pool-tokens fee-lp amp p)
             )
         )
     )
-    (defun SWP|C_IssueStandardMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal p:bool)
-        @doc "Similar to <SWP|C_IssueStableMultiStep>, but issues a P (Standard) Pool"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-SWPI:module{SwapperIssue} SWPI)
-                )
-                (ref-SWPI::PS|C_IssueStandard patron account pool-tokens fee-lp p)
-            )
-        )
-    )
-    (defun SWP|C_IssueWeightedMultiStep (patron:string account:string pool-tokens:[object{Swapper.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
         @doc "Similar to <SWP|C_IssueStableMultiStep>, but issues a W (Weighted) Pool"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWPI:module{SwapperIssue} SWPI)
+                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
                 )
-                (ref-SWPI::PS|C_IssueWeighted patron account pool-tokens fee-lp weights p)
+                (ref-SWP-MTX::C_IssueWeightedPool patron account pool-tokens fee-lp weights p)
+            )
+        )
+    )
+    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool)
+        @doc "Similar to <SWP|C_IssueStableMultiStep>, but issues a P (Standard) Pool"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                )
+                (ref-SWP-MTX::C_IssueStandardPool patron account pool-tokens fee-lp p)
+            )
+        )
+    )
+    ;;
+    (defun SWP|C_AddLiquidity
+        (patron:string account:string swpair:string input-amounts:[decimal])
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                )
+                (ref-SWP-MTX::C|KDA-PID_AddStandardLiquidity patron account swpair input-amounts KDAPID)
             )
         )
     )

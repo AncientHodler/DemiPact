@@ -23,7 +23,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -63,7 +63,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (ref-ATS:module{AutostakeV3} ATS)
@@ -83,7 +83,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
@@ -99,7 +99,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (ref-ATS:module{AutostakeV3} ATS)
@@ -120,7 +120,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
 
@@ -134,7 +134,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
 
@@ -149,7 +149,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
 
@@ -170,10 +170,10 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
 
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
@@ -187,7 +187,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-ATS:module{AutostakeV3} ATS)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
@@ -265,7 +265,7 @@
 (let
     (
         ;;refs
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-ATS:module{AutostakeV3} ATS)
         (receiver:string KST.EMMA)
@@ -310,7 +310,7 @@
 (let
     (
         (patron:string KST.ANHD)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -392,7 +392,7 @@
 (let
     (
         (patron:string KST.ANHD)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -474,7 +474,7 @@
     (
         (patron:string KST.ANHD)
         (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
@@ -523,7 +523,7 @@
     )
     (let
         (
-            (ref-DALOS:module{OuronetDalosV3} DALOS)
+            (ref-DALOS:module{OuronetDalosV4} DALOS)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
             (info:string (ref-DALOS::DALOS|Info))
             (issued-ids:[string]
@@ -739,7 +739,7 @@
     (
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
@@ -899,7 +899,7 @@
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (patron:string  KST.ANHD)
         (emma:string  KST.EMMA)
@@ -1006,7 +1006,7 @@
     (
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
     )
@@ -1046,7 +1046,7 @@
 (use DALOS) 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (patron:string KST.ANHD)
         (split-kda:[decimal] 
@@ -1089,7 +1089,7 @@
     (format "KDA Split is {}" [split-kda])
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
             (ats-ids:[string]
                 (ref-TS01-C2::ATS|C_Issue
                     patron
@@ -1135,7 +1135,7 @@
     (
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
         (m1:string "LI-98c486052a51")
@@ -1229,7 +1229,7 @@
     (
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
-        (ref-DALOS:module{OuronetDalosV3} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
     )
@@ -1295,7 +1295,7 @@
         (receiver-lst2:[string]
             [KST.FLRN KST.KISS KST.BYTA KST.PLCS KST.SWAPR] ;KST.KISS KST.PLCS KST.NANI KST.AOZT]
         )
-        ;(ref-DALOS:module{OuronetDalosV3} DALOS)
+        ;(ref-DALOS:module{OuronetDalosV4} DALOS)
         ;(ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)

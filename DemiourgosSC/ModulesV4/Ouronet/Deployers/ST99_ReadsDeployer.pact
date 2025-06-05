@@ -29,7 +29,7 @@
     (defcap GOV|DPL_UR_ADMIN ()             (enforce-guard GOV|MD_DPL-UR))
     ;;{G3}
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -111,7 +111,7 @@
     (defun URC_PrimordialIDs:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ignis:string (ref-DALOS::UR_IgnisID))
                 (auryn:string (ref-DALOS::UR_AurynID))
@@ -127,7 +127,7 @@
         \ [WKDA LKDA OURO AURYN ELITEAURYN]"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (ref-DSP:module{DeployerDispenserV4} DSP)
@@ -165,7 +165,7 @@
     (defun URC_KadenaCollectionReceivers:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (r1:string (ref-DALOS::UR_AccountKadena (at 2 (ref-DALOS::UR_DemiurgoiID))))
                 (r2:string (ref-DALOS::UR_AccountKadena (ref-DALOS::GOV|DALOS|SC_NAME)))
                 (r3:string (ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID))))
@@ -198,7 +198,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (ref-TFT:module{TrueFungibleTransferV6} TFT)
@@ -295,7 +295,7 @@
     (defun URC_0002_Primordials (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
                 (ref-ATS:module{AutostakeV3} ATS)
                 (ref-TFT:module{TrueFungibleTransferV6} TFT)
@@ -436,7 +436,7 @@
     (defun DALOS|URC_DeployStandardAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "standard"))
             )
             (URC_SplitKdaPriceForReceivers price)
@@ -445,10 +445,36 @@
     (defun DALOS|URC_DeploySmartAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV3} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "smart"))
             )
             (URC_SplitKdaPriceForReceivers price)
+        )
+    )
+    ;;
+    (defun OUROBOROS|Sublimate (ouro-amount:decimal)
+        (let
+            (
+                (ref-U|ATS:module{UtilityAts} U|ATS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                ;;
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (ouro-precision:integer (ref-DPTF::UR_Decimals ouro-id))
+                ;;
+                (ouro-split:[decimal] (ref-U|ATS::UC_PromilleSplit 10.0 ouro-amount ouro-precision))
+                (ouro-remainder-amount:decimal (at 0 ouro-split))
+            )
+            (ref-ORBR::URC_Sublimate ouro-remainder-amount)
+        )
+    )
+    (defun OUROBOROS|Compress (ignis-amount:decimal)
+        (let
+            (
+                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+            )
+            (at 0 (ref-ORBR::URC_Compress ignis-amount))
         )
     )
     ;;{F1}  [URC]

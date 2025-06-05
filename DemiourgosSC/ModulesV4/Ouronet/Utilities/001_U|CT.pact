@@ -91,9 +91,15 @@
     (defun CT_N76 ())
     (defun CT_N77 ())
 )
+(interface DiaKdaPid
+    @doc "Exposes the UR Function that Reads KDA Price in Dollars (KDA-PID) via Dia Oracle on Chain 2"
+    ;;
+    (defun UR|KDA-PID:decimal ())
+)
 (module U|CT GOV
     ;;
     (implements OuronetConstants)
+    (implements DiaKdaPid)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -254,6 +260,10 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     ;;{F1}  [URC]
+    (defun UR|KDA-PID:decimal ()
+        ;;(at "value" (n_bfb76eab37bf8c84359d6552a1d96a309e030b71.dia-oracle.get-value "KDA/USD"))
+        1.0
+    )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]

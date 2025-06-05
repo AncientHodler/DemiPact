@@ -122,7 +122,6 @@
         ;;Virtual Swap Chains
         swaps:[object{DirectSwapInputData}] ;;Stores the Data of the Swaps in a Chain
     )
-    
     ;;
     (defun UC_ComputeY (drsi:object{DirectRawSwapInput}))
     (defun UC_ComputeInverseY (irsi:object{InverseRawSwapInput}))
@@ -132,7 +131,7 @@
     (defun UC_DNext (D:decimal A:decimal X:[decimal]))
         ;;
     (defun UC_ComputeWP (drsi:object{DirectRawSwapInput}))
-    (defun UC_ComputedInverseWP (irsi:object{InverseRawSwapInput}))
+    (defun UC_ComputeInverseWP (irsi:object{InverseRawSwapInput}))
         ;;
     (defun UC_ComputeEP:decimal (drsi:object{DirectRawSwapInput}))
     (defun UC_ComputeInverseEP:decimal (irsi:object{InverseRawSwapInput}))
@@ -452,7 +451,7 @@
             (- (at op X) output-missing-term)
         )
     )
-    (defun UC_ComputedInverseWP
+    (defun UC_ComputeInverseWP
         (irsi:object{UtilitySwpV2.InverseRawSwapInput})
         @doc "Swapping ??A for 100C >> Equation in a weighted constant product pool: \
             \ How much A do you need to swap to get 100C ?  \
@@ -948,7 +947,7 @@
         ,"special"          : k
         ,"boost"            : l
         ,"swaps"            : m}
-      )
+    )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]

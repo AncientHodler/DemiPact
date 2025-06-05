@@ -59,7 +59,7 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV3} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
     ;;
     ;;<====>
@@ -412,7 +412,7 @@
     (defun A_Step005:[string] ()
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -452,7 +452,7 @@
     (defun A_Step006:[string] ()
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -494,7 +494,7 @@
     (defun A_Step007:[string] ()
         (let*
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
@@ -535,7 +535,7 @@
         (with-capability (GOV|DPL_AOZ_ADMIN)
             (let
                 (
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                     (PlebeicStrengthID:string (UR_Assets 3 0))
                     (DenariusDebilisID:string (UR_Assets 2 0))
                     (decay:integer 0)
@@ -676,7 +676,7 @@
         (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (EsothericKosonID:string (UR_Assets 1 1))
                 (AncientKosonID:string (UR_Assets 1 2))
@@ -695,7 +695,7 @@
         (require-capability (GOV|DPL_AOZ_ADMIN))
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV2} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (PrimordialKosonID:string (UR_Assets 1 0))
                 (EsothericKosonID:string (UR_Assets 1 1))
