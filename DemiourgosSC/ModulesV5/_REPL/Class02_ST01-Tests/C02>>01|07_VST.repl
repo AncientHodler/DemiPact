@@ -1,0 +1,355 @@
+(print "")
+(print "===================Last Vesting Tests============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+        (ref-ATS:module{AutostakeV3} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (ref-P|TS01-C2::VST|C_ToggleTransferRoleFrozenDPTF patron f-vst emma true)
+    (ref-P|TS01-C2::VST|C_ToggleTransferRoleReservedDPTF patron r-ouro emma true)
+    (ref-P|TS01-C2::VST|C_ToggleTransferRoleSleepingDPMF patron s-vst emma true)
+    [
+        (format "Emma F-VST Transfer Role is {}" [(ref-DPTF::UR_AccountRoleTransfer f-vst emma)])
+        (format "Emma R-OURO Transfer Role is {}" [(ref-DPTF::UR_AccountRoleTransfer r-ouro emma)])
+        (format "Emma S-VST Transfer Role is {}" [(ref-DPMF::UR_AccountRoleTransfer s-vst emma)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+        (ref-ATS:module{AutostakeV3} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (vst:string "VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (v-auryn:string "V|AURYN-98c486052a51")
+        (v-e-auryn:string "V|ELITEAURYN-98c486052a51")
+    )
+    (ref-TS01-C2::VST|C_CoilAndVest patron patron a-idx ouro 100.0 emma 3600 7200 5)
+    (ref-TS01-C2::VST|C_CurlAndVest patron patron a-idx ea-idx ouro 250.0 emma 360 720 6)
+
+    ;;Sleept 6500 VST to Emma
+    (ref-TS01-C2::VST|C_Sleep patron patron emma vst 5000.0 432000)
+    (ref-TS01-C2::VST|C_Sleep patron patron emma vst 6000.0 518400)
+    (ref-TS01-C2::VST|C_Sleep patron patron emma vst 7000.0 604800)
+    (ref-TS01-C2::VST|C_Sleep patron patron emma vst 8000.0 691200)
+    (ref-TS01-C2::VST|C_Sleep patron patron emma vst 9000.0 777600)
+    [
+        (format "Emma F-VST Transfer Role is {}" [(ref-DPTF::UR_AccountRoleTransfer f-vst emma)])
+        (format "Emma R-OURO Transfer Role is {}" [(ref-DPTF::UR_AccountRoleTransfer r-ouro emma)])
+        (format "Emma S-VST Transfer Role is {}" [(ref-DPMF::UR_AccountRoleTransfer s-vst emma)])
+
+        (format "Emma has {} Vested Auryn" [(ref-DPMF::UR_AccountSupply v-auryn emma)])
+        (format "Emma has {} Vested Elite-Auryn" [(ref-DPMF::UR_AccountSupply v-e-auryn emma)])
+
+        (format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])
+        (format "AH has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst patron)])
+
+        (format "S-VST Supply is {}" [(ref-DPMF::UR_Supply s-vst)])
+
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst emma) s-vst (ref-DPMF::UR_AccountNonces s-vst emma)])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
+
+        (format "Emma Sleeping VST Units are: {}" [(ref-DPMF::UR_AccountUnit s-vst emma)])
+    ]
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-11-22T00:00:00Z")}
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+        (ref-ATS:module{AutostakeV3} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (vst:string "VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (v-auryn:string "V|AURYN-98c486052a51")
+        (v-e-auryn:string "V|ELITEAURYN-98c486052a51")
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-10-19T00:00:00Z")}
+    )
+    (ref-TS01-C2::VST|C_Unsleep patron emma s-vst 36)
+
+    [
+        ;(format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])
+        ;(format "AH has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst patron)])
+
+        (format "S-VST Supply is {}" [(ref-DPMF::UR_Supply s-vst)])
+
+        (format "Emma has {} {} in total, owned nonces are {}"[(ref-DPMF::UR_AccountSupply s-vst emma) s-vst (ref-DPMF::UR_AccountNonces s-vst emma)])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
+
+        ;(format "Emma Sleeping VST Units are: {}" [(ref-DPMF::UR_AccountUnit s-vst emma)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DWK Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+;(env-sigs
+;    [   
+;        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+;          "caps": [
+;                    (coin.TRANSFER 
+;                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+;                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+;                    150.0)
+;                  ]
+;        }
+;    ]
+;)
+
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+        (ref-ATS:module{AutostakeV3} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-coin:module{fungible-v2} coin)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (vst:string "VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (v-auryn:string "V|AURYN-98c486052a51")
+        (v-e-auryn:string "V|ELITEAURYN-98c486052a51")
+
+        (dwk:string "DWK-98c486052a51")
+    )
+    (ref-TS01-C2::LQD|C_UnwrapKadena patron patron 150.0)
+
+    [
+        ;(format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])
+        ;(format "AH has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst patron)])
+        (format "AH DWK supply is {}" [(ref-DPTF::UR_AccountSupply dwk patron)])
+        (format "AH Native KDA is {}" [(ref-coin::get-balance (ref-DALOS::UR_AccountKadena patron))])
+
+        ;(format "Emma Sleeping VST Units are: {}" [(ref-DPMF::UR_AccountUnit s-vst emma)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV4} DPMF)
+        (ref-ATS:module{AutostakeV3} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+
+        (f-vst:string "F|VST-98c486052a51")
+        (r-ouro:string "R|OURO-98c486052a51")
+        (s-vst:string "Z|VST-98c486052a51")
+        (vst:string "VST-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (v-auryn:string "V|AURYN-98c486052a51")
+        (v-e-auryn:string "V|ELITEAURYN-98c486052a51")
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-10-19T00:00:00Z")}
+    )
+    ;(ref-TS01-C2::VST|C_Unsleep patron emma s-vst 36)
+    (ref-TS01-C1::DPTF|C_SetMinMove patron vst 500.0)
+    ;(ref-TS01-C1::DPTF|C_ToggleFee patron vst true)
+    (ref-TS01-C1::DPTF|C_Transfer patron vst emma lumy 500.0 false)
+
+    [
+        ;(format "Emma has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst emma)])
+        ;(format "AH has {} Sleeping Vesta" [(ref-DPMF::UR_AccountSupply s-vst patron)])
+        (format "VST Fee Lock State is {}" [(ref-DPTF::UR_FeeLock vst)])
+        (format "VST Fee Toggle is {}" [(ref-DPTF::UR_FeeToggle vst)])
+        (format "VST Min Move Value is {}" [(ref-DPTF::UR_MinMove vst)])
+        (format "Emma VST supply is {}" [(ref-DPTF::UR_AccountSupply vst emma)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

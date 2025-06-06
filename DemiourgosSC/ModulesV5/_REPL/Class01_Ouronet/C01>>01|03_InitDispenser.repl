@@ -1,0 +1,351 @@
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 01 - Secondary Module Key Initialisation
+(print "")
+(print "===================Initialise Ouronet_TX-001============================")
+(begin-tx "INIT TX 001 - Demiourgos DPTS|KADENA Keyset Definitions")
+;;Entering Namespace Free
+(namespace "free")
+
+    (module KC3 GOVERNANCE
+        (defcap GOVERNANCE () true)
+
+        ;;DHV, CST, DSP Repl Keys
+        (defconst DPTS_PBKY_0008 "PK_DSP")
+        (defconst DPTS_PBKY_0009 "PK_CST")
+
+        (defconst KADN_NAME_0008 "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99")
+        (defconst KADN_PBKY_0008 (drop 2 KADN_NAME_0008))
+        (defconst KADN_NAME_0009 "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7")
+        (defconst KADN_PBKY_0009 (drop 2 KADN_NAME_0009))
+    )
+
+    (env-data
+        {
+            "KEY_SC_Dispenser": { "keys": [KC3.DPTS_PBKY_0008]},
+            "KEY_SC_Custodians": { "keys": [KC3.DPTS_PBKY_0009]}
+        }
+    )
+
+    ;;Keysets
+    (define-keyset "free.dh_sc_dispenser-keyset" (read-keyset "KEY_SC_Dispenser"))
+    (define-keyset "free.dh_sc_custodians-keyset" (read-keyset "KEY_SC_Custodians"))
+
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Chain Data Time SetUp Definition
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 002 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 03 - Module Load Up
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;; LOAD Class04_ST01-PostTalos >>> 4 Modules
+;;
+(print "")
+(begin-tx "INIT TX M39 - DSP Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class04_ST01-PostTalos/C04>>01|03_DSP+.pact")
+(format "<<<<<<<DSP Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+(print "Dispenser Module Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+(print "<Class04_ST01-PostTalos> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX - Use Modules")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(use DSP)     ;; xx.xxx
+
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;
+(begin-tx "Init STEP 001")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
+    )
+    (ref-DPL|DSP::A_Step001 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+;;Fuel KDA Accounts of Dispenser and Custodians. On Mainnet it is assumed they have enough KDA
+(begin-tx "Fuel DPS and CST with KDA - REPL Only")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-data
+        {
+            "KEY_KDA_Dispenser": { "keys": [KC3.KADN_PBKY_0008]},
+            "KEY_KDA_Custodians": { "keys": [KC3.KADN_PBKY_0009]}
+        }
+    )
+    (env-sigs
+        [
+            {
+                "key": "alice-key",
+                "caps":
+                    [
+                        (coin.TRANSFER "alice" KC3.KADN_NAME_0008 25.0)
+                        (coin.TRANSFER "alice" KC3.KADN_NAME_0009 25.0)
+                    ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-coin:module{fungible-v2} coin)
+            (ref-DALOS:module{OuronetDalosV4} DALOS)
+        )
+        ;;Create DSP and transfer to it 25 KDA
+        (ref-coin::create-account KC3.KADN_NAME_0008 (read-keyset "KEY_KDA_Dispenser"))
+        (ref-DALOS::C_TransferDalosFuel "alice" KC3.KADN_NAME_0008 25.0)
+
+        ;;Create CST and transfer to it 25 KDA
+        (ref-coin::create-account KC3.KADN_NAME_0009 (read-keyset "KEY_KDA_Custodians"))
+        (ref-DALOS::C_TransferDalosFuel "alice" KC3.KADN_NAME_0009 25.0)
+    )
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 002")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
+        (dsp1:string (ref-DPL|DSP::GOV|DSP1|SC_NAME))
+        (cst1:string (ref-DPL|DSP::GOV|CST1|SC_NAME))
+
+        (split-kda-dsp:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                dsp1
+                (+ (ref-DALOS::UR_UsagePrice "smart") (ref-DALOS::UR_UsagePrice "standard"))
+            )
+        )
+        (split-kda-cst:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                cst1
+                (+ (ref-DALOS::UR_UsagePrice "smart") (ref-DALOS::UR_UsagePrice "standard"))
+            )
+        )
+    )
+    ;;dsp k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99
+    ;;cst k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7
+    (env-sigs
+        [
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_DSP", "caps": [] }
+            { "key": "78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda-dsp)
+                    )
+                    (coin.TRANSFER
+                        "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda-dsp)
+                    )
+                    (coin.TRANSFER
+                        "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda-dsp)
+                    )
+                    (coin.TRANSFER
+                        "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda-dsp)
+                    )
+                ]
+            }
+            { "key": "PK_CST", "caps": [] }
+            { "key": "309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda-cst)
+                    )
+                    (coin.TRANSFER
+                        "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda-cst)
+                    )
+                    (coin.TRANSFER
+                        "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda-cst)
+                    )
+                    (coin.TRANSFER
+                        "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda-cst)
+                    )
+                ]
+            }
+        ]
+    )
+    (ref-DPL|DSP::A_Step002)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 003")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
+    (ref-DPL|DSP::A_Step003 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 003 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 004")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
+    (ref-DPL|DSP::A_Step004 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 004 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;
+(begin-tx "Init STEP 005")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+        { "key": "PK_DHV", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    ((ref-DPL|DSP:module{DeployerDispenserV4} DSP))
+    (ref-DPL|DSP::A_Step005 KST.ANHD)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 005 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

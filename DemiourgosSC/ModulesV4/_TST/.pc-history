@@ -1,5 +1,5 @@
-(load "Test_00x_All.repl")
-(load "Test_00x_All.repl")
+(take -2 "Bytales")
+(take 2 "Bytales")
 (load "Test_00x_All.repl")
 (load "Test_00x_All.repl")
 (load "Test_00x_All.repl")

@@ -498,15 +498,6 @@
     )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
-    
-    (defun UDC_KadenaCosts:object{ClientKadenaCosts} (account:string kda-full-price:decimal)
-        (let
-            (
-                (kadena-discount:decimal (URC_KadenaDiscount account))
-                (kadena-need:decimal (floor () KDAPREC))
-            )
-        )
-    )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]

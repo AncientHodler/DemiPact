@@ -1,0 +1,38 @@
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Module Load Up
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;; LOAD Class04_ST01-PostTalos >>> 4 Modules
+;;
+(print "")
+(begin-tx "INIT TX M40 - DPL-UR Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class04_ST01-PostTalos/C04>>01|04_DPL-UR+.pact")
+(format "<<<<<<<DPL-UR Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+(print "Deployer Reads Module Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+(print "<Class04_ST01-PostTalos> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX - Use Modules")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(use DPL-UR)     ;; xx.xxx
+
+(env-gas)
+(commit-tx)
+;;==============================================================================

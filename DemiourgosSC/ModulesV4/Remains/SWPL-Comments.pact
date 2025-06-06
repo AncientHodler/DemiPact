@@ -145,3 +145,58 @@
         @event
         true
     )
+    (defun URC_ClearDispo:object{OuronetInfo.ClientInfo}
+        (patron:string account:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+                (ref-I|OURONET:module{OuronetInfo} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                ;;
+                (ats-sc:string (ref-DALOS::GOV|ATS|SC_NAME))
+                (ouro-id:string (ref-DALOS::UR_OuroborosID))
+                (a-id:string (ref-DALOS::UR_AurynID))
+                (ea-id:string (ref-DALOS::UR_EliteAurynID))
+                (ouro-amount:decimal (abs (ref-DPTF::UR_AccountSupply ouro-id account)))
+                (account-ea-supply:decimal (ref-DPTF::UR_AccountSupply ea-id account))
+                (frozen-state:bool (ref-DPTF::UR_AccountFrozenState ea-id account))
+                ;;
+                (auryndex:string (at 0 (ref-DPTF::UR_RewardToken ouro-id)))
+                (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardToken a-id)))
+                (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
+                (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
+                ;;
+                (o-prec:integer (ref-DPTF::UR_Decimals ouro-id))
+                (a-prec:integer (ref-DPTF::UR_Decimals a-id))
+                (ea-prec:integer (ref-DPTF::UR_Decimals ea-id))
+                ;;
+                (burn-auryn-amount:decimal (floor (/ ouro-amount auryndex-value) a-prec))
+                (burn-elite-auryn-amount:decimal (floor (/ burn-auryn-amount elite-auryndex-value) ea-prec))
+                (total-ea:decimal (floor (* burn-elite-auryn-amount 2.5) ea-prec))
+                ;;
+                (ig1-tgfr:decimal 
+                    (if (not frozen-state)
+                        (SIP|URC_Biggest)
+                        0.0
+                    )
+                )
+                (ig2-wppr:decimal (SIP|URC_Biggest))
+                (ig3-tgfr:decimal (SIP|URC_Biggest))
+                (ig4-burn:decimal (SIP|URC_Burn a-id ats-sc))
+                (ig5-burn:decimal (SIP|URC_Burn ouro-id ats-sc))
+                (ifp:decimal (fold (+) 0.0 [ig1-tgfr ig2-wppr ig3-tgfr ig4-burn ig5-burn]))
+                (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
+            )
+            (ref-I|OURONET::OI|UDC_ClientInfo
+                [
+                    (format "Operation: Clear the negative Ѻ Balance on Account {}" [sa])
+                    (format "Cost: {}% of negative Ѻ in Ξ₳" [250.0])
+                    (format "Clears {} Ѻ with {} Ξ₳" [(abs ouro-amount) total-ea])
+                    (format "{} Ξ₳ to be used for increasing the {}" [burn-elite-auryn-amount elite-auryndex])
+                ]
+                [(format "Ѻ Supply on {} Account succesfully brought to 0.0" [sa])]
+                (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
+                (ref-I|OURONET::OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
