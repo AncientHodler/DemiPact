@@ -1,0 +1,185 @@
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 01 - Chain Data Time SetUp Definition
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 001 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Module Load Up
+(print "")
+(print "===================Initialise Ouronet_TX-002-===========================")
+;;
+;; LOAD Class05_ST02-Interfaces >>> Multiple Interfaces
+;;
+(print "<Class05_ST02-Interfaces> Stage Interfaces >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+(print "")
+(begin-tx "INIT TX M1 - C05>>02|01_StageTwoInterfaces.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class05_ST02-Interfaces/C05>>02|01_StageTwoInterfaces.pact")
+(format "<<<<<<<Stage 2 Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+(print "<Class05_ST02-Interfaces> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;
+;;
+;; LOAD Class06_ST02-Main >>> 4 Modules
+;;
+(print "")
+(begin-tx "INIT TX M2 - DPDC-UDC Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|01_DPDC-UDC.pact")
+(format "<<<<<<<DPDC-UDC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M2 - DPDC Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|02_DPDC.pact")
+(format "<<<<<<<DPDC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M3 - DPDC-C Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|03_DPDC-C.pact")
+(format "<<<<<<<DPDC-C Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M4 - DPDC-I Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|04_DPDC-I.pact")
+(format "<<<<<<<DPDC-I Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M5 - DPDC-R Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|05_DPDC-R.pact")
+(format "<<<<<<<DPDC-R Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M6 - DPDC-MNG Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|06_DPDC-MNG.pact")
+(format "<<<<<<<DPDC-MNG Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M7 - DPDC-N Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|07_DPDC-N.pact")
+(format "<<<<<<<DPDC-N Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M8 - DPDC-T Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|08_DPDC-T.pact")
+(format "<<<<<<<DPDC-T Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M9 - DPDC-F Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|09_DPDC-F.pact")
+(format "<<<<<<<DPDC-F Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M10 - DPDC-S Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|10_DPDC-S.pact")
+(format "<<<<<<<DPDC-S Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+(print "<Class06_ST02-Main> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;
+;;
+;; LOAD CClass07_ST02-Talos >>> 2 Modules
+;;
+(print "")
+(begin-tx "INIT TX M6 - TS02-C1 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class07_ST02-Talos/C07>>02|01_TS02-C1+.pact")
+(format "<<<<<<<TS02-C1 Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M7 - TS02-C2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class07_ST02-Talos/C07>>02|01_TS02-C2+.pact")
+(format "<<<<<<<TS02-C2 Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+(print "<Class07_ST02-Talos> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

@@ -932,7 +932,6 @@
         [
             DALOS|SC_NAME
             (GOV|OUROBOROS|SC_NAME)
-            (GOV|LIQUID|SC_NAME)
         ]
     )
     (defconst GAS_QUARTER 0.25)

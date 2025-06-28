@@ -1,0 +1,1666 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 001 - Show Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+
+        (dd-k:string "DDKOSON-98c486052a51")
+        
+    )
+    [
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPTF::UR_AccountSupply ca-k aoz)
+                (ref-DPTF::UR_AccountSupply ps-k aoz)
+                (ref-DPTF::UR_AccountSupply ts-k aoz)
+                (ref-DPTF::UR_AccountSupply sd-k aoz)
+                (ref-DPTF::UR_AccountSupply ba-k aoz)
+            ]
+        )
+
+        (format "ATSC has {} p-ks | {} e-ks | {} a-ks" 
+            [
+                (ref-DPTF::UR_AccountSupply p-k atsc)
+                (ref-DPTF::UR_AccountSupply e-k atsc)
+                (ref-DPTF::UR_AccountSupply a-k atsc)
+            ]
+        )
+        (format "Reward Tokens for {}} are {}" [ps (ref-ATS::UR_RewardTokenList ps)])
+        (format "Reward Tokens Resident Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps true)])
+        (format "Reward Tokens Unbonding Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps false)])
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+
+        (format "C-RBT for {} is {}" [ps (ref-ATS::UR_ColdRewardBearingToken ps)])
+        (format "{} Supply is {}" [pd-k (ref-DPTF::UR_Supply pd-k)])
+        (format "{} RBT-Supply is {}" [ps (ref-ATS::URC_PairRBTSupply ps)])
+    ]
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Show Tests {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 001")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    (
+        (aoz:string KST.AOZT)
+        ;(atsc:string KST.ATSTK)
+        ;(ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        ;(ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        ;(pd-k:string "PDKOSON-98c486052a51")
+        ;(ca-k:string "CAKOSON-98c486052a51")
+        ;(ps-k:string "PSKOSON-98c486052a51")
+        ;(ts-k:string "TSKOSON-98c486052a51")
+        ;(sd-k:string "SDKOSON-98c486052a51")
+        ;(ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+
+    )
+    (ref-P|TS01-C2::ATS|C_Coil aoz aoz ps p-k 100.0)
+    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps p-k 50.0)
+    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps e-k 40.0)
+    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps a-k 80.0)
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 002 Coil Fuel Tests {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 003 - Show Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let 
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+
+    )
+    [
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "Cold Recovery is {} and Hot Recovery is {} for {}"
+            [
+                (ref-ATS::UR_ToggleColdRecovery ps)
+                (ref-ATS::UR_ToggleHotRecovery ps)
+                ps
+            ]
+        )
+    ]
+)
+(print "")
+(print "")
+(format "<<<<<<<STEP 003 Show Tests Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Hot RBT and Redeem Test 1|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    [
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} RBT SUpply is {}; C-RBT is {}; Hot-RBT is {};" 
+            [
+                ps
+                (ref-ATS::URC_PairRBTSupply ps)
+                (ref-DPTF::UR_Supply pd-k)
+                (ref-DPMF::UR_Supply dd-k)
+            ]
+        )
+        (format "Autostake has before REDEEM in {} P-K, {} E-K, A-K {} for {}"
+            [
+                (at "resident" (at 0 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 1 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 2 (ref-ATS::UR_RewardTokens ps)))
+                ps
+            ]
+        )
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Hot RBT and Redeem Test 1|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Hot RBT and Redeem Test 2|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(print "BEFORE BLOCK===================================")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    (ref-P|TS01-C2::ATS|C_HotRecovery aoz aoz ps 100.0)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Hot RBT and Redeem Test 2|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Hot RBT and Redeem Test 3|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    [
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Hot RBT and Redeem Test 3|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Hot RBT and Redeem Test 4|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-10-11T00:00:00Z")}
+    )
+    ;(ref-P|TS01-C2::ATS|C_Redeem aoz aoz dd-k 1)
+    ;(ref-P|TS01-C2::ATS|C_RecoverHotRBT aoz aoz dd-k 1 75.0)
+    (ref-P|TS01-C2::ATS|C_RecoverWholeRBTBatch aoz aoz dd-k 1)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Hot RBT and Redeem Test 4|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Hot RBT and Redeem Test 5|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    [
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} RBT SUpply is {}; C-RBT is {}; Hot-RBT is {};" 
+            [
+                ps
+                (ref-ATS::URC_PairRBTSupply ps)
+                (ref-DPTF::UR_Supply pd-k)
+                (ref-DPMF::UR_Supply dd-k)
+            ]
+        )
+        (format "Autostake has AFTER REDEEM in {} P-K, {} E-K, A-K {} for {}"
+            [
+                (at "resident" (at 0 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 1 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 2 (ref-ATS::UR_RewardTokens ps)))
+                ps
+            ]
+        )
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Hot RBT and Redeem Test 5|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Cold Recovery and Cull Test 1|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+    )
+    [
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} RBT SUpply is {}; C-RBT is {}; Hot-RBT is {};" 
+            [
+                ps
+                (ref-ATS::URC_PairRBTSupply ps)
+                (ref-DPTF::UR_Supply pd-k)
+                (ref-DPMF::UR_Supply dd-k)
+            ]
+        )
+        (format "Autostake has BEFORE COLD Recovery in {} P-K, {} E-K, A-K {} for {}"
+            [
+                (at "resident" (at 0 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 1 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 2 (ref-ATS::UR_RewardTokens ps)))
+                ps
+            ]
+        )
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Cold Recovery and Cull Test 1|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Cold Recovery and Cull Test 2|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (patron:string KST.ANHD)
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+        (ttt:time (time "2024-10-15T00:00:00Z"))
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+
+    )
+    ;(format "PS has Cold Recovery Positions {}" [(ref-ATS::UR_ColdRecoveryPositions ps)])
+    
+    [
+        (format "Cold Recovery Fee for 200 is {}" [(ref-ATS::URC_ColdRecoveryFee ps 200.0 -1)])
+        (format "Cold Recovery Fee for 100 is {}" [(ref-ATS::URC_ColdRecoveryFee ps 100.0 -1)])
+        (format "Cold Recovery Fee for 50 is {}" [(ref-ATS::URC_ColdRecoveryFee ps 50.0 -1)])
+    ]
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 200.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 100.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 50.0)
+
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron a-idx 50.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron a-idx 60.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron a-idx 70.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron a-idx 80.0)
+
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron ea-idx 500.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron ea-idx 600.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron ea-idx 700.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery patron patron ea-idx 800.0)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Cold Recovery and Cull Test 2|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Cold Recovery and Cull Test 3|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+    )
+    [
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Cold Recovery Positions are {}; Fee Threhsolds are: {}; Fee Table is {}; Cold Recovery Fee Redirection is {}; Cold Recovery Duration is: {}"
+            [
+                ps
+                (ref-ATS::UR_ColdRecoveryPositions ps)
+                (ref-ATS::UR_ColdRecoveryFeeThresholds ps)
+                (ref-ATS::UR_ColdRecoveryFeeTable ps)
+                (ref-ATS::UR_ColdRecoveryFeeRedirection ps)
+                (ref-ATS::UR_ColdRecoveryDuration ps)
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} Index is {};" [a-idx (ref-ATS::URC_Index a-idx)])
+        (format "{} Index is {};" [ea-idx (ref-ATS::URC_Index ea-idx)])
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+        (format "AOZET P1 is {}" [(ref-ATS::UR_P1-7 ps aoz 1)])
+        (format "----------------------------------------- {} -----------------------------------------" [a-idx])
+        (format "Auryndex AH P0 is {}" [(ref-ATS::UR_P0 a-idx patron)])
+        (format "Auryndex AH P1 is {}" [(ref-ATS::UR_P1-7 a-idx patron 1)])
+        (format "Auryndex AH P2 is {}" [(ref-ATS::UR_P1-7 a-idx patron 2)])
+        (format "Auryndex AH P3 is {}" [(ref-ATS::UR_P1-7 a-idx patron 3)])
+        (format "Auryndex AH P4 is {}" [(ref-ATS::UR_P1-7 a-idx patron 4)])
+        (format "Auryndex AH P5 is {}" [(ref-ATS::UR_P1-7 a-idx patron 5)])
+        (format "Auryndex AH P6 is {}" [(ref-ATS::UR_P1-7 a-idx patron 6)])
+        (format "Auryndex AH P7 is {}" [(ref-ATS::UR_P1-7 a-idx patron 7)])
+        (format "----------------------------------------- {} -----------------------------------------" [ea-idx])
+        (format "E-Auryndex AH P0 is {}" [(ref-ATS::UR_P0 ea-idx patron)])
+        (format "E-Auryndex AH P1 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 1)])
+        (format "E-Auryndex AH P2 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 2)])
+        (format "E-Auryndex AH P3 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 3)])
+        (format "E-Auryndex AH P4 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 4)])
+        (format "E-Auryndex AH P5 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 5)])
+        (format "E-Auryndex AH P6 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 6)])
+        (format "E-Auryndex AH P7 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 7)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Cold Recovery and Cull Test 3|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Cold Recovery and Cull Test 4|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-11-01T00:00:00Z")}
+        ;"block-time": (time "2024-10-28T00:00:00Z")}
+    )
+    ;(ref-P|TS01-C2::ATS|C_ModifyCanChangeOwner patron a-idx false)
+    (ref-P|TS01-C2::ATS|C_RotateOwnership patron a-idx emma)
+    (ref-P|TS01-C2::ATS|C_RotateOwnership emma a-idx patron)
+    [
+        (format "Can Change Owner for Auryndex is {}" [(ref-ATS::UR_CanChangeOwner a-idx)])
+        (format "Curling 100 OURO Returns {} EA" [(ref-P|TS01-C2::ATS|C_Curl patron patron a-idx ea-idx ouro 100.0)])
+        (format "Culling AOZ returns {} in RTs" [(ref-P|TS01-C2::ATS|C_Cull aoz aoz ps)])
+        (format "Culling AH Auryndex returns {} in RTs" [(ref-P|TS01-C2::ATS|C_Cull patron patron a-idx)])
+        (format "Culling AH E-Auryndex returns {} in RTs" [(ref-P|TS01-C2::ATS|C_Cull patron patron ea-idx)])
+        
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} Index is {};" [a-idx (ref-ATS::URC_Index a-idx)])
+        (format "{} Index is {};" [ea-idx (ref-ATS::URC_Index ea-idx)])
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+        (format "AOZET P1 is {}" [(ref-ATS::UR_P1-7 ps aoz 1)])
+        (format "----------------------------------------- {} -----------------------------------------" [a-idx])
+        (format "Auryndex AH P0 is {}" [(ref-ATS::UR_P0 a-idx patron)])
+        (format "Auryndex AH P1 is {}" [(ref-ATS::UR_P1-7 a-idx patron 1)])
+        (format "Auryndex AH P2 is {}" [(ref-ATS::UR_P1-7 a-idx patron 2)])
+        (format "Auryndex AH P3 is {}" [(ref-ATS::UR_P1-7 a-idx patron 3)])
+        (format "Auryndex AH P4 is {}" [(ref-ATS::UR_P1-7 a-idx patron 4)])
+        (format "Auryndex AH P5 is {}" [(ref-ATS::UR_P1-7 a-idx patron 5)])
+        (format "Auryndex AH P6 is {}" [(ref-ATS::UR_P1-7 a-idx patron 6)])
+        (format "Auryndex AH P7 is {}" [(ref-ATS::UR_P1-7 a-idx patron 7)])
+        (format "----------------------------------------- {} -----------------------------------------" [ea-idx])
+        (format "E-Auryndex AH P0 is {}" [(ref-ATS::UR_P0 ea-idx patron)])
+        (format "E-Auryndex AH P1 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 1)])
+        (format "E-Auryndex AH P2 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 2)])
+        (format "E-Auryndex AH P3 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 3)])
+        (format "E-Auryndex AH P4 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 4)])
+        (format "E-Auryndex AH P5 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 5)])
+        (format "E-Auryndex AH P6 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 6)])
+        (format "E-Auryndex AH P7 is {}" [(ref-ATS::UR_P1-7 ea-idx patron 7)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Cold Recovery and Cull Test 4|4 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Syphon Tests 1|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (ref-P|TS01-C2::ATS|C_UpdateSyphon patron ps 0.6)
+    (ref-P|TS01-C2::ATS|C_ToggleSyphoning patron ps true)
+
+    [
+        (format "Plebeic Strength Setting Lock state is {}" [(ref-ATS::UR_Lock ps)])
+        (format "Emma has before spyhoning {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k emma)
+                (ref-DPTF::UR_AccountSupply e-k emma)
+                (ref-DPTF::UR_AccountSupply a-k emma)
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} RBT SUpply is {}; C-RBT is {}; Hot-RBT is {};" 
+            [
+                ps
+                (ref-ATS::URC_PairRBTSupply ps)
+                (ref-DPTF::UR_Supply pd-k)
+                (ref-DPMF::UR_Supply dd-k)
+            ]
+        )
+        (format "Autostake has BEFORE SYPHON in {} P-K, {} E-K, A-K {} for {}"
+            [
+                (at "resident" (at 0 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 1 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 2 (ref-ATS::UR_RewardTokens ps)))
+                ps
+            ]
+        )
+        (format "Max Syphon for {} is {}" [ps (ref-ATS::URC_MaxSyphon ps)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Syphone Tests 1|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Syphon Tests 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+
+    (ref-P|TS01-C2::ATS|C_Syphon patron emma ps [17.647058823529411764705882 5.294117647058823529411765 7.058823529411764705882353])
+    (ref-P|TS01-C2::ATS|C_ToggleParameterLock patron ps true)
+    [
+        (format "Plebeic Strength Setting Lock state is {}" [(ref-ATS::UR_Lock ps)])
+        (format "Emma has after spyhoning {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k emma)
+                (ref-DPTF::UR_AccountSupply e-k emma)
+                (ref-DPTF::UR_AccountSupply a-k emma)
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "{} RBT SUpply is {}; C-RBT is {}; Hot-RBT is {};" 
+            [
+                ps
+                (ref-ATS::URC_PairRBTSupply ps)
+                (ref-DPTF::UR_Supply pd-k)
+                (ref-DPMF::UR_Supply dd-k)
+            ]
+        )
+        (format "Autostake has After SYPHON in {} P-K, {} E-K, A-K {} for {}"
+            [
+                (at "resident" (at 0 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 1 (ref-ATS::UR_RewardTokens ps)))
+                (at "resident" (at 2 (ref-ATS::UR_RewardTokens ps)))
+                ps
+            ]
+        )
+        (format "Max Syphon for {} is {}" [ps (ref-ATS::URC_MaxSyphon ps)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Syphon Tests 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Parameter Unlock with KDA Fee Collection")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+
+        (f-toggle-costs:[decimal]
+            (ref-U|ATS::UC_UnlockPrice (ref-ATS::UR_Unlocks ps))
+        )
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                aoz
+                (at 1 f-toggle-costs)
+            )
+        )
+    )
+    ;"k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" emma
+    ;"k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ah
+    ; k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf aoz
+    (env-sigs
+        [   
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    
+    (format "Parameter Lock for {} is {}" [ps (ref-ATS::UR_Lock ps)])
+    (ref-P|TS01-C2::ATS|C_ToggleParameterLock aoz ps false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Parameter Unlock with KDA Fee Collection costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Secondary Remove 1|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    [
+        (format "{} c-nfr is {}" [ps (ref-ATS::UR_ColdNativeFeeRedirection ps)])
+        (format "{} c-fr is {}" [ps (ref-ATS::UR_ColdRecoveryFeeRedirection ps)])
+        (format "{} h-fr is {}" [ps (ref-ATS::UR_HotRecoveryFeeRedirection ps)])
+
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "BEFORE COLD RECOVERY Reward Tokens Resident Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps true)])
+        (format "BEFORE COLD RECOVERY Reward Tokens Unbonding Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps false)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Secondary Remove 1|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Secondary Remove 2|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 40.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 50.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 75.0)
+    [
+        (format "AFTER COLD RECOVERY Reward Tokens Resident Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps true)])
+        (format "AFTER COLD RECOVERY Reward Tokens Unbonding Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps false)])
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+        (format "AOZET P1 is {}" [(ref-ATS::UR_P1-7 ps aoz 1)])
+        (format "AOZET P2 is {}" [(ref-ATS::UR_P1-7 ps aoz 2)])
+        (format "AOZET P3 is {}" [(ref-ATS::UR_P1-7 ps aoz 3)])
+        (format "AOZET P4 is {}" [(ref-ATS::UR_P1-7 ps aoz 4)])
+        (format "AOZET P5 is {}" [(ref-ATS::UR_P1-7 ps aoz 5)])
+        (format "AOZET P6 is {}" [(ref-ATS::UR_P1-7 ps aoz 6)])
+        (format "AOZET P7 is {}" [(ref-ATS::UR_P1-7 ps aoz 7)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Secondary Remove 2|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Secondary Remove 3|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (print "Begining with removal of RT++++++++++++++++++++")
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOff aoz ps false)
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOff aoz ps true)
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Secondary Remove 3|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Secondary Remove 4|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-TFT:module{TrueFungibleTransferV7} TFT)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+        ;;
+        (keyz:[string] (ref-TFT::DPTF-DPMF-ATS|UR_TableKeys 3 false))
+        (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString "|" x)) keyz))
+        (fl:[string] (ref-U|DALOS::UC_InverseFilterId listoflists ps))
+    )
+    (print "Remove Secondary++++++++++++++++++++")
+    (print "NOOOOOOOOOOOOOOOOT Remove Secondary++++++++++++++++++++")
+    
+    (ref-P|TS01-C2::ATS|C_RemoveSecondary aoz aoz ps a-k)
+    [
+        ;keyz
+        ;listoflists
+        (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo ps 3 false)
+        (format "{} has as RTs: {}" [ps (ref-ATS::UR_RewardTokenList ps)])
+    ]
+    
+)
+
+;
+
+(print "")
+(print "")
+(format "<<<<<<<Secondary Remove 4|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Secondary Remove 5|5")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (print "Verification AFTER Remove Secondary++++++++++++++++++++")
+    [
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "AOZET has  {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+        (format "AOZET P1 is {}" [(ref-ATS::UR_P1-7 ps aoz 1)])
+        (format "AOZET P2 is {}" [(ref-ATS::UR_P1-7 ps aoz 2)])
+        (format "AOZET P3 is {}" [(ref-ATS::UR_P1-7 ps aoz 3)])
+        (format "AOZET P4 is {}" [(ref-ATS::UR_P1-7 ps aoz 4)])
+        (format "AOZET P5 is {}" [(ref-ATS::UR_P1-7 ps aoz 5)])
+        (format "AOZET P6 is {}" [(ref-ATS::UR_P1-7 ps aoz 6)])
+        (format "AOZET P7 is {}" [(ref-ATS::UR_P1-7 ps aoz 7)])
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Secondary Remove 5|5 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 1|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (ref-P|TS01-C2::ATS|C_Coil aoz aoz ps e-k 250.0)
+    (ref-P|TS01-C2::ATS|C_AddSecondary aoz ps a-k false)
+    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps a-k 500.0)
+
+
+    [
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "AFTER Adding A-K Reward Tokens Resident Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps true)])
+        (format "AFTER Adding A-K Reward Tokens Unbonding Amounts for {} are {}" [ps (ref-ATS::UR_RoUAmountList ps false)])
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 1|2 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 2|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (print "Turning Recovery On Again++++++++++++++++++++")
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOn aoz ps false)
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOn aoz ps true)
+    (print "Cold Recovery Again++++++++++++++++++++")
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 25.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 64.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 90.0)
+    (ref-P|TS01-C2::ATS|C_ColdRecovery aoz aoz ps 15.0)
+
+
+    [
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "AOZET has {} PlebiumDenarius and {} Denarius Debilis; Time is {}"
+            [
+                (ref-DPTF::UR_AccountSupply pd-k aoz)
+                (ref-DPMF::UR_AccountSupply dd-k aoz)
+                (at "block-time" (chain-data))
+            ]
+        )
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+        (format "AOZET P1 is {}" [(ref-ATS::UR_P1-7 ps aoz 1)])
+        (format "AOZET P2 is {}" [(ref-ATS::UR_P1-7 ps aoz 2)])
+        (format "AOZET P3 is {}" [(ref-ATS::UR_P1-7 ps aoz 3)])
+        (format "AOZET P4 is {}" [(ref-ATS::UR_P1-7 ps aoz 4)])
+        (format "AOZET P5 is {}" [(ref-ATS::UR_P1-7 ps aoz 5)])
+        (format "AOZET P6 is {}" [(ref-ATS::UR_P1-7 ps aoz 6)])
+        (format "AOZET P7 is {}" [(ref-ATS::UR_P1-7 ps aoz 7)])
+        (format "AOZET has BEFORE Hybrid Cull {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 2|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (ref-U|ATS:module{UtilityAts} U|ATS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+
+        (p-k:string "PKOSON-98c486052a51")
+        (e-k:string "EKOSON-98c486052a51")
+        (a-k:string "AKOSON-98c486052a51")
+        (pd-k:string "PDKOSON-98c486052a51")
+        (ca-k:string "CAKOSON-98c486052a51")
+        (ps-k:string "PSKOSON-98c486052a51")
+        (ts-k:string "TSKOSON-98c486052a51")
+        (sd-k:string "SDKOSON-98c486052a51")
+        (ba-k:string "BAKOSON-98c486052a51")
+        (ps:string "PlebeicStrength-98c486052a51")
+        (dd-k:string "DDKOSON-98c486052a51")
+
+        (a-idx:string "Auryndex-98c486052a51")
+        (ea-idx:string "EliteAuryndex-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    (print "Hybrid Cull++++++++++++++++++++")
+    (env-chain-data
+        {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+        "block-time": (time "2024-11-22T00:00:00Z")}
+    )
+
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOff aoz ps false)
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOff aoz ps true)
+
+    (ref-P|TS01-C2::ATS|C_ToggleFeeSettings aoz ps false 0)
+    (ref-P|TS01-C2::ATS|C_ToggleFeeSettings aoz ps false 1)
+    (ref-P|TS01-C2::ATS|C_ToggleFeeSettings aoz ps false 2)
+
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOn aoz ps false)
+    (ref-P|TS01-C2::ATS|C_TurnRecoveryOn aoz ps true)
+
+    [
+        (format "{} Index is {};" [ps (ref-ATS::URC_Index ps)])
+        (format "Culling AOZ returns {} in RTs" [(ref-P|TS01-C2::ATS|C_Cull aoz aoz ps)])
+        (format "AOZET has AFTER Hybrid Cull {} p-k |{} e-k |{} a-k " 
+            [
+                (ref-DPTF::UR_AccountSupply p-k aoz)
+                (ref-DPTF::UR_AccountSupply e-k aoz)
+                (ref-DPTF::UR_AccountSupply a-k aoz)
+            ]
+        )
+        (format "----------------------------------------- {} -----------------------------------------" [ps])
+        (format "AOZET P0 is {}" [(ref-ATS::UR_P0 ps aoz)])
+
+        (format "{} c-nfr is {}" [ps (ref-ATS::UR_ColdNativeFeeRedirection ps)])
+        (format "{} c-fr is {}" [ps (ref-ATS::UR_ColdRecoveryFeeRedirection ps)])
+        (format "{} h-fr is {}" [ps (ref-ATS::UR_HotRecoveryFeeRedirection ps)])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)

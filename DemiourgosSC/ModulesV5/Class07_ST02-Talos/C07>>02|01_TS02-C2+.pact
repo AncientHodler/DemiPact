@@ -29,7 +29,32 @@
     (defun DPNF|C_Create:string
         (
             patron:string id:string
-            input-nonce-data:[object{Dpdc.DC|DataSchema}]
+            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
+        )
+    )
+    (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPNF|C_DefinePrimordialSet 
+        (
+            patron:string id:string set-name:string 
+            set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+    )
+    ;;
+    (defun DPNF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal))
+    (defun DPNF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal))
+    (defun DPNF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string))
+    (defun DPNF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string))
+    (defun DPNF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal))
+    (defun DPNF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer))
+    (defun DPNF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object]))
+    (defun DPNF|C_SetNonceUri 
+        (
+            patron:string id:string account:string nonce:integer
+            ay:object{DpdcUdc.URI|Type}
+            u1:object{DpdcUdc.URI|Data}
+            u2:object{DpdcUdc.URI|Data}
+            u3:object{DpdcUdc.URI|Data}
         )
     )
 )
@@ -108,16 +133,26 @@
             (
                 (ref-P|TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
-                (ref-P|DPDC-M:module{OuronetPolicy} DPDC-M)
-                (ref-P|DPDC-NM:module{OuronetPolicy} DPDC-NM)
-                (ref-P|DPDC-NP:module{OuronetPolicy} DPDC-NP)
+                (ref-P|DPDC-C:module{OuronetPolicy} DPDC-C)
+                (ref-P|DPDC-I:module{OuronetPolicy} DPDC-I)
+                (ref-P|DPDC-R:module{OuronetPolicy} DPDC-R)
+                (ref-P|DPDC-MNG:module{OuronetPolicy} DPDC-MNG)
+                (ref-P|DPDC-N:module{OuronetPolicy} DPDC-N)
+                (ref-P|DPDC-T:module{OuronetPolicy} DPDC-T)
+                (ref-P|DPDC-F:module{OuronetPolicy} DPDC-F)
+                (ref-P|DPDC-S:module{OuronetPolicy} DPDC-S)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
             (ref-P|DPDC::P|A_AddIMP mg)
-            (ref-P|DPDC-M::P|A_AddIMP mg)
-            (ref-P|DPDC-NM::P|A_AddIMP mg)
-            (ref-P|DPDC-NP::P|A_AddIMP mg)
+            (ref-P|DPDC-C::P|A_AddIMP mg)
+            (ref-P|DPDC-I::P|A_AddIMP mg)
+            (ref-P|DPDC-R::P|A_AddIMP mg)
+            (ref-P|DPDC-MNG::P|A_AddIMP mg)
+            (ref-P|DPDC-N::P|A_AddIMP mg)
+            (ref-P|DPDC-T::P|A_AddIMP mg)
+            (ref-P|DPDC-F::P|A_AddIMP mg)
+            (ref-P|DPDC-S::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -171,7 +206,8 @@
         )
     )
     (defun DPNF|C_UpgradeBranding (patron:string entity-id:string months:integer)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Upgrades Branding for DPNF Token, making it a premium Branding. \
+            \ Also sets pending-branding to live branding if its branding is not live yet"
         (with-capability (P|TS)
             (let
                 (
@@ -190,10 +226,10 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_Control id false cu cco ccc casr ctncr cf cw cp)
+                    (ref-DPDC-MNG::C_Control id false cu cco ccc casr ctncr cf cw cp)
                 )
             )
         )
@@ -204,9 +240,9 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                 )
-                (ref-DPDC::C_DeployAccountNFT id account)
+                (ref-DPDC-I::C_DeployAccountNFT id account)
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-IGNIS::IC|UDC_MediumCumulator account)
                 )
@@ -226,10 +262,10 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                     (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
                     (ico:object{IgnisCollector.OutputCumulator}
-                        (ref-DPDC-M::C_IssueDigitalCollection
+                        (ref-DPDC-I::C_IssueDigitalCollection
                             patron false 
                             owner-account creator-account collection-name collection-ticker
                             can-upgrade can-change-owner can-change-creator can-add-special-role
@@ -244,155 +280,165 @@
         )
     )
     (defun DPNF|C_TogglePause (patron:string id:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Pauses a DPNF Collection. Paused Collections can no longer be transfered"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_TogglePause id false toggle)
+                    (ref-DPDC-MNG::C_TogglePause id false toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Freezes a given account for a given DPNF Token. Frozen Accounts can no longer send or receive that DPNF Token"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleFreezeAccount id false account toggle)
+                    (ref-DPDC-R::C_ToggleFreezeAccount id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles exemption Role for a given DPNF on a given Smart Ouronet Account (Only Smart Ouronet Accounts can accept this role) \
+            \ When sending to or receiving from such Accounts, the flat IGNIS Royalty fee must not be paid."
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleExemptionRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleExemptionRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleBurnRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles burn Role for a given DPNF on any Ouronet Account. \
+            \ Such Accounts can then burn the DPNF"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleBurnRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleBurnRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleUpdateRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles update Role for a given DPNF on any Ouronet Account. \
+            \ Such Accounts can then update (modify) the Metadata on any DPNF nonce"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleUpdateRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleUpdateRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleModifyCreatorRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles Modify Creator Role for a given DPNF on any Ouronet Account. \
+            \ Such Accounts can proceed to modify the Creator of the DPNF Collection"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleModifyCreatorRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleModifyCreatorRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleModifyRoyaltiesRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles Modify Royalties Role for a given DPNF on any Ouronet Account. \
+            \ Such Accounts can proceed to modify the Permille Royalty of any nonce in the  DPNF Collection"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleModifyRoyaltiesRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleModifyRoyaltiesRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_ToggleTransferRole (patron:string id:string account:string toggle:bool)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Toggles Transfer Role for a given DPNF on any Ouronet Account. \
+            \ Transfers for any Nonce in the DPNF Collection are then restricted only to and from these accounts"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_ToggleTransferRole id false account toggle)
+                    (ref-DPDC-R::C_ToggleTransferRole id false account toggle)
                 )
             )
         )
     )
     (defun DPNF|C_MoveCreateRole (patron:string id:string new-account:string)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Moves the Create Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can issue new NFTs in the Collection"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_MoveCreateRole id false new-account)
+                    (ref-DPDC-R::C_MoveCreateRole id false new-account)
                 )
             )
         )
     )
     (defun DPNF|C_MoveRecreateRole (patron:string id:string new-account:string)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Moves the Recreate Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can recreate any existing NFT in the Collection \
+            \ Recreation reffers to a complete update (modification) of all NFT properties of a given nonce"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_MoveRecreateRole id false new-account)
+                    (ref-DPDC-R::C_MoveRecreateRole id false new-account)
                 )
             )
         )
     )
     (defun DPNF|C_MoveSetUriRole (patron:string id:string new-account:string)
-        @doc "Similar to its DPSF counterpart"
+        @doc "Moves the Set URI Role to another Ouronet Account. A single Account may have this Role \
+            \ This is the only account that can modify the URIs of any nonce in the NFT Collection"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-M:module{DpdcManagement} DPDC-M)
+                    (ref-DPDC-R:module{DpdcRoles} DPDC-R)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-M::C_MoveSetUriRole id false new-account)
+                    (ref-DPDC-R::C_MoveSetUriRole id false new-account)
                 )
             )
         )
@@ -401,7 +447,7 @@
     (defun DPNF|C_Create:string
         (
             patron:string id:string
-            input-nonce-data:[object{Dpdc.DC|DataSchema}]
+            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
         )
         @doc "Creates a new NFT Collection Element(s), having a new nonce, \
             \ of amount 1, on the <creator> account."
@@ -409,14 +455,14 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-NM:module{DpdcNonceManagement} DPDC-NM)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
                     (l:integer (length input-nonce-data))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (if (= l 1)
-                            (ref-DPDC-NM::C_CreateNewNonce
-                                id false 0 1 (at 0 input-nonce-data)
+                            (ref-DPDC-C::C_CreateNewNonce
+                                id false 0 1 (at 0 input-nonce-data) false
                             )
-                            (ref-DPDC-NM::C_CreateNewNonces
+                            (ref-DPDC-C::C_CreateNewNonces
                                 id false (make-list l 1) input-nonce-data
                             )
                         )
@@ -425,6 +471,160 @@
                 (ref-IGNIS::IC|C_Collect patron ico)
                 (format "Created {} Clas 0 NonFungible(s) within the {} DPNF Collection"
                     [(at "output" ico) id]
+                )
+            )
+        )
+    )
+    (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData})
+        @doc "Enables Fragmentation for a given NFT Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-F:module{DpdcFragments} DPDC-F)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-F::C_EnableNonceFragmentation id false nonce fragmentation-ind)
+                )
+                (format "Fragmentation for NFT {} Nonce {} enabled succesfully" [id nonce])
+            )
+        )
+    )
+    (defun DPNF|C_DefinePrimordialSet
+        (
+            patron:string id:string set-name:string 
+            set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Defines a New Primordial NFT Set. Primordial Sets are composed oc Class 0 Nonces"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_DefinePrimordialSet id true set-name set-definition ind)
+                )
+                (format "Primordial Set for NFT Collection {} defined succesfully" [id])
+            )
+        )
+    )
+
+    ;;
+    (defun DPNF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal)
+        @doc "Updates the Royalty of an NFT Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceRoyalty id true account nonce royalty)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal)
+        @doc "Updates the Ignis Royalty of an NFT Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account nonce ignis-royalty)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string)
+        @doc "Updates the Name of an NFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceNameOrDescription id true account nonce true name)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string)
+        @doc "Updates the Description of an NFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceNameOrDescription id true account nonce false description)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal)
+        @doc "Updates the Score of an NFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-DPDC-N::C_UpdateNonceScore id true account nonce score)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Update Nonce {} of NFT Collection {} with a score of {}"
+                    [nonce id score]
+                )
+            )
+        )
+    )
+    (defun DPNF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer)
+        @doc "Removes the Score of an NFT nonce, setting it to -1.0"
+        (DPNF|C_SetNonceScore patron id account nonce -1.0)
+    )
+    (defun DPNF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object])
+        @doc "Updates the Metadata of an NFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-DPDC-N::C_UpdateNonceMetadata id true account nonce meta-data)
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Update Meta-Data of Nonce {} of NFT Collection {}"
+                    [nonce id]
+                )
+            )
+        )
+    )
+    (defun DPNF|C_SetNonceUri
+        (
+            patron:string id:string account:string nonce:integer
+            ay:object{DpdcUdc.URI|Type}
+            u1:object{DpdcUdc.URI|Data}
+            u2:object{DpdcUdc.URI|Data}
+            u3:object{DpdcUdc.URI|Data}
+        )
+        @doc "Updates the URI List for an NFT nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceUri id true account nonce ay u1 u2 u3)
                 )
             )
         )

@@ -11,7 +11,11 @@
     (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool))
     ;;
-    (defun SWP|C_AddLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddGlacialLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddFrozenLiquidity (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
+    (defun SWP|C_AddSleepingLiquidity (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
     ;;
 )
 (module TS01-CP GOV
@@ -88,10 +92,10 @@
         (let
             (
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|SWP-MTX:module{OuronetPolicy} SWP-MTX)
+                (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
-            (ref-P|SWP-MTX::P|A_AddIMP mg)
+            (ref-P|MTX-SWP::P|A_AddIMP mg)
             (ref-P|TFT::P|A_AddIMP mg)
         )
     )
@@ -109,8 +113,6 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_KdaPid ()             (let ((ref-U|CT|DIA:module{DiaKdaPid} U|CT)) (ref-U|CT|DIA::UR|KDA-PID)))
-    (defconst KDAPID                (CT_KdaPid))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -144,9 +146,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
                 )
-                (ref-SWP-MTX::C_IssueStablePool patron account pool-tokens fee-lp amp p)
+                (ref-MTX-SWP::C_IssueStablePool patron account pool-tokens fee-lp amp p)
             )
         )
     )
@@ -155,9 +157,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
                 )
-                (ref-SWP-MTX::C_IssueWeightedPool patron account pool-tokens fee-lp weights p)
+                (ref-MTX-SWP::C_IssueWeightedPool patron account pool-tokens fee-lp weights p)
             )
         )
     )
@@ -166,21 +168,85 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
                 )
-                (ref-SWP-MTX::C_IssueStandardPool patron account pool-tokens fee-lp p)
+                (ref-MTX-SWP::C_IssueStandardPool patron account pool-tokens fee-lp p)
             )
         )
     )
     ;;
-    (defun SWP|C_AddLiquidity
+    (defun SWP|C_AddStandardLiquidity
         (patron:string account:string swpair:string input-amounts:[decimal])
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SWP-MTX:module{SwapperMtx} SWP-MTX)
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
                 )
-                (ref-SWP-MTX::C|KDA-PID_AddStandardLiquidity patron account swpair input-amounts KDAPID)
+                (ref-MTX-SWP::C_AddStandardLiquidity 
+                    patron account swpair input-amounts kda-pid
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddIcedLiquidity
+        (patron:string account:string swpair:string input-amounts:[decimal])
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
+                )
+                (ref-MTX-SWP::C_AddIcedLiquidity 
+                    patron account swpair input-amounts kda-pid
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddGlacialLiquidity
+        (patron:string account:string swpair:string input-amounts:[decimal])
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
+                )
+                (ref-MTX-SWP::C_AddGlacialLiquidity 
+                    patron account swpair input-amounts kda-pid
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddFrozenLiquidity
+        (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
+                )
+                (ref-MTX-SWP::C_AddFrozenLiquidity
+                    patron account swpair frozen-dptf input-amount kda-pid
+                )
+            )
+        )
+    )
+    (defun SWP|C_AddSleepingLiquidity
+        (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                    (ref-MTX-SWP:module{SwapperMtx} MTX-SWP)
+                )
+                (ref-MTX-SWP::C_AddSleepingLiquidity
+                    patron account swpair sleeping-dpmf nonce kda-pid
+                )
             )
         )
     )

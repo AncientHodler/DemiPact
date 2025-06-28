@@ -1,0 +1,92 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 001 Cumulator Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ats:string KST.ATSTK)
+        (vst:string KST.VESTG)
+        (ref-IGNIS:module{IgnisCollector} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+
+        (cum1:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 5.0 patron false))
+        (cum2:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 7.0 receiver false))
+        (cum3:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 8.0 ats false))
+        (cum4:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 5.0 ats false))
+        (cum5:object{IgnisCollector.ModularCumulator} (ref-IGNIS::IC|UDC_MakeModularCumulator 17.0 vst false))
+        (l1:[object{IgnisCollector.ModularCumulator}] [cum3 cum4 cum1 cum2 cum5])
+        (lst:list ["coco" "poco" 1])
+        (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
+        ;;
+        (ocv2:object{IgnisCollector.OutputCumulator}
+            (ref-IGNIS::IC|UDC_MakeOutputCumulator l1 lst)
+        )
+        (ccv2:object{IgnisCollector.CompressedCumulator}
+            (ref-IGNIS::IC|UDC_CompressOutputCumulator ocv2)
+        )
+        (pcv2:object{IgnisCollector.PrimedCumulator}
+            (ref-IGNIS::IC|UDC_PrimeIgnisCumulator patron ccv2)
+        )
+        (oc1:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum1] []))
+        (oc2:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum2] []))
+        (oc3:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum3] []))
+        (oc4:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum4] []))
+        (oc5:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_MakeOutputCumulator [cum5] []))
+
+        (try:object{IgnisCollector.OutputCumulator} (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
+        (try2:object{IgnisCollector.CompressedCumulator}
+            (ref-IGNIS::IC|UDC_CompressOutputCumulator try)
+        )
+        (try3:object{IgnisCollector.PrimedCumulator}
+            (ref-IGNIS::IC|UDC_PrimeIgnisCumulator patron try2)
+        )
+    )
+    [
+        ;cum1
+        ;cum2
+        ;cum3
+        ;cum4
+        ;cum5
+
+        ;oc1
+        ;oc3
+        ;try
+    ]
+    try3
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Cumulator Tests costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

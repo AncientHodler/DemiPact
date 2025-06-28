@@ -1,4 +1,4 @@
-;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
+;;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (module DALOS GOV
     ;;
     ;;Ouronet DALOS Gas-Station
@@ -6,9 +6,10 @@
         (let
             (
                 (ref-U|ST:module{OuronetGasStation} U|ST)
-                (gas-price (ref-U|ST::UR_chain-gas-price))
+                (iz-continuation:bool (contains "continuation" (read-msg)))
             )
-            (compose-capability (DALOS|NATIVE-AUTOMATIC))
+            ;;GENERAL CHECKS
+            ;;2]Enforce either GOV|MD_DALOS guard or maximum gas notional 0.02
             (enforce-one
                 "Add multiple conditions needed to use Ouronet DALOS Gas-Station"
                 [
@@ -16,14 +17,35 @@
                     (enforce-guard (ref-U|ST::UEV_max-gas-notional 0.02))
                 ]
             )
-            (enforce (= 1 (length (at "exec-code" (read-msg)))) "Tx of only one Pact Function")
-            (enforce-one
-                "Payable Modules not satisfied"
-                [
-                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
-                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DPS Modules allowed")
-                ]
+            ;;Checks Depending on TX Type
+            (if (not iz-continuation)
+                ;;Standard TX
+                (enforce-one
+                    "Payable Modules not satisfied"
+                    [
+                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_MovieBoosterBuyer" (take 66 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
+                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_RedeemMovieBooster" (take 67 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
+                    ]
+                )
+                ;;Continuation TX
+                (let
+                    (
+                        (cont-obj:object (at "continuation" (read-msg)))
+                        (arguments:list (at "args" cont-obj))
+                        (patron:string (at 0 arguments))
+                        (account:string (at 1 arguments))
+                        (definition:string (at "def" cont-obj))
+                    )
+                    (enforce (= patron account) "Patron and Client must be similar for a continuation TX!")
+                    ;;Enforce the defpact originates in a Proprietary Module.
+                    ;;Only MTX Modules from Ouronet Namespace will have their defpact continuation paid for.
+                    (enforce (= "n_7d40ccda457e374d8eb07b658fd38c282c545038.MTX" (take 46 definition)))
+                )
             )
+            ;;
+            (compose-capability (DALOS|NATIVE-AUTOMATIC))
         )
     )
     (defun create-gas-payer-guard:guard ()
@@ -34,8 +56,8 @@
     (implements OuronetPolicy)
     (implements OuronetDalosV4)
     (implements IgnisCollector)
-    (implements OuronetInfo)
-    (implements DalosInfo)
+    (implements OuronetInfoV2)
+    (implements DalosInfoV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -84,8 +106,10 @@
                             (ref-U|G::UEV_GuardOfAny
                                 [
                                     (P|UR "TFT|RemoteDalosGov")
-                                    (P|UR "TS01-A|RemoteDalosGov")
+                                    (P|UR "ORBR|RemoteDalosGov")
                                     (P|UR "SWPU|RemoteDalosGov")
+                                    (P|UR "TS01-A|RemoteDalosGov")
+                                    ;(P|UR "DSP|RemoteDalosGov") ;;Must exist
                                 ]
                             )
                         )
@@ -315,7 +339,7 @@
         [
             DALOS|SC_NAME
             (GOV|OUROBOROS|SC_NAME)
-            (GOV|LIQUID|SC_NAME)
+            ;(GOV|LIQUID|SC_NAME)
         ]
     )
     (defconst GAS_QUARTER 0.25)
@@ -842,7 +866,7 @@
             )
             (enforce (!= sovereign account) "Incompatible Sovereign detected for Smart DALOS Account")
             (enforce-one
-                "Smart DALOS Account Permissions not satisfied !"
+                (format "Smart DALOS Account {} Ownership could not be verified!" [account])
                 [
                     (enforce-guard account-guard)
                     (enforce-guard sovereign-guard)
@@ -1908,18 +1932,33 @@
     ;;{C2}
     ;;{C3}
     (defun CT_KdaPrec ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_KDA_PRECISION)))
-    (defun CT_KdaPid ()                     (let ((ref-U|CT|DIA:module{DiaKdaPid} U|CT)) (ref-U|CT|DIA::UR|KDA-PID)))
     (defconst KDAPREC                       (CT_KdaPrec))
-    (defconst KDAPID                        (CT_KdaPid))
     ;;{C4}
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun OI|UC_IfpFromOutputCumulator:decimal (input:object{IgnisCollector.OutputCumulator})
+        (let
+            (
+                (cc:[object{IgnisCollector.ModularCumulator}] (at "cumulator-chain" input))
+            )
+            (fold
+                (lambda
+                    (acc:decimal idx:integer)
+                    (+ acc (at "ignis" (at idx cc)))
+                )
+                0.0
+                (enumerate 0 (- (length cc) 1))
+            )
+        )
+    )
     (defun OI|UC_ShortAccount:string (account:string)
         (concat
-            [take 5 account]
-            "..."
-            [take -3 account]
+            [
+                (take 5 account)
+                "..."
+                (take -3 account)
+            ]
         )
     )
     (defun OI|UC_ConvertPrice:string (input-price:decimal)
@@ -1977,21 +2016,21 @@
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
-    (defun OI|UDC_ClientInfo:object{OuronetInfo.ClientInfo}
-        (a:[string] b:[string] c:object{OuronetInfo.ClientIgnisCosts} d:object{OuronetInfo.ClientKadenaCosts})
+    (defun OI|UDC_ClientInfo:object{OuronetInfoV2.ClientInfo}
+        (a:[string] b:[string] c:object{OuronetInfoV2.ClientIgnisCosts} d:object{OuronetInfoV2.ClientKadenaCosts})
         {"pre-text"         : a
         ,"post-text"        : b
         ,"ignis"            : c
         ,"kadena"           : d}
     )
-    (defun OI|UDC_ClientIgnisCosts:object{OuronetInfo.ClientIgnisCosts}
+    (defun OI|UDC_ClientIgnisCosts:object{OuronetInfoV2.ClientIgnisCosts}
         (a:decimal b:decimal c:decimal d:string)
         {"ignis-discount"   : a
         ,"ignis-full"       : b
         ,"ignis-need"       : c
         ,"ignis-text"       : d}
     )
-    (defun OI|UDC_ClientKadenaCosts:object{OuronetInfo.ClientKadenaCosts}
+    (defun OI|UDC_ClientKadenaCosts:object{OuronetInfoV2.ClientKadenaCosts}
         (a:decimal b:decimal c:decimal d:[decimal] e:[string] f:string)
         {"kadena-discount"  : a
         ,"kadena-full"      : b
@@ -2000,13 +2039,15 @@
         ,"kadena-targets"   : e
         ,"kadena-text"      : f}
     )
-    (defun OI|UDC_FullKadenaCosts:object{OuronetInfo.ClientKadenaCosts} (kfp:decimal)
+    (defun OI|UDC_FullKadenaCosts:object{OuronetInfoV2.ClientKadenaCosts} (kfp:decimal)
         (let
             (
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 (kadena-split:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit kfp KDAPREC))
                 (kadena-targets:[string] (OI|UR_KadenaTargets))
-                (kadena-price:string (OI|UC_ConvertPrice (* kfp KDAPID)))
+                (kadena-price:string (OI|UC_ConvertPrice (* kfp kda-pid)))
                 (kadena-text:string
                     (format "Operation costs {} KDA valued at {} with no further discounts applied." [kfp kadena-price])
                 )
@@ -2021,16 +2062,18 @@
             )
         )
     )
-    (defun OI|UDC_KadenaCosts:object{OuronetInfo.ClientKadenaCosts} (patron:string kfp:decimal)
+    (defun OI|UDC_KadenaCosts:object{OuronetInfoV2.ClientKadenaCosts} (patron:string kfp:decimal)
         (let
             (
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 (kadena-discount:decimal (URC_KadenaGasDiscount patron))
                 (discount-percent:string (format "{}%" [(* 100.0 (- 1.0 kadena-discount))]))
                 (kadena-need:decimal (floor (* kadena-discount kfp) KDAPREC))
                 (kadena-split:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit kadena-need KDAPREC))
                 (kadena-targets:[string] (OI|UR_KadenaTargets))
-                (kadena-need-price:string (OI|UC_ConvertPrice (* kadena-need KDAPID)))
+                (kadena-need-price:string (OI|UC_ConvertPrice (* kadena-need kda-pid)))
                 (kadena-text:string
                     (if (= kadena-discount 1.0)
                         (format "Operation costs {} KDA valued at {} with no further discounts applied." [kadena-need kadena-need-price])
@@ -2050,7 +2093,7 @@
             )
         )
     )
-    (defun OI|UDC_NoKadenaCosts:object{OuronetInfo.ClientKadenaCosts} ()
+    (defun OI|UDC_NoKadenaCosts:object{OuronetInfoV2.ClientKadenaCosts} ()
         (OI|UDC_ClientKadenaCosts
             1.0
             0.0
@@ -2060,12 +2103,19 @@
             "Operation is free of native Kadena (KDA)"
         )
     )
-    (defun OI|UDC_IgnisCosts:object{OuronetInfo.ClientIgnisCosts} (patron:string ifp:decimal)
+    (defun OI|UDC_DynamicKadenaCost:object{OuronetInfoV2.ClientKadenaCosts} (patron:string kfp:decimal)
+        (if (= kfp 0.0)
+            (OI|UDC_NoKadenaCosts)
+            (OI|UDC_KadenaCosts patron kfp)
+        )
+    )
+    ;;
+    (defun OI|UDC_IgnisCosts:object{OuronetInfoV2.ClientIgnisCosts} (patron:string ifp:decimal)
         (let
             (
                 (ignis-discount:decimal (URC_IgnisGasDiscount patron))
                 (discount-percent:string (format "{}%" [(* 100.0 (- 1.0 ignis-discount))]))
-                (ignis-need:decimal (* ignis-discount discount-percent))
+                (ignis-need:decimal (* ignis-discount ifp))
                 (ignis-need-price (OI|UC_ConvertPrice (/ ignis-need 100.0)))
                 (ignis-text:string
                     (if (= ignis-discount 1.0)
@@ -2084,23 +2134,15 @@
             )
         )
     )
-    (defun OI|UDC_NoIgnisCosts:object{OuronetInfo.ClientIgnisCosts} ()
-        (OI|UDC_ClientKadenaCosts
+    (defun OI|UDC_NoIgnisCosts:object{OuronetInfoV2.ClientIgnisCosts} ()
+        (OI|UDC_ClientIgnisCosts
             1.0
             0.0
             0.0
-            [0.0]
-            [BAR]
             "Operation is free of Ouronet GAS (IGNIS)"
         )
     )
-    (defun OI|UDC_DynamicIgnisCost:object{OuronetInfo.ClientIgnisCosts} (patron:string ifp:decimal)
-        (if (= ifp 0.0)
-            (OI|UDC_NoIgnisCosts)
-            (OI|UDC_IgnisCosts patron ifp)
-        )
-    )
-    (defun OI|UDC_DynamicKadenaCost:object{OuronetInfo.ClientIgnisCosts} (patron:string ifp:decimal)
+    (defun OI|UDC_DynamicIgnisCost:object{OuronetInfoV2.ClientIgnisCosts} (patron:string ifp:decimal)
         (if (= ifp 0.0)
             (OI|UDC_NoIgnisCosts)
             (OI|UDC_IgnisCosts patron ifp)
@@ -2133,99 +2175,138 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     ;;{F1}  [URC]
-    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfo.ClientInfo} (patron:string)
+    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
         (let
             (
                 (is-ignis:bool (IC|URC_IsVirtualGasZero))
                 (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Execute Smart Account Control."]
-                ["Smart Account controlled Succesfully !"]
+                [(format "Smart Ouronet Account {} controlled succesfully" [sa])]
                 (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
                 (OI|UDC_NoKadenaCosts)
             )
         )
     )
-    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfo.ClientInfo} ()
+    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfoV2.ClientInfo} (account:string)
         (let
             (
                 (is-kadena:bool (IC|URC_IsNativeGasZero))
                 (kfp:decimal (UR_UsagePrice "smart"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Deploy a Smart Ouronet Account."]
-                ["Smart Ouronet Account deployed Succesfully !"]
+                [(format "Smart Ouronet Account {} deployed succesfully" [sa])]
                 (OI|UDC_NoIgnisCosts)
                 (if is-kadena (OI|UDC_FullKadenaCosts kfp) (OI|UDC_NoKadenaCosts))
             )
         )
     )
-    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfo.ClientInfo} ()
+    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfoV2.ClientInfo} (account:string)
         (let
             (
                 (is-kadena:bool (IC|URC_IsNativeGasZero))
                 (kfp:decimal (UR_UsagePrice "standard"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Deploy a Standard Ouronet Account."]
-                ["Standard Ouronet Account deployed Succesfully !"]
+                [(format "Standard Ouronet Account {} deployed succesfully" [sa])]
                 (OI|UDC_NoIgnisCosts)
                 (if is-kadena (OI|UDC_FullKadenaCosts kfp) (OI|UDC_NoKadenaCosts))
             )
         )
     )
-    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfo.ClientInfo} (patron:string)
+    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
         (let
             (
                 (is-ignis:bool (IC|URC_IsVirtualGasZero))
                 (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Rotate the Governor-Guard of an Ouronet Account."]
-                ["Ouronet Account Governor-Guard rotated succesfully!"]
+                [(format "Ouronet Account {} Governor-Guard rotated succesfully!" [sa])]
                 (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
                 (OI|UDC_NoKadenaCosts)
             )
         )
     )
-    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfo.ClientInfo} (patron:string)
+    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
         (let
             (
                 (is-ignis:bool (IC|URC_IsVirtualGasZero))
                 (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Rotate the Primary-Guard of an Ouronet Account."]
-                ["Ouronet Account Primary-Guard rotated succesfully!"]
+                [(format "Ouronet Account {} Primary-Guard rotated succesfully!" [sa])]
                 (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
                 (OI|UDC_NoKadenaCosts)
             )
         )
     )
-    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfo.ClientInfo} (patron:string)
+    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
         (let
             (
                 (is-ignis:bool (IC|URC_IsVirtualGasZero))
                 (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Rotate the Attached KDA-Address of an Ouronet Account."]
-                ["Ouronet Account Attached Kadena-Address rotated succesfully!"]
+
+                [(format "Ouronet Account {} Attached Kadena-Address rotated succesfully!" [sa])]
                 (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
                 (OI|UDC_NoKadenaCosts)
             )
         )
     )
-    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfo.ClientInfo} (patron:string)
+    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
         (let
             (
                 (is-ignis:bool (IC|URC_IsVirtualGasZero))
                 (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
             )
             (OI|UDC_ClientInfo
                 ["Operation: Rotate the Sovereign of a Smart Ouronet Account."]
-                ["Smart Ouronet Account Sovereign rotated succesfully!"]
+                [(format "Smart Ouronet Account {} Sovereign rotated succesfully!" [sa])]
+                (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
+                (OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
+    (defun DALOS-INFO|URC_UpdateEliteAccount:object{OuronetInfoV2.ClientInfo} (patron:string account:string)
+        (let
+            (
+                (is-ignis:bool (IC|URC_IsVirtualGasZero))
+                (ifp:decimal (UR_UsagePrice "ignis|small"))
+                (sa:string (OI|UC_ShortAccount account))
+            )
+            (OI|UDC_ClientInfo
+                ["Operation: Update Elite Account Data for a single Ouronet Account"]
+                [(format "Elite Account Data for {} updated succesfully!" [sa])]
+                (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
+                (OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
+    (defun DALOS-INFO|URC_UpdateEliteAccountSquared:object{OuronetInfoV2.ClientInfo} (patron:string sender:string receiver:string)
+        (let
+            (
+                (is-ignis:bool (IC|URC_IsVirtualGasZero))
+                (ifp:decimal (UR_UsagePrice "ignis|medium"))
+                (sa1:string (OI|UC_ShortAccount sender))
+                (sa2:string (OI|UC_ShortAccount receiver))
+            )
+            (OI|UDC_ClientInfo
+                ["Operation: Update Elite Account Data for a two Ouronet Accounts"]
+                [(format "Elite Account Data for {} and {} updated succesfully!" [sa1 sa2])]
                 (if is-ignis (OI|UDC_IgnisCosts patron ifp) (OI|UDC_NoIgnisCosts))
                 (OI|UDC_NoKadenaCosts)
             )

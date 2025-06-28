@@ -1,0 +1,257 @@
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;SWP|TX 000 - WrapKadena
+;;MB|TX 001 -- Read Tests
+;:MB|TX 002 -- Buy Some Tokens
+;;MB|TX 003 -- Feed some WKDA to MB|SC_NAME
+;;MB|TX 004 -- Redeem Emma
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(print "===================Last Dispenser Tests============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=============================================BEGIN SWP TESTS==========================================")
+(begin-tx "SWP|TX 000 - Make 10k DWK")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": [
+                    (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    500.0)
+                  ]
+        }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+    )
+    (ref-TS01-C2::LQD|C_WrapKadena KST.ANHD KST.ANHD 500.0)
+    (format "CD with PBH iz {}"
+        [(at "prev-block-hash" (chain-data))]
+    )
+
+)
+(print "")
+(print "")
+(format "<<<<<<<SWP|TX 000 WrapKadena ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB|TX 001 - Read Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-MB:module{MovieBoosterV2} MB)
+        (mb-id:string (ref-MB::UR_MovieBoosterID))
+        (promille:decimal (ref-MB::UR_BoostPromille))
+        (ofb:bool (ref-MB::UR_IzOpenForBusiness))
+        (tokens:integer 17)
+        (patron:string KST.ANHD)
+    )
+    (ref-MB::A_ToggleOpenForBusiness true)
+    [
+        (format "Id is {}" [mb-id])
+        (format "Promille is {}" [promille])
+        (format "OfB is {}" [ofb])
+        (format "Kadena Total Cost of {} Tokens is {}"
+            [
+                tokens
+                (ref-MB::URC_TotalMBCost tokens)
+            ]
+        )
+        (format "CD2 with PBH iz {}"
+            [(at "prev-block-hash" (chain-data))]
+        )
+        (format "AH can buy {}" [(ref-MB::URC_GetMaxBuy patron false)])
+    ]
+)
+(print "")
+(print "")
+(format "<<<<<<<MB|TX 001 - Read Tests ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB|TX 002 - Buy Some Tokens")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-MB:module{MovieBoosterV2} MB)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (mb-amount:integer 25)
+        (total-kadena-amount:decimal (ref-MB::URC_TotalMBCost mb-amount))
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48", 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                    "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48" 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    total-kadena-amount)
+                ]
+            }
+        ]
+    )
+    (ref-MB::C_MovieBoosterBuyer patron emma mb-amount true)
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<MB|TX 002 - Buy Some Tokens ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB|TX 003 - Feed some WKDA to MB|SC_NAME")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_MovieBooster", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-MB:module{MovieBoosterV2} MB)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (mb-amount:integer 25)
+        (earn-amount:decimal (ref-MB::URC_AccountRedemptionAmount emma))
+        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+    )
+    [
+        (format "AH has {} WKDA" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
+        (ref-TS01-C1::DPTF|C_Transfer patron wkda-id patron MB.MB|SC_NAME 100.0 true)
+        (format "Emma Earned {} WKDA" [earn-amount])
+    ]
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<MB|TX 003 - Feed some WKDA to MB|SC_NAME ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB|TX 004 - Redeem Emma")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_MovieBooster", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-MB:module{MovieBoosterV2} MB)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+    )
+    (ref-MB::C_RedeemMovieBooster patron emma)
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<MB|TX 004 - Redeem Emma ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB|TX 005 - Fuel MB")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_MovieBooster", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-MB:module{MovieBoosterV2} MB)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+    )
+    (ref-MB::A_FuelMB patron 5000)
+    
+)
+(print "")
+(print "")
+(format "<<<<<<<MB|TX 005 - Fuel MB ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

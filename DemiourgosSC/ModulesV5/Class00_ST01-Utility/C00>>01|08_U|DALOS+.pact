@@ -247,17 +247,22 @@
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (b:string (ref-U|CT::CT_BAR))
+                (l:integer (length current-lst))
+                (iz-within:bool (contains account current-lst))
             )
             (if direction
                 (if
-                    (= current-lst [b])
+                    (and (= l 1) (= current-lst [b]))
                     [account]
                     (ref-U|LST::UC_AppL current-lst account)
                 )
-                (if
-                    (= current-lst [b])
-                    [b]
-                    (ref-U|LST::UC_RemoveItem current-lst account)
+                (do
+                    (enforce iz-within "When removing an Account, it must exist within!")
+                    (if
+                        (and (= l 1) (!= current-lst [b]))
+                        [b]
+                        (ref-U|LST::UC_RemoveItem current-lst account)
+                    )
                 )
             )
         )

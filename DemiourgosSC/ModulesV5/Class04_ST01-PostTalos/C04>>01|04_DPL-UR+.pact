@@ -104,7 +104,7 @@
     (defun URC_TrueFungibleAmountPrice:decimal (id:string amount:decimal price:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                 (idp:integer (ref-DPTF::UR_Decimals id))
             )
             (floor (* amount price) idp)
@@ -130,9 +130,9 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                (ref-ATS:module{AutostakeV3} ATS)
-                (ref-DSP:module{DeployerDispenserV4} DSP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-ATS:module{AutostakeV4} ATS)
+                (ref-DSP:module{DeployerDispenserV6} DSP)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
                 (ouro:string (at 0 p-ids))
@@ -154,7 +154,7 @@
                 (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
                 (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
                 ;;
-                (dollar-ouro:decimal (ref-DSP::URC_TokenDollarPrice ouro))
+                (dollar-ouro:decimal (ref-DSP::URC_OuroPrimordialPrice))
                 (dollar-ignis:decimal 0.01)
                 (dollar-auryn:decimal (floor (* auryndex-value dollar-ouro) 24))
                 (dollar-elite-auryn:decimal (floor (* elite-auryndex-value dollar-auryn) 24))
@@ -201,10 +201,10 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV6} TFT)
-                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-ATS:module{AutostakeV4} ATS)
+                (ref-TFT:module{TrueFungibleTransferV7} TFT)
+                (ref-ORBR:module{OuroborosV4} OUROBOROS)
                 ;;
                 (payment-key:string (ref-DALOS::UR_AccountKadena account))
                 (payment-key-kda:decimal (try 0.0 (ref-coin::get-balance payment-key)))
@@ -298,9 +298,9 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                (ref-ATS:module{AutostakeV3} ATS)
-                (ref-TFT:module{TrueFungibleTransferV6} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-ATS:module{AutostakeV4} ATS)
+                (ref-TFT:module{TrueFungibleTransferV7} TFT)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
                 (ouro:string (at 0 p-ids))
@@ -459,8 +459,8 @@
             (
                 (ref-U|ATS:module{UtilityAts} U|ATS)
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
-                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-ORBR:module{OuroborosV4} OUROBOROS)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro-precision:integer (ref-DPTF::UR_Decimals ouro-id))
@@ -474,7 +474,7 @@
     (defun OUROBOROS|Compress (ignis-amount:decimal)
         (let
             (
-                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                (ref-ORBR:module{OuroborosV4} OUROBOROS)
             )
             (at 0 (ref-ORBR::URC_Compress ignis-amount))
         )

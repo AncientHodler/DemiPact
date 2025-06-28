@@ -343,7 +343,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                 )
                 (ref-DPTF::A_UpdateTreasury type tdp tds)
             )
@@ -355,7 +355,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebt)
             )
@@ -367,7 +367,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebtPartial debt-to-be-wiped)
             )
@@ -381,7 +381,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStakingV3} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV4} LIQUID)
                 )
                 (ref-LIQUID::A_MigrateLiquidFunds migration-target-kda-account)
             )
@@ -494,7 +494,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-ORBR:module{OuroborosV3} OUROBOROS)
+                (ref-ORBR:module{OuroborosV4} OUROBOROS)
             )
             (with-capability (P|TS)
                 (ref-ORBR::C_Fuel)

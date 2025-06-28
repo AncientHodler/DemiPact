@@ -260,7 +260,7 @@
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
     (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
 )
-(interface OuronetInfo
+(interface OuronetInfoV2
     @doc "Holds Information Schema"
     ;;
     ;;
@@ -290,6 +290,8 @@
     ;;
     ;;  [UC] Functions
     ;;
+    (defun OI|UC_IfpFromOutputCumulator:decimal (input:object{IgnisCollector.OutputCumulator}))
+    (defun OI|UC_ShortAccount:string (account:string))
     (defun OI|UC_ConvertPrice:string (input-price:decimal))
     (defun OI|UC_FormatIndex:string (index:decimal))
     (defun OI|UC_FormatTokenAmount:string (amount:decimal))
@@ -309,23 +311,27 @@
     (defun OI|UDC_FullKadenaCosts:object{ClientKadenaCosts} (kfp:decimal))
     (defun OI|UDC_KadenaCosts:object{ClientKadenaCosts} (patron:string kfp:decimal))
     (defun OI|UDC_NoKadenaCosts:object{ClientKadenaCosts} ())
+    (defun OI|UDC_DynamicKadenaCost:object{ClientKadenaCosts} (patron:string kfp:decimal))
         ;;
     (defun OI|UDC_IgnisCosts:object{ClientIgnisCosts} (patron:string ifp:decimal))
     (defun OI|UDC_NoIgnisCosts:object{ClientIgnisCosts} ())
+    (defun OI|UDC_DynamicIgnisCost:object{ClientIgnisCosts} (patron:string ifp:decimal))
 )
-(interface DalosInfo
+(interface DalosInfoV2
     @doc "Exposes Information Function for the Dalos Client Functions"
     ;;
     ;;
     ;;  [URC] Functions
     ;;
-    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfo.ClientInfo} (patron:string))
-    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfo.ClientInfo} ())
-    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfo.ClientInfo} ())
-    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfo.ClientInfo} (patron:string))
-    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfo.ClientInfo} (patron:string))
-    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfo.ClientInfo} (patron:string))
-    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfo.ClientInfo} (patron:string))
+    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfoV2.ClientInfo} (account:string))
+    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfoV2.ClientInfo} (account:string))
+    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_UpdateEliteAccount:object{OuronetInfoV2.ClientInfo} (patron:string account:string))
+    (defun DALOS-INFO|URC_UpdateEliteAccountSquared:object{OuronetInfoV2.ClientInfo} (patron:string sender:string receiver:string))
 )
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -378,7 +384,7 @@
     (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{SocialSchema}]))
     (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer))
 )
-(interface BrandingUsageV6
+(interface BrandingUsageV7
     @doc "Exposes Branding Functions for True-Fungibles (T), Meta-Fungibles (M), ATS-Pairs (A) and SWP-Pairs (S) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts) \
         \ V4 Removes <patron> input variable where it is not needed"
@@ -386,7 +392,7 @@
     (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator} (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
 )
-(interface BrandingUsageV7
+(interface BrandingUsageV8
     @doc "Exposes Branding Functions for True-Fungible LP Tokens \
         \ <entity-pos>: 1 (Native LP), 2 (Freezing LP), 3 (Sleeping LP) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts) \
@@ -395,19 +401,20 @@
     (defun C_UpdatePendingBrandingLPs:object{IgnisCollector.OutputCumulator} (swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
 )
-(interface BrandingUsageV8
+(interface BrandingUsageV9
     @doc "Exposes Branding Functions for Semi-Fungibles (S) and Non-Fungibles (N) \
         \ Uses V2 IgnisCumulatorV2 Architecture (fixed Ignis Collection for Smart Ouronet Accounts)"
     ;;
-    (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator} (entity-id:string sft-or-nft:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
-    (defun C_UpgradeBranding (patron:string entity-id:string sft-or-nft:bool  months:integer))
+    (defun C_UpdatePendingBranding:object{IgnisCollector.OutputCumulator} (entity-id:string son:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
+    (defun C_UpgradeBranding (patron:string entity-id:string son:bool  months:integer))
 )
+;;V9 NOT Deployed
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
 ;;  DPTF Interfaces
 ;;
-(interface DemiourgosPactTrueFungibleV4
+(interface DemiourgosPactTrueFungibleV5
     @doc "Exposes most of the Functions of the DPTF Module. \
     \ Later deployed modules (ATS and TFT), contain the rest of the DPTF Functions \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
@@ -417,7 +424,8 @@
     \ Removes the 2 Branding Functions from this Interface, since they are in their own interface \
     \ \
     \ V3 Removes <patron> input variable where it is not needed \
-    \ V4 Removes <URC_TrFeeMinExc> <UEV_EnforceMinimumAmount>"
+    \ V4 Removes <URC_TrFeeMinExc> <UEV_EnforceMinimumAmount> \
+    \ V4 Brings support for New Cumulator Architecture"
     ;;
     ;;
     (defun UC_VolumetricTax (id:string amount:decimal))
@@ -618,12 +626,87 @@
     (defun C_MultiTransfer:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     (defun C_MultiBulkTransfer:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver-array:[[string]] transfer-amount-array:[[decimal]]))
 )
+(interface TrueFungibleTransferV7
+    @doc "Exposes True Fungible Transfer Functions \
+    \ V6 brings a revised V5 Architecture for Transfers, MultiTransfers and BulkTransfers. \
+    \ For BulkTransfers, it compresses the BulkTransfer Logic in a MultiBulkTransfer Function, \
+    \ which can also be used for BulkTransfers. \
+    \ V6 Modifications remove a lot of redundant code in the TFT Module. \
+    \ V7 Add Cumulator for Bulk and MultiBulk Transfers."
+    ;;
+    (defun UC_TransferCumulator:object{IgnisCollector.OutputCumulator} (type:integer id:string sender:string receiver:string))
+    (defun UC_BulkRemainders:[decimal] (id:string transfer-amount-lst:[decimal]))
+    (defun UC_BulkFees:[decimal] (id:string transfer-amount-lst:[decimal]))
+    (defun UC_ContainsEliteAurynz:bool (id-lst:[string]))
+    ;;
+    (defun DPTF-DPMF-ATS|UR_OwnedTokens (account:string table-to-query:integer))
+    (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
+    (defun DPTF-DPMF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
+    ;;
+    (defun ATS|URC_RT-Unbonding (atspair:string reward-token:string))
+    (defun URC_MinimumOuro:decimal (account:string))
+    (defun URC_VirtualOuro:decimal (account:string))
+        ;;
+    (defun URC_ReceiverAmount:decimal (id:string sender:string receiver:string amount:decimal))
+    (defun URC_UnityTransferIgnisPrice (transfer-amount:decimal))
+    (defun URC_TransferClasses:integer (id:string sender:string receiver:string amount:decimal))
+    (defun URC_TransferClassesForBulk:integer (id:string sender:string))
+    (defun URC_IzSimpleTransferForBulk:bool (id:string sender:string))
+    (defun URC_IzSimpleTransfer:bool (id:string sender:string receiver:string amount:decimal))
+    (defun URC_IzTrueFungibleEliteAuryn:bool (id:string))
+    (defun URC_IzTrueFungibleUnity:bool (id:string))
+    (defun URC_AreTrueFungiblesEliteAurynz:bool (id:string))
+    (defun URC_TransferRoleChecker:bool (id:string sender:string))
+    ;;
+    (defun UEV_IzSimpleTransfer (id:string sender:string receiver:string amount:decimal iz-or-not:bool))
+    (defun UEV_IzSimpleTransferForBulk (id:string sender:string iz-or-not:bool))
+    (defun UEV_AreTrueFungiblesEliteAurynz (id:string iz-or-not:bool))
+    (defun UEV_TrueFungibleAsEliteAuryn:bool (id:string iz-or-not:bool))
+    (defun UEV_TrueFungibleAsUnity:bool (id:string iz-or-not:bool))
+    (defun UEV_Minimum (id:string amount:decimal))
+    (defun UEV_DispoLocker (id:string account:string))
+    (defun UEV_VTT (id:string iz-vtt:bool))
+    (defun UEV_TransferRolesComplex (id:string sender:string receiver:string))
+    (defun UEV_TransferRolesSimple (id:string sender:string receiver:string))
+    (defun UEV_TransferRoleChecker (trc:bool s:bool r:bool))
+        ;;
+    (defun UEV_BulkTransfer (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal]))
+    (defun UEV_MinimumMapperForBulk (id:string transfer-amount-lst:[decimal]))
+        ;;
+    (defun UEV_MultiTransfer (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    ;;
+    (defun UDC_SmallTransmuteCumulator:object{IgnisCollector.OutputCumulator} (id:string transmuter:string))
+    (defun UDC_LargeTransmuteCumulator:object{IgnisCollector.OutputCumulator} (id:string transmuter:string))
+        ;;
+    (defun UDC_UnityTransferCumulator:object{IgnisCollector.OutputCumulator} (sender:string receiver:string amount:decimal))
+    (defun UDC_SmallTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string receiver:string))
+    (defun UDC_MediumTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string receiver:string))
+    (defun UDC_LargeTransferCumulator:object{IgnisCollector.OutputCumulator} (sender:string receiver:string))
+    (defun UDC_EliteExchangeCumulator:object{IgnisCollector.OutputCumulator} (sender:string smart-intermediary:string amplifier:integer))
+    (defun UDC_GetDispoData:object{UtilityDptf.DispoData} (account:string))
+        ;;
+    (defun UDC_MultiTransferCumulator:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal]))
+    (defun UDC_MultiBulkTransferCumulator:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver-array:[[string]] transfer-amount-array:[[decimal]]))
+    (defun UDC_BulkTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string receiver-lst:[string] transfer-amount-lst:[decimal]))    
+        ;;
+    (defun UDC_UnityBulkTransferCumulator:object{IgnisCollector.OutputCumulator} (sender:string receiver-lst:[string] transfer-amount-lst:[decimal]))
+    (defun UDC_SimpleBulkTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string size:integer))
+    (defun UDC_ComplexBulkTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string size:integer))
+    (defun UDC_EliteBulkTransferCumulator:object{IgnisCollector.OutputCumulator} (id:string sender:string size:integer))
+    ;;
+    ;;
+    (defun C_ClearDispo:object{IgnisCollector.OutputCumulator} (account:string))
+    (defun C_Transmute:object{IgnisCollector.OutputCumulator} (id:string transmuter:string transmute-amount:decimal))
+    (defun C_Transfer:object{IgnisCollector.OutputCumulator} (id:string sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_MultiTransfer:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
+    (defun C_MultiBulkTransfer:object{IgnisCollector.OutputCumulator} (id-lst:[string] sender:string receiver-array:[[string]] transfer-amount-array:[[decimal]]))
+)
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
 ;;  DPMF Interface
 ;;
-(interface DemiourgosPactMetaFungibleV4
+(interface DemiourgosPactMetaFungibleV5
     @doc "Exposes most of the Functions of the DPMF Module. \
     \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
@@ -761,7 +844,7 @@
 ;;
 ;;  ATS Interfaces
 ;;
-(interface AutostakeV3
+(interface AutostakeV4
     @doc "Exposes half of the Autostake Functions, the other Functions existing in the ATSU Module \
     \ Also contains a few DPTF and DPMF Functions \
     \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
@@ -902,7 +985,7 @@
     (defun XE_UpP6 (atspair:string account:string obj:object{UtilityAts.Awo}))
     (defun XE_UpP7 (atspair:string account:string obj:object{UtilityAts.Awo}))
 )
-(interface AutostakeUsageV3
+(interface AutostakeUsageV4
     @doc "Exposes the last Batch of Client Autostake Functions \ 
         \ \
         \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
@@ -999,7 +1082,7 @@
     (defun C_RepurposeMergeAll:object{IgnisCollector.OutputCumulator} (dpmf-to-repurpose:string repurpose-from:string repurpose-to:string))
     (defun C_ToggleTransferRoleSleepingDPMF:object{IgnisCollector.OutputCumulator} (s-dpmf:string target:string toggle:bool))
 )
-(interface KadenaLiquidStakingV3
+(interface KadenaLiquidStakingV4
     @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA \
         \ \
         \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
@@ -1021,7 +1104,7 @@
     (defun C_UnwrapKadena:object{IgnisCollector.OutputCumulator} (unwrapper:string amount:decimal))
     (defun C_WrapKadena:object{IgnisCollector.OutputCumulator} (wrapper:string amount:decimal))
 )
-(interface OuroborosV3
+(interface OuroborosV4
     @doc "Exposes Functions related to the OUROBOROS Module \
         \ \
         \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
@@ -1189,9 +1272,10 @@
     (defun XE_Issue:string (account:string pool-tokens:[object{PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     (defun XE_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool))
 )
-(interface SwapperIssue
+(interface SwapperIssueV2
     @doc "Exposes SWP Issuing Functions. \
-    \ Also contains Swap Computation Functions, and the Hopper Function"
+    \ Also contains Swap Computation Functions, and the Hopper Function \
+    \ V2 Adds OuroPrimordialPrice"
     ;;
     ;;
     ;;  SCHEMAS
@@ -1250,6 +1334,7 @@
     (defun URC_Hopper:object{Hopper} (hopper-input-id:string hopper-output-id:string hopper-input-amount:decimal))
     (defun URC_BestEdge:string (ia:decimal i:string o:string))
         ;;
+    (defun URC_OuroPrimordialPrice:decimal ())
     (defun URC_TokenDollarPrice (id:string kda-pid:decimal))
     (defun URC_SingleWorthDWK (id:string))
     (defun URC_WorthDWK (id:string amount:decimal))
@@ -1329,7 +1414,7 @@
         total-input-liquidity:[decimal]
         balanced-liquidity:[decimal]
         asymmetric-liquidity:[decimal]
-        asymmetric-deviation:decimal
+        asymmetric-deviation:[decimal]
         ;;
         primary-lp:decimal
         secondary-lp:decimal
@@ -1347,10 +1432,32 @@
         special-text:string
         lqboost-text:string
         fueling-text:string
+        ;;
+        clad-op:object{CladOperation}
+    )
+    (defschema CladOperation
+        perfect-ignis-fee:object{IgnisCollector.OutputCumulator}   
+                                    ;;Ignis Cumulator for the Operation
+                                    ;;Can be used to Collect Fees in Advance
+        mt-ids:[string]             ;;IDs the User Moves to swp-sc
+        mt-amt:[decimal]            ;;Their Amounts
+        lp-mint:bool                ;;True Mints only Primary, false mints both
+        bk-ids:[string]             ;;IDs of the special Targets, in case none then BAR
+        bk-amt:[decimal]            ;;Amounts for the BulkT, in case none, then 0.0
+        ;;
+        ppb:[decimal]               ;;Pool Amounts plus balanced-liq
+        ppa:[decimal]               ;;Pool Amounts plus all input-lq
+
     )
     (defschema PoolState
+        A:decimal
+        F:object{UtilitySwpV2.SwapFeez}
         X:[decimal]
+        W:[decimal]
+        ;;
         LP:decimal
+        FT:[string]
+        FTP:[decimal]
     )
     ;;
     ;;
@@ -1361,10 +1468,9 @@
     ;;
     ;;  [URC] Functions
     ;;
-    (defun URC|KDA-PID:decimal ())
     (defun URC|KDA-PID_LpToIgnis:decimal (swpair:string amount:decimal kda-pid:decimal))
     (defun URC|KDA-PID_TokenToIgnis (id:string amount:decimal kda-pid:decimal))
-    (defun URC|KDA-PID_CompleteLiquidityAdditionData:object{CompleteLiquidityAdditionData}
+    (defun URC|KDA-PID_CLAD:object{CompleteLiquidityAdditionData}
         (
             account:string swpair:string ld:object{LiquidityData} 
             asymmetric-collection:bool gaseous-collection:bool kda-pid:decimal
@@ -1373,9 +1479,7 @@
     (defun URC_TokenPrecision (id:string))
     (defun URC_IgnisPrecision ())
         ;;
-    (defun URC_EntityPosToID:string (swpair:string entity-pos:integer))
-        ;;
-    (defun URC_Liquidity:object{LiquidityData} (swpair:string input-amounts:[decimal]))
+    (defun URC_LD:object{LiquidityData} (swpair:string input-amounts:[decimal]))
     (defun URC_AsymmetricTax:object{AsymmetricTax} (account:string swpair:string ld:object{LiquidityData}))
     (defun URC_SortLiquidity:object{LiquiditySplit} (swpair:string input-amounts:[decimal]))
         ;;
@@ -1387,9 +1491,9 @@
     ;;
     ;;  [UEV] Functions
     ;;
-    (defun UEV_Liquidity:decimal (swpair:string ld:object{LiquidityData}))
+    (defun UEV_Liquidity:[decimal] (swpair:string ld:object{LiquidityData}))
     (defun UEV_BalancedLiquidity (swpair:string input-id:string input-amount:decimal))
-    (defun UEV_InputsForLP (swpair:string input-amounts:[decimal]))
+    
     ;;
     ;;
     ;;  [UDC] Functions
@@ -1409,6 +1513,37 @@
     (defun UDC_LiquidityData:object{LiquidityData} (a:object{LiquiditySplit} b:object{LiquiditySplitType} c:decimal d:decimal e:decimal))
     (defun UDC_LiquidityComputationData:object{LiquidityComputationData} (a:integer b:string c:integer d:decimal e:decimal f:[decimal]))
     (defun UDC_AsymmetricTax:object{AsymmetricTax} (a:decimal b:decimal c:decimal d:decimal e:decimal f:decimal))
+    (defun UDC_CompleteLiquidityAdditionData:object{CompleteLiquidityAdditionData}
+        (
+            a:[decimal] b:[decimal] c:[decimal] d:[decimal]
+            e:decimal f:decimal
+            g:decimal
+            h:decimal i:decimal j:decimal k:decimal l:decimal
+            m:string n:string o:string p:string q:string
+            r:object{CladOperation}
+        )
+    )
+    (defun UDC_CladOperation:object{CladOperation} (a:object{IgnisCollector.OutputCumulator} b:[string] c:[decimal] d:bool e:[string] f:[decimal] g:[decimal] h:[decimal]))
+    (defun UDC_PoolState:object{PoolState} (a:decimal b:object{UtilitySwpV2.SwapFeez} c:[decimal] d:[decimal] e:decimal f:[string] g:[decimal]))
+)
+(interface SwapperLiquidityClient
+    @doc "Exposes the Client Functions of Swapper Liquidity"
+    ;;
+    ;;
+    ;;  [URC] Functions
+    ;;
+    (defun URC_EntityPosToID:string (swpair:string entity-pos:integer))
+    ;;
+    ;;
+    ;;  [UEV] Functions
+    ;;
+    (defun UEV_InputsForLP (swpair:string input-amounts:[decimal]))
+    (defun UEV_AddFrozenLiquidity (swpair:string frozen-dptf:string))
+    (defun UEV_AddSleepingLiquidity (account:string swpair:string sleeping-dpmf:string nonce:integer))
+    (defun UEV_AddDormantLiquidity (swpair:string))
+    (defun UEV_AddChilledLiquidity (swpair:string ld:object{SwapperLiquidity.LiquidityData}))
+    (defun UEV_AddLiquidity (swpair:string ld:object{SwapperLiquidity.LiquidityData}))
+    (defun UEV_RemoveLiquidity (swpair:string lp-amount:decimal))
     ;;
     ;;
     ;;  []C] Functions
@@ -1473,6 +1608,10 @@
     (defun C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     (defun C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV4.PoolTokens}] fee-lp:decimal p:bool))
     ;;
-    (defun C|KDA-PID_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
-
+    (defun C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun C_AddGlacialLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
+    (defun C_AddFrozenLiquidity (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal kda-pid:decimal))
+    (defun C_AddSleepingLiquidity (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer kda-pid:decimal))
+    ;;
 )

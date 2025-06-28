@@ -1,15 +1,19 @@
-(interface OuronetIntegers
+(interface OuronetIntegersV2
     @doc "Exported Integer Functions"
+    (defschema SplitIntegers
+        negative:[integer]
+        positive:[integer]
+    )
     ;;
     (defun UC_MaxInteger:integer (lst:[integer])) ;;2
     ;;
-    (defun UEV_ContainsAll (l1:[integer] l2:[integer]))
+    (defun UEV_ContainsAll:bool (l1:[integer] l2:[integer]))
     (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string))
     (defun UEV_UniformList (input:[integer]))
 )
 (module U|INT GOV
     ;;
-    (implements OuronetIntegers)
+    (implements OuronetIntegersV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -59,10 +63,33 @@
             (drop 1 lst)
         )
     )
+    (defun UC_SplitAuxiliaryIntegerList:object{OuronetIntegersV2.SplitIntegers} (primary:[integer] auxiliary:[integer])
+        @doc "Splits an auxiliary integer list into 2 integers list, according to the negatives and positives of the primary"
+        (let 
+            (
+                (indices (enumerate 0 (- (length primary) 1)))
+                (neg-indices (filter (lambda (i:integer) (< (at i primary) 0)) indices))
+                (pos-indices (filter (lambda (i:integer) (> (at i primary) 0)) indices))
+                (neg-counterparts (map (lambda (i:integer) (at i auxiliary)) neg-indices))
+                (pos-counterparts (map (lambda (i:integer) (at i auxiliary)) pos-indices))
+            )
+            (UDC_SplitIntegers neg-counterparts pos-counterparts)
+        )
+    )
+    (defun UC_SplitIntegerList:object{OuronetIntegersV2.SplitIntegers} (input:[integer])
+        @doc "Splits an integer list into a negative and postive integer list"
+        (let 
+            (
+                (negatives (filter (lambda (x:integer) (< x 0)) input))
+                (positives (filter (lambda (x:integer) (> x 0)) input))
+            )
+            (UDC_SplitIntegers negatives positives)
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
-    (defun UEV_ContainsAll (l1:[integer] l2:[integer])
+    (defun UEV_ContainsAll:bool (l1:[integer] l2:[integer])
         (let*
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -106,6 +133,10 @@
         )
     )
     ;;{F3}  [UDC]
+    (defun UDC_SplitIntegers:object{OuronetIntegersV2.SplitIntegers} (neg:[integer] pos:[integer])
+        {"negative" : neg
+        ,"positive" : pos}
+    )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]

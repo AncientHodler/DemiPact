@@ -168,8 +168,6 @@
     (defun UDC_VirtualSwapEngine:object{VirtualSwapEngine} (a:[string] b:[integer] c:string d:[decimal] e:string f:[decimal] g:decimal h:[decimal] i:object{SwapFeez} j:[decimal] k:[decimal] l:[decimal] m:[object{DirectSwapInputData}]))
 )
 
-
-
 (module U|SWP GOV
     ;;
     (implements UtilitySwpV2)
@@ -423,7 +421,7 @@
         (drsi:object{UtilitySwpV2.DirectRawSwapInput})
         @doc "Swapping 100A for y amount of C >> Equation in a weighted constant product pool: \
             \ How much C do you get for swapping 100A ? \
-            \ xA^wA * xB^wB * xC^wC * xD^wD = (xA + 100)^wA * xB^wB * (xC - y)^wB * xD \
+            \ xA^wA * xB^wB * xC^wC * xD^wD = (xA + 100)^wA * xB^wB * (xC - y)^wC * xD^wD \
             \ This functions solves for y"
         (let
             (
@@ -455,7 +453,7 @@
         (irsi:object{UtilitySwpV2.InverseRawSwapInput})
         @doc "Swapping ??A for 100C >> Equation in a weighted constant product pool: \
             \ How much A do you need to swap to get 100C ?  \
-            \ xA^wA * xB^wB * xC^wC * xD^wD = (xA + y)^wA * xB^wB * (xC - 100)^wB * xD \
+            \ xA^wA * xB^wB * xC^wC * xD^wD = (xA + y)^wA * xB^wB * (xC - 100)^wC * xD^wD \
             \ This functions solves for y"
         (let
             (
@@ -578,7 +576,7 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|INT:module{OuronetIntegers} U|INT)
+                (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (prefix:string (UC_Prefix weights amp))
                 (l1:integer (length token-names))

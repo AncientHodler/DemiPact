@@ -1,0 +1,190 @@
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(print "===================Last Dispenser Tests============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;MODULE LOADINGS
+;;==============================================================================
+;; PART 01 - Module Load Up
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;; LOAD Class04_ST01-PostTalos >>> 4 Modules
+;;
+(print "")
+(begin-tx "INIT TX 1 - MB Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class04_ST01-PostTalos/C04>>01|05_MB.pact")
+(format "<<<<<<<DPL-UR Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+(print "Movie Booster Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+(print "<Class04_ST01-PostTalos> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX - Use Modules")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(use MB)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 06 - Initialise Demiourgos Ecosystem
+;;
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;
+(begin-tx "MB Init STEP 001")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
+        (ref-MB:module{MovieBoosterV2} MB)
+        (kp:integer (ref-U|CT::CT_KDA_PRECISION))
+        (patron:string KST.ANHD)
+        (price:decimal (ref-DALOS::UR_UsagePrice "smart"))
+        (prices:[decimal]
+            (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit price kp)
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_MovieBooster", "caps": [] }
+            { "key": "35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 prices)
+                    )
+                    (coin.TRANSFER 
+                        "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 prices)
+                    )
+                    (coin.TRANSFER 
+                        "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 prices)
+                    )
+                    (coin.TRANSFER 
+                        "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 prices)
+                    )
+                ] 
+            }
+        ]
+    )
+    (ref-MB::A_Step01 patron)
+
+)
+(print "")
+(print "")
+(format "<<<<<<<MB STEP 001 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "MB Init STEP 002")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-MB:module{MovieBoosterV2} MB)
+        (patron:string KST.ANHD)
+        (split-kda:[decimal] 
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (* 2.0 (ref-DALOS::UR_UsagePrice "dptf"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ] 
+            }
+        ]
+    )
+    (ref-MB::A_Step02 patron 35000.0)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<MB STEP 02 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

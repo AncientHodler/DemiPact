@@ -269,7 +269,7 @@
             (let*
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-U|INT:module{OuronetIntegers} U|INT)
+                    (ref-U|INT:module{OuronetIntegersV2} U|INT)
                     (max-precision:integer (ref-U|INT::UC_MaxInteger rt-precisions))
                     (max-pp:integer (at 0 (ref-U|LST::UC_Search rt-precisions max-precision)))
                     (indexed-rbt:decimal (floor (* rbt-amount index) max-precision))

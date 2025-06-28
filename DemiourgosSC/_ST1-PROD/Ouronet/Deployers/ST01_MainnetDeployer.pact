@@ -1,4 +1,11 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(length (keys n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.DALOS|AccountTable))
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+;:Disble Ignis Collection
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-A.DALOS|A_IgnisToggle false false)
+;;Enable Ignis Collection
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-A.DALOS|A_IgnisToggle false true)
+;;
 ;;Contains Code needed to run when Setting Up Ouronet in Main Kadena Live Net
 ;;Code is sequenced in Steps, these needed to be run one after another.
 ;;Once all Steps are run, Ouronet is Live
@@ -137,11 +144,46 @@
 
 (coin.TRANSFER "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" "k:2dd5ae3dd78493f468d2f99e36fe4e1a39002cd26196e472ff47f50adb577cb5" 1.0)
 ;;KDA Collection for 900 KDA with 0.76 Rabat
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 1.0)
+
+"c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY"
+
+;;UNWRAP CAPABILITY
+(coin.TRANSFER "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f" 1.0)
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" (n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.URC_TotalMBCost 1))
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 10.0)
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
-(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 2.0)
-(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  4.0)
-(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  6.0)
-(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 8.0)
+;;FIRESTARTER
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.SWP|C_Firestarter
+    "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc"
+)
+
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038") 
+(acquire-module-admin SWP) 
+(SWP.P|A_Add 
+    "SWPU|RemoteSwpGov"
+    (create-capability-guard (SWPU.P|SWPU|REMOTE-GOV)) 
+) 
+(SWP.SWP|SetGovernor 
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+)
+;;==========================
+;;
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.A_Step01
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+)
+;;Payment Capabilities
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 40.0)
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  80.0)
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  120.0)
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 160.0)
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.A_ToggleOpenForBusiness true)
+
+
+(coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 160.0)
+2.573245238404
 
 ;;Paying 20 KDA for initialisation - 9500 left.
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.KDA|C_CollectWT
@@ -1215,3 +1257,281 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 )
 
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.LQD|C_UnwrapKadena patron unwrapper amount)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_MultiBulkTransfer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        "OURO-slLyzPPCo22W"
+        "AURYN-slLyzPPCo22W"
+        "ELITEAURYN-slLyzPPCo22W"
+        "IGNIS-slLyzPPCo22W"
+    ]
+    "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    [
+        [
+            "Ѻ.БqßtgЙAиßÎиYБЭJпÖ₿éΦ9θ∇ȚЦČČ0íNΓ¥ÞWÃ7цнfãбUь€Ñßî₳ÈÃĎÚ¥εÉЪЯVьŠйÃИțчNĆďířGЙьЬÑiMşщďθk₳UĘйχæíbą₳đьñ2ěйŁνÀxżкШιЗвtæ£HYYœ¥şщÖλλCШŘinìpЖθÀŠφqпjфđZ$ÆÊдΘΩP8àψЫЙъψĐÛщfфěш"
+            "Ѻ.BĆÊăvμЬñĎÆΓŹ₱sμмыжmçK91AЫåûBPșдåΘуwЗęQåÎžNπЩ2ЯБлпωúÞнŘńŚĄИУщgѺăřΩÉøĄαÞȚвŚLÈдŹν5ΘMŒлťôДÒQ€ÝŒЭÊпγĎŠмЗzΞGMĐщкøù¥пăмÒΔQзđÑиßÒÂÒXvŘȚдř6ΨιÕΘлŤżд8źTΠȚδÿWM9ČŒuśИ"
+            "Ѻ.χHåăRT2ÌΠшđςöñÄůыmтÌЛθωΣ5uβΞĚFXςÏFmĎχДqsи1îмoĘIžиωżáλÊlşiνÒdř₿лčιяRPЩшMΞuT9ÉφwюжÏUщéκâZΓшãЫИÎãù43ΞçďνYşкѺĄóqRCкđÕЙфк¢ĄěэõμæõCŤиЬÆzbđ3ŚdöÏĚ∇ÅŽËшЭÈяdÞGș2áaO3£ΩöGh"
+        ]
+        [
+            "Ѻ.БqßtgЙAиßÎиYБЭJпÖ₿éΦ9θ∇ȚЦČČ0íNΓ¥ÞWÃ7цнfãбUь€Ñßî₳ÈÃĎÚ¥εÉЪЯVьŠйÃИțчNĆďířGЙьЬÑiMşщďθk₳UĘйχæíbą₳đьñ2ěйŁνÀxżкШιЗвtæ£HYYœ¥şщÖλλCШŘinìpЖθÀŠφqпjфđZ$ÆÊдΘΩP8àψЫЙъψĐÛщfфěш"
+            "Ѻ.BĆÊăvμЬñĎÆΓŹ₱sμмыжmçK91AЫåûBPșдåΘуwЗęQåÎžNπЩ2ЯБлпωúÞнŘńŚĄИУщgѺăřΩÉøĄαÞȚвŚLÈдŹν5ΘMŒлťôДÒQ€ÝŒЭÊпγĎŠмЗzΞGMĐщкøù¥пăмÒΔQзđÑиßÒÂÒXvŘȚдř6ΨιÕΘлŤżд8źTΠȚδÿWM9ČŒuśИ"
+        ]
+        [
+            "Ѻ.БqßtgЙAиßÎиYБЭJпÖ₿éΦ9θ∇ȚЦČČ0íNΓ¥ÞWÃ7цнfãбUь€Ñßî₳ÈÃĎÚ¥εÉЪЯVьŠйÃИțчNĆďířGЙьЬÑiMşщďθk₳UĘйχæíbą₳đьñ2ěйŁνÀxżкШιЗвtæ£HYYœ¥şщÖλλCШŘinìpЖθÀŠφqпjфđZ$ÆÊдΘΩP8àψЫЙъψĐÛщfфěш"
+        ]
+        [
+            "Ѻ.BĆÊăvμЬñĎÆΓŹ₱sμмыжmçK91AЫåûBPșдåΘуwЗęQåÎžNπЩ2ЯБлпωúÞнŘńŚĄИУщgѺăřΩÉøĄαÞȚвŚLÈдŹν5ΘMŒлťôДÒQ€ÝŒЭÊпγĎŠмЗzΞGMĐщкøù¥пăмÒΔQзđÑиßÒÂÒXvŘȚдř6ΨιÕΘлŤżд8źTΠȚδÿWM9ČŒuśИ"
+        ]
+    ]
+    [
+        [
+            4443.144703341228115265
+            (fold (+) 0.0 [365.1477041017586597 1.288949440690679121 18.22 0.003394166909684005])
+            779.812704444130899739
+        ]
+        [
+            87.979277897548063757
+            (fold (+) 0.0 [13.588173133664337363 0.48563340155397279 0.3215130745112429061 1.113])
+        ]
+        [
+            25.715738928979436092
+        ]
+        [
+            6241.0
+        ]
+    ]
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_MultiBulkTransfer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        "WKDA-slLyzPPCo22W"
+    ]
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    [
+        [
+        "Ѻ.ŠÿůŘŃBUsŤòΨżЦΛmŘ7aιÍσ$ș₳ȚfE1ζŹñИЩAœüЙjЯΘШÛÇм£ΠηZUùbÈфцδSĞlUβ€εtFŃρìÇfuelØLȚюø$å₳ąĚiЭЧÈzПLŹЫÁgÙьщOsÎôΛΨâłЦôaпôкÓ1èÛOyłÇęζȚÜďßÝÎΘbиìÕäFÀÑ$àЙcövŁжαÂχЧ£Á2þäæWBíЦČŁŮ"
+        "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+        "Ѻ.шÖЮíэTѺåãΣШËşčÌòS€чpΩιшЧЦťЭιîgΣÅôéÄξνнœяVłĆэviźüжÙw₱UςУэ₱иУÂΣπà7ъюßáYüÓIьÙăANйÏжĘЧdąÈØπ£ςWșLhëDŸщιO4ñŮЗÒÒ3ÌÎĎA9a₿S8Ÿ¢ÈχGëźrćcaGśïŤ¢WRñõγ8žÁš2ЫÏžШÿцДςsŹ6ÑζUдkÁĐζ"
+        ]
+    ]
+    [
+        [
+        ]
+    ]
+)
+
+
+
+
+
+
+
+
+
+
+
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    )
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.A_ToggleOpenForBusiness true)
+    (TS01-C1.DALOS|C_RotateKadena 
+        patron patron 
+        "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01"
+    )
+    (install-capability 
+        (coin.TRANSFER 
+            lq-kda
+            kadena-patron 
+            amount
+        )
+    )
+    
+    (TS01-C1.DALOS|C_RotateKadena 
+        patron patron 
+        "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f"
+    )
+    
+)
+
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_MovieBoosterBuyer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    1
+    false
+)
+
+
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (chainweaver-sender:string "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01")
+        (koala-sender:string "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f")
+        (liquid-recipient:string LIQUID.LIQUID|SC_KDA-NAME)
+        (spark-amount:integer 1)
+        (kda-amount:decimal (MB.URC_TotalMBCost spark-amount))
+    )
+    (TS01-C1.DALOS|C_RotateKadena patron patron chainweaver-sender)
+    (install-capability 
+        (coin.TRANSFER 
+            chainweaver-sender
+            liquid-recipient
+            kda-amount
+        )
+    )
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_MovieBoosterBuyer
+        patron
+        patron
+        spark-amount
+        false
+    )
+    (TS01-C1.DALOS|C_RotateKadena patron patron koala-sender)
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(TS01-C1.DALOS|C_RotateKadena 
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01"
+)
+(TS01-C1.DALOS|C_RotateKadena 
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f"
+)
+
+(TS01-C1.DALOS|C_RotateKadena 
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc"
+    "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01"
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+[
+(DALOS.UR_AccountGovernor
+    (DALOS.GOV|DALOS|SC_NAME)
+)
+(DALOS.UR_AccountGovernor
+    (DALOS.GOV|VST|SC_NAME)
+)
+(DALOS.UR_AccountGovernor
+    (DALOS.GOV|SWP|SC_NAME)
+)]
+
+(acquire-module-admin TS01-C2)
+(with-capability (TS01-C2.P|TS)
+    (let
+        (
+            (fire-starter:string "Ѻ.ÔlзюĞÞýжůúìЮRПы3эérДÏõÀЬâùèCχżÖtDlÅgБ6яğèιмgnŸŒćçнÎэnÅ5tĐηψìãŮĘΘe¢ЬA₳ΔЛ¢ρЦκĎвÈбe7ÖJΔÏ3șφûηnŤäčúμ£ЧλíĆC₱ëż₳χдYιΔäđAąoĞъØ∇hůτNÔRxgŹŹЫĐ7FςЭ8ΣσвhD3жâó¥ышΨψşψžźëÅôщc")
+            (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+            (ref-DALOS:module{OuronetDalosV4} DALOS)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+            (ref-LIQUID:module{KadenaLiquidStakingV4} LIQUID)
+            (ref-ORBR:module{OuroborosV4} OUROBOROS)
+            (ref-SWP:module{SwapperV4} SWP)
+            (ref-SWPU:module{SwapperUsageV4} SWPU)
+            ;;
+            (ouro:string (ref-DALOS::UR_OuroborosID))
+            (ignis:string (ref-DALOS::UR_IgnisID))
+            (primordial:string (ref-SWP::UR_PrimordialPool))
+            (fire-starter-ignis:decimal (ref-DPTF::UR_AccountSupply ignis fire-starter))
+            (fire-starter-ouro:decimal (ref-DPTF::UR_AccountSupply ouro fire-starter))
+        )
+        (enforce (and (< fire-starter-ouro 1.0) (= fire-starter-ignis 0.0)) 
+            "Only Virgin Ouronet Accounts allowed for firestarting"
+        )
+        (let
+            (
+                (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+                (ico1:object{IgnisCollector.OutputCumulator}
+                    (ref-LIQUID::C_WrapKadena fire-starter 10.0)
+                )
+                (ico2:object{IgnisCollector.OutputCumulator}
+                    (ref-SWPU::C_Swap fire-starter primordial [wkda] [10.0] ouro -1.0 kda-pid)
+                )
+                (ico3:object{IgnisCollector.OutputCumulator}
+                    (ref-ORBR::C_SublimateV2 fire-starter fire-starter (at 0 (at "output" ico2)))
+                )
+            )
+            ;(format "Used 10 KDA to generate {} IGNIS to client minus Gas fees" [(at 0 (at "output" ico3))])              
+            (format "Used 10 KDA to generate {} IGNIS to client minus Gas fees" [7.0])              
+        )
+    )
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    "OURO-slLyzPPCo22W"
+    "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    "Ѻ.àИĂ2hΓźя£ØXJq∇ЗзbȚþĄZcpeĎóмØAσë£Ю8LěĎÛ¢ÁŤѺîžśbWUrδΩεγЮăΛîÉýѺTIoЪκœ₳ÿÆğğφбì5qvąПς0ЬTźÃíЗ¢MrÄůù₱яqγяиЭвÁïrκF8MÛÿĘи₳ρQĚПιú59óÕôŮÝéäуuäŹV₳ì5Ir₳đДb1ÑыrlŻăŞațÂθO5vкУŠ"
+    10.255095190075491485
+    false
+)
+
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DALOS|C_DeployStandardAccount 
+    "Ѻ.þódýSå∇θœŻθäЮânΦěÂCÉΛŠĚыćжŃУфÑíтσÈŸüÓÿÂи₳áìĚàŘhÃѺuΔuțŒЭěвžsÊ¢tWÛěbtõ₿1LΔмëøÆŚøξѺŮŤÒÚτцoDêžńęQvNTжÚž∇9ÂKуŞşи0ΛкДżεŽбÎбεÀÆãчvĚЫбçrЭKãwÿŽΨáÕЦê1мòğćZЮĞÉø1Î$mДMѺπďRЫ" 
+    (read-keyset "ks") 
+    "k:be554d8fbee9a24f6dd533d0aaff7f0642c677c5dbadc61422cc4043b3b3785f" 
+    "9F.8Kd1nxv7iFyoF0L8mIBMFEri4aMGKcwHhd2LrzgeiCHleps2u0BC0dt3sMtLA6bne216JHGsfoq3pM19vjGswBDavbg4FBI39FhjuDqMlk8K1ahlKH8nbEDhybBwKKGstgthzGahbaH6rdnwk777gkhmmy4qejrIfelLHj8BE9wtxGbEoEyFpJdgkn2DofM9m1Ja98v69i59KuAHyuh6uJAxFelfaxp5JkJ06ElMJlIlAzjuz1nu4DmpIG0mtK5okFomLkvulr3w5EtrJpn4tsJpaMHK0fHJf4KDj8zplDtBfk87CewJ7ebw17KCj099Ha0jMErID2GwjgtpDI5tjljiCfeGq6J4bnw5j3gB7ACb4oxe3e6joHCgqwlp7q7aqpDmdnkkKfgguojmLi4rpkcJyJxwjeqqakqilgpBegI1rv3Dlvns9eieCKttaIH1Iuyn4JBpEhqxy79KojsLtvuAnb6seuF2MMp06g2e2inI0f1hBFIpf5g2pLequ143vbb6KFrwAr1tMk7FmjEDki3GKHB8qA9cAIHeAtirxqlaxH3CyKwFj4v5Ma0"
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (spark-sc:string "Σ.Îäć$ЬчýφVεÎÿůпΨÖůηüηŞйnюŽXΣşpЩß5ςĂκ£RäbE₳èËłŹŘYшÆgлoюýRαѺÑÏρζt∇ŹÏýжIŒațэVÞÛщŹЭδźvëȘĂтPЖÃÇЭiërđÈÝДÖšжzČđзUĚĂsкιnãñOÔIKпŞΛI₳zÄû$ρśθ6ΨЬпYпĞHöÝйÏюşí2ćщÞΔΔŻTж€₿ŞhTțŽ")
+        (spark:string "SPARK-zE_O6meVEL3X")
+        (wkda:string "WKDA-slLyzPPCo22W")
+        (supply:decimal (ref-DPTF::UR_AccountSupply wkda spark-sc))
+    )
+    supply
+    (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
+        patron
+        wkda
+        spark-sc
+        patron
+        supply
+        true
+    )
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(ALA.URC_ValueToKadenaz
+    (ALA.URC_ExtraValueNeeded
+        (ALA.UC_CDP
+            (SWPI.URC_OuroPrimordialPrice)
+            10.0
+            365
+        )
+    )
+)
+
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (amount:decimal 650.0)
+        (target:string "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
+        (original:string "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f")
+    )
+    (TS01-C1.DALOS|C_RotateKadena patron patron target)
+    (DALOS.KDA|C_Collect patron amount false)
+    (TS01-C1.DALOS|C_RotateKadena patron patron original)
+)
+
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 65.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  130.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  195.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 260.0)
