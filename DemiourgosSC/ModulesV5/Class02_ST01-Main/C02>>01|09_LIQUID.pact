@@ -215,6 +215,19 @@
             )
         )
     )
+    (defun UEV_Amount (amount:decimal)
+        @doc "Enforces amount to coin (Kadena) Precision, which uses 12 decimal"
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+            )
+            (enforce
+                (= (floor amount kda-prec) amount)
+                (format "{} is not conform with KDA prec." [amount])
+            )
+        )
+    )
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
     ;;

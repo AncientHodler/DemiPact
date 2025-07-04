@@ -424,6 +424,24 @@
             )
         )
     )
+    (defun DPTF|URC_GetOwnedSupplies (id:string)
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (accounts:[string] (DPTF-DPMF-ATS|UR_FilterKeysForInfo id 1 false))
+                (l:integer (length accounts))
+            )
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-DPTF::UR_AccountSupply id (at idx accounts)))
+                )
+                []
+                (enumerate 0 (- l 1))
+            )
+        )
+    )
     (defun DPTF-DPMF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool)
         @doc "Returns a List of either: \
             \       Direct-Mode(true):      <account-or-token-id> is <account> Name: \

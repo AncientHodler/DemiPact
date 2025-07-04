@@ -64,6 +64,8 @@
     (defun DPMF|INFO_Issue:object{OuronetInfoV2.ClientInfo} (patron:string account:string name:[string]))
     (defun DPMF|INFO_Mint:object{OuronetInfoV2.ClientInfo} (patron:string id:string account:string amount:decimal))
     ;;
+    (defun ATS|INFO_Coil:object{OuronetInfoV2.ClientInfo} (patron:string coiler:string ats:string rt:string amount:decimal))
+    ;;
     (defun SWP|INFO_AddLiquidity:object{OuronetInfoV2.ClientInfo} (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
     (defun SWP|INFO_IcedLiquidity:object{OuronetInfoV2.ClientInfo} (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
     (defun SWP|INFO_GlacialLiquidity:object{OuronetInfoV2.ClientInfo} (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
@@ -1013,7 +1015,6 @@
             (
                 (ref-I|OURONET:module{OuronetInfoV2} DALOS)
                 ;;
-                ;;
                 (small:decimal (SIP|URC_Small))
                 (medium:decimal (SIP|URC_Medium))
                 (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
@@ -1022,6 +1023,49 @@
                 [(format "Operation: Mint {} {} on Account {}, on a new Nonce" [amount id sa])]
                 [(format "Succesfully minted {} {} on Account {}, on a new Nonce" [amount id sa])]
                 (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron (+ small medium))
+                (ref-I|OURONET::OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
+    ;;  [ATS]
+    (defun ATS|INFO_Coil:object{OuronetInfoV2.ClientInfo}
+        (patron:string coiler:string ats:string rt:string amount:decimal)
+        (let
+            (
+                (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                (ref-ATS:module{AutostakeV4} ATS)
+                (ref-TFT:module{TrueFungibleTransferV7} TFT)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                (c-rbt-amount:decimal (ref-ATS::URC_RBT ats rt amount))
+                ;;
+                ;;Operation 1 - Transfer
+                (wt1:integer (ref-TFT::URC_TransferClasses rt coiler ats-sc amount))
+                (ico1:object{IgnisCollector.OutputCumulator}
+                    (ref-TFT::UC_TransferCumulator wt1 rt coiler ats-sc)
+                )
+                (ifp1:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico1))
+                ;;Operation 2 - Mint
+                (ifp2:decimal (SIP|URC_Mint c-rbt ats-sc false))
+                ;;Operation 3 - Transfer
+                (wt3:integer (ref-TFT::URC_TransferClasses c-rbt ats-sc coiler c-rbt-amount))
+                (ico3:object{IgnisCollector.OutputCumulator}
+                    (ref-TFT::UC_TransferCumulator wt3 rt coiler ats-sc)
+                )
+                (ifp3:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico3))
+                (ifp:decimal (fold (+) 0.0 [ifp1 ifp2 ifp3]))
+                ;;
+                (sa-coiler:string (ref-I|OURONET::OI|UC_ShortAccount coiler))
+            )
+            (ref-I|OURONET::OI|UDC_ClientInfo
+                [
+                    (format "Operation: Coils (autostakes) {} on the {} ATS-Pair" [rt ats])
+                    (format "Generates {} {}" [c-rbt-amount c-rbt])
+                ]
+                [
+                    (format "Succesfuly autostaked {} {} on ATS-Pair {} generating {} {} on {} Account" [amount rt ats c-rbt-amount c-rbt sa-coiler])
+                ]
+                (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
                 (ref-I|OURONET::OI|UDC_NoKadenaCosts)
             )
         )

@@ -99,7 +99,7 @@
     (defcap DPDC-C|C>REGISTER-SINGLE-NONCE
         (id:string son:bool amount:integer ind:object{DpdcUdc.DPDC|NonceData} sft-set-mode:bool)
         @event
-        (compose-capability (DPDC-C|C>REGISTER-NONCES id son [amount] [ind] sft-set-mode))
+        (compose-capability (DPDC-C|C>REGISTER-NONCES  id son [amount] [ind] sft-set-mode))
     )
     (defcap DPDC-C|C>REGISTER-MULTIPLE-NONCES
         (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdc.DPDC|NonceData}])
@@ -116,6 +116,7 @@
         (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdc.DPDC|NonceData}] sft-set-mode:bool)
         (let
             (
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
                 ;;
                 (l1:integer (length amounts))
@@ -126,6 +127,7 @@
                         "multiple Nonces"
                     )
                 )
+                (r-nft-create-account:string (ref-DPDC::UR_Verum5 id son))
             )
             (enforce (= l1 l2) (format "Incompatible Input Data for Registering {}" [msg]))
             (map
@@ -149,7 +151,7 @@
                 )
                 (enumerate 0 (- l2 1))
             )
-            (ref-DPDC::CAP_Owner id son)
+            (ref-DALOS::CAP_EnforceAccountOwnership r-nft-create-account)
             (compose-capability (P|DPDC-C|CALLER))
         )
     )
@@ -800,7 +802,7 @@
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
-                (creator:string (ref-DPDC::UR_CreatorKonto id son))
+                (r-nft-create-account:string (ref-DPDC::UR_Verum5 id son))
                 ;;
                 ;;Compute Cumulator Parameters
                 (s-amounts:integer (fold (+) 0 amounts))
@@ -826,12 +828,12 @@
                 )
                 (isg:bool (= l 1))
             )
-            ;;Credit Created Elements to Creator Account
+            ;;Credit Created Elements to <r-nft-create-account>
             (cond
-                ((UC_AndTruths [isg son ])              (XB_CreditSFT-Nonce id creator n0 a0))
-                ((UC_AndTruths [isg (not son)])         (XB_CreditNFT-Nonce id creator n0 a0))
-                ((UC_AndTruths [(not isg) son])         (XB_CreditSFT-Nonces id creator nonces-to-be-created amounts))
-                ((UC_AndTruths [(not isg) (not son)])   (XB_CreditNFT-Nonces id creator nonces-to-be-created amounts))
+                ((UC_AndTruths [isg son ])              (XB_CreditSFT-Nonce id r-nft-create-account n0 a0))
+                ((UC_AndTruths [isg (not son)])         (XB_CreditNFT-Nonce id r-nft-create-account n0 a0))
+                ((UC_AndTruths [(not isg) son])         (XB_CreditSFT-Nonces id r-nft-create-account nonces-to-be-created amounts))
+                ((UC_AndTruths [(not isg) (not son)])   (XB_CreditNFT-Nonces id r-nft-create-account nonces-to-be-created amounts))
                 true
             )
             (ref-IGNIS::IC|UDC_ConstructOutputCumulator price owner trigger collectable-names)
@@ -900,7 +902,7 @@
                     )
                 )
             )
-            (ref-DPDC::XE_InsertCollectionElement id son new-element-nonce element)
+            (ref-DPDC::XE_I|CollectionElement id son new-element-nonce element)
             (ref-DPDC::XE_U|NoncesUsed id son new-element-nonce)
             (format "{} <{}>" [amount (at "name" input-nonce-data)])
         )

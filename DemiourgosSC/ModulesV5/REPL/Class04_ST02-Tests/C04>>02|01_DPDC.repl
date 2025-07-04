@@ -12,7 +12,13 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "REPL_Test_000x - TX03 - Accounts Display")
+;;TX 001 -- Accounts Display
+;;TX 002 -- Toggle Tests
+;;TX 003 -- Nonce Tests
+;;TX 004 -- Set Tests
+;;
+;;
+(begin-tx "TX001 - Accounts Display")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -41,7 +47,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<Stage 2 Warmup costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<TX001 - Accounts Display costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -49,10 +55,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-;;
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;
-(begin-tx "REPL_Test_000x - TX02 - Initialise IMC for Stage 2")
+(begin-tx "TX 002 -- Toggle Tests")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -86,17 +89,20 @@
     (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr f)
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma t)
-    ;(ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
-    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma t)
-    ;(ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma f)
     ;;
+    (ref-TS02-C1::DPSF|C_MoveCreateRole patron id lumy)
     (ref-TS02-C1::DPSF|C_MoveCreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveRecreateRole patron id lumy)
     (ref-TS02-C1::DPSF|C_MoveRecreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveSetUriRole patron id lumy)
     (ref-TS02-C1::DPSF|C_MoveSetUriRole patron id emma)
     [
         [
@@ -138,7 +144,7 @@
 
 (print "")
 (print "")
-(format "<<<<<<<Stage 2 IMC costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<TX 002 -- Toggle Tests costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -146,7 +152,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "REPL_Test_000x - TX02 - Initialise IMC for Stage 2")
+(begin-tx "TX 003 -- Nonce Tests")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -185,21 +191,21 @@
             )
         )
     )
-    (ref-TS02-C1::DPSF|C_SetNonceScore patron id emma 1 25.0)
+    (ref-TS02-C1::DPSF|C_UpdateNonceScore patron id emma 1 true 25.0)
     ;(ref-TS02-C1::DPSF|C_RemoveNonceScore patron id emma 1)
-    (ref-TS02-C1::DPSF|C_SetNonceMetaData patron id emma 1
+    (ref-TS02-C1::DPSF|C_UpdateNonceMetaData patron id emma 1 true
         [
             {"eye"      : "red"
             ,"age"      : 24.3
             ,"value"    : 123.3}
         ]
     )
-    (ref-TS02-C1::DPSF|C_SetNonceName patron id emma 1 "Snake Eyez")
-    (ref-TS02-C1::DPSF|C_SetNonceDescription patron id emma 1 "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
-    (ref-TS02-C1::DPSF|C_SetNonceRoyalty patron id emma 1 133.0)
-    (ref-TS02-C1::DPSF|C_SetNonceIgnisRoyalty patron id emma 1 49.0)
+    (ref-TS02-C1::DPSF|C_UpdateNonceName patron id emma 1  true "Snake Eyez")
+    (ref-TS02-C1::DPSF|C_UpdateNonceDescription patron id emma 1 true "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
+    (ref-TS02-C1::DPSF|C_UpdateNonceRoyalty patron id emma 1 true 133.0)
+    (ref-TS02-C1::DPSF|C_UpdateNonceIgnisRoyalty patron id emma 1 true 49.0)
     
-    ;(ref-TS02-C1::DPSF|C_SetNonceUri patron id emma 1
+    ;(ref-TS02-C1::DPSF|C_UpdateNonceURI patron id emma 1 true
     ;    {"image"    : t
     ;    ,"audio"    : t
     ;    ,"video"    : t
@@ -230,40 +236,116 @@
     ;    ,"exotic"   : "e3"}
     ;)
     [
-        (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Score id true 1)
-        (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_NonceValue id true 1)
-        (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true 1))
-        (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true 1))
-        
-    ]
-    [
-        ;(ref-DPDC::P|UR_IMP)
-        ;(ref-DPDC::UEV_IMC)
-        (ref-TS02-C1::DPSF|C_EnableNonceFragmentation patron id 1 snake-eye-fragmentation-data)
-        (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Score id true -1)
-        (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_NonceValue id true -1)
-        (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true -1))
-        (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true -1))
+        [
+            (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Score id true 1)
+            (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_NonceValue id true 1)
+            (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true 1))
+            
+        ]
+        [
+            ;(ref-DPDC::P|UR_IMP)
+            ;(ref-DPDC::UEV_IMC)
+            (ref-TS02-C1::DPSF|C_EnableNonceFragmentation patron id 1 snake-eye-fragmentation-data)
+            (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Score id true -1)
+            (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_NonceValue id true -1)
+            (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true -1))
+        ]
     ]
 )
 
 (print "")
 (print "")
-(format "<<<<<<<Stage 3 IMC costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<TX 003 -- Nonce Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 004 -- Set Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHWC-98c486052a51")
+        (patron:string KST.ANHD)
+        (orbr:string KST.OURBR)
+        (lumy:string KST.LUMY)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
+        (b:string "|")
+        (wonder-coach-fragmentation-data:object{DpdcUdc.DPDC|NonceData} 
+            (ref-DPDC-UDC::UDC_NonceData
+                7.0
+                7.0
+                "Whole Movie Fragments"
+                "These are the fragments of Wonder Coach Movie"
+                [{}]
+                (ref-DPDC-UDC::UDC_URI|Type t t t f f f f)
+                (ref-DPDC-UDC::UDC_URI|Data "Image Link" "Audio Link" "Video Link" b b b b)
+                (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
+                (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
+            )
+        )
+    )
+    [
+        (ref-TS02-C1::DPSF|C_EnableSetClassFragmentation patron id 4 wonder-coach-fragmentation-data)
+        (ref-TS02-C1::DPSF|C_ToggleSet patron id 4 false)
+        (ref-TS02-C1::DPSF|C_ToggleSet patron id 4 true)
+        (format "Wonder Coach Set Class 1 name is <{}>" [(ref-DPDC-S::UR_SetName id true 1)])
+        (format "Wonder Coach Set Class 2 name is <{}>" [(ref-DPDC-S::UR_SetName id true 2)])
+        (format "Wonder Coach Set Class 3 name is <{}>" [(ref-DPDC-S::UR_SetName id true 3)])
+        (format "Wonder Coach Set Class 4 name is <{}>" [(ref-DPDC-S::UR_SetName id true 4)])
+        (ref-TS02-C1::DPSF|C_RenameSet patron id 4 "Cine Nu e Gata")
+        (format "Wonder Coach Set Class 4 name is <{}>" [(ref-DPDC-S::UR_SetName id true 4)])
+        ;(ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Score id true -34)
+        ;(ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_NonceValue id true -34)
+        ;(ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true -34))
+        ;(ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true -34))
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 004 -- Set Tests costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

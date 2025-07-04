@@ -95,7 +95,7 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
-    (defcap DPDC-F|C>ENABLE-NONCE-FRAGMENTATION
+    (defcap DPDC-F|C>ENABLE-FRAGMENTATION
         (
             id:string son:bool nonce:integer
             fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
@@ -105,9 +105,11 @@
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                (iz-fragmented:bool (ref-DPDC::UEV_IzNonceFragmented id son nonce))
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+                (iz-fragmented:bool (UEV_IzNonceFragmented id son nonce))
             )
-            (enforce (not iz-fragmented) "Nonce must not be fragmented in order to fragment it !")
+            (enforce (= nonce-class 0) "Only Class 0 Nonces can be fragmented")
+            (enforce (not iz-fragmented) "Nonce must not be fragmented in order to enable fragmentation for it !")
             (ref-DPDC::UEV_Nonce id son nonce)
             (ref-DPDC::CAP_Owner id son)
             (ref-DPDC-C::UEV_NonceDataForCreation fragmentation-ind)
@@ -120,6 +122,39 @@
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
+    (defun UEV_IzNonceFragmented:bool (id:string son:bool nonce:integer)
+        @doc "Checks if a nonce is fragmented. For non 0 nonce-classes, the set class is checked instead for fragmentation"
+        (enforce (> nonce 0) "Only greater than 0 nonces can be checked for fragmentation")
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (ref-DPDC:module{Dpdc} DPDC)
+                (sd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC::UR_SplitData id son nonce))
+                (zd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+            )
+            (if (!= sd zd) 
+                true
+                (if (!= nonce-class 0)
+                    (let
+                        (
+                            (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                        )
+                        (ref-DPDC-S::UEV_IzSetClassFragmented id son nonce-class)
+                    )
+                    false
+                )
+            )
+        )
+    )
+    (defun UEV_Fragmentation (id:string son:bool nonce:integer)
+        (let
+            (
+                (iz-fragmented:bool (UEV_IzNonceFragmented id son nonce))
+            )
+            (enforce iz-fragmented "Nonce must be fragmented for operation")
+        )
+    )
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
     ;;
@@ -131,7 +166,7 @@
             fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
         )
         (UEV_IMC)
-        (with-capability (DPDC-F|C>ENABLE-NONCE-FRAGMENTATION id son nonce fragmentation-ind)
+        (with-capability (DPDC-F|C>ENABLE-FRAGMENTATION id son nonce fragmentation-ind)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
@@ -148,7 +183,7 @@
             id:string son:bool nonce:integer
             fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
         )
-        (require-capability (DPDC-F|C>ENABLE-NONCE-FRAGMENTATION id son nonce fragmentation-ind))
+        (require-capability (DPDC-F|C>ENABLE-FRAGMENTATION id son nonce fragmentation-ind))
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)

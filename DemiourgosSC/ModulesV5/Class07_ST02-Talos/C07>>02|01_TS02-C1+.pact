@@ -1,10 +1,22 @@
 (interface TalosStageTwo_ClientOne
     @doc "Exposes Client SFT Functions"
     ;;
+    ;;  [2] DPDC
+    ;;
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
-    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)) ;x
+    ;;  [3] DPDC-C
+    ;;
+    (defun DPSF|C_Create:string
+        (
+            patron:string id:string amount:[integer]
+            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
+        )
+    )
+    ;;
+    ;;  [4] DPDC-I
+    ;;
     (defun DPSF|C_DeployAccount (patron:string id:string account:string))
     (defun DPSF|C_Issue:string 
         (
@@ -15,7 +27,8 @@
         )
     )
     ;;
-    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool))
+    ;;  [5] DPDC-R
+    ;;
     (defun DPSF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool))
     (defun DPSF|C_ToggleFreezeAccount (patron:string id:string account:string toggle:bool))
     (defun DPSF|C_ToggleExemptionRole (patron:string id:string account:string toggle:bool))
@@ -28,13 +41,16 @@
     (defun DPSF|C_MoveRecreateRole (patron:string id:string new-account:string))
     (defun DPSF|C_MoveSetUriRole (patron:string id:string new-account:string))
     ;;
-    (defun DPSF|C_Create:string
-        (
-            patron:string id:string amount:[integer]
-            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
-        )
-    )
-    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
+    ;;  [6] DPDC-MNG
+    ;;
+    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)) ;x
+    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool))
+    ;;
+    ;;  [7] DPDC-T
+    ;;
+    ;;
+    ;;  [8] DPDC-S
+    ;;
     (defun DPSF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string 
@@ -42,23 +58,59 @@
             ind:object{DpdcUdc.DPDC|NonceData}
         )
     )
-    ;;
-    (defun DPSF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal))
-    (defun DPSF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal))
-    (defun DPSF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string))
-    (defun DPSF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string))
-    (defun DPSF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal))
-    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer))
-    (defun DPSF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object]))
-    (defun DPSF|C_SetNonceUri 
+    (defun DPSF|C_DefineCompositeSet
         (
-            patron:string id:string account:string nonce:integer
-            ay:object{DpdcUdc.URI|Type}
-            u1:object{DpdcUdc.URI|Data}
-            u2:object{DpdcUdc.URI|Data}
-            u3:object{DpdcUdc.URI|Data}
+            patron:string id:string set-name:string 
+            set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
         )
     )
+    (defun DPSF|C_EnableSetClassFragmentation
+        (
+            patron:string id:string set-class:integer
+            fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
+        )
+    )
+    (defun DPSF|C_ToggleSet (patron:string id:string set-class:integer toggle:bool))
+    (defun DPSF|C_RenameSet (patron:string id:string set-class:integer new-name:string))
+    ;;
+    (defun DPSF|C_UpdateSetNonce (patron:string id:string account:string nonce:integer native-or-split:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPSF|C_UpdateSetNonceRoyalty (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal))
+    (defun DPSF|C_UpdateSetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal))
+    (defun DPSF|C_UpdateSetNonceName (patron:string id:string account:string nonce:integer native-or-split:bool name:string))
+    (defun DPSF|C_UpdateSetNonceDescription (patron:string id:string account:string nonce:integer native-or-split:bool description:string))
+    (defun DPSF|C_UpdateSetNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool score:decimal))
+    (defun DPSF|C_RemoveSetNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool))
+    (defun DPSF|C_UpdateSetNonceMetaData (patron:string id:string account:string nonce:integer native-or-split:bool meta-data:[object]))
+    (defun DPSF|C_UpdateSetNonceURI
+        (
+            patron:string id:string account:string nonce:integer native-or-split:bool
+            ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
+        )
+    )
+    ;;
+    ;;  [9] DPDC-F
+    ;;
+    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
+    ;;
+    ;;  [10] DPDC-N
+    ;;
+    (defun DPSF|C_UpdateNonce (patron:string id:string account:string nonce:integer native-or-split:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPSF|C_UpdateNonceRoyalty (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal))
+    (defun DPSF|C_UpdateNonceIgnisRoyalty (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal))
+    (defun DPSF|C_UpdateNonceName (patron:string id:string account:string nonce:integer native-or-split:bool name:string))
+    (defun DPSF|C_UpdateNonceDescription (patron:string id:string account:string nonce:integer native-or-split:bool description:string))
+    (defun DPSF|C_UpdateNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool score:decimal))
+    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool))
+    (defun DPSF|C_UpdateNonceMetaData (patron:string id:string account:string nonce:integer native-or-split:bool meta-data:[object]))
+    (defun DPSF|C_UpdateNonceURI
+        (
+            patron:string id:string account:string nonce:integer native-or-split:bool
+            ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
+        )
+    )
+    ;;
+    
 )
 (module TS02-C1 GOV
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
@@ -192,7 +244,9 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    ;;  [DPSF_Client]
+    ;;
+    ;;  [2] DPDC
+    ;;
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
         @doc "Updates <pending-branding> for DPSF Token <entity-id> costing 400 IGNIS"
         (with-capability (P|TS)
@@ -222,20 +276,43 @@
         )
     )
     ;;
-    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
-        @doc "Controls DPSF Properties"
+    ;;  [3] DPDC-C
+    ;;
+    (defun DPSF|C_Create:string
+        (
+            patron:string id:string amount:[integer]
+            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
+        )
+        @doc "Creates a new SFT Collection Element(s), having a new nonce, \
+            \ of amount <amount>, on the Account that has <r-nft-create> \
+            \ As this account is the only Account that is allowed to crete new SFTs in the Collection"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (l:integer (length input-nonce-data))
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (if (= l 1)
+                            (ref-DPDC-C::C_CreateNewNonce
+                                id true 0 (at 0 amount) (at 0 input-nonce-data) false
+                            )
+                            (ref-DPDC-C::C_CreateNewNonces
+                                id true amount input-nonce-data
+                            )
+                        )
+                    )
                 )
-                (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_Control id true cu cco ccc casr ctncr cf cw cp)
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (format "Created {} Clas 0 SemiFungible(s) within the {} DPSF Collection"
+                    [(at "output" ico) id]
                 )
             )
         )
     )
+    ;;
+    ;;  [4] DPDC-I
+    ;;
     (defun DPSF|C_DeployAccount (patron:string id:string account:string)
         @doc "Deploys a DPSF Account. Stand Alone Deployment costs 2 IGNIS"
         (with-capability (P|TS)
@@ -281,20 +358,9 @@
             )
         )
     )
-    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool)
-        @doc "Pauses a DPSF Collection. Paused Collections can no longer be transfered"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                )
-                (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_TogglePause id true toggle)
-                )
-            )
-        )
-    )
+    ;;
+    ;;  [5] DPDC-R
+    ;;
     (defun DPSF|C_ToggleAddQuantityRole (patron:string id:string account:string toggle:bool)
         @doc "Toggles the add quantity role for a DPTF Token on a given Ouronet Account"
         (with-capability (P|TS)
@@ -460,37 +526,264 @@
         )
     )
     ;;
-    (defun DPSF|C_Create:string
-        (
-            patron:string id:string amount:[integer]
-            input-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
-        )
-        @doc "Creates a new SFT Collection Element(s), having a new nonce, \
-            \ of amount <amount>, on the <creator> account."
+    ;;  [6] DPDC-MNG
+    ;;
+    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
+        @doc "Controls DPSF Properties"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (l:integer (length input-nonce-data))
-                    (ico:object{IgnisCollector.OutputCumulator}
-                        (if (= l 1)
-                            (ref-DPDC-C::C_CreateNewNonce
-                                id true 0 (at 0 amount) (at 0 input-nonce-data) false
-                            )
-                            (ref-DPDC-C::C_CreateNewNonces
-                                id true amount input-nonce-data
-                            )
-                        )
-                    )
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
-                (ref-IGNIS::IC|C_Collect patron ico)
-                (format "Created {} Clas 0 SemiFungible(s) within the {} DPSF Collection"
-                    [(at "output" ico) id]
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_Control id true cu cco ccc casr ctncr cf cw cp)
                 )
             )
         )
     )
+    
+    (defun DPSF|C_TogglePause (patron:string id:string toggle:bool)
+        @doc "Pauses a DPSF Collection. Paused Collections can no longer be transfered"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_TogglePause id true toggle)
+                )
+            )
+        )
+    )
+    
+    ;;
+    ;;  [7] DPDC-T
+    ;;
+    ;;
+    ;;  [8] DPDC-S
+    ;;
+    (defun DPSF|C_DefinePrimordialSet
+        (
+            patron:string id:string set-name:string 
+            set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Defines a New Primordial SFT Set. Primordial Sets are composed of Class 0 Nonces"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_DefinePrimordialSet id true set-name set-definition ind)
+                )
+                (format "Primordial Set <{}> for SFT Collection {} defined succesfully" [set-name id])
+            )
+        )
+    )
+    (defun DPSF|C_DefineCompositeSet
+        (
+            patron:string id:string set-name:string 
+            set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Defines a New Composite SFT Set. Composite Sets are composed of Class (!=0) Nonces"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_DefineCompositeSet id true set-name set-definition ind)
+                )
+                (format "Composite Set <{}> for SFT Collection {} defined succesfully" [set-name id])
+            )
+        )
+    )
+    (defun DPSF|C_EnableSetClassFragmentation
+        (
+            patron:string id:string set-class:integer
+            fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Enables Fragmentation for a given Set Class. This allows all SFTs of the given Set Class to be Fragmented"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_EnableSetClassFragmentation id true set-class fragmentation-ind)
+                )
+                (format "Set Class {} for SFT {} succesfully fragmented" [set-class id])
+            )
+        )
+    )
+    (defun DPSF|C_ToggleSet (patron:string id:string set-class:integer toggle:bool)
+        @doc "Enables or Disables a Set. A disabled Set allows only for decomposition of Set Elements, but not for composition"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_ToggleSet id true set-class toggle)
+                )
+                (format "SFT {} Set Class {} succesfully turned {}" [id set-class (if toggle "ON" "OFF")])
+            )
+        )
+    )
+    (defun DPSF|C_RenameSet (patron:string id:string set-class:integer new-name:string)
+        @doc "Renames an SFT Set"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_RenameSet id true set-class new-name)
+                )
+                (format "SFT {} Set Class {} succesfuly renamed from to <{}>" [id set-class new-name])
+            )
+        )
+    )
+    ;;
+    (defun DPSF|C_UpdateSetNonce 
+        (patron:string id:string account:string nonce:integer native-or-split:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
+        @doc "[0] Updates Full Set Nonce Data, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonce id true account nonce native-or-split false new-nonce-data)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceRoyalty
+        (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal)
+        @doc "[1] Updates Set Nonce Native Royalty Value, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceRoyalty id true account nonce native-or-split false royalty-value)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceIgnisRoyalty
+        (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal)
+        @doc "[2] Updates Set Nonce IGNIS Royalty Value, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account nonce native-or-split false royalty-value)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceName
+        (patron:string id:string account:string nonce:integer native-or-split:bool name:string)
+        @doc "[3] Updates Set Nonce Name, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceName id true account nonce native-or-split false name)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceDescription
+        (patron:string id:string account:string nonce:integer native-or-split:bool description:string)
+        @doc "[4] Updates Set Nonce Description, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceDescription id true account nonce native-or-split false description)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceScore
+        (patron:string id:string account:string nonce:integer native-or-split:bool score:decimal)
+        @doc "[5] Updates Set Nonce Score, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceScore id true account nonce native-or-split false score)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_RemoveSetNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool)
+        @doc "[5b] Removes Set Nonce Score, setting it to -1.0, either Native or Split, for an SFT"
+        (DPSF|C_UpdateNonceScore patron id account nonce native-or-split -1.0)
+    )
+    (defun DPSF|C_UpdateSetNonceMetaData
+        (patron:string id:string account:string nonce:integer native-or-split:bool meta-data:[object])
+        @doc "[6] Updates Set Nonce Meta-Data, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceMetaData id true account nonce native-or-split false meta-data)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateSetNonceURI
+        (
+            patron:string id:string account:string nonce:integer native-or-split:bool
+            ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
+        )
+        @doc "[7] Updates Set Nonce URI, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceURI id true account nonce native-or-split false ay u1 u2 u3)
+                )
+            )
+        )
+    )
+    ;;
+    ;;  [9] DPDC-F
+    ;;
     (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData})
         @doc "Enables Fragmentation for a given SFT Nonce"
         (with-capability (P|TS)
@@ -506,30 +799,12 @@
             )
         )
     )
-    (defun DPSF|C_DefinePrimordialSet
-        (
-            patron:string id:string set-name:string 
-            set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
-            ind:object{DpdcUdc.DPDC|NonceData}
-        )
-        @doc "Defines a New Primordial SFT Set. Primordial Sets are composed oc Class 0 Nonces"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
-                )
-                (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-S::C_DefinePrimordialSet id true set-name set-definition ind)
-                )
-                (format "Primordial Set <{}> for SFT Collection {} defined succesfully" [set-name id])
-            )
-        )
-    )
-
     ;;
-    (defun DPSF|C_SetNonceRoyalty (patron:string id:string account:string nonce:integer royalty:decimal)
-        @doc "Updates the Royalty of an SFT Nonce"
+    ;;  [10] DPDC-N
+    ;;
+    (defun DPSF|C_UpdateNonce 
+        (patron:string id:string account:string nonce:integer native-or-split:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
+        @doc "[0] Updates Full Nonce Data, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
@@ -537,13 +812,14 @@
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonceRoyalty id true account nonce royalty)
+                    (ref-DPDC-N::C_UpdateNonce id true account nonce native-or-split true new-nonce-data)
                 )
             )
         )
     )
-    (defun DPSF|C_SetNonceIgnisRoyalty (patron:string id:string account:string nonce:integer ignis-royalty:decimal)
-        @doc "Updates the Ignis Royalty of an SFT Nonce"
+    (defun DPSF|C_UpdateNonceRoyalty
+        (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal)
+        @doc "[1] Updates Nonce Native Royalty Value, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
@@ -551,13 +827,14 @@
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account nonce ignis-royalty)
+                    (ref-DPDC-N::C_UpdateNonceRoyalty id true account nonce native-or-split true royalty-value)
                 )
             )
         )
     )
-    (defun DPSF|C_SetNonceName (patron:string id:string account:string nonce:integer name:string)
-        @doc "Updates the Name of an SFT nonce"
+    (defun DPSF|C_UpdateNonceIgnisRoyalty
+        (patron:string id:string account:string nonce:integer native-or-split:bool royalty-value:decimal)
+        @doc "[2] Updates Nonce IGNIS Royalty Value, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
@@ -565,13 +842,14 @@
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonceNameOrDescription id true account nonce true name)
+                    (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account nonce native-or-split true royalty-value)
                 )
             )
         )
     )
-    (defun DPSF|C_SetNonceDescription (patron:string id:string account:string nonce:integer description:string)
-        @doc "Updates the Description of an SFT nonce"
+    (defun DPSF|C_UpdateNonceName
+        (patron:string id:string account:string nonce:integer native-or-split:bool name:string)
+        @doc "[3] Updates Nonce Name, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
@@ -579,60 +857,66 @@
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonceNameOrDescription id true account nonce false description)
+                    (ref-DPDC-N::C_UpdateNonceName id true account nonce native-or-split true name)
                 )
             )
         )
     )
-    (defun DPSF|C_SetNonceScore (patron:string id:string account:string nonce:integer score:decimal)
-        @doc "Updates the Score of an SFT nonce"
+    (defun DPSF|C_UpdateNonceDescription
+        (patron:string id:string account:string nonce:integer native-or-split:bool description:string)
+        @doc "[4] Updates Nonce Description, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
-                    (ico:object{IgnisCollector.OutputCumulator}
-                        (ref-DPDC-N::C_UpdateNonceScore id true account nonce score)
-                    )
                 )
-                (ref-IGNIS::IC|C_Collect patron ico)
-                (format "Update Nonce {} of SFT Collection {} with a score of {}"
-                    [nonce id score]
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceDescription id true account nonce native-or-split true description)
                 )
             )
         )
     )
-    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer)
-        @doc "Removes the Score of an SFT nonce, setting it to -1.0"
-        (DPSF|C_SetNonceScore patron id account nonce -1.0)
-    )
-    (defun DPSF|C_SetNonceMetaData (patron:string id:string account:string nonce:integer meta-data:[object])
-        @doc "Updates the Metadata of an SFT nonce"
+    (defun DPSF|C_UpdateNonceScore
+        (patron:string id:string account:string nonce:integer native-or-split:bool score:decimal)
+        @doc "[5] Updates Nonce Score, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
-                    (ico:object{IgnisCollector.OutputCumulator}
-                        (ref-DPDC-N::C_UpdateNonceMetadata id true account nonce meta-data)
-                    )
                 )
-                (ref-IGNIS::IC|C_Collect patron ico)
-                (format "Update Meta-Data of Nonce {} of SFT Collection {}"
-                    [nonce id]
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceScore id true account nonce native-or-split true score)
                 )
             )
         )
     )
-    (defun DPSF|C_SetNonceUri
+    (defun DPSF|C_RemoveNonceScore (patron:string id:string account:string nonce:integer native-or-split:bool)
+        @doc "[5b] Removes Nonce Score, setting it to -1.0, either Native or Split, for an SFT"
+        (DPSF|C_UpdateNonceScore patron id account nonce native-or-split -1.0)
+    )
+    (defun DPSF|C_UpdateNonceMetaData
+        (patron:string id:string account:string nonce:integer native-or-split:bool meta-data:[object])
+        @doc "[6] Updates Nonce Meta-Data, either Native or Split, for an SFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonceMetaData id true account nonce native-or-split true meta-data)
+                )
+            )
+        )
+    )
+    (defun DPSF|C_UpdateNonceURI
         (
-            patron:string id:string account:string nonce:integer
-            ay:object{DpdcUdc.URI|Type}
-            u1:object{DpdcUdc.URI|Data}
-            u2:object{DpdcUdc.URI|Data}
-            u3:object{DpdcUdc.URI|Data}
+            patron:string id:string account:string nonce:integer native-or-split:bool
+            ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
         )
-        @doc "Updates the URI List for an SFT nonce"
+        @doc "[7] Updates Nonce URI, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
@@ -640,11 +924,12 @@
                     (ref-DPDC-N:module{DpdcNonce} DPDC-N)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonceUri id true account nonce ay u1 u2 u3)
+                    (ref-DPDC-N::C_UpdateNonceURI id true account nonce native-or-split true ay u1 u2 u3)
                 )
             )
         )
     )
+    ;;
     ;;{F7}  [X]
     ;;
 )

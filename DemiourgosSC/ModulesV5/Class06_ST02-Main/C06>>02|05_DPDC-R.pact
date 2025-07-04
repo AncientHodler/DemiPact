@@ -373,7 +373,7 @@
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
-                (old-account:string (at 0 (ref-DPDC::UR_Verum5 id son)))
+                (old-account:string (ref-DPDC::UR_Verum5 id son))
             )
             (with-capability (DPDC|C>MV_CREATE-R id son old-account new-account)
                 (ref-DPDC::XE_DeployAccountWNE id son new-account)
@@ -389,7 +389,7 @@
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
-                (old-account:string (at 0 (ref-DPDC::UR_Verum6 id son)))
+                (old-account:string (ref-DPDC::UR_Verum6 id son))
             )
             (with-capability (DPDC|C>MV_RECREATE-R id son old-account new-account)
                 (ref-DPDC::XE_DeployAccountWNE id son new-account)
@@ -405,7 +405,7 @@
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
-                (old-account:string (at 0 (ref-DPDC::UR_Verum10 id son)))
+                (old-account:string (ref-DPDC::UR_Verum10 id son))
             )
             (with-capability (DPDC|C>MV_SET-URI-R id son old-account new-account)
                 (ref-DPDC::XE_DeployAccountWNE id son new-account)

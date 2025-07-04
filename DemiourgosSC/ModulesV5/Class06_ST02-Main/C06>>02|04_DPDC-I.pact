@@ -183,12 +183,58 @@
                 ;;Deploy Collection Accounts for Owner and Creator
                 (if son
                     (do
-                        (ref-DPDC::XB_DeployAccountSFT id owner-account t f f f t t f f f t f)
-                        (ref-DPDC::XB_DeployAccountSFT id creator-account f f f f f f f f f f f)
+                        (ref-DPDC::XB_DeployAccountSFT id owner-account 
+                            true    ;;role-nft-add-quantity
+                            false   ;;frozen
+                            false   ;;role-exemption
+                            true    ;;role-nft-burn
+                            false   ;;role-nft-create
+                            false   ;;role-nft-recreate
+                            true    ;;role-nft-update
+                            false   ;;role-modify-creator
+                            false   ;;role-modify-royalties
+                            false   ;;role-set-new-uri
+                            false   ;;role-transfer
+                        )
+                        (ref-DPDC::XB_DeployAccountSFT id creator-account 
+                            false   ;;role-nft-add-quantity
+                            false   ;;frozen
+                            true    ;;role-exemption
+                            false   ;;role-nft-burn
+                            true    ;;role-nft-create
+                            true    ;;role-nft-recreate
+                            true    ;;role-nft-update
+                            true    ;;role-modify-creator
+                            true    ;;role-modify-royalties
+                            true    ;;role-set-new-uri
+                            false   ;;role-transfer
+                        )
                     )
                     (do
-                        (ref-DPDC::XB_DeployAccountNFT id owner-account f f f t t f f f t f)
-                        (ref-DPDC::XB_DeployAccountNFT id creator-account f f f f f f f f f f)
+                        (ref-DPDC::XB_DeployAccountNFT id owner-account 
+                            false   ;;frozen
+                            false   ;;role-exemption
+                            true    ;;role-nft-burn
+                            false   ;;role-nft-create
+                            false   ;;role-nft-recreate
+                            true    ;;role-nft-update
+                            false   ;;role-modify-creator
+                            false   ;;role-modify-royalties
+                            false   ;;role-set-new-uri
+                            false   ;;role-transfer
+                        )
+                        (ref-DPDC::XB_DeployAccountNFT id creator-account 
+                            false   ;;frozen
+                            true    ;;role-exemption
+                            false   ;;role-nft-burn
+                            true    ;;role-nft-create
+                            true    ;;role-nft-recreate
+                            true    ;;role-nft-update
+                            true    ;;role-modify-creator
+                            true    ;;role-modify-royalties
+                            true    ;;role-set-new-uri
+                            false   ;;role-transfer
+                        )
                     )
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-cost)
@@ -223,17 +269,41 @@
                 (zne:[object{DpdcUdc.DPDC|NonceElement}]
                     [(ref-DPDC-UDC::UDC_ZeroNonceElement)]
                 )
-                (b:[string] [BAR])
-                (oa:[string] [owner-account])
+                (ca:string creator-account)
+                (oa:string owner-account)
                 (verum-chain:object{DpdcUdc.DPDC|VerumRoles}
                     (if son
-                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles b b oa b oa oa b b b oa b)    
-                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles b b b b oa oa b b b oa b)
+                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                            [BAR]   ;;a-frozen
+                            [ca]    ;;r-exemption
+                            [oa]    ;;r-nft-add-quantity
+                            [oa]    ;;r-nft-burn
+                            ca      ;;r-nft-create
+                            ca      ;;r-nft-recreate
+                            [ca oa] ;;r-nft-update
+                            [ca]    ;;r-modify-creator
+                            [ca]    ;;r-modify-royalties
+                            ca      ;;r-set-new-uri
+                            [BAR]   ;;r-transfer
+                        )    
+                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                            [BAR]   ;;a-frozen
+                            [ca]    ;;r-exemption
+                            [BAR]   ;;r-nft-add-quantity
+                            [oa]    ;;r-nft-burn
+                            ca      ;;r-nft-create
+                            ca      ;;r-nft-recreate
+                            [ca oa] ;;r-nft-update
+                            [ca]    ;;r-modify-creator
+                            [ca]    ;;r-modify-royalties
+                            ca      ;;r-set-new-uri
+                            [BAR]   ;;r-transfer
+                        )
                     )
                 )
             )
-            (ref-DPDC::XE_InsertCollection id son specifications)
-            (ref-DPDC::XE_InsertVerumRoles id son verum-chain)
+            (ref-DPDC::XE_I|Collection id son specifications)
+            (ref-DPDC::XE_I|VerumRoles id son verum-chain)
             id
         )
     )

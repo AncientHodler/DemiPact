@@ -238,6 +238,9 @@
                 (r-gf:decimal 50.0)
                 (ir-gf:decimal 425.0)
                 ;;
+                (r-full:decimal 40.0)
+                (ir-full:decimal 560.0)
+                ;;
                 (md:[object] [{}])
                 (d1:string "Sleeping Beauty")
                 (d2:string "Sleeping Beauty")
@@ -305,6 +308,7 @@
                 (bf:string "https://ipfs.io/ipfs/QmT9HM77wfod92eXeSbKkVXJiVKaWmSdaSUpkJmE6GozuB")
                 (sf:string "https://ipfs.io/ipfs/QmQhCbuWKALbakWFtf2cNJCzwbXiB8PxuSNf9sv8CC5BMa")
                 (gf:string "https://ipfs.io/ipfs/QmeKFGGsgsnMpYFifdc61pvgNyEQnrVX7QDgZHtgpDBA85")
+                (ff:string "Link for Movie Collectable Here")
                 ;;
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             )
@@ -458,32 +462,6 @@
                     )
                 )
                 (ref-TS02-C1::DPSF|C_DefinePrimordialSet
-                    patron dhwc-id "Wonder Coach Silver Chapter"
-                    [
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [11])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [12])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [13])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [14])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [15])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [16])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [17])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [18])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [19])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [20])
-                    ]
-                    (ref-DPDC-UDC::UDC_NonceData
-                        r-sf
-                        ir-sf
-                        "Wonder Coach Silver Chapter"
-                        "The Wonder Coach Silver Chapter represents a complete Set of all Silver Wonder Coach Frames. 6% Royalty and 90% Ignis-Royalty relative to individual Elements"
-                        md
-                        (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                        (ref-DPDC-UDC::UDC_URI|Data sf b b b b b b)
-                        (ref-DPDC-UDC::UDC_ZeroURI|Data)
-                        (ref-DPDC-UDC::UDC_ZeroURI|Data)
-                    )
-                )
-                (ref-TS02-C1::DPSF|C_DefinePrimordialSet
                     patron dhwc-id "Wonder Coach Golden Chapter"
                     [
                         (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [21])
@@ -505,6 +483,25 @@
                         md
                         (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
                         (ref-DPDC-UDC::UDC_URI|Data sf b b b b b b)
+                        (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                        (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    )
+                )
+                (ref-TS02-C1::DPSF|C_DefineCompositeSet
+                    patron dhwc-id "Wonder Coach Movie Collectable"
+                    [
+                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 1)
+                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 2)
+                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 3)
+                    ]
+                    (ref-DPDC-UDC::UDC_NonceData
+                        r-full
+                        ir-full
+                        "Wonder Coach Movie Collectable"
+                        "The Woander Coach Movie Collectable represents the Complete Movie Collectable Set, containing all 30 existing Frames. 4% Royalty and 80% Ignis-Royalty relative to individual Elements"
+                        md
+                        (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
+                        (ref-DPDC-UDC::UDC_URI|Data ff b b b b b b)
                         (ref-DPDC-UDC::UDC_ZeroURI|Data)
                         (ref-DPDC-UDC::UDC_ZeroURI|Data)
                     )

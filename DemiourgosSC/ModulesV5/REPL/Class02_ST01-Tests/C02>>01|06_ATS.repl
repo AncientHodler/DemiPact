@@ -99,6 +99,7 @@
 (namespace "free")
 (let 
     (
+        (ref-INFO-ONE:module{InfoOneV2} INFO-ONE)
         (aoz:string KST.AOZT)
         ;(atsc:string KST.ATSTK)
         ;(ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
@@ -117,10 +118,15 @@
         (ps:string "PlebeicStrength-98c486052a51")
 
     )
-    (ref-P|TS01-C2::ATS|C_Coil aoz aoz ps p-k 100.0)
-    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps p-k 50.0)
-    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps e-k 40.0)
-    (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps a-k 80.0)
+    [
+        (ref-P|TS01-C2::ATS|C_Coil aoz aoz ps p-k 100.0)
+        (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps p-k 50.0)
+        (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps e-k 40.0)
+        (ref-P|TS01-C2::ATS|C_Fuel aoz aoz ps a-k 80.0)
+        (ref-INFO-ONE::ATS|INFO_Coil aoz aoz ps p-k 100.0)
+    ]
+
+
 )
 (print "")
 (print "")

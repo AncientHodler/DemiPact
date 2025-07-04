@@ -265,7 +265,7 @@
     (env-sigs
         [   
             { "key": "PK_AncientHodler", "caps": [] }
-            ;;{ "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
             { "key": "PK_Lumy", "caps": [] }
             { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
               "caps": 

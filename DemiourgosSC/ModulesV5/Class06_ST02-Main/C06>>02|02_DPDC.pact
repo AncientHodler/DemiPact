@@ -99,13 +99,11 @@
     ;;{2}
     (deftable DPSF|PropertiesTable:{DpdcUdc.DPDC|Properties})   ;;Key = <DPSF-id>
     (deftable DPSF|NoncesTable:{DpdcUdc.DPDC|NonceElement})     ;;Key = <DSPF-id> + BAR + <nonce>
-    (deftable DPSF|SetsTable:{DpdcUdc.DPDC|Set})                ;;Key = <DPSF-id> + BAR + <set-class>
     (deftable DPSF|VerumRolesTable:{DpdcUdc.DPDC|VerumRoles})   ;;Key = <DPSF-id>
     (deftable DPSF|AccountsTable:{DpdcUdc.DPSF|Account})        ;;Key = <DPSF-id> + BAR + <account>
     ;;
     (deftable DPNF|PropertiesTable:{DpdcUdc.DPDC|Properties})   ;;Key = <DPNF-id>
     (deftable DPNF|NoncesTable:{DpdcUdc.DPDC|NonceElement})     ;;Key = <DPNF-id> + BAR + <nonce>
-    (deftable DPNF|SetsTable:{DpdcUdc.DPDC|Set})                ;;Key = <DPNF-id> + BAR + <set-class>
     (deftable DPNF|VerumRolesTable:{DpdcUdc.DPDC|VerumRoles})   ;;Key = <DPNF-id>
     (deftable DPNF|AccountsTable:{DpdcUdc.DPNF|Account})        ;;Key = <DPNF-id> + BAR + <account>
     ;;{3}
@@ -247,19 +245,11 @@
             (at "nonce-supply" (UR_NonceElement id son (abs nonce)))
         )
     )
-    (defun UR_IzElementActive:bool (id:string son:bool nonce:integer)
-        (if (< nonce 0)
-            (let
-                (
-                    (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                    (sd:object{DpdcUdc.DPDC|NonceData} (UR_SplitData id son nonce))
-                    (zd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
-                )
-                (if (= sd zd) false true)
-            )
-            (at "iz-active" (UR_NonceElement id son (abs nonce)))
-        )
-        
+    (defun UR_IzNonFungibleNonceActive:bool (id:string nonce:integer)
+        @doc "Check if an NFT Nonce is active. Is used for NFTs only, as all SFTs are always active by default. \
+            \ And only NFT Nonces can become inactive"
+        (enforce (>= nonce 0) "Only higher than zero Nonces can be checked for activness")
+        (at "iz-active" (UR_NonceElement id false nonce))
     )
     (defun UR_NonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
         (if (< nonce 0)
@@ -300,10 +290,10 @@
         (at "uri-tertiary" n)
     )
     ;;
-    (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
+    (defun UR_N|RawScore:decimal (n:object{DpdcUdc.DPDC|NonceData})
         (let
             (
-                (meta-data:[object] (UR_N|MetaData (UR_NonceData id son nonce)))
+                (meta-data:[object] (UR_N|MetaData n))
                 (l:integer (length meta-data))
                 (fo:object (at 0 meta-data))
             )
@@ -313,41 +303,8 @@
             )
         )
     )
-    ;; [Set]
-    (defun UR_Set:object{DpdcUdc.DPDC|Set} (id:string son:bool set-class:integer)
-        (if son
-            (read DPSF|SetsTable (concat [id BAR (format "{}" [set-class])]))
-            (read DPNF|SetsTable (concat [id BAR (format "{}" [set-class])]))
-        )
-    )
-    (defun UR_SetClass:integer (id:string son:bool set-class:integer)
-        (at "set-class" (UR_Set id son set-class))
-    )
-    (defun UR_SetName:string (id:string son:bool set-class:integer)
-        (at "set-name" (UR_Set id son set-class))
-    )
-    (defun UR_IzSetActive:bool (id:string son:bool set-class:integer)
-        (at "iz-active" (UR_Set id son set-class))
-    )
-    (defun UR_IzSetPrimordial:bool (id:string son:bool set-class:integer)
-        (at "iz-primordial" (UR_Set id son set-class))
-    )
-    (defun UR_IzSetComposite:bool (id:string son:bool set-class:integer)
-        (at "iz-composite" (UR_Set id son set-class))
-    )
-    (defun UR_PSD:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
-        (id:string son:bool set-class:integer)
-        (at "primordial-set-definition" (UR_Set id son set-class))
-    )
-    (defun UR_CSD:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] 
-        (id:string son:bool set-class:integer)
-        (at "composite-set-definition" (UR_Set id son set-class))
-    )
-    (defun UR_SetNonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool set-class:integer)
-        (at "nonce-data" (UR_Set id son set-class))
-    )
-    (defun UR_SetSplitData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool set-class:integer)
-        (at "split-data" (UR_Set id son set-class))
+    (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
+        (UR_N|RawScore (UR_NonceData id son nonce))
     )
     ;; [VerumRoles]
     (defun UR_VerumRoles:object{DpdcUdc.DPDC|VerumRoles} (id:string son:bool)
@@ -368,10 +325,10 @@
     (defun UR_Verum4:[string] (id:string son:bool)
         (at "r-nft-burn" (UR_VerumRoles id son))
     )
-    (defun UR_Verum5:[string] (id:string son:bool)
+    (defun UR_Verum5:string (id:string son:bool)
         (at "r-nft-create" (UR_VerumRoles id son))
     )
-    (defun UR_Verum6:[string] (id:string son:bool)
+    (defun UR_Verum6:string (id:string son:bool)
         (at "r-nft-recreate" (UR_VerumRoles id son))
     )
     (defun UR_Verum7:[string] (id:string son:bool)
@@ -383,24 +340,31 @@
     (defun UR_Verum9:[string] (id:string son:bool)
         (at "r-modify-royalties" (UR_VerumRoles id son))
     )
-    (defun UR_Verum10:[string] (id:string son:bool)
+    (defun UR_Verum10:string (id:string son:bool)
         (at "r-set-new-uri" (UR_VerumRoles id son))
     )
     (defun UR_Verum11:[string] (id:string son:bool)
         (at "r-transfer" (UR_VerumRoles id son))
     )
+    (defun UR_GetSingleVerum:string (id:string son:bool rp:integer)
+        (enforce (contains rp [5 6 10]) "Invalid Position for Single Verum")
+        (cond
+            ((= rp 5) (UR_Verum5 id son))
+            ((= rp 6) (UR_Verum6 id son))
+            ((= rp 10) (UR_Verum10 id son))
+            BAR
+        )
+    )
     (defun UR_GetVerumChain:[string] (id:string son:bool rp:integer)
+        (enforce (contains rp [1 2 3 4 7 8 9 11]) "Invalid Position for Multi Verum")
         (cond
             ((= rp 1) (UR_Verum1 id son))
             ((= rp 2) (UR_Verum2 id son))
             ((= rp 3) (UR_Verum3 id son))
             ((= rp 4) (UR_Verum4 id son))
-            ((= rp 5) (UR_Verum5 id son))
-            ((= rp 6) (UR_Verum6 id son))
             ((= rp 7) (UR_Verum7 id son))
             ((= rp 8) (UR_Verum8 id son))
             ((= rp 9) (UR_Verum9 id son))
-            ((= rp 10) (UR_Verum10 id son))
             ((= rp 11) (UR_Verum11 id son))
             [BAR]
         )
@@ -596,31 +560,16 @@
         (let
             (
                 (nv:integer (UR_NonceValue id son nonce))
+                (nu:integer (UR_NoncesUsed id son))
+                (an:integer (abs nonce))
             )
-            (enforce (!= nonce 0) "Invalid Nonce Value")
-            (if (> nonce 0)
-                (enforce (= nonce nv) "Invalid DPDC Data Set")
-                (let
-                    (
-                        (iz-fragmented:bool (UEV_IzNonceFragmented id son (abs nonce)))
-                    )
-                    (enforce iz-fragmented "Negative Nonce doesnt exist, as no split-data is detected!")
-                    (enforce (= (abs nonce) nv) "Invalid DPDC Data Set")
-                )  
+            (enforce
+                (fold (and) true [(!= an 0) (<= an nu) (= an nv)])
+                "Invalid Nonce Value"
             )
         )
     )
-    (defun UEV_IzNonceFragmented:bool (id:string son:bool nonce:integer)
-        (enforce (> nonce 0) "Only greater than 0 nonces can be checked for fragmentation")
-        (let
-            (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (sd:object{DpdcUdc.DPDC|NonceData} (UR_SplitData id son nonce))
-                (zd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
-            )
-            (if (!= sd zd) true false)
-        )
-    )
+    
     (defun UEV_CanUpgradeON (id:string son:bool)
         (let
             (
@@ -811,6 +760,15 @@
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_OwnerKonto id son))
         )
     )
+    (defun CAP_Creator (id:string son:bool)
+        @doc "Enforces DPSF or DPNF Token ID Ownership"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership (UR_CreatorKonto id son))
+        )
+    )
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
@@ -970,7 +928,7 @@
         )
     )
     ;; [<PropertiesTable> Writings] [1]
-    (defun XE_InsertCollection
+    (defun XE_I|Collection
         (id:string son:bool idp:object{DpdcUdc.DPDC|Properties})
         (UEV_IMC)
         (if son
@@ -1007,7 +965,7 @@
         )
     )
     ;; [<NoncesTable> Writings] [2]
-    (defun XE_InsertCollectionElement (id:string son:bool nonce-value:integer ned:object{DpdcUdc.DPDC|NonceElement})
+    (defun XE_I|CollectionElement (id:string son:bool nonce-value:integer ned:object{DpdcUdc.DPDC|NonceElement})
         (UEV_IMC)
         (if son
             (insert DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) ned)
@@ -1027,93 +985,85 @@
             )
         )
     )
-    ;; [<SetsTable> Writings] [3]
-    (defun XE_InsertCollectionSet (id:string son:bool set-class:integer set:object{DpdcUdc.DPDC|Set})
-        (UEV_IMC)
-        (if son
-            (insert DPSF|SetsTable (concat [id BAR (format "{}" [set-class])]) set)
-            (insert DPNF|SetsTable (concat [id BAR (format "{}" [set-class])]) set)
-        )
-    )
     ;; [<VerumRolesTable> Writings] [4]
-    (defun XE_InsertVerumRoles (id:string son:bool verum-chain:object{DpdcUdc.DPDC|VerumRoles})
+    (defun XE_I|VerumRoles (id:string son:bool verum-chain:object{DpdcUdc.DPDC|VerumRoles})
         (UEV_IMC)
         (if son
             (insert DPSF|VerumRolesTable id verum-chain)
             (insert DPNF|VerumRolesTable id verum-chain)
         )
     )
-    (defun XI_UpdateVerumRole1 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole1 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"a-frozen" : ul})
             (update DPNF|VerumRolesTable id {"a-frozen" : ul})
         )
     )
-    (defun XI_UpdateVerumRole2 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole2 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-exemption" : ul})
             (update DPNF|VerumRolesTable id {"r-exemption" : ul})
         )
     )
-    (defun XI_UpdateVerumRole3 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole3 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-nft-add-quantity" : ul})
             (update DPNF|VerumRolesTable id {"r-nft-add-quantity" : ul})
         )
     )
-    (defun XI_UpdateVerumRole4 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole4 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-nft-burn" : ul})
             (update DPNF|VerumRolesTable id {"r-nft-burn" : ul})
         )
     )
-    (defun XI_UpdateVerumRole5 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole5 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-nft-create" : ul})
             (update DPNF|VerumRolesTable id {"r-nft-create" : ul})
         )
     )
-    (defun XI_UpdateVerumRole6 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole6 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-nft-recreate" : ul})
             (update DPNF|VerumRolesTable id {"r-nft-recreate" : ul})
         )
     )
-    (defun XI_UpdateVerumRole7 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole7 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-nft-update" : ul})
             (update DPNF|VerumRolesTable id {"r-nft-update" : ul})
         )
     )
-    (defun XI_UpdateVerumRole8 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole8 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-modify-creator" : ul})
             (update DPNF|VerumRolesTable id {"r-modify-creator" : ul})
         )
     )
-    (defun XI_UpdateVerumRole9 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole9 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-modify-royalties" : ul})
             (update DPNF|VerumRolesTable id {"r-modify-royalties" : ul})
         )
     )
-    (defun XI_UpdateVerumRole10 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole10 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-set-new-uri" : ul})
             (update DPNF|VerumRolesTable id {"r-set-new-uri" : ul})
         )
     )
-    (defun XI_UpdateVerumRole11 (id:string son:bool ul:[string])
+    (defun XI_U|VerumRole11 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
             (update DPSF|VerumRolesTable id {"r-transfer" : ul})
@@ -1235,27 +1185,37 @@
     )
     (defun XE_U|VerumRoles (id:string son:bool rp:integer aor:bool account:string)
         (UEV_IMC)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (current-verum-chain:[string] (UR_GetVerumChain id son rp))
-                (ul:[string] (ref-U|DALOS::UC_NewRoleList current-verum-chain account aor))
+        (if (contains rp [5 6 10])
+            (if aor
+                (with-capability (SECURE)
+                    (cond
+                        ((= rp 5) (XI_U|VerumRole5 id son account))
+                        ((= rp 6) (XI_U|VerumRole6 id son account))
+                        ((= rp 10) (XI_U|VerumRole10 id son account))
+                        true
+                    )
+                )
+                true
             )
-            (with-capability (SECURE)
-                (cond
-                    ((= rp 1) (XI_UpdateVerumRole1 id son ul))
-                    ((= rp 2) (XI_UpdateVerumRole2 id son ul))
-                    ((= rp 3) (XI_UpdateVerumRole3 id son ul))
-                    ((= rp 4) (XI_UpdateVerumRole4 id son ul))
-                    ((= rp 5) (XI_UpdateVerumRole5 id son ul))
-                    ((= rp 6) (XI_UpdateVerumRole6 id son ul))
-                    ((= rp 7) (XI_UpdateVerumRole7 id son ul))
-                    ((= rp 8) (XI_UpdateVerumRole8 id son ul))
-                    ((= rp 9) (XI_UpdateVerumRole9 id son ul))
-                    ((= rp 10) (XI_UpdateVerumRole10 id son ul))
-                    ((= rp 11) (XI_UpdateVerumRole11 id son ul))
-                    true
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                    (current-verum-chain:[string] (UR_GetVerumChain id son rp))
+                    (ul:[string] (ref-U|DALOS::UC_NewRoleList current-verum-chain account aor))
+                )
+                (with-capability (SECURE)
+                    (cond
+                        ((= rp 1) (XI_U|VerumRole1 id son ul))
+                        ((= rp 2) (XI_U|VerumRole2 id son ul))
+                        ((= rp 3) (XI_U|VerumRole3 id son ul))
+                        ((= rp 4) (XI_U|VerumRole4 id son ul))
+                        ((= rp 7) (XI_U|VerumRole7 id son ul))
+                        ((= rp 8) (XI_U|VerumRole8 id son ul))
+                        ((= rp 9) (XI_U|VerumRole9 id son ul))
+                        ((= rp 11) (XI_U|VerumRole11 id son ul))
+                        true
+                    )
                 )
             )
         )
@@ -1268,12 +1228,10 @@
 ;;DPSF
 (create-table DPSF|PropertiesTable)
 (create-table DPSF|NoncesTable)
-(create-table DPSF|SetsTable)
 (create-table DPSF|VerumRolesTable)
 (create-table DPSF|AccountsTable)
 ;;DPNF
 (create-table DPNF|PropertiesTable)
 (create-table DPNF|NoncesTable)
-(create-table DPNF|SetsTable)
 (create-table DPNF|VerumRolesTable)
 (create-table DPNF|AccountsTable)

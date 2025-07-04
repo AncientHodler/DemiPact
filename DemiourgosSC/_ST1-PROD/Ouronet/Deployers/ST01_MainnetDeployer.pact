@@ -1517,6 +1517,8 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
     )
 )
 
+;;650 +143.52 183.34
+;;78% value added, X/78*100 for total amount
 
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (let
@@ -1527,7 +1529,7 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
         (original:string "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f")
     )
     (TS01-C1.DALOS|C_RotateKadena patron patron target)
-    (DALOS.KDA|C_Collect patron amount false)
+    (DALOS.KDA|C_CollectWT patron amount false)
     (TS01-C1.DALOS|C_RotateKadena patron patron original)
 )
 
@@ -1535,3 +1537,26 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  130.0)
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  195.0)
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 260.0)
+
+;;Get Owned Supplies Example
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TFT:module{TrueFungibleTransferV7} TFT)
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (id:string "WKDA-slLyzPPCo22W")
+        (accounts:[string] (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo id 1 false))
+        (l:integer (length accounts))
+    )
+    (fold
+        (lambda
+            (acc:[decimal] idx:integer)
+            (ref-U|LST::UC_AppL acc (ref-DPTF::UR_AccountSupply id (at idx accounts)))
+        )
+        []
+        (enumerate 0 (- l 1))
+    )
+)
+
+;;"Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ"

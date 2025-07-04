@@ -244,19 +244,19 @@
         ,"nonce-data"                   : i
         ,"split-data"                   : j}
     )
-    (defun UDC_DPDC|AllowedClassForSetPosition:object{DpdcUdc.DPDC|AllowedClassForSetPosition} 
-        (a:integer)
-        {"allowed-sclass"   : a}
-    )
     (defun UDC_DPDC|AllowedNonceForSetPosition:object{DpdcUdc.DPDC|AllowedNonceForSetPosition} 
         (a:[integer])
         {"allowed-nonces"   : a}
+    )
+    (defun UDC_DPDC|AllowedClassForSetPosition:object{DpdcUdc.DPDC|AllowedClassForSetPosition} 
+        (a:integer)
+        {"allowed-sclass"   : a}
     )
     ;;
     ;;  [4]
     ;;
     (defun UDC_DPDC|VerumRoles:object{DpdcUdc.DPDC|VerumRoles}
-        (a:[string] b:[string] c:[string] d:[string] e:[string] f:[string] g:[string] h:[string] i:[string] j:[string] k:[string])
+        (a:[string] b:[string] c:[string] d:[string] e:string f:string g:[string] h:[string] i:[string] j:string k:[string])
         {"a-frozen"                 : a
         ,"r-exemption"              : b
         ,"r-nft-add-quantity"       : c
@@ -302,6 +302,12 @@
     )
     (defun UDC_NoScore:object{DpdcUdc.DPDC|NonceScore} ()
         (UDC_Score -1.0)
+    )
+    (defun UDC_NoPrimordialSet:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] ()
+        [(UDC_DPDC|AllowedNonceForSetPosition [0])]
+    )
+    (defun UDC_NoCompositeSet:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] ()
+        [(UDC_DPDC|AllowedClassForSetPosition -1)]
     )
     ;;{F4}  [CAP]
     ;;
