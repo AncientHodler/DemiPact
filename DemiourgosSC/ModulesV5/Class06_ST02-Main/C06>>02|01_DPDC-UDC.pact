@@ -98,6 +98,134 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_SplitNonceBalanceObject:object{DpdcUdc.DPSF|NonceBalanceChain} (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}])
+        @doc "Splits a NonceBalanceObject into an integer array, containg 2 integer lists, one of nonces and one of supplies"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (l:integer (length input-nbo))
+                (folded-obj:[[integer]]
+                    (fold
+                        (lambda
+                            (acc:[[integer]] idx:integer)
+                            (let
+                                (
+                                    (nonce:integer (at "nonce" (at idx input-nbo)))
+                                    (supply:integer (at "supply" (at idx input-nbo)))
+                                )
+                                (if (= idx 0)
+                                    [[nonce][supply]]
+                                    (let
+                                        (
+                                            (nonce-chain:[integer] (at 0 acc))
+                                            (supply-chain:[integer] (at 1 acc))
+                                            (new-nonce-chain:[integer] (ref-U|LST::UC_AppL nonce-chain nonce))
+                                            (new-supply-chain:[integer] (ref-U|LST::UC_AppL supply-chain supply))
+                                        )
+                                        [new-nonce-chain new-supply-chain]
+                                    )
+                                )
+                            )
+                        )
+                        []
+                        (enumerate 0 (- l 1))
+                    )
+                )
+            )
+            (UDC_DPSF|NonceBalanceChain
+                (at 0 folded-obj)
+                (at 1 folded-obj)
+            )
+        )
+    )
+    (defun UC_SupplyFronNonceBalanceObject:integer (input-obj:[object{DpdcUdc.DPSF|NonceBalance}] query-value:integer nonce-or-position:bool)
+        @doc "Outputs the Supply of a given nonce or position from a <DPSF|NonceBalance> Object"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (split-array:object{DpdcUdc.DPSF|NonceBalanceChain} (UC_SplitNonceBalanceObject input-obj))
+                (nonce-chain:[integer] (at "nonce" split-array))
+                (supply-chain:[integer] (at "supply" split-array))
+                (l:integer (length input-obj))
+            )
+            (if nonce-or-position
+                (let
+                    (
+                        (iz-nonce-present:bool (contains query-value nonce-chain))
+                    )
+                    (enforce iz-nonce-present "Nonce must be present for operation")
+                    (at (at 0 (ref-U|LST::UC_Search nonce-chain query-value)) supply-chain)
+                )
+                (let
+                    (
+                        (iz-position-in-range:bool (<= query-value l))
+                    )
+                    (enforce iz-position-in-range "Position must be in range for operation")
+                    (at query-value supply-chain)
+                )
+            )
+        )
+    )
+    (defun UC_CreditOrDebitNonceObject:[object{DpdcUdc.DPSF|NonceBalance}]
+        (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}] nonces-to-modify:[integer] amounts-to-modify-with:[integer] credit-or-debit:bool)
+        (if (= input-nbo [(UDC_ZeroNBO)])
+            (do
+                (enforce credit-or-debit "A Zero NBO Can only be credited upon.")
+                (zip (lambda (n:integer a:integer) (UDC_DPSF|NonceBalance n a)) nonces-to-modify amounts-to-modify-with)
+            )
+            (let
+                (
+                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (split-array:object{DpdcUdc.DPSF|NonceBalanceChain} (UC_SplitNonceBalanceObject input-nbo))
+                    (nonce-chain:[integer] (at "nonce" split-array))
+                    (supply-chain:[integer] (at "supply" split-array))
+                )
+                (filter 
+                    (lambda 
+                        (element:object{DpdcUdc.DPSF|NonceBalance})
+                        (!= (at "supply" element) 0)
+                    )
+                    (fold
+                        (lambda
+                            (acc:[object{DpdcUdc.DPSF|NonceBalance}] idx:integer)
+                            (let
+                                (
+                                    (nonce:integer (at idx nonces-to-modify))
+                                    (amount:integer (at idx amounts-to-modify-with))
+                                    ;;
+                                    (iz-nonce-present:bool (contains nonce nonce-chain))
+                                )
+                                (if iz-nonce-present
+                                    (let
+                                        (
+                                            (nonce-position:integer (at 0 (ref-U|LST::UC_Search nonce-chain nonce)))
+                                            (current-nonce-supply:integer (at nonce-position supply-chain))
+                                            (updated-balance:integer 
+                                                (if credit-or-debit
+                                                    (+ current-nonce-supply amount)
+                                                    (- current-nonce-supply amount)
+                                                )
+                                            )
+                                            (updated-nbo:object{DpdcUdc.DPSF|NonceBalance} 
+                                                (UDC_DPSF|NonceBalance nonce updated-balance)
+                                            )
+                                        )
+                                        (ref-U|LST::UC_ReplaceAt acc nonce-position updated-nbo)  
+                                    )
+                                    (do
+                                        (enforce credit-or-debit "When the Nonce isnt present, it can only be credited and not debited upon.")
+                                        (ref-U|LST::UC_AppL acc (UDC_DPSF|NonceBalance nonce amount))
+                                    )
+                                )
+                            )
+                        )
+                        input-nbo
+                        (enumerate 0 (- (length nonces-to-modify) 1))
+                    )
+                )
+            )
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -116,6 +244,11 @@
     )
     (defun UDC_DPSF|NonceBalance:object{DpdcUdc.DPSF|NonceBalance}
         (a:integer b:integer)
+        {"nonce"                    : a
+        ,"supply"                   : b}
+    )
+    (defun UDC_DPSF|NonceBalanceChain:object{DpdcUdc.DPSF|NonceBalanceChain}
+        (a:[integer] b:[integer])
         {"nonce"                    : a
         ,"supply"                   : b}
     )
@@ -228,19 +361,20 @@
     ;;
     (defun UDC_DPDC|Set:object{DpdcUdc.DPDC|Set}
         (
-            a:integer b:string c:bool d:bool e:bool
-            f:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
-            g:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            a:integer b:string c:integer d:bool e:bool f:bool
+            g:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            h:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             i:object{DpdcUdc.DPDC|NonceData}
             j:object{DpdcUdc.DPDC|NonceData}
         )
         {"set-class"                    : a
         ,"set-name"                     : b
-        ,"iz-active"                    : c
-        ,"primordial"                   : d
-        ,"composite"                    : e
-        ,"primordial-set-definition"    : f
-        ,"composite-set-definition"     : g
+        ,"nonce-of-set"                 : c
+        ,"iz-active"                    : d
+        ,"primordial"                   : e
+        ,"composite"                    : f
+        ,"primordial-set-definition"    : g
+        ,"composite-set-definition"     : h
         ,"nonce-data"                   : i
         ,"split-data"                   : j}
     )

@@ -44,9 +44,16 @@
     ;;
     (defun DPNF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun DPNF|C_TogglePause (patron:string id:string toggle:bool))
+    (defun DPNF|C_Burn (patron:string id:string account:string nonce:integer))
+    (defun DPNF|C_Respawn (patron:string id:string account:string nonce:integer))
+    (defun DPNF|C_WipeNonce (patron:string id:string account:string nonce:integer))
+    (defun DPNF|C_Wipe (patron:string id:string account:string))
+
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPNF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
+    (defun DPNF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)) 
     ;;
     ;;  [8] DPDC-S
     ;;
@@ -525,7 +532,6 @@
             )
         )
     )
-    
     (defun DPNF|C_TogglePause (patron:string id:string toggle:bool)
         @doc "Pauses a DPNF Collection. Paused Collections can no longer be transfered"
         (with-capability (P|TS)
@@ -540,9 +546,103 @@
             )
         )
     )
+    (defun DPNF|C_Burn (patron:string id:string account:string nonce:integer)
+        @doc "Burns NFT <id> <nonce> on <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_BurnNFT id account nonce)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_Respawn (patron:string id:string account:string nonce:integer)
+        @doc "Respawns NFT <id> <nonce> on <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_RespawnNFT id account nonce)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_WipeNonce (patron:string id:string account:string nonce:integer)
+        @doc "Wipes NFT <id> <nonce> on <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_WipeNftNonce id account nonce)
+                )
+            )
+        )
+    )
+    (defun DPNF|C_Wipe (patron:string id:string account:string)
+        @doc "Wipes NFT <id> on <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_WipeNft id account)
+                )
+            )
+        )
+    )
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPNF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool)
+        @doc "Transfer an NFT <nonce> of <amount> from <sender> to <receiver> using <method>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-T::C_Transfer id false sender receiver [nonce] [amount] method)
+                )
+                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id false [nonce] [amount])
+                (format "Succesfuly transfered Native NFT {} Nonce {} from {} to {}" [id nonce sa ra])
+            )
+        )
+    )
+    (defun DPNF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
+        @doc "Transfer an NFT <nonce> of <amount> from <sender> to <receiver> using <method>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-T::C_Transfer id false sender receiver nonces amounts method)
+                )
+                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id false nonces amounts)
+                (format "Succesfully transfered {} Amounts Native NFT {} Nonces {} from {} to {}" [amounts id nonces sa ra])
+            )
+        )
+    )
     ;;
     ;;  [8] DPDC-S
     ;;

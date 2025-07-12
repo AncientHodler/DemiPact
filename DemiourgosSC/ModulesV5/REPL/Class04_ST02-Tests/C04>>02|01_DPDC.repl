@@ -83,12 +83,12 @@
     (ref-TS02-C1::DPSF|C_TogglePause patron id t)
     (ref-TS02-C1::DPSF|C_ToggleAddQuantityRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma t)
-    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
+    ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
     (ref-TS02-C1::DPSF|C_DeployAccount patron id orbr)
     (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr t)
     (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr f)
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
-    (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
+    ;(ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
     (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma f)
@@ -203,7 +203,7 @@
     (ref-TS02-C1::DPSF|C_UpdateNonceName patron id emma 1  true "Snake Eyez")
     (ref-TS02-C1::DPSF|C_UpdateNonceDescription patron id emma 1 true "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
     (ref-TS02-C1::DPSF|C_UpdateNonceRoyalty patron id emma 1 true 133.0)
-    (ref-TS02-C1::DPSF|C_UpdateNonceIgnisRoyalty patron id emma 1 true 49.0)
+    (ref-TS02-C1::DPSF|C_UpdateNonceIgnisRoyalty patron id emma 1 true 50.0)
     
     ;(ref-TS02-C1::DPSF|C_UpdateNonceURI patron id emma 1 true
     ;    {"image"    : t
@@ -346,6 +346,199 @@
 (print "")
 (print "")
 (format "<<<<<<<TX 004 -- Set Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 005 -- NFT Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    [
+        (ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 20)
+        ;(ref-TS02-C1::DPSF|C_AddQuantity patron id emma 11 20)
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        (ref-TS02-C1::DPSF|C_Burn patron id emma 1 19)
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        (ref-TS02-C1::DPSF|C_WipeNoncePartialy patron id emma 1 11)
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        ;(ref-TS02-C1::DPSF|C_WipeNonce patron id emma 1)
+        ;;;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        ;(ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 500)
+        
+
+        
+        
+        
+        ;(ref-TS02-C1::DPSF|C_WipeNonces patron id emma)
+        ;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        ;(format "SemiFungible Account Holdings are: {}" [(ref-DPDC::UR_SemiFungibleAccountHoldings id emma)])
+        ;(format "Nonce 1 Supply again is {}" [(ref-DPDC::UC_SupplyFronNonceBalanceObject (ref-DPDC::UR_SemiFungibleAccountHoldings id emma) 1 true)])
+
+        ;(ref-DPDC::UR_NonceSupply id true 1)
+        ;(ref-DPDC::UR_SemiFungibleAccountHoldings id emma)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 005 -- NFT Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 006 -- NFT Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+        (id:string "DHN-98c486052a51")
+        ;(id2:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    (ref-TS02-C2::DPNF|C_ToggleBurnRole patron id emma true)
+    [
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id patron)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id lumy)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(ref-TS02-C2::DPNF|C_Burn patron id emma 1)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(format "Non Fungible 1 active status is {}" [(ref-DPDC::UR_IzNonFungibleNonceActive id 1)])
+        ;(format "Create State for Nsoferatu is on {}" [(ref-DPDC::UR_Verum5 id false)])
+        ;(ref-TS02-C2::DPNF|C_Respawn patron id emma 1)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;;
+        ;(ref-TS02-C2::DPNF|C_ToggleFreezeAccount patron id emma true)
+        ;(ref-TS02-C2::DPNF|C_WipeNonce patron id emma 3)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+
+        ;;
+        ;(ref-DPDC::UR_SemiFungibleAccountHoldings id2 emma)
+        ;(ref-TS02-C2::DPNF|C_Wipe patron id emma)
+        (ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 006 -- NFT Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 007 -- SFT Trasnfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+        (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma false)
+    (ref-TS02-C1::DPSF|C_TogglePause patron id false)
+    [
+        (format "Patron has {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
+        (format "Summed Ignis Royalty is {}" [(ref-DPDC-T::URC_SummedIgnisRoyalty id true [1] [7])])
+        (format "Transfer Cumulator is {}" [(ref-DPDC-T::UDC_TransferCumulator true patron emma [7])])
+        (ref-TS02-C1::DPSF|C_TransferNonce patron id emma lumy 1 7 false)
+        (format "Patron has after transfer {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id lumy)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id emma)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 007a -- SFT Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 007b -- SFT Trasnfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (id:string "DHN-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    ;(ref-TS02-C1::DPSF|C_TransferNonces patron id emma lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
+    (ref-TS02-C2::DPNF|C_TransferNonce patron id emma lumy 1 1 false)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 007b -- SFT Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

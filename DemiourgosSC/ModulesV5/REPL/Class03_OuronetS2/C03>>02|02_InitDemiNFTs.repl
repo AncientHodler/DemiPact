@@ -13,16 +13,59 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
 (print "")
-(begin-tx "INIT TX 02 - C08>>02|01_DPL-NOSFERATU.pact")
+(begin-tx "INIT TX 02 - C08>>02|02_DPL-NOSFERATU.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../../Class08_ST02-PostTalos/C08>>02|02_DPL-NOSFERATU.pact")
-(format "<<<<<<<NFT Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<NFT Nosferatu Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
+(print "")
+(begin-tx "INIT TX 03 - C08>>02|03_DPL-BLOODSHED-L.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/C08>>02|03_DPL-BLOODSHED-L.pact")
+(format "<<<<<<<NFT Bloodshed Legendary Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(begin-tx "INIT TX 04 - C08>>02|03_DPL-BLOODSHED-E.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/C08>>02|04_DPL-BLOODSHED-E.pact")
+(format "<<<<<<<NFT Bloodshed Epic Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(begin-tx "INIT TX 04 - C08>>02|03_DPL-BLOODSHED-R.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/C08>>02|05_DPL-BLOODSHED-R.pact")
+(format "<<<<<<<NFT Bloodshed Rare Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(begin-tx "INIT TX 06 - C08>>02|03_DPL-BLOODSHED-C.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/C08>>02|06_DPL-BLOODSHED-C.pact")
+(format "<<<<<<<NFT Bloodshed Common Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+
 ;; PART 02 - Load Constant Modules (for Repl Testing purposes)
 (begin-tx "Constant Module for NFT Deployment")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -50,8 +93,12 @@
 (begin-tx "NFT - Use Modules")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
-(use free.DPL-NFT)  ;;
-(use free.NOSFERATU)  ;;
+(use free.DPL-NFT)
+(use free.NOSFERATU)
+(use free.BLOODSHED-L)
+(use free.BLOODSHED-E)
+(use free.BLOODSHED-R)
+(use free.BLOODSHED-C)
 
 (env-gas)
 (commit-tx)
@@ -388,6 +435,8 @@
         (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-NOS:module{DeployerNosferatu} NOSFERATU)
         (patron:string  KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)  
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 patron
@@ -398,6 +447,8 @@
     (env-sigs
         [   
             { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
             { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
               "caps": 
                 [
@@ -425,7 +476,7 @@
             }
         ]
     )
-    (ref-NOS::A_Step01 patron patron patron)
+    (ref-NOS::A_Step01 patron lumy emma)
 )
 (print "")
 (print "")
@@ -438,3 +489,218 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
+(begin-tx "Init STEP 07 - Issue Bloodshed")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-BSL:module{BsLegendary} BLOODSHED-L)
+        (patron:string  KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)  
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (ref-DALOS::UR_UsagePrice "dpnf")
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (ref-BSL::A_Issue patron lumy emma)
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07 - Issue Bloodshed Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 07a - Create Bloodshed Legendary")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-BSL:module{BsLegendary} BLOODSHED-L)
+        (patron:string  KST.ANHD) 
+        (dhb:string "DHB-98c486052a51")
+    )
+    (ref-BSL::A_Legendary patron dhb (enumerate 1 160))
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07a - Create Bloodshed Legendary Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 07b - Create Bloodshed Epic")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-BSE:module{BsEpic} BLOODSHED-E)
+        (patron:string  KST.ANHD) 
+        (dhb:string "DHB-98c486052a51")
+    )
+    (ref-BSE::A_Epic patron dhb (enumerate 1 1536))
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07b - Create Bloodshed Epic Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 07c - Create Bloodshed Rare")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-BSR:module{BsRare} BLOODSHED-R)
+        (patron:string  KST.ANHD) 
+        (dhb:string "DHB-98c486052a51")
+    )
+    (ref-BSR::A_Rare patron dhb (enumerate 1 3168))
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07c - Create Bloodshed Rare Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 07d - Create Bloodshed Common")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-BSC:module{BsCommon} BLOODSHED-C)
+        (patron:string  KST.ANHD) 
+        (dhb:string "DHB-98c486052a51")
+    )
+    (ref-BSC::A_Common patron dhb (enumerate 1 4032))
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07d - Create Bloodshed Common Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 07e - Create Bloodshed Common")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-BSC:module{BsCommon} BLOODSHED-C)
+        (patron:string  KST.ANHD) 
+        (dhb:string "DHB-98c486052a51")
+    )
+    (ref-BSC::A_Common patron dhb (enumerate 4033 8064 1))
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 07e - Create Bloodshed Common Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

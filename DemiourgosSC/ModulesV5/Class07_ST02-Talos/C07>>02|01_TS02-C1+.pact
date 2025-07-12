@@ -43,11 +43,17 @@
     ;;
     ;;  [6] DPDC-MNG
     ;;
-    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)) ;x
+    (defun DPSF|C_Control (patron:string id:string cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun DPSF|C_TogglePause (patron:string id:string toggle:bool))
+    (defun DPSF|C_AddQuantity (patron:string id:string account:string nonce:integer amount:integer))
+    (defun DPSF|C_Burn (patron:string id:string account:string nonce:integer amount:integer))
+    (defun DPSF|C_WipeNoncePartialy (patron:string id:string account:string nonce:integer amount:integer))
+    (defun DPSF|C_WipeNonce (patron:string id:string account:string nonce:integer))
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
+    (defun DPSF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
     ;;
     ;;  [8] DPDC-S
     ;;
@@ -236,6 +242,14 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_ShortAccount:string (account:string)
+        (let
+            (
+                (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+            )
+            (ref-I|OURONET::OI|UC_ShortAccount account)
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -542,7 +556,6 @@
             )
         )
     )
-    
     (defun DPSF|C_TogglePause (patron:string id:string toggle:bool)
         @doc "Pauses a DPSF Collection. Paused Collections can no longer be transfered"
         (with-capability (P|TS)
@@ -557,10 +570,124 @@
             )
         )
     )
-    
+    (defun DPSF|C_AddQuantity (patron:string id:string account:string nonce:integer amount:integer)
+        @doc "Increases the Quantity for SFT <id> <nonce> by <amount> on <account> \
+        \ Account is created if it doesnt exist for SFT <id>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_AddQuantity id account nonce amount)
+                )
+                (format "Succesfuly added {} Units for SFT {} Nonce {} on Account {}" [amount id nonce (UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPSF|C_Burn (patron:string id:string account:string nonce:integer amount:integer)
+        @doc "Decreases the Quantity for SFT <id> <nonce> by <amount> on <account> \
+        \ Account is created if it doesnt exist for SFT <id>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_BurnSFT id account nonce amount)
+                )
+                (format "Succesfuly removed {} Units for SFT {} Nonce {} on Account {}" [amount id nonce (UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPSF|C_WipeNoncePartialy (patron:string id:string account:string nonce:integer amount:integer)
+        @doc "Wipes a partial <amount> of SFT <id> <nonce> from <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_WipeSftNoncePartialy id account nonce amount)
+                )
+                (format "Succesfuly wiped {} Units for SFT {} Nonce {} from Account {}" [amount id nonce (UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPSF|C_WipeNonce (patron:string id:string account:string nonce:integer)
+        @doc "Wipes the SFT <id> <nonce> from <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_WipeSftNonce id account nonce)
+                )
+                (format "Succesfuly wiped SFT {} Nonce {} from Account {}" [id nonce (UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPSF|C_WipeNonces (patron:string id:string account:string)
+        @doc "Wipes all of SFT <id> from <account>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-MNG::C_WipeSftNonces id account)
+                )
+                (format "Succesfuly wiped SFT {} from Account {}" [id (UC_ShortAccount account)])
+            )
+        )
+    )
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool)
+        @doc "Transfer an SFT <nonce> of <amount> from <sender> to <receiver> using <method>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-T::C_Transfer id true sender receiver [nonce] [amount] method)
+                )
+                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id true [nonce] [amount])
+                (format "Succesfuly transfered {} SFT {} Nonce {} from {} to {}" [amount id nonce sa ra])
+            )
+        )
+    )
+    (defun DPSF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
+        @doc "Transfer an SFT <nonce> of <amount> from <sender> to <receiver> using <method>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-T::C_Transfer id true sender receiver nonces amounts method)
+                )
+                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id true nonces amounts)
+                (format "Succesfully transfered {} Amounts SFT {} Nonces {} from {} to {}" [amounts id nonces sa ra])
+            )
+        )
+    )
     ;;
     ;;  [8] DPDC-S
     ;;

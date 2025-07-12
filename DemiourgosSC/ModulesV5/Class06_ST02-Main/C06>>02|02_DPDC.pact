@@ -248,7 +248,7 @@
     (defun UR_IzNonFungibleNonceActive:bool (id:string nonce:integer)
         @doc "Check if an NFT Nonce is active. Is used for NFTs only, as all SFTs are always active by default. \
             \ And only NFT Nonces can become inactive"
-        (enforce (>= nonce 0) "Only higher than zero Nonces can be checked for activness")
+        (enforce (> nonce 0) "Only higher than zero Nonces can be checked for activness")
         (at "iz-active" (UR_NonceElement id false nonce))
     )
     (defun UR_NonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
@@ -386,11 +386,16 @@
     )
     (defun UR_AccountNonces:[integer] (id:string son:bool account:string fragments-or-native:bool)
         @doc "Outputs Requestes Account Nonces"
-        (if fragments-or-native
-            (at 0 (UR_SplitNonceBalanceObject (UR_AccountFragments id son account)))
-            (if son
-                (at 0 (UR_SplitNonceBalanceObject (UR_SemiFungibleAccountHoldings id account)))
-                (UR_NonFungibleAccountHoldings id account)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+            )
+            (if fragments-or-native
+                (at "nonce" (ref-DPDC-UDC::UC_SplitNonceBalanceObject (UR_AccountFragments id son account)))
+                (if son
+                    (at "nonce" (ref-DPDC-UDC::UC_SplitNonceBalanceObject (UR_SemiFungibleAccountHoldings id account)))
+                    (UR_NonFungibleAccountHoldings id account)
+                )
             )
         )
     )
@@ -406,88 +411,32 @@
             (at "fragments" (read DPNF|AccountsTable (concat [id BAR account]) ["fragments"]))
         )
     )
-    (defun UR_SplitNonceBalanceObject:[[integer]] (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}])
-        @doc "Splits a NonceBalanceObject into an integer array, containg 2 integer lists, one of nonces and one of supplies"
+    (defun UR_AccountNonceSupply:integer (id:string son:bool account:string nonce:integer)
+        @doc "Returns the supply of a Nonce existing on a given account, be it SFT or NFT, positive or negative nonce"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (l:integer (length input-nbo))
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
             )
-            (fold
-                (lambda
-                    (acc:[[integer]] idx:integer)
-                    (let
-                        (
-                            (nonce:integer (at "nonce" (at idx input-nbo)))
-                            (supply:integer (at "supply" (at idx input-nbo)))
-                        )
-                        (if (= idx 0)
-                            [[nonce][supply]]
-                            (let
-                                (
-                                    (nonce-chain:[integer] (at 0 acc))
-                                    (supply-chain:[integer] (at 1 acc))
-                                    (new-nonce-chain:[integer] (ref-U|LST::UC_AppL nonce-chain nonce))
-                                    (new-supply-chain:[integer] (ref-U|LST::UC_AppL supply-chain nonce))
-                                )
-                                [new-nonce-chain new-supply-chain]
+            (if son
+                (let
+                    (
+                        (nbo:[object{DpdcUdc.DPSF|NonceBalance}]
+                            (if (> nonce 0)
+                                (UR_SemiFungibleAccountHoldings id account)
+                                (UR_AccountFragments id true account)
                             )
                         )
                     )
+                    (ref-DPDC-UDC::UC_SupplyFronNonceBalanceObject nbo nonce true)
                 )
-                []
-                (enumerate 0 (- l 1))
-            )
-        )
-    )
-    (defun UC_SupplyFronNonceBalanceObject:integer (input-obj:[object{DpdcUdc.DPSF|NonceBalance}] query-value:integer nonce-or-position:bool)
-        @doc "Outputs the Supply of a given nonce or position from a <DPSF|NonceBalance> Object"
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (split-array:[[integer]] (UR_SplitNonceBalanceObject input-obj))
-                (nonce-chain:[integer] (at 0 split-array))
-                (supply-chain:[integer] (at 1 split-array))
-                (l:integer (length input-obj))
-            )
-            (if nonce-or-position
-                (let
-                    (
-                        (iz-nonce-present:bool (contains query-value nonce-chain))
-                    )
-                    (enforce iz-nonce-present "Nonce must be present for operation")
-                    (at (at 0 (ref-U|LST::UC_Search nonce-chain query-value)) supply-chain)
-                )
-                (let
-                    (
-                        (iz-position-in-range:bool (<= query-value l))
-                    )
-                    (enforce iz-position-in-range "Position must be in range for operation")
-                    (at query-value supply-chain)
+                (if (> nonce 0)
+                    1
+                    (ref-DPDC-UDC::UC_SupplyFronNonceBalanceObject (UR_AccountFragments id false account) nonce true)
                 )
             )
         )
     )
-    (defun UR_AccountNonceSupply:integer (id:string son:bool account:string nonce:integer)
-        @doc "Returns the supply of a Nonce existing on a given account, be it SFT or NFT, positive or negative nonce"
-        (if son
-            (let
-                (
-                    (nbo:[object{DpdcUdc.DPSF|NonceBalance}]
-                        (if (> nonce 0)
-                            (UR_SemiFungibleAccountHoldings id account)
-                            (UR_AccountFragments id true account)
-                        )
-                    )
-                )
-                (UC_SupplyFronNonceBalanceObject nbo nonce true)
-            )
-            (if (> nonce 0)
-                1
-                (UC_SupplyFronNonceBalanceObject (UR_AccountFragments id false account) nonce true)
-            )
-        )
-    )
+    ;;
     (defun UR_CA|R:object{DpdcUdc.AccountRoles} (id:string son:bool account:string)
         (if son
             (at "roles" (read DPSF|AccountsTable (concat [id BAR account]) ["roles"]))
@@ -569,7 +518,6 @@
             )
         )
     )
-    
     (defun UEV_CanUpgradeON (id:string son:bool)
         (let
             (
@@ -728,6 +676,14 @@
                 (= (floor royalty ignis-pr) royalty)
                 (format "The Ignis input amount of {} is not conform with its precision" [royalty])
             )
+        )
+    )
+    (defun UEV_NftNonceExistance (id:string nonce:integer existance:bool)
+        (let
+            (
+                (x:bool (UR_IzNonFungibleNonceActive id nonce))
+            )
+            (enforce (= x existance) (format "NFT {} Nonce {} must have Existance set to {} for Operation" [id nonce existance]))
         )
     )
     ;;{F3}  [UDC]
@@ -971,6 +927,14 @@
             (insert DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) ned)
             (insert DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) ned)
         )
+    )
+    (defun XE_U|NonceSupply (id:string nonce-value:integer new-supply:integer)
+        (UEV_IMC)
+        (update DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"nonce-supply" : new-supply})
+    )
+    (defun XE_U|NonceIzActive (id:string nonce-value:integer iz-active:bool)
+        (UEV_IMC)
+        (update DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"iz-active" : iz-active})
     )
     (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nd:object{DpdcUdc.DPDC|NonceData} nos:bool)
         (UEV_IMC)

@@ -1060,10 +1060,10 @@
             (ref-I|OURONET::OI|UDC_ClientInfo
                 [
                     (format "Operation: Coils (autostakes) {} on the {} ATS-Pair" [rt ats])
-                    (format "Generates {} {}" [c-rbt-amount c-rbt])
+                    (format "Coil generates {} {}" [c-rbt-amount c-rbt])
                 ]
                 [
-                    (format "Succesfuly autostaked {} {} on ATS-Pair {} generating {} {} on {} Account" [amount rt ats c-rbt-amount c-rbt sa-coiler])
+                    (format "Succesfully autostaked {} {} on ATS-Pair {} generating {} {} on {} Account" [amount rt ats c-rbt-amount c-rbt sa-coiler])
                 ]
                 (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
                 (ref-I|OURONET::OI|UDC_NoKadenaCosts)

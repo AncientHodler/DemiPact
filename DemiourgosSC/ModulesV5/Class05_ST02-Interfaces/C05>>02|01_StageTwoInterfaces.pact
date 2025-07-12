@@ -16,6 +16,10 @@
         nonce:integer
         supply:integer
     )
+    (defschema DPSF|NonceBalanceChain
+        nonce:[integer]
+        supply:[integer]
+    )
     ;;DPNF
     (defschema DPNF|Account
         @doc "Key = <DPNF-id> + BAR + <account>"
@@ -116,6 +120,9 @@
     (defschema DPDC|Set
         set-class:integer
         set-name:string
+        nonce-of-set:integer                ;;Saves the Nonce of the Set; 
+                                            ;;Only for SFT, since they get their own nonce at definition
+                                            ;;For NFT has no use and is filled with 0
         ;;                                  
         iz-active:bool                      ;;Inactive Sets cannot be composed, but can be decomposed
         primordial:bool                     ;;primordial sets are composed of specific class 0 nonces
@@ -151,6 +158,9 @@
         r-set-new-uri:string
         r-transfer:[string]
     )
+    ;;
+    (defun UC_SplitNonceBalanceObject:object{DPSF|NonceBalanceChain} (input-nbo:[object{DPSF|NonceBalance}]))
+    (defun UC_SupplyFronNonceBalanceObject:integer (input-obj:[object{DPSF|NonceBalance}] query-value:integer nonce-or-position:bool))
     ;;
     ;;  [UDC]
     ;;
@@ -199,9 +209,9 @@
     ;;
     (defun UDC_DPDC|Set:object{DPDC|Set}
         (
-            a:integer b:string c:bool d:bool e:bool
-            f:[object{DPDC|AllowedNonceForSetPosition}]
-            g:[object{DPDC|AllowedClassForSetPosition}]
+            a:integer b:string c:integer d:bool e:bool f:bool
+            g:[object{DPDC|AllowedNonceForSetPosition}]
+            h:[object{DPDC|AllowedClassForSetPosition}]
             i:object{DPDC|NonceData}
             j:object{DPDC|NonceData}
         )
@@ -286,7 +296,12 @@
     (defun UR_GetVerumChain:[string] (id:string son:bool rp:integer))
 
     (defun UR_IzAccount:bool (id:string son:bool account:string))
+    (defun UR_AccountNonces:[integer] (id:string son:bool account:string fragments-or-native:bool))
+    (defun UR_SemiFungibleAccountHoldings:[object{DpdcUdc.DPSF|NonceBalance}] (id:string account:string))
     (defun UR_NonFungibleAccountHoldings:[integer] (id:string account:string))
+    (defun UR_AccountFragments:[object{DpdcUdc.DPSF|NonceBalance}] (id:string son:bool account:string))
+    (defun UR_AccountNonceSupply:integer (id:string son:bool account:string nonce:integer))
+    ;;
     (defun UR_CA|R:object{AccountRoles} (id:string son:bool account:string))
     (defun UR_CA|R-AddQuantity:bool (id:string account:string))
     (defun UR_CA|R-Frozen:bool (id:string son:bool account:string))
@@ -324,6 +339,7 @@
     (defun UEV_AccountSetUriState (id:string son:bool account:string state:bool))
     (defun UEV_Royalty (royalty:decimal))
     (defun UEV_IgnisRoyalty (royalty:decimal))
+    (defun UEV_NftNonceExistance (id:string nonce:integer existance:bool))
     ;;
     ;; [UDC]
     ;;
@@ -395,7 +411,6 @@
     ;;
     ;;  [UC]
     ;;
-    (defun UC_CreditOrDebitNonceObject:[object{DpdcUdc.DPSF|NonceBalance}] (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}] nonces-to-modify:[integer] amounts-to-modify-with:[integer] credit-or-debit:bool))
     (defun UC_AndTruths:bool (truths:[bool]))
     ;;
     ;;  [UEV]
@@ -496,12 +511,45 @@
     ;;
     (defun C_Control:object{IgnisCollector.OutputCumulator} (id:string son:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool))
     (defun C_TogglePause:object{IgnisCollector.OutputCumulator} (id:string son:bool toggle:bool))
+        ;;
+    (defun C_AddQuantity:object{IgnisCollector.OutputCumulator} (id:string account:string nonce:integer amount:integer))
+    (defun C_BurnSFT:object{IgnisCollector.OutputCumulator} (id:string account:string nonce:integer amount:integer))
+    (defun C_WipeSftNoncePartialy:object{IgnisCollector.OutputCumulator} (id:string account:string nonce:integer amount:integer))
+    (defun C_WipeSftNonce:object{IgnisCollector.OutputCumulator} (id:string account:string nonce:integer))
+    (defun C_WipeSftNonces:object{IgnisCollector.OutputCumulator} (id:string account:string))
+        ;;
+    (defun C_BurnNFT (id:string account:string nonce:integer))
+    (defun C_RespawnNFT (id:string account:string nonce:integer))
+    (defun C_WipeNftNonce (id:string account:string nonce:integer))
+    (defun C_WipeNft (id:string account:string))
 )
 ;;
 ;;
-;(interface DpdcTransfer
-;    
-;)
+(interface DpdcTransfer
+    @doc "Holds Dpdc Transfer Related Functions"
+    ;;
+    (defun UC_AndTruths:bool (truths:[bool]))
+    ;;
+    ;;  [URC]
+    ;;
+    (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string))
+    (defun URC_SummedIgnisRoyalty:decimal (id:string son:bool nonces:[integer] amounts:[integer]))
+    ;;
+    ;;  [UEV]
+    ;;
+    (defun UEV_TransferRoles (id:string son:bool sender:string receiver:string))
+    (defun UEV_TransferRoleChecker (trc:bool s:bool r:bool))
+    (defun UEV_AmountsForTransfer (id:string son:bool nonces:[integer] amounts:[integer]))
+    ;;
+    ;;  [UDC]
+    ;;
+    (defun UDC_TransferCumulator:object{IgnisCollector.OutputCumulator} (son:bool sender:string receiver:string amounts:[integer]))
+    ;;
+    ;;  [C]
+    ;;
+    (defun C_Transfer (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
+    (defun C_IgnisRoyaltyCollector (patron:string id:string son:bool nonces:[integer] amounts:[integer]))
+)
 ;;
 (interface DpdcSets
     @doc "Holds Dpdc Set Related Functions"

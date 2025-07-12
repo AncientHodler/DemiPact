@@ -196,6 +196,9 @@
     (defun UR_SetName:string (id:string son:bool set-class:integer)
         (at "set-name" (UR_Set id son set-class))
     )
+    (defun UR_NonceOfSet:string (id:string set-class:integer)
+        (at "nonce-of-set" (UR_Set id true set-class))
+    )
     (defun UR_IzSetActive:bool (id:string son:bool set-class:integer)
         (at "iz-active" (UR_Set id son set-class))
     )
@@ -220,6 +223,20 @@
         (at "split-data" (UR_Set id son set-class))
     )
     ;;{F1}  [URC]
+    (defun URC_PrimordialOrComposite:bool (id:string son:bool set-class:integer)
+        (UEV_SetClass id son set-class)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (UR_PSD id son set-class))
+                (no-psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (ref-DPDC-UDC::UDC_NoPrimordialSet))
+            )
+            (if (= psd no-psd)
+                false
+                true
+            )
+        )
+    )
     ;;{F2}  [UEV]
     (defun UEV_PrimordialSetDefinition (id:string son:bool set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}])
         (let
@@ -413,7 +430,13 @@
             )
         )
     )
-    ;;(defun C_UpdateSet) ;;cannot be done. For a new composition, a new set must be defined and previous set must be disabled.
+    (defun C_MakeSet:object{IgnisCollector.OutputCumulator} (id:string son:bool nonces:[integer] set-class:integer)
+        true
+        ;;Transfer 1 of each Nonce to DPDC|SC_NAME
+        ;;Create the SET SFT|NFT; 
+        ;;  If its SFT, use the stored nonce, and create 1 Unit
+        ;;  If its NFT, create new Nonce, with the set <nonce-data>
+    )
     ;;{F7}  [X]
     (defun XI_PrimordialSet:integer
         (
@@ -428,11 +451,19 @@
                 (ref-DPDC:module{Dpdc} DPDC)
                 (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
                 (set-class:integer (+ set-classes-used 1))
+                (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))
+                (nonce-of-set:integer
+                    (if son
+                        (+ nonces-used 1)
+                        0
+                    )
+                )
             )
             (XI_I|CollectionSet id son set-class
                 (ref-DPDC-UDC::UDC_DPDC|Set
                     set-class
                     set-name
+                    nonce-of-set
                     true
                     true
                     false
@@ -459,11 +490,19 @@
                 (ref-DPDC:module{Dpdc} DPDC)
                 (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
                 (set-class:integer (+ set-classes-used 1))
+                (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))
+                (nonce-of-set:integer
+                    (if son
+                        (+ nonces-used 1)
+                        0
+                    )
+                )
             )
             (XI_I|CollectionSet id son set-class
                 (ref-DPDC-UDC::UDC_DPDC|Set
                     set-class
                     set-name
+                    nonce-of-set
                     true
                     false
                     true

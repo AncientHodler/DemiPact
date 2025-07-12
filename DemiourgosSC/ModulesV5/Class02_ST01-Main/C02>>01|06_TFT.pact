@@ -241,8 +241,8 @@
                 (ref-DALOS::CAP_EnforceAccountOwnership receiver)
                 true
             )
-            (ref-DALOS::CAP_EnforceAccountOwnership sender);
-            (ref-DALOS::UEV_EnforceTransferability sender receiver method) ;;x
+            (ref-DALOS::CAP_EnforceAccountOwnership sender)
+            (ref-DALOS::UEV_EnforceTransferability sender receiver method)
             (ref-DPTF::UEV_Amount id transfer-amount) ;;x
             (ref-DPTF::UEV_PauseState id false);
             (ref-DPTF::UEV_AccountFreezeState id sender false);

@@ -1,15 +1,27 @@
 (interface OuronetIntegersV2
     @doc "Exported Integer Functions"
+    (defschema NonceSplitter
+        negative-nonces:[integer]
+        positive-nonces:[integer]
+        negative-counterparts:[integer]
+        positive-counterparts:[integer]
+    )
     (defschema SplitIntegers
         negative:[integer]
         positive:[integer]
     )
     ;;
-    (defun UC_MaxInteger:integer (lst:[integer])) ;;2
+    (defun UC_MaxInteger:integer (lst:[integer]))
+    (defun UC_SplitAuxiliaryIntegerList:object{SplitIntegers} (primary:[integer] auxiliary:[integer]))
+    (defun UC_SplitIntegerList:object{SplitIntegers} (input:[integer]))
+    (defun UC_NonceSplitter:object{NonceSplitter} (nonces:[integer] amounts:[integer]))
     ;;
     (defun UEV_ContainsAll:bool (l1:[integer] l2:[integer]))
     (defun UEV_PositionalVariable (integer-to-validate:integer positions:integer message:string))
     (defun UEV_UniformList (input:[integer]))
+    ;;
+    (defun UDC_SplitIntegers:object{SplitIntegers} (neg:[integer] pos:[integer]))
+    (defun UDC_NonceSplitter:object{NonceSplitter} (a:[integer] b:[integer] c:[integer] d:[integer]))
 )
 (module U|INT GOV
     ;;
@@ -86,6 +98,25 @@
             (UDC_SplitIntegers negatives positives)
         )
     )
+    (defun UC_NonceSplitter:object{OuronetIntegersV2.NonceSplitter} (nonces:[integer] amounts:[integer])
+        (let
+            (
+                (ref-U|INT:module{OuronetIntegersV2} U|INT)
+                (split-nonces:object{OuronetIntegersV2.SplitIntegers} (ref-U|INT::UC_SplitIntegerList nonces))
+                (negative-nonces:[integer] (at "negative" split-nonces))
+                (positive-nonces:[integer] (at "positive" split-nonces))
+                (split-amounts:object{OuronetIntegersV2.SplitIntegers} (ref-U|INT::UC_SplitAuxiliaryIntegerList nonces amounts))
+                (negative-counterparts:[integer] (at "negative" split-amounts))
+                (positive-counterparts:[integer] (at "positive" split-amounts))
+            )
+            (UDC_NonceSplitter
+                negative-nonces
+                positive-nonces
+                negative-counterparts
+                positive-counterparts
+            )
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -136,6 +167,13 @@
     (defun UDC_SplitIntegers:object{OuronetIntegersV2.SplitIntegers} (neg:[integer] pos:[integer])
         {"negative" : neg
         ,"positive" : pos}
+    )
+    (defun UDC_NonceSplitter:object{OuronetIntegersV2.NonceSplitter}
+        (a:[integer] b:[integer] c:[integer] d:[integer])
+        {"negative-nonces"          : a
+        ,"positive-nonces"          : b
+        ,"negative-counterparts"    : c
+        ,"positive-counterparts"    : d}
     )
     ;;{F4}  [CAP]
     ;;

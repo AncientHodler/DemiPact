@@ -27,6 +27,16 @@
                         (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
                         (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_MovieBoosterBuyer" (take 66 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
                         (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_RedeemMovieBooster" (take 67 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
+                        (enforce
+                            (and
+                                (= "(namespace \"n_7d40ccda457e374d8eb07b658fd38c282c545038\")" (at 0 (at "exec-code" (read-msg))))
+                                (and
+                                    (= "(DALOS.IC|C_Collect \"Ѻ." (take 23 (at 1 (at "exec-code" (read-msg)))))
+                                    (= "(DALOS.IC|UDC_CustomCodeCumulator))" (take -35 (at 1 (at "exec-code" (read-msg)))))
+                                )
+                            )
+                            "Namespace Entry requires Collection with CustomCodeCumulator."
+                        )
                     ]
                 )
                 ;;Continuation TX
@@ -1110,6 +1120,15 @@
             []
         )
     )
+    (defun IC|UDC_CustomCodeCumulator:object{IgnisCollector.OutputCumulator}
+        ()
+        (IC|UDC_ConstructOutputCumulator
+            (* 5.0 (UR_UsagePrice "ignis|biggest"))
+            (at 1 (UR_DemiurgoiID))
+            (IC|URC_IsVirtualGasZero)
+            []
+        )
+    )
     (defun IC|UDC_MakeModularCumulator:object{IgnisCollector.ModularCumulator}
         (price:decimal active-account:string trigger:bool)
         (let
@@ -1244,7 +1263,7 @@
                                             )
                                         )
                                         (prime-ignis-amount:decimal (- input-ignis-price-discounted smart-ignis-amount))
-
+                                        ;;
                                         (principal-interactor-search:[integer] (ref-U|LST::UC_Search (at "interactors" (at 0 acc)) BAR))
                                         (principal-interactor-exists:bool 
                                             (if (= (length principal-interactor-search) 0)

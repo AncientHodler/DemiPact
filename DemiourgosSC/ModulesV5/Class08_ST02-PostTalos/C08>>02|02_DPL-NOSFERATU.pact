@@ -107,15 +107,17 @@
                 (ri-c:decimal 20.0)
                 ;;
                 (d-l:string "Legendary Nosferat Earning 0.4 Percent of Nosferatu Movie Profits, and 0.25 Promile of all Future Movie Profits")
-                (d-l:string "Epic Nosferat Earning 0.2 Percent of Nosferatu Movie Profits, and 0.125 Promile of all Future Movie Profits")
-                (d-l:string "Rare Nosferat Earning 0.1 Percent of Nosferatu Movie Profits, and 0.0625 Promile of all Future Movie Profits")
-                (d-l:string "Common Nosferat Earning 0.5 Promile of Nosferatu Movie Profits, and 0.03125 Promile of all Future Movie Profits")
+                (d-e:string "Epic Nosferat Earning 0.2 Percent of Nosferatu Movie Profits, and 0.125 Promile of all Future Movie Profits")
+                (d-r:string "Rare Nosferat Earning 0.1 Percent of Nosferatu Movie Profits, and 0.0625 Promile of all Future Movie Profits")
+                (d-c:string "Common Nosferat Earning 0.5 Promile of Nosferatu Movie Profits, and 0.03125 Promile of all Future Movie Profits")
                 ;;
                 (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type t f f f f f f))
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
                 ;;
                 (l-l001:string "https://ipfs.io/ipfs/QmXtn1RpdCYjWSVwBVWwkaT8k5QtGZg2Rm5MTveHRd6exZ/Nosferatu%20Legendary_1.jpg")
                 (l-l002:string "https://ipfs.io/ipfs/QmXtn1RpdCYjWSVwBVWwkaT8k5QtGZg2Rm5MTveHRd6exZ/Nosferatu%20Legendary_2.jpg")
+                (l-l003:string "https://ipfs.io/ipfs/QmXtn1RpdCYjWSVwBVWwkaT8k5QtGZg2Rm5MTveHRd6exZ/Nosferatu%20Legendary_3.jpg")
+                (l-l004:string "https://ipfs.io/ipfs/QmXtn1RpdCYjWSVwBVWwkaT8k5QtGZg2Rm5MTveHRd6exZ/Nosferatu%20Legendary_4.jpg")
                 ;;
             )
             (ref-TS02-C2::DPNF|C_Create
@@ -128,6 +130,14 @@
                     (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #2" d-l 
                         [(UDC_NosMD ["Shadowed Seat of Eternal Rule" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Gold Earring Left" "Divine Glow" "Round Golden Glasses" "Engraved Ring" "King's Crown" "Gold Coin" "Crimson Veil Effect" "Legendary" "Gold Tooth"])]
                         type (ref-DPDC-UDC::UDC_URI|Data l-l002 b b b b b b) zd zd
+                    )
+                    (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #3" d-l 
+                        [(UDC_NosMD ["The Serpent's Cryptovault of Bloodcoin Hoard" "Legendary Vampiric Mesmeric Hypnotic Figure" "$Elite Auryn" "Viespar" "Double Gold Earrings Right" "Sanguine Tide Glow" "No Glasses" "No Accessories" "Wreath Leafs" "Opium Pipe #2" "Nightfall Mist Distortion" "Legendary" "Silver Tooth"])]
+                        type (ref-DPDC-UDC::UDC_URI|Data l-l003 b b b b b b) zd zd
+                    )
+                    (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #4" d-l 
+                        [(UDC_NosMD ["Vampire's Haunting Steps" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Silver Earring Left" "Moonlight Glow" "Golden Aristocrat Glasses" "Golden Skull Ring" "Tillted Peacky Hat" "Jack of Spades" "Moonlit Shadows Overlay" "Legendary" "Gold Tooth"])]
+                        type (ref-DPDC-UDC::UDC_URI|Data l-l004 b b b b b b) zd zd
                     )
                 ]
             )
