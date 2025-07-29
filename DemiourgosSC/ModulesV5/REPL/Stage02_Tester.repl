@@ -71,6 +71,10 @@
 (load "Class03_OuronetS2/C03>>02|02_InitDemiNFTs.repl")
 (print "************************Initialise_Demi-NFTs.repl LOADED*******************************")
 ;;
+(print "")
+(load "Class03_OuronetS2/C03>>02|03_PopulateBloodshed.repl")
+(print "************************PopulateBloodhsed.repl LOADED*******************************")
+;;
 ;;
 ;;
 ;; Tests after Loading Stages

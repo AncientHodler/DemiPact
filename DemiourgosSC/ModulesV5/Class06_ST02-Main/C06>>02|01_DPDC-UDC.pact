@@ -168,7 +168,7 @@
     )
     (defun UC_CreditOrDebitNonceObject:[object{DpdcUdc.DPSF|NonceBalance}]
         (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}] nonces-to-modify:[integer] amounts-to-modify-with:[integer] credit-or-debit:bool)
-        (if (= input-nbo [(UDC_ZeroNBO)])
+        (if (or (= input-nbo [(UDC_ZeroNBO)]) (= input-nbo []))
             (do
                 (enforce credit-or-debit "A Zero NBO Can only be credited upon.")
                 (zip (lambda (n:integer a:integer) (UDC_DPSF|NonceBalance n a)) nonces-to-modify amounts-to-modify-with)
@@ -316,7 +316,8 @@
     )
     (defun UDC_NonceData:object{DpdcUdc.DPDC|NonceData} 
         (
-            a:decimal b:decimal c:string d:string e:[object]
+            a:decimal b:decimal c:string d:string 
+            e:object{DpdcUdc.NonceMetaData}
             f:object{DpdcUdc.URI|Type}
             g:object{DpdcUdc.URI|Data}
             h:object{DpdcUdc.URI|Data}
@@ -331,6 +332,12 @@
         ,"uri-primary"      : g
         ,"uri-secondary"    : h
         ,"uri-tertiary"     : i}
+    )
+    (defun UDC_NonceMetaData:object{DpdcUdc.NonceMetaData}
+        (a:decimal b:[integer] c:object)
+        {"score"            : a
+        ,"composition"      : b
+        ,"meta-data"        : c}
     )
     (defun UDC_URI|Type:object{DpdcUdc.URI|Type}
         (a:bool b:bool c:bool d:bool e:bool f:bool g:bool)
@@ -352,31 +359,28 @@
         ,"model"            : f
         ,"exotic"           : g}
     )
-    (defun UDC_Score:object{DpdcUdc.DPDC|NonceScore}
-        (a:decimal)
-        {"score"            : a}
-    )
     ;;
     ;;  [3]
     ;;
     (defun UDC_DPDC|Set:object{DpdcUdc.DPDC|Set}
         (
-            a:integer b:string c:integer d:bool e:bool f:bool
-            g:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
-            h:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
-            i:object{DpdcUdc.DPDC|NonceData}
+            a:integer b:string c:decimal d:integer e:bool f:bool g:bool
+            h:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            i:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             j:object{DpdcUdc.DPDC|NonceData}
+            k:object{DpdcUdc.DPDC|NonceData}
         )
         {"set-class"                    : a
         ,"set-name"                     : b
-        ,"nonce-of-set"                 : c
-        ,"iz-active"                    : d
-        ,"primordial"                   : e
-        ,"composite"                    : f
-        ,"primordial-set-definition"    : g
-        ,"composite-set-definition"     : h
-        ,"nonce-data"                   : i
-        ,"split-data"                   : j}
+        ,"set-score-multiplier"         : c
+        ,"nonce-of-set"                 : d
+        ,"iz-active"                    : e
+        ,"primordial"                   : f
+        ,"composite"                    : g
+        ,"primordial-set-definition"    : h
+        ,"composite-set-definition"     : i
+        ,"nonce-data"                   : j
+        ,"split-data"                   : k}
     )
     (defun UDC_DPDC|AllowedNonceForSetPosition:object{DpdcUdc.DPDC|AllowedNonceForSetPosition} 
         (a:[integer])
@@ -423,19 +427,28 @@
     )
     (defun UDC_ZeroNonceData:object{DpdcUdc.DPDC|NonceData} ()
         (UDC_NonceData
-            0.0 0.0 BAR BAR [{}]
+            0.0 0.0 BAR BAR (UDC_NoMetaData)
             (UDC_ZeroURI|Type) (UDC_ZeroURI|Data)
             (UDC_ZeroURI|Data) (UDC_ZeroURI|Data)
         )
     )
+    (defun UDC_NoMetaData:object{DpdcUdc.NonceMetaData} ()
+        (UDC_MetaData {})
+    )
+    (defun UDC_MetaData:object{DpdcUdc.NonceMetaData}
+        (meta-data:object)
+        (UDC_NonceMetaData -1.0 [0] meta-data)
+    )
+    (defun UDC_ScoreMetaData:object{DpdcUdc.NonceMetaData}
+        (score:decimal meta-data:object)
+        (UDC_NonceMetaData score [0] meta-data)
+    )
+
     (defun UDC_ZeroURI|Type:object{DpdcUdc.URI|Type} ()
         (UDC_URI|Type false false false false false false false)
     )
     (defun UDC_ZeroURI|Data:object{DpdcUdc.URI|Data} ()
         (UDC_URI|Data BAR BAR BAR BAR BAR BAR BAR)
-    )
-    (defun UDC_NoScore:object{DpdcUdc.DPDC|NonceScore} ()
-        (UDC_Score -1.0)
     )
     (defun UDC_NoPrimordialSet:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] ()
         [(UDC_DPDC|AllowedNonceForSetPosition [0])]

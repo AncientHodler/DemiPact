@@ -49,6 +49,8 @@
 (ref-ORBR:module{Ouroboros} OUROBOROS)
 (ref-SWPT:module{SwapTracer} SWPT)
 (ref-SWP:module{Swapper} SWP)
+(ref-SWPI:module{SwapperIssue} SWPI)
+(ref-SWPL:module{SwapperLiquidity} SWPL)
 (ref-SWPU:module{SwapperUsage} SWPU)
 
 (ref-DPDC:module{DemiourgosPactDigitalCollectibles} DPDC)

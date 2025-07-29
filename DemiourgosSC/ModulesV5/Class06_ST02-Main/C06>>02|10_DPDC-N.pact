@@ -97,7 +97,7 @@
     ;;{C3}
     ;;{C4}
     (defcap DPDC-N|C>SET-DATA
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
         @doc "[0] Controls Full Nonce Updating"
         @event
         (let
@@ -106,11 +106,11 @@
             )
             (UEV_RoleNftRecreateON id son account)
             (ref-DPDC-C::UEV_NonceDataForCreation new-nonce-data)
-            (compose-capability (DPDC-N|C>DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+            (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
         )
     )
     (defcap DPDC-N|C>SET-ROYALTY
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal)
         @doc "[1] Controls Nonce Native Royalty Updating"
         @event
         (let
@@ -119,11 +119,11 @@
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_Royalty royalty-value)
-            (compose-capability (DPDC-N|C>DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+            (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
         )
     )
     (defcap DPDC-N|C>SET-IGNIS-ROYALTY
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal)
         @doc "[2] Controls Nonce Native Ignis Royalty Updating"
         @event
         (let
@@ -132,56 +132,56 @@
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_IgnisRoyalty royalty-value)
-            (compose-capability (DPDC-N|C>DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+            (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
         )
     )
     (defcap DPDC-N|C>SET-NAME
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         @doc "[3] Controls Nonce Name Updating"
         @event
-        (compose-capability (DPDC-N|C>UPDATE id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>UPDATE id son account nosc nos nost))
     )
     (defcap DPDC-N|C>SET-DESCRIPTION
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         @doc "[4] Controls Nonce Description Updating"
         @event
-        (compose-capability (DPDC-N|C>UPDATE id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>UPDATE id son account nosc nos nost))
     )
     (defcap DPDC-N|C>SET-SCORE
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool score:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool score:decimal)
         @doc "[5] Controls Nonce Score Updating"
         @event
         (UEV_Score score)
-        (compose-capability (DPDC-N|C>UPDATE id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>UPDATE id son account nosc nos nost))
     )
     (defcap DPDC-N|C>SET-META-DATA
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         @doc "[6] Controls Nonce Meta-Data Updating"
         @event
-        (compose-capability (DPDC-N|C>UPDATE id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>UPDATE id son account nosc nos nost))
     )
     
     (defcap DPDC-N|C>SET-URI
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         @doc "[7] Controls Nonce Uri Updating"
         @event
         (UEV_RoleSetNewUriON id son account)
-        (compose-capability (DPDC-N|C>DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
     )
     ;;
     (defcap DPDC-N|C>UPDATE 
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         (UEV_RoleNftUpdateON id son account)
-        (compose-capability (DPDC-N|C>DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero))
+        (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
     )
     (defcap DPDC-N|C>DATA
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC-C:module{DpdcCreate} DPDC-C)
             )
-            (UEV_NonceDataUpdater id son account nonce-or-set-class native-or-split classzero-or-nonzero)
+            (UEV_NonceDataUpdater id son account nosc nos nost)
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (compose-capability (P|SECURE-CALLER))
         )
@@ -191,20 +191,23 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     (defun UR_Nonce:object{DpdcUdc.DPDC|NonceData}
-        (id:string son:bool nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
+        (id:string son:bool nosc:integer nos:bool nost:bool)
+        @doc "nosc = <Nonce-Or-Set-Class> ; value of either a Nonce or Set-Class \
+            \ nos  = <Native-Or-Split>    ; designates either native or split for Nonce-Data \
+            \ nost = <NoNCe-Or-SET>       ; designates if <nosc> is either a <nonce> or <set-class> value"
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-S:module{DpdcSets} DPDC-S)
             )
-            (if classzero-or-nonzero
-                (if native-or-split
-                    (ref-DPDC::UR_NonceData id son nonce-or-set-class)
-                    (ref-DPDC::UR_SplitData id son nonce-or-set-class)
+            (if nost
+                (if nos
+                    (ref-DPDC::UR_NonceData id son nosc)
+                    (ref-DPDC::UR_SplitData id son nosc)
                 )
-                (if native-or-split
-                    (ref-DPDC-S::UR_SetNonceData id son nonce-or-set-class)
-                    (ref-DPDC-S::UR_SetSplitData id son nonce-or-set-class)
+                (if nos
+                    (ref-DPDC-S::UR_SetNonceData id son nosc)
+                    (ref-DPDC-S::UR_SetSplitData id son nosc)
                 )
             )
         )
@@ -212,20 +215,18 @@
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     (defun UEV_NonceDataUpdater
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool)
-        (enforce (> nonce-or-set-class 0) "Operation requires greater than zero <nonce-or-set-class>")
-        (if classzero-or-nonzero
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool)
+        (enforce (> nosc 0) "Operation requires greater than zero <nonce-or-set-class>")
+        (if nost
             ;;Nonce
             (let
                 (
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
-                    (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce-or-set-class))
                 )
-                (enforce (= nonce-class 0) "Nonce Class must be 0 for Operation")
-                (ref-DPDC::UEV_Nonce id son nonce-or-set-class)
-                (if (not native-or-split)
-                    (ref-DPDC-F::UEV_Fragmentation id son nonce-or-set-class)
+                (ref-DPDC::UEV_Nonce id son nosc)
+                (if (not nos)
+                    (ref-DPDC-F::UEV_Fragmentation id son nosc)
                     true
                 )
             )
@@ -233,12 +234,10 @@
             (let
                 (
                     (ref-DPDC-S:module{DpdcSets} DPDC-S)
-                    (set-class:integer (ref-DPDC-S::UR_SetClass id son nonce-or-set-class))
                 )
-                (enforce (>= set-class 0) "Set Class must be greater than 0 for Operation")
-                (ref-DPDC-S::UEV_SetClass id son nonce-or-set-class)
-                (if (not native-or-split)
-                    (ref-DPDC-S::UEV_Fragmentation id son nonce-or-set-class)
+                (ref-DPDC-S::UEV_SetClass id son nosc)
+                (if (not nos)
+                    (ref-DPDC-S::UEV_Fragmentation id son nosc)
                     true
                 )
             )
@@ -297,106 +296,106 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     (defun C_UpdateNonce
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
         @doc "[0] Updates Full Nonce Data"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
-                (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (with-capability (DPDC-N|C>SET-DATA id son account nosc nos nost new-nonce-data)
+                (XI_U|NonceData id son account nosc nos nost new-nonce-data)
                 (ref-IGNIS::IC|UDC_BiggestCumulator account)
             )
         )
     )
     (defun C_UpdateNonceRoyalty
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal)
         @doc "[1] Updates Nonce Native Royalty Value"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-ROYALTY id son account nonce-or-set-class native-or-split classzero-or-nonzero royalty-value)
-                (XI_U|NonceRoyalty id son account nonce-or-set-class native-or-split classzero-or-nonzero true royalty-value)
+            (with-capability (DPDC-N|C>SET-ROYALTY id son account nosc nos nost royalty-value)
+                (XI_U|NonceRoyalty id son account nosc nos nost true royalty-value)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceIgnisRoyalty
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal)
         @doc "[2] Updates Nonce Ignis Royalty Value"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-IGNIS-ROYALTY id son account nonce-or-set-class native-or-split classzero-or-nonzero royalty-value)
-                (XI_U|NonceRoyalty id son account nonce-or-set-class native-or-split classzero-or-nonzero false royalty-value)
+            (with-capability (DPDC-N|C>SET-IGNIS-ROYALTY id son account nosc nos nost royalty-value)
+                (XI_U|NonceRoyalty id son account nosc nos nost false royalty-value)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceName
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool name:string)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool name:string)
         @doc "[3] Updates Nonce Name"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-NAME id son account nonce-or-set-class native-or-split classzero-or-nonzero)
-                (XI_U|NonceNoD id son account nonce-or-set-class native-or-split classzero-or-nonzero true name)
+            (with-capability (DPDC-N|C>SET-NAME id son account nosc nos nost)
+                (XI_U|NonceNoD id son account nosc nos nost true name)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceDescription
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool description:string)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool description:string)
         @doc "[4] Updates Nonce Description"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-DESCRIPTION id son account nonce-or-set-class native-or-split classzero-or-nonzero)
-                (XI_U|NonceNoD id son account nonce-or-set-class native-or-split classzero-or-nonzero false description)
+            (with-capability (DPDC-N|C>SET-DESCRIPTION id son account nosc nos nost)
+                (XI_U|NonceNoD id son account nosc nos nost false description)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceScore
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool score:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool score:decimal)
         @doc "[5] Updates Nonce Score"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-SCORE id son account nonce-or-set-class native-or-split classzero-or-nonzero score)
-                (XI_U|NonceScore id son account nonce-or-set-class native-or-split classzero-or-nonzero score)
+            (with-capability (DPDC-N|C>SET-SCORE id son account nosc nos nost score)
+                (XI_U|NonceScore id son account nosc nos nost score)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceMetaData
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool meta-data:[object])
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool meta-data:object)
         @doc "[6] Updates Nonce Meta-Data"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-META-DATA id son account nonce-or-set-class native-or-split classzero-or-nonzero)
-                (XI|U_NonceMetaData id son account nonce-or-set-class native-or-split classzero-or-nonzero meta-data)
+            (with-capability (DPDC-N|C>SET-META-DATA id son account nosc nos nost)
+                (XI|U_NonceMetaData id son account nosc nos nost meta-data)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     (defun C_UpdateNonceURI
         (
-            id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool
+            id:string son:bool account:string nosc:integer nos:bool nost:bool
             ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
         )
         @doc "[7] Updates Nonce URIs"
@@ -405,39 +404,35 @@
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
             )
-            (with-capability (DPDC-N|C>SET-URI id son account nonce-or-set-class native-or-split classzero-or-nonzero)
-                (XI_U|NonceUri id son account nonce-or-set-class native-or-split classzero-or-nonzero ay u1 u2 u3)
+            (with-capability (DPDC-N|C>SET-URI id son account nosc nos nost)
+                (XI_U|NonceUri id son account nosc nos nost ay u1 u2 u3)
                 (ref-IGNIS::IC|UDC_SmallCumulator account)
             )
         )
     )
     ;;{F7}  [X]
     (defun XI_U|NonceData
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
-        ;;nonce-or-set-class    >> nonce value or set-class value
-        ;;native-or-split       >> determines if its native or split data
-        ;;classzero-or-nonzero  >> Nonce data (class-zero) or Set-Data (non-zero)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
         (require-capability (SECURE))
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-S:module{DpdcSets} DPDC-S)
             )
-            (if classzero-or-nonzero
+            (if nost
                 ;;Nonce
-                (ref-DPDC::XE_U|NonceOrSplitData id son nonce-or-set-class new-nonce-data native-or-split)
+                (ref-DPDC::XE_U|NonceOrSplitData id son nosc nos new-nonce-data)
                 ;;Sets
-                (ref-DPDC-S::XB_U|NonceOrSplitData id son nonce-or-set-class new-nonce-data native-or-split)
+                (ref-DPDC-S::XB_U|NonceOrSplitData id son nosc nos new-nonce-data)
             )
         )
     )
     (defun XI_U|NonceRoyalty
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool r-or-ir:bool royalty-value:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool r-or-ir:bool royalty-value:decimal)
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nonce-or-set-class native-or-split classzero-or-nonzero))
+                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
                 (new-nonce-data:object{DpdcUdc.DPDC|NonceData}
                     (if r-or-ir
                         (+
@@ -451,16 +446,15 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
         )
     )
     (defun XI_U|NonceNoD 
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool name-or-description:bool name-description:string)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool name-or-description:bool name-description:string)
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nonce-or-set-class native-or-split classzero-or-nonzero))
+                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
                 (new-nonce-data:object{DpdcUdc.DPDC|NonceData}
                     (if name-or-description
                         (+
@@ -474,31 +468,21 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
         )
     )
     (defun XI_U|NonceScore
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool score:decimal)
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool score:decimal)
         (require-capability (SECURE))
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-DPDC:module{Dpdc} DPDC)
+                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (read-md:object{DpdcUdc.NonceMetaData} (at "meta-data" read-nonce-data))
                 ;;
-                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nonce-or-set-class native-or-split classzero-or-nonzero))
-                (current-nonce-score:decimal (ref-DPDC::UR_N|RawScore read-nonce-data))
-                (current-nonce-md:[object] (ref-DPDC::UR_N|MetaData read-nonce-data))
-                (score-md-obj:object (ref-DPDC-UDC::UDC_Score score))
-                (e-md:[object] [{}])
-                ;;
-                (updated-md:[object]
-                    (if (= current-nonce-score -1.0)
-                        (if (= current-nonce-md e-md)
-                            [score-md-obj]
-                            (ref-U|LST::UC_InsertFirst current-nonce-md score-md-obj)
-                        )
-                        (ref-U|LST::UC_ReplaceAt current-nonce-md 0 score-md-obj)
+                (updated-md:object{DpdcUdc.NonceMetaData}
+                    (+
+                        {"score" : score}
+                        (remove "score" read-md)
                     )
                 )
                 (new-nonce-data:object{DpdcUdc.DPDC|NonceData}
@@ -508,25 +492,21 @@
                     )
                 )
             )
-            (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
         )
     )
     (defun XI|U_NonceMetaData 
-        (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool meta-data:[object])
+        (id:string son:bool account:string nosc:integer nos:bool nost:bool meta-data:object)
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-DPDC:module{Dpdc} DPDC)
+                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (read-md:object{DpdcUdc.NonceMetaData} (at "meta-data" read-nonce-data))
                 ;;
-                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nonce-or-set-class native-or-split classzero-or-nonzero))
-                (current-nonce-score:decimal (ref-DPDC::UR_N|RawScore read-nonce-data))
-                (e-md:[object] [{}])
-                ;;
-                (updated-md:[object]
-                    (if (= current-nonce-score -1.0)
-                        meta-data
-                        (+ [(ref-DPDC-UDC::UDC_Score current-nonce-score)] meta-data)
+                (updated-md:object{DpdcUdc.NonceMetaData}
+                    (+
+                        {"meta-data" : meta-data}
+                        (remove "meta-data" read-md)
                     )
                 )
                 (new-nonce-data:object{DpdcUdc.DPDC|NonceData}
@@ -536,19 +516,18 @@
                     )
                 )
             )
-            (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
         )
     )
     (defun XI_U|NonceUri
         (
-            id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool
+            id:string son:bool account:string nosc:integer nos:bool nost:bool
             ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
         )
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nonce-or-set-class native-or-split classzero-or-nonzero))
+                (read-nonce-data:object{DpdcUdc.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
                 (new-nonce-data:object{DpdcUdc.DPDC|NonceData}
                     (+
                         {"uri-tertiary" : u3}
@@ -565,7 +544,7 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nonce-or-set-class native-or-split classzero-or-nonzero new-nonce-data)
+            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
         )
     )
     ;;

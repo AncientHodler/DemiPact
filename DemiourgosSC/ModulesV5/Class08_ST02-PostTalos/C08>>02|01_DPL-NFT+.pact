@@ -1,4 +1,5 @@
 (interface DeployerNft
+    (defun A_Step00 ())
     (defun A_Step01 ())
     (defun A_Step02 (patron:string collection-owner:string collection-creator:string))
     (defun A_Step03 (patron:string collection-owner:string collection-creator:string))
@@ -37,6 +38,13 @@
     (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
     ;;
+    (defconst DEMIURGOI|AH_NAME             "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+    ;;  [DPDC]
+    (defconst DPDC|SC_KDA-NAME              "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
+    (defconst DPDC|SC_KEY                   (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|CollectiblesKey)))
+    (defconst DPDC|SC_NAME                  (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|DPDC|SC_NAME)))
+    (defconst DPDC|PBL                      (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|DPDC|PBL)))
+    ;;
     ;;<==========>
     ;;CAPABILITIES
     ;;{C1}
@@ -46,6 +54,22 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun N:object{DpdcUdc.DPDC|AllowedNonceForSetPosition} (lst:[integer])
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+            )
+            (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition lst)
+        )
+    )
+    (defun C:object{DpdcUdc.DPDC|AllowedClassForSetPosition} (input:integer)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+            )
+            (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition input)
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -54,6 +78,16 @@
     ;;
     ;;{F5}  [A]
     ;;  [NFT DEPLOY]
+    (defun A_Step00 ()
+        (let
+            (
+                (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+                (ref-DPDC:module{Dpdc} DPDC)
+                (patron:string DEMIURGOI|AH_NAME)
+            )
+            (ref-TS01-A::DALOS|A_DeploySmartAccount DPDC|SC_NAME (keyset-ref-guard DPDC|SC_KEY) DPDC|SC_KDA-NAME patron DPDC|PBL)
+        )
+    )
     (defun A_Step01 ()
         (let
             (
@@ -70,6 +104,9 @@
                 ;;
                 (ref-P|TS02-C1:module{OuronetPolicy} TS02-C1)
                 (ref-P|TS02-C2:module{OuronetPolicy} TS02-C2)
+                ;;
+                (ref-DPDC:module{Dpdc} DPDC)
+                (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-P|DPDC-UDC::P|A_Define)
             (ref-P|DPDC::P|A_Define)
@@ -84,6 +121,8 @@
             ;;
             (ref-P|TS02-C1::P|A_Define)
             (ref-P|TS02-C2::P|A_Define)
+            ;;
+            (ref-DPDC::DPDC|SetGovernor patron)
         )
     )
     (defun A_Step02 (patron:string collection-owner:string collection-creator:string)
@@ -112,7 +151,7 @@
                 )
                 (r:decimal 150.0)
                 (ir:decimal 50.0)
-                (md:[object] [{}])
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (d1:string "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creator.")
                 (d2:string "Of Japanese origin, Rudis was forced by the Yakuza to leave his homeland. His ancestors were traced back to the 47 Ronin riot on the 14th of December 1702. Abounty is placed on his head for \"bad genetics\". He found shelter at our Coding Division. Works remote.")
                 (d3:string "After the great nuclear war between East and West, Gwen was forced to leave her homeland. She comes from the East and met her love in the West. Together they trz to prove that East and West can love each other. She joined our Coding Division shortly after her runaway in Europe.")
@@ -182,18 +221,18 @@
                 ]
             )
             (ref-TS02-C1::DPSF|C_DefinePrimordialSet
-                patron dhcd-id set-name
+                patron dhcd-id set-name 1.0
                 [
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [1])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [2])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [3])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [4])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [5])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [6])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [7])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [8])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [9])
-                    (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [10])
+                    (N [1])
+                    (N [2])
+                    (N [3])
+                    (N [4])
+                    (N [5])
+                    (N [6])
+                    (N [7])
+                    (N [8])
+                    (N [9])
+                    (N [10])
                 ]
                 (ref-DPDC-UDC::UDC_NonceData
                     100.0
@@ -241,7 +280,7 @@
                 (r-full:decimal 40.0)
                 (ir-full:decimal 560.0)
                 ;;
-                (md:[object] [{}])
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (d1:string "Sleeping Beauty")
                 (d2:string "Sleeping Beauty")
                 (d3:string "Sleeping Beauty")
@@ -410,18 +449,18 @@
                     ]
                 )
                 (ref-TS02-C1::DPSF|C_DefinePrimordialSet
-                    patron dhwc-id "Wonder Coach Bronze Chapter"
+                    patron dhwc-id "Wonder Coach Bronze Chapter" 1.0
                     [
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [1])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [2])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [3])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [4])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [5])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [6])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [7])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [8])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [9])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [10])
+                        (N [1])
+                        (N [2])
+                        (N [3])
+                        (N [4])
+                        (N [5])
+                        (N [6])
+                        (N [7])
+                        (N [8])
+                        (N [9])
+                        (N [10])
                     ]
                     (ref-DPDC-UDC::UDC_NonceData
                         r-bf
@@ -436,18 +475,18 @@
                     )
                 )
                 (ref-TS02-C1::DPSF|C_DefinePrimordialSet
-                    patron dhwc-id "Wonder Coach Silver Chapter"
+                    patron dhwc-id "Wonder Coach Silver Chapter" 1.0
                     [
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [11])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [12])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [13])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [14])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [15])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [16])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [17])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [18])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [19])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [20])
+                        (N [11])
+                        (N [12])
+                        (N [13])
+                        (N [14])
+                        (N [15])
+                        (N [16])
+                        (N [17])
+                        (N [18])
+                        (N [19])
+                        (N [20])
                     ]
                     (ref-DPDC-UDC::UDC_NonceData
                         r-sf
@@ -462,18 +501,18 @@
                     )
                 )
                 (ref-TS02-C1::DPSF|C_DefinePrimordialSet
-                    patron dhwc-id "Wonder Coach Golden Chapter"
+                    patron dhwc-id "Wonder Coach Golden Chapter" 1.0
                     [
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [21])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [22])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [23])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [24])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [25])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [26])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [27])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [28])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [29])
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedNonceForSetPosition [30])
+                        (N [21])
+                        (N [22])
+                        (N [23])
+                        (N [24])
+                        (N [25])
+                        (N [26])
+                        (N [27])
+                        (N [28])
+                        (N [29])
+                        (N [30])
                     ]
                     (ref-DPDC-UDC::UDC_NonceData
                         r-gf
@@ -488,11 +527,11 @@
                     )
                 )
                 (ref-TS02-C1::DPSF|C_DefineCompositeSet
-                    patron dhwc-id "Wonder Coach Movie Collectable"
+                    patron dhwc-id "Wonder Coach Movie Collectable" 1.0
                     [
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 1)
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 2)
-                        (ref-DPDC-UDC::UDC_DPDC|AllowedClassForSetPosition 3)
+                        (C 1)
+                        (C 2)
+                        (C 3)
                     ]
                     (ref-DPDC-UDC::UDC_NonceData
                         r-full
@@ -537,7 +576,7 @@
                         "Bronze Ouronet Fragment: 1/1000th of a Bronze Custodian SFT, representing 1/10,000,000th of one-third of Ouronet’s Financial Ownership. Good cost-effective investment in the Ouronet Virtual Blockchain."
                     ]
                 )
-                (md:[object] [{}])
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (asset-type:object{DpdcUdc.URI|Type}
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
                 )
@@ -631,7 +670,7 @@
                         "Bronze Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 10000 Units"
                     ]
                 )
-                (md:[object] [{}])
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (asset-type:object{DpdcUdc.URI|Type}
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
                 )
@@ -717,7 +756,7 @@
                         "Financial Ownership over 15% of VestaX.Finance Revenues. Multiple Benefits in Demiourgos.Holdings Ecosystem. For Demiourgos Investors."
                     ]
                 )
-                (md:[object] [{}])
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (asset-type:object{DpdcUdc.URI|Type}
                     (ref-DPDC-UDC::UDC_URI|Type false false true false false false false)
                 )

@@ -15,6 +15,10 @@
     ;;{G2}
     (defcap GOV ()                          (compose-capability (GOV|DPDC_ADMIN)))
     (defcap GOV|DPDC_ADMIN ()               (enforce-guard GOV|MD_DPDC))
+    (defcap DPDC|GOV ()
+        @doc "Governor Capability for the DPDC Smart DALOS Account"
+        true
+    )
     ;;{G3}
     (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
@@ -24,6 +28,30 @@
     ;;
     ;; [SC-Names]
     (defun GOV|DPDC|SC_NAME ()              (at 0 ["Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4"]))
+    ;;
+    (defun DPDC|SetGovernor (patron:string)
+        (with-capability (P|DPDC|CALLER)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
+                    (ref-U|G:module{OuronetGuards} U|G)
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-DALOS::C_RotateGovernor
+                            DPDC|SC_NAME
+                            (ref-U|G::UEV_GuardOfAny
+                                [
+                                    (create-capability-guard (DPDC|GOV))
+                                    (P|UR "DPDC-F|RemoteDpdcGov")
+                                ]
+                            )
+                        )
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+            )
+        )
+    )
     ;;
     ;; [PBLs]
     (defun GOV|DPDC|PBL ()                  (at 0 ["9G.2j95rkomKqd207CDg5yycyKcAy1AqFhjy6D0rCr0Kbwe9E6libtveIHsAIw9F2c43v6IHILIBf62r2LD58xHE09kypyoevL62E81wHL4zj9tIyspf5df82upuBGGKmIsHGuvH86fHMMi99n0htsypL9h3dMHFCIx8ogeynkmCIghxK871rlkas8iDfce7AwAbiajr7H1LHi17mLD7aJu6m7xmcAABkhxtwb4Kqbk8xLpehakyu3AvajgJvtfeysoH67irvplA0as86Jls1r3d3oHms9Maaja9856wzybpthMGs6qDAzacE24skcA30wvm77BLhrdh0ymkl3vbJ9lG641J7ofg5K9gEbHD4ioFHLEajL28qsD4cFEhdDthDzwF8EnBBc74Dikqn9xixFap5Jxhl7D0owz5d9MDJzfjgx3jbdpD3zglsq83iC4fhcpbz3KeAi11Ig2pgIqnmwwqA0Exr5073w7lgzlrw3Ff7Co9uuxbnLuJvlFzgfGeIwM2Dmev1JskqEGK0Ck0B87iagsHFI76HC6sKnwrHnkl0sl8pAf0pbBaw9MbqLs"]))
@@ -78,9 +106,11 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (mg:guard (create-capability-guard (P|DPDC|CALLER)))
             )
+            (ref-P|DALOS::P|A_AddIMP mg)
             (ref-P|BRD::P|A_AddIMP mg)
         )
     )
@@ -274,7 +304,7 @@
     (defun UR_N|Description:string (n:object{DpdcUdc.DPDC|NonceData})
         (at "description" n)
     )
-    (defun UR_N|MetaData:[object] (n:object{DpdcUdc.DPDC|NonceData})
+    (defun UR_N|MetaData:object{DpdcUdc.NonceMetaData} (n:object{DpdcUdc.DPDC|NonceData})
         (at "meta-data" n)
     )
     (defun UR_N|AssetType:object{DpdcUdc.URI|Type} (n:object{DpdcUdc.DPDC|NonceData})
@@ -290,21 +320,14 @@
         (at "uri-tertiary" n)
     )
     ;;
-    (defun UR_N|RawScore:decimal (n:object{DpdcUdc.DPDC|NonceData})
-        (let
-            (
-                (meta-data:[object] (UR_N|MetaData n))
-                (l:integer (length meta-data))
-                (fo:object (at 0 meta-data))
-            )
-            (if (contains "score" fo)
-                (at "score" fo)
-                -1.0
-            )
-        )
+    (defun UR_N|RawScore:decimal (id:string son:bool nonce:integer)
+        (at "score" (UR_N|MetaData (UR_NonceData id son nonce)))
     )
-    (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
-        (UR_N|RawScore (UR_NonceData id son nonce))
+    (defun UR_N|Composition:[integer] (id:string son:bool nonce:integer)
+        (at "composition" (UR_N|MetaData (UR_NonceData id son nonce)))
+    )
+    (defun UR_N|RawMetaData:[object] (id:string son:bool nonce:integer)
+        (at "meta-data" (UR_N|MetaData (UR_NonceData id son nonce)))
     )
     ;; [VerumRoles]
     (defun UR_VerumRoles:object{DpdcUdc.DPDC|VerumRoles} (id:string son:bool)
@@ -936,7 +959,7 @@
         (UEV_IMC)
         (update DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"iz-active" : iz-active})
     )
-    (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nd:object{DpdcUdc.DPDC|NonceData} nos:bool)
+    (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nos:bool nd:object{DpdcUdc.DPDC|NonceData} )
         (UEV_IMC)
         (if nos
             (if son

@@ -117,7 +117,7 @@
             (ref-DPDC::UEV_AccountFreezeState id son sender false)
             (ref-DPDC::UEV_AccountFreezeState id son receiver false)
             (UEV_TransferRoles id son sender receiver)
-            ;(UEV_AmountsForTransfer id son nonces amounts)
+            (UEV_AmountsForTransfer id son nonces amounts)
             (compose-capability (P|SECURE-CALLER))
         )
     )

@@ -1,3 +1,22 @@
+(ref-DPTF:module{DemiourgosPactTrueFungibleV3} DPTF)
+(ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
+
+
+(ref-TFT:module{TrueFungibleTransferV4} TFT)
+(ref-TFT:module{TrueFungibleTransferV5} TFT)
+(ref-TFT:module{TrueFungibleTransferV6} TFT)
+
+(ref-P|TS01-A:module{TalosStageOne_AdminV3} TS01-A)
+(ref-P|TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+
+(ref-TS01-C1:module{TalosStageOne_ClientOne} TS01-C1)
+(ref-TS01-C1:module{TalosStageOne_ClientOneV2} TS01-C1)
+(ref-TS01-C1:module{TalosStageOne_ClientOneV3} TS01-C1)
+
+(ref-TS01-CP:module{TalosStageOne_ClientPacts} TS01-CP)
+(ref-TS01-CP:module{TalosStageOne_ClientPactsV2} TS01-CP)
+
+
 UtilityDalosV2
 UtilityDalosV3
 

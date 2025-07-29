@@ -1424,12 +1424,20 @@
         (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeploySmartAccount account guard kadena sovereign public)
+            (if (not (IC|URC_IsNativeGasZero))
+                (KDA|C_Collect account (UR_UsagePrice "smart"))
+                true
+            )
         )
     )
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeployStandardAccount account guard kadena public)
+            (if (not (IC|URC_IsNativeGasZero))
+                (KDA|C_Collect account (UR_UsagePrice "standard"))
+                true
+            )
         )
     )
     (defun C_RotateGovernor:object{IgnisCollector.OutputCumulator}
@@ -1746,10 +1754,6 @@
                 }
             )
             (XI_UpdateKadenaLedger kadena account true)
-            (if (not (IC|URC_IsNativeGasZero))
-                (KDA|C_Collect account (UR_UsagePrice "smart"))
-                true
-            )
         )
     )
     (defun XI_DeployStandardAccount (account:string guard:guard kadena:string public:string)
@@ -1774,10 +1778,6 @@
                     }
                 )
                 (XI_UpdateKadenaLedger kadena account true)
-                (if (not (IC|URC_IsNativeGasZero))
-                    (KDA|C_Collect account (UR_UsagePrice "standard"))
-                    true
-                )
             )
     )
     (defun XI_IgnisCollector (patron:string interactor:string amount:decimal)

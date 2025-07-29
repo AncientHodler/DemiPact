@@ -179,6 +179,27 @@
             (compose-capability (SECURE))
         )
     )
+    (defcap DPDC-S|C>MULTIPLIER (id:string son:bool set-class:integer new-multiplier:decimal)
+        @event
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (current-multiplier:string (UR_SetMultiplier id son set-class))
+            )
+            ;;Multiplier Precision Check, maximum 3 Precision for Set Multiplier
+            (enforce
+                (= (floor new-multiplier 3) new-multiplier)
+                (format "Input Set-Multiplier of {} is not conform with its designed precision of only 3 decimals" [new-multiplier])
+            )
+            (enforce 
+                (!= new-multiplier current-multiplier) 
+                (format "The Set Multiplier of <{}> must be different from the current Set Multiplier of <{}> for operation" [new-multiplier current-multiplier])
+            )
+            (UEV_SetActiveState id son set-class true)
+            (ref-DPDC::CAP_Owner id son)
+            (compose-capability (SECURE))
+        )
+    )
     ;;
     ;;<=======>
     ;;FUNCTIONS
@@ -195,6 +216,9 @@
     )
     (defun UR_SetName:string (id:string son:bool set-class:integer)
         (at "set-name" (UR_Set id son set-class))
+    )
+    (defun UR_SetMultiplier:decimal (id:string son:bool set-class:integer)
+        (at "set-score-multiplier" (UR_Set id son set-class))
     )
     (defun UR_NonceOfSet:string (id:string set-class:integer)
         (at "nonce-of-set" (UR_Set id true set-class))
@@ -221,6 +245,38 @@
     )
     (defun UR_SetSplitData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool set-class:integer)
         (at "split-data" (UR_Set id son set-class))
+    )
+    ;;Score Read for Nonce
+    (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+                (raw-score:decimal (ref-DPDC::UR_N|RawScore id son nonce))
+            )
+            (if (= nonce-class 0)
+                (if (< nonce 0)
+                    (/ raw-score 1000.0)
+                    (if (= raw-score -1.0)
+                        0.0
+                        raw-score
+                    )
+                )
+                (let
+                    (
+                        (multiplier:decimal (UR_SetMultiplier id son nonce))
+                        (multiplied-score:decimal (* raw-score multiplier))
+                    )
+                    (if (< nonce 0)
+                        (/ multiplied-score 1000.0)
+                        (if (= multiplied-score -1000.0)
+                            0.0
+                            multiplied-score
+                        )
+                    )
+                )
+            )
+        )
     )
     ;;{F1}  [URC]
     (defun URC_PrimordialOrComposite:bool (id:string son:bool set-class:integer)
@@ -323,7 +379,7 @@
     ;;{F6}  [C]
     (defun C_DefinePrimordialSet:object{IgnisCollector.OutputCumulator}
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
@@ -336,9 +392,9 @@
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
                     ;;
-                    (creator:string (ref-DPDC::UR_CreatorKonto id true))
+                    (creator:string (ref-DPDC::UR_CreatorKonto id son))
                     (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                    (set-class:integer (XI_PrimordialSet id son set-name set-definition ind))
+                    (set-class:integer (XI_PrimordialSet id son set-name score-multiplier set-definition ind))
                     (ico0:object{IgnisCollector.OutputCumulator}
                         (ref-IGNIS::IC|UDC_ConstructOutputCumulator price creator false [])
                     )
@@ -356,7 +412,7 @@
     )
     (defun C_DefineCompositeSet:object{IgnisCollector.OutputCumulator}
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
@@ -369,9 +425,9 @@
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
                     ;;
-                    (creator:string (ref-DPDC::UR_CreatorKonto id true))
+                    (creator:string (ref-DPDC::UR_CreatorKonto id son))
                     (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
-                    (set-class:integer (XI_CompositeSet id son set-name set-definition ind))
+                    (set-class:integer (XI_CompositeSet id son set-name score-multiplier set-definition ind))
                     (ico0:object{IgnisCollector.OutputCumulator}
                         (ref-IGNIS::IC|UDC_ConstructOutputCumulator price creator false [])
                     )
@@ -430,6 +486,19 @@
             )
         )
     )
+    (defun C_UpdateSetMultiplier:object{IgnisCollector.OutputCumulator} (id:string son:bool set-class:integer new-multiplier:decimal)
+        (UEV_IMC)
+        (with-capability (DPDC-S|C>MULTIPLIER id son set-class new-multiplier)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                )
+                (XI_Multiplier id son set-class new-multiplier)
+                (ref-IGNIS::IC|UDC_SmallestCumulator (ref-DPDC::UR_CreatorKonto id son))
+            )
+        )
+    )
     (defun C_MakeSet:object{IgnisCollector.OutputCumulator} (id:string son:bool nonces:[integer] set-class:integer)
         true
         ;;Transfer 1 of each Nonce to DPDC|SC_NAME
@@ -440,7 +509,7 @@
     ;;{F7}  [X]
     (defun XI_PrimordialSet:integer
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
@@ -463,6 +532,7 @@
                 (ref-DPDC-UDC::UDC_DPDC|Set
                     set-class
                     set-name
+                    score-multiplier
                     nonce-of-set
                     true
                     true
@@ -479,7 +549,7 @@
     )
     (defun XI_CompositeSet:integer
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
@@ -502,6 +572,7 @@
                 (ref-DPDC-UDC::UDC_DPDC|Set
                     set-class
                     set-name
+                    score-multiplier
                     nonce-of-set
                     true
                     false
@@ -519,7 +590,7 @@
     (defun XI_FragmentSetClass
         (id:string son:bool set-class:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData})
         (require-capability (DPDC-S|C>ENABLE-FRAGMENTATION id son set-class fragmentation-ind))
-        (XB_U|NonceOrSplitData id son set-class fragmentation-ind false)
+        (XB_U|NonceOrSplitData id son set-class false fragmentation-ind)
     )
     (defun XI_ToggleSetClass (id:string son:bool set-class:integer toggle:bool)
         (require-capability (DPDC-S|C>TOGGLE id son set-class toggle))
@@ -528,6 +599,10 @@
     (defun XI_RenameSet (id:string son:bool set-class:integer new-name:string)
         (require-capability (DPDC-S|C>RENAME id son set-class new-name))
         (XI_U|SetName id son set-class new-name)
+    )
+    (defun XI_Multiplier (id:string son:bool set-class:integer new-multiplier:decimal)
+        (require-capability (DPDC-S|C>MULTIPLIER id son set-class new-multiplier))
+        (XI_U|SetMultiplier id son set-class new-multiplier)
     )
     ;;
     ;; [<SetsTable> Writings] [3]
@@ -538,7 +613,7 @@
             (insert DPNF|SetsTable (concat [id BAR (format "{}" [set-class])]) set)
         )
     )
-    (defun XB_U|NonceOrSplitData (id:string son:bool set-class:integer nd:object{DpdcUdc.DPDC|NonceData} nos:bool)
+    (defun XB_U|NonceOrSplitData (id:string son:bool set-class:integer nos:bool nd:object{DpdcUdc.DPDC|NonceData})
         (require-capability (SECURE))
         (if nos
             (if son
@@ -563,6 +638,13 @@
         (if son
             (update DPSF|SetsTable (concat [id BAR (format "{}" [set-class])]) {"set-name" : new-name})
             (update DPNF|SetsTable (concat [id BAR (format "{}" [set-class])]) {"set-name" : new-name})
+        )
+    )
+    (defun XI_U|SetMultiplier (id:string son:bool set-class:integer new-multiplier:decimal)
+        (require-capability (SECURE))
+        (if son
+            (update DPSF|SetsTable (concat [id BAR (format "{}" [set-class])]) {"set-score-multiplier" : new-multiplier})
+            (update DPNF|SetsTable (concat [id BAR (format "{}" [set-class])]) {"set-score-multiplier" : new-multiplier})
         )
     )
 )

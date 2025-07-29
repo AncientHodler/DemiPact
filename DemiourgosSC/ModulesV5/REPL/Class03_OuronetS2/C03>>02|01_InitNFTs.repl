@@ -1,3 +1,35 @@
+;;Entering Namespace Free
+(print "")
+(print "===================Initialise Ouronet_TX-001============================")
+(begin-tx "INIT TX 000 - Stage 2 Keyset Definitions")
+;;Entering Namespace Free
+(namespace "free")
+
+    (module KCV2 GOVERNANCE
+        (defcap GOVERNANCE () true)
+
+        ;;User Names
+        
+        ;;Smart Contracts
+        (defconst KADN_NAME_0001 "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
+        (defconst KADN_PBKY_0001 (drop 2 KADN_NAME_0001))
+        (defconst DPTS_NAME_0001 "Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4")
+        (defconst DPDC DPTS_NAME_0001)
+        (defconst DPTS_PBKY_0001 "PK_Collectables")
+        (defconst PBLC_0008 "9G.2j95rkomKqd207CDg5yycyKcAy1AqFhjy6D0rCr0Kbwe9E6libtveIHsAIw9F2c43v6IHILIBf62r2LD58xHE09kypyoevL62E81wHL4zj9tIyspf5df82upuBGGKmIsHGuvH86fHMMi99n0htsypL9h3dMHFCIx8ogeynkmCIghxK871rlkas8iDfce7AwAbiajr7H1LHi17mLD7aJu6m7xmcAABkhxtwb4Kqbk8xLpehakyu3AvajgJvtfeysoH67irvplA0as86Jls1r3d3oHms9Maaja9856wzybpthMGs6qDAzacE24skcA30wvm77BLhrdh0ymkl3vbJ9lG641J7ofg5K9gEbHD4ioFHLEajL28qsD4cFEhdDthDzwF8EnBBc74Dikqn9xixFap5Jxhl7D0owz5d9MDJzfjgx3jbdpD3zglsq83iC4fhcpbz3KeAi11Ig2pgIqnmwwqA0Exr5073w7lgzlrw3Ff7Co9uuxbnLuJvlFzgfGeIwM2Dmev1JskqEGK0Ck0B87iagsHFI76HC6sKnwrHnkl0sl8pAf0pbBaw9MbqLs")
+
+    )
+
+    (env-data
+        {
+            ;;DEMI-SC-KEYS
+            "KEY_SC_Collectables": { "keys": [KCV2.DPTS_PBKY_0001]}
+        }
+    )
+
+    ;;DEMI MASTER KEYSETS
+    (define-keyset "free.dh_sc_dpdc-keyset" (read-keyset "KEY_SC_Collectables"))
+(commit-tx)
 ;;==============================================================================
 ;;
 ;;

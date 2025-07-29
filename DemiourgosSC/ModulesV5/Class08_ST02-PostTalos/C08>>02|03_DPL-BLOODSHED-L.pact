@@ -327,17 +327,22 @@
                 (fold
                     (lambda
                         (acc:[object{DpdcUdc.DPDC|NonceData}] idx:integer)
-                        (ref-U|LST::UC_AppL acc
-                            (ref-DPDC-UDC::UDC_NonceData
-                                R
-                                IR-L
-                                (format "Bloodshed Legendary #{}" [(at idx pos)])
-                                d-l
-                                [(ref-DPDC-UDC::UDC_Score (LS (at idx pos))) (L-x (at idx pos))]
-                                type
-                                (ref-DPDC-UDC::UDC_URI|Data (BloodshedLink "Legendary" (at idx pos)) b b b b b b)
-                                zd
-                                zd
+                        (let
+                            (
+                                (p:integer (at idx pos))
+                            )
+                            (ref-U|LST::UC_AppL acc
+                                (ref-DPDC-UDC::UDC_NonceData
+                                    R
+                                    IR-L
+                                    (format "Bloodshed Legendary #{}" [p])
+                                    d-l
+                                    (ref-DPDC-UDC::UDC_ScoreMetaData (LS p) (L-x p))
+                                    type
+                                    (ref-DPDC-UDC::UDC_URI|Data (BloodshedLink "Legendary" p) b b b b b b)
+                                    zd
+                                    zd
+                                )
                             )
                         )
                     )

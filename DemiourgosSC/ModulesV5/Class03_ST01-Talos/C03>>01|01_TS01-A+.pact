@@ -230,7 +230,6 @@
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
             )
         )
-
     )
     (defun DALOS|A_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         @doc "Deploys a Standard Ouronet Account in Administrator Mode, without collection KDA"

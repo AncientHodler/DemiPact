@@ -70,6 +70,7 @@
     ;;
     (defschema DPDC|NonceElement
         nonce-class:integer                 ;;Class 0 for Primordial Nonces, non-zero for Composite Nonces
+                                            ;;For Composite Nonces, <nonce-class> is the <set-class>
         nonce-value:integer                 ;;Nonce Value of the Collection Element.
         nonce-supply:integer                ;;Collection Element Supply
         ;;
@@ -87,11 +88,16 @@
         ignis:decimal
         name:string
         description:string
-        meta-data:[object]
+        meta-data:object{NonceMetaData}
         asset-type:object{URI|Type}
         uri-primary:object{URI|Data}
         uri-secondary:object{URI|Data}
         uri-tertiary:object{URI|Data}
+    )
+    (defschema NonceMetaData
+        score:decimal
+        composition:[integer]
+        meta-data:object
     )
     (defschema URI|Type
         image:bool
@@ -111,15 +117,13 @@
         model:string
         exotic:string
     )
-    (defschema DPDC|NonceScore
-        score:decimal
-    )
     ;;
     ;;  [3]
     ;;
     (defschema DPDC|Set
         set-class:integer
         set-name:string
+        set-score-multiplier:decimal        ;;Stores Set NFT Score Multiplier, default to 1.0
         nonce-of-set:integer                ;;Saves the Nonce of the Set; 
                                             ;;Only for SFT, since they get their own nonce at definition
                                             ;;For NFT has no use and is filled with 0
@@ -194,26 +198,27 @@
     )
     (defun UDC_NonceData:object{DPDC|NonceData} 
         (
-            a:decimal b:decimal c:string d:string e:[object]
+            a:decimal b:decimal c:string d:string 
+            e:object{NonceMetaData}
             f:object{URI|Type}
             g:object{URI|Data}
             h:object{URI|Data}
             i:object{URI|Data}
         )
     )
+    (defun UDC_NonceMetaData:object{NonceMetaData} (a:decimal b:[integer] c:object))
     (defun UDC_URI|Type:object{URI|Type} (a:bool b:bool c:bool d:bool e:bool f:bool g:bool))
     (defun UDC_URI|Data:object{URI|Data} (a:string b:string c:string d:string e:string f:string g:string))
-    (defun UDC_Score:object{DPDC|NonceScore} (a:decimal))
     ;;
     ;;  [3]
     ;;
     (defun UDC_DPDC|Set:object{DPDC|Set}
         (
-            a:integer b:string c:integer d:bool e:bool f:bool
-            g:[object{DPDC|AllowedNonceForSetPosition}]
-            h:[object{DPDC|AllowedClassForSetPosition}]
-            i:object{DPDC|NonceData}
+            a:integer b:string c:decimal d:integer e:bool f:bool g:bool
+            h:[object{DPDC|AllowedNonceForSetPosition}]
+            i:[object{DPDC|AllowedClassForSetPosition}]
             j:object{DPDC|NonceData}
+            k:object{DPDC|NonceData}
         )
     )
     (defun UDC_DPDC|AllowedClassForSetPosition:object{DPDC|AllowedClassForSetPosition}  (a:integer))
@@ -231,10 +236,12 @@
     (defun UDC_ZeroNBO:object{DPSF|NonceBalance} ())
     ;;  [2]
     (defun UDC_ZeroNonceElement:object{DPDC|NonceElement} ())
+    (defun UDC_NoMetaData:object{NonceMetaData} ())
+    (defun UDC_MetaData:object{NonceMetaData} (meta-data:object))
+    (defun UDC_ScoreMetaData:object{NonceMetaData} (score:decimal meta-data:object))
     (defun UDC_ZeroNonceData:object{DPDC|NonceData} ())
     (defun UDC_ZeroURI|Type:object{URI|Type} ())
     (defun UDC_ZeroURI|Data:object{URI|Data} ())
-    (defun UDC_NoScore:object{DPDC|NonceScore} ())
     ;;  [3]
     (defun UDC_NoPrimordialSet:[object{DPDC|AllowedNonceForSetPosition}] ())
     (defun UDC_NoCompositeSet:[object{DPDC|AllowedClassForSetPosition}] ())
@@ -242,6 +249,7 @@
 ;;
 (interface Dpdc
     @doc "Holds Schema for Digital Collectibles, these being the DPSF and DPNF"
+    (defun GOV|DPDC|SC_NAME ())
     ;;
     ;;  [UR]
     ;;
@@ -274,11 +282,15 @@
     (defun UR_N|IgnisRoyalty:decimal (n:object{DPDC|NonceData}))
     (defun UR_N|Name:string (n:object{DPDC|NonceData}))
     (defun UR_N|Description:string (n:object{DPDC|NonceData}))
-    (defun UR_N|MetaData:[object] (n:object{DPDC|NonceData}))
+    (defun UR_N|MetaData:object{NonceMetaData} (n:object{DPDC|NonceData}))
     (defun UR_N|AssetType:object{URI|Type} (n:object{DPDC|NonceData}))
     (defun UR_N|Primary:object{URI|Data} (n:object{DPDC|NonceData}))
     (defun UR_N|Secondary:object{URI|Data} (n:object{DPDC|NonceData}))
     (defun UR_N|Tertiary:object{URI|Data} (n:object{DPDC|NonceData}))
+    ;;
+    (defun UR_N|RawScore:decimal (id:string son:bool nonce:integer))
+    (defun UR_N|Composition:[integer] (id:string son:bool nonce:integer))
+    (defun UR_N|RawMetaData:[object] (id:string son:bool nonce:integer))
         ;;
     (defun UR_VerumRoles:object{DPDC|VerumRoles} (id:string son:bool))
     (defun UR_Verum1:[string] (id:string son:bool))
@@ -385,7 +397,9 @@
     ;; [<NoncesTable> Writings] [2]
     ;;
     (defun XE_I|CollectionElement (id:string son:bool nonce-value:integer ned:object{DpdcUdc.DPDC|NonceElement}))
-    (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nd:object{DpdcUdc.DPDC|NonceData} nos:bool))
+    (defun XE_U|NonceSupply (id:string nonce-value:integer new-supply:integer))
+    (defun XE_U|NonceIzActive (id:string nonce-value:integer iz-active:bool))
+    (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nos:bool nd:object{DpdcUdc.DPDC|NonceData}))
     ;;
     ;; [<VerumRolesTable> Writings] [4]
     ;;
@@ -559,6 +573,7 @@
     (defun UR_Set:object{DPDC|Set} (id:string son:bool set-class:integer))
     (defun UR_SetClass:integer (id:string son:bool set-class:integer))
     (defun UR_SetName:string (id:string son:bool set-class:integer))
+    (defun UR_SetMultiplier:decimal (id:string son:bool set-class:integer))
     (defun UR_IzSetActive:bool (id:string son:bool set-class:integer))
     (defun UR_IzSetPrimordial:bool (id:string son:bool set-class:integer))
     (defun UR_IzSetComposite:bool (id:string son:bool set-class:integer))
@@ -566,6 +581,7 @@
     (defun UR_CSD:[object{DPDC|AllowedClassForSetPosition}] (id:string son:bool set-class:integer))
     (defun UR_SetNonceData:object{DPDC|NonceData} (id:string son:bool set-class:integer))
     (defun UR_SetSplitData:object{DPDC|NonceData} (id:string son:bool set-class:integer))
+    (defun UR_N|Score:decimal (id:string son:bool nonce:integer))
     ;;
     ;;  [UEV]
     ;;
@@ -580,14 +596,14 @@
     ;;
     (defun C_DefinePrimordialSet:object{IgnisCollector.OutputCumulator}
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
     )
     (defun C_DefineCompositeSet:object{IgnisCollector.OutputCumulator}
         (
-            id:string son:bool set-name:string
+            id:string son:bool set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
@@ -600,7 +616,9 @@
     )
     (defun C_ToggleSet:object{IgnisCollector.OutputCumulator} (id:string son:bool set-class:integer toggle:bool))
     (defun C_RenameSet:object{IgnisCollector.OutputCumulator} (id:string son:bool set-class:integer new-name:string))
+    (defun C_UpdateSetMultiplier:object{IgnisCollector.OutputCumulator} (id:string son:bool set-class:integer new-multiplier:decimal))
     ;;
+    (defun XB_U|NonceOrSplitData (id:string son:bool set-class:integer nos:bool nd:object{DPDC|NonceData}))
 )
 ;;
 (interface DpdcFragments
@@ -613,6 +631,8 @@
     ;;
     ;; [C]
     ;;
+    (defun C_MakeFragments:object{IgnisCollector.OutputCumulator} (id:string son:bool nonce:integer amount:integer account:string))
+    (defun C_MergeFragments:object{IgnisCollector.OutputCumulator} (id:string son:bool nonce:integer amount:integer account:string))
     (defun C_EnableNonceFragmentation:object{IgnisCollector.OutputCumulator}
         (
             id:string son:bool nonce:integer
@@ -626,11 +646,11 @@
     ;;
     ;; [UR]
     ;;
-    (defun UR_Nonce:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool))
+    (defun UR_Nonce:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nosc:integer nos:bool nost:bool))
     ;;
     ;; [UEV]
     ;;
-    (defun UEV_NonceDataUpdater (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool))
+    (defun UEV_NonceDataUpdater (id:string son:bool account:string nosc:integer nos:bool nost:bool))
     (defun UEV_RoleNftRecreateON (id:string son:bool account:string))
     (defun UEV_RoleNftUpdateON (id:string son:bool account:string))
     (defun UEV_RoleModifyRoyaltiesON (id:string son:bool account:string))
@@ -639,17 +659,12 @@
     ;;
     ;; [C]
     ;;
-    (defun C_UpdateNonce (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
-    (defun C_UpdateNonceRoyalty (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal))
-    (defun C_UpdateNonceIgnisRoyalty (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool royalty-value:decimal))
-    (defun C_UpdateNonceName (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool name:string))
-    (defun C_UpdateNonceDescription (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool description:string))
-    (defun C_UpdateNonceScore (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool score:decimal))
-    (defun C_UpdateNonceMetaData (id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool meta-data:[object]))
-    (defun C_UpdateNonceURI
-        (
-            id:string son:bool account:string nonce-or-set-class:integer native-or-split:bool classzero-or-nonzero:bool
-            ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}
-        )
-    )
+    (defun C_UpdateNonce                (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun C_UpdateNonceRoyalty         (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal))
+    (defun C_UpdateNonceIgnisRoyalty    (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal))
+    (defun C_UpdateNonceName            (id:string son:bool account:string nosc:integer nos:bool nost:bool name:string))
+    (defun C_UpdateNonceDescription     (id:string son:bool account:string nosc:integer nos:bool nost:bool description:string))
+    (defun C_UpdateNonceScore           (id:string son:bool account:string nosc:integer nos:bool nost:bool score:decimal))
+    (defun C_UpdateNonceMetaData        (id:string son:bool account:string nosc:integer nos:bool nost:bool meta-data:object))
+    (defun C_UpdateNonceURI             (id:string son:bool account:string nosc:integer nos:bool nost:bool ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}))
 )

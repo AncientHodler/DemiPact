@@ -237,17 +237,22 @@
                 (fold
                     (lambda
                         (acc:[object{DpdcUdc.DPDC|NonceData}] idx:integer)
-                        (ref-U|LST::UC_AppL acc
-                            (ref-DPDC-UDC::UDC_NonceData
-                                R
-                                IR-L
-                                (format "Bloodshed Epic #{}" [(at idx pos)])
-                                d-l
-                                [(ref-DPDC-UDC::UDC_Score (ES (at idx pos))) (E-x (at idx pos))]
-                                type
-                                (ref-DPDC-UDC::UDC_URI|Data (ref-BSL::BloodshedLink "Epic" (at idx pos)) b b b b b b)
-                                zd
-                                zd
+                        (let
+                            (
+                                (p:integer (at idx pos))
+                            )
+                            (ref-U|LST::UC_AppL acc
+                                (ref-DPDC-UDC::UDC_NonceData
+                                    R
+                                    IR-L
+                                    (format "Bloodshed Epic #{}" [p])
+                                    d-l
+                                    (ref-DPDC-UDC::UDC_ScoreMetaData (ES p) (E-x p))
+                                    type
+                                    (ref-DPDC-UDC::UDC_URI|Data (ref-BSL::BloodshedLink "Epic" p) b b b b b b)
+                                    zd
+                                    zd
+                                )
                             )
                         )
                     )

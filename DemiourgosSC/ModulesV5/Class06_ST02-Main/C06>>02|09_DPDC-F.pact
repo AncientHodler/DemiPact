@@ -27,6 +27,10 @@
         (compose-capability (P|DPDC-F|CALLER))
         (compose-capability (SECURE))
     )
+    (defcap P|DPDC|REMOTE-GOV ()
+        @doc "DPDC Remote Governor Capability"
+        true
+    )
     ;;{P4}
     (defconst P|I                   (P|Info))
     (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
@@ -64,9 +68,17 @@
         (let
             (
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
+                (ref-P|DPDC-C:module{OuronetPolicy} DPDC-C)
+                (ref-P|DPDC-T:module{OuronetPolicy} DPDC-T)
                 (mg:guard (create-capability-guard (P|DPDC-F|CALLER)))
             )
+            (ref-P|DPDC::P|A_Add
+                "DPDC-F|RemoteDpdcGov"
+                (create-capability-guard (P|DPDC|REMOTE-GOV))
+            )
             (ref-P|DPDC::P|A_AddIMP mg)
+            (ref-P|DPDC-C::P|A_AddIMP mg)
+            (ref-P|DPDC-T::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -116,6 +128,36 @@
             (compose-capability (P|DPDC-F|CALLER))
         )
     )
+    (defcap DPDC-F|C>NONCE
+        (id:string son:bool nonce:integer)
+        ;;Nonce is fragmented
+        ;;Smart Governance for dpdc
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+            )
+            (if (= nonce-class 0)
+                (UEV_Fragmentation id son nonce)
+                (ref-DPDC-S::UEV_Fragmentation id son nonce)
+            )
+            (compose-capability (P|DPDC-F|CALLER))
+            (compose-capability (P|DPDC|REMOTE-GOV))
+        )
+    )
+    (defcap DPDC-F|C>MERGE 
+        (nonce:integer amount:integer)
+        (let
+            (
+                (divided:integer (mod amount 1000))
+            )
+            (enforce (< nonce 0) "Only negative nonces can be used for merging")
+            (enforce (= divided 0) "Only multiple of 1000 can be used for Merging")
+            (compose-capability (P|DPDC-F|CALLER))
+            (compose-capability (P|DPDC|REMOTE-GOV))
+        )
+    )
     ;;
     ;;<=======>
     ;;FUNCTIONS
@@ -160,6 +202,62 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_MakeFragments:object{IgnisCollector.OutputCumulator}
+        (id:string son:bool nonce:integer amount:integer account:string)
+        (UEV_IMC)
+        (with-capability (DPDC-F|C>NONCE id son nonce)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+                    (neg-nonce:integer (- 0 nonce))
+                    (f-amount:integer (* 1000 amount))
+                )
+                ;;1]Transfer <nonce> <amount> from <account> to <DPDC|SC_NAME>
+                (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
+                ;;2]Fragment Nonces are credited to the <DPDC|SC_NAME>
+                (if son
+                    (ref-DPDC-C::XE_CreditSFT-FragmentNonce id dpdc neg-nonce f-amount)
+                    (ref-DPDC-C::XE_CreditNFT-FragmentNonce id dpdc neg-nonce f-amount)
+                )
+                ;;3]They are then transfered to the <account>
+                (ref-DPDC-T::C_Transfer id son dpdc account [neg-nonce] [f-amount] true)
+                ;;4]Output Cumulator
+                (ref-IGNIS::IC|UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
+            )
+        )
+    )
+    (defun C_MergeFragments:object{IgnisCollector.OutputCumulator}
+        (id:string son:bool nonce:integer amount:integer account:string)
+        (UEV_IMC)
+        (with-capability (DPDC-F|C>MERGE nonce amount)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+                    (pos-nonce:integer (abs nonce))
+                    (merged-amount:integer (/ amount 1000))
+                )
+                ;;1]Transfer <nonce> <amount> from <account> to <DPDC|SC_NAME>
+                (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
+                ;;2]Fragment Nonces are debited from the <DPDC|SC_NAME>
+                (if son
+                    (ref-DPDC-C::XE_DebitSFT-FragmentNonce id dpdc nonce amount)
+                    (ref-DPDC-C::XE_DebitNFT-FragmentNonce id dpdc nonce amount)
+                )
+                ;;3]Native <nonces> are transfered from <DPDC|SC_NAME> to <account>
+                (ref-DPDC-T::C_Transfer id son dpdc account [pos-nonce] [merged-amount] true)
+                ;;4]Output Cumulator
+                (ref-IGNIS::IC|UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
+            )
+        )
+    )
     (defun C_EnableNonceFragmentation:object{IgnisCollector.OutputCumulator}
         (
             id:string son:bool nonce:integer
@@ -171,14 +269,16 @@
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPDC:module{Dpdc} DPDC)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 )
-                (XI_FragmentNonce id son nonce fragmentation-ind)
+                (XI_EnableNonceFragmentation id son nonce fragmentation-ind)
+                (ref-DPDC::XE_DeployAccountWNE id son dpdc)
                 (ref-IGNIS::IC|UDC_SmallestCumulator (ref-DPDC::UR_CreatorKonto id son))
             )
         )
     )
     ;;{F7}  [X]
-    (defun XI_FragmentNonce 
+    (defun XI_EnableNonceFragmentation 
         (
             id:string son:bool nonce:integer
             fragmentation-ind:object{DpdcUdc.DPDC|NonceData}
@@ -188,7 +288,7 @@
             (
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (ref-DPDC::XE_U|NonceOrSplitData id son nonce fragmentation-ind false)
+            (ref-DPDC::XE_U|NonceOrSplitData id son nonce false fragmentation-ind)
         )
     )
     ;;

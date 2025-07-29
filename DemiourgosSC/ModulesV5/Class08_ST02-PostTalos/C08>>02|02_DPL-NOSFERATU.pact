@@ -47,6 +47,11 @@
     (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
     ;;
+    (defconst MD0001    ["The Serpent's Cryptovault of Bloodcoin Hoard" "Nosferatu's Bloodgrip of Legends" "$Elite Auryn" "Viespar Coat with Legendary Bloodgrip" "Gold Earring Right" "Sanguine Tide Glow" "Golden Aristocrat Glasses" "Golden Ring" "Golden Wreath" "Queen of Clubs" "Crimson Veil Effect" "Legendary" "Silver Tooth"])
+    (defconst MD0002    ["Shadowed Seat of Eternal Rule" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Gold Earring Left" "Divine Glow" "Round Golden Glasses" "Engraved Ring" "King's Crown" "Gold Coin" "Crimson Veil Effect" "Legendary" "Gold Tooth"])
+    (defconst MD0003    ["The Serpent's Cryptovault of Bloodcoin Hoard" "Legendary Vampiric Mesmeric Hypnotic Figure" "$Elite Auryn" "Viespar" "Double Gold Earrings Right" "Sanguine Tide Glow" "No Glasses" "No Accessories" "Wreath Leafs" "Opium Pipe #2" "Nightfall Mist Distortion" "Legendary" "Silver Tooth"])
+    (defconst MD0004    ["Vampire's Haunting Steps" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Silver Earring Left" "Moonlight Glow" "Golden Aristocrat Glasses" "Golden Skull Ring" "Tillted Peacky Hat" "Jack of Spades" "Moonlit Shadows Overlay" "Legendary" "Gold Tooth"])
+    ;;
     ;;<==========>
     ;;CAPABILITIES
     ;;{C1}
@@ -123,20 +128,20 @@
             (ref-TS02-C2::DPNF|C_Create
                 patron dhn-id
                 [
-                    (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #1" d-l 
-                        [(UDC_NosMD ["The Serpent's Cryptovault of Bloodcoin Hoard" "Nosferatu's Bloodgrip of Legends" "$Elite Auryn" "Viespar Coat with Legendary Bloodgrip" "Gold Earring Right" "Sanguine Tide Glow" "Golden Aristocrat Glasses" "Golden Ring" "Golden Wreath" "Queen of Clubs" "Crimson Veil Effect" "Legendary" "Silver Tooth"])]
+                    (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #1" d-l
+                        (ref-DPDC-UDC::UDC_MetaData (UDC_NosMD MD0001))
                         type (ref-DPDC-UDC::UDC_URI|Data l-l001 b b b b b b) zd zd
                     )
                     (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #2" d-l 
-                        [(UDC_NosMD ["Shadowed Seat of Eternal Rule" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Gold Earring Left" "Divine Glow" "Round Golden Glasses" "Engraved Ring" "King's Crown" "Gold Coin" "Crimson Veil Effect" "Legendary" "Gold Tooth"])]
+                        (ref-DPDC-UDC::UDC_MetaData (UDC_NosMD MD0002))
                         type (ref-DPDC-UDC::UDC_URI|Data l-l002 b b b b b b) zd zd
                     )
                     (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #3" d-l 
-                        [(UDC_NosMD ["The Serpent's Cryptovault of Bloodcoin Hoard" "Legendary Vampiric Mesmeric Hypnotic Figure" "$Elite Auryn" "Viespar" "Double Gold Earrings Right" "Sanguine Tide Glow" "No Glasses" "No Accessories" "Wreath Leafs" "Opium Pipe #2" "Nightfall Mist Distortion" "Legendary" "Silver Tooth"])]
+                        (ref-DPDC-UDC::UDC_MetaData (UDC_NosMD MD0003))
                         type (ref-DPDC-UDC::UDC_URI|Data l-l003 b b b b b b) zd zd
                     )
                     (ref-DPDC-UDC::UDC_NonceData r ri-l "Nosferatu Legendary #4" d-l 
-                        [(UDC_NosMD ["Vampire's Haunting Steps" "Nosferatu's Bloodgrip of Legends" "$Auryn" "Viespar with Legendary Bloodgrip" "Silver Earring Left" "Moonlight Glow" "Golden Aristocrat Glasses" "Golden Skull Ring" "Tillted Peacky Hat" "Jack of Spades" "Moonlit Shadows Overlay" "Legendary" "Gold Tooth"])]
+                        (ref-DPDC-UDC::UDC_MetaData (UDC_NosMD MD0004))
                         type (ref-DPDC-UDC::UDC_URI|Data l-l004 b b b b b b) zd zd
                     )
                 ]

@@ -168,6 +168,7 @@
         (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
         (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
         (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -183,7 +184,7 @@
                 7.0
                 "Thousand Snake Eyez"
                 "These are the fragments of Snake Eyez"
-                [{}]
+                (ref-DPDC-UDC::UDC_NoMetaData)
                 (ref-DPDC-UDC::UDC_URI|Type t t t f f f f)
                 (ref-DPDC-UDC::UDC_URI|Data "Image Link" "Audio Link" "Video Link" b b b b)
                 (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
@@ -194,11 +195,9 @@
     (ref-TS02-C1::DPSF|C_UpdateNonceScore patron id emma 1 true 25.0)
     ;(ref-TS02-C1::DPSF|C_RemoveNonceScore patron id emma 1)
     (ref-TS02-C1::DPSF|C_UpdateNonceMetaData patron id emma 1 true
-        [
-            {"eye"      : "red"
-            ,"age"      : 24.3
-            ,"value"    : 123.3}
-        ]
+        {"eye"      : "red"
+        ,"age"      : 24.3
+        ,"value"    : 123.3}
     )
     (ref-TS02-C1::DPSF|C_UpdateNonceName patron id emma 1  true "Snake Eyez")
     (ref-TS02-C1::DPSF|C_UpdateNonceDescription patron id emma 1 true "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
@@ -241,7 +240,10 @@
             (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true 1))
             (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true 1))
             (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true 1))
-            (ref-DPDC::UR_N|Score id true 1)
+
+            (ref-DPDC::UR_N|RawScore id true 1)
+            (ref-DPDC-S::UR_N|Score id true 1)
+
             (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true 1))
             (ref-DPDC::UR_NonceValue id true 1)
             (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true 1))
@@ -258,7 +260,10 @@
             (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -1))
-            (ref-DPDC::UR_N|Score id true -1)
+
+            (ref-DPDC::UR_N|RawScore id true -1)
+            (ref-DPDC-S::UR_N|Score id true 1)
+
             (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_NonceValue id true -1)
             (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -1))
@@ -311,7 +316,7 @@
                 7.0
                 "Whole Movie Fragments"
                 "These are the fragments of Wonder Coach Movie"
-                [{}]
+                (ref-DPDC-UDC::UDC_NoMetaData)
                 (ref-DPDC-UDC::UDC_URI|Type t t t f f f f)
                 (ref-DPDC-UDC::UDC_URI|Data "Image Link" "Audio Link" "Video Link" b b b b)
                 (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
@@ -513,7 +518,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "TX 007b -- SFT Trasnfer Tests")
+(begin-tx "TX 007b -- SFT Transfer Tests")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -525,20 +530,67 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
+        (ref-DPDC:module{Dpdc} DPDC)
         (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
         (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
-        (id:string "DHN-98c486052a51")
+        (id1:string "DHCD-98c486052a51")
+        (id2:string "DHN-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
     )
-    ;(ref-TS02-C1::DPSF|C_TransferNonces patron id emma lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
-    (ref-TS02-C2::DPNF|C_TransferNonce patron id emma lumy 1 1 false)
+    (ref-TS02-C1::DPSF|C_TransferNonces patron id1 emma lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
+    ;(ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
+
+    [
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id1 emma)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id1 lumy)
+    ]
 )
 
 (print "")
 (print "")
 (format "<<<<<<<TX 007b -- SFT Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 008 -- SFT Fragment Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (id:string "DHOC-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+    )
+    (ref-TS02-C1::DPSF|C_MakeFragments patron id 1 3 patron)
+    (ref-TS02-C1::DPSF|C_MergeFragments patron id -1 2000 patron)
+    [
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id patron)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings id dpdc)
+        (ref-DPDC::UR_AccountFragments id true patron)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 008 -- SFT Fragment Tests costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
