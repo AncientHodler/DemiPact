@@ -84,7 +84,7 @@
     (ref-TS02-C1::DPSF|C_ToggleAddQuantityRole patron id emma t)
     (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma t)
     ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
-    (ref-TS02-C1::DPSF|C_DeployAccount patron id orbr)
+    (ref-TS02-C1::DPSF|C_DeployAccount patron orbr id)
     (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr t)
     (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr f)
     (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
@@ -241,7 +241,7 @@
             (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true 1))
             (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true 1))
 
-            (ref-DPDC::UR_N|RawScore id true 1)
+            (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id true 1))
             (ref-DPDC-S::UR_N|Score id true 1)
 
             (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true 1))
@@ -261,11 +261,11 @@
             (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -1))
 
-            (ref-DPDC::UR_N|RawScore id true -1)
+            (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC-S::UR_N|Score id true 1)
 
             (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -1))
-            (ref-DPDC::UR_NonceValue id true -1)
+            (ref-DPDC::UR_NonceValue id true (abs -1))
             (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true -1))
             (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true -1))
@@ -382,13 +382,13 @@
     [
         (ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 20)
         ;(ref-TS02-C1::DPSF|C_AddQuantity patron id emma 11 20)
-        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
         (ref-TS02-C1::DPSF|C_Burn patron id emma 1 19)
-        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
         (ref-TS02-C1::DPSF|C_WipeNoncePartialy patron id emma 1 11)
-        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        (format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
         ;(ref-TS02-C1::DPSF|C_WipeNonce patron id emma 1)
-        ;;;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        ;;;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
         ;(ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 500)
         
 
@@ -396,7 +396,7 @@
         
         
         ;(ref-TS02-C1::DPSF|C_WipeNonces patron id emma)
-        ;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply id true emma 1)])
+        ;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
         ;(format "SemiFungible Account Holdings are: {}" [(ref-DPDC::UR_SemiFungibleAccountHoldings id emma)])
         ;(format "Nonce 1 Supply again is {}" [(ref-DPDC::UC_SupplyFronNonceBalanceObject (ref-DPDC::UR_SemiFungibleAccountHoldings id emma) 1 true)])
 
@@ -440,24 +440,24 @@
     )
     (ref-TS02-C2::DPNF|C_ToggleBurnRole patron id emma true)
     [
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id patron)
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id lumy)
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings patron id)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings lumy id)
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings emma id) ;;creator
         ;(ref-TS02-C2::DPNF|C_Burn patron id emma 1)
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings emma id) ;;creator
         ;(format "Non Fungible 1 active status is {}" [(ref-DPDC::UR_IzNonFungibleNonceActive id 1)])
         ;(format "Create State for Nsoferatu is on {}" [(ref-DPDC::UR_Verum5 id false)])
         ;(ref-TS02-C2::DPNF|C_Respawn patron id emma 1)
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings emma id) ;;creator
         ;;
         ;(ref-TS02-C2::DPNF|C_ToggleFreezeAccount patron id emma true)
         ;(ref-TS02-C2::DPNF|C_WipeNonce patron id emma 3)
-        ;(ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        ;(ref-DPDC::UR_NonFungibleAccountHoldings emma id) ;;creator
 
         ;;
         ;(ref-DPDC::UR_SemiFungibleAccountHoldings id2 emma)
         ;(ref-TS02-C2::DPNF|C_Wipe patron id emma)
-        (ref-DPDC::UR_NonFungibleAccountHoldings id emma) ;;creator
+        (ref-DPDC::UR_NonFungibleAccountHoldings emma id) ;;creator
     ]
 )
 
@@ -471,7 +471,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "TX 007 -- SFT Trasnfer Tests")
+(begin-tx "TX 007 -- SFT Transfer Tests")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs 
@@ -503,8 +503,8 @@
         (format "Transfer Cumulator is {}" [(ref-DPDC-T::UDC_TransferCumulator true patron emma [7])])
         (ref-TS02-C1::DPSF|C_TransferNonce patron id emma lumy 1 7 false)
         (format "Patron has after transfer {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id lumy)
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id emma)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings lumy id)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings emma id)
     ]
 )
 
@@ -543,8 +543,8 @@
     ;(ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
 
     [
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id1 emma)
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id1 lumy)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings emma id1)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings lumy id1)
     ]
 )
 
@@ -582,15 +582,471 @@
     (ref-TS02-C1::DPSF|C_MakeFragments patron id 1 3 patron)
     (ref-TS02-C1::DPSF|C_MergeFragments patron id -1 2000 patron)
     [
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id patron)
-        (ref-DPDC::UR_SemiFungibleAccountHoldings id dpdc)
-        (ref-DPDC::UR_AccountFragments id true patron)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings patron id)
+        (ref-DPDC::UR_SemiFungibleAccountHoldings dpdc id)
+        ;(ref-DPDC::UR_AccountFragments id true patron)
     ]
 )
 
 (print "")
 (print "")
 (format "<<<<<<<TX 008 -- SFT Fragment Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+
+
+
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 009 -- Nosferatu Transfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(free.TS02-C2.DPNF|C_TransferNonces
+    KST.ANHD
+    "DHN-98c486052a51"
+    KST.EMMA
+    KST.LUMY
+    (enumerate 1 125)
+    (make-list 125 1)
+    false
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 009 -- Nosferatu Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX 010 -- Bloodshed Transfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(free.TS02-C2.DPNF|C_TransferNonces
+    KST.ANHD
+    "DHN-98c486052a51"
+    KST.EMMA
+    KST.LUMY
+    (enumerate 126 250)
+    (make-list 125 1)
+    false
+)
+;(free.TS02-C2.DPNF|C_TransferNonces
+;    KST.ANHD
+;    "DHB-98c486052a51"
+;    KST.EMMA
+;    KST.LUMY
+;    (enumerate 1 135)
+;    (make-list 135 1)
+;    false
+;)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 010 -- Bloodshed Transfer Tests Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX 011 -- Make CD Set")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (id:string "DHCD-98c486052a51")
+    )
+    [
+        (free.TS02-C1.DPSF|C_Make
+            patron
+            emma
+            id
+            [1 2 3 4 5 6 7 8 9 10]
+            1
+        )
+        (ref-DPDC::UR_AccountNonces emma id true)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 1)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 2)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 3)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 4)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 5)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 6)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 7)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 8)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 9)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 10)
+        (ref-DPDC::UR_AccountNonceSupply emma id true 11)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 010 -- Make CD Set Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX 011 -- Make BS Set")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (id:string "DHB-98c486052a51")
+        (tetwo:bool false)
+    )
+    [
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2881 2450 1011 7204 5333 2742 727 1160 2601 154 3179 2460 4189 3902 1887 880 305 18])
+            1
+        )
+        ;(format "Raw Nonce {} Score is {}" [12929 (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id false 12929))])
+        ;(format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12929)])
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [1747 1028 1749 310 4631 4920 1177 1754 4779 892 5501 174 4783 4784 5937 322 611 36])
+            2
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [3061 1478 2775 4360 617 1050 475 5228 3933 4798 5519 4080 4657 2498 1347 4228 4373 2502])
+            3
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [5959 632 3225 4378 203 204 6973 2366 1359 5248 5969 5394 211 3380 2949 3526 2807 3096])
+            4
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [793 6122 507 2524 5261 798 3679 2816 2961 4402 1667 3108 4981 5702 3111 2536 2249 378])
+            5
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [91 1964 2397 238 1391 4272 5857 1538 7587 6004 4277 1542 247 2264 3417 5434 971 4284])
+            6
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2845 4718 255 1696 113 2418 5587 5012 261 7606 5591 264 2425 4010 2859 412 3725 5166])
+            7
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2719 5744 4017 3154 7043 2148 1717 3446 7047 3160 1145 5178 1147 1292 1149 6766 4175 6336])
+            8
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [505 146 147 364 509 222 223 440 153])
+            9
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [370 443 516 589 14 231 16 305 18])
+            10
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [523 236 597 598 527 24 457 170 243])
+            11
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [388 29 462 247 320 393 538 539 396])
+            12
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [541 110 183 472 545 402 475 404 261])
+            13
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [46 407 192 49 122 555 52 53 126])
+            14
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [271 200 129 346 131 132 493 422 495])
+            15
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [208 209 282 427 140 285 286 287 360])
+            16
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [49 194 147 100 245 102])
+            17
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [55 344 201 346 59 348])
+            18
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [301 350 255 160 161 210])
+            19
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [19 308 165 70 263 120])
+            20
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [217 218 75 364 221 30])
+            21
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [79 272 225 178 131 276])
+            22
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [37 182 87 136 281 90])
+            23
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [331 140 285 46 383 288])
+            24
+        )
+        (if tetwo
+            (do
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [145 12929 12937 12945]
+                    25
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [90 12930 12938 12946]
+                    26
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [99 12931 12939 12947]
+                    27
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [60 12932 12940 12948]
+                    28
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [5 12933 12941 12949]
+                    29
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [142 12934 12942 12950]
+                    30
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [23 12935 12943 12951]
+                    31
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [128 12936 12944 12952]
+                    32
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12953 12954 12955 12956 12957 12958 12959 12960]
+                    37
+                )
+                (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12961)]) ;;2199718.99236
+            )
+            (do
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12929 12930 12931 12932 12933 12934 12935 12936]
+                    33
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12937 12938 12939 12940 12941 12942 12943 12944]
+                    34
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12945 12946 12947 12948 12949 12950 12951 12952]
+                    35
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [145 90 99 60 5 142 23 128]
+                    36
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12953 12954 12955 12956]
+                    38
+                )
+                (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12957)]) ;;2199718.99236
+            )
+        )
+        
+    ]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12929)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12930)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12931)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12932)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12933)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12934)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12935)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12936)])
+    ;]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12937)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12938)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12939)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12940)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12941)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12942)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12943)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12944)])
+    ;]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12945)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12946)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12947)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12948)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12949)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12950)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12951)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12952)])
+    ;]]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 010 -- Make BS Set Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

@@ -98,180 +98,11 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_SplitNonceBalanceObject:object{DpdcUdc.DPSF|NonceBalanceChain} (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}])
-        @doc "Splits a NonceBalanceObject into an integer array, containg 2 integer lists, one of nonces and one of supplies"
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (l:integer (length input-nbo))
-                (folded-obj:[[integer]]
-                    (fold
-                        (lambda
-                            (acc:[[integer]] idx:integer)
-                            (let
-                                (
-                                    (nonce:integer (at "nonce" (at idx input-nbo)))
-                                    (supply:integer (at "supply" (at idx input-nbo)))
-                                )
-                                (if (= idx 0)
-                                    [[nonce][supply]]
-                                    (let
-                                        (
-                                            (nonce-chain:[integer] (at 0 acc))
-                                            (supply-chain:[integer] (at 1 acc))
-                                            (new-nonce-chain:[integer] (ref-U|LST::UC_AppL nonce-chain nonce))
-                                            (new-supply-chain:[integer] (ref-U|LST::UC_AppL supply-chain supply))
-                                        )
-                                        [new-nonce-chain new-supply-chain]
-                                    )
-                                )
-                            )
-                        )
-                        []
-                        (enumerate 0 (- l 1))
-                    )
-                )
-            )
-            (UDC_DPSF|NonceBalanceChain
-                (at 0 folded-obj)
-                (at 1 folded-obj)
-            )
-        )
-    )
-    (defun UC_SupplyFronNonceBalanceObject:integer (input-obj:[object{DpdcUdc.DPSF|NonceBalance}] query-value:integer nonce-or-position:bool)
-        @doc "Outputs the Supply of a given nonce or position from a <DPSF|NonceBalance> Object"
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (split-array:object{DpdcUdc.DPSF|NonceBalanceChain} (UC_SplitNonceBalanceObject input-obj))
-                (nonce-chain:[integer] (at "nonce" split-array))
-                (supply-chain:[integer] (at "supply" split-array))
-                (l:integer (length input-obj))
-            )
-            (if nonce-or-position
-                (let
-                    (
-                        (iz-nonce-present:bool (contains query-value nonce-chain))
-                    )
-                    (enforce iz-nonce-present "Nonce must be present for operation")
-                    (at (at 0 (ref-U|LST::UC_Search nonce-chain query-value)) supply-chain)
-                )
-                (let
-                    (
-                        (iz-position-in-range:bool (<= query-value l))
-                    )
-                    (enforce iz-position-in-range "Position must be in range for operation")
-                    (at query-value supply-chain)
-                )
-            )
-        )
-    )
-    (defun UC_CreditOrDebitNonceObject:[object{DpdcUdc.DPSF|NonceBalance}]
-        (input-nbo:[object{DpdcUdc.DPSF|NonceBalance}] nonces-to-modify:[integer] amounts-to-modify-with:[integer] credit-or-debit:bool)
-        (if (or (= input-nbo [(UDC_ZeroNBO)]) (= input-nbo []))
-            (do
-                (enforce credit-or-debit "A Zero NBO Can only be credited upon.")
-                (zip (lambda (n:integer a:integer) (UDC_DPSF|NonceBalance n a)) nonces-to-modify amounts-to-modify-with)
-            )
-            (let
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (split-array:object{DpdcUdc.DPSF|NonceBalanceChain} (UC_SplitNonceBalanceObject input-nbo))
-                    (nonce-chain:[integer] (at "nonce" split-array))
-                    (supply-chain:[integer] (at "supply" split-array))
-                )
-                (filter 
-                    (lambda 
-                        (element:object{DpdcUdc.DPSF|NonceBalance})
-                        (!= (at "supply" element) 0)
-                    )
-                    (fold
-                        (lambda
-                            (acc:[object{DpdcUdc.DPSF|NonceBalance}] idx:integer)
-                            (let
-                                (
-                                    (nonce:integer (at idx nonces-to-modify))
-                                    (amount:integer (at idx amounts-to-modify-with))
-                                    ;;
-                                    (iz-nonce-present:bool (contains nonce nonce-chain))
-                                )
-                                (if iz-nonce-present
-                                    (let
-                                        (
-                                            (nonce-position:integer (at 0 (ref-U|LST::UC_Search nonce-chain nonce)))
-                                            (current-nonce-supply:integer (at nonce-position supply-chain))
-                                            (updated-balance:integer 
-                                                (if credit-or-debit
-                                                    (+ current-nonce-supply amount)
-                                                    (- current-nonce-supply amount)
-                                                )
-                                            )
-                                            (updated-nbo:object{DpdcUdc.DPSF|NonceBalance} 
-                                                (UDC_DPSF|NonceBalance nonce updated-balance)
-                                            )
-                                        )
-                                        (ref-U|LST::UC_ReplaceAt acc nonce-position updated-nbo)  
-                                    )
-                                    (do
-                                        (enforce credit-or-debit "When the Nonce isnt present, it can only be credited and not debited upon.")
-                                        (ref-U|LST::UC_AppL acc (UDC_DPSF|NonceBalance nonce amount))
-                                    )
-                                )
-                            )
-                        )
-                        input-nbo
-                        (enumerate 0 (- (length nonces-to-modify) 1))
-                    )
-                )
-            )
-        )
-    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     ;;Properties UDCs
-    ;;
-    ;;  [0]
-    ;;
-    (defun UDC_DPSF|Account:object{DpdcUdc.DPSF|Account}
-        (a:bool b:[object{DpdcUdc.DPSF|NonceBalance}] c:[object{DpdcUdc.DPSF|NonceBalance}] d:object{DpdcUdc.AccountRoles} e:bool)
-        {"iz"                       : a
-        ,"holdings"                 : b
-        ,"fragments"                : c
-        ,"roles"                    : d
-        ,"role-nft-add-quantity"    : e}
-    )
-    (defun UDC_DPSF|NonceBalance:object{DpdcUdc.DPSF|NonceBalance}
-        (a:integer b:integer)
-        {"nonce"                    : a
-        ,"supply"                   : b}
-    )
-    (defun UDC_DPSF|NonceBalanceChain:object{DpdcUdc.DPSF|NonceBalanceChain}
-        (a:[integer] b:[integer])
-        {"nonce"                    : a
-        ,"supply"                   : b}
-    )
-    (defun UDC_DPNF|Account:object{DpdcUdc.DPNF|Account}
-        (a:bool b:[integer] c:[object{DpdcUdc.DPSF|NonceBalance}] d:object{DpdcUdc.AccountRoles})
-        {"iz"                       : a
-        ,"holdings"                 : b
-        ,"fragments"                : c
-        ,"roles"                    : d}
-    )
-    (defun UDC_AccountRoles:object{DpdcUdc.AccountRoles}
-        (a:bool b:bool c:bool d:bool e:bool f:bool g:bool h:bool i:bool j:bool)
-        {"frozen"               : a
-        ,"role-exemption"       : b
-        ,"role-nft-burn"        : c
-        ,"role-nft-create"      : d
-        ,"role-nft-recreate"    : e
-        ,"role-nft-update"      : f
-        ,"role-modify-creator"  : g
-        ,"role-modify-royalties": h
-        ,"role-set-new-uri"     : i
-        ,"role-transfer"        : j}
-    )
     ;;
     ;;  [1]
     ;;
@@ -303,14 +134,14 @@
     ;;
     (defun UDC_NonceElement:object{DpdcUdc.DPDC|NonceElement} 
         (   
-            a:integer b:integer c:integer d:bool
+            a:integer b:integer c:integer d:string
             e:object{DpdcUdc.DPDC|NonceData}
             f:object{DpdcUdc.DPDC|NonceData}
         )
         {"nonce-class"      : a
         ,"nonce-value"      : b
         ,"nonce-supply"     : c
-        ,"iz-active"        : d
+        ,"nonce-holder"     : d
         ,"nonce-data"       : e
         ,"split-data"       : f}
     )
@@ -362,6 +193,55 @@
     ;;
     ;;  [3]
     ;;
+    (defun UDC_DPDC|VerumRoles:object{DpdcUdc.DPDC|VerumRoles}
+        (a:[string] b:[string] c:[string] d:[string] e:string f:string g:[string] h:[string] i:[string] j:string k:[string])
+        {"a-frozen"                 : a
+        ,"r-exemption"              : b
+        ,"r-nft-add-quantity"       : c
+        ,"r-nft-burn"               : d
+        ,"r-nft-create"             : e
+        ,"r-nft-recreate"           : f
+        ,"r-nft-update"             : g
+        ,"r-modify-creator"         : h
+        ,"r-modify-royalties"       : i
+        ,"r-set-new-uri"            : j
+        ,"r-transfer"               : k}
+    )
+    ;;
+    ;;  [4]
+    ;;
+    (defun UDC_DPSF|AccountRoles:object{DpdcUdc.DPSF|AccountRoles}
+        (a:object{DpdcUdc.AccountRoles} b:bool)
+        {"roles"                : a
+        ,"role-nft-add-quantity": b}
+    )
+    (defun UDC_DPNF|AccountRoles:object{DpdcUdc.DPNF|AccountRoles}
+        (a:object{DpdcUdc.AccountRoles})
+        {"roles"                : a}
+    )
+    (defun UDC_AccountRoles:object{DpdcUdc.AccountRoles}
+        (a:bool b:bool c:bool d:bool e:bool f:bool g:bool h:bool i:bool j:bool)
+        {"frozen"               : a
+        ,"role-exemption"       : b
+        ,"role-nft-burn"        : c
+        ,"role-nft-create"      : d
+        ,"role-nft-recreate"    : e
+        ,"role-nft-update"      : f
+        ,"role-modify-creator"  : g
+        ,"role-modify-royalties": h
+        ,"role-set-new-uri"     : i
+        ,"role-transfer"        : j}
+    )
+    ;;
+    ;;  [5]
+    ;;
+    (defun UDC_DPDC|AccountSupply:object{DpdcUdc.DPDC|AccountSupply} 
+        (amount:integer)
+        {"supply" : amount}
+    )
+    ;;
+    ;;  [6]
+    ;;
     (defun UDC_DPDC|Set:object{DpdcUdc.DPDC|Set}
         (
             a:integer b:string c:decimal d:integer e:bool f:bool g:bool
@@ -391,36 +271,13 @@
         {"allowed-sclass"   : a}
     )
     ;;
-    ;;  [4]
-    ;;
-    (defun UDC_DPDC|VerumRoles:object{DpdcUdc.DPDC|VerumRoles}
-        (a:[string] b:[string] c:[string] d:[string] e:string f:string g:[string] h:[string] i:[string] j:string k:[string])
-        {"a-frozen"                 : a
-        ,"r-exemption"              : b
-        ,"r-nft-add-quantity"       : c
-        ,"r-nft-burn"               : d
-        ,"r-nft-create"             : e
-        ,"r-nft-recreate"           : f
-        ,"r-nft-update"             : g
-        ,"r-modify-creator"         : h
-        ,"r-modify-royalties"       : i
-        ,"r-set-new-uri"            : j
-        ,"r-transfer"               : k}
-    )
-    ;;
     ;;  [CUSTOM]
-    ;;
-    ;;  [0]
-    ;;
-    (defun UDC_ZeroNBO:object{DpdcUdc.DPSF|NonceBalance} ()
-        (UDC_DPSF|NonceBalance 0 0)
-    )
     ;;
     ;;  [2]
     ;;
     (defun UDC_ZeroNonceElement:object{DpdcUdc.DPDC|NonceElement} ()
         (UDC_NonceElement
-            0 0 0 false
+            0 0 0 BAR
             (UDC_ZeroNonceData)
             (UDC_ZeroNonceData)
         )
@@ -443,13 +300,15 @@
         (score:decimal meta-data:object)
         (UDC_NonceMetaData score [0] meta-data)
     )
-
     (defun UDC_ZeroURI|Type:object{DpdcUdc.URI|Type} ()
         (UDC_URI|Type false false false false false false false)
     )
     (defun UDC_ZeroURI|Data:object{DpdcUdc.URI|Data} ()
         (UDC_URI|Data BAR BAR BAR BAR BAR BAR BAR)
     )
+    ;;
+    ;;  [6]
+    ;;
     (defun UDC_NoPrimordialSet:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] ()
         [(UDC_DPDC|AllowedNonceForSetPosition [0])]
     )

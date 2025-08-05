@@ -17,7 +17,7 @@
     ;;
     ;;  [4] DPDC-I
     ;;
-    (defun DPSF|C_DeployAccount (patron:string id:string account:string))
+    (defun DPSF|C_DeployAccount (patron:string account:string id:string))
     (defun DPSF|C_Issue:string 
         (
             patron:string 
@@ -57,6 +57,7 @@
     ;;
     ;;  [8] DPDC-S
     ;;
+    (defun DPSF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer))
     (defun DPSF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -68,6 +69,14 @@
         (
             patron:string id:string set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+    )
+    (defun DPSF|C_DefineHybridSet
+        (
+            patron:string id:string set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
     )
@@ -292,7 +301,7 @@
         )
         @doc "Creates a new SFT Collection Element(s), having a new nonce, \
             \ of amount <amount>, on the Account that has <r-nft-create> \
-            \ As this account is the only Account that is allowed to crete new SFTs in the Collection"
+            \ As this account is the only Account that is allowed to create new SFTs in the Collection"
         (with-capability (P|TS)
             (let
                 (
@@ -320,7 +329,7 @@
     ;;
     ;;  [4] DPDC-I
     ;;
-    (defun DPSF|C_DeployAccount (patron:string id:string account:string)
+    (defun DPSF|C_DeployAccount (patron:string account:string id:string)
         @doc "Deploys a DPSF Account. Stand Alone Deployment costs 2 IGNIS"
         (with-capability (P|TS)
             (let
@@ -328,7 +337,7 @@
                     (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                 )
-                (ref-DPDC-I::C_DeployAccountSFT id account)
+                (ref-DPDC-I::C_DeployAccountSFT account id)
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-IGNIS::IC|UDC_SmallCumulator account)
                 )
@@ -573,7 +582,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_AddQuantity id account nonce amount)
+                    (ref-DPDC-MNG::C_AddQuantity account id nonce amount)
                 )
                 (format "Succesfuly added {} Units for SFT {} Nonce {} on Account {}" [amount id nonce (UC_ShortAccount account)])
             )
@@ -589,7 +598,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_BurnSFT id account nonce amount)
+                    (ref-DPDC-MNG::C_BurnSFT account id nonce amount)
                 )
                 (format "Succesfuly removed {} Units for SFT {} Nonce {} on Account {}" [amount id nonce (UC_ShortAccount account)])
             )
@@ -604,7 +613,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_WipeSftNoncePartialy id account nonce amount)
+                    (ref-DPDC-MNG::C_WipeSftNoncePartialy account id nonce amount)
                 )
                 (format "Succesfuly wiped {} Units for SFT {} Nonce {} from Account {}" [amount id nonce (UC_ShortAccount account)])
             )
@@ -619,7 +628,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_WipeSftNonce id account nonce)
+                    (ref-DPDC-MNG::C_WipeSftNonce account id nonce)
                 )
                 (format "Succesfuly wiped SFT {} Nonce {} from Account {}" [id nonce (UC_ShortAccount account)])
             )
@@ -634,7 +643,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_WipeSftNonces id account)
+                    (ref-DPDC-MNG::C_WipeSftNonces account id)
                 )
                 (format "Succesfuly wiped SFT {} from Account {}" [id (UC_ShortAccount account)])
             )
@@ -684,6 +693,22 @@
     ;;
     ;;  [8] DPDC-S
     ;;
+    (defun DPSF|C_Make
+        (patron:string account:string id:string nonces:[integer] set-class:integer)
+        @doc "Makes a Set SFT of Class <set-class>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_Make account id true nonces set-class)
+                )
+                (format "Set Class {} SFT generated succesfully on Account {}" [set-class account])
+            )
+        )
+    )
     (defun DPSF|C_DefinePrimordialSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -721,6 +746,27 @@
                     (ref-DPDC-S::C_DefineCompositeSet id true set-name score-multiplier set-definition ind)
                 )
                 (format "Composite Set <{}> for SFT Collection {} defined succesfully" [set-name id])
+            )
+        )
+    )
+    (defun DPSF|C_DefineHybridSet
+        (
+            patron:string id:string set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Defines a New Hybrid SFT Set. Hybrid Sets are composed of both Class 0 and Non-0 Nonces"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_DefineHybridSet id true set-name score-multiplier primordial-sd composite-sd ind)
+                )
+                (format "Hybrid Set <{}> for SFT Collection {} defined succesfully" [set-name id])
             )
         )
     )
@@ -928,7 +974,7 @@
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-F::C_MakeFragments id true nonce amount account)
+                    (ref-DPDC-F::C_MakeFragments account id true nonce amount)
                 )
                 (format "Succesfuly Fragmented {} SFT(s) {} of Nonce {}" [amount id nonce])
             )
@@ -943,7 +989,7 @@
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-F::C_MergeFragments id true nonce amount account)
+                    (ref-DPDC-F::C_MergeFragments account id true nonce amount)
                 )
                 (format "Succesfuly merged {} {} SFT(s) Fragments of Nonce {}" [amount id nonce])
             )

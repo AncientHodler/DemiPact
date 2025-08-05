@@ -17,7 +17,7 @@
     ;;
     ;;  [4] DPDC-I
     ;;
-    (defun DPNF|C_DeployAccount (patron:string id:string account:string))
+    (defun DPNF|C_DeployAccount (patron:string account:string id:string))
     (defun DPNF|C_Issue:string
         (
             patron:string 
@@ -57,6 +57,7 @@
     ;;
     ;;  [8] DPDC-S
     ;;
+    (defun DPNF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer))
     (defun DPNF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -68,6 +69,14 @@
         (
             patron:string id:string set-name:string score-multiplier:decimal
             set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+    )
+    (defun DPNF|C_DefineHybridSet
+        (
+            patron:string id:string set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
             ind:object{DpdcUdc.DPDC|NonceData}
         )
     )
@@ -310,7 +319,7 @@
     ;;
     ;;  [4] DPDC-I
     ;;
-    (defun DPNF|C_DeployAccount (patron:string id:string account:string)
+    (defun DPNF|C_DeployAccount (patron:string account:string id:string)
         @doc "Deploys a DPNF Account. Stand Alone Deployment costs 3 IGNIS"
         (with-capability (P|TS)
             (let
@@ -318,7 +327,7 @@
                     (ref-IGNIS:module{IgnisCollector} DALOS)
                     (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                 )
-                (ref-DPDC-I::C_DeployAccountNFT id account)
+                (ref-DPDC-I::C_DeployAccountNFT account id)
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-IGNIS::IC|UDC_MediumCumulator account)
                 )
@@ -548,7 +557,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_BurnNFT id account nonce)
+                    (ref-DPDC-MNG::C_BurnNFT account id nonce)
                 )
             )
         )
@@ -562,7 +571,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_RespawnNFT id account nonce)
+                    (ref-DPDC-MNG::C_RespawnNFT account id nonce)
                 )
             )
         )
@@ -576,7 +585,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_WipeNftNonce id account nonce)
+                    (ref-DPDC-MNG::C_WipeNftNonce account id nonce)
                 )
             )
         )
@@ -590,7 +599,7 @@
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-MNG::C_WipeNft id account)
+                    (ref-DPDC-MNG::C_WipeNft account id)
                 )
             )
         )
@@ -639,6 +648,23 @@
     ;;
     ;;  [8] DPDC-S
     ;;
+    (defun DPNF|C_Make
+        (patron:string account:string id:string nonces:[integer] set-class:integer)
+        @doc "Makes a Set NFT of Class <set-class>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_Make account id false nonces set-class)
+                )
+                (format "Set Class {} NFT with Nonce {} generated succesfully on Account {}" [set-class (ref-DPDC::UR_NoncesUsed id false) account])
+            )
+        )
+    )
     (defun DPNF|C_DefinePrimordialSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -655,7 +681,7 @@
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-DPDC-S::C_DefinePrimordialSet id false set-name score-multiplier set-definition ind)
                 )
-                (format "Primordial Set for NFT Collection {} defined succesfully" [id])
+                (format "Primordial Set <{}> for NFT Collection {} defined succesfully" [set-name id])
             )
         )
     )
@@ -676,6 +702,27 @@
                     (ref-DPDC-S::C_DefineCompositeSet id false set-name score-multiplier set-definition ind)
                 )
                 (format "Composite Set <{}> for NFT Collection {} defined succesfully" [set-name id])
+            )
+        )
+    )
+    (defun DPNF|C_DefineHybridSet
+        (
+            patron:string id:string set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @doc "Defines a New Hybrid NFT Set. Hybrid Sets are composed of both Class 0 and Non-0 Nonces"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_DefineHybridSet id false set-name score-multiplier primordial-sd composite-sd ind)
+                )
+                (format "Hybrid Set <{}> for NFT Collection {} defined succesfully" [set-name id])
             )
         )
     )

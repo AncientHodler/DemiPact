@@ -72,7 +72,7 @@
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../../Class08_ST02-PostTalos/C08>>02|07_DPL-BLOODSHED-Sets.pact")
-(format "<<<<<<<NFT Bloodshed Common Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<NFT Bloodshed Sets Deployer PACT Costs {} GAS>>>>>>>" [(env-gas)])
 (commit-tx)
 (print "")
 
@@ -512,7 +512,7 @@
             }
         ]
     )
-    (ref-NOS::A_Step01 patron lumy emma)
+    (ref-NOS::A_Step00 patron lumy emma)
 )
 (print "")
 (print "")

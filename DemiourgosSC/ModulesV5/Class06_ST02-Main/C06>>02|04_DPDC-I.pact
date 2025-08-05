@@ -123,22 +123,22 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_DeployAccountSFT (id:string account:string)
+    (defun C_DeployAccountSFT (account:string id:string)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (f:bool false)
             )
-            (ref-DPDC::XB_DeployAccountSFT id account f f f f f f f f f f f)
+            (ref-DPDC::XB_DeployAccountSFT account id f f f f f f f f f f f)
         )
     )
-    (defun C_DeployAccountNFT (id:string account:string)
+    (defun C_DeployAccountNFT (account:string id:string)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (f:bool false)
             )
-            (ref-DPDC::XB_DeployAccountNFT id account f f f f f f f f f f)
+            (ref-DPDC::XB_DeployAccountNFT account id f f f f f f f f f f)
         )
     )
     (defun C_IssueDigitalCollection:object{IgnisCollector.OutputCumulator}
@@ -182,60 +182,90 @@
                 (ref-BRD::XE_Issue id)
                 ;;Deploy Collection Accounts for Owner and Creator
                 (if son
-                    (do
-                        (ref-DPDC::XB_DeployAccountSFT id owner-account 
+                    (if (!= owner-account creator-account)
+                        (do
+                            (ref-DPDC::XB_DeployAccountSFT owner-account id
+                                true    ;;role-nft-add-quantity
+                                false   ;;frozen
+                                false   ;;role-exemption
+                                true    ;;role-nft-burn
+                                false   ;;role-nft-create
+                                false   ;;role-nft-recreate
+                                true    ;;role-nft-update
+                                false   ;;role-modify-creator
+                                false   ;;role-modify-royalties
+                                false   ;;role-set-new-uri
+                                false   ;;role-transfer
+                            )
+                            (ref-DPDC::XB_DeployAccountSFT creator-account id
+                                false   ;;role-nft-add-quantity
+                                false   ;;frozen
+                                true    ;;role-exemption
+                                false   ;;role-nft-burn
+                                true    ;;role-nft-create
+                                true    ;;role-nft-recreate
+                                true    ;;role-nft-update
+                                true    ;;role-modify-creator
+                                true    ;;role-modify-royalties
+                                true    ;;role-set-new-uri
+                                false   ;;role-transfer
+                            )
+                        )
+                        (ref-DPDC::XB_DeployAccountSFT owner-account id
                             true    ;;role-nft-add-quantity
                             false   ;;frozen
                             false   ;;role-exemption
                             true    ;;role-nft-burn
-                            false   ;;role-nft-create
-                            false   ;;role-nft-recreate
-                            true    ;;role-nft-update
-                            false   ;;role-modify-creator
-                            false   ;;role-modify-royalties
-                            false   ;;role-set-new-uri
-                            false   ;;role-transfer
-                        )
-                        (ref-DPDC::XB_DeployAccountSFT id creator-account 
-                            false   ;;role-nft-add-quantity
-                            false   ;;frozen
-                            true    ;;role-exemption
-                            false   ;;role-nft-burn
                             true    ;;role-nft-create
                             true    ;;role-nft-recreate
                             true    ;;role-nft-update
-                            true    ;;role-modify-creator
-                            true    ;;role-modify-royalties
-                            true    ;;role-set-new-uri
+                            false   ;;role-modify-creator
+                            false   ;;role-modify-royalties
+                            true   ;;role-set-new-uri
                             false   ;;role-transfer
                         )
                     )
-                    (do
-                        (ref-DPDC::XB_DeployAccountNFT id owner-account 
+                    (if (!= owner-account creator-account)
+                        (do
+                            (ref-DPDC::XB_DeployAccountNFT owner-account id
+                                false   ;;frozen
+                                false   ;;role-exemption
+                                true    ;;role-nft-burn
+                                false   ;;role-nft-create
+                                false   ;;role-nft-recreate
+                                true    ;;role-nft-update
+                                false   ;;role-modify-creator
+                                false   ;;role-modify-royalties
+                                false   ;;role-set-new-uri
+                                false   ;;role-transfer
+                            )
+                            (ref-DPDC::XB_DeployAccountNFT creator-account id
+                                false   ;;frozen
+                                true    ;;role-exemption
+                                false   ;;role-nft-burn
+                                true    ;;role-nft-create
+                                true    ;;role-nft-recreate
+                                true    ;;role-nft-update
+                                true    ;;role-modify-creator
+                                true    ;;role-modify-royalties
+                                true    ;;role-set-new-uri
+                                false   ;;role-transfer
+                            )
+                        )
+                        (ref-DPDC::XB_DeployAccountNFT owner-account id
                             false   ;;frozen
                             false   ;;role-exemption
                             true    ;;role-nft-burn
-                            false   ;;role-nft-create
-                            false   ;;role-nft-recreate
-                            true    ;;role-nft-update
-                            false   ;;role-modify-creator
-                            false   ;;role-modify-royalties
-                            false   ;;role-set-new-uri
-                            false   ;;role-transfer
-                        )
-                        (ref-DPDC::XB_DeployAccountNFT id creator-account 
-                            false   ;;frozen
-                            true    ;;role-exemption
-                            false   ;;role-nft-burn
                             true    ;;role-nft-create
                             true    ;;role-nft-recreate
                             true    ;;role-nft-update
-                            true    ;;role-modify-creator
-                            true    ;;role-modify-royalties
+                            false   ;;role-modify-creator
+                            false   ;;role-modify-royalties
                             true    ;;role-set-new-uri
                             false   ;;role-transfer
                         )
                     )
+                    
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-cost)
                 (ref-IGNIS::IC|UDC_ConstructOutputCumulator ignis-price owner-account trigger [id])

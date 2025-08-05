@@ -72,7 +72,11 @@
 (print "************************Initialise_Demi-NFTs.repl LOADED*******************************")
 ;;
 (print "")
-(load "Class03_OuronetS2/C03>>02|03_PopulateBloodshed.repl")
+(load "Class03_OuronetS2/C03>>02|03_PopulateNosferatu.repl")
+(print "************************PopulateBloodhsed.repl LOADED*******************************")
+;;
+(print "")
+(load "Class03_OuronetS2/C03>>02|04_PopulateBloodshed.repl")
 (print "************************PopulateBloodhsed.repl LOADED*******************************")
 ;;
 ;;

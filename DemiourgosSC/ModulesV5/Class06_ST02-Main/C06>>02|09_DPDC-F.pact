@@ -171,7 +171,7 @@
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
                 (ref-DPDC:module{Dpdc} DPDC)
-                (sd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC::UR_SplitData id son nonce))
+                (sd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC::UR_SplitNonceData id son nonce))
                 (zd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
             )
@@ -203,7 +203,7 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     (defun C_MakeFragments:object{IgnisCollector.OutputCumulator}
-        (id:string son:bool nonce:integer amount:integer account:string)
+        (account:string id:string son:bool nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPDC-F|C>NONCE id son nonce)
             (let
@@ -220,8 +220,8 @@
                 (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
                 ;;2]Fragment Nonces are credited to the <DPDC|SC_NAME>
                 (if son
-                    (ref-DPDC-C::XE_CreditSFT-FragmentNonce id dpdc neg-nonce f-amount)
-                    (ref-DPDC-C::XE_CreditNFT-FragmentNonce id dpdc neg-nonce f-amount)
+                    (ref-DPDC-C::XE_CreditSFT-FragmentNonce dpdc id neg-nonce f-amount)
+                    (ref-DPDC-C::XE_CreditNFT-FragmentNonce dpdc id neg-nonce f-amount)
                 )
                 ;;3]They are then transfered to the <account>
                 (ref-DPDC-T::C_Transfer id son dpdc account [neg-nonce] [f-amount] true)
@@ -231,7 +231,7 @@
         )
     )
     (defun C_MergeFragments:object{IgnisCollector.OutputCumulator}
-        (id:string son:bool nonce:integer amount:integer account:string)
+        (account:string id:string son:bool nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPDC-F|C>MERGE nonce amount)
             (let
@@ -248,8 +248,8 @@
                 (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
                 ;;2]Fragment Nonces are debited from the <DPDC|SC_NAME>
                 (if son
-                    (ref-DPDC-C::XE_DebitSFT-FragmentNonce id dpdc nonce amount)
-                    (ref-DPDC-C::XE_DebitNFT-FragmentNonce id dpdc nonce amount)
+                    (ref-DPDC-C::XE_DebitSFT-FragmentNonce dpdc id nonce amount)
+                    (ref-DPDC-C::XE_DebitNFT-FragmentNonce dpdc id nonce amount)
                 )
                 ;;3]Native <nonces> are transfered from <DPDC|SC_NAME> to <account>
                 (ref-DPDC-T::C_Transfer id son dpdc account [pos-nonce] [merged-amount] true)
@@ -272,7 +272,7 @@
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 )
                 (XI_EnableNonceFragmentation id son nonce fragmentation-ind)
-                (ref-DPDC::XE_DeployAccountWNE id son dpdc)
+                (ref-DPDC::XE_DeployAccountWNE dpdc id son)
                 (ref-IGNIS::IC|UDC_SmallestCumulator (ref-DPDC::UR_CreatorKonto id son))
             )
         )

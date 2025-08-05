@@ -74,32 +74,32 @@
 ;;
 ;;
 ;(print "")
-;(load "Class02_ST01-Tests/C02>>01|01_Cumulator.repl")
-;(print "**********************************CUML Tests LOADED************************************")
+(load "Class02_ST01-Tests/C02>>01|01_Cumulator.repl")
+(print "**********************************CUML Tests LOADED************************************")
 ;;
 ;(print "")
-(load "Class02_ST01-Tests/C02>>01|02_DPTF.repl")
-(print "************************DPTF Tests LOADED**********************************************")
+;(load "Class02_ST01-Tests/C02>>01|02_DPTF.repl")
+;(print "************************DPTF Tests LOADED**********************************************")
 ;;
 ;(print "")
-(load "Class02_ST01-Tests/C02>>01|03_SWP.repl")
-(print "************************SWP Tests LOADED***********************************************")
+;(load "Class02_ST01-Tests/C02>>01|03_SWP.repl")
+;(print "************************SWP Tests LOADED***********************************************")
 ;;
 ;(print "")
-(load "Class02_ST01-Tests/C02>>01|10_ALA.repl")
-(print "************************SWP Tests LOADED***********************************************")
+;(load "Class02_ST01-Tests/C02>>01|10_ALA.repl")
+;(print "************************SWP Tests LOADED***********************************************")
 ;;
-(print "")
-(load "Class02_ST01-Tests/C02>>01|04_Admin.repl")
-(print "************************ADMIN Tests LOADED*********************************************")
+;(print "")
+;(load "Class02_ST01-Tests/C02>>01|04_Admin.repl")
+;(print "************************ADMIN Tests LOADED*********************************************")
 ;;
-(print "")
-(load "Class02_ST01-Tests/C02>>01|05_DPMF.repl")
-(print "************************DPMF Tests LOADED**********************************************")
+;(print "")
+;(load "Class02_ST01-Tests/C02>>01|05_DPMF.repl")
+;(print "************************DPMF Tests LOADED**********************************************")
 ;;
-(print "")
-(load "Class02_ST01-Tests/C02>>01|06_ATS.repl")
-(print "************************ATS Tests LOADED***********************************************")
+;(print "")
+;(load "Class02_ST01-Tests/C02>>01|06_ATS.repl")
+;(print "************************ATS Tests LOADED***********************************************")
 ;;
 ;(print "")
 ;(load "Class02_ST01-Tests/C02>>01|07_VST.repl")

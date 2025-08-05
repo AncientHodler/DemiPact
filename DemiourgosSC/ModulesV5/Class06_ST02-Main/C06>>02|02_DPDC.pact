@@ -42,6 +42,7 @@
                             (ref-U|G::UEV_GuardOfAny
                                 [
                                     (create-capability-guard (DPDC|GOV))
+                                    (P|UR "DPDC-S|RemoteDpdcGov")
                                     (P|UR "DPDC-F|RemoteDpdcGov")
                                 ]
                             )
@@ -127,15 +128,17 @@
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
     ;;{2}
-    (deftable DPSF|PropertiesTable:{DpdcUdc.DPDC|Properties})   ;;Key = <DPSF-id>
-    (deftable DPSF|NoncesTable:{DpdcUdc.DPDC|NonceElement})     ;;Key = <DSPF-id> + BAR + <nonce>
-    (deftable DPSF|VerumRolesTable:{DpdcUdc.DPDC|VerumRoles})   ;;Key = <DPSF-id>
-    (deftable DPSF|AccountsTable:{DpdcUdc.DPSF|Account})        ;;Key = <DPSF-id> + BAR + <account>
+    (deftable DPSF|T|Properties:{DpdcUdc.DPDC|Properties})          ;;Key = <DPSF-id>      
+    (deftable DPSF|T|Nonces:{DpdcUdc.DPDC|NonceElement})            ;;Key = <DSPF-id> + BAR + <nonce>
+    (deftable DPSF|T|VerumRoles:{DpdcUdc.DPDC|VerumRoles})          ;;Key = <DPSF-id>
+    (deftable DPSF|T|Account:{DpdcUdc.DPSF|AccountRoles})           ;;Key = <DPSF-id> + BAR + <account> 
+    (deftable DPSF|T|AccountSupplies:{DpdcUdc.DPDC|AccountSupply})  ;;Key = <account> + BAR + <DPSF-id> + BAR + <nonce>
     ;;
-    (deftable DPNF|PropertiesTable:{DpdcUdc.DPDC|Properties})   ;;Key = <DPNF-id>
-    (deftable DPNF|NoncesTable:{DpdcUdc.DPDC|NonceElement})     ;;Key = <DPNF-id> + BAR + <nonce>
-    (deftable DPNF|VerumRolesTable:{DpdcUdc.DPDC|VerumRoles})   ;;Key = <DPNF-id>
-    (deftable DPNF|AccountsTable:{DpdcUdc.DPNF|Account})        ;;Key = <DPNF-id> + BAR + <account>
+    (deftable DPNF|T|Properties:{DpdcUdc.DPDC|Properties})          ;;Key = <DPNF-id>      
+    (deftable DPNF|T|Nonces:{DpdcUdc.DPDC|NonceElement})            ;;Key = <DSNF-id> + BAR + <nonce>
+    (deftable DPNF|T|VerumRoles:{DpdcUdc.DPDC|VerumRoles})          ;;Key = <DPNF-id>
+    (deftable DPNF|T|Account:{DpdcUdc.DPNF|AccountRoles})           ;;Key = <DPNF-id> + BAR + <account> 
+    (deftable DPNF|T|AccountSupplies:{DpdcUdc.DPDC|AccountSupply})  ;;Key = <account> + BAR + <DPNF-id> + BAR + <nonce>
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
@@ -163,6 +166,20 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_ParseSignedInteger:integer (value:string)
+        @doc "Converts an integer written as string, to integer, working for negative values aswell."
+        (let
+            (
+                (is-negative:bool (= (take 1 value) "-"))
+                (abs-str:string (if is-negative (drop 1 value) value))
+                (parsed-int:integer (str-to-int abs-str))
+            )
+            (if is-negative
+                (- parsed-int)
+                parsed-int
+            )
+        )
+    )
     ;;{F0}  [UR]
     (defun DPDC|UR_FilterKeysForInfo:[string] (account-or-token-id:string son:bool mode:bool)
         @doc "Returns a List of either: \
@@ -186,8 +203,8 @@
                 (
                     (keyz:[string]
                         (if son
-                            (keys DPSF|AccountsTable)
-                            (keys DPNF|AccountsTable)
+                            (keys DPSF|T|Account)
+                            (keys DPNF|T|Account)
                         )
                     )
                     (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
@@ -204,11 +221,11 @@
         )
     )
     ;;
-    ;; [Properties]
+    ;; [1] - [Properties]
     (defun UR_Properties:object{DpdcUdc.DPDC|Properties} (id:string son:bool)
         (if son
-            (read DPSF|PropertiesTable id)
-            (read DPNF|PropertiesTable id)
+            (read DPSF|T|Properties id)
+            (read DPNF|T|Properties id)
         )
     )
     (defun UR_OwnerKonto:string (id:string son:bool)
@@ -256,42 +273,43 @@
     (defun UR_SetClassesUsed:integer (id:string son:bool)
         (at "set-classes-used" (UR_Properties id son))
     )
-    ;; [Nonces]
+    ;; [2] - [Nonce Element] - Only positive nonces can be read this way; Negative Nonces will error out except for <UR_NonceSupply>
     (defun UR_NonceElement:object{DpdcUdc.DPDC|NonceElement} (id:string son:bool nonce:integer)
         (if son
-            (read DPSF|NoncesTable (concat [id BAR (format "{}" [nonce])]))
-            (read DPNF|NoncesTable (concat [id BAR (format "{}" [nonce])]))
+            (read DPSF|T|Nonces (concat [id BAR (format "{}" [nonce])]))
+            (read DPNF|T|Nonces (concat [id BAR (format "{}" [nonce])]))
         )
     )
     (defun UR_NonceClass:integer (id:string son:bool nonce:integer)
-        (at "nonce-class" (UR_NonceElement id son (abs nonce)))
+        (at "nonce-class" (UR_NonceElement id son nonce))
     )
     (defun UR_NonceValue:integer (id:string son:bool nonce:integer)
-        (at "nonce-value" (UR_NonceElement id son (abs nonce)))
+        (at "nonce-value" (UR_NonceElement id son nonce))
     )
     (defun UR_NonceSupply:integer (id:string son:bool nonce:integer)
+        @doc "Can be used with negative Nonce Value"
         (if (< nonce 0)
             FRG
             (at "nonce-supply" (UR_NonceElement id son (abs nonce)))
         )
     )
-    (defun UR_IzNonFungibleNonceActive:bool (id:string nonce:integer)
-        @doc "Check if an NFT Nonce is active. Is used for NFTs only, as all SFTs are always active by default. \
-            \ And only NFT Nonces can become inactive"
-        (enforce (> nonce 0) "Only higher than zero Nonces can be checked for activness")
-        (at "iz-active" (UR_NonceElement id false nonce))
+    (defun UR_NonceHolder:string (id:string son:bool nonce:integer)
+        (at "nonce-holder" (UR_NonceElement id son nonce))
+    )
+    (defun UR_NativeNonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
+        (at "nonce-data" (UR_NonceElement id son nonce))
+    )
+    (defun UR_SplitNonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
+        (at "split-data" (UR_NonceElement id son nonce))
     )
     (defun UR_NonceData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
         (if (< nonce 0)
-            (UR_SplitData id son nonce)
-            (at "nonce-data" (UR_NonceElement id son (abs nonce)))
+            (UR_SplitNonceData id son (abs nonce))
+            (UR_NativeNonceData id son nonce)
         )
     )
-    (defun UR_SplitData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool nonce:integer)
-        (at "split-data" (UR_NonceElement id son (abs nonce)))
-    )
     ;;
-    ;; [Nonce-Information]
+    ;; [2.1] - [Generic Nonce-Data Read]
     (defun UR_N|Royalty:decimal (n:object{DpdcUdc.DPDC|NonceData})
         (at "royalty" n)
     )
@@ -319,21 +337,24 @@
     (defun UR_N|Tertiary:object{DpdcUdc.URI|Data} (n:object{DpdcUdc.DPDC|NonceData})
         (at "uri-tertiary" n)
     )
+    ;;  [2.1.1] - [Generic Nonce-MetaData Read]
+    (defun UR_N|RawScore:decimal (n:object{DpdcUdc.DPDC|NonceData})
+        (at "score" (UR_N|MetaData n))
+    )
+    (defun UR_N|Composition:[integer] (n:object{DpdcUdc.DPDC|NonceData})
+        (at "composition" (UR_N|MetaData n))
+    )
+    (defun UR_N|RawMetaData:[object] (n:object{DpdcUdc.DPDC|NonceData})
+        (at "meta-data" (UR_N|MetaData n))
+    )
+    ;;  [2.2] - [Existing Nonce-Data Read]
+    ;;  [Uses Above Functions, instead of <n> would use <(UR_NativeNonceData id son nonce)> or <(UR_SplitNonceData id son nonce)>]
     ;;
-    (defun UR_N|RawScore:decimal (id:string son:bool nonce:integer)
-        (at "score" (UR_N|MetaData (UR_NonceData id son nonce)))
-    )
-    (defun UR_N|Composition:[integer] (id:string son:bool nonce:integer)
-        (at "composition" (UR_N|MetaData (UR_NonceData id son nonce)))
-    )
-    (defun UR_N|RawMetaData:[object] (id:string son:bool nonce:integer)
-        (at "meta-data" (UR_N|MetaData (UR_NonceData id son nonce)))
-    )
-    ;; [VerumRoles]
+    ;;  [3] - [VerumRoles]
     (defun UR_VerumRoles:object{DpdcUdc.DPDC|VerumRoles} (id:string son:bool)
         (if son
-            (read DPSF|VerumRolesTable id)
-            (read DPNF|VerumRolesTable id)
+            (read DPSF|T|VerumRoles id)
+            (read DPNF|T|VerumRoles id)
         )
     )
     (defun UR_Verum1:[string] (id:string son:bool)
@@ -392,82 +413,28 @@
             [BAR]
         )
     )
-    ;; [Accounts]
-    (defun UR_IzAccount:bool (id:string son:bool account:string)
-        (if son
-            (with-default-read DPSF|AccountsTable (concat [id BAR account])
-                {"iz" : false}
-                {"iz" := iz}
-                iz
-            )
-            (with-default-read DPNF|AccountsTable (concat [id BAR account])
-                {"iz" : false}
-                {"iz" := iz}
-                iz
-            )
-        )
-    )
-    (defun UR_AccountNonces:[integer] (id:string son:bool account:string fragments-or-native:bool)
-        @doc "Outputs Requestes Account Nonces"
+    ;; [4] - [Account]
+    (defun UR_IzAccount:bool (account:string id:string son:bool)
         (let
             (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            )
-            (if fragments-or-native
-                (at "nonce" (ref-DPDC-UDC::UC_SplitNonceBalanceObject (UR_AccountFragments id son account)))
-                (if son
-                    (at "nonce" (ref-DPDC-UDC::UC_SplitNonceBalanceObject (UR_SemiFungibleAccountHoldings id account)))
-                    (UR_NonFungibleAccountHoldings id account)
-                )
-            )
-        )
-    )
-    (defun UR_SemiFungibleAccountHoldings:[object{DpdcUdc.DPSF|NonceBalance}] (id:string account:string)
-        (at "holdings" (read DPSF|AccountsTable (concat [id BAR account]) ["holdings"]))
-    )
-    (defun UR_NonFungibleAccountHoldings:[integer] (id:string account:string)
-        (at "holdings" (read DPNF|AccountsTable (concat [id BAR account]) ["holdings"]))
-    )
-    (defun UR_AccountFragments:[object{DpdcUdc.DPSF|NonceBalance}] (id:string son:bool account:string)
-        (if son
-            (at "fragments" (read DPSF|AccountsTable (concat [id BAR account]) ["fragments"]))
-            (at "fragments" (read DPNF|AccountsTable (concat [id BAR account]) ["fragments"]))
-        )
-    )
-    (defun UR_AccountNonceSupply:integer (id:string son:bool account:string nonce:integer)
-        @doc "Returns the supply of a Nonce existing on a given account, be it SFT or NFT, positive or negative nonce"
-        (let
-            (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            )
-            (if son
-                (let
-                    (
-                        (nbo:[object{DpdcUdc.DPSF|NonceBalance}]
-                            (if (> nonce 0)
-                                (UR_SemiFungibleAccountHoldings id account)
-                                (UR_AccountFragments id true account)
-                            )
-                        )
+                (trial 
+                    (if son
+                        (try false (read DPSF|T|Account (concat [id BAR account])))
+                        (try false (read DPNF|T|Account (concat [id BAR account])))
                     )
-                    (ref-DPDC-UDC::UC_SupplyFronNonceBalanceObject nbo nonce true)
-                )
-                (if (> nonce 0)
-                    1
-                    (ref-DPDC-UDC::UC_SupplyFronNonceBalanceObject (UR_AccountFragments id false account) nonce true)
-                )
+                ) 
             )
+            (if (= (typeof trial) "bool") false true)
         )
     )
-    ;;
     (defun UR_CA|R:object{DpdcUdc.AccountRoles} (id:string son:bool account:string)
         (if son
-            (at "roles" (read DPSF|AccountsTable (concat [id BAR account]) ["roles"]))
-            (at "roles" (read DPNF|AccountsTable (concat [id BAR account]) ["roles"]))
+            (at "roles" (read DPSF|T|Account (concat [id BAR account]) ["roles"]))
+            (at "roles" (read DPNF|T|Account (concat [id BAR account]) ["roles"]))
         )
     )
     (defun UR_CA|R-AddQuantity:bool (id:string account:string)
-        (with-default-read DPSF|AccountsTable (concat [id BAR account])
+        (with-default-read DPSF|T|Account (concat [id BAR account])
             { "role-nft-add-quantity" : false}
             { "role-nft-add-quantity" := rnaq }
             rnaq
@@ -503,16 +470,65 @@
     (defun UR_CA|R-Transfer:bool (id:string son:bool account:string)
         (at "role-transfer" (UR_CA|R id son account))
     )
+    ;; [5] - [AccountSupplies]
+    (defun UR_AccountNonceSupply:integer (account:string id:string son:bool nonce:integer)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (zs:object{DpdcUdc.DPDC|AccountSupply} (ref-DPDC-UDC::UDC_DPDC|AccountSupply 0))
+            )
+            (at "supply"
+                (if son
+                    (try zs (read DPSF|T|AccountSupplies (concat [account BAR id BAR (format "{}" [nonce])])))
+                    (try zs (read DPNF|T|AccountSupplies (concat [account BAR id BAR (format "{}" [nonce])])))
+                )
+            )
+        )
+    )
+    (defun UR_AccountNonces:[integer] (account:string id:string son:bool)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (keyz:[string]
+                    (if son
+                        (keys DPSF|T|AccountSupplies)
+                        (keys DPNF|T|AccountSupplies)
+                    )
+                )
+                (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString BAR x)) keyz))
+                (strlst:[string] (ref-U|DALOS::UC_InverseFilterId listoflists (concat [account BAR id])))
+                (size:integer (length strlst))
+            )
+            (if (= size 0)
+                [0]
+                (fold
+                    (lambda
+                        (acc:[integer] idx:integer)
+                        (ref-U|LST::UC_AppL acc (UC_ParseSignedInteger (at idx strlst)))
+                    )
+                    []
+                    (enumerate 0 (- size 1))
+                )
+            )
+        )
+    )
+    (defun UR_SemiFungibleAccountHoldings:[integer] (account:string id:string)
+        (UR_AccountNonces account id true)
+    )
+    (defun UR_NonFungibleAccountHoldings:[integer] (account:string id:string)
+        (UR_AccountNonces account id false)
+    )
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     (defun UEV_id (id:string son:bool)
         (if son
-            (with-default-read DPSF|PropertiesTable id
+            (with-default-read DPSF|T|Properties id
                 { "nonces-used"   : -1 }
                 { "nonces-used"   := ne }
                 (enforce (>= ne 0) (format "DPSF ID {} does not exist" [id]))
             )
-            (with-default-read DPNF|PropertiesTable id
+            (with-default-read DPNF|T|Properties id
                 { "nonces-used"   : -1 }
                 { "nonces-used"   := ne }
                 (enforce (>= ne 0) (format "DPNF ID {} does not exist" [id]))
@@ -531,9 +547,9 @@
     (defun UEV_Nonce (id:string son:bool nonce:integer)
         (let
             (
-                (nv:integer (UR_NonceValue id son nonce))
-                (nu:integer (UR_NoncesUsed id son))
                 (an:integer (abs nonce))
+                (nv:integer (UR_NonceValue id son an))
+                (nu:integer (UR_NoncesUsed id son))
             )
             (enforce
                 (fold (and) true [(!= an 0) (<= an nu) (= an nv)])
@@ -704,9 +720,59 @@
     (defun UEV_NftNonceExistance (id:string nonce:integer existance:bool)
         (let
             (
-                (x:bool (UR_IzNonFungibleNonceActive id nonce))
+                (x:bool (UR_NonceHolder id false nonce))
+                (ft:string (format "NFT {} Nonce {} must have Existance set to {} for Operation" [id nonce existance]))
             )
-            (enforce (= x existance) (format "NFT {} Nonce {} must have Existance set to {} for Operation" [id nonce existance]))
+            (if (> nonce 0)
+                (if existance
+                    (enforce (!= x BAR) ft)
+                    (enforce (= x BAR) ft)
+                )
+                (let
+                    (
+                        (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                        (split-data:object{DpdcUdc.DPDC|NonceData} (UR_SplitNonceData id false nonce))
+                        (znd:object{DpdcUdc.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
+                    )
+                    (if existance
+                        (enforce (!= split-data znd) ft)
+                        (enforce (= split-data znd) ft)
+                    )
+                )
+            )
+        )
+    )
+    (defun UEV_NonceQuantityInclusion (account:string id:string son:bool nonce:integer amount:integer)
+        (let
+            (
+                (nonce-supply:integer (UR_AccountNonceSupply account id son nonce))
+            )
+            (if (or son (< nonce 0))
+                (enforce 
+                    (<= amount nonce-supply) 
+                    (format 
+                        "Account {} doesnt hold {} {} Nonce {} in sufficient quantity for Operation!" 
+                        [account (if son "SFT" "NFT") id nonce]
+                    )
+                )
+                (let
+                    (
+                        (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                        (nft-holder:string (UR_NonceHolder id false nonce))
+                        (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
+                    )
+                    (enforce (= sa nft-holder) (format "Account {} doesnt hold NFT {} Nonce {}" [account id nonce]))
+                )
+            )
+        )
+    )
+    (defun UEV_NonceQuantityInclusionMapper (account:string id:string son:bool nonces:[integer] amounts:[integer])
+        (map
+            (lambda
+                (idx:integer)
+                (UEV_NonceQuantityInclusion account id son (at idx nonces) (at idx amounts))
+            )
+            (enumerate 0 (- (length nonces) 1))
         )
     )
     ;;{F3}  [UDC]
@@ -788,7 +854,7 @@
     ;; [<AccountsTable> Writings] [0]
     (defun XB_DeployAccountSFT
         (
-            id:string account:string
+            account:string id:string
             input-rnaq:bool f:bool re:bool rnb:bool rnc:bool rnr:bool
             rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool
         )
@@ -800,28 +866,22 @@
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id true)
-            (with-default-read DPSF|AccountsTable (concat [id BAR account])
-                (ref-DPDC-UDC::UDC_DPSF|Account
-                    true
-                    [(ref-DPDC-UDC::UDC_ZeroNBO)]
-                    [(ref-DPDC-UDC::UDC_ZeroNBO)]
+            (with-default-read DPSF|T|Account (concat [id BAR account])
+                (ref-DPDC-UDC::UDC_DPSF|AccountRoles
                     (ref-DPDC-UDC::UDC_AccountRoles f re rnb rnc rnr rnu rmc rmr rsnu rt)
                     input-rnaq
                 )
-                {"iz"                       := e
-                ,"holdings"                 := h
-                ,"fragments"                := f
-                ,"roles"                    := r
+                {"roles"                    := r
                 ,"role-nft-add-quantity"    := rnaq}
-                (write DPSF|AccountsTable (concat [id BAR account])
-                    (ref-DPDC-UDC::UDC_DPSF|Account e h f r rnaq)
+                (write DPSF|T|Account (concat [id BAR account])
+                    (ref-DPDC-UDC::UDC_DPSF|AccountRoles r rnaq)
                 )
             )
         )
     )
     (defun XB_DeployAccountNFT 
         (
-            id:string account:string
+            account:string id:string
             f:bool re:bool rnb:bool rnc:bool rnr:bool
             rnu:bool rmc:bool rmr:bool rsnu:bool rt:bool
         )
@@ -833,75 +893,46 @@
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id false)
-            (with-default-read DPNF|AccountsTable (concat [id BAR account])
-                (ref-DPDC-UDC::UDC_DPNF|Account
-                    true
-                    [0]
-                    [(ref-DPDC-UDC::UDC_ZeroNBO)]
+            (with-default-read DPNF|T|Account (concat [id BAR account])
+                (ref-DPDC-UDC::UDC_DPNF|AccountRoles
                     (ref-DPDC-UDC::UDC_AccountRoles f re rnb rnc rnr rnu rmc rmr rsnu rt)
                 )
-                {"iz"                       := e
-                ,"holdings"                 := h
-                ,"fragments"                := f
-                ,"roles"                    := r}
-                (write DPNF|AccountsTable (concat [id BAR account])
-                    (ref-DPDC-UDC::UDC_DPNF|Account e h f r)
+                {"roles"                    := r}
+                (write DPNF|T|Account (concat [id BAR account])
+                    (ref-DPDC-UDC::UDC_DPNF|AccountRoles r)
                 )
             )
         )
     )
-    (defun XE_DeployAccountWNE (id:string son:bool account:string)
+    (defun XE_DeployAccountWNE (account:string id:string son:bool)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (collection-account-exists:bool (ref-DPDC::UR_IzAccount id son account))
+                (collection-account-exists:bool (UR_IzAccount account id son))
                 (f:bool false)
             )
             (if (not collection-account-exists)
                 (if son
-                    (XB_DeployAccountSFT id account f f f f f f f f f f f)
-                    (XB_DeployAccountNFT id account f f f f f f f f f f)
+                    (XB_DeployAccountSFT account id f f f f f f f f f f f)
+                    (XB_DeployAccountNFT account id f f f f f f f f f f)
                 )
                 true
             )
         )
     )
-    (defun XE_U|SFT-Holdings (id:string account:string holdings:[object{DpdcUdc.DPSF|NonceBalance}])
-        (UEV_IMC)
-        (update DPSF|AccountsTable (concat [id BAR account])
-            {"holdings"     : holdings}
-        )
-    )
-    (defun XE_U|NFT-Holdings (id:string account:string holdings:[integer])
-        (UEV_IMC)
-        (update DPNF|AccountsTable (concat [id BAR account])
-            {"holdings"     : holdings}
-        )
-    )
-    (defun XE_U|DPDC-Fragments (id:string son:bool account:string fragments:[object{DpdcUdc.DPSF|NonceBalance}])
-        (UEV_IMC)
-        (if son
-            (update DPSF|AccountsTable (concat [id BAR account])
-                {"fragments"    : fragments}
-            )
-            (update DPNF|AccountsTable (concat [id BAR account])
-                {"fragments"    : fragments}
-            )
-        )
-    )
+    ;;
     (defun XE_U|Rnaq (id:string account:string toggle)
         (UEV_IMC)
-        (update DPSF|AccountsTable (concat [id BAR account])
+        (update DPSF|T|Account (concat [id BAR account])
             {"role-nft-add-quantity" : toggle}
         )
     )
     (defun XI_U|AccountRoles (id:string son:bool account:string new-roles:object{DpdcUdc.AccountRoles})
         (require-capability (SECURE))
         (if son
-            (update DPSF|AccountsTable (concat [id BAR account])
+            (update DPSF|T|Account (concat [id BAR account])
                 {"roles" : new-roles}
             )
-            (update DPNF|AccountsTable (concat [id BAR account])
+            (update DPNF|T|Account (concat [id BAR account])
                 {"roles" : new-roles}
             )
         )
@@ -911,150 +942,162 @@
         (id:string son:bool idp:object{DpdcUdc.DPDC|Properties})
         (UEV_IMC)
         (if son
-            (insert DPSF|PropertiesTable id idp)
-            (insert DPNF|PropertiesTable id idp)
+            (insert DPSF|T|Properties id idp)
+            (insert DPNF|T|Properties id idp)
         )
     )
     (defun XE_U|Specs (id:string son:bool specs:object{DpdcUdc.DPDC|Properties})
         (UEV_IMC)
         (if son
-            (update DPSF|PropertiesTable id specs)
-            (update DPNF|PropertiesTable id specs)
+            (update DPSF|T|Properties id specs)
+            (update DPNF|T|Properties id specs)
         )
     )
     (defun XE_U|IsPaused (id:string son:bool toggle:bool)
         (UEV_IMC)
         (if son
-            (update DPSF|PropertiesTable id {"is-paused" : toggle})
-            (update DPNF|PropertiesTable id {"is-paused" : toggle})
+            (update DPSF|T|Properties id {"is-paused" : toggle})
+            (update DPNF|T|Properties id {"is-paused" : toggle})
         )
     )
     (defun XE_U|NoncesUsed (id:string son:bool new-nv:integer)
         (UEV_IMC)
         (if son
-            (update DPSF|PropertiesTable id {"nonces-used" : new-nv})
-            (update DPNF|PropertiesTable id {"nonces-used" : new-nv})
+            (update DPSF|T|Properties id {"nonces-used" : new-nv})
+            (update DPNF|T|Properties id {"nonces-used" : new-nv})
         )
     )
     (defun XE_U|SetClassesUsed (id:string son:bool new-nsc:integer)
         (UEV_IMC)
         (if son
-            (update DPSF|PropertiesTable id {"set-classes-used" : new-nsc})
-            (update DPNF|PropertiesTable id {"set-classes-used" : new-nsc})
+            (update DPSF|T|Properties id {"set-classes-used" : new-nsc})
+            (update DPNF|T|Properties id {"set-classes-used" : new-nsc})
         )
     )
     ;; [<NoncesTable> Writings] [2]
     (defun XE_I|CollectionElement (id:string son:bool nonce-value:integer ned:object{DpdcUdc.DPDC|NonceElement})
         (UEV_IMC)
         (if son
-            (insert DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) ned)
-            (insert DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) ned)
+            (insert DPSF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) ned)
+            (insert DPNF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) ned)
         )
     )
     (defun XE_U|NonceSupply (id:string nonce-value:integer new-supply:integer)
         (UEV_IMC)
-        (update DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"nonce-supply" : new-supply})
+        (update DPSF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"nonce-supply" : new-supply})
     )
-    (defun XE_U|NonceIzActive (id:string nonce-value:integer iz-active:bool)
+    (defun XE_U|NonceHolder (id:string nonce-value:integer new-holder-account:string)
         (UEV_IMC)
-        (update DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"iz-active" : iz-active})
+        (let
+            (
+                (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                (iz-bar:bool (if (= new-holder-account BAR) true false))
+                (sh:string
+                    (if iz-bar
+                        BAR
+                        (ref-I|OURONET::OI|UC_ShortAccount new-holder-account)
+                    )
+                )
+            )
+            (update DPNF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"nonce-holder" : sh})
+        )
     )
     (defun XE_U|NonceOrSplitData (id:string son:bool nonce-value:integer nos:bool nd:object{DpdcUdc.DPDC|NonceData} )
         (UEV_IMC)
         (if nos
             (if son
-                (update DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"nonce-data" : nd})
-                (update DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"nonce-data" : nd})
+                (update DPSF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"nonce-data" : nd})
+                (update DPNF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"nonce-data" : nd})
             )
             (if son
-                (update DPSF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"split-data" : nd})
-                (update DPNF|NoncesTable (concat [id BAR (format "{}" [nonce-value])]) {"split-data" : nd})
+                (update DPSF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"split-data" : nd})
+                (update DPNF|T|Nonces (concat [id BAR (format "{}" [nonce-value])]) {"split-data" : nd})
             )
         )
     )
-    ;; [<VerumRolesTable> Writings] [4]
+    ;; [<VerumRolesTable> Writings] [3]
     (defun XE_I|VerumRoles (id:string son:bool verum-chain:object{DpdcUdc.DPDC|VerumRoles})
         (UEV_IMC)
         (if son
-            (insert DPSF|VerumRolesTable id verum-chain)
-            (insert DPNF|VerumRolesTable id verum-chain)
+            (insert DPSF|T|VerumRoles id verum-chain)
+            (insert DPNF|T|VerumRoles id verum-chain)
         )
     )
     (defun XI_U|VerumRole1 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"a-frozen" : ul})
-            (update DPNF|VerumRolesTable id {"a-frozen" : ul})
+            (update DPSF|T|VerumRoles id {"a-frozen" : ul})
+            (update DPNF|T|VerumRoles id {"a-frozen" : ul})
         )
     )
     (defun XI_U|VerumRole2 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-exemption" : ul})
-            (update DPNF|VerumRolesTable id {"r-exemption" : ul})
+            (update DPSF|T|VerumRoles id {"r-exemption" : ul})
+            (update DPNF|T|VerumRoles id {"r-exemption" : ul})
         )
     )
     (defun XI_U|VerumRole3 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-nft-add-quantity" : ul})
-            (update DPNF|VerumRolesTable id {"r-nft-add-quantity" : ul})
+            (update DPSF|T|VerumRoles id {"r-nft-add-quantity" : ul})
+            (update DPNF|T|VerumRoles id {"r-nft-add-quantity" : ul})
         )
     )
     (defun XI_U|VerumRole4 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-nft-burn" : ul})
-            (update DPNF|VerumRolesTable id {"r-nft-burn" : ul})
+            (update DPSF|T|VerumRoles id {"r-nft-burn" : ul})
+            (update DPNF|T|VerumRoles id {"r-nft-burn" : ul})
         )
     )
     (defun XI_U|VerumRole5 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-nft-create" : ul})
-            (update DPNF|VerumRolesTable id {"r-nft-create" : ul})
+            (update DPSF|T|VerumRoles id {"r-nft-create" : ul})
+            (update DPNF|T|VerumRoles id {"r-nft-create" : ul})
         )
     )
     (defun XI_U|VerumRole6 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-nft-recreate" : ul})
-            (update DPNF|VerumRolesTable id {"r-nft-recreate" : ul})
+            (update DPSF|T|VerumRoles id {"r-nft-recreate" : ul})
+            (update DPNF|T|VerumRoles id {"r-nft-recreate" : ul})
         )
     )
     (defun XI_U|VerumRole7 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-nft-update" : ul})
-            (update DPNF|VerumRolesTable id {"r-nft-update" : ul})
+            (update DPSF|T|VerumRoles id {"r-nft-update" : ul})
+            (update DPNF|T|VerumRoles id {"r-nft-update" : ul})
         )
     )
     (defun XI_U|VerumRole8 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-modify-creator" : ul})
-            (update DPNF|VerumRolesTable id {"r-modify-creator" : ul})
+            (update DPSF|T|VerumRoles id {"r-modify-creator" : ul})
+            (update DPNF|T|VerumRoles id {"r-modify-creator" : ul})
         )
     )
     (defun XI_U|VerumRole9 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-modify-royalties" : ul})
-            (update DPNF|VerumRolesTable id {"r-modify-royalties" : ul})
+            (update DPSF|T|VerumRoles id {"r-modify-royalties" : ul})
+            (update DPNF|T|VerumRoles id {"r-modify-royalties" : ul})
         )
     )
     (defun XI_U|VerumRole10 (id:string son:bool ul:string)
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-set-new-uri" : ul})
-            (update DPNF|VerumRolesTable id {"r-set-new-uri" : ul})
+            (update DPSF|T|VerumRoles id {"r-set-new-uri" : ul})
+            (update DPNF|T|VerumRoles id {"r-set-new-uri" : ul})
         )
     )
     (defun XI_U|VerumRole11 (id:string son:bool ul:[string])
         (require-capability (SECURE))
         (if son
-            (update DPSF|VerumRolesTable id {"r-transfer" : ul})
-            (update DPNF|VerumRolesTable id {"r-transfer" : ul})
+            (update DPSF|T|VerumRoles id {"r-transfer" : ul})
+            (update DPNF|T|VerumRoles id {"r-transfer" : ul})
         )
     )
     ;;
@@ -1208,17 +1251,31 @@
         )
     )
     ;;
+    (defun XE_W|Supply (account:string id:string son:bool nonce-value:integer amount:integer)
+        (UEV_IMC)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+            )
+            (if son
+                (write DPSF|T|AccountSupplies (concat [account BAR id BAR (format "{}" [nonce-value])]) (ref-DPDC-UDC::UDC_DPDC|AccountSupply amount))
+                (write DPNF|T|AccountSupplies (concat [account BAR id BAR (format "{}" [nonce-value])]) (ref-DPDC-UDC::UDC_DPDC|AccountSupply amount))
+            )
+        )
+    )
 )
 
 (create-table P|T)
 (create-table P|MT)
 ;;DPSF
-(create-table DPSF|PropertiesTable)
-(create-table DPSF|NoncesTable)
-(create-table DPSF|VerumRolesTable)
-(create-table DPSF|AccountsTable)
+(create-table DPSF|T|Properties)
+(create-table DPSF|T|Nonces)
+(create-table DPSF|T|VerumRoles)
+(create-table DPSF|T|Account)
+(create-table DPSF|T|AccountSupplies)
 ;;DPNF
-(create-table DPNF|PropertiesTable)
-(create-table DPNF|NoncesTable)
-(create-table DPNF|VerumRolesTable)
-(create-table DPNF|AccountsTable)
+(create-table DPNF|T|Properties)
+(create-table DPNF|T|Nonces)
+(create-table DPNF|T|VerumRoles)
+(create-table DPNF|T|Account)
+(create-table DPNF|T|AccountSupplies)

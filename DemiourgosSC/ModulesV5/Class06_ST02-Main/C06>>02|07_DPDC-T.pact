@@ -283,7 +283,8 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Transfer (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
+    (defun C_Transfer:object{IgnisCollector.OutputCumulator}
+        (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
         (UEV_IMC)
         (with-capability (DPDC-T|C>TRANSFER id son sender receiver nonces amounts method)
             (XI_TransferNonces id son sender receiver nonces amounts)
@@ -342,27 +343,27 @@
                 ;;Transfer Native Nonce
                 ((UC_AndTruths [isg (not inn) son])
                     (do
-                        (ref-DPDC-C::XE_DebitSFT-Nonce id sender n0 a0)
-                        (ref-DPDC-C::XB_CreditSFT-Nonce id receiver n0 a0)
+                        (ref-DPDC-C::XE_DebitSFT-Nonce sender id n0 a0)
+                        (ref-DPDC-C::XB_CreditSFT-Nonce receiver id n0 a0)
                     )
                 )
                 ((UC_AndTruths [isg (not inn) (not son)])
                     (do
-                        (ref-DPDC-C::XE_DebitNFT-Nonce id sender n0 a0)
-                        (ref-DPDC-C::XB_CreditNFT-Nonce id receiver n0 a0)
+                        (ref-DPDC-C::XE_DebitNFT-Nonce sender id n0 a0)
+                        (ref-DPDC-C::XB_CreditNFT-Nonce receiver id n0 a0)
                     )
                 )
                 ;;Trasnfer Fragment Nonce
                 ((UC_AndTruths [isg inn son])
                     (do
-                        (ref-DPDC-C::XE_DebitSFT-FragmentNonce id sender n0 a0)
-                        (ref-DPDC-C::XE_CreditSFT-FragmentNonce id receiver n0 a0)
+                        (ref-DPDC-C::XE_DebitSFT-FragmentNonce sender id n0 a0)
+                        (ref-DPDC-C::XE_CreditSFT-FragmentNonce receiver id n0 a0)
                     )
                 )
                 ((UC_AndTruths [isg inn (not son)])
                     (do
-                        (ref-DPDC-C::XE_DebitNFT-FragmentNonce id sender n0 a0)
-                        (ref-DPDC-C::XE_CreditNFT-FragmentNonce id receiver n0 a0)
+                        (ref-DPDC-C::XE_DebitNFT-FragmentNonce sender id n0 a0)
+                        (ref-DPDC-C::XE_CreditNFT-FragmentNonce receiver id n0 a0)
                     )
                 )
                 ;;
@@ -370,40 +371,40 @@
                 ;;Transfer Native Nonces
                 ((UC_AndTruths [(not isg) (not ong) onp son])
                     (do
-                        (ref-DPDC-C::XE_DebitSFT-Nonces id sender nonces amounts)
-                        (ref-DPDC-C::XB_CreditSFT-Nonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitSFT-Nonces sender id nonces amounts)
+                        (ref-DPDC-C::XB_CreditSFT-Nonces receiver id nonces amounts)
                     )
                 )
                 ((UC_AndTruths [(not isg) (not ong) onp (not son)])
                     (do
-                        (ref-DPDC-C::XE_DebitNFT-Nonces id sender nonces amounts)
-                        (ref-DPDC-C::XB_CreditNFT-Nonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitNFT-Nonces sender id nonces amounts)
+                        (ref-DPDC-C::XB_CreditNFT-Nonces receiver id nonces amounts)
                     )
                 )
                 ;;Transfer Fragment Nonces
                 ((UC_AndTruths [(not isg) ong son])
                     (do
-                        (ref-DPDC-C::XE_DebitSFT-FragmentNonces id sender nonces amounts)
-                        (ref-DPDC-C::XE_CreditSFT-FragmentNonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitSFT-FragmentNonces sender id nonces amounts)
+                        (ref-DPDC-C::XE_CreditSFT-FragmentNonces receiver id nonces amounts)
                     )
                 )
                 ((UC_AndTruths [(not isg) ong (not son)])
                     (do
-                        (ref-DPDC-C::XE_DebitNFT-FragmentNonces id sender nonces amounts)
-                        (ref-DPDC-C::XE_CreditNFT-FragmentNonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitNFT-FragmentNonces sender id nonces amounts)
+                        (ref-DPDC-C::XE_CreditNFT-FragmentNonces receiver id nonces amounts)
                     )
                 )
                 ;;Transfer Hybrid (Native and Fragment) Nonces
                 ((UC_AndTruths [(not isg) (not ong) (not onp) son])
                     (do
-                        (ref-DPDC-C::XE_DebitSFT-HybridNonces id sender nonces amounts)
-                        (ref-DPDC-C::XE_CreditSFT-HybridNonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitSFT-HybridNonces sender id nonces amounts)
+                        (ref-DPDC-C::XE_CreditSFT-HybridNonces receiver id nonces amounts)
                     )
                 )
                 ((UC_AndTruths [(not isg) (not ong) (not onp) (not son)])
                     (do
-                        (ref-DPDC-C::XE_DebitNFT-HybridNonces id sender nonces amounts)
-                        (ref-DPDC-C::XE_CreditNFT-HybridNonces id receiver nonces amounts)
+                        (ref-DPDC-C::XE_DebitNFT-HybridNonces sender id nonces amounts)
+                        (ref-DPDC-C::XE_CreditNFT-HybridNonces receiver id nonces amounts)
                     )
                 )
             )

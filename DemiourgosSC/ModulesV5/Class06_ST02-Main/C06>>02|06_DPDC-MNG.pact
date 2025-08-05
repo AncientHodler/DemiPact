@@ -121,7 +121,7 @@
     )
     ;;{C3}
     ;;{C4}
-    (defcap DPDC-MNG|C>ADD-QUANTITY (id:string account:string nonce:integer amount:integer)
+    (defcap DPDC-MNG|C>ADD-QUANTITY (account:string id:string nonce:integer amount:integer)
         @event
         (let
             (
@@ -129,63 +129,69 @@
                 (ref-DPDC:module{Dpdc} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id true nonce))
             )
-            (enforce (> nonce 0) "Only positive nonces can be used for operation")
-            (enforce (> amount 0) "Only positive amounts can be used for operation")
+            (enforce (> nonce 0) "Only positive nonces can be used for operation!")
+            (enforce (> amount 0) "Only positive amounts can be used for operation!")
             (enforce (= nonce-class 0) "Adding Quantity is allowed only for class 0 nonces!")
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (ref-DPDC::UEV_AccountAddQuantityState id account true)
             (compose-capability (P|DPDC-MNG|CALLER))
         )
     )
-    (defcap DPDC-MNG|C>BURN-SFT (id:string account:string nonce:integer amount:integer)
+    (defcap DPDC-MNG|C>BURN-SFT (account:string id:string nonce:integer amount:integer)
         @event
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (ref-DPDC::UEV_AccountBurnState id true account true)
-            (compose-capability (DPDC-MNG|C>RM-SFT-QT id account nonce amount))
+            (compose-capability (DPDC-MNG|C>RM-SFT-QT account id nonce amount))
         )
     )
-    (defcap DPDC-MNG|C>WIPE-SFT-NONCE-PARTIALLY (id:string account:string nonce:integer amount:integer)
+    (defcap DPDC-MNG|C>WIPE-SFT-NONCE-PARTIALLY (account:string id:string nonce:integer amount:integer)
         @event
-        (compose-capability (DPDC-MNG|C>WIPE-SFT id account nonce amount))
+        (compose-capability (DPDC-MNG|C>WIPE-SFT account id nonce amount))
     )
-    (defcap DPDC-MNG|C>WIPE-SFT-NONCE-TOTALLY (id:string account:string nonce:integer)
+    (defcap DPDC-MNG|C>WIPE-SFT-NONCE-TOTALLY (account:string id:string nonce:integer)
         @event
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
-                (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
+                (account-nonce-supply:integer (ref-DPDC::UR_AccountNonceSupply account id true nonce))
             )
-            (compose-capability (DPDC-MNG|C>WIPE-SFT id account nonce nonce-supply))
+            (compose-capability (DPDC-MNG|C>WIPE-SFT account id nonce account-nonce-supply))
         )
     )
-    (defcap DPDC-MNG|C>WIPE-SFT (id:string account:string nonce:integer amount:integer)
+    (defcap DPDC-MNG|C>WIPE-SFT (account:string id:string nonce:integer amount:integer)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
             )
             (ref-DPDC::CAP_Owner id true)
             (ref-DPDC::UEV_AccountFreezeState id true account true)
-            (compose-capability (DPDC-MNG|C>RM-SFT-QT id account nonce amount))
+            (compose-capability (DPDC-MNG|C>RM-SFT-QT account id nonce amount))
         )
     )
-    (defcap DPDC-MNG|C>RM-SFT-QT (id:string account:string nonce:integer amount:integer)
+    (defcap DPDC-MNG|C>RM-SFT-QT (account:string id:string nonce:integer amount:integer)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id true nonce))
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
+                (account-nonce-supply:integer (ref-DPDC::UR_AccountNonceSupply account id true nonce))
             )
-            (enforce (> nonce 0) "Only positive nonces can be used for operation")
-            (enforce (<= amount nonce-supply) "Invalid Amount for SFT Wiping")
+            ;;Fragments (that have negative nonces) cannot be burned or wiped
+            (enforce
+                (fold (and) true [(> nonce 0) (> amount 0) (<= amount account-nonce-supply) (= nonce-class 0)])
+                (format "Conditions not met for removal of {} SFT {} Nonce {} on Account {}." [amount id nonce account])
+            )
             (compose-capability (P|SECURE-CALLER))
         )
     )
-    (defcap DPDC-MNG|C>WIPE-SFTS (id:string account:string)
+    (defcap DPDC-MNG|C>WIPE-SFTS (account:string id:string)
         @event
         (let
             (
@@ -197,7 +203,7 @@
         )
     )
     ;;
-    (defcap DPDC-MNG|C>BURN-NFT (id:string account:string nonce:integer)
+    (defcap DPDC-MNG|C>BURN-NFT (account:string id:string nonce:integer)
         @event
         (let
             (
@@ -207,10 +213,10 @@
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (ref-DPDC::UEV_AccountBurnState id false account true)
             (ref-DPDC::UEV_NftNonceExistance id nonce true)
-            (compose-capability (P|SECURE-CALLER))
+            (compose-capability (P|DPDC-MNG|CALLER))
         )
     )
-    (defcap DPDC-MNG|C>RESPAWN-NFT (id:string account:string nonce:integer)
+    (defcap DPDC-MNG|C>RESPAWN-NFT (account:string id:string nonce:integer)
         @event
         (let
             (
@@ -220,24 +226,24 @@
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (ref-DPDC::UEV_AccountCreateState id false account true)
             (ref-DPDC::UEV_NftNonceExistance id nonce false)
-            (compose-capability (P|SECURE-CALLER))
+            (compose-capability (P|DPDC-MNG|CALLER))
         )
     )
-    (defcap DPDC-MNG|C>WIPE-NFT-NONCE (id:string account:string nonce:integer)
+    (defcap DPDC-MNG|C>WIPE-NFT-NONCE (account:string id:string nonce:integer)
         @event
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
             )
             (ref-DPDC::UEV_NftNonceExistance id nonce true)
-            (compose-capability (DPDC-MNG|C>WIPE-NFT id account))
+            (compose-capability (DPDC-MNG|C>WIPE-NFT account id))
         )
     )
-    (defcap DPDC-MNG|C>WIPE-NFTS (id:string account:string)
+    (defcap DPDC-MNG|C>WIPE-NFTS (account:string id:string)
         @event
-        (compose-capability (DPDC-MNG|C>WIPE-NFT id account))
+        (compose-capability (DPDC-MNG|C>WIPE-NFT account id))
     )
-    (defcap DPDC-MNG|C>WIPE-NFT (id:string account:string)
+    (defcap DPDC-MNG|C>WIPE-NFT (account:string id:string)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
@@ -252,27 +258,7 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     ;;{F1}  [URC]
-    (defun URC_FilterClassZeroNonces:[object{DpdcUdc.DPSF|NonceBalance}] (id:string input:[object{DpdcUdc.DPSF|NonceBalance}])
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-            )
-            (filter 
-                (lambda 
-                    (element:object{DpdcUdc.DPSF|NonceBalance})
-                    (let
-                        (
-                            (nonce:integer (at "nonce" element))
-                            (nonce-class:integer (ref-DPDC::UR_NonceClass id true nonce))
-                        )
-                        (= nonce-class 0)
-                    )
-                ) 
-                input
-            )
-        )
-    )
-    (defun URC_FilterClassZeroNoncesV2:[integer] (id:string nonces:[integer])
+    (defun URC_FilterClassZeroNonces:[integer] (id:string son:bool nonces:[integer])
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
@@ -280,7 +266,7 @@
             (filter 
                 (lambda 
                     (element:integer)
-                    (= (ref-DPDC::UR_NonceClass id false element) 0)
+                    (= (ref-DPDC::UR_NonceClass id son element) 0)
                 ) 
                 nonces
             )
@@ -310,7 +296,6 @@
             )
         )
     )
-    ;;
     (defun C_TogglePause:object{IgnisCollector.OutputCumulator}
         (id:string son:bool toggle:bool)
         (UEV_IMC)
@@ -325,51 +310,51 @@
             )
         )
     )
-    ;;
+    ;; [SFT]
     (defun C_AddQuantity:object{IgnisCollector.OutputCumulator}
-        (id:string account:string nonce:integer amount:integer)
+        (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (with-capability (DPDC-MNG|C>ADD-QUANTITY id account nonce amount)
-                (XI_AddQuantity id account nonce amount)
+            (with-capability (DPDC-MNG|C>ADD-QUANTITY account id nonce amount)
+                (XI_AddQuantity account id nonce amount)
                 (ref-IGNIS::IC|UDC_SmallCumulator (ref-DPDC::UR_OwnerKonto id true))
             )
         )
     )
     (defun C_BurnSFT:object{IgnisCollector.OutputCumulator}
-        (id:string account:string nonce:integer amount:integer)
+        (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (with-capability (DPDC-MNG|C>BURN-SFT id account nonce amount)
-                (XI_BurnSemiFungible id account nonce amount)
+            (with-capability (DPDC-MNG|C>BURN-SFT account id nonce amount)
+                (XI_BurnSemiFungible account id nonce amount)
                 (ref-IGNIS::IC|UDC_SmallCumulator (ref-DPDC::UR_OwnerKonto id true))
             )
         )
     )
     (defun C_WipeSftNoncePartialy:object{IgnisCollector.OutputCumulator}
-        (id:string account:string nonce:integer amount:integer)
+        (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (with-capability (DPDC-MNG|C>WIPE-SFT-NONCE-PARTIALLY id account nonce amount)
-                (XI_BurnSemiFungible id account nonce amount)
+            (with-capability (DPDC-MNG|C>WIPE-SFT-NONCE-PARTIALLY account id nonce amount)
+                (XI_BurnSemiFungible account id nonce amount)
                 (ref-IGNIS::IC|UDC_BigCumulator (ref-DPDC::UR_OwnerKonto id true))
             )
         )
     )
     (defun C_WipeSftNonce:object{IgnisCollector.OutputCumulator}
-        (id:string account:string nonce:integer)
+        (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
@@ -377,76 +362,109 @@
                 (ref-DPDC:module{Dpdc} DPDC)
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
             )
-            (with-capability (DPDC-MNG|C>WIPE-SFT-NONCE-TOTALLY id account nonce)
-                (XI_BurnSemiFungible id account nonce nonce-supply)
+            (with-capability (DPDC-MNG|C>WIPE-SFT-NONCE-TOTALLY account id nonce)
+                (XI_BurnSemiFungible account id nonce nonce-supply)
                 (ref-IGNIS::IC|UDC_BigCumulator (ref-DPDC::UR_OwnerKonto id true))
             )
         )
     )
     (defun C_WipeSftNonces:object{IgnisCollector.OutputCumulator}
-        (id:string account:string)
+        (account:string id:string)
+        @doc "Costs 1 IGNIS per SFT Nonce wiped. \
+            \ For demonstration purposes only, due to high computation cost"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (with-capability (DPDC-MNG|C>WIPE-SFTS id account)
-                (XI_WipeSFT id account)
-                (ref-IGNIS::IC|UDC_BiggestCumulator (ref-DPDC::UR_OwnerKonto id true))
+            (with-capability (DPDC-MNG|C>WIPE-SFTS account id)
+                (let
+                    (
+                        (no-of-nonces:decimal (dec (XI_WipeSFT account id)))
+                    )
+                    (ref-IGNIS::IC|UDC_ConstructOutputCumulator
+                        (* 
+                            (ref-DALOS::UR_UsagePrice "ignis|smallest")
+                            no-of-nonces
+                        )
+                        (ref-DPDC::UR_OwnerKonto id true)
+                        (ref-IGNIS::IC|URC_IsVirtualGasZero)
+                        [no-of-nonces]
+                    )
+                )
             )
         )
     )
-    ;;
-    (defun C_BurnNFT (id:string account:string nonce:integer)
+    ;; [NFT]
+    (defun C_BurnNFT (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
             )
-            (with-capability (DPDC-MNG|C>BURN-NFT id account nonce)
-                (XI_BurnNonFungible id account nonce)
+            (with-capability (DPDC-MNG|C>BURN-NFT account id nonce)
+                (ref-DPDC-C::XE_DebitNFT-Nonce id account nonce 1)
                 (ref-IGNIS::IC|UDC_MediumCumulator (ref-DPDC::UR_OwnerKonto id false))
             )
         )
     )
-    (defun C_RespawnNFT (id:string account:string nonce:integer)
+    (defun C_RespawnNFT (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
             )
-            (with-capability (DPDC-MNG|C>RESPAWN-NFT id account nonce)
-                (XI_RespawnNonFungible id account nonce)
+            (with-capability (DPDC-MNG|C>RESPAWN-NFT account id nonce)
+                (ref-DPDC-C::XB_CreditNFT-Nonce id account nonce 1)
                 (ref-IGNIS::IC|UDC_MediumCumulator (ref-DPDC::UR_OwnerKonto id false))
             )
         )
     )
-    (defun C_WipeNftNonce (id:string account:string nonce:integer)
+    (defun C_WipeNftNonce (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
             )
-            (with-capability (DPDC-MNG|C>WIPE-NFT-NONCE id account nonce)
-                (XI_BurnNonFungible id account nonce)
+            (with-capability (DPDC-MNG|C>WIPE-NFT-NONCE account id nonce)
+                (ref-DPDC-C::XE_DebitNFT-Nonce id account nonce 1)
                 (ref-IGNIS::IC|UDC_BigCumulator (ref-DPDC::UR_OwnerKonto id false))
             )
         )
     )
-    (defun C_WipeNft (id:string account:string)
+    (defun C_WipeNft (account:string id:string)
+        @doc "Costs 1 IGNIS per SFT Nonce wiped. \
+            \ For demonstration purposes only, due to high computation cost"
         (UEV_IMC)
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
-            (with-capability (DPDC-MNG|C>WIPE-NFTS id account)
-                (XI_WipeNFT id account )
-                (ref-IGNIS::IC|UDC_BiggestCumulator (ref-DPDC::UR_OwnerKonto id false))
+            (with-capability (DPDC-MNG|C>WIPE-NFTS account id)
+                (let
+                    (
+                        (no-of-nonces:decimal (dec  (XI_WipeNFT account id)))
+                    )
+                    (ref-IGNIS::IC|UDC_ConstructOutputCumulator
+                        (* 
+                            (ref-DALOS::UR_UsagePrice "ignis|smallest")
+                            no-of-nonces
+                        )
+                        (ref-DPDC::UR_OwnerKonto id false)
+                        (ref-IGNIS::IC|URC_IsVirtualGasZero)
+                        [no-of-nonces]
+                    )
+                )
             )
         )
     )
@@ -472,8 +490,8 @@
         )
     )
     ;;
-    (defun XI_AddQuantity (id:string account:string nonce:integer amount:integer)
-        (require-capability (DPDC-MNG|C>ADD-QUANTITY id account nonce amount))
+    (defun XI_AddQuantity (account:string id:string nonce:integer amount:integer)
+        (require-capability (DPDC-MNG|C>ADD-QUANTITY account id nonce amount))
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
@@ -481,11 +499,12 @@
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
             )
             (ref-DPDC::XE_U|NonceSupply id nonce (+ amount nonce-supply))
-            (ref-DPDC-C::XB_CreditSFT-Nonce id account nonce amount)
+            (ref-DPDC-C::XB_CreditSFT-Nonce account id nonce amount)
         )
     )
-    (defun XI_BurnSemiFungible (id:string account:string nonce:integer amount:integer)
-        @doc "Only Class 0 Nonces can be burned."
+    (defun XI_BurnSemiFungible (account:string id:string nonce:integer amount:integer)
+        @doc "Only Positive, Class 0 Nonces can be burned directly with this function \
+            \ Negative (Fragment Nonces) and Class Non-0 Nonces (Set Nonces) are protected by direct burning."   
         (require-capability (SECURE))
         (let
             (
@@ -494,74 +513,71 @@
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
             )
             (ref-DPDC::XE_U|NonceSupply id nonce (- nonce-supply amount))
-            (ref-DPDC-C::XE_DebitSFT-Nonce id account nonce amount)
+            (ref-DPDC-C::XE_DebitSFT-Nonce account id nonce amount)
         )
     )
-    (defun XI_WipeSFT (id:string account:string)
-        @doc "Only Class 0 positive nonces can be Wiped. Set Nonces cannot be wiped"
+    (defun XI_WipeSFT:integer (account:string id:string)
+        @doc "Only Positive, Class 0 Nonces can be burned directly with this function \
+            \ Negative (Fragment Nonces) and Class Non-0 Nonces (Set Nonces) are protected by direct burning. \
+            \ Only Works up to a certain amount of Nonces held by the account due to <UR_AccountNonces> which is expensive \
+            \ since it polls all NFT Accounts existing on Ouronet; \
+            \ \
+            \ Only for demonstration purposes. Nonces should insted be wiped one at a time. \
+            \ Outputs the number of elements wiped."
         (require-capability (SECURE))
         (let
             (
+                (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
                 (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                (sfh:[object{DpdcUdc.DPSF|NonceBalance}] (ref-DPDC::UR_SemiFungibleAccountHoldings id account))
-                (class-zero-sfh:[object{DpdcUdc.DPSF|NonceBalance}] (URC_FilterClassZeroNonces id sfh))
-                (czsfh-snbo:object{DpdcUdc.DPSF|NonceBalanceChain} (ref-DPDC-UDC::UR_SplitNonceBalanceObject class-zero-sfh))
-                (nonces:[integer] (at "nonce" czsfh-snbo))
-                (amounts:[integer] (at "supply" czsfh-snbo))
+                (asfn:[integer] (ref-DPDC::UR_AccountNonces account id true))
+                (class-zero-asfn:[integer] (URC_FilterClassZeroNonces id true asfn))
+                (class-zero-asfn-amounts:[integer] 
+                    (fold
+                        (lambda
+                            (acc:[integer] idx:integer)
+                            (ref-U|LST::UC_AppL acc 
+                                (ref-DPDC::UR_AccountNonceSupply account id true (at idx class-zero-asfn))
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length class-zero-asfn) 1))
+                    )
+                )
             )
             (map
                 (lambda
                     (idx:integer)
                     (let
                         (
-                            (nonce:integer (at idx nonces))
-                            (amount:integer (at idx amounts))
+                            (nonce:integer (at idx class-zero-asfn))
+                            (amount:integer (at idx class-zero-asfn-amounts))
                             (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
                         )
                         (ref-DPDC::XE_U|NonceSupply id nonce (- nonce-supply amount))
                     )
                 )
-                (enumerate 0 (- (length nonces) 1))
+                (enumerate 0 (- (length class-zero-asfn) 1))
             )
-            (ref-DPDC-C::XE_DebitSFT-Nonces id account nonces amounts)
+            (ref-DPDC-C::XE_DebitSFT-Nonces account id class-zero-asfn class-zero-asfn-amounts)
+            (length class-zero-asfn)
         )
     )
     ;;
-    (defun XI_BurnNonFungible (id:string account:string nonce:integer)
-        ;(require-capability (SECURE))
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-            )
-            (ref-DPDC::XE_U|NonceIzActive id nonce false)
-            (ref-DPDC-C::XE_DebitNFT-Nonce id account nonce 1)
-        )
-    )
-    (defun XI_RespawnNonFungible (id:string account:string nonce:integer)
+    (defun XI_WipeNFT:integer (id:string account:string)
+        @doc "Similar to SFT Wiping"
         (require-capability (SECURE))
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (anfn:[integer] (ref-DPDC::UR_AccountNonces account id false))
+                (class-zero-anfn:[integer] (URC_FilterClassZeroNonces id false anfn))
+                (class-zero-anfn-amounts:[integer] (make-list (length class-zero-anfn) 1))
             )
-            (ref-DPDC::XE_U|NonceIzActive id nonce true)
-            (ref-DPDC-C::XB_CreditNFT-Nonce id account nonce 1)
-        )
-    )
-    (defun XI_WipeNFT (id:string account:string)
-        @doc "Only Class 0 positive nonces can be Wiped. Set Nonces cannot be wiped"
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                (nfh:[integer] (ref-DPDC::UR_NonFungibleAccountHoldings id account))
-                (class-zero-nfh:[integer] (URC_FilterClassZeroNoncesV2 id nfh))
-            )
-            (ref-DPDC-C::XE_DebitNFT-Nonces id account class-zero-nfh (make-list (length class-zero-nfh) 1))
+            (ref-DPDC-C::XE_DebitNFT-Nonces account id class-zero-anfn class-zero-anfn-amounts)
+            (length class-zero-anfn)
         )
     )
     ;;

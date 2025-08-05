@@ -180,7 +180,6 @@
                 (ref-DPDC:module{Dpdc} DPDC)
             )
             (UEV_NonceType nonce fragments-or-native)
-            (ref-DPDC::UEV_Nonce id son nonce)
             (compose-capability (P|DPDC-C|CALLER))
         )
     )
@@ -207,7 +206,6 @@
         (UEV_NonceTypeMapper nonces fragments-or-native)
         (compose-capability (DPDC-C|CX>MULTI-CREDIT id son nonces amounts))
     )
-    
     ;;
     ;;Hybrid Multi Credit
     (defcap DPSF|C>CREDIT-HYBRID-NONCES (id:string nonces:[integer] amounts:[integer])
@@ -230,7 +228,6 @@
                 (l2:integer (length amounts))
             )
             (enforce (= l1 l2) (format "Nonces {} are incompatible with {} Amounts for Crediting" [nonces amounts]))
-            (ref-DPDC::UEV_NonceMapper id son nonces)
             (compose-capability (P|DPDC-C|CALLER))
         )
     )
@@ -238,83 +235,74 @@
     ;;
     ;;DEBIT
     ;;Single Debit
-    (defcap DPSF|C>DEBIT-FRAGMENT-NONCE (id:string account:string nonce:integer amount:integer)
+    (defcap DPSF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
         @event
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT id true account nonce amount true))
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount true))
     )
-    (defcap DPNF|C>DEBIT-FRAGMENT-NONCE (id:string account:string nonce:integer amount:integer)
+    (defcap DPNF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
         @event
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT id false account nonce amount true))
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount true))
     )
     ;;
-    (defcap DPSF|C>DEBIT-NONCE (id:string account:string nonce:integer amount:integer)
+    (defcap DPSF|C>DEBIT-NONCE (account:string id:string nonce:integer amount:integer)
         @event
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT id true account nonce amount false))
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount false))
     )
-    (defcap DPNF|C>DEBIT-NONCE (id:string account:string nonce:integer amount:integer)
+    (defcap DPNF|C>DEBIT-NONCE (account:string id:string nonce:integer amount:integer)
         @event
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT id false account nonce amount false))
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount false))
     )
-    (defcap DPDC-C|C>SINGLE-DEBIT (id:string son:bool account:string nonce:integer amount:integer fragments-or-native:bool)
+    (defcap DPDC-C|C>SINGLE-DEBIT (account:string id:string son:bool nonce:integer amount:integer fragments-or-native:bool)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
-            (ref-DPDC::UEV_Nonce id son nonce)
+            (ref-DPDC::UEV_NonceQuantityInclusion account id son nonce amount)
             ;;
             (UEV_NonceType nonce fragments-or-native)
-            (UEV_NonceInclusion id son account nonce fragments-or-native)
-            (UEV_Quantity id son account nonce amount)
             ;;
             (compose-capability (P|DPDC-C|CALLER))
         )
     )
     ;;Multi-Debit
-    (defcap DPSF|C>DEBIT-FRAGMENT-NONCES (id:string account:string nonces:[integer] amounts:[integer])
+    (defcap DPSF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
         @event
-        (compose-capability (DPDC|C>MULTI-DEBIT id true account nonces amounts true))
+        (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts true))
     )
-    (defcap DPNF|C>DEBIT-FRAGMENT-NONCES (id:string account:string nonces:[integer] amounts:[integer])
+    (defcap DPNF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
         @event
-        (compose-capability (DPDC|C>MULTI-DEBIT id false account nonces amounts true))
+        (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts true))
     )
-    (defcap DPSF|C>DEBIT-NONCES (id:string account:string nonces:[integer] amounts:[integer])
+    (defcap DPSF|C>DEBIT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
         @event
-        (compose-capability (DPDC|C>MULTI-DEBIT id true account nonces amounts false))
+        (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts false))
     )
-    (defcap DPNF|C>DEBIT-NONCES (id:string account:string nonces:[integer] amounts:[integer])
+    (defcap DPNF|C>DEBIT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
         @event
-        (compose-capability (DPDC|C>MULTI-DEBIT id false account nonces amounts false))
+        (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts false))
     )
-    (defcap DPDC|C>MULTI-DEBIT (id:string son:bool account:string nonces:[integer] amounts:[integer] fragments-or-native:bool)
-        (UEV_NonceTypeMapper nonces fragments-or-native)
-        (UEV_NonceInclusionMapper id son account nonces fragments-or-native)
-        (compose-capability (DPDC|CX>MULTI-DEBIT id son account nonces amounts))
-    )
-    ;;Hybrid Multi Debit
-    (defcap DPSF|C>DEBIT-HYBRID-NONCES (id:string account:string nonces:[integer] amounts:[integer])
-        @event
-        (compose-capability (DPDC|C>HYBRID-MULTI-DEBIT id true account nonces amounts))
-    )
-    (defcap DPNF|C>DEBIT-HYBRID-NONCES (id:string account:string nonces:[integer] amounts:[integer])
-        @event
-        (compose-capability (DPDC|C>HYBRID-MULTI-DEBIT id false account nonces amounts))
-    )
-    (defcap DPDC|C>HYBRID-MULTI-DEBIT (id:string son:bool account:string nonces:[integer] amounts:[integer])
+    (defcap DPDC|C>MULTI-DEBIT (account:string id:string son:bool nonces:[integer] amounts:[integer] fragments-or-native:bool)
         (let
             (
-                (split-nonces:object{OuronetIntegersV2.SplitIntegers} (UEV_HybridNonces nonces))
-                (negative-nonces:[integer] (at "negative" split-nonces))
-                (positive-nonces:[integer] (at "positive" split-nonces))
+                (ref-DPDC:module{Dpdc} DPDC)
             )
-            (UEV_NonceInclusionMapper id son account negative-nonces false)
-            (UEV_NonceInclusionMapper id son account positive-nonces true)
-            (compose-capability (DPDC|CX>MULTI-DEBIT id son account nonces amounts))
+            (UEV_NonceTypeMapper nonces fragments-or-native)
+            (compose-capability (DPDC|CX>MULTI-DEBIT account id son nonces amounts))
         )
+        
     )
-    (defcap DPDC|CX>MULTI-DEBIT (id:string son:bool account:string nonces:[integer] amounts:[integer])
+    ;;Hybrid Multi Debit
+    (defcap DPSF|C>DEBIT-HYBRID-NONCES (account:string id:string nonces:[integer] amounts:[integer])
+        @event
+        (compose-capability (DPDC|CX>MULTI-DEBIT account id true nonces amounts))
+    )
+    (defcap DPNF|C>DEBIT-HYBRID-NONCES (account:string id:string nonces:[integer] amounts:[integer])
+        @event
+        (compose-capability (DPDC|CX>MULTI-DEBIT account id false nonces amounts))
+    )
+    (defcap DPDC|CX>MULTI-DEBIT (account:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
@@ -325,8 +313,7 @@
             )
             (enforce (= l1 l2) (format "Nonces {} and Amounts {} are invalid for Operation" [nonces amounts]))
             (ref-DALOS::CAP_EnforceAccountOwnership account)
-            (ref-DPDC::UEV_NonceMapper id son nonces)
-            (UEV_QuantityMapper id son account nonces amounts)
+            (ref-DPDC::UEV_NonceQuantityInclusionMapper account id son nonces amounts)
             (compose-capability (P|DPDC-C|CALLER))
         )
     )
@@ -364,53 +351,12 @@
             (enforce (> nonce 0) "Only Positive Nonces Allowed for Operation")
         )
     )
-    (defun UEV_NonceInclusion (id:string son:bool account:string nonce:integer fragments-or-native:bool)
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                ;;
-                (account-nonces:[integer] (ref-DPDC::UR_AccountNonces id son account fragments-or-native))
-                (iz-contained:bool (contains nonce account-nonces))
-            )
-            (enforce iz-contained (format "Account {} doesnt hold Nonce {}" [account nonce]))
-        )
-    )
-    (defun UEV_Quantity (id:string son:bool account:string nonce:integer amount:integer)
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (nonce-supply:integer (ref-DPDC::UR_AccountNonceSupply id son account nonce))
-            )
-            (enforce 
-                (<= amount nonce-supply) 
-                (format "Amount of {} is not smaller than or equal to the {} for ID {} and Nonce {} on Accoumt {}" [amount nonce-supply id nonce account])
-            )
-        )
-    )
     ;;
     (defun UEV_NonceTypeMapper (nonces:[integer] fragments-or-native:bool)
         (map
             (lambda
                 (idx:integer)
                 (UEV_NonceType (at idx nonces) fragments-or-native)
-            )
-            (enumerate 0 (- (length nonces) 1))
-        )
-    )
-    (defun UEV_NonceInclusionMapper (id:string son:bool account:string nonces:[integer] fragments-or-native:bool)
-        (map
-            (lambda
-                (idx:integer)
-                (UEV_NonceInclusion id son account (at idx nonces) fragments-or-native)
-            )
-            (enumerate 0 (- (length nonces) 1))
-        )
-    )
-    (defun UEV_QuantityMapper (id:string son:bool account:string nonces:[integer] amounts:[integer])
-        (map
-            (lambda
-                (idx:integer)
-                (UEV_Quantity id son account (at idx nonces) (at idx amounts))
             )
             (enumerate 0 (- (length nonces) 1))
         )
@@ -460,154 +406,154 @@
     )
     ;;{F7}  [X]
     ;;T3x20
-    (defun XE_CreditSFT-FragmentNonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_CreditSFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPSF|C>CREDIT-FRAGMENT-NONCE id nonce)
-            (XI_CreditSFT id account [nonce] [amount])
+            (XI_CreditSFT account id [nonce] [amount])
         )
     )
-    (defun XE_CreditNFT-FragmentNonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_CreditNFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPNF|C>CREDIT-FRAGMENT-NONCE id nonce)
-            (XI_CreditNFT id account [nonce] [amount])
+            (XI_CreditNFT account id [nonce] [amount])
         )
     )
-    (defun XE_DebitSFT-FragmentNonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_DebitSFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCE id account nonce amount)
-            (XI_DebitSFT id account [nonce] [amount])
+        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id nonce amount)
+            (XI_DebitSFT account id [nonce] [amount])
         )
     )
-    (defun XE_DebitNFT-FragmentNonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_DebitNFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCE id account nonce amount)
-            (XI_DebitNFT id account [nonce] [amount])
+        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id nonce amount)
+            (XI_DebitNFT account id [nonce] [amount])
         )
     )
     ;;
-    (defun XB_CreditSFT-Nonce (id:string account:string nonce:integer amount:integer)
+    (defun XB_CreditSFT-Nonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPSF|C>CREDIT-NONCE id nonce)
-            (XI_CreditSFT id account [nonce] [amount])
+            (XI_CreditSFT account id [nonce] [amount])
         )
     )
-    (defun XB_CreditNFT-Nonce (id:string account:string nonce:integer amount:integer)
+    (defun XB_CreditNFT-Nonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (with-capability (DPNF|C>CREDIT-NONCE id nonce amount)
-            (XI_CreditNFT id account [nonce] [amount])
+            (XI_CreditNFT account id [nonce] [amount])
         )
     )
-    (defun XE_DebitSFT-Nonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_DebitSFT-Nonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-NONCE id account nonce amount)
-            (XI_DebitSFT id account [nonce] [amount])
+        (with-capability (DPSF|C>DEBIT-NONCE account id nonce amount)
+            (XI_DebitSFT account id [nonce] [amount])
         )
     )
-    (defun XE_DebitNFT-Nonce (id:string account:string nonce:integer amount:integer)
+    (defun XE_DebitNFT-Nonce (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-NONCE id account nonce amount)
-            (XI_DebitNFT id account [nonce] [amount])
+        (with-capability (DPNF|C>DEBIT-NONCE account id nonce amount)
+            (XI_DebitNFT account id [nonce] [amount])
         )
     )
     ;;
-    (defun XE_CreditSFT-FragmentNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_CreditSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPSF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)
-            (XI_CreditSFT id account nonces amounts)
+            (XI_CreditSFT account id nonces amounts)
         )
     )
-    (defun XE_CreditNFT-FragmentNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_CreditNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPNF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)
-            (XI_CreditNFT id account nonces amounts)
+            (XI_CreditNFT account id nonces amounts)
         )
     )
-    (defun XE_DebitSFT-FragmentNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCES id account nonces amounts)
-            (XI_DebitSFT id account nonces amounts)
+        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)
+            (XI_DebitSFT account id nonces amounts)
         )
     )
-    (defun XE_DebitNFT-FragmentNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCES id account nonces amounts)
-            (XI_DebitNFT id account nonces amounts)
+        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)
+            (XI_DebitNFT account id nonces amounts)
         )
     )
     ;;
-    (defun XB_CreditSFT-Nonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XB_CreditSFT-Nonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPSF|C>CREDIT-NONCES id nonces amounts)
-            (XI_CreditSFT id account nonces amounts)
+            (XI_CreditSFT account id nonces amounts)
         )
     )
-    (defun XB_CreditNFT-Nonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XB_CreditNFT-Nonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPNF|C>CREDIT-NONCES id nonces amounts)
-            (XI_CreditNFT id account nonces amounts)
+            (XI_CreditNFT account id nonces amounts)
         )
     )
-    (defun XE_DebitSFT-Nonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitSFT-Nonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-NONCES id account nonces amounts)
-            (XI_DebitSFT id account nonces amounts)
+        (with-capability (DPSF|C>DEBIT-NONCES account id nonces amounts)
+            (XI_DebitSFT account id nonces amounts)
         )
     )
-    (defun XE_DebitNFT-Nonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitNFT-Nonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-NONCES id account nonces amounts)
-            (XI_DebitNFT id account nonces amounts)
+        (with-capability (DPNF|C>DEBIT-NONCES account id nonces amounts)
+            (XI_DebitNFT account id nonces amounts)
         )
     )
     ;;
-    (defun XE_CreditSFT-HybridNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_CreditSFT-HybridNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPSF|C>CREDIT-HYBRID-NONCES id nonces amounts)
-            (XI_CreditSFT id account nonces amounts)
+            (XI_CreditSFT account id nonces amounts)
         )
     )
-    (defun XE_CreditNFT-HybridNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_CreditNFT-HybridNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
         (with-capability (DPNF|C>CREDIT-HYBRID-NONCES id nonces amounts)
-            (XI_CreditNFT id account nonces amounts)
+            (XI_CreditNFT account id nonces amounts)
         )
     )
-    (defun XE_DebitSFT-HybridNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitSFT-HybridNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-HYBRID-NONCES id account nonces amounts)
-            (XI_DebitSFT id account nonces amounts)
+        (with-capability (DPSF|C>DEBIT-HYBRID-NONCES account id nonces amounts)
+            (XI_DebitSFT account id nonces amounts)
         )
     )
-    (defun XE_DebitNFT-HybridNonces (id:string account:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitNFT-HybridNonces (account:string id:string nonces:[integer] amounts:[integer])
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-HYBRID-NONCES id account nonces amounts)
-            (XI_DebitNFT id account nonces amounts)
+        (with-capability (DPNF|C>DEBIT-HYBRID-NONCES account id nonces amounts)
+            (XI_DebitNFT account id nonces amounts)
         )
     )
     ;;
     ;;T2x4
-    (defun XI_CreditSFT (id:string account:string nonces:[integer] amounts:[integer])
-        (XI_CreditCollectables id true account nonces amounts)
+    (defun XI_CreditSFT (account:string id:string nonces:[integer] amounts:[integer])
+        (XI_CreditCollectables account id true nonces amounts)
     )
-    (defun XI_CreditNFT (id:string account:string nonces:[integer] amounts:[integer])
-        (XI_CreditCollectables id false account nonces amounts)
+    (defun XI_CreditNFT (account:string id:string nonces:[integer] amounts:[integer])
+        (XI_CreditCollectables account id false nonces amounts)
     )
     ;;
-    (defun XI_DebitSFT (id:string account:string nonces:[integer] amounts:[integer])
-        (XI_DebitCollectables id true account nonces amounts)
+    (defun XI_DebitSFT (account:string id:string nonces:[integer] amounts:[integer])
+        (XI_DebitCollectables account id true nonces amounts)
     )
-    (defun XI_DebitNFT (id:string account:string nonces:[integer] amounts:[integer])
-        (XI_DebitCollectables id false account nonces amounts)
+    (defun XI_DebitNFT (account:string id:string nonces:[integer] amounts:[integer])
+        (XI_DebitCollectables account id false nonces amounts)
     )
     ;;T1x2
-    (defun XI_CreditCollectables (id:string son:bool account:string nonces:[integer] amounts:[integer])
-        (XI_CreditOrDebitCollectables id son account nonces amounts true)
+    (defun XI_CreditCollectables (account:string id:string son:bool nonces:[integer] amounts:[integer])
+        (XI_CreditOrDebitCollectables account id son nonces amounts true)
     )
-    (defun XI_DebitCollectables (id:string son:bool account:string nonces:[integer] amounts:[integer])
-        (XI_CreditOrDebitCollectables id son account nonces amounts false)
+    (defun XI_DebitCollectables (account:string id:string son:bool nonces:[integer] amounts:[integer])
+        (XI_CreditOrDebitCollectables account id son nonces amounts false)
     )
     ;;T0x1
-    (defun XI_CreditOrDebitCollectables (id:string son:bool account:string nonces:[integer] amounts:[integer] cod:bool)
+    (defun XI_CreditOrDebitCollectables (account:string id:string son:bool nonces:[integer] amounts:[integer] cod:bool)
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
@@ -636,104 +582,60 @@
                 ;;Native Nonce
                 ((UC_AndTruths [isg (not inn) cod son])                             (require-capability (DPSF|C>CREDIT-NONCE id n0)))
                 ((UC_AndTruths [isg (not inn) cod (not son)])                       (require-capability (DPNF|C>CREDIT-NONCE id n0 a0)))
-                ((UC_AndTruths [isg (not inn) (not cod) son])                       (require-capability (DPSF|C>DEBIT-NONCE id account n0 a0)))
-                ((UC_AndTruths [isg (not inn) (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-NONCE id account n0 a0)))
+                ((UC_AndTruths [isg (not inn) (not cod) son])                       (require-capability (DPSF|C>DEBIT-NONCE account id n0 a0)))
+                ((UC_AndTruths [isg (not inn) (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-NONCE account id n0 a0)))
                 ;;Fragment Nonce
                 ((UC_AndTruths [isg inn cod son])                                   (require-capability (DPSF|C>CREDIT-FRAGMENT-NONCE id n0)))
                 ((UC_AndTruths [isg inn cod (not son)])                             (require-capability (DPNF|C>CREDIT-FRAGMENT-NONCE id n0)))
-                ((UC_AndTruths [isg inn (not cod) son])                             (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCE id account n0 a0)))
-                ((UC_AndTruths [isg inn (not cod) (not son)])                       (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCE id account n0 a0)))
+                ((UC_AndTruths [isg inn (not cod) son])                             (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id n0 a0)))
+                ((UC_AndTruths [isg inn (not cod) (not son)])                       (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id n0 a0)))
                 ;;
                 ;;MULTI
                 ;;Native Nonces
                 ((UC_AndTruths [(not isg) (not ong) onp cod son])                   (require-capability (DPSF|C>CREDIT-NONCES id nonces amounts)))
                 ((UC_AndTruths [(not isg) (not ong) onp cod (not son)])             (require-capability (DPNF|C>CREDIT-NONCES id nonces amounts)))
-                ((UC_AndTruths [(not isg) (not ong) onp (not cod) son])             (require-capability (DPSF|C>DEBIT-NONCES id account nonces amounts)))
-                ((UC_AndTruths [(not isg) (not ong) onp (not cod) (not son)])       (require-capability (DPNF|C>DEBIT-NONCES id account nonces amounts)))
+                ((UC_AndTruths [(not isg) (not ong) onp (not cod) son])             (require-capability (DPSF|C>DEBIT-NONCES account id nonces amounts)))
+                ((UC_AndTruths [(not isg) (not ong) onp (not cod) (not son)])       (require-capability (DPNF|C>DEBIT-NONCES account id nonces amounts)))
                 ;;Fragment Nonces
                 ((UC_AndTruths [(not isg) ong cod son])                             (require-capability (DPSF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)))
                 ((UC_AndTruths [(not isg) ong cod (not son)])                       (require-capability (DPNF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)))
-                ((UC_AndTruths [(not isg) ong (not cod) son])                       (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCES id account nonces amounts)))
-                ((UC_AndTruths [(not isg) ong (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCES id account nonces amounts)))
+                ((UC_AndTruths [(not isg) ong (not cod) son])                       (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)))
+                ((UC_AndTruths [(not isg) ong (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)))
                 ;;Hybrid (Native and Fragment) Nonces
                 ((UC_AndTruths [(not isg) (not ong) (not onp) cod son])             (require-capability (DPSF|C>CREDIT-HYBRID-NONCES id nonces amounts)))
                 ((UC_AndTruths [(not isg) (not ong) (not onp) cod (not son)])       (require-capability (DPNF|C>CREDIT-HYBRID-NONCES id nonces amounts)))
-                ((UC_AndTruths [(not isg) (not ong) (not onp) (not cod) son])       (require-capability (DPSF|C>DEBIT-HYBRID-NONCES id account nonces amounts)))
-                ((UC_AndTruths [(not isg) (not ong) (not onp) (not cod) (not son)]) (require-capability (DPNF|C>DEBIT-HYBRID-NONCES id account nonces amounts)))
+                ((UC_AndTruths [(not isg) (not ong) (not onp) (not cod) son])       (require-capability (DPSF|C>DEBIT-HYBRID-NONCES account id nonces amounts)))
+                ((UC_AndTruths [(not isg) (not ong) (not onp) (not cod) (not son)]) (require-capability (DPNF|C>DEBIT-HYBRID-NONCES account id nonces amounts)))
                 true
             )
             (if cod
-                (ref-DPDC::XE_DeployAccountWNE id son account)
+                (ref-DPDC::XE_DeployAccountWNE account id son)
                 true
             )
-            (with-capability (SECURE)
-                (if (and (> negatives 0) (= positives 0))
-                    ;; only negative nonces
-                    (XI_CreditOrDebitNegatives id son account negative-nonces negative-counterparts cod)
-                    (if (and (> positives 0) (= negatives 0))
-                        ;;only positive nonces
-                        (XI_CreditOrDebitPositives id son account positive-nonces positive-counterparts cod)
-                        ;;positive and negative nonces
-                        (do
-                            (XI_CreditOrDebitNegatives id son account negative-nonces negative-counterparts cod)
-                            (XI_CreditOrDebitPositives id son account positive-nonces positive-counterparts cod)
+            (if (and (> negatives 0) (= positives 0))
+                ;; only negative nonces
+                (MappedCreditOrDebitDPDC account id son negative-nonces negative-counterparts cod)
+                (if (and (> positives 0) (= negatives 0))
+                    ;;only positive nonces
+                    (if son
+                        ;;If SFT
+                        (MappedCreditOrDebitDPDC account id son positive-nonces positive-counterparts cod)
+                        ;;If NFT
+                        (if cod
+                            ;;If Credit
+                            (MappedUpdateOwnerNFT id positive-nonces account)
+                            ;;If Debit
+                            (MappedUpdateOwnerNFT id positive-nonces BAR)
                         )
                     )
-                )
-            )
-        )
-    )
-    ;;
-    (defun XI_CreditOrDebitNegatives (id:string son:bool account:string negative-nonces:[integer] negative-counterparts:[integer] cod:bool)
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-DPDC:module{Dpdc} DPDC)
-            )
-            (ref-DPDC::XE_U|DPDC-Fragments 
-                id son account
-                (ref-DPDC-UDC::UC_CreditOrDebitNonceObject 
-                    (ref-DPDC::UR_AccountFragments id son account)
-                    negative-nonces negative-counterparts cod
-                )
-            )
-        )
-        
-    )
-    (defun XI_CreditOrDebitPositives (id:string son:bool account:string positive-nonces:[integer] positive-counterparts:[integer] cod:bool)
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-U|LST:module{StringProcessor} U|LST)
-            )
-            (if son
-                (ref-DPDC::XE_U|SFT-Holdings
-                    id account
-                    (ref-DPDC-UDC::UC_CreditOrDebitNonceObject
-                        (ref-DPDC::UR_SemiFungibleAccountHoldings id account)
-                        positive-nonces positive-counterparts cod
-                    )
-                )
-                (ref-DPDC::XE_U|NFT-Holdings
-                    id account
-                    (if cod
-                        (filter (!= 0)
-                            (+
-                                (ref-DPDC::UR_NonFungibleAccountHoldings id account)
-                                positive-nonces
-                            )
-                        )
-                        (filter (!= 0)
-                            (fold
-                                (lambda
-                                    (acc:[integer] idx:integer)
-                                    (ref-U|LST::UC_RemoveItem acc (at idx positive-nonces))
-                                )
-                                (ref-DPDC::UR_NonFungibleAccountHoldings id account)
-                                (enumerate 0 (- (length positive-nonces) 1))
+                    ;;positive and negative nonces
+                    (do
+                        (MappedCreditOrDebitDPDC account id son negative-nonces negative-counterparts cod)
+                        (if son
+                            (MappedCreditOrDebitDPDC account id son positive-nonces positive-counterparts cod)
+                            (if cod
+                                (MappedUpdateOwnerNFT id positive-nonces account)
+                                (MappedUpdateOwnerNFT id positive-nonces BAR)
                             )
                         )
                     )
@@ -753,7 +655,16 @@
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
-                (r-nft-create-account:string (ref-DPDC::UR_Verum5 id son))
+                ;;
+                (l:integer (length amounts))
+                (fnc:integer (at 0 nonce-classes))
+                (isg:bool (= l 1))
+                (output-account:string
+                    (if (!= fnc 0)
+                        (ref-DPDC::GOV|DPDC|SC_NAME)
+                        (ref-DPDC::UR_Verum5 id son)
+                    )
+                )
                 ;;
                 ;;Compute Cumulator Parameters
                 (s-amounts:integer (fold (+) 0 amounts))
@@ -763,7 +674,7 @@
                 ;;
                 ;;Computing Nonces that will be generated
                 (current-nonce:integer (ref-DPDC::UR_NoncesUsed id son))
-                (l:integer (length amounts))
+                
                 (nonces-to-be-created:[integer]
                     (take (- 0 l) (enumerate 0 (+ current-nonce l)))
                 )
@@ -773,18 +684,17 @@
                 ;;Generating Collection Elements Names, by registering them
                 (collectable-names:[string]
                     (if (= l 1)
-                        [(XI_RegisterSingleNonce id son (at 0 nonce-classes) (at 0 amounts) (at 0 input-nonce-datas) sft-set-mode)]
+                        [(XI_RegisterSingleNonce id son fnc (at 0 amounts) (at 0 input-nonce-datas) sft-set-mode)]
                         (XI_RegisterMultipleNonces id son nonce-classes amounts input-nonce-datas)
                     )
                 )
-                (isg:bool (= l 1))
             )
-            ;;Credit Created Elements to <r-nft-create-account>
+            ;;Credit Created Elements to <output-account>, which is either <creator-account> or <dpdc> account
             (cond
-                ((UC_AndTruths [isg son ])              (XB_CreditSFT-Nonce id r-nft-create-account n0 a0))
-                ((UC_AndTruths [isg (not son)])         (XB_CreditNFT-Nonce id r-nft-create-account n0 a0))
-                ((UC_AndTruths [(not isg) son])         (XB_CreditSFT-Nonces id r-nft-create-account nonces-to-be-created amounts))
-                ((UC_AndTruths [(not isg) (not son)])   (XB_CreditNFT-Nonces id r-nft-create-account nonces-to-be-created amounts))
+                ((UC_AndTruths [isg son ])              (XB_CreditSFT-Nonce output-account id n0 a0))
+                ((UC_AndTruths [isg (not son)])         (XB_CreditNFT-Nonce output-account id n0 a0))
+                ((UC_AndTruths [(not isg) son])         (XB_CreditSFT-Nonces output-account id nonces-to-be-created amounts))
+                ((UC_AndTruths [(not isg) (not son)])   (XB_CreditNFT-Nonces output-account id nonces-to-be-created amounts))
                 true
             )
             (ref-IGNIS::IC|UDC_ConstructOutputCumulator price owner trigger collectable-names)
@@ -839,15 +749,22 @@
         (require-capability (SECURE))
         (let
             (
+                (ref-I|OURONET:module{OuronetInfoV2} DALOS)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
                 (ref-DPDC:module{Dpdc} DPDC)
                 (new-element-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id son) 1))
+                (nonce-holder:string
+                    (if son
+                        BAR
+                        (ref-I|OURONET::OI|UC_ShortAccount (ref-DPDC::UR_Verum5 id son))
+                    )
+                )
                 (element:object{DpdcUdc.DPDC|NonceElement} 
                     (ref-DPDC-UDC::UDC_NonceElement
                         nonce-class
                         new-element-nonce
                         amount
-                        true
+                        nonce-holder
                         input-nonce-data
                         (ref-DPDC-UDC::UDC_ZeroNonceData)
                     )
@@ -856,6 +773,58 @@
             (ref-DPDC::XE_I|CollectionElement id son new-element-nonce element)
             (ref-DPDC::XE_U|NoncesUsed id son new-element-nonce)
             (format "{} <{}>" [amount (at "name" input-nonce-data)])
+        )
+    )
+    ;;===========================================
+    ;;
+    (defun MappedUpdateOwnerNFT (id:string nonces:[integer] new-owner:string)
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+            )
+            (map
+                (lambda
+                    (idx:integer)
+                    (ref-DPDC::XE_U|NonceHolder id (at idx nonces) new-owner)
+                )
+                (enumerate 0 (- (length nonces) 1))
+            )
+        )
+    )
+    ;;Must account for exist/not-exist
+    (defun CreditOrDebitDPDC (account:string id:string son:bool nonce:integer amount:integer cod:bool)
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (current-supply:integer (ref-DPDC::UR_AccountNonceSupply account id son nonce))
+                (new-supply:integer
+                    (if cod
+                        (+ current-supply amount)
+                        (- current-supply amount)
+                    )
+                )
+            )
+            (if (= current-supply 0)
+                (enforce cod "Cannot Debit 0 Amounts!")
+                true
+            )
+            (ref-DPDC::XE_W|Supply account id son nonce new-supply)
+        )
+    )
+    (defun MappedCreditOrDebitDPDC (account:string id:string son:bool nonces:[integer] amounts:[integer] cod:bool)
+        (let
+            (
+                (l1:integer (length nonces))
+                (l2:integer (length amounts))
+            )
+            (enforce (= l1 l2) "Invalid <nonces> and <amounts> lengths for CreditOrDebit Operation")
+            (map
+                (lambda
+                    (idx:integer)
+                    (CreditOrDebitDPDC account id son (at idx nonces) (at idx amounts) cod)
+                )
+                (enumerate 0 (- l1 1))
+            )
         )
     )
 )

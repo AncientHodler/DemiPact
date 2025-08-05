@@ -202,8 +202,8 @@
             )
             (if nost
                 (if nos
-                    (ref-DPDC::UR_NonceData id son nosc)
-                    (ref-DPDC::UR_SplitData id son nosc)
+                    (ref-DPDC::UR_NativeNonceData id son nosc)
+                    (ref-DPDC::UR_SplitNonceData id son nosc)
                 )
                 (if nos
                     (ref-DPDC-S::UR_SetNonceData id son nosc)

@@ -27,6 +27,10 @@
         (compose-capability (P|DPDC-S|CALLER))
         (compose-capability (SECURE))
     )
+    (defcap P|DPDC|REMOTE-GOV ()
+        @doc "DPDC Remote Governor Capability"
+        true
+    )
     ;;{P4}
     (defconst P|I                   (P|Info))
     (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV4} DALOS)) (ref-DALOS::P|Info)))
@@ -64,9 +68,17 @@
         (let
             (
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
+                (ref-P|DPDC-C:module{OuronetPolicy} DPDC-C)
+                (ref-P|DPDC-T:module{OuronetPolicy} DPDC-T)
                 (mg:guard (create-capability-guard (P|DPDC-S|CALLER)))
             )
+            (ref-P|DPDC::P|A_Add
+                "DPDC-S|RemoteDpdcGov"
+                (create-capability-guard (P|DPDC|REMOTE-GOV))
+            )
             (ref-P|DPDC::P|A_AddIMP mg)
+            (ref-P|DPDC-C::P|A_AddIMP mg)
+            (ref-P|DPDC-T::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -100,6 +112,20 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
+    (defcap DPDC-S|C>MAKE (id:string son:bool nonces:[integer] set-class:integer)
+        (let
+            (
+                (iz-active:bool (UR_IzSetActive id son set-class))
+            )
+            (enforce iz-active (format "Set-Class {} is not active for Set Composition" [set-class]))
+            (UEV_NoncesForSetClass id son nonces set-class)
+            (compose-capability (P|DPDC-S|CALLER))
+            (compose-capability (P|DPDC|REMOTE-GOV))
+        )
+    )
+    (defcap DPDC-S|C>BREAK (account:string id:string son:bool nonce:integer)
+        true
+    )
     (defcap DPDC-S|C>DEFINE-PRIMORDIAL 
         (
             id:string son:bool
@@ -107,16 +133,8 @@
             ind:object{DpdcUdc.DPDC|NonceData}
         )
         @event
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-            )
-            (ref-DPDC::CAP_Owner id son)
-            (ref-DPDC-C::UEV_NonceDataForCreation ind)
-            (UEV_PrimordialSetDefinition id son set-definition)
-            (compose-capability (P|SECURE-CALLER))
-        )
+        (UEV_PrimordialSetDefinition id son set-definition)
+        (compose-capability (DPDC-S|CX>DEFINE id son ind))
     )
     (defcap DPDC-S|C>DEFINE-COMPOSITE 
         (
@@ -125,6 +143,22 @@
             ind:object{DpdcUdc.DPDC|NonceData}
         )
         @event
+        (UEV_CompositeSetDefinition id son set-definition)
+        (compose-capability (DPDC-S|CX>DEFINE id son ind))
+    )
+    (defcap DPDC-S|C>DEFINE-HYBRID 
+        (
+            id:string son:bool
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        @event
+        (UEV_PrimordialSetDefinition id son primordial-sd)
+        (UEV_CompositeSetDefinition id son composite-sd)
+        (compose-capability (DPDC-S|CX>DEFINE id son ind))
+    )
+    (defcap DPDC-S|CX>DEFINE (id:string son:bool ind:object{DpdcUdc.DPDC|NonceData})
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
@@ -132,7 +166,6 @@
             )
             (ref-DPDC::CAP_Owner id son)
             (ref-DPDC-C::UEV_NonceDataForCreation ind)
-            (UEV_CompositeSetDefinition id son set-definition)
             (compose-capability (P|SECURE-CALLER))
         )
     )
@@ -200,11 +233,12 @@
             (compose-capability (SECURE))
         )
     )
+
     ;;
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
-    ;; [Set]
+    ;;  [6] - [Set]
     (defun UR_Set:object{DpdcUdc.DPDC|Set} (id:string son:bool set-class:integer)
         (if son
             (read DPSF|SetsTable (concat [id BAR (format "{}" [set-class])]))
@@ -220,7 +254,7 @@
     (defun UR_SetMultiplier:decimal (id:string son:bool set-class:integer)
         (at "set-score-multiplier" (UR_Set id son set-class))
     )
-    (defun UR_NonceOfSet:string (id:string set-class:integer)
+    (defun UR_NonceOfSet:integer (id:string set-class:integer)
         (at "nonce-of-set" (UR_Set id true set-class))
     )
     (defun UR_IzSetActive:bool (id:string son:bool set-class:integer)
@@ -246,26 +280,28 @@
     (defun UR_SetSplitData:object{DpdcUdc.DPDC|NonceData} (id:string son:bool set-class:integer)
         (at "split-data" (UR_Set id son set-class))
     )
+    ;;
+
     ;;Score Read for Nonce
     (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
-                (raw-score:decimal (ref-DPDC::UR_N|RawScore id son nonce))
+                (raw-nonce-score:decimal (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id son nonce)))
             )
             (if (= nonce-class 0)
                 (if (< nonce 0)
-                    (/ raw-score 1000.0)
-                    (if (= raw-score -1.0)
+                    (/ raw-nonce-score 1000.0)
+                    (if (= raw-nonce-score -1.0)
                         0.0
-                        raw-score
+                        raw-nonce-score
                     )
                 )
                 (let
                     (
-                        (multiplier:decimal (UR_SetMultiplier id son nonce))
-                        (multiplied-score:decimal (* raw-score multiplier))
+                        (multiplier:decimal (UR_SetMultiplier id son nonce-class))
+                        (multiplied-score:decimal (* raw-nonce-score multiplier))
                     )
                     (if (< nonce 0)
                         (/ multiplied-score 1000.0)
@@ -279,17 +315,32 @@
         )
     )
     ;;{F1}  [URC]
-    (defun URC_PrimordialOrComposite:bool (id:string son:bool set-class:integer)
+    ;:Requires rethinking
+    (defun URC_PrimordialOrComposite:[bool] (id:string son:bool set-class:integer)
         (UEV_SetClass id son set-class)
+        [
+            (UR_IzSetPrimordial id son set-class)
+            (UR_IzSetComposite id son set-class)
+        ]
+    )
+    (defun URC_NoncesSummedScore:decimal (id:string son:bool nonces:[integer])
         (let
             (
-                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (UR_PSD id son set-class))
-                (no-psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (ref-DPDC-UDC::UDC_NoPrimordialSet))
+                (ref-DPDC:module{Dpdc} DPDC)
+                (summed-score:decimal
+                    (fold
+                        (lambda
+                            (acc:decimal idx:integer)
+                            (+ acc (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id son (at idx nonces))))
+                        )
+                        0.0
+                        (enumerate 0 (- (length nonces) 1))
+                    )
+                )
             )
-            (if (= psd no-psd)
-                false
-                true
+            (if (< summed-score 0.0)
+                0.0
+                summed-score
             )
         )
     )
@@ -313,6 +364,25 @@
                 (nu:integer (ref-DPDC::UR_NoncesUsed id son))
             )
             (enforce (<= max nu) "Invalid Set-Definition for a Primordial Set with non existent Nonces")
+            (map
+                (lambda
+                    (idx:integer)
+                    (UEV_PrimordialSetElement son (at idx set-definition))
+                )
+                (enumerate 0 (- (length set-definition) 1))
+            )
+        )
+    )
+    (defun UEV_PrimordialSetElement (son:bool element:object{DpdcUdc.DPDC|AllowedNonceForSetPosition})
+        (let
+            (
+                (allowed-nonces:[integer] (at "allowed-nonces" element))
+                (size:integer (length allowed-nonces))
+            )
+            (if son
+                (enforce (= size 1) "SFT Set Elements must have only 1 allowed element")
+                (enforce (> size 1) "NFT Set Elements must have more than 1 allowed element")
+            )
         )
     )
     (defun UEV_CompositeSetDefinition (id:string son:bool set-definition:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}])
@@ -372,11 +442,173 @@
             (enforce (= x state) (format "Set Class {} of {} ID {} must be set to {} for operation" [set-class (if son "SFT" "NFT") id state]))
         )
     )
+    ;;
+    (defun UEV_NoncesForSetClass (id:string son:bool nonces:[integer] set-class:integer)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (UR_PSD id son set-class))
+                (csd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] (UR_CSD id son set-class))
+                (npsd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (ref-DPDC-UDC::UDC_NoPrimordialSet))
+                (ncsd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] (ref-DPDC-UDC::UDC_NoCompositeSet))
+                (l-psd:integer
+                    (if (= psd npsd)
+                        0
+                        (length psd)
+                    )
+                )
+                (l-csd:integer
+                    (if (= csd ncsd)
+                        0
+                        (length csd)
+                    )
+                )
+                (tl:integer (+ l-psd l-csd))
+                (nl:integer (length nonces))
+            )
+            (enforce (= tl nl) (format "Nonces list {} are invalid for making a Set of Class {}" [nonces set-class]))
+            (if (= l-psd 0)
+                ;;Composite Set
+                (UEV_Composite id son nonces csd)
+                (if (= l-csd 0)
+                    ;;Primordial Set
+                    (UEV_Primordial nonces psd)
+                    ;;Hybrid Set
+                    (do
+                        (UEV_Primordial (take l-psd nonces) psd)
+                        (UEV_Composite id son (drop l-psd nonces) csd)
+                    )
+                )
+            )
+        )
+    )
+    (defun UEV_Primordial (nonces:[integer] psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}])
+        (let
+            (
+                (l1:integer (length nonces))
+                (l2:integer (length psd))
+            )
+            (enforce (= l1 l2) "Incompatible Input for <UEV_Composite> Validation")
+            (map
+                (lambda
+                    (idx:integer)
+                    (let
+                        (
+                            (set-element:object{DpdcUdc.DPDC|AllowedNonceForSetPosition} (at idx psd))
+                            (allowed-nonces:[integer] (at "allowed-nonces" set-element))
+                            (nonce:integer (at idx nonces))
+                            (iz-nonce-allowed:bool (contains nonce allowed-nonces))
+                        )
+                        (enforce iz-nonce-allowed (format "Nonce {} not compatible with Set-Element {} for Set Definition" [nonce set-element]))
+                    )
+                )
+                (enumerate 0 (- (length psd) 1))
+            )
+        )
+    )
+    (defun UEV_Composite (id:string son:bool nonces:[integer] csd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}])
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (l1:integer (length nonces))
+                (l2:integer (length csd))
+            )
+            (enforce (= l1 l2) "Incompatible Input for <UEV_Composite> Validation")
+            (map
+                (lambda
+                    (idx:integer)
+                    (let
+                        (
+                            (set-element:object{DpdcUdc.DPDC|AllowedClassForSetPosition} (at idx csd))
+                            (allowed-sclass:integer (at "allowed-sclass" set-element))
+                            (nonce:integer (at idx nonces))
+                            (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+                            (iz-nonce-allowed:bool (= nonce-class allowed-sclass))
+                        )
+                        (enforce iz-nonce-allowed (format "Nonce {} not compatible with Set-Element {} for Set Definition" [nonce set-element]))
+                    )
+                )
+                (enumerate 0 (- (length csd) 1))
+            )
+        )
+    )
+    ;;
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_Make:object{IgnisCollector.OutputCumulator} (account:string id:string son:bool nonces:[integer] set-class:integer)
+        (UEV_IMC)
+        (with-capability (DPDC-S|C>MAKE id son nonces set-class)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+                    ;;
+                    (ico1:object{IgnisCollector.OutputCumulator}
+                        ;;1]Transfer <nonces> to <dpdc>
+                        (ref-DPDC-T::C_Transfer id son account dpdc nonces (make-list (length nonces) 1) true)
+                    )
+                    (ico2:object{IgnisCollector.OutputCumulator}
+                        (if son
+                            EOC
+                            ;;NFT Set Nonce must be created with each Set Making. Each individual NFT has an unique Nonce
+                            (let
+                                (
+                                    (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                                    (set-nd:object{DpdcUdc.DPDC|NonceData} (UR_SetNonceData id son set-class))
+                                    (summed-score:decimal (URC_NoncesSummedScore id son nonces))
+                                    (spawned-nonce-md:object{DpdcUdc.NonceMetaData}
+                                        (ref-DPDC-UDC::UDC_NonceMetaData
+                                            summed-score
+                                            nonces
+                                            {}
+                                        )
+                                    )
+                                    (spawned-nd:object{DpdcUdc.DPDC|NonceData}
+                                        (+
+                                            {"meta-data" : spawned-nonce-md}
+                                            (remove "meta-data" set-nd)
+                                        )
+                                    )
+                                    (ico3:object{IgnisCollector.OutputCumulator}
+                                        ;;2]When one nonce of class non-0 is created, is automatically created on <dpdc> account
+                                        (ref-DPDC-C::C_CreateNewNonce id false set-class 1 spawned-nd false)
+                                    )
+                                    (ico4:object{IgnisCollector.OutputCumulator}
+                                        ;;3]Transfer new set nonce to <account>
+                                        (ref-DPDC-T::C_Transfer id false dpdc account [(ref-DPDC::UR_NoncesUsed id son)] [1] true)
+                                    )
+                                )
+                                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico3 ico4] [])
+                            )
+                        )
+                    )
+                )
+                (if son
+                    ;;2]Credit Set Nonce on directly on <account>
+                    ;;SFT Set Nonce is already created with the Set Definition, it only needs a quantity of 1 to be added to target <account>
+                    (ref-DPDC-C::XB_CreditSFT-Nonce account id (UR_NonceOfSet id set-class) 1)
+                    true
+                )
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico1 ico2] [])
+            )
+        )
+    )
+    (defun C_Break:object{IgnisCollector.OutputCumulator} (account:string id:string son:bool nonce:integer)
+        (UEV_IMC)
+        (with-capability (DPDC-S|C>BREAK account id son nonce)
+            true
+        )
+        ;;Transfer 1 of each Nonce to DPDC|SC_NAME
+        ;;Create the SET SFT|NFT; 
+        ;;  If its SFT, use the stored nonce, and create 1 Unit
+        ;;  If its NFT, create new Nonce, with the set <nonce-data>
+    )
     (defun C_DefinePrimordialSet:object{IgnisCollector.OutputCumulator}
         (
             id:string son:bool set-name:string score-multiplier:decimal
@@ -403,7 +635,6 @@
                             (ref-DPDC-C::C_CreateNewNonce id son set-class 0 ind true)
                             EOC
                         )
-                        
                     )
                 )
                 (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico0 ico1] [])
@@ -436,7 +667,43 @@
                             (ref-DPDC-C::C_CreateNewNonce id son set-class 0 ind true)
                             EOC
                         )
-                        
+                    )
+                )
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico0 ico1] [])
+            )
+        )
+    )
+    (defun C_DefineHybridSet:object{IgnisCollector.OutputCumulator}
+        (
+            id:string son:bool set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        (UEV_IMC)
+        (with-capability (DPDC-S|C>DEFINE-HYBRID id son primordial-sd composite-sd ind)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DALOS:module{OuronetDalosV4} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+                    ;;
+                    (creator:string (ref-DPDC::UR_CreatorKonto id son))
+                    (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
+                    (set-class:integer (XI_HybridSet id son set-name score-multiplier primordial-sd composite-sd ind))
+                    (ico0:object{IgnisCollector.OutputCumulator}
+                        (ref-IGNIS::IC|UDC_ConstructOutputCumulator price creator false [])
+                    )
+                    (ico1:object{IgnisCollector.OutputCumulator}
+                        (if son
+                            (ref-DPDC-C::C_CreateNewNonce id son set-class 0 ind true)
+                            (do
+                                (ref-DPDC::XE_DeployAccountWNE dpdc id false)
+                                EOC
+                            )
+                        )
                     )
                 )
                 (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico0 ico1] [])
@@ -498,13 +765,6 @@
                 (ref-IGNIS::IC|UDC_SmallestCumulator (ref-DPDC::UR_CreatorKonto id son))
             )
         )
-    )
-    (defun C_MakeSet:object{IgnisCollector.OutputCumulator} (id:string son:bool nonces:[integer] set-class:integer)
-        true
-        ;;Transfer 1 of each Nonce to DPDC|SC_NAME
-        ;;Create the SET SFT|NFT; 
-        ;;  If its SFT, use the stored nonce, and create 1 Unit
-        ;;  If its NFT, create new Nonce, with the set <nonce-data>
     )
     ;;{F7}  [X]
     (defun XI_PrimordialSet:integer
@@ -579,6 +839,47 @@
                     true
                     (ref-DPDC-UDC::UDC_NoPrimordialSet)
                     set-definition
+                    ind
+                    (ref-DPDC-UDC::UDC_ZeroNonceData)
+                )
+            )
+            (ref-DPDC::XE_U|SetClassesUsed id son set-class)
+            set-class
+        )
+    )
+    (defun XI_HybridSet:integer
+        (
+            id:string son:bool set-name:string score-multiplier:decimal
+            primordial-sd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdc.DPDC|NonceData}
+        )
+        (require-capability (DPDC-S|C>DEFINE-HYBRID id son primordial-sd composite-sd ind))
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (ref-DPDC:module{Dpdc} DPDC)
+                (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
+                (set-class:integer (+ set-classes-used 1))
+                (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))
+                (nonce-of-set:integer
+                    (if son
+                        (+ nonces-used 1)
+                        0
+                    )
+                )
+            )
+            (XI_I|CollectionSet id son set-class
+                (ref-DPDC-UDC::UDC_DPDC|Set
+                    set-class
+                    set-name
+                    score-multiplier
+                    nonce-of-set
+                    true
+                    true
+                    true
+                    primordial-sd
+                    composite-sd
                     ind
                     (ref-DPDC-UDC::UDC_ZeroNonceData)
                 )
