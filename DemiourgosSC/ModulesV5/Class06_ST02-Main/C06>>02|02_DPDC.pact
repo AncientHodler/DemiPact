@@ -44,6 +44,7 @@
                                     (create-capability-guard (DPDC|GOV))
                                     (P|UR "DPDC-S|RemoteDpdcGov")
                                     (P|UR "DPDC-F|RemoteDpdcGov")
+                                    (P|UR "EQUITY|RemoteDpdcGov")
                                 ]
                             )
                         )
@@ -281,7 +282,7 @@
         )
     )
     (defun UR_NonceClass:integer (id:string son:bool nonce:integer)
-        (at "nonce-class" (UR_NonceElement id son nonce))
+        (at "nonce-class" (UR_NonceElement id son (abs nonce)))
     )
     (defun UR_NonceValue:integer (id:string son:bool nonce:integer)
         (at "nonce-value" (UR_NonceElement id son nonce))
@@ -1103,7 +1104,7 @@
     ;;
     ;;  [Indirect Writings]
     ;;
-    (defun XE_U|Frozen (id:string son:bool account:string toggle)
+    (defun XE_U|Frozen (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1114,7 +1115,7 @@
             )
         )
     )
-    (defun XE_U|Exemption (id:string son:bool account:string toggle)
+    (defun XE_U|Exemption (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1125,7 +1126,7 @@
             )
         )
     )
-    (defun XE_U|Burn (id:string son:bool account:string toggle)
+    (defun XE_U|Burn (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1136,7 +1137,7 @@
             )
         )
     )
-    (defun XE_U|Create (id:string son:bool account:string toggle)
+    (defun XE_U|Create (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1147,7 +1148,7 @@
             )
         )
     )
-    (defun XE_U|Recreate (id:string son:bool account:string toggle)
+    (defun XE_U|Recreate (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1158,7 +1159,7 @@
             )
         )
     )
-    (defun XE_U|Update (id:string son:bool account:string toggle)
+    (defun XE_U|Update (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1169,7 +1170,7 @@
             )
         )
     )
-    (defun XE_U|ModifyCreator (id:string son:bool account:string toggle)
+    (defun XE_U|ModifyCreator (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1180,7 +1181,7 @@
             )
         )
     )
-    (defun XE_U|ModifyRoyalties (id:string son:bool account:string toggle)
+    (defun XE_U|ModifyRoyalties (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1191,7 +1192,7 @@
             )
         )
     )
-    (defun XE_U|SetNewUri (id:string son:bool account:string toggle)
+    (defun XE_U|SetNewUri (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account
@@ -1202,7 +1203,7 @@
             )
         )
     )
-    (defun XE_U|Transfer (id:string son:bool account:string toggle)
+    (defun XE_U|Transfer (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (with-capability (SECURE) 
             (XI_U|AccountRoles id son account

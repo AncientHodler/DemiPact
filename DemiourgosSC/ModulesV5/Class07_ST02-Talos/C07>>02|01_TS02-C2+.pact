@@ -58,6 +58,7 @@
     ;;  [8] DPDC-S
     ;;
     (defun DPNF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer))
+    (defun DPNF|C_Break (patron:string account:string id:string nonce:integer))
     (defun DPNF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -102,8 +103,8 @@
     ;;
     ;;  [9] DPDC-F
     ;;
-    (defun DPNF|C_MakeFragments (patron:string id:string nonce:integer amount:integer account:string))
-    (defun DPNF|C_MergeFragments (patron:string id:string nonce:integer amount:integer account:string))
+    (defun DPNF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
+    (defun DPNF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
     ;;
     ;;  [10] DPDC-N
@@ -210,10 +211,10 @@
             (ref-P|DPDC-I::P|A_AddIMP mg)
             (ref-P|DPDC-R::P|A_AddIMP mg)
             (ref-P|DPDC-MNG::P|A_AddIMP mg)
-            (ref-P|DPDC-N::P|A_AddIMP mg)
             (ref-P|DPDC-T::P|A_AddIMP mg)
             (ref-P|DPDC-F::P|A_AddIMP mg)
             (ref-P|DPDC-S::P|A_AddIMP mg)
+            (ref-P|DPDC-N::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -355,6 +356,7 @@
                             owner-account creator-account collection-name collection-ticker
                             can-upgrade can-change-owner can-change-creator can-add-special-role
                             can-transfer-nft-create-role can-freeze can-wipe can-pause
+                            false
                         )
                     )
                 )
@@ -655,13 +657,31 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-S:module{DpdcSets} DPDC-S)
                 )
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-DPDC-S::C_Make account id false nonces set-class)
                 )
-                (format "Set Class {} NFT with Nonce {} generated succesfully on Account {}" [set-class (ref-DPDC::UR_NoncesUsed id false) account])
+                (format "Set Class {} NFT with Nonce {} generated succesfully on Account {}" [set-class (ref-DPDC::UR_NoncesUsed id false) (ref-I|OURONET::OI|UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPNF|C_Break
+        (patron:string account:string id:string nonce:integer)
+        @doc "Brakes an NFT Nonce representing an NFT Set"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_Break account id false nonce)
+                )
+                (format "NFT {} Nonce {} succesfully broken down into its constituents to Account {}" [id nonce (ref-I|OURONET::OI|UC_ShortAccount account)])
             )
         )
     )
@@ -921,7 +941,7 @@
     ;;
     ;;  [9] DPDC-F
     ;;
-    (defun DPNF|C_MakeFragments (patron:string id:string nonce:integer amount:integer account:string)
+    (defun DPNF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer)
         @doc "Fragments NFT nonce of the given amount into its respective Fragments."
         (with-capability (P|TS)
             (let
@@ -930,13 +950,13 @@
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-F::C_MakeFragments id false nonce amount account)
+                    (ref-DPDC-F::C_MakeFragments account id false nonce amount)
                 )
                 (format "Succesfuly Fragmented {} NFT(s) {} of Nonce {}" [amount id nonce])
             )
         )
     )
-    (defun DPNF|C_MergeFragments (patron:string id:string nonce:integer amount:integer account:string)
+    (defun DPNF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer)
         @doc "MErges NFT Fragments nonces of the given amount into the original NFT nonce."
         (with-capability (P|TS)
             (let
@@ -945,7 +965,7 @@
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
                 )
                 (ref-IGNIS::IC|C_Collect patron
-                    (ref-DPDC-F::C_MergeFragments id false nonce amount account)
+                    (ref-DPDC-F::C_MergeFragments account id false nonce amount)
                 )
                 (format "Succesfuly merged {} {} NFT(s) Fragments of Nonce {}" [amount id nonce])
             )

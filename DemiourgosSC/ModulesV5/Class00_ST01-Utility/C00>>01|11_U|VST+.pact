@@ -116,6 +116,9 @@
     (defun UC_ReservedID:[string] (dptf-name:string dptf-ticker:string)
         (UCX_SpecialID dptf-name dptf-ticker "Reserved" "R")
     )
+    (defun UC_EquityID:[string] (sft-name:string sft-ticker:string)
+        (UCX_SpecialID sft-name sft-ticker "Equity" "E")  
+    )
     (defun UCX_SpecialID:[string] (dptf-name:string dptf-ticker:string special-name:string special-prefix:string)
         (let
             (

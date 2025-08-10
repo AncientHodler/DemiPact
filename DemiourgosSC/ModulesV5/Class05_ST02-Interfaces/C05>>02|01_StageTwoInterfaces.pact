@@ -401,16 +401,16 @@
     ;;
     ;;  [Indirect Writings]
     ;;
-    (defun XE_U|Frozen (id:string son:bool account:string toggle))
-    (defun XE_U|Exemption (id:string son:bool account:string toggle))
-    (defun XE_U|Burn (id:string son:bool account:string toggle))
-    (defun XE_U|Create (id:string son:bool account:string toggle))
-    (defun XE_U|Recreate (id:string son:bool account:string toggle))
-    (defun XE_U|Update (id:string son:bool account:string toggle))
-    (defun XE_U|ModifyCreator (id:string son:bool account:string toggle))
-    (defun XE_U|ModifyRoyalties (id:string son:bool account:string toggle))
-    (defun XE_U|SetNewUri (id:string son:bool account:string toggle))
-    (defun XE_U|Transfer (id:string son:bool account:string toggle))
+    (defun XE_U|Frozen (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Exemption (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Burn (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Create (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Recreate (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Update (id:string son:bool account:string toggle:bool))
+    (defun XE_U|ModifyCreator (id:string son:bool account:string toggle:bool))
+    (defun XE_U|ModifyRoyalties (id:string son:bool account:string toggle:bool))
+    (defun XE_U|SetNewUri (id:string son:bool account:string toggle:bool))
+    (defun XE_U|Transfer (id:string son:bool account:string toggle:bool))
     (defun XE_U|VerumRoles (id:string son:bool rp:integer aor:bool account:string))
     ;;
     ;; [<AccountSuppliesTable> Writings] [4]
@@ -489,6 +489,7 @@
             owner-account:string creator-account:string collection-name:string collection-ticker:string
             can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+            iz-special:bool
         )
     )
     ;;
@@ -526,10 +527,10 @@
     (defun C_WipeSftNonce:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer))
     (defun C_WipeSftNonces:object{IgnisCollector.OutputCumulator} (account:string id:string))
         ;;
-    (defun C_BurnNFT (account:string id:string nonce:integer))
-    (defun C_RespawnNFT (account:string id:string nonce:integer))
-    (defun C_WipeNftNonce (account:string id:string nonce:integer))
-    (defun C_WipeNft (account:string id:string))
+    (defun C_BurnNFT:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer))
+    (defun C_RespawnNFT:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer))
+    (defun C_WipeNftNonce:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer))
+    (defun C_WipeNft:object{IgnisCollector.OutputCumulator} (account:string id:string))
 )
 ;;
 ;;
@@ -551,7 +552,7 @@
     ;;
     ;;  [UDC]
     ;;
-    (defun UDC_TransferCumulator:object{IgnisCollector.OutputCumulator} (son:bool sender:string receiver:string amounts:[integer]))
+    (defun UDC_TransferCumulator:object{IgnisCollector.OutputCumulator} (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer]))
     ;;
     ;;  [C]
     ;;
@@ -582,6 +583,8 @@
     ;;
     (defun URC_PrimordialOrComposite:[bool] (id:string son:bool set-class:integer))
     (defun URC_NoncesSummedScore:decimal (id:string son:bool nonces:[integer]))
+    (defun URC_SemiFungibleConstituents:[integer] (id:string set-class:integer))
+    (defun URC_NonFungibleConstituents:[integer] (id:string nonce:integer))
     ;;
     ;;  [UEV]
     ;;

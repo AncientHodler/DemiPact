@@ -248,7 +248,7 @@
                             (amount:integer (at idx amounts))
                             (nonce-supply:integer (ref-DPDC::UR_NonceSupply id son nonce))
                         )
-                        (if (and (not son) (< nonce 0))
+                        (if (and (not son) (> nonce 0))
                             (enforce (= amount 1) "When transfering Native NFT Nonces, their amount must be 1")
                             true
                         )
@@ -259,22 +259,44 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_TransferCumulator:object{IgnisCollector.OutputCumulator} (son:bool sender:string receiver:string amounts:[integer])
+    (defun UDC_TransferCumulator:object{IgnisCollector.OutputCumulator} 
+        (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer])
         (let
             (
                 (ref-IGNIS:module{IgnisCollector} DALOS)
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (son-price:decimal
-                    (if son
-                        (ref-DALOS::UR_UsagePrice "ignis|small")
-                        (ref-DALOS::UR_UsagePrice "ignis|medium")
+                (ft:string (take 2 id))
+                (sh:string "E|")
+                (sl:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                (s:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (m:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (th:decimal (/ sl 1000.0))
+                (total-price:decimal
+                    (fold
+                        (lambda
+                            (acc:decimal idx:integer)
+                            (let
+                                (
+                                    (nonce:integer (at idx nonces))
+                                    (amount:integer (at idx amounts))
+                                    (price-per-nonce:decimal
+                                        (if (fold (and) true [(= ft sh) son (= nonce 1)])
+                                            th
+                                            (if son s m)
+                                        )
+                                    )
+                                    (total-price-per-nonce:decimal (* price-per-nonce (dec amount)))
+                                )
+                                (+ acc total-price-per-nonce)
+                            )
+                        )
+                        0.0
+                        (enumerate 0 (- (length nonces) 1))
                     )
                 )
-                (sum:decimal (fold (+) 0.0 amounts))
-                (price:decimal (* son-price sum))
             )
             (ref-IGNIS::IC|UDC_ConstructOutputCumulator
-                price  sender
+                total-price  sender
                 (ref-IGNIS::IC|URC_ZeroEliteGAZ sender receiver) []
             )
         )
@@ -288,7 +310,7 @@
         (UEV_IMC)
         (with-capability (DPDC-T|C>TRANSFER id son sender receiver nonces amounts method)
             (XI_TransferNonces id son sender receiver nonces amounts)
-            (UDC_TransferCumulator son sender receiver amounts)
+            (UDC_TransferCumulator id son sender receiver nonces amounts)
         )
     )
     (defun C_IgnisRoyaltyCollector (patron:string id:string son:bool nonces:[integer] amounts:[integer])

@@ -58,6 +58,7 @@
     ;;  [8] DPDC-S
     ;;
     (defun DPSF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer))
+    (defun DPSF|C_Break (patron:string account:string id:string nonce:integer))
     (defun DPSF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
@@ -102,8 +103,8 @@
     ;;
     ;;  [9] DPDC-F
     ;;
-    (defun DPSF|C_MakeFragments (patron:string id:string nonce:integer amount:integer account:string))
-    (defun DPSF|C_MergeFragments (patron:string id:string nonce:integer amount:integer account:string))
+    (defun DPSF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
+    (defun DPSF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
     ;;
     ;;  [10] DPDC-N
@@ -118,7 +119,17 @@
     (defun DPSF|C_UpdateNonceMetaData       (patron:string id:string account:string nonce:integer nos:bool meta-data:object))
     (defun DPSF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}))
     ;;
-    
+    ;;
+    ;;  [10] EQUITY
+    ;;
+    (defun DPSF|C_IssueCompany:string
+        (
+            patron:string creator-account:string collection-name:string collection-ticker:string
+            royalty:decimal ignis-royalty:decimal ipfs-links:[string]
+        )
+    )
+    (defun DPSF|C_MorphEquity (patron:string account:string id:string input-nonce:integer input-amount:integer output-nonce:integer))
+    ;;
 )
 (module TS02-C1 GOV
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
@@ -199,10 +210,11 @@
                 (ref-P|DPDC-I:module{OuronetPolicy} DPDC-I)
                 (ref-P|DPDC-R:module{OuronetPolicy} DPDC-R)
                 (ref-P|DPDC-MNG:module{OuronetPolicy} DPDC-MNG)
-                (ref-P|DPDC-N:module{OuronetPolicy} DPDC-N)
                 (ref-P|DPDC-T:module{OuronetPolicy} DPDC-T)
                 (ref-P|DPDC-F:module{OuronetPolicy} DPDC-F)
                 (ref-P|DPDC-S:module{OuronetPolicy} DPDC-S)
+                (ref-P|DPDC-N:module{OuronetPolicy} DPDC-N)
+                (ref-P|EQUITY:module{OuronetPolicy} EQUITY)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
@@ -211,10 +223,11 @@
             (ref-P|DPDC-I::P|A_AddIMP mg)
             (ref-P|DPDC-R::P|A_AddIMP mg)
             (ref-P|DPDC-MNG::P|A_AddIMP mg)
-            (ref-P|DPDC-N::P|A_AddIMP mg)
             (ref-P|DPDC-T::P|A_AddIMP mg)
             (ref-P|DPDC-F::P|A_AddIMP mg)
             (ref-P|DPDC-S::P|A_AddIMP mg)
+            (ref-P|DPDC-N::P|A_AddIMP mg)
+            (ref-P|EQUITY::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -365,6 +378,7 @@
                             owner-account creator-account collection-name collection-ticker
                             can-upgrade can-change-owner can-change-creator can-add-special-role
                             can-transfer-nft-create-role can-freeze can-wipe can-pause
+                            false
                         )
                     )
                 )
@@ -700,12 +714,30 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
                     (ref-DPDC-S:module{DpdcSets} DPDC-S)
                 )
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-DPDC-S::C_Make account id true nonces set-class)
                 )
-                (format "Set Class {} SFT generated succesfully on Account {}" [set-class account])
+                (format "Set Class {} SFT generated succesfully on Account {}" [set-class (ref-I|OURONET::OI|UC_ShortAccount account)])
+            )
+        )
+    )
+    (defun DPSF|C_Break
+        (patron:string account:string id:string nonce:integer)
+        @doc "Brakes an SFT Nonce representing an SFT Set"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                )
+                (ref-IGNIS::IC|C_Collect patron
+                    (ref-DPDC-S::C_Break account id true nonce)
+                )
+                (format "SFT {} Nonce {} succesfully broken down into its constituents to Account {}" [id nonce (ref-I|OURONET::OI|UC_ShortAccount account)])
             )
         )
     )
@@ -965,7 +997,7 @@
     ;;
     ;;  [9] DPDC-F
     ;;
-    (defun DPSF|C_MakeFragments (patron:string id:string nonce:integer amount:integer account:string)
+    (defun DPSF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer)
         @doc "Fragments SFT nonce of the given amount into its respective Fragments."
         (with-capability (P|TS)
             (let
@@ -980,7 +1012,7 @@
             )
         )
     )
-    (defun DPSF|C_MergeFragments (patron:string id:string nonce:integer amount:integer account:string)
+    (defun DPSF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer)
         @doc "MErges SFT Fragments nonces of the given amount into the original SFT nonce."
         (with-capability (P|TS)
             (let
@@ -1136,6 +1168,83 @@
                 )
                 (ref-IGNIS::IC|C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceURI id true account nonce nos true ay u1 u2 u3)
+                )
+            )
+        )
+    )
+    ;;
+    ;;  [11] EQUITY
+    ;;
+    (defun DPSF|C_IssueCompany:string
+        (
+            patron:string creator-account:string collection-name:string collection-ticker:string
+            royalty:decimal ignis-royalty:decimal ipfs-links:[string]
+        )
+        @doc "Issues an SFT Equity Collection to tokenize Company Shares on Ouronet. \
+            \ Royalty is the standard Royalty for the Whole Collection \
+            \ While <ignis-royalty> is the ignis Royalty for 1% of Company Shares \
+            \ This makes the value of <ignis-royalty> in $ the Price to transfer All Existing Shares as Package Shares \
+            \ \
+            \ <ipfs-links> must be 8 elements long.\
+            \ The Collection is an Image SFT Collection, automanaged by the <dpdc> Smart Ouronet Account as Collection Owner \
+            \ Only 8 Elements can exist in this Collection, and no more can be added. \
+            \ \
+            \ Equity Collections Costs 0.001 IGNIS per Share for Pure Share Transfers as GAS Fees. \
+            \ Package Share cost the normal <ignis|small> price per unit as GAS Fees, as for all SFTs."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+                    (ref-EQUITY:module{Equity} EQUITY)
+                    ;;
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-EQUITY::C_IssueShareholderCollection 
+                            patron creator-account collection-name collection-ticker
+                            royalty ignis-royalty ipfs-links
+                        )
+                    )
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun DPSF|C_MorphEquity
+        (patron:string account:string id:string input-nonce:integer input-amount:integer output-nonce:integer)
+        @doc "Converts any Nonce to [1 2 3 4 5 6 7 8] to any Nonce [1 2 3 4 5 6 7 8] \
+            \ Input-Nonce must be different from Output-Nonce"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-EQUITY:module{Equity} EQUITY)
+                    ;;
+                    (ico:object{IgnisCollector.OutputCumulator}
+                        (ref-EQUITY::C_MorphPackageShares
+                            account id input-nonce input-amount output-nonce
+                        )
+                    )
+                    (output:list (at "output" ico))
+                    (ir-nonces:[integer] (at 0 output))
+                    (ir-amounts:[integer] (at 1 output))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
+                )
+                (ref-IGNIS::IC|C_Collect patron ico)
+                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id true ir-nonces ir-amounts)
+                (if (= input-nonce 1)
+                    ;;Make Package Shares
+                    (format "Succesfuly combined {} Shares to Tier {} Package Share on Account {}" [input-amount (- output-nonce 1) sa])
+                    (if (= output-nonce 1)
+                        ;;Brake Package Shares
+                        (format "Succesfuly broke {} Tier {} Package Share to {} Shares on Account {}" [input-amount (- input-nonce 1) (at 1 ir-amounts) sa])
+                        ;;Convert Package Shares
+                        (format "Succesfuly Converter Tier {} to Tier {} Package Shares on Account {}" [(- input-nonce 1) (- output-nonce 1) sa])
+                        
+                    )
                 )
             )
         )

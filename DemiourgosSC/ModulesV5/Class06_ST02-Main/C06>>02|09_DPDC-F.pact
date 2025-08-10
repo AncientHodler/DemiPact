@@ -27,7 +27,7 @@
         (compose-capability (P|DPDC-F|CALLER))
         (compose-capability (SECURE))
     )
-    (defcap P|DPDC|REMOTE-GOV ()
+    (defcap P|DPDC-F|REMOTE-GOV ()
         @doc "DPDC Remote Governor Capability"
         true
     )
@@ -74,7 +74,7 @@
             )
             (ref-P|DPDC::P|A_Add
                 "DPDC-F|RemoteDpdcGov"
-                (create-capability-guard (P|DPDC|REMOTE-GOV))
+                (create-capability-guard (P|DPDC-F|REMOTE-GOV))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
             (ref-P|DPDC-C::P|A_AddIMP mg)
@@ -130,21 +130,9 @@
     )
     (defcap DPDC-F|C>NONCE
         (id:string son:bool nonce:integer)
-        ;;Nonce is fragmented
-        ;;Smart Governance for dpdc
-        (let
-            (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-S:module{DpdcSets} DPDC-S)
-                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
-            )
-            (if (= nonce-class 0)
-                (UEV_Fragmentation id son nonce)
-                (ref-DPDC-S::UEV_Fragmentation id son nonce)
-            )
-            (compose-capability (P|DPDC-F|CALLER))
-            (compose-capability (P|DPDC|REMOTE-GOV))
-        )
+        (UEV_Fragmentation id son nonce)
+        (compose-capability (P|DPDC-F|CALLER))
+        (compose-capability (P|DPDC-F|REMOTE-GOV))
     )
     (defcap DPDC-F|C>MERGE 
         (nonce:integer amount:integer)
@@ -155,7 +143,7 @@
             (enforce (< nonce 0) "Only negative nonces can be used for merging")
             (enforce (= divided 0) "Only multiple of 1000 can be used for Merging")
             (compose-capability (P|DPDC-F|CALLER))
-            (compose-capability (P|DPDC|REMOTE-GOV))
+            (compose-capability (P|DPDC-F|REMOTE-GOV))
         )
     )
     ;;

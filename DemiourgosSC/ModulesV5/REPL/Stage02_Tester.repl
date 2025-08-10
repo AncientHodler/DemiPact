@@ -58,6 +58,10 @@
 (load "Class01_Ouronet/C01>>01|04_InitReader.repl")
 (print "************************Demiourgos Ecosystem LOADED************************************")
 ;;
+;(print "")
+;(load "Class01_Ouronet/C01>>01|05_InitMovieBooster.repl")
+;(print "************************Init Movie Booster LOADED**************************************")
+;;
 ;;
 ;;
 ;;==============================================================================

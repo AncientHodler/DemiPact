@@ -95,15 +95,15 @@
         true
     )
     ;;{C2}
-    (defcap DPDC-I|C>ISSUE (owner-account:string creator-account:string collection-name:string collection-ticker:string)
+    (defcap DPDC-I|C>ISSUE (owner-account:string creator-account:string collection-name:string collection-ticker:string iz-special:bool)
         @event
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
             )
-            (ref-U|DALOS::UEV_NameOrTicker collection-name true false)
-            (ref-U|DALOS::UEV_NameOrTicker collection-ticker false false)
+            (ref-U|DALOS::UEV_NameOrTicker collection-name true iz-special)
+            (ref-U|DALOS::UEV_NameOrTicker collection-ticker false iz-special)
             (ref-DALOS::CAP_EnforceAccountOwnership owner-account)
             (ref-DALOS::UEV_EnforceAccountType creator-account false)
             (compose-capability (P|SECURE-CALLER))
@@ -147,9 +147,10 @@
             owner-account:string creator-account:string collection-name:string collection-ticker:string
             can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+            iz-special:bool
         )
         (UEV_IMC)
-        (with-capability (DPDC-I|C>ISSUE owner-account creator-account collection-name collection-ticker)
+        (with-capability (DPDC-I|C>ISSUE owner-account creator-account collection-name collection-ticker iz-special)
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV4} DALOS)
@@ -174,6 +175,7 @@
                             owner-account creator-account collection-name collection-ticker
                             can-upgrade can-change-owner can-change-creator can-add-special-role 
                             can-transfer-nft-create-role can-freeze can-wipe can-pause
+                            iz-special
                         )
                     )
                     (t:bool true)
@@ -182,6 +184,7 @@
                 (ref-BRD::XE_Issue id)
                 ;;Deploy Collection Accounts for Owner and Creator
                 (if son
+                    ;;SFT New Account Roles
                     (if (!= owner-account creator-account)
                         (do
                             (ref-DPDC::XB_DeployAccountSFT owner-account id
@@ -214,14 +217,14 @@
                         (ref-DPDC::XB_DeployAccountSFT owner-account id
                             true    ;;role-nft-add-quantity
                             false   ;;frozen
-                            false   ;;role-exemption
+                            true    ;;role-exemption
                             true    ;;role-nft-burn
                             true    ;;role-nft-create
                             true    ;;role-nft-recreate
                             true    ;;role-nft-update
-                            false   ;;role-modify-creator
-                            false   ;;role-modify-royalties
-                            true   ;;role-set-new-uri
+                            true    ;;role-modify-creator
+                            true    ;;role-modify-royalties
+                            true    ;;role-set-new-uri
                             false   ;;role-transfer
                         )
                     )
@@ -265,7 +268,6 @@
                             false   ;;role-transfer
                         )
                     )
-                    
                 )
                 (ref-DALOS::KDA|C_Collect patron kda-cost)
                 (ref-IGNIS::IC|UDC_ConstructOutputCumulator ignis-price owner-account trigger [id])
@@ -279,8 +281,9 @@
             owner-account:string creator-account:string collection-name:string collection-ticker:string
             can-upgrade:bool can-change-owner:bool can-change-creator:bool can-add-special-role:bool
             can-transfer-nft-create-role:bool can-freeze:bool can-wipe:bool can-pause:bool
+            iz-special:bool
         )
-        (require-capability (DPDC-I|C>ISSUE owner-account creator-account collection-name collection-ticker))
+        (require-capability (DPDC-I|C>ISSUE owner-account creator-account collection-name collection-ticker iz-special))
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
@@ -303,32 +306,63 @@
                 (oa:string owner-account)
                 (verum-chain:object{DpdcUdc.DPDC|VerumRoles}
                     (if son
-                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
-                            [BAR]   ;;a-frozen
-                            [ca]    ;;r-exemption
-                            [oa]    ;;r-nft-add-quantity
-                            [oa]    ;;r-nft-burn
-                            ca      ;;r-nft-create
-                            ca      ;;r-nft-recreate
-                            [ca oa] ;;r-nft-update
-                            [ca]    ;;r-modify-creator
-                            [ca]    ;;r-modify-royalties
-                            ca      ;;r-set-new-uri
-                            [BAR]   ;;r-transfer
-                        )    
-                        (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
-                            [BAR]   ;;a-frozen
-                            [ca]    ;;r-exemption
-                            [BAR]   ;;r-nft-add-quantity
-                            [oa]    ;;r-nft-burn
-                            ca      ;;r-nft-create
-                            ca      ;;r-nft-recreate
-                            [ca oa] ;;r-nft-update
-                            [ca]    ;;r-modify-creator
-                            [ca]    ;;r-modify-royalties
-                            ca      ;;r-set-new-uri
-                            [BAR]   ;;r-transfer
+                        (if (!= owner-account creator-account)
+                            (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                                [BAR]   ;;a-frozen
+                                [ca]    ;;r-exemption
+                                [oa]    ;;r-nft-add-quantity
+                                [oa]    ;;r-nft-burn
+                                ca      ;;r-nft-create
+                                ca      ;;r-nft-recreate
+                                [ca oa] ;;r-nft-update
+                                [ca]    ;;r-modify-creator
+                                [ca]    ;;r-modify-royalties
+                                ca      ;;r-set-new-uri
+                                [BAR]   ;;r-transfer
+                            )
+                            (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                                [BAR]   ;;a-frozen
+                                [oa]    ;;r-exemption
+                                [oa]    ;;r-nft-add-quantity
+                                [oa]    ;;r-nft-burn
+                                oa      ;;r-nft-create
+                                oa      ;;r-nft-recreate
+                                [oa] ;;r-nft-update
+                                [oa]    ;;r-modify-creator
+                                [oa]    ;;r-modify-royalties
+                                oa      ;;r-set-new-uri
+                                [BAR]   ;;r-transfer
+                            )
                         )
+                        (if (!= owner-account creator-account)
+                            (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                                [BAR]   ;;a-frozen
+                                [ca]    ;;r-exemption
+                                [BAR]   ;;r-nft-add-quantity
+                                [oa]    ;;r-nft-burn
+                                ca      ;;r-nft-create
+                                ca      ;;r-nft-recreate
+                                [ca oa] ;;r-nft-update
+                                [ca]    ;;r-modify-creator
+                                [ca]    ;;r-modify-royalties
+                                ca      ;;r-set-new-uri
+                                [BAR]   ;;r-transfer
+                            )
+                            (ref-DPDC-UDC::UDC_DPDC|VerumRoles 
+                                [BAR]   ;;a-frozen
+                                [oa]    ;;r-exemption
+                                [BAR]   ;;r-nft-add-quantity
+                                [oa]    ;;r-nft-burn
+                                oa      ;;r-nft-create
+                                oa      ;;r-nft-recreate
+                                [oa]    ;;r-nft-update
+                                [oa]    ;;r-modify-creator
+                                [oa]    ;;r-modify-royalties
+                                oa      ;;r-set-new-uri
+                                [BAR]   ;;r-transfer
+                            )
+                        )
+                        
                     )
                 )
             )

@@ -1123,6 +1123,29 @@
                     zd zd
                 )
             )
+            ;;Set Fragmentation for Class 37 and 38
+            (ref-TS02-C2::DPNF|C_EnableSetClassFragmentation
+                patron dhb 37
+                (ref-DPDC-UDC::UDC_NonceData
+                    r3 (/ ir4 1000.0)
+                    "Tier 4 Fragments"
+                    "Bloodshed Tier 4 Fragments. 9.75% (65% of Native Bloodshed Royalty) Royalty and 1000th Ignis-Royalty relative to the Full Set"
+                    md type
+                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
+                    zd zd
+                )
+            )
+            (ref-TS02-C2::DPNF|C_EnableSetClassFragmentation
+                patron dhb 38
+                (ref-DPDC-UDC::UDC_NonceData
+                    r3 (/ ir4 1000.0)
+                    "Tier 4 Fragments"
+                    "Bloodshed Tier 4 Fragments. 9.75% (65% of Native Bloodshed Royalty) Royalty and 1000th Ignis-Royalty relative to the Full Set"
+                    md type
+                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
+                    zd zd
+                )
+            )
             ]
         )
     )

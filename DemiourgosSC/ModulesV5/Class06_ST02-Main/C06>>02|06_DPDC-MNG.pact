@@ -398,7 +398,7 @@
         )
     )
     ;; [NFT]
-    (defun C_BurnNFT (account:string id:string nonce:integer)
+    (defun C_BurnNFT:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
@@ -412,7 +412,7 @@
             )
         )
     )
-    (defun C_RespawnNFT (account:string id:string nonce:integer)
+    (defun C_RespawnNFT:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
@@ -426,7 +426,7 @@
             )
         )
     )
-    (defun C_WipeNftNonce (account:string id:string nonce:integer)
+    (defun C_WipeNftNonce:object{IgnisCollector.OutputCumulator} (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
@@ -440,7 +440,7 @@
             )
         )
     )
-    (defun C_WipeNft (account:string id:string)
+    (defun C_WipeNft:object{IgnisCollector.OutputCumulator} (account:string id:string)
         @doc "Costs 1 IGNIS per SFT Nonce wiped. \
             \ For demonstration purposes only, due to high computation cost"
         (UEV_IMC)

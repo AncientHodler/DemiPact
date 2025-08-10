@@ -176,8 +176,6 @@
 (commit-tx)
 (print "")
 
-
-
 (print "")
 (begin-tx "INIT TX M10 - DPDC-N Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -188,7 +186,15 @@
 (commit-tx)
 (print "")
 
-
+(print "")
+(begin-tx "INIT TX M11 - C06>>02|11_EQUITY+.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class06_ST02-Main/C06>>02|11_EQUITY+.pact")
+(format "<<<<<<<EQUITY Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
 ;;
 (print "<Class06_ST02-Main> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 ;;
@@ -201,7 +207,7 @@
 ;; LOAD CClass07_ST02-Talos >>> 2 Modules
 ;;
 (print "")
-(begin-tx "INIT TX M6 - TS02-C1 Module")
+(begin-tx "INIT TX M12 - TS02-C1 Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../../Class07_ST02-Talos/C07>>02|01_TS02-C1+.pact")
@@ -210,7 +216,7 @@
 (print "")
 
 (print "")
-(begin-tx "INIT TX M7 - TS02-C2 Module")
+(begin-tx "INIT TX M13 - TS02-C2 Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
 (load "../../Class07_ST02-Talos/C07>>02|01_TS02-C2+.pact")

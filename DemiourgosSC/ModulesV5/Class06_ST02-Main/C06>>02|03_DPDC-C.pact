@@ -143,7 +143,7 @@
                         (if son
                             (if sft-set-mode
                                 (enforce (= amount 0) (format "When Defining an SFT Set, {} must be equal to 0" [amount]))
-                                (enforce (>= amount 1) (format "For an SFT Collectable the {} must be greater or equal to 1" [amount]))
+                                (enforce (>= amount 0) (format "For an SFT Collectable the {} must be greater or equal to 0" [amount]))
                             )
                             (enforce (= amount 1) (format "For an NFT Collectable the {} must be equal to 1" [amount]))
                         )

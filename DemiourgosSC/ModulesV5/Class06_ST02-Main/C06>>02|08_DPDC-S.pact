@@ -27,7 +27,7 @@
         (compose-capability (P|DPDC-S|CALLER))
         (compose-capability (SECURE))
     )
-    (defcap P|DPDC|REMOTE-GOV ()
+    (defcap P|DPDC-S|REMOTE-GOV ()
         @doc "DPDC Remote Governor Capability"
         true
     )
@@ -74,7 +74,7 @@
             )
             (ref-P|DPDC::P|A_Add
                 "DPDC-S|RemoteDpdcGov"
-                (create-capability-guard (P|DPDC|REMOTE-GOV))
+                (create-capability-guard (P|DPDC-S|REMOTE-GOV))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
             (ref-P|DPDC-C::P|A_AddIMP mg)
@@ -113,6 +113,7 @@
     ;;{C3}
     ;;{C4}
     (defcap DPDC-S|C>MAKE (id:string son:bool nonces:[integer] set-class:integer)
+        @event
         (let
             (
                 (iz-active:bool (UR_IzSetActive id son set-class))
@@ -120,11 +121,21 @@
             (enforce iz-active (format "Set-Class {} is not active for Set Composition" [set-class]))
             (UEV_NoncesForSetClass id son nonces set-class)
             (compose-capability (P|DPDC-S|CALLER))
-            (compose-capability (P|DPDC|REMOTE-GOV))
+            (compose-capability (P|DPDC-S|REMOTE-GOV))
         )
     )
-    (defcap DPDC-S|C>BREAK (account:string id:string son:bool nonce:integer)
-        true
+    (defcap DPDC-S|C>BREAK (id:string son:bool nonce:integer)
+        @event
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
+            )
+            ;;Nonces of Inactive Sets can still be broken down.
+            (enforce (!= nonce-class 0) "Only Class Non-0 Nonces can be broken Down")
+            (compose-capability (P|DPDC-S|CALLER))
+            (compose-capability (P|DPDC-S|REMOTE-GOV))
+        )
     )
     (defcap DPDC-S|C>DEFINE-PRIMORDIAL 
         (
@@ -281,14 +292,13 @@
         (at "split-data" (UR_Set id son set-class))
     )
     ;;
-
     ;;Score Read for Nonce
     (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
-                (raw-nonce-score:decimal (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id son nonce)))
+                (raw-nonce-score:decimal (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id son (abs nonce))))
             )
             (if (= nonce-class 0)
                 (if (< nonce 0)
@@ -342,6 +352,98 @@
                 0.0
                 summed-score
             )
+        )
+    )
+    ;;
+    (defun URC_SemiFungibleConstituents:[integer] (id:string set-class:integer)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (UR_PSD id true set-class))
+                (csd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] (UR_CSD id true set-class))
+                (npsd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}] (ref-DPDC-UDC::UDC_NoPrimordialSet))
+                (ncsd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}] (ref-DPDC-UDC::UDC_NoCompositeSet))
+                (l-psd:integer
+                    (if (= psd npsd)
+                        0
+                        (length psd)
+                    )
+                )
+                (l-csd:integer
+                    (if (= csd ncsd)
+                        0
+                        (length csd)
+                    )
+                )
+            )
+            (if (= l-psd 0)
+                ;;Composite Set
+                (URCX|CSD_NonceList id csd)
+                (if (= l-csd 0)
+                    ;;Primordial Set
+                    (URCX|PSD_FirstNoncesList psd)
+                    ;;Hybrid Set
+                    (+ (URCX|CSD_NonceList id csd) (URCX|PSD_FirstNoncesList psd))
+                )
+            )
+        )
+    )
+    (defun URCX|PSD_FirstNoncesList:[integer] (psd:[object{DpdcUdc.DPDC|AllowedNonceForSetPosition}])
+        @doc "Returns a list of Nonces that composed the PSD, only works for SFTs, \
+            \ since the 1st Nonce of the <allowed-nonces> is used"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[integer] idx:integer)
+                    (let
+                        (
+                            (element:object{DpdcUdc.DPDC|AllowedNonceForSetPosition} (at idx psd))
+                            (allowed-nonces:[integer] (at "allowed-nonces" element))
+                            (first-allowed-nonce:integer (at 0 allowed-nonces))
+                        )
+                        (ref-U|LST::UC_AppL acc first-allowed-nonce)
+                    )
+                )
+                []
+                (enumerate 0 (- (length psd) 1))
+            )
+        )
+    )
+    (defun URCX|CSD_NonceList:[integer] (id:string csd:[object{DpdcUdc.DPDC|AllowedClassForSetPosition}])
+        @doc "Returns a list of Nonces that composed the CSD, only works for SFTs \
+            \ since SFTs save the Nonce of the Set Class"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[integer] idx:integer)
+                    (let
+                        (
+                            (element:object{DpdcUdc.DPDC|AllowedClassForSetPosition} (at idx csd))
+                            (allowed-sclass:integer (at "allowed-sclass" element))
+                            (nonce-of-set:integer (UR_NonceOfSet id allowed-sclass))
+                        )
+                        (ref-U|LST::UC_AppL acc nonce-of-set)
+                    )
+                )
+                []
+                (enumerate 0 (- (length csd) 1))
+            )
+        )
+    )
+    (defun URC_NonFungibleConstituents:[integer] (id:string nonce:integer)
+        (let
+            (
+                (ref-DPDC:module{Dpdc} DPDC)
+                (nonce-class:integer (ref-DPDC::UR_NonceClass id false nonce))
+            )
+            (enforce (!= nonce-class 0) "Invalid NFT Nonce to Read Constituents")
+            (ref-DPDC::UR_N|Composition (ref-DPDC::UR_NativeNonceData id false nonce))
         )
     )
     ;;{F2}  [UEV]
@@ -601,13 +703,38 @@
     )
     (defun C_Break:object{IgnisCollector.OutputCumulator} (account:string id:string son:bool nonce:integer)
         (UEV_IMC)
-        (with-capability (DPDC-S|C>BREAK account id son nonce)
-            true
+        (with-capability (DPDC-S|C>BREAK id son nonce)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollector} DALOS)
+                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+                    ;;
+                    (ico1:object{IgnisCollector.OutputCumulator}
+                        ;;1]Transfer the SFT|NFT from <account> to <dpdc>
+                        (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [1] true)
+                    )
+                    (constituents:[integer] 
+                        (if son
+                            (URC_SemiFungibleConstituents id (ref-DPDC::UR_NonceClass id true nonce))
+                            (URC_NonFungibleConstituents id nonce)
+                        )
+                    )
+                    (ico2:object{IgnisCollector.OutputCumulator}
+                        ;;2]Release the Set Elements from <dpdc> to <account>
+                        (ref-DPDC-T::C_Transfer id son dpdc account constituents (make-list (length constituents) 1) true)
+                    )
+                )
+                ;;3]Burn the input SFT|NFT nonce
+                (if son
+                    (ref-DPDC-C::XE_DebitSFT-Nonce dpdc id nonce 1)
+                    (ref-DPDC-C::XE_DebitNFT-Nonce dpdc id nonce 1)
+                )
+                (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators [ico1 ico2] [])
+            )
         )
-        ;;Transfer 1 of each Nonce to DPDC|SC_NAME
-        ;;Create the SET SFT|NFT; 
-        ;;  If its SFT, use the stored nonce, and create 1 Unit
-        ;;  If its NFT, create new Nonce, with the set <nonce-data>
     )
     (defun C_DefinePrimordialSet:object{IgnisCollector.OutputCumulator}
         (

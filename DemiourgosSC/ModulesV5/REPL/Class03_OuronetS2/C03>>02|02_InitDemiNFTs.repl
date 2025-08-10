@@ -1,6 +1,9 @@
 ;MODULE LOADINGS
 ;;==============================================================================
 ;; PART 01 - Load NFT Deployer Module
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
 (print "")
 (begin-tx "INIT TX 01 - C08>>02|01_DPL-NFT+.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -194,7 +197,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 02 - Create Ouronet Custodians")
+(begin-tx "Init STEP 02 - Spawn Ouronet Custodians")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -249,7 +252,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 02 - Create Ouronet Custodians Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 02 - Spawn Ouronet Custodians Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -258,7 +261,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 03 - Issue and Create VestaXFinance")
+(begin-tx "Init STEP 03 - Spawn Demiourgos Shareholders")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -309,11 +312,11 @@
             }
         ]
     )
-    (ref-DPL|NFT::A_Step03 patron patron patron)
+    (ref-DPL|NFT::A_Step03 patron patron)
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 03 - Issue and Create VestaXFinance Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 03 - Spawn Demiourgos Shareholders Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -322,7 +325,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 04 - Issue and Create Coding Division")
+(begin-tx "Init STEP 04 - Spawn Coding Division")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -381,7 +384,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 004 - Issue and Create Coding Division Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 004 - Spawn Coding Division Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -390,7 +393,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 05 - Issue WonderCoach")
+(begin-tx "Init STEP 05 - Spawn VestaXFinance")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -445,7 +448,71 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 05 - Issue WonderCoach Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 05 - Spawn VestaXFinance Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Init STEP 06 - Spawn WonderCoach")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPL|NFT:module{DeployerNft} DPL-NFT)
+        (patron:string  KST.ANHD)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                patron
+                (ref-DALOS::UR_UsagePrice "dpsf")
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (ref-DPL|NFT::A_Step06 patron patron patron)
+)
+(print "")
+(print "")
+(format "<<<<<<<Init STEP 06 - Spawn WonderCoach Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -457,7 +524,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 06 - Issue Nosferatu")
+(begin-tx "Init STEP 07 - Issue Nosferatu")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -516,7 +583,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 06 - Issue Nosferatu Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 07 - Issue Nosferatu Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -525,7 +592,7 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
-(begin-tx "Init STEP 07 - Issue Bloodshed")
+(begin-tx "Init STEP 08 - Issue Bloodshed")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (env-sigs
     [
@@ -584,7 +651,7 @@
 )
 (print "")
 (print "")
-(format "<<<<<<<Init STEP 07 - Issue Bloodshed Costs {} GAS>>>>>>>" [(env-gas)])
+(format "<<<<<<<Init STEP 08 - Issue Bloodshed Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
