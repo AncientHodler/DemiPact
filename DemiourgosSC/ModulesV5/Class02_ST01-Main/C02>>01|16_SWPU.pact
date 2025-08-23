@@ -452,7 +452,6 @@
                 (input-positions:[integer] (ref-SWPI::URC_PoolTokenPositions swpair input-ids))
                 (output-position:integer (ref-SWP::UR_PoolTokenPosition swpair output-id))
                 (W:[decimal] (ref-SWP::UR_Weigths swpair))
-                
                 ;;
                 ;;Do Swap Computation and Unwrap Object Data
                 (dtso:object{UtilitySwpV2.DirectTaxedSwapOutput}

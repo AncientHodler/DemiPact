@@ -4,6 +4,39 @@
 ;;
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
+;;LAUNCHPAD MODULES
+(print "")
+(begin-tx "INIT TX 00 - C08>>02|08_Launchpad.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/Launchpad/C08>>02|08_Launchpad.pact")
+(format "<<<<<<<Launchpad Deployer Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "INIT TX 00a - C08>>02|09_PAD_Shareholders.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/Launchpad/C08>>02|09_PAD_Shareholders.pact")
+(format "<<<<<<<Launchpad Shareholders Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "INIT TX 00b - C08>>02|10_PAD_Custodians.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class08_ST02-PostTalos/Launchpad/C08>>02|10_PAD_Custodians.pact")
+(format "<<<<<<<Launchpad Custodians Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
 (print "")
 (begin-tx "INIT TX 01 - C08>>02|01_DPL-NFT+.pact")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -151,6 +184,7 @@
     [
         { "key": "PK_AncientHodler", "caps": [] }
         { "key": "PK_Collectables", "caps": [] }
+        { "key": "PK_MovieBooster", "caps": [] }
     ]
 )
 (namespace "free")

@@ -566,7 +566,7 @@ UaShUze6a5Z_HnlUx5vGscH-HzoxibQKwlpr4neKUV0
 WVyuIxS3LB9Ig1EbJYERvQ-NW2MvheAQG7T6h-l0sd0
 
 =================================
-Tx 174 [143.225 gas] U|DalosV3, DeployerReadsV1, U|Dalos, U|ATS, DALOS in one TX
+Tx 174 [143.225 gas] U|DalosV3, DeployerReadsV2, U|Dalos, U|ATS, DALOS in one TX
 GE3R8FoI5cWyjadtMws7Bi535SddH3jnEWb0oFMDHo0
 
 Tx 175 [122.926 gas] DPTF update

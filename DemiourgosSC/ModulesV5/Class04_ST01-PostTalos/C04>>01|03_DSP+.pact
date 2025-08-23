@@ -535,7 +535,7 @@
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                     (ref-ATS:module{AutostakeV4} ATS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                     (ouro:string (ref-DALOS::UR_OuroborosID))
                     (op:integer (ref-DPTF::UR_Decimals ouro))
                     (daily:decimal (URC_DailyOURO))
@@ -617,7 +617,7 @@
                     (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                     ;;
                     (primordial-koson:string (ref-DPL|AOZ::UR_Assets 1 0))
                     (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))
@@ -651,7 +651,7 @@
                     (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                     (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                     ;;
                     (esoteric-koson:string (ref-DPL|AOZ::UR_Assets 1 1))
                     (PlebeicStrengthID:string (ref-DPL|AOZ::UR_Assets 3 0))

@@ -45,7 +45,7 @@
 
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
     )
     (ref-TS01-C2::LQD|C_WrapKadena KST.ANHD KST.ANHD 500.0)
     (format "CD with PBH iz {}"

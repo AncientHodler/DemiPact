@@ -277,7 +277,7 @@
                 (pool-value:[decimal] (ref-SWPI::URC_PoolValue swpair))
                 (lp-value-in-dwk:decimal (at 1 pool-value))
             )
-            (floor (fold (*) 1.0 [amount lp-value-in-dwk kda-pid]) 2)
+            (floor (fold (*) 100.0 [amount lp-value-in-dwk kda-pid]) 2)
         )
     )
     (defun URC|KDA-PID_TokenToIgnis (id:string amount:decimal kda-pid:decimal)
@@ -353,7 +353,7 @@
                         (asymmetric-deviation:decimal (at 0 full-asymmetric-deviation))
                         (computed-gaseous-fee:decimal (URC|KDA-PID_LpToIgnis swpair asymmetric-lp-fee-amount kda-pid))
                         (raw-gaseous-fee:decimal
-                            (if (< computed-gaseous-fee 10.0)
+                            (if (< computed-gaseous-fee 50.0)
                                 50.0
                                 (dec (ceiling computed-gaseous-fee))
                             )
@@ -390,6 +390,7 @@
                                 ;;
                                 (a-id:string (at 0 pt-ids))
                                 (a-prec:integer (ref-DPTF::UR_Decimals a-id))
+                                
                                 ;;
                                 ;;<ASYMMETRIC-LQ-DEFICIT-TAX>
                                 (tad-diff-fillup:decimal (+ asymmetric-deviation 0.5))
@@ -398,7 +399,7 @@
                                 (raw-deficit-ignis-tax:decimal (URC|KDA-PID_TokenToIgnis a-id tad-diff-fillup-as-a kda-pid))
                                 (deficit-ignis-tax:decimal
                                     (if (< raw-deficit-ignis-tax 100.0)
-                                        50.0 (ceiling raw-deficit-ignis-tax 2)
+                                        100.0 (ceiling raw-deficit-ignis-tax 2)
                                     )
                                 )
                                 ;;
@@ -409,60 +410,82 @@
                                 (special-as-a:decimal (at "special" asymmetric-tax))
                                 (raw-special-ignis-tax:decimal (URC|KDA-PID_TokenToIgnis a-id special-as-a kda-pid))
                                 (special-ignis-tax:decimal
-                                    (if (< raw-special-ignis-tax 50.0)
+                                    (if (and (> raw-special-ignis-tax 0.0) (< raw-special-ignis-tax 100.0))
                                         100.0 (ceiling raw-special-ignis-tax 2)
                                     )
                                 )
                                 ;;
                                 ;;ASYMMETRIC-LQ-LQBOOST-TAX
-                                (boost-as-a:decimal (at "special" asymmetric-tax))
-                                (raw-lqboost-ignis-tax:decimal (URC|KDA-PID_TokenToIgnis a-id boost-as-a kda-pid))
+                                (boost-as-a:decimal (at "boost" asymmetric-tax))
+                                (raw-lqboost-ignis-tax:decimal 
+                                    (if (= boost-as-a 0.0)
+                                        0.0
+                                        (URC|KDA-PID_TokenToIgnis a-id boost-as-a kda-pid)
+                                    )
+                                )
                                 (lqboost-ignis-tax:decimal
-                                    (if (< raw-lqboost-ignis-tax 1.0)
+                                    (if (and (> raw-lqboost-ignis-tax 0.0) (< raw-lqboost-ignis-tax 100.0))
                                         100.0 (dec (ceiling raw-lqboost-ignis-tax))
                                     )
                                 )
                                 ;;Construc ICOz
                                 (ignis-swp:decimal (fold (+) 0.0 [deficit-ignis-tax special-ignis-tax lqboost-ignis-tax]))
                                 (ignis-id:string (ref-DALOS::UR_IgnisID))
+                                (ouro-id:string (ref-DALOS::UR_OuroborosID))
                                 (secondary-ids-for-transfer:[string] (ref-U|LST::UC_InsertFirst input-ids-for-transfer ignis-id))
                                 (secondary-amounts-for-transfer:[decimal] (ref-U|LST::UC_InsertFirst input-amounts-for-transfer ignis-swp))
                                 (ico1:object{IgnisCollector.OutputCumulator}
-                                    (ref-TFT::UDC_MultiTransferCumulator secondary-ids-for-transfer account SWP|SC_NAME secondary-amounts-for-transfer)
+                                    ;;For initial Transfer towards the SWP|SC_NAME of input tokens and ignis (removed Ignis additions as is always zero)
+                                    (ref-TFT::UDC_MultiTransferCumulator input-ids-for-transfer account SWP|SC_NAME input-amounts-for-transfer)
                                 )
-                                (ico2:object{IgnisCollector.OutputCumulator} ;;x2 mint
+                                (ico2:object{IgnisCollector.OutputCumulator}
+                                    ;;For LP Minting (2)
                                     (ref-IGNIS::IC|UDC_SmallCumulator SWP|SC_NAME)
                                 )
                                 ;;
-                                (bk-ids:[string] (ref-SWP::UR_SpecialFeeTargets swpair))
-                                (bk-amt:[decimal] 
-                                    (ref-U|SWP::UC_SpecialFeeOutputs
-                                        (ref-SWP::UR_SpecialFeeTargetsProportions swpair)
-                                        special-ignis-tax
-                                        ignis-prec
+                                (read-bk-ids:[string] (ref-SWP::UR_SpecialFeeTargets swpair))
+                                (bk-ids:[string] (if (= read-bk-ids [BAR]) [BAR] read-bk-ids))
+                                (bk-amt:[decimal]
+                                    (if (= read-bk-ids [BAR])
+                                        [0.0]
+                                        (ref-U|SWP::UC_SpecialFeeOutputs
+                                            (ref-SWP::UR_SpecialFeeTargetsProportions swpair)
+                                            special-ignis-tax
+                                            ignis-prec
+                                        )
                                     )
                                 )
-                                (ico3:object{IgnisCollector.OutputCumulator}
-                                    (ref-TFT::UDC_BulkTransferCumulator ignis-id SWP|SC_NAME bk-ids bk-amt)
-                                )
-                                (ico4:object{IgnisCollector.OutputCumulator}
+                                ;;Cumulator needed if Liquid Boost is enabled and executed
+                                (ico5:object{IgnisCollector.OutputCumulator}
+                                    ;;ico3 for IGNIS to special Targets is always zero: removed
+                                    ;;Ico4 for IGNIS burn is always zero;removed
+                                    ;;Used for the OURO Mint (2)
                                     (ref-IGNIS::IC|UDC_ConstructOutputCumulator 
                                         (ref-DALOS::UR_UsagePrice "ignis|small") 
                                         SWP|SC_NAME 
-                                        (ref-IGNIS::IC|URC_ZeroGAS ignis-id account) []
+                                        (ref-IGNIS::IC|URC_ZeroGAS ouro-id account) []
                                     )
                                 )
-                                (ico5:object{IgnisCollector.OutputCumulator} ico2)
                                 (ico6:object{IgnisCollector.OutputCumulator}
+                                    ;;Used for LKDA Burn (2)
                                     (ref-IGNIS::IC|UDC_ConstructOutputCumulator 
                                         (ref-DALOS::UR_UsagePrice "ignis|small") 
                                         SWP|SC_NAME 
                                         (ref-IGNIS::IC|URC_ZeroGAS lkda-id account) []
                                     )
                                 )
+                                (ico56:object{IgnisCollector.OutputCumulator}
+                                    (if (= lqboost-ignis-tax 0.0)
+                                        EOC
+                                        (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators 
+                                            [ico5 ico6] 
+                                            []
+                                        )
+                                    )
+                                )
                                 (s-ico1:object{IgnisCollector.OutputCumulator}
                                     (ref-IGNIS::IC|UDC_ConcatenateOutputCumulators 
-                                        [ico-flat ico-gaseous ico1 ico2 ico3 ico4 ico5 ico6] 
+                                        [ico-flat ico-gaseous ico1 ico2 ico56] 
                                         []
                                     )
                                 )
@@ -488,11 +511,17 @@
                                 (format "{} IGNIS costs for a Deviation of ~{}%, as Asym-Liq.-Deficit-TAX"
                                     [deficit-ignis-tax (floor (* 100.0 asymmetric-deviation) 4)]
                                 )
-                                (format "{} IGNIS credited to Special Targets, as Asym-Liq.-Special-TAX"
-                                    [special-ignis-tax]
+                                (if (= special-ignis-tax 0.0)
+                                    "Without Asym-Liq.-Special-Tax, as Pool isn't setup up with a special fee"
+                                    (format "{} IGNIS credited to Special Targets, as Asym-Liq.-Special-TAX"
+                                        [special-ignis-tax]
+                                    )
                                 )
-                                (format "{} IGNIS fueling LKDA LiquidIndex, as Asym-Liq.LqBoost-TAX"
-                                    [lqboost-ignis-tax]
+                                (if (= lqboost-ignis-tax 0.0)
+                                    "Without Asym-Liq.LqBoost-TAX, as Global Liquid Boost is disabled"
+                                    (format "{} IGNIS fueling LKDA LiquidIndex, as Asym-Liq.LqBoost-TAX"
+                                        [lqboost-ignis-tax]
+                                    )
                                 )
                                 (format "Relinquish ~{} LP increasing LP Value, as Asym-Liq.-Fueling-TAX"
                                     [(floor relinquish-lp 4)]
@@ -895,70 +924,93 @@
                     (
                         (balanced-liquidity:[decimal] (at "balanced" (at "sorted-lq" ld)))
                         (asymmetric-liquidity:[decimal] (at "asymmetric" (at "sorted-lq" ld)))
+                        (total-input-liqudity:[decimal] 
+                            (zip (+) balanced-liquidity asymmetric-liquidity)
+                        )
                         (balanced-lp-amount:decimal (at "balanced" ld))
                         (asymmetric-lp-amount:decimal (at "asymmetric" ld))
                         (asymmetric-lp-fee-amount:decimal (at "asymmetric-fee" ld))
                         (lp-amount:decimal (+ balanced-lp-amount asymmetric-lp-amount))
                         ;;
-                        ;;Get Data to Construct the Virtual Swapper
+                        ;;
+                        ;;Get Data to Construct the Virtual Swapper and the Values to compute ABA
+                        (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                        (first-pt:string (at 0 pool-tokens))
                         (pool-token-supplies:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                         (lp-supply:decimal (ref-SWP::URC_LpCapacity swpair))
+                        ;;
+                        (w:[decimal] (ref-SWP::UR_Weigths swpair))
+                        (lp-prec:integer (ref-DPTF::UR_Decimals (ref-SWP::UR_TokenLP swpair)))
+                        ;;
+                        ;;The Asymetric Break Amounts <aba>
+                        ;;<aba> is the Output Liquidity one would get by removing LP made with asymmetric Liquidity
+                        ;;These are hypothetical values one would get, if all input Liqudity were to be added into the Pool
+                        ;;While minting all the LP generated by it via raw mathematical computation.
+                        ;;Against these hypothetical Values the Token A Deficit is calculated, which is the base for the Asymetric Taxes.
+                        (pool-token-supplies-for-aba:[decimal]
+                            ;; on Pool that has a liqudity equal to <pool-liq> + <input-balanced-lq> + <input-asymmetric-lq>
+                            (zip (+) pool-token-supplies total-input-liqudity)
+                        )
+                        (lp-supply-for-aba:decimal
+                            ;; and an LP amount equal to <lp-supply> + <balanced-lp-amount> + <asymmetric-lp-amount>
+                            (+ lp-supply lp-amount)
+                            ;;<aba> is the base for computing the AsymmetricTax
+                        )
+                        (aba:[decimal]
+                            (URC_CustomLpBreakAmounts swpair pool-token-supplies-for-aba lp-supply-for-aba asymmetric-lp-amount)
+                        )
+                        ;;
+                        ;;
+                        ;;Constructing the Pool Supplies of the Virtual Swapper, and the Virtual Account Starting Liquidity
                         (virtual-pool-token-supplies:[decimal] 
+                            ;;<virtual-pool-token-supplies> = <pool-token-supplies> + <balanced-liquidity> when it exists
                             (if iz-balanced
                                 (zip (+) pool-token-supplies balanced-liquidity)
                                 pool-token-supplies
                             )
                         )
                         (virtual-lp-supply:decimal
+                            ;; Used to compute Fuel Shares as LP
                             (if iz-balanced
                                 (+ lp-supply balanced-lp-amount)
                                 lp-supply
                             )
                         )
-                        (w:[decimal] (ref-SWP::UR_Weigths swpair))
-                        (lp-prec:integer (ref-DPTF::UR_Decimals (ref-SWP::UR_TokenLP swpair)))
-                        ;;
-                        ;;Construct the Virtual Swapper and get asymmetric-Break-Amounts <aba>
-                        ;;<aba> is the Output Liquidity one would get by removing LP made with asymmetric Liquidity
-                        ;;<aba> is computed on top of <pool-liq> + <input-balanced-lq>
-                        ;;<aba> is the base for computing the AsymmetricTax
-                        ;;
-                        (aba:[decimal]
-                            (URC_CustomLpBreakAmounts swpair virtual-pool-token-supplies virtual-lp-supply asymmetric-lp-amount)
-                        )
                         (first-bonus-amount:decimal (at 0 aba))
-                        (fba-filled:[decimal] (ref-SWPI::URC_IndirectRefillAmounts virtual-pool-token-supplies [0] [first-bonus-amount]))
-                        (account-starting-liq:[decimal] (zip (-) asymmetric-liquidity fba-filled))
+                        (fba-filled:[decimal] (ref-SWPI::URC_IndirectRefillAmounts pool-token-supplies [0] [first-bonus-amount]))
+                        (account-starting-liq:[decimal]
+                            ;;The Liquidity the Virtual Account starts with on the Virtual Swap Engine
+                            ;;Equal to the Asymetric Liqudity minus the A amount from ABA
+                            (zip (-) asymmetric-liquidity fba-filled)
+                        )
                         (vse:object{UtilitySwpV2.VirtualSwapEngine}
                             (UDC_VirtualSwapEngineSwpair 
                                 account account-starting-liq
                                 swpair virtual-pool-token-supplies
                             )
                         )
-                        (a-prec:integer (at 0 (at "v-prec" vse)))
-                        ;;
-                        ;;Preparing first Virtual Swap;
-                        ;;
-                        ;;Step 1 - in computing the asymmetric Tax
-                        ;;<asymmetric-liquidity> except the the amount for the first token <df-asymmetric-liquidity>
-                        ;;is virtualy swapped into the Pools First Token.
-                        ;;If Amounts for the first Token exist in the <asymmetric-liquidity>, they are kept as such
-                        ;;Therefore, after Step 1, a certain amount of First Token Amount is returned into the virtual account of the VSE
-                        ;;
-                        ;;Step 2 - computes how much of the 1st Pool Token would be neeeded to swap into the
-                        ;;Pool Token Amounts existing in <aba>. This efectively mimics a swap from First Pool Token into the <aba> amounts
-                        ;;Reverse Swap computation is used for this.
-                        ;;
-                        ;;Since there is a Swap in Step 1, and multiple more swap in Step 2, the fee thus leverages:
-                        ;;      Pool Fees
-                        ;;      Pool Liquidity Depth
-                        ;;The nature of the computation for the asymmetric Fee, makes the fee more expensive than an effective swap.
-                        ;;      The logic for this is to deincentivize asymmetric Liquidity Addition, not only by making it expensive
-                        ;;      But also to tie it into the Swap Behaviour of the Pool, 
-                        ;;      so as not to undermine the natural Swap Mechanism itself.
-                        ;;
-                        (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
-                        (first-pt:string (at 0 pool-tokens))
+                        (a-prec:integer 
+                            (at 0 (at "v-prec" vse))
+                            ;;Preparing Step 1 of the Virtual Swaps
+                            ;;STEP 1.
+                            ;;All no-A Tokens on the Virtual Account are swapped in the Virtual Pool to Token A.
+                            ;;      This consumes all non token-A in the Virtual Account of the Swap Engine
+                            ;;STEP 2.
+                            ;;For each non-A Token the Value of Token A is computed with Reverse Swap (with fees) Math,
+                            ;;      that would results in its coresponding value in <aba>
+                            ;;      the computed A Amount is then forward swapped in the Virtual Swap Engine
+                            ;;      this is done sequentially for each positive value of non-A Tokens present in <aba>
+                            ;;After the Virtual Swaps are done, 
+                            ;;  1)A deficit of Token A would result.
+                            ;;      This deficit represents how much more Token A you would have needed to get the <aba> values of non-A Tokens,
+                            ;;          if you were to execute natural Swaps in the pool using Token A as input for these Swaps.
+                            ;;      Naturally, the amount of Token A present in the <asymmetric-liquidity> counts against the deficit (since you already have it)
+                            ;;      And the amount of Token A in the <aba> counts towards the deficit (since you would have gotten it by breaking the <asymmetric-lp-amount>)
+                            ;;          Which is why the Token A in the <aba> needs to be subtracted from the Starting Asymmetric Liquidity 
+                            ;;          the Virtual Account starts with in the Virtual Swap Engine
+                            ;;  2)Various Fees saved by the VSE (Virtual Swap Engine) related to existing POOL Fees
+                            ;;      These are the basis for the computed Taxes.
+                        )
                         (df-pool-tokens:[string] (drop 1 pool-tokens))
                         (df-asymmetric-liquidity:[decimal] (drop 1 asymmetric-liquidity))
                         (df-asymmetric-liquidity-no-zeroes:[decimal] (ref-U|LST::UC_RemoveItem df-asymmetric-liquidity 0.0))
@@ -1568,7 +1620,15 @@
                                 (primordial-swpair:string (ref-SWP::UR_PrimordialPool))
                                 (lqboost-ignis-tax:decimal (at "lqboost-ignis-tax" clad))
                                 (primordial-supplies:[decimal] (ref-SWP::UR_PoolTokenSupplies primordial-swpair))
-                                (ouro-mint-amount:decimal (at 0 (ref-ORBR::URC_Compress lqboost-ignis-tax)))
+                                ;;
+                                ;;Computing the LQ Boost Tax
+                                ;;
+                                (ouro-mint-amount:decimal 
+                                    (if (= lqboost-ignis-tax 0.0)
+                                        0.0
+                                        (at 0 (ref-ORBR::URC_Compress lqboost-ignis-tax))
+                                    )
+                                )    
                                 (dsid:object{UtilitySwpV2.DirectSwapInputData}
                                     (ref-U|SWP::UDC_DirectSwapInputData
                                         [ouro-id]
@@ -1576,21 +1636,38 @@
                                         lkda-id
                                     )
                                 )
-                                (lkda-burn-amount:decimal (ref-SWPI::URC_Swap primordial-swpair dsid false))
+                                (lkda-burn-amount:decimal 
+                                    (if (= lqboost-ignis-tax 0.0)
+                                        0.0
+                                        (ref-SWPI::URC_Swap primordial-swpair dsid false)
+                                    )
+                                )
+                                (bk-ids:[string] (at "bk-ids" (at "clad-op" clad)))
+                                (bk-amt:[decimal] (at "bk-amt" (at "clad-op" clad)))
                             )
                             (with-capability (SECURE) (XI_AddLiqSendAndMint account lp-id lp-to-mint clad))
-                            (ref-TFT::C_MultiBulkTransfer
-                                [ignis-id]
-                                SWP|SC_NAME
-                                [(at "bk-ids" (at "clad-op" clad))]
-                                [(at "bk-amt" (at "clad-op" clad))]
+                            ;;Handle Special Targets
+                            (if (!= bk-ids [BAR])
+                                (ref-TFT::C_MultiBulkTransfer
+                                    [ignis-id]
+                                    SWP|SC_NAME
+                                    [bk-ids]
+                                    [bk-amt]
+                                )
+                                true
                             )
-                            (ref-DPTF::C_Burn ignis-id SWP|SC_NAME lqboost-ignis-tax)
-                            (ref-DPTF::C_Mint ouro-id SWP|SC_NAME ouro-mint-amount false)
-                            (ref-DPTF::C_Burn lkda-id SWP|SC_NAME lkda-burn-amount)
-                            (ref-SWP::XE_UpdateSupplies 
-                                primordial-swpair 
-                                (zip (+) primordial-supplies [(- 0.0 lkda-burn-amount) ouro-mint-amount 0.0])
+                            ;;Handle Liquid Boost
+                            (if (!= lqboost-ignis-tax 0.0)
+                                (do
+                                    (ref-DPTF::C_Burn ignis-id SWP|SC_NAME lqboost-ignis-tax)
+                                    (ref-DPTF::C_Mint ouro-id SWP|SC_NAME ouro-mint-amount false)
+                                    (ref-DPTF::C_Burn lkda-id SWP|SC_NAME lkda-burn-amount)
+                                    (ref-SWP::XE_UpdateSupplies 
+                                        primordial-swpair 
+                                        (zip (+) primordial-supplies [(- 0.0 lkda-burn-amount) ouro-mint-amount 0.0])
+                                    )
+                                )
+                                true
                             )
                             (with-capability (SWPL|S>ASYMMETRIC-LQ-DEFICIT-TAX (at "deficit-text" clad)) true)
                             (with-capability (SWPL|S>ASYMMETRIC-LQ-FUELING-TAX (at "fueling-text" clad)) true)

@@ -72,7 +72,7 @@
         (ref-U|CT:module{OuronetConstants} U|CT)
         (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
         (ref-DALOS:module{OuronetDalosV4} DALOS)
-        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
+        (ref-DPL|UR:module{DeployerReadsV3} DPL-UR)
         (ref-MB:module{MovieBoosterV2} MB)
         (kp:integer (ref-U|CT::CT_KDA_PRECISION))
         (patron:string KST.ANHD)

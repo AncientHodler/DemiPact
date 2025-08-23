@@ -178,12 +178,14 @@
         @event
         (UEV_AddFrozenLiquidity swpair frozen-dptf)
         (compose-capability (SWPLC|C-ADD-CHILLED-LQ swpair ld))
+        (compose-capability (P|SWPLC|REMOTE-GOV))
     )
     (defcap SWPLC|C>ADD-SLEEPING-LQ 
         (account:string swpair:string sleeping-dpmf:string nonce:integer ld:object{SwapperLiquidity.LiquidityData})
         @event
         (UEV_AddSleepingLiquidity account swpair sleeping-dpmf nonce)
         (compose-capability (SWPLC|C-ADD-DORMANT-LQ swpair ld))
+        (compose-capability (P|SWPLC|REMOTE-GOV))
     )
     (defcap SWPLC|C-ADD-DORMANT-LQ (swpair:string ld:object{SwapperLiquidity.LiquidityData})
         (UEV_AddDormantLiquidity swpair)
@@ -195,15 +197,13 @@
     )
     (defcap SWPLC|C>X-ADD-LQ (swpair:string ld:object{SwapperLiquidity.LiquidityData})
         (UEV_AddLiquidity swpair ld)
-        (compose-capability (P|DT))
-        (compose-capability (SECURE))
+        (compose-capability (P|SECURE-CALLER))
     )
     ;;
     (defcap SWPLC|C>REMOVE_LQ (swpair:string lp-amount:decimal)
         @event
         (UEV_RemoveLiquidity swpair lp-amount)
-        (compose-capability (P|DT))
-        (compose-capability (SECURE))
+        (compose-capability (P|SECURE-CALLER))
     )
     ;;
     ;;<=======>

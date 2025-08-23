@@ -1,6 +1,7 @@
-(interface TalosStageOne_ClientTwoV3
+(interface TalosStageOne_ClientTwoV4
     @doc "V2 Removes <patron> input variable where it is not needed \
         \ V3 brings the improved liquidity engine, two more liquidity addition types \
+        \ V4 removed manual kda-pid from adding liquidity functions \
         \ for a total of 5 with improved Swap Logistics"
     ;;
     ;;ATS (Autostake) Functions
@@ -101,11 +102,11 @@
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
     (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV4.FeeSplit}]))
     ;;Liquidity
-    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
-    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
-    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
-    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal kda-pid:decimal))
-    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer kda-pid:decimal))
+    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
+    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
+    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer))
     (defun SWP|C_RemoveLiquidity:list (patron:string account:string swpair:string lp-amount:decimal))
     ;;Swap
     (defun SWP|C_SingleSwapWithSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:decimal))
@@ -117,7 +118,7 @@
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientTwoV3)
+    (implements TalosStageOne_ClientTwoV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -1554,7 +1555,7 @@
             )
         )
     )
-    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+    (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal])
         @doc "Adds Liquidity using <input-amounts> on <swpair>, in its default Standard Mode. \
             \ Must Contain 0.0 for Tokens not used; Pool Token Order must be followed for desired <input-amounts> \
             \ 1000 IGNIS Flat Fee Cost for adding liquidity to deincentivize addition of small values \
@@ -1571,8 +1572,10 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC) 
+                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPLC::C|KDA-PID_AddStandardLiquidity account swpair input-amounts kda-pid)
                     )
@@ -1584,7 +1587,7 @@
             )
         )
     )
-    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+    (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal])
         @doc "Same as <SWP|C_AddLiquidity>, but using ICED Mode \
             \ \
             \ ICED MODE \
@@ -1599,8 +1602,10 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC) 
+                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPLC::C|KDA-PID_AddIcedLiquidity account swpair input-amounts kda-pid)
                     )
@@ -1612,7 +1617,7 @@
             )
         )
     )
-    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+    (defun SWP|C_AddGlacialLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal])
         @doc "Same as <SWP|C_AddLiquidity>, but using GLACIAL Mode \
             \ \
             \ GLACIAL MODE \
@@ -1625,8 +1630,10 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC) 
+                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPLC::C|KDA-PID_AddGlacialLiquidity account swpair input-amounts kda-pid)
                     )
@@ -1638,7 +1645,7 @@
             )
         )
     )
-    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal kda-pid:decimal)
+    (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal)
         @doc "Adds Liquidity using a single <input-amount> of a single <frozen-dptf> \
             \ Since this is an asymetric-liquidity-amount, it is bound by max. deviation rules \
             \ 1000 IGNIS Flat Fee Cost for adding liquidity. \
@@ -1650,8 +1657,10 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC) 
+                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPLC::C|KDA-PID_AddFrozenLiquidity account swpair frozen-dptf input-amount kda-pid)
                     )
@@ -1663,7 +1672,7 @@
             )
         )
     )
-    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer kda-pid:decimal)
+    (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpmf:string nonce:integer)
         @doc "Adds Liquidity using a single <input-amount> of a single <sleeping-dpmf> \
         \ Since this is an asymetric-liquidity-amount, it is bound by max. deviation rules \
         \ 1000 IGNIS Flat Fee Cost for adding liquidity. \
@@ -1675,8 +1684,10 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-IGNIS:module{IgnisCollector} DALOS)
-                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC) 
+                    (ref-SWPLC:module{SwapperLiquidityClient} SWPLC)
+                    (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                     (ico:object{IgnisCollector.OutputCumulator}
                         (ref-SWPLC::C|KDA-PID_AddSleepingLiquidity account swpair sleeping-dpmf nonce kda-pid)
                     )

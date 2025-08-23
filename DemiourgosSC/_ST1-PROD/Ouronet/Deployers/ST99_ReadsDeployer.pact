@@ -1,4 +1,4 @@
-(interface DeployerReadsV1
+(interface DeployerReadsV2
     ;;
     (defun UC_ConvertPrice:string (input-price:decimal))
     (defun UC_FormatIndex:string (index:decimal))
@@ -17,7 +17,7 @@
 )
 (module DPL-UR GOV
     ;;
-    (implements DeployerReadsV1)
+    (implements DeployerReadsV2)
     ;;
     ;;<========>
     ;;GOVERNANCE

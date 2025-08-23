@@ -89,7 +89,7 @@
         (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
         (ref-ATS:module{AutostakeV4} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
 
         (f-vst:string "F|VST-98c486052a51")
         (r-ouro:string "R|OURO-98c486052a51")
@@ -168,7 +168,7 @@
         (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
         (ref-ATS:module{AutostakeV4} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
 
         (f-vst:string "F|VST-98c486052a51")
         (r-ouro:string "R|OURO-98c486052a51")
@@ -248,7 +248,7 @@
         (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
         (ref-ATS:module{AutostakeV4} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
         (ref-coin:module{fungible-v2} coin)
 
         (f-vst:string "F|VST-98c486052a51")
@@ -311,7 +311,7 @@
         (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
         (ref-ATS:module{AutostakeV4} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
 
         (f-vst:string "F|VST-98c486052a51")
         (r-ouro:string "R|OURO-98c486052a51")

@@ -74,7 +74,7 @@ ref-TS01-CP::
 
 (ref-DPL|DALOS:module{DeployerDalos} DPL-DALOS)
 (ref-DPL|AOZ:module{DeployerAoz} DPL-AOZ)
-(ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
+(ref-DPL|UR:module{DeployerReadsV2} DPL-UR)
 
 
 

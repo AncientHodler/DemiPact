@@ -173,7 +173,7 @@
         (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
         (ref-TFT:module{TrueFungibleTransferV7} TFT)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
 
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
@@ -1089,7 +1089,7 @@
     (format "KDA Split is {}" [split-kda])
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
             (ats-ids:[string]
                 (ref-TS01-C2::ATS|C_Issue
                     patron

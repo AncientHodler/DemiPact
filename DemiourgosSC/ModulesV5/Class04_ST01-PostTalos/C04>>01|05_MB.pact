@@ -342,7 +342,7 @@
         (let
             (
                 (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (ids:list
                     (ref-TS01-C1::DPTF|C_Issue
                         patron
@@ -404,7 +404,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                     ;;
                     (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
                     (mb-id:string (UR_MovieBoosterID))
@@ -428,7 +428,7 @@
             (let
                 (
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                     (ref-DALOS:module{OuronetDalosV4} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
                     ;;

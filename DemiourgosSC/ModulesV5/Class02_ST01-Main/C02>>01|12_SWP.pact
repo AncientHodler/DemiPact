@@ -568,7 +568,7 @@
         (at "fee-lock" (read SWP|Pairs swpair ["fee-lock"]))
     )
     (defun UR_FeeUnlocks:integer (swpair:string)
-        (at "fee-unlocks" (read SWP|Pairs swpair ["fee-unlocks"]))
+        (at "unlocks" (read SWP|Pairs swpair ["unlocks"]))
     )
     (defun UR_Amplifier:decimal (swpair:string)
         (at "amplifier" (read SWP|Pairs swpair ["amplifier"]))

@@ -426,7 +426,6 @@
                 (ref-SWP::A_UpdateLimit limit spawn)
             )
         )
-
     )
     (defun SWP|A_UpdateLiquidBoost (new-boost-variable:bool)
         @doc "Updates Liquid Boost switch. When set to true, every swap is set to pump the Index for Kadena Liquid Staking"

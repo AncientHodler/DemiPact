@@ -45,6 +45,11 @@
     (defconst DPDC|SC_KEY                   (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|CollectiblesKey)))
     (defconst DPDC|SC_NAME                  (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|DPDC|SC_NAME)))
     (defconst DPDC|PBL                      (let ((ref-DPDC:module{Dpdc} DPDC)) (ref-DPDC::GOV|DPDC|PBL)))
+    ;;  [LPAD]
+    (defconst LPAD|SC_KDA-NAME              "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
+    (defconst LPAD|SC_KEY                   (let ((ref-LPAD:module{Launchpad} LAUNCHPAD)) (ref-LPAD::GOV|LaunchpadKey)))
+    (defconst LPAD|SC_NAME                  (let ((ref-LPAD:module{Launchpad} LAUNCHPAD)) (ref-LPAD::GOV|LAUNCHPAD|SC_NAME)))
+    (defconst LPAD|PBL                      (let ((ref-LPAD:module{Launchpad} LAUNCHPAD)) (ref-LPAD::GOV|LAUNCHPAD|PBL)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -87,6 +92,7 @@
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-A::DALOS|A_DeploySmartAccount DPDC|SC_NAME (keyset-ref-guard DPDC|SC_KEY) DPDC|SC_KDA-NAME patron DPDC|PBL)
+            (ref-TS01-A::DALOS|A_DeploySmartAccount LPAD|SC_NAME (keyset-ref-guard LPAD|SC_KEY) LPAD|SC_KDA-NAME patron LPAD|PBL)
         )
     )
     (defun A_Step01 ()
@@ -107,10 +113,17 @@
                 (ref-P|TS02-C2:module{OuronetPolicy} TS02-C2)
                 ;;
                 (ref-P|EQUITY:module{OuronetPolicy} EQUITY)
+                (ref-P|LAUNCHPAD:module{OuronetPolicy} LAUNCHPAD)
+                ;;SaleModules
+                (ref-P|PAD-SH:module{OuronetPolicy} PAD-SH)
+                (ref-P|PAD-CUSTODIANS:module{OuronetPolicy} PAD-CUSTODIANS)
                 ;;
                 (ref-DPDC:module{Dpdc} DPDC)
+                (ref-LAUNCHPAD:module{Launchpad} LAUNCHPAD)
+                ;;
                 (patron:string DEMIURGOI|AH_NAME)
             )
+            ;;Main
             (ref-P|DPDC-UDC::P|A_Define)
             (ref-P|DPDC::P|A_Define)
             (ref-P|DPDC-C::P|A_Define)
@@ -122,12 +135,20 @@
             (ref-P|DPDC-F::P|A_Define)
             (ref-P|DPDC-S::P|A_Define)
             ;;
+            ;;Talos
             (ref-P|TS02-C1::P|A_Define)
             (ref-P|TS02-C2::P|A_Define)
             ;;
+            ;;Post Talos
             (ref-P|EQUITY::P|A_Define)
+            (ref-P|LAUNCHPAD::P|A_Define)
+            ;;
+            ;;Sale Modules
+            (ref-P|PAD-SH::P|A_Define)
+            (ref-P|PAD-CUSTODIANS::P|A_Define)
             ;;
             (ref-DPDC::DPDC|SetGovernor patron)
+            (ref-LAUNCHPAD::LAUNCHPAD|SetGovernor patron)
         )
     )
     (defun A_Step02 (patron:string collection-owner:string collection-creator:string)

@@ -154,7 +154,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-TFT:module{TrueFungibleTransferV6} TFT)
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
-        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
+        (ref-DPL|UR:module{DeployerReadsV2} DPL-UR)
         (patron:string  KST.ANHD)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
@@ -228,7 +228,7 @@
         (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV4} DPTF)
         (ref-DPL|DSP:module{DeployerDispenserV4} DSP)
-        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
+        (ref-DPL|UR:module{DeployerReadsV2} DPL-UR)
         (patron:string  KST.ANHD)
     )
     [

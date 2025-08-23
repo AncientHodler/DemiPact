@@ -1,0 +1,9 @@
+[(SWPL.URC|KDA-PID_LpToIgnis 
+    "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W"
+    2150.9135
+    (U|CT.UR|KDA-PID)
+)
+(SWPI.URC_PoolValue
+    "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W"
+)
+]

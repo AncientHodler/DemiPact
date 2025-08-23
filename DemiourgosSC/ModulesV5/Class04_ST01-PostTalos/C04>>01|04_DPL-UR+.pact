@@ -15,9 +15,94 @@
     (defun DALOS|URC_DeployStandardAccount:list ())
     (defun DALOS|URC_DeploySmartAccount:list ())
 )
+(interface DeployerReadsV2
+    ;;
+    (defun UC_ConvertPrice:string (input-price:decimal))
+    (defun UC_FormatIndex:string (index:decimal))
+    (defun UC_FormatTokenAmount:string (amount:decimal))
+    ;;
+    (defun URC_PrimordialIDs:[string] ())
+    (defun URC_PrimordialPrices:[decimal] ())
+    (defun URC_KadenaCollectionReceivers:[string] ())
+    (defun URC_SplitKdaPriceForReceivers (price:decimal))
+    ;;
+    ;;
+    (defun URC_0001_Header (account:string))
+    (defun URC_0002_Primordials (account:string))
+    ;;
+    (defun URC_0003_SWPairGeneralInfo ())
+    (defun URC_0004_SWPairDashboardInfo (swpair:string))
+    (defun URC_0005_SWPairMultiDashboardInfo (swpairs:[string]))
+    ;;
+    (defun DALOS|URC_DeployStandardAccount:list ())
+    (defun DALOS|URC_DeploySmartAccount:list ())
+)
+(interface DeployerReadsV3
+    ;;
+    (defun UC_TrimDecimalTrailingZeros:string (number:decimal))
+    (defun UC_ConvertPrice:string (input-price:decimal))
+    (defun UC_FormatIndex:string (index:decimal))
+    (defun UC_FormatTokenAmount:string (amount:decimal))
+    (defun UC_LpFuelToLpStrings:[string] (input-ids:[string] lp-fuel:[decimal]))
+    ;;
+    (defun URC_PrimordialIDs:[string] ())
+    (defun URC_PrimordialPrices:[decimal] ())
+    (defun URC_KadenaCollectionReceivers:[string] ())
+    (defun URC_SplitKdaPriceForReceivers (price:decimal))
+    (defun URC_ReverseSwapOutputAmount:decimal (swpair:string output-id:string promille:decimal))
+    ;;
+    ;;
+    (defun URC_0001_Header (account:string))
+    (defun URC_0002_Primordials (account:string))
+    ;;
+    (defun URC_0003_SWPairGeneralInfo ())
+    (defun URC_0004_SWPairDashboardInfo (swpair:string))
+    (defun URC_0005_SWPairMultiDashboardInfo (swpairs:[string]))
+    (defun URC_0006_Swap (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun URC_0007_InverseSwap (account:string swpair:string output-id:string output-amount:decimal input-id:string))
+    (defun URC_0008_CappedInverse:decimal (swpair:string output-id:string))
+    (defun URC_0009_MaxInverse:decimal (swpair:string output-id:string))
+    ;;
+    (defun DALOS|URC_DeployStandardAccount:list ())
+    (defun DALOS|URC_DeploySmartAccount:list ())
+)
+(interface DeployerReadsV4
+    ;;
+    (defun UC_TrimDecimalTrailingZeros:string (number:decimal))
+    (defun UC_ConvertPrice:string (input-price:decimal))
+    (defun UC_FormatIndex:string (index:decimal))
+    (defun UC_FormatTokenAmount:string (amount:decimal))
+    (defun UC_LpFuelToLpStrings:[string] (input-ids:[string] lp-fuel:[decimal]))
+    (defun UC_FormatDecimals:[string] (input:[decimal]))
+    (defun UC_FormatAccountsShort:[string] (input-accounts:[string]))
+    ;;
+    (defun URC_PrimordialIDs:[string] ())
+    (defun URC_PrimordialPrices:[decimal] ())
+    (defun URC_KadenaCollectionReceivers:[string] ())
+    (defun URC_SplitKdaPriceForReceivers (price:decimal))
+    (defun URC_ReverseSwapOutputAmount:decimal (swpair:string output-id:string promille:decimal))
+    (defun URC_SWPairCoreRead (swpair:string))
+    ;;
+    ;;
+    (defun URC_0001_Header (account:string))
+    (defun URC_0002_Primordials (account:string))
+    ;;
+    (defun URC_0003_SWPairGeneralInfo ())
+    (defun URC_0004_SWPairDashboardInfo (swpair:string))
+    (defun URC_0005_SWPairMultiDashboardInfo (swpairs:[string]))
+    (defun URC_0006_Swap (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
+    (defun URC_0007_InverseSwap (account:string swpair:string output-id:string output-amount:decimal input-id:string))
+    (defun URC_0008_CappedInverse:decimal (swpair:string output-id:string))
+    (defun URC_0009_MaxInverse:decimal (swpair:string output-id:string))
+    (defun URC_0010_SwpairInternalDashboard (swpair:string))
+    ;;
+    (defun DALOS|URC_DeployStandardAccount:list ())
+    (defun DALOS|URC_DeploySmartAccount:list ())
+)
+
 (module DPL-UR GOV
     ;;
-    (implements DeployerReadsV1)
+    (implements DeployerReadsV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -57,6 +142,40 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_TrimDecimalTrailingZeros:string (number:decimal)
+        @doc "Trims trailing zeros from a decimal number"
+        (let* 
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (number-as-string:string (format "{}" [number]))
+                (split-nas:[string] (ref-U|LST::UC_SplitString "." number-as-string))
+                (integer-part:string (at 0 split-nas))
+                (decimal-part:string (at 1 split-nas))
+                (ldp:integer (length decimal-part))
+                ;;
+                (trimmed-decimal-part:string
+                    (fold
+                        (lambda
+                            (acc:string idx:integer)
+                            (if (= (take -1 acc) "0")
+                                (drop -1 acc)
+                                acc
+                            )    
+                        )
+                        decimal-part
+                        (enumerate 0 (- ldp 1))
+                    )
+                )
+                (resulted-string:string
+                    (if (= trimmed-decimal-part "")
+                        (+ integer-part ".0")
+                        (concat [integer-part "." trimmed-decimal-part])
+                    )
+                )
+            )
+            resulted-string
+        )
+    )
     (defun UC_ConvertPrice:string (input-price:decimal)
         (let
             (
@@ -98,7 +217,74 @@
         )
     )
     (defun UC_FormatTokenAmount:string (amount:decimal)
-        (format "{}" [(floor amount 4)])
+        (let
+            (
+                (formated-value:string (format "{}" [(floor amount 4)]))
+            )
+            (if (= formated-value 0.0)
+                "<0.0001"
+                formated-value
+            )
+        )
+    )
+    (defun UC_LpFuelToLpStrings:[string] (input-ids:[string] lp-fuel:[decimal])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (l1:integer (length input-ids))
+                (l2:integer (length lp-fuel))
+            )
+            (enforce (= l1 l2) "Invalid Input Data for making LP Strings")
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (if (!= (at idx lp-fuel) 0.0) 
+                        (ref-U|LST::UC_AppL acc 
+                            (format "{} from Input to Liquidity Providers: {}" 
+                                [
+                                    (at idx input-ids) 
+                                    (UC_TrimDecimalTrailingZeros (at idx lp-fuel))
+                                ]
+                            )
+                        )
+                        acc
+                    )
+                )
+                []
+                (enumerate 0 (- (length input-ids) 1))
+            )
+        )
+    )
+    (defun UC_FormatDecimals:[string] (input:[decimal])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (ref-U|LST::UC_AppL acc (UC_FormatTokenAmount (at idx input)))
+                )
+                []
+                (enumerate 0 (- (length input) 1))
+            )
+        )
+    )
+    (defun UC_FormatAccountsShort:[string] (input-accounts:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+            )
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-I|OURONET::OI|UC_ShortAccount (at idx input-accounts)))
+                )
+                []
+                (enumerate 0 (- (length input-accounts) 1))
+            )
+        )
     )
     ;;{F0}  [UR]
     (defun URC_TrueFungibleAmountPrice:decimal (id:string amount:decimal price:decimal)
@@ -193,6 +379,48 @@
             ,"20%-p"    : (at 1 prices)
             ,"30%-p"    : (at 2 prices)
             ,"40%-p"    : (at 3 prices)}
+        )
+    )
+    (defun URC_ReverseSwapOutputAmount:decimal (swpair:string output-id:string promille:decimal)
+        @doc "Computes an UI allowed <output-id> amount as a <promille> relative to its total <swpair> supply"
+        (let
+            (
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-SWP:module{SwapperV4} SWP)
+                ;;
+                (output-id-supply:decimal (ref-SWP::UR_PoolTokenSupply swpair output-id))
+                (output-id-prec:integer (ref-DPTF::UR_Decimals output-id))
+            )
+            (floor (* (/ promille 1000.0) output-id-supply) output-id-prec)
+        )
+    )
+    (defun URC_SWPairCoreRead (swpair:string)
+        (let
+            (
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                (ref-SWP:module{SwapperV4} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
+                ;;
+                (ptp:[string] (UC_PoolTypeWord swpair))
+                (glsb:bool (ref-SWP::UR_LiquidBoost))
+                (lp-fee:decimal (ref-SWP::UR_FeeLP swpair))
+                (pool-value:[decimal] (ref-SWPI::URC_PoolValue swpair))
+                (pool-value-in-dwk:decimal (at 0 pool-value))
+                (lp-value-in-dwk:decimal (at 1 pool-value))
+                (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+            )
+            {"pool-type"                        : (at 0 ptp)
+            ,"pool-type-word"                   : (at 1 ptp)
+            ,"pool-token-supplies"              : (ref-SWP::UR_PoolTokenSupplies swpair)
+            ,"lp-supply"                        : (ref-SWP::URC_LpCapacity swpair)
+            ,"lp-fee"                           : lp-fee
+            ,"liquid-fee"                       : (if glsb lp-fee 0.0)
+            ,"special-fee-targets"              : (ref-SWP::UR_SpecialFeeTargets swpair)
+            ,"pool-value-in-dwk"                : pool-value-in-dwk
+            ,"lp-value-in-dwk"                  : lp-value-in-dwk
+            ,"pool-value-pid"                   : (UC_ConvertPrice (* pool-value-in-dwk kda-pid))
+            ,"lp-value-pid"                     : (UC_ConvertPrice (* lp-value-in-dwk kda-pid))
+            }
         )
     )
     ;;
@@ -431,6 +659,252 @@
             ;;
             ,"lkda-supply-hover"                : lkda-supply
             ,"wallet-lkda-hover"                : wallet-lkda
+            }
+        )
+    )
+    (defun URC_0003_SWPairGeneralInfo ()
+        (let
+            (
+                (ref-SWP:module{SwapperV4} SWP)
+                (glsb:bool (ref-SWP::UR_LiquidBoost))
+                (glsb-word:string (if glsb "ON" "OFF"))
+                (asm:bool (ref-SWP::UR_Asymetric))
+                (asm-word:string (if asm "ON" "OFF"))
+                (pools:[string] (ref-SWP::URC_Swpairs))
+                (number-of-pools:integer (length pools))
+            )   
+            {"global-liquid-staking-boost"      : glsb
+            ,"global-liquid-staking-boost-word" : glsb-word
+            ,"asymmetric"                       : asm
+            ,"asymmetric-word"                  : asm-word
+            ;;
+            ,"pools"                            : pools
+            ,"number-of-pools"                  : number-of-pools
+            }
+        )
+    )
+    (defun UC_PoolTypeWord:[string] (swpair:string)
+        (let
+            (
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (pool-type:string (ref-U|SWP::UC_PoolType swpair))
+                (pool-type-word:string
+                    (if (= pool-type "S")
+                        "Stable"
+                        (if (= pool-type "W")
+                            "Weigthed"
+                            "Product"
+                        )
+                    )
+                )
+            )
+            [pool-type pool-type-word]
+        )
+    )
+    
+    (defun URC_0004_SWPairDashboardInfo (swpair:string)
+        (let
+            (
+                (ref-SWP:module{SwapperV4} SWP)
+                ;;
+                (core:object (URC_SWPairCoreRead swpair))
+                (pool-token-supplies:[decimal] (at "pool-token-supplies" core))
+                (lp-supply:decimal (at "lp-supply" core))
+                (special-fee-targets:[string] (at "special-fee-targets" core))
+                (pool-value-in-dwk:decimal (at "pool-value-in-dwk" core))
+                (lp-value-in-dwk:decimal (at "lp-value-in-dwk" core))
+            )
+            ;;Dollar Values
+            {"tvl-in-$"                         : (at "pool-value-pid" core)
+            ,"lp-value-in-$"                    : (at "lp-value-pid" core)
+            ;;Values and Token Values
+            ,"pool-token-supplies"              : pool-token-supplies
+            ,"lp-supply"                        : lp-supply
+            ,"pool-value-in-dwk"                : pool-value-in-dwk
+            ,"lp-value-in-dwk"                  : lp-value-in-dwk
+            ,"weigths"                          : (ref-SWP::UR_Weigths swpair)
+            ,"special-fee-targets-proportions"  : (ref-SWP::UR_SpecialFeeTargetsProportions swpair)
+            ,"total-fee"                        : (ref-SWP::URC_PoolTotalFee swpair)
+            ,"lp-fee"                           : (at "lp-fee" core)
+            ,"liquid-fee"                       : (at "liquid-fee" core)
+            ,"special-fee"                      : (ref-SWP::UR_FeeSP swpair)
+            ;;Formated Token Values
+            ,"ft-pool-token-supplies"           : (UC_FormatDecimals pool-token-supplies)
+            ,"ft-lp-supply"                     : (UC_FormatTokenAmount lp-supply)
+            ,"ft-pool-value-in-dwk"             : (UC_FormatTokenAmount pool-value-in-dwk)
+            ,"ft-lp-value-in-dwk"               : (UC_FormatTokenAmount lp-value-in-dwk)
+            ;;String Values
+            ,"pool-tokens"                      : (ref-SWP::UR_PoolTokens swpair)
+            ,"pool-type"                        : (at "pool-type" core)
+            ,"pool-type-word"                   : (at "pool-type-word" core)
+            ,"special-fee-targets"              : special-fee-targets
+            ,"special-fee-targets-short"        : (UC_FormatAccountsShort special-fee-targets)
+            }
+        )
+    )
+    (defun URC_0005_SWPairMultiDashboardInfo (swpairs:[string])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+            )
+            (fold
+                (lambda
+                    (acc:[object] idx:integer)
+                    (ref-U|LST::UC_AppL
+                        acc
+                        (URC_0004_SWPairDashboardInfo (at idx swpairs))
+                    )
+                )
+                []
+                (enumerate 0 (- (length swpairs) 1))
+            )
+        )
+    )
+    (defun URC_0006_Swap (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-SWP:module{SwapperV4} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
+                (ref-SWPL:module{SwapperLiquidity} SWPL)
+                ;;
+                (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                    (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
+                )
+                ;;
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                (pool-type:string (ref-U|SWP::UC_PoolType swpair))
+                (fees:object{UtilitySwpV2.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
+                (A:decimal (ref-SWP::UR_Amplifier swpair))
+                (X:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
+                (X-prec:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
+                (input-positions:[integer] (ref-SWPI::URC_PoolTokenPositions swpair input-ids))
+                (output-position:integer (ref-SWP::UR_PoolTokenPosition swpair output-id))
+                (W:[decimal] (ref-SWP::UR_Weigths swpair))
+                ;;
+                ;;Do Swap Computation and Unwrap Object Data
+                (dtso:object{UtilitySwpV2.DirectTaxedSwapOutput}
+                    (ref-SWPI::UC_BareboneSwapWithFeez account pool-type dsid fees A X X-prec input-positions output-position W)
+                )
+                (lp-fuel:[decimal] (at "lp-fuel" dtso))
+                (o-id-special:decimal (at "o-id-special" dtso))
+                (o-id-liquid:decimal (at "o-id-liquid" dtso))
+                (o-id-netto:decimal (at "o-id-netto" dtso))
+                ;;
+                (lp-strings:[string] (UC_LpFuelToLpStrings pool-tokens lp-fuel))
+            )
+            {"to-liquidity-providers"           : lp-strings
+            ,"output-amount"                    : (format "{} Output: {}" [output-id o-id-netto])
+            ,"to-special-targets"               : (format "{} from Raw Output to Special Targets: {}" [output-id o-id-special])
+            ,"to-liquid-boost"                  : (format "{} from Raw Output to Liquid Boost: {}" [output-id o-id-liquid])
+            }
+        )
+    )
+    (defun URC_0007_InverseSwap (account:string swpair:string output-id:string output-amount:decimal input-id:string)
+        (let
+            (
+                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-SWP:module{SwapperV4} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
+                (ref-SWPL:module{SwapperLiquidity} SWPL)
+                ;;
+                (rsid:object{UtilitySwpV2.ReverseSwapInputData}
+                    (ref-U|SWP::UDC_ReverseSwapInputData
+                        output-id output-amount input-id
+                    )
+                )
+                ;;
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                (pool-type:string (ref-U|SWP::UC_PoolType swpair))
+                (fees:object{UtilitySwpV2.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
+                (A:decimal (ref-SWP::UR_Amplifier swpair))
+                (X:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
+                (X-prec:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
+                (input-position:integer (ref-SWP::UR_PoolTokenPosition swpair input-id))
+                (output-position:integer (ref-SWP::UR_PoolTokenPosition swpair output-id))
+                (W:[decimal] (ref-SWP::UR_Weigths swpair))
+                ;;
+                ;;Do Inverse Swap Computation and Unwrap Object Data
+                (itso:object{UtilitySwpV2.InverseTaxedSwapOutput}
+                    (ref-SWPI::UC_InverseBareboneSwapWithFeez
+                        account pool-type rsid fees A X X-prec output-position input-position W
+                    )
+                )
+                (lp-fuel:[decimal] (at "lp-fuel" itso))
+                (o-id-special:decimal (at "o-id-special" itso))
+                (o-id-liquid:decimal (at "o-id-liquid" itso))
+                (i-id-brutto:decimal (at "i-id-brutto" itso))
+                ;;
+                (lp-strings:[string] (UC_LpFuelToLpStrings pool-tokens lp-fuel))
+            )
+            {"to-liquidity-providers"           : lp-strings
+            ,"output-amount"                    : (format "{} Output: {}" [output-id output-amount])
+            ,"to-special-targets"               : (format "{} from Raw Output to Special Targets: {}" [output-id o-id-special])
+            ,"to-liquid-boost"                  : (format "{} from Raw Output to Liquid Boost: {}" [output-id o-id-liquid])
+            ,"input-brutto"                     : i-id-brutto
+            }
+        )
+    )
+    (defun URC_0008_CappedInverse:decimal (swpair:string output-id:string)
+        @doc "Computes the <Capped UI Output Amount for Inverse Swap> for the <output-id> \
+            \ Capped at 75% supply of <output-id> in <swpair>, in order to protect from spending to much Input Token"
+        (URC_ReverseSwapOutputAmount swpair output-id 750.0)
+    )
+    (defun URC_0009_MaxInverse:decimal (swpair:string output-id:string)
+        @doc "Computes the <Max UI Allowed Output Amount for Inverse Swap> for the <output-id> \
+            \ Capped at 95% supply of <output-id> in <swpair>, as a maximum before input amounts raise to ridiculous values"
+        (URC_ReverseSwapOutputAmount swpair output-id 950.0)
+    )
+    (defun URC_0010_SwpairInternalDashboard (swpair:string)
+        (let
+            (
+                (ref-SWP:module{SwapperV4} SWP)
+                ;;
+                (core:object (URC_SWPairCoreRead swpair))
+                (pool-token-supplies:[decimal] (at "pool-token-supplies" core))
+                (lp-supply:decimal (at "lp-supply" core))
+                (special-fee-targets:[string] (at "special-fee-targets" core))
+                (pool-value-in-dwk:decimal (at "pool-value-in-dwk" core))
+                (lp-value-in-dwk:decimal (at "lp-value-in-dwk" core))
+                ;;
+                (genesis-supplies:[decimal] (ref-SWP::UR_PoolGenesisSupplies swpair))
+            )
+            ;;Dollar Values
+            {"tvl-in-$"                         : (at "pool-value-pid" core)
+            ,"lp-value-in-$"                    : (at "lp-value-pid" core)
+            ;;Values and Token Values
+            ,"genesis-supplies"                 : genesis-supplies
+            ,"pool-token-supplies"              : pool-token-supplies
+            ,"lp-supply"                        : lp-supply
+            ,"pool-value-in-dwk"                : pool-value-in-dwk
+            ,"lp-value-in-dwk"                  : lp-value-in-dwk
+            ,"weigths"                          : (ref-SWP::UR_Weigths swpair)
+            ,"genesis-weights"                  : (ref-SWP::UR_GenesisWeigths swpair)
+            ,"amplifier"                        : (ref-SWP::UR_Amplifier swpair)
+            ,"fee-unlocks"                      : (ref-SWP::UR_FeeUnlocks swpair)
+            ,"special-fee-target-proportions"   : (ref-SWP::UR_SpecialFeeTargetsProportions swpair)
+            ,"total-fee"                        : (ref-SWP::URC_PoolTotalFee swpair)
+            ,"lp-fee"                           : (at "lp-fee" core)
+            ,"liquid-fee"                       : (at "liquid-fee" core)
+            ,"special-fee"                      : (ref-SWP::UR_FeeSP swpair)
+            ;;Formated Token Values
+            ,"ft-genesis-supplies"              : (UC_FormatDecimals genesis-supplies)
+            ,"ft-pool-token-supplies"           : (UC_FormatDecimals pool-token-supplies)
+            ,"ft-lp-supply"                     : (UC_FormatTokenAmount lp-supply)
+            ,"ft-pool-value-in-dwk"             : (UC_FormatTokenAmount pool-value-in-dwk)
+            ,"ft-lp-value-in-dwk"               : (UC_FormatTokenAmount lp-value-in-dwk)
+            ;;String Values
+            ,"pool-tokens"                      : (ref-SWP::UR_PoolTokens swpair)
+            ,"pool-type"                        : (at "pool-type" core)
+            ,"pool-type-word"                   : (at "pool-type-word" core)
+            ,"primality"                        : (if (ref-SWP::UR_Primality swpair) "Primal" "Standard")
+            ,"swapping-enabled"                 : (if (ref-SWP::UR_CanSwap swpair) "ON" "OFF")
+            ,"liquidity-enabled"                : (if (ref-SWP::UR_CanAdd swpair) "ON" "OFF")
+            ,"frozen-and-sleeping"              : (format "{} | {}" [(if (ref-SWP::UR_IzFrozenLP swpair) "ON" "OFF") (if (ref-SWP::UR_IzSleepingLP swpair) "ON" "OFF")])
+            ,"fee-lockup"                       : (if (ref-SWP::UR_FeeLock swpair) "Locked" "Unlocked")
+            ,"special-fee-targets"              : special-fee-targets
+            ,"special-fee-targets-short"        : (UC_FormatAccountsShort special-fee-targets)
             }
         )
     )

@@ -77,17 +77,33 @@
 ;;
 (print "")
 (load "Class03_OuronetS2/C03>>02|03_PopulateNosferatu.repl")
-(print "************************PopulateBloodhsed.repl LOADED*******************************")
+(print "************************PopulateNosferatu.repl LOADED*******************************")
 ;;
 (print "")
 (load "Class03_OuronetS2/C03>>02|04_PopulateBloodshed.repl")
 (print "************************PopulateBloodhsed.repl LOADED*******************************")
 ;;
+(print "")
+(load "Class03_OuronetS2/C03>>02|05_InitLaunchpad.repl")
+(print "************************InitiLaunchpad.repl LOADED*******************************")
 ;;
 ;;
 ;; Tests after Loading Stages
 ;;==============================================================================
 ;; PART 04 - Load Stage 01 Tests
+;;
+;;
+;(print "")
+;(load "Class02_ST01-Tests/C02>>01|02_DPTF.repl")
+;(print "************************DPTF Tests LOADED**********************************************")
+;;
+;(print "")
+;(load "Class02_ST01-Tests/C02>>01|03_SWP.repl")
+;(print "************************SWP Tests LOADED***********************************************")
+;;
+
+;;==============================================================================
+;; PART 05 - Load Stage 02 Tests
 ;;
 ;;
 (print "")

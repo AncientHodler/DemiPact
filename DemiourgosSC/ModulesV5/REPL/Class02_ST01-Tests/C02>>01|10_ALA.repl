@@ -43,7 +43,7 @@
     (
         (ref-DALOS:module{OuronetDalosV4} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (wkda:string (ref-DALOS::UR_WrappedKadenaID))
@@ -89,7 +89,7 @@
         (ref-SWPI:module{SwapperIssueV2} SWPI)
         (ref-SWP:module{SwapperV4} SWP)
         (ref-ALA:module{AutonomicLiquidityAdder} ALA)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
         (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
         
         (patron:string KST.ANHD)

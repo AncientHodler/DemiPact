@@ -410,7 +410,7 @@
         (let*
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
@@ -427,7 +427,7 @@
         (let*
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (AurynID:string (ref-DALOS::UR_AurynID))
@@ -497,7 +497,7 @@
     (defun A_Step012 ()
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (aozt:string PLEB|AOZT_NAME)
                 (emma:string PLEB|EMMA_NAME)
@@ -537,7 +537,7 @@
     (defun A_Step014 ()
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
@@ -548,7 +548,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
             )
             (ref-TS01-C2::ATS|C_Coil
@@ -565,7 +565,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
                 (rt-amounts:[decimal] [418414.8824])
@@ -579,7 +579,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
                 (rt-amounts:[decimal] [114907.2904])
@@ -622,7 +622,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV4} DALOS)
                 (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV3} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
                 (patron:string DEMIURGOI|AH_NAME)
                 (OuroID:string (ref-DALOS::UR_OuroborosID))
                 (ids:list
