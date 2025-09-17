@@ -1,0 +1,151 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [13 TXs]                                                ;;
+;;              LOAD    [1.01]_U|CT.pact (NO PreL; No PostL)                    ;;
+;;              LOAD    [1.02]_U|G.pact (NO PreL; No PostL)                     ;;
+;;              LOAD    [1.03]_U|ST.pact (NO PreL; No PostL)                    ;;
+;;              LOAD    [1.04]_U|RS.pact (NO PreL; No PostL)                    ;;
+;;              LOAD    [1.05]_U|LST.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.06]_U|INT.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.07]_U|DEC.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.08]_U|DALOS.pact (NO PreL; No PostL)                 ;;
+;;              LOAD    [1.09]_U|ATS.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.10]_U|DPTF.pact (NO PreL; No PostL)                  ;;
+;;              LOAD    [1.11]_U|VST.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.12]_U|SWP.pact (NO PreL; No PostL)                   ;;
+;;              LOAD    [1.13]_U|BFS.pact (NO PreL; No PostL)                   ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [1.01] - Deploy U|CT")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/01_U|CT.pact")
+(format "<<<<<<<U|CT Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-02 [1.02] - Deploy U|G")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/02_U|G.pact")
+(format "<<<<<<<U|G Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-03 [1.03] - Deploy U|ST")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/03_U|ST.pact")
+(format "<<<<<<<U|ST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.04] - Deploy U|RD")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/04_U|RS.pact")
+(format "<<<<<<<U|RS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-05 [1.05] - Deploy U|LST")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/05_U|LST.pact")
+(format "<<<<<<<U|LST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.06] - Deploy U|INT")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/06_U|INT.pact")
+(format "<<<<<<<U|INT Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.07] - Deploy U|DEC")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/07_U|DEC.pact")
+(format "<<<<<<<U|DEC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.08] - Deploy U|DALOS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/08_U|DALOS.pact")
+(format "<<<<<<<U|DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.09] - Deploy U|ATS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/09_U|ATS.pact")
+(format "<<<<<<<U|ATS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.10] - Deploy U|DPTF")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/10_U|DPTF.pact")
+(format "<<<<<<<U|DPTF Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.11] - Deploy U|VST")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/11_U|VST.pact")
+(format "<<<<<<<U|VST Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.12] - Deploy U|SWP")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/12_U|SWP.pact")
+(format "<<<<<<<U|SWP Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;
+;;
+(print "")
+(begin-tx "TX-04 [1.13] - Deploy U|BFS")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/13_U|BFS.pact")
+(format "<<<<<<<U|BFS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)

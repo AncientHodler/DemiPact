@@ -1,0 +1,4344 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [15 TXs]                                                ;;
+;;              1.1     NONE: [REPL] Pre-Loads execs (already done)             ;;
+;;              1.2     NONE: LIVE Pre-Loads execs [only comment]               ;;
+;;              2       BLOODSHED Deployment                                    ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       BLOODSHED Deployment                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2] - BSD-L Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/1_Bloodshed/01_BSD-L.pact")
+(format "<<<<<<<BSD-L Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [2] - BSD-E Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/1_Bloodshed/02_BSD-E.pact")
+(format "<<<<<<<BSD-E Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [2] - BSD-R Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/1_Bloodshed/03_BSD-R.pact")
+(format "<<<<<<<BSD-R Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [2] - BSD-C Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/1_Bloodshed/04_BSD-C.pact")
+(format "<<<<<<<BSD-C Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 [2] - BSD-SETS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/1_Bloodshed/05_BSD-SETS.pact")
+(format "<<<<<<<BSD-SETS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(begin-tx "TX-01 - Bloodshed Legendary (1-75)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-L.A_Legendary KST.ANHD "DHB-98c486052a51" (enumerate 1 75))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Legendary (1-75) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 - Bloodshed Legendary (76-150)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-L.A_Legendary KST.ANHD "DHB-98c486052a51" (enumerate 76 150))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Legendary (76-150) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-03 - Bloodshed Legendary (151-160) with Bloodshed Epic (1-61)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-L.A_Legendary KST.ANHD "DHB-98c486052a51" (enumerate 151 160))
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1 61))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Legendary (151-160) with Bloodshed Epic (1-61) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-04 - Bloodshed Epic (62-136)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 62 136))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (62-136) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-05 - Bloodshed Epic (137-211)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 137 211))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (137-211) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-06 - Bloodshed Epic (212-286)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 212 286))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (212-286) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-07 - Bloodshed Epic (287-361)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 287 361))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (287-361) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-08 - Bloodshed Epic (362-436)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 362 436))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (362-436) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-09 - Bloodshed Epic (437-511)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 437 511))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (437-511) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-10 - Bloodshed Epic (512-586)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 512 586))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (512-586) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-11 - Bloodshed Epic (587-661)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 587 661))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (587-661) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-12 - Bloodshed Epic (662-736)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 662 736))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (662-736) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-13 - Bloodshed Epic (737-811)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 737 811))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (737-811) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-14 - Bloodshed Epic (812-886)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 812 886))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (812-886) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-15 - Bloodshed Epic (887-961)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 887 961))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (887-961) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-16 - Bloodshed Epic (962-1036)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 962 1036))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (962-1036) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-17 - Bloodshed Epic (1037-1111)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1037 1111))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1037-1111) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-18 - Bloodshed Epic (1112-1186)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1112 1186))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1112-1186) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-19 - Bloodshed Epic (1187-1261)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1187 1261))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1187-1261) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-20 - Bloodshed Epic (1262-1336)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1262 1336))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1262-1336) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-21 - Bloodshed Epic (1337-1411)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1337 1411))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1337-1411) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-22 - Bloodshed Epic (1412-1486)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1412 1486))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1412-1486) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-23 - Bloodshed Epic (1487-1536) with Bloodshed Rare (1-21)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-E.A_Epic KST.ANHD "DHB-98c486052a51" (enumerate 1487 1536))
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1 21))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Epic (1487-1536) with Bloodshed Rare (1-21) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-24 - Bloodshed Rare (22-96)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 22 96))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (22-96) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-25 - Bloodshed Rare (97-171)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 97 171))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (97-171) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-26 - Bloodshed Rare (172-246)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 172 246))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (172-246) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-27 - Bloodshed Rare (247-321)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 247 321))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (247-321) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-28 - Bloodshed Rare (322-396)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 322 396))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (322-396) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-29 - Bloodshed Rare (397-471)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 397 471))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (397-471) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-30 - Bloodshed Rare (472-546)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 472 546))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (472-546) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-31 - Bloodshed Rare (547-621)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 547 621))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (547-621) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-32 - Bloodshed Rare (622-696)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 622 696))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (622-696) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-33 - Bloodshed Rare (697-771)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 697 771))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (697-771) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-34 - Bloodshed Rare (772-846)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 772 846))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (772-846) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-35 - Bloodshed Rare (847-921)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 847 921))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (847-921) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-36 - Bloodshed Rare (922-996)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 922 996))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (922-996) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-37 - Bloodshed Rare (997-1071)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 997 1071))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (997-1071) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-38 - Bloodshed Rare (1072-1146)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1072 1146))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1072-1146) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-39 - Bloodshed Rare (1147-1221)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1147 1221))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1147-1221) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-40 - Bloodshed Rare (1222-1296)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1222 1296))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1222-1296) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-41 - Bloodshed Rare (1297-1371)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1297 1371))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1297-1371) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-42 - Bloodshed Rare (1372-1446)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1372 1446))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1372-1446) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-43 - Bloodshed Rare (1447-1521)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1447 1521))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1447-1521) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-44 - Bloodshed Rare (1522-1596)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1522 1596))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1522-1596) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-45 - Bloodshed Rare (1597-1671)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1597 1671))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1597-1671) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-46 - Bloodshed Rare (1672-1746)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1672 1746))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1672-1746) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-47 - Bloodshed Rare (1747-1821)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1747 1821))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1747-1821) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-48 - Bloodshed Rare (1822-1896)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1822 1896))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1822-1896) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-49 - Bloodshed Rare (1897-1971)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1897 1971))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1897-1971) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-50 - Bloodshed Rare (1972-2046)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 1972 2046))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (1972-2046) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-51 - Bloodshed Rare (2047-2121)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2047 2121))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2047-2121) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-52 - Bloodshed Rare (2122-2196)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2122 2196))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2122-2196) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-53 - Bloodshed Rare (2197-2271)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2197 2271))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2197-2271) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-54 - Bloodshed Rare (2272-2346)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2272 2346))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2272-2346) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-55 - Bloodshed Rare (2347-2421)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2347 2421))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2347-2421) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-56 - Bloodshed Rare (2422-2496)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2422 2496))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2422-2496) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-57 - Bloodshed Rare (2497-2571)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2497 2571))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2497-2571) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-58 - Bloodshed Rare (2572-2646)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2572 2646))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2572-2646) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-59 - Bloodshed Rare (2647-2721)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2647 2721))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2647-2721) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-60 - Bloodshed Rare (2722-2796)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2722 2796))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2722-2796) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-61 - Bloodshed Rare (2797-2871)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2797 2871))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2797-2871) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-62 - Bloodshed Rare (2872-2946)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2872 2946))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2872-2946) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-63 - Bloodshed Rare (2947-3021)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 2947 3021))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (2947-3021) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-64 - Bloodshed Rare (3022-3096)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 3022 3096))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (3022-3096) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-65 - Bloodshed Rare (3097-3168)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-R.A_Rare KST.ANHD "DHB-98c486052a51" (enumerate 3097 3168))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Rare (3097-3168) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-66 - Bloodshed Common (1-74)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1 74))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1-74) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-67 - Bloodshed Common (75-148)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 75 148))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (75-148) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-68 - Bloodshed Common (149-222)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 149 222))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (149-222) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-69 - Bloodshed Common (223-296)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 223 296))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (223-296) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-70 - Bloodshed Common (297-370)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 297 370))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (297-370) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-71 - Bloodshed Common (371-444)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 371 444))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (371-444) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-72 - Bloodshed Common (445-518)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 445 518))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (445-518) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-73 - Bloodshed Common (519-592)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 519 592))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (519-592) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-74 - Bloodshed Common (593-666)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 593 666))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (593-666) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-75 - Bloodshed Common (667-740)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 667 740))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (667-740) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-76 - Bloodshed Common (741-814)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 741 814))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (741-814) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-77 - Bloodshed Common (815-888)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 815 888))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (815-888) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-78 - Bloodshed Common (889-962)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 889 962))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (889-962) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-79 - Bloodshed Common (963-1036)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 963 1036))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (963-1036) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-80 - Bloodshed Common (1037-1110)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1037 1110))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1037-1110) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-81 - Bloodshed Common (1111-1184)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1111 1184))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1111-1184) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-82 - Bloodshed Common (1185-1258)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1185 1258))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1185-1258) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-83 - Bloodshed Common (1259-1332)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1259 1332))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1259-1332) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-84 - Bloodshed Common (1333-1406)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1333 1406))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1333-1406) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-85 - Bloodshed Common (1407-1480)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1407 1480))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1407-1480) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-86 - Bloodshed Common (1481-1554)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1481 1554))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1481-1554) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-87 - Bloodshed Common (1555-1628)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1555 1628))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1555-1628) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-88 - Bloodshed Common (1629-1702)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1629 1702))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1629-1702) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-89 - Bloodshed Common (1703-1776)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1703 1776))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1703-1776) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-90 - Bloodshed Common (1777-1850)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1777 1850))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1777-1850) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-91 - Bloodshed Common (1851-1924)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1851 1924))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1851-1924) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-92 - Bloodshed Common (1925-1998)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1925 1998))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1925-1998) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-93 - Bloodshed Common (1999-2072)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 1999 2072))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (1999-2072) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-94 - Bloodshed Common (2073-2146)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2073 2146))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2073-2146) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-95 - Bloodshed Common (2147-2220)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2147 2220))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2147-2220) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-96 - Bloodshed Common (2221-2294)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2221 2294))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2221-2294) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-97 - Bloodshed Common (2295-2368)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2295 2368))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2295-2368) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-98 - Bloodshed Common (2369-2442)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2369 2442))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2369-2442) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-99 - Bloodshed Common (2443-2516)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2443 2516))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2443-2516) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-100 - Bloodshed Common (2517-2590)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2517 2590))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2517-2590) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-101 - Bloodshed Common (2591-2664)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2591 2664))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2591-2664) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-102 - Bloodshed Common (2665-2738)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2665 2738))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2665-2738) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-103 - Bloodshed Common (2739-2812)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2739 2812))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2739-2812) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-104 - Bloodshed Common (2813-2886)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2813 2886))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2813-2886) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-105 - Bloodshed Common (2887-2960)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2887 2960))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2887-2960) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-106 - Bloodshed Common (2961-3034)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 2961 3034))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (2961-3034) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-107 - Bloodshed Common (3035-3108)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3035 3108))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3035-3108) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-108 - Bloodshed Common (3109-3182)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3109 3182))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3109-3182) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-109 - Bloodshed Common (3183-3256)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3183 3256))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3183-3256) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-110 - Bloodshed Common (3257-3330)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3257 3330))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3257-3330) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-111 - Bloodshed Common (3331-3404)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3331 3404))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3331-3404) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-112 - Bloodshed Common (3405-3478)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3405 3478))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3405-3478) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-113 - Bloodshed Common (3479-3552)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3479 3552))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3479-3552) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-114 - Bloodshed Common (3553-3626)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3553 3626))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3553-3626) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-115 - Bloodshed Common (3627-3700)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3627 3700))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3627-3700) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-116 - Bloodshed Common (3701-3774)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3701 3774))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3701-3774) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-117 - Bloodshed Common (3775-3848)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3775 3848))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3775-3848) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-118 - Bloodshed Common (3849-3922)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3849 3922))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3849-3922) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-119 - Bloodshed Common (3923-3996)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3923 3996))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3923-3996) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-120 - Bloodshed Common (3997-4070)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 3997 4070))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (3997-4070) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-121 - Bloodshed Common (4071-4144)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4071 4144))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4071-4144) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-122 - Bloodshed Common (4145-4218)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4145 4218))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4145-4218) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-123 - Bloodshed Common (4219-4292)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4219 4292))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4219-4292) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-124 - Bloodshed Common (4293-4366)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4293 4366))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4293-4366) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-125 - Bloodshed Common (4367-4440)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4367 4440))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4367-4440) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-126 - Bloodshed Common (4441-4514)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4441 4514))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4441-4514) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-127 - Bloodshed Common (4515-4588)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4515 4588))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4515-4588) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-128 - Bloodshed Common (4589-4662)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4589 4662))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4589-4662) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-129 - Bloodshed Common (4663-4736)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4663 4736))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4663-4736) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-130 - Bloodshed Common (4737-4810)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4737 4810))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4737-4810) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-131 - Bloodshed Common (4811-4884)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4811 4884))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4811-4884) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-132 - Bloodshed Common (4885-4958)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4885 4958))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4885-4958) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-133 - Bloodshed Common (4959-5032)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 4959 5032))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (4959-5032) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-134 - Bloodshed Common (5033-5106)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5033 5106))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5033-5106) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-135 - Bloodshed Common (5107-5180)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5107 5180))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5107-5180) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-136 - Bloodshed Common (5181-5254)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5181 5254))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5181-5254) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-137 - Bloodshed Common (5255-5328)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5255 5328))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5255-5328) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-138 - Bloodshed Common (5329-5402)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5329 5402))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5329-5402) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-139 - Bloodshed Common (5403-5476)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5403 5476))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5403-5476) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-140 - Bloodshed Common (5477-5550)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5477 5550))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5477-5550) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-141 - Bloodshed Common (5551-5624)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5551 5624))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5551-5624) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-142 - Bloodshed Common (5625-5698)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5625 5698))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5625-5698) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-143 - Bloodshed Common (5699-5772)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5699 5772))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5699-5772) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-144 - Bloodshed Common (5773-5846)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5773 5846))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5773-5846) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-145 - Bloodshed Common (5847-5920)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5847 5920))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5847-5920) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-146 - Bloodshed Common (5921-5994)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5921 5994))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5921-5994) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-147 - Bloodshed Common (5995-6068)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 5995 6068))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (5995-6068) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-148 - Bloodshed Common (6069-6142)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6069 6142))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6069-6142) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-149 - Bloodshed Common (6143-6216)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6143 6216))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6143-6216) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-150 - Bloodshed Common (6217-6290)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6217 6290))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6217-6290) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-151 - Bloodshed Common (6291-6364)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6291 6364))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6291-6364) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-152 - Bloodshed Common (6365-6438)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6365 6438))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6365-6438) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-153 - Bloodshed Common (6439-6512)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6439 6512))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6439-6512) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-154 - Bloodshed Common (6513-6586)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6513 6586))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6513-6586) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-155 - Bloodshed Common (6587-6660)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6587 6660))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6587-6660) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-156 - Bloodshed Common (6661-6734)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6661 6734))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6661-6734) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-157 - Bloodshed Common (6735-6808)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6735 6808))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6735-6808) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-158 - Bloodshed Common (6809-6882)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6809 6882))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6809-6882) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-159 - Bloodshed Common (6883-6956)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6883 6956))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6883-6956) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-160 - Bloodshed Common (6957-7030)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 6957 7030))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (6957-7030) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-161 - Bloodshed Common (7031-7104)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7031 7104))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7031-7104) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-162 - Bloodshed Common (7105-7178)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7105 7178))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7105-7178) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-163 - Bloodshed Common (7179-7252)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7179 7252))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7179-7252) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-164 - Bloodshed Common (7253-7326)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7253 7326))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7253-7326) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-165 - Bloodshed Common (7327-7400)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7327 7400))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7327-7400) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-166 - Bloodshed Common (7401-7474)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7401 7474))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7401-7474) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-167 - Bloodshed Common (7475-7548)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7475 7548))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7475-7548) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-168 - Bloodshed Common (7549-7622)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7549 7622))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7549-7622) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-169 - Bloodshed Common (7623-7696)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7623 7696))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7623-7696) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-170 - Bloodshed Common (7697-7770)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7697 7770))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7697-7770) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-171 - Bloodshed Common (7771-7844)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7771 7844))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7771-7844) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-172 - Bloodshed Common (7845-7918)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7845 7918))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7845-7918) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-173 - Bloodshed Common (7919-7992)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7919 7992))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7919-7992) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-174 - Bloodshed Common (7993-8064)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(BLOODSHED-C.A_Common KST.ANHD "DHB-98c486052a51" (enumerate 7993 8064))
+(print "")
+(print "")
+(format "<<<<<<<Bloodshed Common (7993-8064) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-175 - Tier 1 Comati")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A01_TierOneCommonComati KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Comati Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-176 - Tier 1 Ursoi")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A02_TierOneCommonUrsoi KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Ursoi Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-177 - Tier 1 Pileati")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A03_TierOneCommonPileati KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Pileati Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-178 - Tier 1 Smardoi")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A04_TierOneCommonSmardoi KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Smardoi Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-179 - Tier 1 Carpian")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A05_TierOneCommonCarpian KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Carpian Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-180 - Tier 1 Tarabostes")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A06_TierOneCommonTarabostes KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Tarabostes Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-181 - Tier 1 Costoboc")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A07_TierOneCommonCostoboc KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Costoboc Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-182 - Tier 1 Buridavens Comati")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A08_TierOneCommonBuridavensRareComati KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Buridavens Comati Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-183 - Tier 1 Rare")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A09_TierOneRare KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Rare {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-184 - Tier 1 Epic")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A10_TierOneEpic KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier 1 Epic {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-185 - Tier TierTwoThreeFour")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(BLOODSHED-SETS.A11_TierTwoThreeFour KST.ANHD "DHB-98c486052a51")
+(print "")
+(print "")
+(format "<<<<<<<Tier TierTwoThreeFour {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| TESTS                  >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX 012 -- Make BS Set")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (id:string "DHB-98c486052a51")
+        (tetwo:bool false)
+    )
+    [
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2881 2450 1011 7204 5333 2742 727 1160 2601 154 3179 2460 4189 3902 1887 880 305 18])
+            1
+        )
+        ;(format "Raw Nonce {} Score is {}" [12929 (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id false 12929))])
+        ;(format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12929)])
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [1747 1028 1749 310 4631 4920 1177 1754 4779 892 5501 174 4783 4784 5937 322 611 36])
+            2
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [3061 1478 2775 4360 617 1050 475 5228 3933 4798 5519 4080 4657 2498 1347 4228 4373 2502])
+            3
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [5959 632 3225 4378 203 204 6973 2366 1359 5248 5969 5394 211 3380 2949 3526 2807 3096])
+            4
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [793 6122 507 2524 5261 798 3679 2816 2961 4402 1667 3108 4981 5702 3111 2536 2249 378])
+            5
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [91 1964 2397 238 1391 4272 5857 1538 7587 6004 4277 1542 247 2264 3417 5434 971 4284])
+            6
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2845 4718 255 1696 113 2418 5587 5012 261 7606 5591 264 2425 4010 2859 412 3725 5166])
+            7
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 4864) [2719 5744 4017 3154 7043 2148 1717 3446 7047 3160 1145 5178 1147 1292 1149 6766 4175 6336])
+            8
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [505 146 147 364 509 222 223 440 153])
+            9
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [370 443 516 589 14 231 16 305 18])
+            10
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [523 236 597 598 527 24 457 170 243])
+            11
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [388 29 462 247 320 393 538 539 396])
+            12
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [541 110 183 472 545 402 475 404 261])
+            13
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [46 407 192 49 122 555 52 53 126])
+            14
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [271 200 129 346 131 132 493 422 495])
+            15
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 1696) [208 209 282 427 140 285 286 287 360])
+            16
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [49 194 147 100 245 102])
+            17
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [55 344 201 346 59 348])
+            18
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [301 350 255 160 161 210])
+            19
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [19 308 165 70 263 120])
+            20
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [217 218 75 364 221 30])
+            21
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [79 272 225 178 131 276])
+            22
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [37 182 87 136 281 90])
+            23
+        )
+        (free.TS02-C2.DPNF|C_Make
+            patron
+            emma
+            id
+            (map (+ 160) [331 140 285 46 383 288])
+            24
+        )
+        (if tetwo
+            (do
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [145 12929 12937 12945]
+                    25
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [90 12930 12938 12946]
+                    26
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [99 12931 12939 12947]
+                    27
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [60 12932 12940 12948]
+                    28
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [5 12933 12941 12949]
+                    29
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [142 12934 12942 12950]
+                    30
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [23 12935 12943 12951]
+                    31
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [128 12936 12944 12952]
+                    32
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12953 12954 12955 12956 12957 12958 12959 12960]
+                    37
+                )
+                (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12961)]) ;;2199718.99236
+            )
+            (do
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12929 12930 12931 12932 12933 12934 12935 12936]
+                    33
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12937 12938 12939 12940 12941 12942 12943 12944]
+                    34
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12945 12946 12947 12948 12949 12950 12951 12952]
+                    35
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [145 90 99 60 5 142 23 128]
+                    36
+                )
+                (free.TS02-C2.DPNF|C_Make
+                    patron
+                    emma
+                    id
+                    [12953 12954 12955 12956]
+                    38
+                )
+                (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12957)]) ;;2199718.99236
+            )
+        )
+        
+    ]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12929)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12930)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12931)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12932)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12933)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12934)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12935)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12936)])
+    ;]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12937)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12938)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12939)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12940)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12941)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12942)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12943)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12944)])
+    ;]
+    ;[
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12945)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12946)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12947)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12948)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12949)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12950)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12951)])
+    ;    (format "Score with built in Multiplier is {}" [(ref-DPDC-S::UR_N|Score id false 12952)])
+    ;]]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 012 -- Make BS Set Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)

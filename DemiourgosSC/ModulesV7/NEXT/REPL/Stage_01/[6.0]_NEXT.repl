@@ -1,0 +1,293 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              4.0     Executes Functions needed to activate the Sovereign     ;;
+;;              4.1     NEXT                                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [4.1.2] - Dalos INIT [02]: Define IMC Policies")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_Emma", "caps": [] }
+    ]
+)
+
+(let
+    (
+        ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        ;;
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
+        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
+        (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
+        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
+        (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
+        ;;
+        (pkda-id:string "PKDA-98c486052a51")
+        (hpkda-id:string "H|PKDA-98c486052a51")
+        (kori-id:string "KORIndex-98c486052a51")
+        (liquid-id:string "KdaLiquindex-98c486052a51")
+        ;;
+    )
+    [
+        [
+            (format "AH has Native Kadena {}" [(ref-coin::get-balance patron-kda)])
+            (format "AH has WKDA {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
+            (format "AH has LKDA {}" [(ref-DPTF::UR_AccountSupply lkda-id patron)])
+            (format "AH has PKDA {}" [(ref-DPTF::UR_AccountSupply pkda-id patron)])
+            (format "AH has HPKDA {}" [(ref-DPOF::UR_AccountSupply hpkda-id patron)])
+            ;(ref-TS01-C1::DPTF|C_Transfer patron lkda-id patron KST.EMMA 2000.0 false)
+        ]
+        [
+            (format "Kori Index Before Constrict {}" [(ref-ATS::URC_Index kori-id)])
+
+            ;(format "500.0 with 200 Days Constrict Computation is {}" [(ref-ATS::URC_RewardBearingTokenAmountsWithHibernation kori-id lkda-id 500.0 200)])
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 500.0 200)
+            (ref-TS01-C2::ATS|C_Brumate patron patron liquid-id kori-id wkda-id 473.0 1234)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 131.0 475)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 237.0 575)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 45.2 675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 55.12 1675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 155.3763 2675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 175.0 4675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 275.0 3325)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1275.0 175)
+
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 137.0 11275)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1372.0 975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1272.0 1975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1331.0 475)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 27.0 5475)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 453.2 775)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 552.12 1625)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 125.3763 3675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 175.0 4675)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 275.0 3325)
+
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 2275.0 175)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1327.0 11275)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 132.0 975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 272.0 1975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1331.0 1475)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 27.0 575)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 453.2 7752)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 552.12 125)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 125.3763 365)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 175.0 465)
+
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 275.0 325)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 2275.0 175)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1327.0 1175)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 132.0 9725)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 272.0 975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 132.0 975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 272.0 1975)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1331.0 1475)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 27.0 575)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 453.2 7752)
+
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 27.0 575)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 453.2 7752)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 552.12 125)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 125.3763 365)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 175.0 465)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 275.0 325)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 2275.0 175)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 1327.0 1175)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 132.0 9725)
+            (ref-TS01-C2::ATS|C_Constrict patron patron kori-id lkda-id 272.0 975)
+            
+            (format "Kori Index After Constrict {}" [(ref-ATS::URC_Index kori-id)])
+        ]
+        [
+            (format "Cumulated Resident on Kori is {}" [(ref-ATS::UR_SingleRewardTokenRUR kori-id lkda-id 1)])
+            (format "Cumulated Unbonding on Kori is {}" [(ref-ATS::UR_SingleRewardTokenRUR kori-id lkda-id 2)])
+            (format "Cumulated Royalty on Kori is {}" [(ref-ATS::UR_SingleRewardTokenRUR kori-id lkda-id 3)])
+            (format "H|PKDA Nonces are {}" [(ref-DPOF::UR_NoncesUsed hpkda-id)])
+        ]
+        
+    ]
+)
+
+
+(format "<<<<<<<Pension Tests [01] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME03}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [4.1.2] - Dalos INIT [02]: Define IMC Policies")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        (ref-ATS:module{AutostakeV5} ATS)
+        (kori-id:string "KORIndex-98c486052a51")
+    )
+    [
+        (ref-TS01-C1::DPOF|C_Transfer KST.ANHD "H|PKDA-98c486052a51" (enumerate 1 25) KST.ANHD KST.EMMA false)
+        ;(format "Kori Index Before Awake {}" [(ref-ATS::URC_Index kori-id)])
+        ;(ref-TS01-C2::VST|C_Awake KST.ANHD KST.EMMA "H|PKDA-98c486052a51" 33)
+        ;(format "Kori Index After Awake {}" [(ref-ATS::URC_Index kori-id)])
+        ;(format "Emma has PKDA {}" [(ref-DPTF::UR_AccountSupply "PKDA-98c486052a51" KST.EMMA)])
+        ;(format "Nonce 33 MetaData is {}" [(ref-DPOF::UR_NonceMetaData "H|PKDA-98c486052a51" 33)])
+        ;(format "Current Time is {}" [(at "block-time" (chain-data))])
+    ]
+)
+(format "<<<<<<<Pension Transfer Tests [01] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [4.1.2] - Dalos INIT [02]: Define IMC Policies")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        (ref-ATS:module{AutostakeV5} ATS)
+        (kori-id:string "KORIndex-98c486052a51")
+    )
+    [
+        (ref-TS01-C2::VST|C_Slumber KST.ANHD KST.EMMA "H|PKDA-98c486052a51" (enumerate 1 10))
+        ;(format "Nonces Used are {} and discarded are {}"
+        ;    [
+        ;        (ref-DPOF::UR_NoncesUsed "H|PKDA-98c486052a51")
+        ;        (ref-DPOF::UR_NoncesExcluded "H|PKDA-98c486052a51")
+        ;    ]
+        ;)
+
+
+        ;(format "Kori Index Before Awake {}" [(ref-ATS::URC_Index kori-id)])
+        (ref-TS01-C2::VST|C_Awake KST.ANHD KST.EMMA "H|PKDA-98c486052a51" 17)
+
+        (ref-TS01-C2::VST|C_RepurposeSlumber KST.ANHD "H|PKDA-98c486052a51" [26 27 28] KST.ANHD KST.EMMA)
+        ;(format "Kori Index After Awake {}" [(ref-ATS::URC_Index kori-id)])
+        ;(format "Emma has PKDA {}" [(ref-DPTF::UR_AccountSupply "PKDA-98c486052a51" KST.EMMA)])
+        ;(format "Nonce 33 MetaData is {}" [(ref-DPOF::UR_NonceMetaData "H|PKDA-98c486052a51" 33)])
+        ;(format "Current Time is {}" [(at "block-time" (chain-data))])
+        (format "Emma Has Nonces {}" [(ref-DPOF::URD_AccountNonces KST.EMMA "H|PKDA-98c486052a51")])
+
+        (ref-TS01-C2::VST|C_RepurposeHibernating KST.ANHD "H|PKDA-98c486052a51" 51 KST.EMMA KST.LUMY)
+        (format "Emma Has Nonces after Repurpose {}" [(ref-DPOF::URD_AccountNonces KST.EMMA "H|PKDA-98c486052a51")])
+        (format "Lumy Has Nonces {}" [(ref-DPOF::URD_AccountNonces KST.LUMY "H|PKDA-98c486052a51")])
+    ]
+)
+(format "<<<<<<<Pension Transfer Tests [01] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+
+
+
+
+(begin-tx "SWP|TX 016 - 4x Swaps")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        ;;
+        (id:string "OURO-98c486052a51")
+        (sender:string "Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ")
+        (transfer-amount-lst:[decimal] [23.23 112.32 112.3])
+        ;;
+
+    )
+    ;;134k
+    
+    (ref-TS01-C2::SWP|C_MultiSwapWithSlippage
+        KST.ANHD 
+        KST.ANHD
+        "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51"
+        ["TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+        [2.0 40.0 3.0 3.0 4.0 3.0]
+        "OURO-98c486052a51"
+        5.0
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<SWP|TX 016 - 4x Swaps ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

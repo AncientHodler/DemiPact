@@ -1,0 +1,49 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [14 TXs]                                                ;;
+;;              1.1     NONE ==> [REPL] Pre-Loads execs;                        ;;
+;;              1.2     NONE ==> LIVE Pre-Loads execs [only comment]            ;;
+;;              2       BRD, DPTF, DPMF, ATS, TFT, ATSU, VST, LIQUID            ;;
+;;                      OUROBOROS, SWPT, SWP, SWPI, SWPL, SWPLC, SWPU           ;;
+;;                      MTX-SWP, INFO-ONE Deployment                            ;;
+;;              3       NONE ==> [REPL] Post-Loads execs                        ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2.1] - U|ATS-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/09_U|ATS-V2.pact")
+(format "<<<<<<<U|ATS-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [2.1] - U|VST-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/1_Utilities/11_U|VST-V2.pact")
+(format "<<<<<<<U|VST-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")

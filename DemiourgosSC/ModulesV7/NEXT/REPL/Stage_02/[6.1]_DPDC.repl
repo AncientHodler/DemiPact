@@ -1,0 +1,1031 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;TX 001 -- Accounts Display
+;;TX 002 -- Toggle Tests
+;;TX 003 -- Nonce Tests
+;;TX 004 -- Set Tests
+;;
+;;
+(begin-tx "TX001 - Accounts Display")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+        (ref-DPDC:module{Dpdc} DPDC)
+        (id:string "DHCD-98c486052a51")
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    [
+        ;(format "ANHD Kadena is {}" [(ref-DALOS::UR_AccountKadena KST.ANHD)])
+        ;(format "CTO is {}" [(ref-DALOS::UR_AccountKadena (at 0 (ref-DALOS::UR_DemiurgoiID)))])
+        ;(format "HOV is {}" [(ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID)))])
+        ;(format "OUROBOROS is {}" [(ref-DALOS::UR_AccountKadena ouroboros)])
+        ;(format "DALOS is {}" [(ref-DALOS::UR_AccountKadena dalos)])
+        ;(format "LIQUID is {}" [(ref-DALOS::UR_AccountKadena liquid)])
+        (format "Emma has CD Account {}" [(ref-DPDC::UR_IzAccount emma id true)])
+        (format "Lumy has CD Account {}" [(ref-DPDC::UR_IzAccount lumy id true)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX001 - Accounts Display costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 002 -- Toggle Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (orbr:string KST.OURBR)
+        (lumy:string KST.LUMY)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
+    )
+    (ref-TS02-C1::DPSF|C_Control patron id t f t t t t t t)
+    (ref-TS02-C1::DPSF|C_TogglePause patron id t)
+    (ref-TS02-C1::DPSF|C_ToggleAddQuantityRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
+    (ref-TS02-C1::DPSF|C_DeployAccount patron orbr id)
+    (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr t)
+    (ref-TS02-C1::DPSF|C_ToggleExemptionRole patron id orbr f)
+    (ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma t)
+    ;(ref-TS02-C1::DPSF|C_ToggleBurnRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma t)
+    ;(ref-TS02-C1::DPSF|C_ToggleUpdateRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleModifyCreatorRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma t)
+    ;(ref-TS02-C1::DPSF|C_ToggleModifyRoyaltiesRole patron id emma f)
+    (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma t)
+    (ref-TS02-C1::DPSF|C_ToggleTransferRole patron id emma f)
+    ;;
+    (ref-TS02-C1::DPSF|C_MoveCreateRole patron id lumy)
+    (ref-TS02-C1::DPSF|C_MoveCreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveRecreateRole patron id lumy)
+    (ref-TS02-C1::DPSF|C_MoveRecreateRole patron id emma)
+    (ref-TS02-C1::DPSF|C_MoveSetUriRole patron id lumy)
+    (ref-TS02-C1::DPSF|C_MoveSetUriRole patron id emma)
+    [
+        [
+            (ref-DPDC::UR_CA|R-AddQuantity id lumy)
+            (ref-DPDC::UR_CA|R-AddQuantity id emma)
+            (ref-DPDC::UR_CA|R-Frozen id t emma)
+            (ref-DPDC::UR_CA|R-Exemption id t emma)
+            (ref-DPDC::UR_CA|R-Exemption id t orbr)
+            (ref-DPDC::UR_CA|R-Burn id t emma)
+            (ref-DPDC::UR_CA|R-Update id t emma)
+            (ref-DPDC::UR_CA|R-ModifyCreator id t emma)
+            (ref-DPDC::UR_CA|R-ModifyRoyalties id t emma)
+            (ref-DPDC::UR_CA|R-Transfer id t emma)
+        ]
+        [
+            (ref-DPDC::UR_CA|R-Create id t lumy)
+            (ref-DPDC::UR_CA|R-Recreate id t lumy)
+            (ref-DPDC::UR_CA|R-SetUri id t lumy)
+        ]
+        [
+            (ref-DPDC::UR_CA|R-Create id t emma)
+            (ref-DPDC::UR_CA|R-Recreate id t emma)
+            (ref-DPDC::UR_CA|R-SetUri id t emma)
+        ]
+        [
+            ;;
+            (ref-DPDC::UR_CanUpgrade id t)
+            (ref-DPDC::UR_CanChangeOwner id t)
+            (ref-DPDC::UR_CanChangeCreator id t)
+            (ref-DPDC::UR_CanAddSpecialRole id t)
+            (ref-DPDC::UR_CanTransferNftCreateRole id t)
+            (ref-DPDC::UR_CanFreeze id t)
+            (ref-DPDC::UR_CanWipe id t)
+            (ref-DPDC::UR_CanPause id t)
+            (ref-DPDC::UR_IsPaused id t)
+        ]
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 002 -- Toggle Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX001 - Accounts Display")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+        
+        (id:string "DHCD-98c486052a51")
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        ;;
+        (ref-DPDC:module{Dpdc} DPDC)
+        (id1:string "DHOC-98c486052a51")
+        (id2:string "E|DH-98c486052a51")
+        (id3:string "DHCD-98c486052a51")
+        (id4:string "DHWC-98c486052a51")
+    )
+    ;;KST.ANHD >> DHOC-98c486052a51 == 1|100, 2|1000, 3|10000
+    ;;KST.ANHD = 1|100, 2|1000, 3|10000
+    [
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 3)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id2 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id2 true 1)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 3)])
+            (format "AH with {} Nonce 4 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 4)])
+            (format "AH with {} Nonce 5 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 5)])
+            (format "AH with {} Nonce 6 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 6)])
+            (format "AH with {} Nonce 7 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 7)])
+            (format "AH with {} Nonce 8 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 8)])
+            (format "AH with {} Nonce 9 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 9)])
+            (format "AH with {} Nonce 10 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 10)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 3)])
+        ]
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX001 - Accounts Display costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 003 -- Nonce Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (orbr:string KST.OURBR)
+        (lumy:string KST.LUMY)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
+        (b:string "|")
+        (snake-eye-fragmentation-data:object{DpdcUdc.DPDC|NonceData} 
+            (ref-DPDC-UDC::UDC_NonceData
+                7.0
+                7.0
+                "Thousand Snake Eyez"
+                "These are the fragments of Snake Eyez"
+                (ref-DPDC-UDC::UDC_NoMetaData)
+                (ref-DPDC-UDC::UDC_URI|Type t t t f f f f)
+                (ref-DPDC-UDC::UDC_URI|Data "Image Link" "Audio Link" "Video Link" b b b b)
+                (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
+                (ref-DPDC-UDC::UDC_URI|Data b b b b b b b)
+            )
+        )
+    )
+    (ref-TS02-C1::DPSF|C_UpdateNonceScore patron id emma 1 true 25.0)
+    ;(ref-TS02-C1::DPSF|C_RemoveNonceScore patron id emma 1)
+    (ref-TS02-C1::DPSF|C_UpdateNonceMetaData patron id emma 1 true
+        {"eye"      : "red"
+        ,"age"      : 24.3
+        ,"value"    : 123.3}
+    )
+    (ref-TS02-C1::DPSF|C_UpdateNonceName patron id emma 1  true "Snake Eyez")
+    (ref-TS02-C1::DPSF|C_UpdateNonceDescription patron id emma 1 true "Long dormant sentient AI, Snake Eye. Coded by a mad developer back in the 80s. Awakened by DemiourgosHoldings. With the help of our Coding Division it searches for his creatorz.")
+    (ref-TS02-C1::DPSF|C_UpdateNonceRoyalty patron id emma 1 true 133.0)
+    (ref-TS02-C1::DPSF|C_UpdateNonceIgnisRoyalty patron id emma 1 true 50.0)
+    
+    ;(ref-TS02-C1::DPSF|C_UpdateNonceURI patron id emma 1 true
+    ;    {"image"    : t
+    ;    ,"audio"    : t
+    ;    ,"video"    : t
+    ;    ,"document" : t
+    ;    ,"archive"  : t
+    ;    ,"model"    : t
+    ;    ,"exotic"   : t}
+    ;    {"image"    : "i1"
+    ;    ,"audio"    : "a1" 
+    ;    ,"video"    : "v1"
+    ;    ,"document" : "d1"
+    ;    ,"archive"  : "b1"
+    ;    ,"model"    : "m1"
+    ;    ,"exotic"   : "e1"}
+    ;    {"image"    : "i2"
+    ;    ,"audio"    : "a2" 
+    ;    ,"video"    : "v2"
+    ;    ,"document" : "d2"
+    ;    ,"archive"  : "b2"
+    ;    ,"model"    : "m2"
+    ;    ,"exotic"   : "e2"}
+    ;    {"image"    : "i3"
+    ;    ,"audio"    : "a3" 
+    ;    ,"video"    : "v3"
+    ;    ,"document" : "d3"
+    ;    ,"archive"  : "b3"
+    ;    ,"model"    : "m3"
+    ;    ,"exotic"   : "e3"}
+    ;)
+    [
+        [
+            (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true 1))
+
+            (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id true 1))
+            (ref-DPDC-S::UR_N|Score id true 1)
+
+            (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_NonceValue id true 1)
+            (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true 1))
+            (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true 1))
+            
+        ]
+        [
+            ;(ref-DPDC::P|UR_IMP)
+            ;(ref-DPDC::UEV_IMC)
+            (ref-TS02-C1::DPSF|C_EnableNonceFragmentation patron id 1 snake-eye-fragmentation-data)
+            (ref-DPDC::UR_N|Royalty (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Name (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Description (ref-DPDC::UR_NonceData id true -1))
+
+            (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC-S::UR_N|Score id true 1)
+
+            (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_NonceValue id true (abs -1))
+            (ref-DPDC::UR_N|AssetType (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Primary (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Secondary (ref-DPDC::UR_NonceData id true -1))
+            (ref-DPDC::UR_N|Tertiary (ref-DPDC::UR_NonceData id true -1))
+        ]
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 003 -- Nonce Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 005 -- NFT Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (t:bool true)
+        (f:bool false)
+    )
+    [       
+            ;:Freeze Emma
+            (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma t)
+        (ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 20)
+        ;(ref-TS02-C1::DPSF|C_AddQuantity patron id emma 11 20)
+            (format "Emma Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+            (format "After Add Q, Nonce 1 Supply is {}" [(ref-DPDC::UR_NonceSupply id true 1)])
+        (ref-TS02-C1::DPSF|C_Burn patron id emma 1 7)
+            (format "Emma Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+            (format "After Burn, Nonce 1 Supply is {}" [(ref-DPDC::UR_NonceSupply id true 1)])
+        (ref-TS02-C1::DPSF|C_WipeNoncePartialy patron id emma 1 6)
+            (format "Emma Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+            (format "After Wipe, Nonce 1 Supply is {}" [(ref-DPDC::UR_NonceSupply id true 1)])
+        (ref-TS02-C1::DPSF|C_WipeNonce patron id emma 1)
+            (format "Emma Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+            (format "After Total Wipe of Nonce, Nonce 1 Supply is {}" [(ref-DPDC::UR_NonceSupply id true 1)])
+        (ref-TS02-C1::DPSF|C_AddQuantity patron id emma 1 500)
+            (format "Emma Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+            (format "After Remake of Nonce, Nonce 1 Supply is {}" [(ref-DPDC::UR_NonceSupply id true 1)])
+        
+
+            ;:Unfreeze Emma
+            (ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma f)
+        ;;
+        (format "Emma Nonces are {}" [(ref-DPDC::URD_AccountNonces emma id true)])
+
+        
+        
+        
+        ;(ref-TS02-C1::DPSF|C_WipeNonces patron id emma)
+        ;(format "Nonce 1 Supply is {}" [(ref-DPDC::UR_AccountNonceSupply emma id true 1)])
+        ;(format "SemiFungible Account Holdings are: {}" [(ref-DPDC::URD_SemiFungibleAccountHoldings id emma)])
+        ;(format "Nonce 1 Supply again is {}" [(ref-DPDC::UC_SupplyFronNonceBalanceObject (ref-DPDC::URD_SemiFungibleAccountHoldings id emma) 1 true)])
+
+        ;(ref-DPDC::UR_NonceSupply id true 1)
+        ;(ref-DPDC::URD_SemiFungibleAccountHoldings id emma)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 005 -- NFT Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 005b -- Wipe Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (t:bool true)
+        (f:bool false)
+        ;;
+        ;(wipe-obj:object{DpdcManagement.RemovableNonces} (ref-DPDC-MNG::URDC_WipePure emma id true))
+    )
+    [
+        ;wipe-obj
+
+        ;;Block 1 of Testing
+        ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id patron t)
+        ;    (ref-TS02-C1::DPSF|C_WipeHeavy patron patron id)
+        ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id patron f)
+
+        ;;Block 2 of Testing
+        ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id patron t)
+        ;    (ref-TS02-C1::DPSF|C_WipePure patron patron id
+        ;        {"r-nonces": [1 2 3 4 5 6 7 8 9 10]
+        ;        ,"r-amounts": [300 500 500 500 500 500 500 500 500 200]}
+        ;    )
+        ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id patron f)
+
+        
+        ;(ref-TS02-C1::DPSF|C_WipeClean patron emma id [1 2 3 4 5 6 7 8 9 10])
+        ;(ref-TS02-C1::DPSF|C_WipeDirty patron emma id [1 2 3 4 5 6 7 8 9 10])
+        (format "Wipe Tests executed here and are {}" [true])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 005b -- Wipe Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX001 - Accounts Display")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+        
+        (id:string "DHCD-98c486052a51")
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        ;;
+        (ref-DPDC:module{Dpdc} DPDC)
+        (id1:string "DHOC-98c486052a51")
+        (id2:string "E|DH-98c486052a51")
+        (id3:string "DHCD-98c486052a51")
+        (id4:string "DHWC-98c486052a51")
+    )
+    ;;KST.ANHD >> DHOC-98c486052a51 == 1|100, 2|1000, 3|10000
+    ;;KST.ANHD = 1|100, 2|1000, 3|10000
+    [
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id1 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id1 true 3)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id2 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id2 true 1)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 3)])
+            (format "AH with {} Nonce 4 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 4)])
+            (format "AH with {} Nonce 5 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 5)])
+            (format "AH with {} Nonce 6 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 6)])
+            (format "AH with {} Nonce 7 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 7)])
+            (format "AH with {} Nonce 8 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 8)])
+            (format "AH with {} Nonce 9 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 9)])
+            (format "AH with {} Nonce 10 has supply of {}" [id3 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id3 true 10)])
+        ]
+        [
+            (format "AH with {} Nonce 1 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 1)])
+            (format "AH with {} Nonce 2 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 2)])
+            (format "AH with {} Nonce 3 has supply of {}" [id4 (ref-DPDC::UR_AccountNonceSupply KST.ANHD id4 true 3)])
+        ]
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX001 - Accounts Display costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+
+(begin-tx "TX 007 -- SFT Transfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+        (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
+        (id:string "DHCD-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    ;(ref-TS02-C1::DPSF|C_ToggleFreezeAccount patron id emma false)
+    (ref-TS02-C1::DPSF|C_TogglePause patron id false)
+    [
+        (format "Patron has {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
+        (format "Summed Ignis Royalty is {}" [(ref-DPDC-T::URC_SummedIgnisRoyalty id true [1] [7])])
+        (format "Transfer Cumulator is {}" [(ref-DPDC-T::UDC_TransferCumulator id true patron emma [1] [7])])
+        (ref-TS02-C1::DPSF|C_TransferNonce patron id patron lumy 1 7 false)
+        (format "Patron has after transfer {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
+        (ref-DPDC::URD_SemiFungibleAccountHoldings lumy id)
+        (ref-DPDC::URD_SemiFungibleAccountHoldings emma id)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 007a -- SFT Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 007b -- SFT Transfer Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (id1:string "DHCD-98c486052a51")
+        (id2:string "DHN-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+    )
+    (ref-TS02-C1::DPSF|C_TransferNonces patron id1 patron lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
+    ;(ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
+
+    [
+        (ref-DPDC::URD_SemiFungibleAccountHoldings emma id1)
+        (ref-DPDC::URD_SemiFungibleAccountHoldings lumy id1)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 007b -- SFT Transfer Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 008 -- SFT Fragment Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(print "=============================================BEGIN DPTF TESTS==========================================")
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (id:string "DHOC-98c486052a51")
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
+    )
+    (ref-TS02-C1::DPSF|C_MakeFragments patron patron id 1 3)
+    (ref-TS02-C1::DPSF|C_MergeFragments patron patron id -1 3000)
+    [
+        (ref-DPDC::URD_SemiFungibleAccountHoldings patron id)
+        (ref-DPDC::URD_SemiFungibleAccountHoldings dpdc id)
+        ;(ref-DPDC::UR_AccountNonceSupply dpdc id true -1)
+        ;(ref-DPDC::UR_AccountFragments id true patron)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 008 -- SFT Fragment Tests costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 011 -- Make CD Set")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPDC:module{Dpdc} DPDC)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (id:string "DHCD-98c486052a51")
+    )
+    [
+    [
+        (free.TS02-C1.DPSF|C_Make
+            patron
+            patron
+            id
+            [1 2 3 4 5 6 7 8 9 10]
+            1
+        )
+        
+        (ref-DPDC::URD_AccountNonces patron id true)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 1)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 2)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 3)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 4)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 5)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 6)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 7)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 8)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 9)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 10)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 11)
+    ]
+    [
+        (free.TS02-C1.DPSF|C_Make
+            patron
+            patron
+            id
+            [1 2 3 4 5 6 7 8 9 10]
+            1
+        )
+        (format "After Second Making of Nonce {}" [11])
+        (ref-DPDC::UR_AccountNonceSupply patron id true 1)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 2)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 3)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 4)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 5)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 6)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 7)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 8)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 9)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 10)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 11)
+        (free.TS02-C1.DPSF|C_Break
+            patron
+            patron
+            id
+            11
+        )
+        (format "After Breaking of Nonce {}" [11])
+        (ref-DPDC::UR_AccountNonceSupply patron id true 1)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 2)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 3)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 4)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 5)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 6)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 7)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 8)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 9)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 10)
+        (ref-DPDC::UR_AccountNonceSupply patron id true 11)
+    ]]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 011 -- Make CD Set Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 014 -- Equity Collection Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (id:string "E|DH-98c486052a51")
+        (ouro:string "OURO-98c486052a51")
+    )
+    [
+        (ref-TS02-C1::DPSF|C_MorphEquity patron patron id 1 500000 4)
+        [
+            (ref-DPDC::UR_AccountNonceSupply patron id true 1)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 2)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 3)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 4)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 5)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 6)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 7)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 8)
+        ]
+        (ref-TS02-C1::DPSF|C_MorphEquity patron patron id 4 40 8)
+        (ref-TS02-C1::DPSF|C_MorphEquity patron patron id 4 2 3)
+        (ref-TS02-C1::DPSF|C_MorphEquity patron patron id 8 1 6)
+        [
+            (ref-DPDC::UR_AccountNonceSupply patron id true 1)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 2)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 3)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 4)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 5)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 6)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 7)
+            (ref-DPDC::UR_AccountNonceSupply patron id true 8)
+        ]
+        (format "AH has {} OURO" [(ref-DPTF::UR_AccountSupply ouro patron)])
+        (format "OURO Owner is {}" [(ref-DPTF::UR_Konto ouro)])
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 014 -- Equity Collection Tests Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 015 -- LAUNCHPAD TESTS")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPDC:module{Dpdc} DPDC)
+        
+        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+        (patron:string KST.ANHD)
+        (ouro:string "OURO-98c486052a51")
+        (id:string "E|DH-98c486052a51")
+        (dhoc:string "DHOC-98c486052a51")
+        (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
+        (lpad:string free.DEMIPAD.DEMIPAD|SC_NAME)
+    )
+    [
+        ;;
+        ;;Fragment Some DHOC to Fuel Launchpad
+        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 1 100)
+        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 2 1000)
+        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 3 10000)
+        ;;
+        ;;Fuel Launchpad with OURO, E|DH and DHOC
+        (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron "OURO-98c486052a51" [true true])
+        (ref-TS02-DPAD::A_ToggleOpenForBusiness "OURO-98c486052a51" true)
+        (ref-TS02-DPAD::A_DefinePrice "OURO-98c486052a51" {"ouro-price" : 1.22})
+        (ref-TS02-DPAD::DEMIPAD|C_FuelTrueFungible patron patron ouro 1500.0)
+
+
+
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron id [4] [240])
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-1] [45000])
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-2] [450000])
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-3] [4500000])
+        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-1] [45000])
+        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-2] [450000])
+        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-3] [4500000])
+    ]
+    [
+        (free.DEMIPAD.UC_GenerateRoyaltyIntervals)
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 014 -- LAUNCHPAD TESTS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 015 -- LAUNCHPAD TESTS")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DPAD:module{DemiourgosLaunchpad} DEMIPAD)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        ;;
+        (total-kadena-amount:decimal 5000.0)
+        ;;
+        (id:string "E|DH-98c486052a51")
+        (type:integer 1)
+        (prices-obj:object{DemiourgosLaunchpad.DEMIPAD|Prices}
+            (ref-DPAD::URC_Prices id total-kadena-amount 1)
+        )
+        ;;
+        (patron:string KST.ANHD)
+        (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
+        (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
+        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
+        ;;
+        
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            ;{ "key": "PK_Emma", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+              "caps": 
+                [
+                    ;;for C_WrapKadena
+                    (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    total-kadena-amount)
+                    ;;
+                    ;;
+                    ;;for C_Acquire with <iz-native> = false, which will unwrap WKDA to KDA
+                    (coin.TRANSFER 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                    total-kadena-amount)
+                    ;;
+                    ;;
+                    ;;Satisfying Enviroment in C_Acquire
+                    ;;<amount-one> to <receiver-one>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at "amount-one" prices-obj)
+                    )
+                    ;;<amount-two> to <receiver-two>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at "amount-two" prices-obj)
+                    )
+                    ;;<amount-three> to <receiver-three>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at "amount-three" prices-obj)
+                    )
+                    ;;<amount-four> to <receiver-four>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at "amount-four" prices-obj)
+                    )
+                ]
+            }
+        ]
+    )
+    
+    [
+        [
+            (format "Price OBJ iz {}" [prices-obj])
+        ]
+        [
+            (ref-TS01-C2::LQD|C_WrapKadena patron patron total-kadena-amount)
+        ]
+        [
+            (format "AH has Native Kadena {}" [(ref-coin::get-balance patron-kda)])
+            (format "AH has WKDA {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
+        ]
+        [
+            ;;iz native False requires unwrapping, therefore the proper transfer capability must be set
+            ;;<iz-native> = false => input WKDA, which will be unwrapped to KDA to satisfz enviroment
+            (ref-TS02-DPAD::SNAKES|C_Acquire patron patron 4 1 false)
+        ]
+        [
+            (format "AH has Native Kadena after purchse {}" [(ref-coin::get-balance patron-kda)])
+            (format "AH has WKDA after purchase {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
+        ]
+        [
+            (format "Launchpad Properties after Buy are {}" [(ref-DPAD::UR_LaunchpadState)])
+            (format "Launchpad Holdings for {} are {}" [id (ref-DPAD::UR_AssetState id)])
+        ]
+        ;(free.LAUNCHPAD.UC_ComputeDepositRoyalty 20000000.0 5000000.0)
+        
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 014 -- LAUNCHPAD TESTS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)

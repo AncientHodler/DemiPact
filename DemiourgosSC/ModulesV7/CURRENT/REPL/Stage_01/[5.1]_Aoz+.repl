@@ -1,0 +1,863 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [15 TXs]                                                ;;
+;;              1.1     NONE: [REPL] Pre-Loads execs (already done)             ;;
+;;              1.2     LIVE Pre-Loads execs [only comment]                     ;;
+;;              2       AOZ Deployment                                          ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.2     LIVE Pre-Loads execs                                    ;;
+;;                      Deploy "free.us-0000_aozt-keyset"                       ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       AOZ Deployment                                          ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2] - DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_01/01_AOZ+.pact")
+(format "<<<<<<<AOZ Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-02 [C3.1] - AOZ Init [01]: Initialise Counters")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+    (let
+        (
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            ;;IDs will be
+            ;(PrimordialKosonID:string      (ref-AOZ::UR_PrimalTrueFungible 1))
+            ;(EsothericKosonID:string       (ref-AOZ::UR_PrimalTrueFungible 2))
+            ;(AncientKosonID:string         (ref-AOZ::UR_PrimalTrueFungible 3))
+
+            ;(PlebiumDenariusID:string      (ref-AOZ::UR_PrimalTrueFungible 4))
+            ;(ComatusAureusID:string        (ref-AOZ::UR_PrimalTrueFungible 5))
+            ;(PileatusSolidusID:string      (ref-AOZ::UR_PrimalTrueFungible 6))
+            ;(TarabostesStaterID:string     (ref-AOZ::UR_PrimalTrueFungible 7))
+            ;(StrategonDrachmaID:string     (ref-AOZ::UR_PrimalTrueFungible 8))
+            ;(BasileonAsID:string           (ref-AOZ::UR_PrimalTrueFungible 9))
+
+            ;(DenariusDebilisID:string      (ref-AOZ::UR_PrimalOrtoFungible 1))
+            ;(AureusFragilisID:string       (ref-AOZ::UR_PrimalOrtoFungible 2))
+            ;(SolidusFractusID:string       (ref-AOZ::UR_PrimalOrtoFungible 3))
+            ;(StaterTenuulusID:string       (ref-AOZ::UR_PrimalOrtoFungible 4))
+            ;(DrachmaMinimaID:string        (ref-AOZ::UR_PrimalOrtoFungible 5))
+            ;(AsInfinimusID:string          (ref-AOZ::UR_PrimalOrtoFungible 6))
+            
+            ;(PlebeicStrengthID:string      (ref-AOZ::UR_AutostakePair 1))
+            ;(ComatiCommandID:string        (ref-AOZ::UR_AutostakePair 2))
+            ;(PileatiPowerID:string         (ref-AOZ::UR_AutostakePair 3))
+            ;(TarabostesTenacityID:string   (ref-AOZ::UR_AutostakePair 4))
+            ;(StrategonVigorID:string       (ref-AOZ::UR_AutostakePair 5))
+            ;(AsAuthorityID:string          (ref-AOZ::UR_AutostakePair 6))
+        )
+        (ref-AOZ::A_InitialiseCounters)
+
+    )
+
+(format "<<<<<<<AOZ Init [01] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [3.2] - AOZ Init [02]: Issue Primal True Fungibles")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (* (ref-DALOS::UR_UsagePrice "dptf") 9.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            (patron:string AOZ.AOZ|SC_NAME)
+            ;;
+            (tf-ids:[string]
+                (ref-TS01-C1::DPTF|C_Issue
+                    patron
+                    patron
+                    ["PrimordialKoson" "EsothericKoson" "AncientKoson" "PlebiumDenarius" "ComatusAureus" "PileatusSolidus" "TarabostesStater" "StrategonDrachma" "BasileonAs"]
+                    ["PKOSON" "EKOSON" "AKOSON" "PDKOSON" "CAKOSON" "PSKOSON" "TSKOSON" "SDKOSON" "BAKOSON"]
+                    (make-list 9 24)                            ;;precision
+                    (make-list 9 true)                          ;;can change owner
+                    (make-list 9 true)                          ;;can upgrade
+                    (make-list 9 true)                          ;;can can-add-special-role
+                    (make-list 9 false)                         ;;can-freeze
+                    (make-list 9 false)                         ;;can-wipe
+                    (make-list 9 true)                          ;;can-pause
+                )
+            )
+        )
+        (map
+            (lambda
+                (id:string)
+                (ref-AOZ::A_RegisterPrimalTrueFungible id)
+            )
+            tf-ids
+        )
+    )
+)
+
+(format "<<<<<<<AOZ Init [02] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [3.3] - AOZ Init [03]: Setup Primal True Fungibles")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        (patron:string AOZ.AOZ|SC_NAME)
+        ;;
+        (PlebiumDenariusID:string   (ref-AOZ::UR_PrimalTrueFungible 4))
+        (ComatusAureusID:string     (ref-AOZ::UR_PrimalTrueFungible 5))
+        (PileatusSolidusID:string   (ref-AOZ::UR_PrimalTrueFungible 6))
+        (TarabostesStaterID:string  (ref-AOZ::UR_PrimalTrueFungible 7))
+        (StrategonDrachmaID:string  (ref-AOZ::UR_PrimalTrueFungible 8))
+        (BasileonAsID:string        (ref-AOZ::UR_PrimalTrueFungible 9))        
+    )
+    (ref-TS01-C1::DPTF|C_SetFee patron PlebiumDenariusID 10.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron PlebiumDenariusID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron PlebiumDenariusID true)
+
+    (ref-TS01-C1::DPTF|C_SetFee patron ComatusAureusID 20.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron ComatusAureusID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron ComatusAureusID true)
+
+    (ref-TS01-C1::DPTF|C_SetFee patron PileatusSolidusID 30.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron PileatusSolidusID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron PileatusSolidusID true)
+
+    (ref-TS01-C1::DPTF|C_SetFee patron TarabostesStaterID 40.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron TarabostesStaterID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron TarabostesStaterID true)
+
+    (ref-TS01-C1::DPTF|C_SetFee patron StrategonDrachmaID 50.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron StrategonDrachmaID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StrategonDrachmaID true)
+
+    (ref-TS01-C1::DPTF|C_SetFee patron BasileonAsID 60.0)
+    (ref-TS01-C1::DPTF|C_ToggleFee patron BasileonAsID true)
+    (ref-TS01-C1::DPTF|C_ToggleFeeLock patron BasileonAsID true)    
+
+)
+
+(format "<<<<<<<AOZ Init [03] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 [3.4] - AOZ Init [04]: Issue Primal Orto Fungibles")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (* (ref-DALOS::UR_UsagePrice "dpmf") 6.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            (patron:string AOZ.AOZ|SC_NAME)
+            ;;
+            (of-ids:[string]
+                (ref-TS01-C1::DPMF|C_Issue
+                    patron
+                    patron
+                    ["DenariusDebilis" "AureusFragilis" "SolidusFractus" "StaterTenuulus" "DrachmaMinima" "AsInfinimus"]
+                    ["DDKOSON" "AFKOSON" "SFKOSON" "STKOSON" "DMKOSON" "AIKOSON"]
+                    (make-list 6 24)                            ;;precision
+                    (make-list 6 true)                          ;;can change owner
+                    (make-list 6 true)                          ;;can upgrade
+                    (make-list 6 true)                          ;;can can-add-special-role
+                    (make-list 6 false)                         ;;can-freeze
+                    (make-list 6 false)                         ;;can-wipe
+                    (make-list 6 true)                          ;;can-pause
+                    (make-list 6 true)                          ;;can-transfer-nft-create-role
+                )
+            )
+        )
+        (map
+            (lambda
+                (id:string)
+                (ref-AOZ::A_RegisterPrimalOrtoFungible id)
+            )
+            of-ids
+        )
+    )
+)
+
+
+(format "<<<<<<<AOZ Init [04] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-06 [3.5] - AOZ Init [05]: Issue Autostake Pair 1 and 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (* (ref-DALOS::UR_UsagePrice "ats") 2.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            (patron:string AOZ.AOZ|SC_NAME)
+            ;;
+            (PrimordialKosonID:string (ref-AOZ::UR_PrimalTrueFungible 1))
+            (PlebiumDenariusID:string (ref-AOZ::UR_PrimalTrueFungible 4))
+            (ComatusAureusID:string (ref-AOZ::UR_PrimalTrueFungible 5))
+            ;;
+            (ats-ids:[string]
+                (ref-TS01-C2::ATS|C_Issue
+                    patron
+                    patron
+                    ["PlebeicStrength" "ComatiCommand"]
+                    [24 24]
+                    [PrimordialKosonID PrimordialKosonID]
+                    [false false]
+                    [PlebiumDenariusID ComatusAureusID]
+                    [true true]
+                )
+            )
+        )
+        (map
+            (lambda
+                (ats:string)
+                (ref-AOZ::A_RegisterAutostakePair ats)
+            )
+            ats-ids
+        )
+    )
+)
+
+(format "<<<<<<<AOZ Init [05] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-07 [3.6] - AOZ Init [06]: Issue Autostake Pair 3 and 4")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (* (ref-DALOS::UR_UsagePrice "ats") 2.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            (patron:string AOZ.AOZ|SC_NAME)
+            ;;
+            (PrimordialKosonID:string (ref-AOZ::UR_PrimalTrueFungible 1))
+            (PileatusSolidusID:string (ref-AOZ::UR_PrimalTrueFungible 6))
+            (TarabostesStaterID:string (ref-AOZ::UR_PrimalTrueFungible 7))
+            ;;
+            (ats-ids:[string]
+                (ref-TS01-C2::ATS|C_Issue
+                    patron
+                    patron
+                    ["PileatiPower" "TarabostesTenacity"]
+                    [24 24]
+                    [PrimordialKosonID PrimordialKosonID]
+                    [false false]
+                    [PileatusSolidusID TarabostesStaterID]
+                    [true true]
+                )
+            )
+        )
+        (map
+            (lambda
+                (ats:string)
+                (ref-AOZ::A_RegisterAutostakePair ats)
+            )
+            ats-ids
+        )
+    )
+)
+
+(format "<<<<<<<AOZ Init [06] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-08 [3.7] - AOZ Init [07]: Issue Autostake Pair 5 and 6")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.AOZT
+                (* (ref-DALOS::UR_UsagePrice "ats") 2.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AOZ", "caps": [] }
+            { "key": "95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:95a59029029524ebb250b2fafe6826ff88bb59c527d661cba3279d09a51d3bdf"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+            (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+            (patron:string AOZ.AOZ|SC_NAME)
+            ;;
+            (PrimordialKosonID:string (ref-AOZ::UR_PrimalTrueFungible 1))
+            (StrategonDrachmaID:string (ref-AOZ::UR_PrimalTrueFungible 8))
+            (BasileonAsID:string (ref-AOZ::UR_PrimalTrueFungible 9))
+            ;;
+            (ats-ids:[string]
+                (ref-TS01-C2::ATS|C_Issue
+                    patron
+                    patron
+                    ["StrategonVigor" "AsAuthority"]
+                    [24 24]
+                    [PrimordialKosonID PrimordialKosonID]
+                    [false false]
+                    [StrategonDrachmaID BasileonAsID]
+                    [true true]
+                )
+            )
+        )
+        (map
+            (lambda
+                (ats:string)
+                (ref-AOZ::A_RegisterAutostakePair ats)
+            )
+            ats-ids
+        )
+    ) 
+)
+
+(format "<<<<<<<AOZ Init [07] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-09 [3.8] - AOZ Init [08]: Setup ATS-Pair 1")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        (patron:string AOZ.AOZ|SC_NAME)
+        ;;
+        (PlebeicStrengthID:string (ref-AOZ::UR_AutostakePair 1))
+        (DenariusDebilisID:string (ref-AOZ::UR_PrimalOrtoFungible 1))
+        (decay:integer 0)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS PlebeicStrengthID DenariusDebilisID decay)
+    (ref-TS01-C2::ATS|C_TurnRecoveryOn patron PlebeicStrengthID true) ;;REPL-ONLY >> When deploying on mainnet must be removed
+)
+
+(format "<<<<<<<AOZ Init [08] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-10 [3.9] - AOZ Init [09]: Setup ATS-Pair 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        ;;
+        (ComatiCommandID:string (ref-AOZ::UR_AutostakePair 2))
+        (AureusFragilisID:string (ref-AOZ::UR_PrimalOrtoFungible 2))
+        (decay:integer 90)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS ComatiCommandID AureusFragilisID decay)
+)
+
+(format "<<<<<<<AOZ Init [09] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-11 [3.10] - AOZ Init [10]: Setup ATS-Pair 3")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        ;;
+        (PileatiPowerID:string (ref-AOZ::UR_AutostakePair 3))
+        (SolidusFractusID:string (ref-AOZ::UR_PrimalOrtoFungible 3))
+        (decay:integer 180)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS PileatiPowerID SolidusFractusID decay)
+)
+
+(format "<<<<<<<AOZ Init [10] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-12 [3.11] - AOZ Init [11]: Setup ATS-Pair 4")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        ;;
+        (TarabostesTenacityID:string (ref-AOZ::UR_AutostakePair 4))
+        (StaterTenuulusID:string (ref-AOZ::UR_PrimalOrtoFungible 4))
+        (decay:integer 360)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS TarabostesTenacityID StaterTenuulusID decay)
+)
+
+(format "<<<<<<<AOZ Init [11] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-13 [3.12] - AOZ Init [12]: Setup ATS-Pair 5")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        ;;
+        (StrategonVigorID:string (ref-AOZ::UR_AutostakePair 5))
+        (DrachmaMinimaID:string (ref-AOZ::UR_PrimalOrtoFungible 5))
+        (decay:integer 720)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS StrategonVigorID DrachmaMinimaID decay)
+)
+
+(format "<<<<<<<AOZ Init [12] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-14 [3.13] - AOZ Init [13]: Setup ATS-Pair 6")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        ;;
+        (AsAuthorityID:string (ref-AOZ::UR_AutostakePair 6))
+        (AsInfinimusID:string (ref-AOZ::UR_PrimalOrtoFungible 6))
+        (decay:integer 1440)        
+
+    )
+    (ref-AOZ::C_SetupKosonicATS AsAuthorityID AsInfinimusID decay)
+)
+
+(format "<<<<<<<AOZ Init [13] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-15 [3.14] - AOZ Init [14]: Mint Kosons")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        (patron:string AOZ.AOZ|SC_NAME)
+        ;;
+        (PrimordialKosonID:string (ref-AOZ::UR_PrimalTrueFungible 1))
+        (EsothericKosonID:string (ref-AOZ::UR_PrimalTrueFungible 2))
+        (AncientKosonID:string (ref-AOZ::UR_PrimalTrueFungible 3))      
+        (pk-amount:decimal 50000.0)     ;;Differs on Main-Net
+        (ek-amount:decimal 50000.0)     ;;Differs on Main-Net
+        (ak-amount:decimal 50000.0)     ;;Differs on Main-Net
+
+    )
+    (ref-TS01-C1::DPTF|C_Mint patron PrimordialKosonID  patron pk-amount true)
+    (ref-TS01-C1::DPTF|C_Mint patron EsothericKosonID   patron ek-amount true)
+    (ref-TS01-C1::DPTF|C_Mint patron AncientKosonID     patron ak-amount true)
+)
+
+(format "<<<<<<<AOZ Init [14] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-16 [3.15] - AOZ Init [15]: Coil in each ATS Pair 250 of Each Type of Koson")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AOZ", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        (patron:string AOZ.AOZ|SC_NAME)
+        ;;
+        (PrimordialKosonID:string (ref-AOZ::UR_PrimalTrueFungible 1))
+        (EsothericKosonID:string (ref-AOZ::UR_PrimalTrueFungible 2))
+        (AncientKosonID:string (ref-AOZ::UR_PrimalTrueFungible 3))
+        ;;
+        (PlebeicStrengthID:string      (ref-AOZ::UR_AutostakePair 1))
+        (ComatiCommandID:string        (ref-AOZ::UR_AutostakePair 2))
+        (PileatiPowerID:string         (ref-AOZ::UR_AutostakePair 3))
+        (TarabostesTenacityID:string   (ref-AOZ::UR_AutostakePair 4))
+        (StrategonVigorID:string       (ref-AOZ::UR_AutostakePair 5))
+        (AsAuthorityID:string          (ref-AOZ::UR_AutostakePair 6))
+        ;;
+        (a:decimal 250.0)   ;; May Differ on Main-Net
+    )
+    (ref-TS01-C2::ATS|C_Coil patron patron PlebeicStrengthID    PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron PlebeicStrengthID    EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron PlebeicStrengthID    AncientKosonID      a)
+
+    (ref-TS01-C2::ATS|C_Coil patron patron ComatiCommandID      PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron ComatiCommandID      EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron ComatiCommandID      AncientKosonID      a)
+
+    (ref-TS01-C2::ATS|C_Coil patron patron PileatiPowerID       PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron PileatiPowerID       EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron PileatiPowerID       AncientKosonID      a)
+
+    (ref-TS01-C2::ATS|C_Coil patron patron TarabostesTenacityID PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron TarabostesTenacityID EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron TarabostesTenacityID AncientKosonID      a)
+
+    (ref-TS01-C2::ATS|C_Coil patron patron StrategonVigorID     PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron StrategonVigorID     EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron StrategonVigorID     AncientKosonID      a)
+
+    (ref-TS01-C2::ATS|C_Coil patron patron AsAuthorityID        PrimordialKosonID   a)
+    (ref-TS01-C2::ATS|C_Coil patron patron AsAuthorityID        EsothericKosonID    a)
+    (ref-TS01-C2::ATS|C_Coil patron patron AsAuthorityID        AncientKosonID      a)
+)
+
+(format "<<<<<<<AOZ Init [15] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")

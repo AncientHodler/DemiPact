@@ -1,0 +1,251 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              1.1     NONE: [REPL] Pre-Loads execs (already done)             ;;
+;;              1.2     LIVE Pre-Loads execs [only comment]                     ;;
+;;              2       DSP Deployment                                          ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.1     Repl Pre-Loads execs                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [1.1] - Define Keys Used in the DALOS Module")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    ;;
+    (module KC2 GOVERNANCE
+        (defcap GOVERNANCE () true)
+
+        ;;Standard Account
+        (defconst KADN_NAME_a "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99")
+        (defconst KADN_PBKY_a (drop 2 KADN_NAME_a))
+        (defconst DPTS_NAME_a "Ѻ.hÜ5ĞÊÜεŞΓõè1Ă₳äàÄìãÓЦφLÕзЯŮμĞ₿мK6àŘуVćχδдзηφыβэÎχUHRêγBğΛ∇VŒižďЬШ£îOÜøE4ÖFSõЩЩAłκè1ččΨΦŻЖэч6Iчη₱ØćнúŒψУćÀyпãЗцÚäδÏÍtςřïçγț6γÎęôigFzÝûηы₿ÏЬüБэΞčмŃт₳ŘчjζsŠȚHъĘïЦ0")
+        (defconst DISPENSER DPTS_NAME_a)
+        (defconst DPTS_PBKY_a "PK_DSP")
+        (defconst PBLC_a "9G.o0n0iHmGhkch5aEqr0wcpEKpuqgGt5uvFapDLb94GwCbJvBga5H4xrFAx41CbMMH0M7AHmqFnrafceFmaHBfjsH51ggCxJmu5DMpK4jGg0rpogpD26r4yiykAIkaqDz61sHGewpxl1tly780ahKxbEB7uD8FlvA1nGppsttz3AhIhbxlhJ3BpI3Hehf5tCM6bfqF9o6ryb3bErqJwEDJmMGFC9HEeDiLKAtMgqaajzK2b0yg2sE0lJMp2K8I6sjfwnyhyL5vnycpMpeCgagdlnbMMMaA9trHLx4FxLym6KqCFAxCFwFHohfbcolG3u5wGo06M1fMBKpC64Mgm4584tH93Hpmop4tLpD7157GLo7mejJk8ryrA229K07D2hbhtanzCgdtjziBs9yqvHLq78EFEsD1fpEeD0pMhJeLEMEsqu8zf816cLErk4aDC22GnsC9774C59iaLFKkzKzh11xnAEalcpGcLf7aecGBHu5IABIGq8sEFa9Ahi5inermzrys3HcLpz2degMmAEy8hKsI83zvaCta8Ksimgn3qmv4r4jocMsIAwDeEfzE")
+
+        (defconst KADN_NAME_b "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7")
+        (defconst KADN_PBKY_b (drop 2 KADN_NAME_b))
+        (defconst DPTS_NAME_b "Ѻ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ")
+        (defconst CUSTODIAN DPTS_NAME_b)
+        (defconst DPTS_PBKY_b "PK_CST")
+        (defconst PBLC_b "9H.abeq3vvcwJp9gl2Kdt5xb7djJwdB35bCgkIaF3r0k38kBF6La1M6ci0ma2e5exMehsmwe1x3d6EpsIjxv95hAvc3uJweirnitcAAryxn9HaHJ1f0ya36BDfsrfaIBL4moIF3B8glb5pDBhta7pyxigEdt13ccEIKtCdyC6krMhB5iyqfEyB70zf5tjqn2xpDDzg9nA7auzzjxxtwLH80Lmdp4wAEcnqprGishhMLLefMnzDv9dFyM0n31fAcziHogCIM4kktFgydhHah7hmJurs3xCrGrs5qAEtjid0zioLHM58l8wogL2j0L9LIH21wI4lD1BlKq4445nos849CEzcm3DC9t67IH1r63pkgc9xFEGr8K6H3CCfg9aqDcApxaDuEomaKjEj6ft71gtEwbEJJmrAzfDolHrFfubcertjF2rE2wMywhv7HqIoHMCKEznMFCy2C6eyGyh1mIMeKJDDhwqIDIA5a2wvtt0HedKxmgDldafrrGdn5yDGHMexLFCrGv9aG50G82zIlE5z7cksfplf5taeiz8vlydDKmLaCcMgA7ne77hsbGHuu")
+
+        (defconst KADN_NAME_c "k:1ca97db36aa87fd6fd7be81a263811469bf8b79d6b21ef3a215653bdcf7af55a")
+        (defconst KADN_PBKY_c (drop 2 KADN_NAME_c))
+        (defconst DPTS_NAME_c "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (defconst DHVAULT DPTS_NAME_c)
+        (defconst DPTS_PBKY_c "PK_DHV")
+        (defconst PBLC_c "9G.7G3mkhkk34Bg37uslsu3M7psBc40xsKFibE9DL0jb43JcJ7fzDh9cz3Edn8uvlkh0bCeFafFntCKt0HvJsmczx3Lek9d3mqr38BbIwmBrDkd8sordjr4L7tJ5Fnqj39F6s55hD3rEFvMGors4sws3lDcKiEHkMEE7kHuuB31gGe3F5HsI0yHbwsm2IcspsB1ICiD1g73vup127pjLauIc6gxl3sJy0lAml1uA9g18Btcl6prinGmo3uFomeoyvx9oLGlf6ctFsfavKa5vFrvaw2FB1KsAiejqqjaeMu1I1cEey3m55allFm5pg9LaFK307qnmjxfmqv38vvr2wBerI4BnvFKLgpB7e7pCCmarDJq1l6nHEIv6wl3d96iwAqEHxKEwpH7ljzqnsnBpcEFlpKu6xjc5o78DiwzrltiDxa5c9ug7wML3MGqDEH9tzIj2IreF5yEnw4M15yy38z7gqKbd7l3Fb3qc7kvrgHKG8cpq9M54kg6v5a1k7Laqea07ynccK6r2bjwl7L8IkE7EsAep77M1kb4455klFFH2qx2uEuGBlfsu1rztiMa")
+        
+        ;;Smart Account
+        (defconst KADN_NAME_1 "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99")
+        (defconst KADN_PBKY_1 (drop 2 KADN_NAME_1))
+        (defconst DPTS_NAME_1 "Σ.hÜ5ĞÊÜεŞΓõè1Ă₳äàÄìãÓЦφLÕзЯŮμĞ₿мK6àŘуVćχδдзηφыβэÎχUHRêγBğΛ∇VŒižďЬШ£îOÜøE4ÖFSõЩЩAłκè1ččΨΦŻЖэч6Iчη₱ØćнúŒψУćÀyпãЗцÚäδÏÍtςřïçγț6γÎęôigFzÝûηы₿ÏЬüБэΞčмŃт₳ŘчjζsŠȚHъĘïЦ0")
+        (defconst SMART-DISPENSER DPTS_NAME_1)
+        (defconst DPTS_PBKY_1 "PK_S-DSP")
+        (defconst PBLC_1 "9G.o0n0iHmGhkch5aEqr0wcpEKpuqgGt5uvFapDLb94GwCbJvBga5H4xrFAx41CbMMH0M7AHmqFnrafceFmaHBfjsH51ggCxJmu5DMpK4jGg0rpogpD26r4yiykAIkaqDz61sHGewpxl1tly780ahKxbEB7uD8FlvA1nGppsttz3AhIhbxlhJ3BpI3Hehf5tCM6bfqF9o6ryb3bErqJwEDJmMGFC9HEeDiLKAtMgqaajzK2b0yg2sE0lJMp2K8I6sjfwnyhyL5vnycpMpeCgagdlnbMMMaA9trHLx4FxLym6KqCFAxCFwFHohfbcolG3u5wGo06M1fMBKpC64Mgm4584tH93Hpmop4tLpD7157GLo7mejJk8ryrA229K07D2hbhtanzCgdtjziBs9yqvHLq78EFEsD1fpEeD0pMhJeLEMEsqu8zf816cLErk4aDC22GnsC9774C59iaLFKkzKzh11xnAEalcpGcLf7aecGBHu5IABIGq8sEFa9Ahi5inermzrys3HcLpz2degMmAEy8hKsI83zvaCta8Ksimgn3qmv4r4jocMsIAwDeEfzE")
+
+        (defconst KADN_NAME_2 "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7")
+        (defconst KADN_PBKY_2 (drop 2 KADN_NAME_2))
+        (defconst DPTS_NAME_2 "Σ.Щę7ãŽÓλ4ěПîЭđЮЫAďбQOχnиИДχѺNŽł6ПžιéИąĞuπЙůÞ1ęrПΔżæÍžăζàïαŮŘDzΘ€ЦBGÝŁЭЭςșúÜđŻõËŻκΩÎzŁÇÉΠмłÔÝÖθσ7₱в£μŻzéΘÚĂИüyćťξюWc2И7кςαTnÿЩE3MVTÀεPβafÖôoъBσÂбýжõÞ7ßzŁŞε0âłXâÃЛ")
+        (defconst SMART-CUSTODIAN DPTS_NAME_2)
+        (defconst DPTS_PBKY_2 "PK_S-CST")
+        (defconst PBLC_2 "9H.abeq3vvcwJp9gl2Kdt5xb7djJwdB35bCgkIaF3r0k38kBF6La1M6ci0ma2e5exMehsmwe1x3d6EpsIjxv95hAvc3uJweirnitcAAryxn9HaHJ1f0ya36BDfsrfaIBL4moIF3B8glb5pDBhta7pyxigEdt13ccEIKtCdyC6krMhB5iyqfEyB70zf5tjqn2xpDDzg9nA7auzzjxxtwLH80Lmdp4wAEcnqprGishhMLLefMnzDv9dFyM0n31fAcziHogCIM4kktFgydhHah7hmJurs3xCrGrs5qAEtjid0zioLHM58l8wogL2j0L9LIH21wI4lD1BlKq4445nos849CEzcm3DC9t67IH1r63pkgc9xFEGr8K6H3CCfg9aqDcApxaDuEomaKjEj6ft71gtEwbEJJmrAzfDolHrFfubcertjF2rE2wMywhv7HqIoHMCKEznMFCy2C6eyGyh1mIMeKJDDhwqIDIA5a2wvtt0HedKxmgDldafrrGdn5yDGHMexLFCrGv9aG50G82zIlE5z7cksfplf5taeiz8vlydDKmLaCcMgA7ne77hsbGHuu") 
+
+        (defconst KADN_NAME_3 "k:1ca97db36aa87fd6fd7be81a263811469bf8b79d6b21ef3a215653bdcf7af55a")
+        (defconst KADN_PBKY_3 (drop 2 KADN_NAME_3))
+        (defconst DPTS_NAME_3 "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+        (defconst SMART-DHVAULT DPTS_NAME_3)
+        (defconst DPTS_PBKY_3 "PK_S-DHV")
+        (defconst PBLC_3 "9G.7G3mkhkk34Bg37uslsu3M7psBc40xsKFibE9DL0jb43JcJ7fzDh9cz3Edn8uvlkh0bCeFafFntCKt0HvJsmczx3Lek9d3mqr38BbIwmBrDkd8sordjr4L7tJ5Fnqj39F6s55hD3rEFvMGors4sws3lDcKiEHkMEE7kHuuB31gGe3F5HsI0yHbwsm2IcspsB1ICiD1g73vup127pjLauIc6gxl3sJy0lAml1uA9g18Btcl6prinGmo3uFomeoyvx9oLGlf6ctFsfavKa5vFrvaw2FB1KsAiejqqjaeMu1I1cEey3m55allFm5pg9LaFK307qnmjxfmqv38vvr2wBerI4BnvFKLgpB7e7pCCmarDJq1l6nHEIv6wl3d96iwAqEHxKEwpH7ljzqnsnBpcEFlpKu6xjc5o78DiwzrltiDxa5c9ug7wML3MGqDEH9tzIj2IreF5yEnw4M15yy38z7gqKbd7l3Fb3qc7kvrgHKG8cpq9M54kg6v5a1k7Laqea07ynccK6r2bjwl7L8IkE7EsAep77M1kb4455klFFH2qx2uEuGBlfsu1rztiMa")
+    )
+
+    (env-data
+        {
+            "KEY_SC_Dispenser"      : { "keys": [KC2.DPTS_PBKY_a]},
+            "KEY_SC_Custodians"     : { "keys": [KC2.DPTS_PBKY_b]},
+            ;"KEY_SC_DHVault"        : { "keys": [KC2.DPTS_PBKY_c]},
+
+            "KEY_KDA_Dispenser"     : { "keys": [KC2.KADN_PBKY_a]},
+            "KEY_KDA_Custodians"    : { "keys": [KC2.KADN_PBKY_b]},
+            "KEY_KDA_DHVault"       : { "keys": [KC2.KADN_PBKY_c]}
+        }
+    )
+
+    ;;1]Create Keys On Name Space
+    (define-keyset "free.dh_sc_dispenser-keyset"    (read-keyset "KEY_SC_Dispenser"))
+    (define-keyset "free.dh_sc_custodians-keyset"   (read-keyset "KEY_SC_Custodians"))
+    ;(define-keyset "free.dh_sc_dhvault-keyset"      (read-keyset "KEY_SC_DHVault"))
+
+    ;;2]Issue and Fuel K:Accounts
+    (env-sigs
+        [
+            {
+                "key": "alice-key",
+                "caps":
+                    [
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_a 100.0)    ;;<PK_DSP>  "k:78567097b68c98bf0c86a1938e60111a3bfc0ccadb858cc7f3630bc9da9dad99"
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_b 100.0)    ;;<PK_CST>  "k:309a1052856018a954d9692560934a3b8bb6fd0f283ab6eee5fc192b61c119a7"
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_c 100.0)    ;;<PK_DHV>  "k:1ca97db36aa87fd6fd7be81a263811469bf8b79d6b21ef3a215653bdcf7af55a"
+                    ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-coin:module{fungible-v2} coin)
+        )
+        ;;Issue
+        (ref-coin::create-account KC2.KADN_NAME_a (read-keyset "KEY_KDA_Dispenser"))
+        (ref-coin::create-account KC2.KADN_NAME_b (read-keyset "KEY_KDA_Custodians"))
+        (ref-coin::create-account KC2.KADN_NAME_c (read-keyset "KEY_KDA_DHVault"))
+        ;;Fuel
+        (ref-coin::transfer "alice" KC2.KADN_NAME_a 100.0)
+        (ref-coin::transfer "alice" KC2.KADN_NAME_b 100.0)
+        (ref-coin::transfer "alice" KC2.KADN_NAME_c 100.0)
+    )
+
+    ;;3]Issue Standard and Smart Ouronet Accounts in Admin Mode (to not have to applies KDA Transfer Capabilities)
+    (env-sigs 
+        [ 
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_DSP", "caps": [] }
+            { "key": "PK_CST", "caps": [] }
+            ;{ "key": "PK_DHV", "caps": [] }
+        ]
+    )
+    (let
+        (
+            (ref-DALOS:module{OuronetDalosV4} DALOS)
+            (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+            ;;
+            (OuroID:string (ref-DALOS::UR_OuroborosID))
+        )
+        ;;Deploy Dispenser, Custodians and Treasury Standard Ouronet Accounts
+        (ref-TS01-A::DALOS|A_DeployStandardAccount KC2.DPTS_NAME_a  (keyset-ref-guard "free.dh_sc_dispenser-keyset")     KC2.KADN_NAME_a PBLC_a)
+        (ref-TS01-A::DALOS|A_DeployStandardAccount KC2.DPTS_NAME_b  (keyset-ref-guard "free.dh_sc_custodians-keyset")    KC2.KADN_NAME_b PBLC_b)
+        ;(ref-TS01-A::DALOS|A_DeployStandardAccount KC2.DPTS_NAME_c  (keyset-ref-guard "free.dh_sc_dhvault-keyset")       KC2.KADN_NAME_c PBLC_c)
+        ;;
+        ;;Deploy Dispenser, Custodians and Treasury Smart Ouronet Accounts
+        (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_1     (keyset-ref-guard "free.dh_sc_dispenser-keyset")     KC2.KADN_NAME_1 KC2.DPTS_NAME_a PBLC_a)
+        (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_2     (keyset-ref-guard "free.dh_sc_custodians-keyset")    KC2.KADN_NAME_2 KC2.DPTS_NAME_b PBLC_b)
+        ;(ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_3     (keyset-ref-guard "free.dh_sc_dhvault-keyset")       KC2.KADN_NAME_3 KC2.DPTS_NAME_c PBLC_c)
+        ;;
+    )
+
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       DSP Deployment                                          ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-02 [2] - DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_01/02_DSP+.pact")
+(format "<<<<<<<AOZ Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-03 [3.1] - DSP Init [1]: Dispenser Setup")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_DHV", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|G:module{OuronetGuards} U|G)
+        (ref-P|DALOS:module{OuronetPolicy} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+        (ref-P|DSP:module{OuronetPolicy} DSP)
+        (ref-DSP:module{Dispenser} DSP)
+        ;;
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (dalos-sc:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (smart-dhvault-sc:string (ref-DALOS::GOV|DHV2|SC_NAME))
+        (standard-dispenser:string (ref-DSP::GOV|DSP1|SC_NAME))
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        (PrimordialKosonID:string      (ref-AOZ::UR_PrimalTrueFungible 1))
+        (EsothericKosonID:string       (ref-AOZ::UR_PrimalTrueFungible 2))
+        (AncientKosonID:string         (ref-AOZ::UR_PrimalTrueFungible 3))
+    )
+    ;;1]Define IMC for Dispenser
+    (ref-P|DSP::P|A_Define)
+    ;;2]Reconfigure DALOS Governor, to be accesable from Dispenser, in order to use Gassless Patron for dispensing
+    (ref-TS01-C1::DALOS|C_RotateGovernor patron dalos-sc
+        (ref-U|G::UEV_GuardOfAny
+            [
+                (ref-P|DALOS::P|UR "TFT|RemoteDalosGov")
+                (ref-P|DALOS::P|UR "ORBR|RemoteDalosGov")
+                (ref-P|DALOS::P|UR "SWPU|RemoteDalosGov")
+                (ref-P|DALOS::P|UR "TS01-A|RemoteDalosGov")
+                (ref-P|DALOS::P|UR "DSP|RemoteDalosGov")
+            ]
+        )
+    )
+    ;;3]Reconfigure the SMART-DHVault Governor, to acces it fro mthe DSP Module
+    (ref-TS01-C1::DALOS|C_RotateGovernor patron smart-dhvault-sc
+        (ref-P|DALOS::P|UR "DSP|RemoteDalosGov")
+    )
+    ;;4]Toggle Mint Role for Ouro on Dispenser
+    (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID standard-dispenser true)
+    ;;5]Toggle Mint Role for Primordial, Esoteric, and Ancient Kosons on Dispenser
+    (ref-TS01-C1::DPTF|C_ToggleMintRole patron PrimordialKosonID standard-dispenser true)
+    (ref-TS01-C1::DPTF|C_ToggleMintRole patron EsothericKosonID standard-dispenser true)
+    (ref-TS01-C1::DPTF|C_ToggleMintRole patron AncientKosonID standard-dispenser true)
+)
+
+(format "<<<<<<<Dispenser Init [1] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>

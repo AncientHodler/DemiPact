@@ -1,0 +1,159 @@
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;ALA|TX 000 - Compute Test Percent
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "")
+(print "===================Last Dispenser Tests============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=============================================BEGIN SWP TESTS==========================================")
+(begin-tx "SWP|TX 000 - Make 10k DWK")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+          "caps": [
+                    (coin.TRANSFER 
+                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    1000.0)
+                  ]
+        }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+        (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+        (lq-index:string (at 0 (ref-DPTF::UR_RewardBearingToken lkda)))
+    )
+    (ref-TS01-C2::LQD|C_WrapKadena patron patron 1000.0)
+    (ref-TS01-C2::ATS|C_Coil patron patron lq-index wkda 510.0)
+    (format "CD with PBH iz {}"
+        [(at "prev-block-hash" (chain-data))]
+    )
+
+)
+(print "")
+(print "")
+(format "<<<<<<<SWP|TX 000 WrapKadena ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(print "=============================================BEGIN SWP TESTS==========================================")
+(begin-tx "ALA|TX 000 - Test BoostPromile")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+        (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-SWPI:module{SwapperIssueV2} SWPI)
+        (ref-SWP:module{SwapperV4} SWP)
+        (ref-ALA:module{AutonomicLiquidityAdder} ALA)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+        
+        (patron:string KST.ANHD)
+        (primordial:string (ref-SWP::UR_PrimordialPool))
+        (copp:decimal (ref-SWPI::URC_OuroPrimordialPrice))
+        (tp:decimal 10.0)
+        (daily-promille:decimal (ref-ALA::UC_ComputeDailyBoostPromile copp tp))
+
+        (dayz:integer 300)
+        (cdp:decimal (ref-ALA::UC_ComputeDailyBoostPromile copp tp))
+        (cdp2:decimal (ref-ALA::UC_CDP copp tp dayz))
+        ;;
+        (interval:decimal 1800.0)
+        (daily-intervals:decimal (floor (/ 86400.0 interval) 6))
+        (raise-per-interval:decimal (floor (/ daily-promille daily-intervals) 12))
+        ;;
+        (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+        (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+        (delta:[decimal] (ref-ALA::URC_DepletionOverpletion primordial))
+        ;;
+        (evn1:decimal (ref-ALA::URC_ExtraValueNeeded daily-promille))
+        (evn2:decimal (ref-ALA::URC_ExtraValueNeeded cdp2))
+    )
+    [
+        (format "Ouro Price is {}" [copp])
+        (format "Moving this price to {}$ in One year, means a daily promile of {}" [tp daily-promille])
+        (format "Raw Swap Amount is {}" 
+            [
+                (ref-U|SWP::UC_ComputeWP
+                    (ref-U|SWP::UDC_DirectRawSwapInput
+                        (ref-SWP::UR_Amplifier primordial)
+                        (ref-SWP::UR_PoolTokenSupplies primordial)
+                        [100.0]
+                        [2]
+                        0
+                        24
+                        (ref-SWP::UR_Weigths primordial)
+                    )
+                )
+            ]
+        )
+        (format "Weigths are {}" [(ref-SWP::UR_Weigths primordial)])
+        (format "Depletion-Overpletion for primordial is {}" [delta])
+        (format "Pool Total Fee is {}" [(ref-SWP::URC_PoolTotalFee primordial)])
+        (format "Extra Value needed with 365 days is {}" [evn1])
+        (format "Extra Value needed with 300 days is {}" [evn2])
+        ;;
+        (format "EVN1 is in LKDA|WKDA {}" [(ref-ALA::URC_ValueToKadenaz evn1)])
+        (format "EVN2 is in LKDA|WKDA {}" [(ref-ALA::URC_ValueToKadenaz evn2)])
+        (format "Daily Promille is {} and Raise per Interval is {}" [daily-promille raise-per-interval])
+
+    ]
+    ;(ref-TS01-C2::SWP|C_AddLiquidity patron patron primordial [10.008565986200021116735698 0.0 10.099370859207607932341959] kda-pid)
+    ;(format "Ouro NEW Price is {}" [(ref-SWPI::URC_OuroPrimordialPrice)])
+    ;(ref-TS01-C2::SWP|C_SingleSwapNoSlippage patron patron primordial lkda 408.0 wkda)
+    ;(ref-TS01-C2::SWP|C_SingleSwapNoSlippage patron patron primordial wkda 53.0 lkda)
+    ;(format "Depletion-Overpletion for primordial after swap is {}" [(ref-ALA::URC_DepletionOverpletion primordial)])
+
+)
+(print "")
+(print "")
+(format "<<<<<<<ALA|TX 000 Costs ==> {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

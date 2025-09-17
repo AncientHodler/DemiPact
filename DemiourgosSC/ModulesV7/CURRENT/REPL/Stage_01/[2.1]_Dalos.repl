@@ -1,0 +1,154 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              1.1     [REPL] Pre-Loads execs                                  ;;
+;;              1.2     LIVE Pre-Loads execs [only comment]                     ;;
+;;              2       DALOS Deployment                                        ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.1     Repl Pre-Loads execs                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [1.1] - Define Keys Used in the DALOS Module")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-data
+        {
+            ;;DEMI-MASTER-KEYS
+            "DemiourgosSithMasters": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_000a], "pred": "keys-any" },
+            "KEY_SC_GasTanker": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0002], "pred": "keys-any" },
+            "KEY_SC_DalosAutostake": { "keys": [KC.DPTS_PBKY_0004]},
+            "KEY_SC_DalosVesting": { "keys": [KC.DPTS_PBKY_0005]},
+            "KEY_SC_KadenaLiquidStaking": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0003], "pred": "keys-any" },
+            "KEY_SC_Ouroboros": { "keys": [KC.DPTS_PBKY_0000, KC.DPTS_PBKY_0001], "pred": "keys-any" },
+            "KEY_SC_DalosSwapper": { "keys": [KC.DPTS_PBKY_0000]},
+            "KEY_SC_DHVault": { "keys": [KC.DPTS_PBKY_0007]},
+
+            "KEY_KDA_DalosAutostake": { "keys": [KC.KADN_PBKY_0004]},
+            "KEY_KDA_DalosVesting": { "keys": [KC.KADN_PBKY_0005]}
+        }
+    )
+
+    ;;DALOS Defined Keysets ==> For Repl Using Named Keys, ex PK_AncientHodler
+    (define-keyset "free.dh_master-keyset" (read-keyset "DemiourgosSithMasters"))
+    (define-keyset "free.dh_sc_dalos-keyset" (read-keyset "KEY_SC_GasTanker"))
+    (define-keyset "free.dh_sc_autostake-keyset" (read-keyset "KEY_SC_DalosAutostake"))
+    (define-keyset "free.dh_sc_vesting-keyset" (read-keyset "KEY_SC_DalosVesting"))
+    (define-keyset "free.dh_sc_kadenaliquidstaking-keyset" (read-keyset "KEY_SC_KadenaLiquidStaking"))
+    (define-keyset "free.dh_sc_ouroboros-keyset" (read-keyset "KEY_SC_Ouroboros"))
+    (define-keyset "free.dh_sc_swapper-keyset" (read-keyset "KEY_SC_DalosSwapper"))
+    (define-keyset "free.dh_sc_dhvault-keyset" (read-keyset "KEY_SC_DHVault"))
+
+    ;;Create Autostake and Vesting KDA Accounts (for use in Repl)
+    (let
+        (
+            (ref-coin:module{fungible-v2} coin)
+        )
+        (ref-coin::create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
+        (ref-coin::create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))
+    )
+
+(env-gas)
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [1.2] - Kadena Account Creation and Fuel of 1st Account")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs [])
+(env-gas)
+(commit-tx)
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.2     LIVE Pre-Loads execs                                    ;;
+;;                      Deploy "free.dh_master-keyset"                          ;;
+;;                      Deploy "free.dh_sc_dalos-keyset"                        ;;
+;;                      Deploy "free.dh_sc_autostake-keyset"                    ;;
+;;                      Deploy "free.dh_sc_vesting-keyset"                      ;;
+;;                      Deploy "free.dh_sc_kadenaliquidstaking-keyset"          ;;
+;;                      Deploy "free.dh_sc_ouroboros-keyset"                    ;;
+;;                      Deploy "free.dh_sc_swapper-keyset"                      ;;
+;;                      Deploy "free.dh_sc_dhvault-keyset"                      ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       DALOS Deployment                                        ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-02 [2] - DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/2_Core/01_DALOS.pact")
+(format "<<<<<<<DALOS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-03 [C3.1] - Deploy Ouronet Accounts for Testing Purposes")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [ 
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;;
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+        { "key": "PK_Coca", "caps": [] }
+        { "key": "PK_Kiss", "caps": [] }
+        { "key": "PK_Plcs", "caps": [] }
+        { "key": "PK_Nani", "caps": [] }
+        { "key": "PK_AOZ", "caps": [] }
+        ;;
+        { "key": "PK_BM", "caps": [] }
+        { "key": "PK_BJ", "caps": [] }
+    ]
+)
+
+    ;;
+    [
+        (DALOS.A_DeployStandardAccount KC.EMMA (keyset-ref-guard "free.us-0001_emma-keyset") KC.KADN_NAME_000b KC.PBLC_000b)
+        (DALOS.A_DeployStandardAccount KC.LUMY (keyset-ref-guard "free.us-0002_lumy-keyset") KC.KADN_NAME_000d KC.PBLC_000d)
+        (DALOS.A_DeployStandardAccount KC.COCA (keyset-ref-guard "free.us-0003_coca-keyset") KC.KADN_NAME_000e KC.PBLC_000e)
+        (DALOS.A_DeployStandardAccount KC.KISS (keyset-ref-guard "free.us-0004_kiss-keyset") KC.KADN_NAME_000f KC.PBLC_000f)
+        (DALOS.A_DeployStandardAccount KC.PULECS (keyset-ref-guard "free.us-0005_plcs-keyset") KC.KADN_NAME_000g KC.PBLC_000g)
+        (DALOS.A_DeployStandardAccount KC.NANI (keyset-ref-guard "free.us-0006_nani-keyset") KC.KADN_NAME_000h KC.PBLC_000h)
+        (DALOS.A_DeployStandardAccount KC.AOZ (keyset-ref-guard "free.us-0000_aozt-keyset") KC.KADN_NAME_000i KC.PBLC_000i)
+        ;;
+        ;;Banana Example
+        (DALOS.A_DeployStandardAccount KC.BM (keyset-ref-guard "free.us-0007_bnms-keyset") KC.KADN_NAME_000j KC.PBLC_000j)
+        (DALOS.A_DeploySmartAccount KC.BJ (keyset-ref-guard "free.us-0008_bnjr-keyset") KC.KADN_NAME_0006 KC.BM KC.PBLC_0006)
+    ]
+
+(env-sigs [])
+(env-gas)
+(commit-tx)

@@ -1,0 +1,83 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              1.1     NONE ==> [REPL] Pre-Loads execs;                        ;;
+;;              1.2     NONE ==> LIVE Pre-Loads execs [only comment]            ;;
+;;              2       TS01-A, TS01-C1, TS01-C2, TS01-P Deployment             ;;
+;;              3       NONE ==> [REPL] Post-Loads execs                        ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2.1] - TS01-A Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/3_Talos/01_TS01-A.pact")
+(format "<<<<<<<TS01-A Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [2.2] - TS01-C1 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/3_Talos/02_TS01-C1.pact")
+(format "<<<<<<<TS01-C1 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [2.3] - TS01-C2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/3_Talos/03_TS01-C2.pact")
+(format "<<<<<<<TS01-C2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [2.4] - TS01-P Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/3_Talos/04_TS01-P.pact")
+(format "<<<<<<<TS01-P Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")

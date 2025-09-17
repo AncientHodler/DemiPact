@@ -1,0 +1,228 @@
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 01 - Chain Data Time SetUp Definition
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 00 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;==============================================================================
+;;
+;;
+;;
+;;
+;;
+;;==============================================================================
+;; PART 02 - Module Load Up
+;;
+;; LOAD Class01_ST01-Utility-v2 >>> Utility Modules
+;;
+(print "")
+(begin-tx "INIT TX 00a - U|ATS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C00>>01|09_U|ATS+-V2.pact")
+(format "<<<<<<<U|ATS-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 00b - U|VST Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C00>>01|11_U|VST+-V2.pact")
+(format "<<<<<<<U|VST-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;; LOAD Class01_ST01-Interfaces >>> Multiple Interfaces
+;;
+(print "<Class01_ST01-Interfaces-V2> Stage Interfaces >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+(print "")
+(begin-tx "INIT TX M00b - C01>>01|01_StageOneInterfaces.pact")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class01_ST01-Interfaces-V2/C01>>01|01_StageOneInterfaces-V2.pact")
+(format "<<<<<<<StageOne-V2 Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+;;
+(print "<Class01_ST01-Interfaces-V2> Modules Loaded >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;; LOAD Class02_ST01-Main-V2 >>> 17 Modules
+;;
+(print "")
+(begin-tx "INIT TX 01 - DALOS-v2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|01_DALOS-V2.pact")
+(format "<<<<<<<DALOS-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 02 - IGNIS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class02_ST01-Main-V2/C02>>01|02_IGNIS.pact")
+(format "<<<<<<<IGNIS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX 03 - INFO-ZERO Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class02_ST01-Main-V2/C02>>01|03_INFO-ZERO.pact")
+(format "<<<<<<<INFO-ZERO Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M04 - BRD Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|04_BRD-V2.pact")
+(format "<<<<<<<BRD-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M05 - DPTF-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|05_DPTF-V2.pact")
+(format "<<<<<<<DPTF-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M06 - DPOF Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class02_ST01-Main-V2/C02>>01|06_DPOF.pact")
+(format "<<<<<<<DPOF Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M07 - ELITE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class02_ST01-Main-V2/C02>>01|07_ELITE.pact")
+(format "<<<<<<<ELITE Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M08 - ATS-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|08_ATS-V2.pact")
+(format "<<<<<<<ATS-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M09 - TFT-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|09_TFT-V2.pact")
+(format "<<<<<<<TFT-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M10 - ATSU-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|10_ATSU-V2.pact")
+(format "<<<<<<<ATSU-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")
+
+(print "")
+(begin-tx "INIT TX M11 - VST-V2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../Class02_ST01-Main-V2/C02>>01|11_VST-V2.pact")
+(format "<<<<<<<VST-V2 Costs {} GAS>>>>>>>" [(env-gas)])
+(env-sigs [])
+(commit-tx)
+(print "")

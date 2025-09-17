@@ -31,69 +31,6 @@
         @doc "Defines the Intermodule Guards"
     )
 )
-(interface IgnisCollector
-    ;;
-    ;;
-    ;;  SCHEMAS
-    ;;
-    (defschema PrimedCumulator
-        primed-cumulator:object{CompressedCumulator}
-    )
-    (defschema CompressedCumulator
-        ignis-prices:[decimal]
-        interactors:[string]
-    )
-    (defschema OutputCumulator
-        cumulator-chain:[object{ModularCumulator}]
-        output:list
-    )
-    (defschema ModularCumulator
-        ignis:decimal
-        interactor:string
-    )
-    ;;
-    ;;
-    ;;  [URC] Functions
-    ;;
-    (defun IC|URC_Exception (account:string))
-    (defun IC|URC_ZeroEliteGAZ (sender:string receiver:string))
-    (defun IC|URC_ZeroGAZ:bool (id:string sender:string receiver:string))
-    (defun IC|URC_ZeroGAS:bool (id:string sender:string))
-    (defun IC|URC_IsVirtualGasZeroAbsolutely:bool (id:string))
-    (defun IC|URC_IsVirtualGasZero:bool ())
-    (defun IC|URC_IsNativeGasZero:bool ())
-    ;;
-    ;;
-    ;;  [UEV] Functions
-    ;;
-    (defun IC|UEV_VirtualState (state:bool))
-    (defun IC|UEV_VirtualOnCondition ())
-    (defun IC|UEV_NativeState (state:bool))
-    (defun IC|UEV_Patron (patron:string))
-    ;;
-    ;;
-    ;;  [UDC] Functions
-    ;;
-    (defun IC|UDC_BrandingCumulator:object{OutputCumulator} (active-account:string multiplier:decimal))
-    (defun IC|UDC_SmallestCumulator:object{OutputCumulator} (active-account:string))
-    (defun IC|UDC_SmallCumulator:object{OutputCumulator} (active-account:string))
-    (defun IC|UDC_MediumCumulator:object{OutputCumulator} (active-account:string))
-    (defun IC|UDC_BigCumulator:object{OutputCumulator} (active-account:string))
-    (defun IC|UDC_BiggestCumulator:object{OutputCumulator} (active-account:string))
-        ;;
-    (defun IC|UDC_ConstructOutputCumulator:object{OutputCumulator} (price:decimal active-account:string trigger:bool output-lst:list))
-    (defun IC|UDC_MakeModularCumulator:object{ModularCumulator} (price:decimal active-account:string trigger:bool))
-    (defun IC|UDC_MakeOutputCumulator:object{OutputCumulator} (input-modular-cumulator-chain:[object{ModularCumulator}] output-lst:list))
-    (defun IC|UDC_ConcatenateOutputCumulators:object{OutputCumulator} (input-output-cumulator-chain:[object{OutputCumulator}] new-output-lst:list))
-    (defun IC|UDC_CompressOutputCumulator:object{CompressedCumulator} (input-output-cumulator:object{OutputCumulator}))
-    (defun IC|UDC_PrimeIgnisCumulator:object{PrimedCumulator} (patron:string input:object{CompressedCumulator}))
-    ;;
-    ;;
-    ;;  []C] Functions
-    ;;
-    ;;
-    (defun IC|C_Collect (patron:string input-output-cumulator:object{OutputCumulator}))
-)
 (interface OuronetDalosV4
     @doc "Interface Exposing DALOS Module Functions \
         \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) \
@@ -259,6 +196,69 @@
     (defun XE_UpdateMintRole (account:string snake-or-gas:bool new-mint:bool))
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
     (defun XE_UpdateTreasury (type:integer tdp:decimal tds:decimal))
+)
+(interface IgnisCollector
+    ;;
+    ;;
+    ;;  SCHEMAS
+    ;;
+    (defschema PrimedCumulator
+        primed-cumulator:object{CompressedCumulator}
+    )
+    (defschema CompressedCumulator
+        ignis-prices:[decimal]
+        interactors:[string]
+    )
+    (defschema OutputCumulator
+        cumulator-chain:[object{ModularCumulator}]
+        output:list
+    )
+    (defschema ModularCumulator
+        ignis:decimal
+        interactor:string
+    )
+    ;;
+    ;;
+    ;;  [URC] Functions
+    ;;
+    (defun IC|URC_Exception (account:string))
+    (defun IC|URC_ZeroEliteGAZ (sender:string receiver:string))
+    (defun IC|URC_ZeroGAZ:bool (id:string sender:string receiver:string))
+    (defun IC|URC_ZeroGAS:bool (id:string sender:string))
+    (defun IC|URC_IsVirtualGasZeroAbsolutely:bool (id:string))
+    (defun IC|URC_IsVirtualGasZero:bool ())
+    (defun IC|URC_IsNativeGasZero:bool ())
+    ;;
+    ;;
+    ;;  [UEV] Functions
+    ;;
+    (defun IC|UEV_VirtualState (state:bool))
+    (defun IC|UEV_VirtualOnCondition ())
+    (defun IC|UEV_NativeState (state:bool))
+    (defun IC|UEV_Patron (patron:string))
+    ;;
+    ;;
+    ;;  [UDC] Functions
+    ;;
+    (defun IC|UDC_BrandingCumulator:object{OutputCumulator} (active-account:string multiplier:decimal))
+    (defun IC|UDC_SmallestCumulator:object{OutputCumulator} (active-account:string))
+    (defun IC|UDC_SmallCumulator:object{OutputCumulator} (active-account:string))
+    (defun IC|UDC_MediumCumulator:object{OutputCumulator} (active-account:string))
+    (defun IC|UDC_BigCumulator:object{OutputCumulator} (active-account:string))
+    (defun IC|UDC_BiggestCumulator:object{OutputCumulator} (active-account:string))
+        ;;
+    (defun IC|UDC_ConstructOutputCumulator:object{OutputCumulator} (price:decimal active-account:string trigger:bool output-lst:list))
+    (defun IC|UDC_MakeModularCumulator:object{ModularCumulator} (price:decimal active-account:string trigger:bool))
+    (defun IC|UDC_MakeOutputCumulator:object{OutputCumulator} (input-modular-cumulator-chain:[object{ModularCumulator}] output-lst:list))
+    (defun IC|UDC_ConcatenateOutputCumulators:object{OutputCumulator} (input-output-cumulator-chain:[object{OutputCumulator}] new-output-lst:list))
+    (defun IC|UDC_CompressOutputCumulator:object{CompressedCumulator} (input-output-cumulator:object{OutputCumulator}))
+    (defun IC|UDC_PrimeIgnisCumulator:object{PrimedCumulator} (patron:string input:object{CompressedCumulator}))
+    ;;
+    ;;
+    ;;  []C] Functions
+    ;;
+    ;;
+    (defun IC|C_Collect (patron:string input-output-cumulator:object{OutputCumulator}))
 )
 (interface OuronetInfoV2
     @doc "Holds Information Schema"

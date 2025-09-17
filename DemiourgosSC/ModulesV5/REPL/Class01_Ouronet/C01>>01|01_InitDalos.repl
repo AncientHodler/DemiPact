@@ -460,6 +460,15 @@
 (print "")
 
 (print "")
+(begin-tx "INIT TX M18b - DPOF Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../Class02_ST01-Main/C02>>01|04b_DPOF.pact")
+(format "<<<<<<<DPOF Costs {} GAS>>>>>>>" [(env-gas)])
+(commit-tx)
+(print "")
+
+(print "")
 (begin-tx "INIT TX M19 - ATS Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 (namespace "free")
@@ -690,6 +699,7 @@
 (use BRD)           ;; 34.960
 (use DPTF)          ;;121.156
 (use DPMF)          ;;120.199
+(use DPOF)
 (use ATS)           ;;138.940
 (use TFT)           ;;118.810
 (use ATSU)          ;;104.135

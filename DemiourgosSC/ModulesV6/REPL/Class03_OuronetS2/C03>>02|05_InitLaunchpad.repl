@@ -1,0 +1,58 @@
+;;Anct Patron
+;;lumy Owner
+;;emma Creator
+(begin-tx "Step 01 - Init Shareholders Sale")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-PAD-SH:module{SaleShareholders} PAD-SH)
+        (patron:string  KST.ANHD) 
+        (edh:string "E|DH-98c486052a51")
+    )
+    (ref-PAD-SH::A_InitialiseSaleModule patron edh 10.0)
+)
+(print "")
+(print "")
+(format "<<<<<<<Step 01 - Init Shareholders Sale Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Step 02 - Init Custodians Sale")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-PAD-CUSTODIANS:module{SaleCustodians} PAD-CUSTODIANS)
+        (patron:string  KST.ANHD) 
+        (dhoc:string "DHOC-98c486052a51")
+    )
+    (ref-PAD-CUSTODIANS::A_InitialiseSaleModule patron dhoc 1.5)
+)
+(print "")
+(print "")
+(format "<<<<<<<Step 02 - Init Custodians Sale Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

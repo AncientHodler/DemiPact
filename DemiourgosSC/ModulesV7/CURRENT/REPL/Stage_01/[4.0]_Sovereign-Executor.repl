@@ -1,0 +1,1119 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              4.0     Executes Functions needed to activate the Sovereign     ;;
+;;              4.1     DALOS                                                   ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+;;These Functions must be executed after Deployment to ensure Sovereing Functionality
+;;Wrapped in a <(let ...>  syntax, they bring the removal of the deployer Modules
+;;
+;;              4.1     DALOS
+(print "")
+(begin-tx "TX-01 [4.1.1] - Dalos INIT [01]: Init Sovereign Standard Ouronet Account")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Byta", "caps": [] }
+        { "key": "PK_Florean", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+        ;;
+        (ns-uze:string (ref-U|CT::CT_NS_USE))
+    )
+    [
+        (ref-TS01-A::DALOS|A_DeployStandardAccount
+            ;:Deploy AH Standard Ouronet Account
+            "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+            (keyset-ref-guard (+ ns-uze ".dh_ah-keyset"))
+            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"    ;;Different Main Net Value
+            "9G.CgcAjiI89ICnk45mxx63hwkBe5G71sIqfEta0ugkzF7EB6cy55BtzlFa27jDGE7Kn7ChljCmkcIsrDw9JwzJECieGLB5Jlkz9Blo6iJct6uxIA1u64Hr7HKa93EAiCwJJBBKAojJtwupEsvspH1jjGxKyFsb8fbfnJm1rAKxcIzcFILmmdHFaICfFpnbJG6tJu0HM9JCJ7MBCE7C2LiqvE6Fc1hqCeAdGHxDp7sGquI0wl2l08aa6wlKvwu44jgqF8mqDnCyjpxHuttEqjs4h9IJ28kmB53ppwoznt16rjzeMl21n3rwfI2es56rp5xavCabDacyCuonniz72L5d7dq3ptIEiuggEyLIIGe9sadH6eaMyitcmKaH7orgFz6d9kL9FKorBr06owFg328wFhCIlCFpwIzokmo47xKKt5kBzhyodBAjhCqayuHBue4oDhoA21A2H9ut9gApMuxokcmsi7Bd1kitrfJAy1GkrGiBK5dvlhgshcnGaG3vhkCm6dI5idCGjDEodivvDbgyI6zaajHvIMdBtrGvuKnxvsBulkbaDbk2wIdKwrK"
+        )
+        (ref-TS01-A::DALOS|A_DeployStandardAccount
+            ;;Deploy CTO Standard Ouronet Account
+            "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"
+            (keyset-ref-guard (+ ns-uze ".dh_cto-keyset"))
+            "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+            "9G.7si93iImtrM53Jl9C7pIojCAmq04gHyk8d1lle6x07Hfh57idcrqEznFM7ousiC14d16dlIbwAE2K7MBK79ApIMgb405svepvaz7azIIHGLulbIqBefscnsmydqD1pCHAKlH3xu6tJk6ejJk5fMlvtrvu2gc0lnz7knipdqvE6huvywrFt925E9Ci5bkspirF8GDA03Iorf5zdg1ad6tFG9uMBHL2aqsu0JcoicuoHcCnLHE6dBoignL7DiJrFGxgimrmrF5cLoqDjrjhb3GwFD4wfnMDbIqmq3MMrBJm96Ggve7worr5z5oLh5bhhrjHzf0fLH77ho1zv04kEM8odz6254H4JewC4sw9cxA1Aa9vaggj5owFK332Fff41lCi75otEhdzoheln2Czli46tcKv35o1ftkHLgrjAtMoIFDKuFjzv4d3kbqJ4Crzgtn63o95FMqFF91MbLGMLEBjis3sjJiGB0yLJzdBetdECclzxFo5cAve8o08Hifng4kEgExDzqFhKGdK9lCmyu4E9vo6k3jHjhH96KlvGDCjwMFcpkqyMB2gtlurlst"
+        )
+        (ref-TS01-A::DALOS|A_DeployStandardAccount
+            ;;Deploy HOV Standard Ouronet Account
+            "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι"
+            (keyset-ref-guard (+ ns-uze ".dh_hov-keyset"))
+            "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"    ;;Different Main Net Value
+            "9H.268Bnvp307DmbIcEltbEkpeHuK3C3qsD615ml5qefsA4HErwbqDhy6K1IvqxMeoCBh9mfieMj72jbzzI6a6nDtGhmf2nbHyE6M3zceog4o3bEkqcyvLsBdsGLt7Fu6Ei0Da6iej0n2z5M3bFsAk6iitosvzemff0B18kpeh5ocj5zb7DebFiLgAhIElsgg05Lh5CpyF5LqyKtlFvAay6wtCzsi2cM19BMB29nrfcIgKkaIkh2sjtAE5giM6th727eDekACBvMexk74wxgD2pJegzjuCqIe3BwozG5Fa29DqpcKM5zL1x78h7JKMj1ek2aanqnCtG33Dr3w2mzcIcLjlsDtMD1CG02CFlrCCAzMmlLmFgsBiIpt3Blj1uaxJG67xB2jwKj45s4LIDhzLea24m1AzFh6FD4MsF4Ay35i2Cvbmzdff6nuJbKM5tw5C31xapoqwEIeKkCC9zsiIk8GCMhis557p7Hk9H3aM059D24ar7KLmlr8cydi9n4u2rwH02rb8l1ixDbgoqn2jlCHDBxbCnf3A4GyI4FpaqJuBf1IwdI85Bq6qzcJIiK"
+        )
+    ]
+    
+)
+
+(format "<<<<<<<Dalos INIT [01] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [4.1.2] - Dalos INIT [02]: Define IMC Policies")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-P|BRD:module{OuronetPolicy} BRD)
+        (ref-P|DPTF:module{OuronetPolicy} DPTF)
+        (ref-P|DPMF:module{OuronetPolicy} DPMF)
+        (ref-P|ATS:module{OuronetPolicy} ATS)
+        (ref-P|TFT:module{OuronetPolicy} TFT)
+        (ref-P|ATSU:module{OuronetPolicy} ATSU)
+        (ref-P|VST:module{OuronetPolicy} VST)
+        (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+        (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+        ;;
+        (ref-P|SWPT:module{OuronetPolicy} SWPT)
+        (ref-P|SWP:module{OuronetPolicy} SWP)
+        (ref-P|SWPI:module{OuronetPolicy} SWPI)
+        (ref-P|SWPL:module{OuronetPolicy} SWPL)
+        (ref-P|SWPLC:module{OuronetPolicy} SWPLC)
+        (ref-P|SWPU:module{OuronetPolicy} SWPU)
+        (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP)
+        ;;
+        (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
+        (ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
+        (ref-P|TS01-C2:module{OuronetPolicy} TS01-C2)
+        (ref-P|TS01-CP:module{OuronetPolicy} TS01-CP)
+    )
+    [
+        (ref-P|BRD::P|A_Define)
+        (ref-P|DPTF::P|A_Define)
+        (ref-P|DPMF::P|A_Define)
+        (ref-P|ATS::P|A_Define)
+        (ref-P|TFT::P|A_Define)
+        (ref-P|ATSU::P|A_Define)
+        (ref-P|VST::P|A_Define)
+        (ref-P|LIQUID::P|A_Define)
+        (ref-P|ORBR::P|A_Define)
+        ;;
+        (ref-P|SWPT::P|A_Define)
+        (ref-P|SWP::P|A_Define)
+        (ref-P|SWPI::P|A_Define)
+        (ref-P|SWPL::P|A_Define)
+        (ref-P|SWPLC::P|A_Define)
+        (ref-P|SWPU::P|A_Define)
+        (ref-P|MTX-SWP::P|A_Define)
+        ;;
+        (ref-P|TS01-A::P|A_Define)
+        (ref-P|TS01-C1::P|A_Define)
+        (ref-P|TS01-C2::P|A_Define)
+        (ref-P|TS01-CP::P|A_Define)
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [02] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [4.1.3] - Dalos INIT [03]: Insert Dalos Table Data")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|CT:module{OuronetConstants} U|CT)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+        ;;
+        (bar:string (ref-U|CT::CT_BAR))
+        (info:string (ref-DALOS::DALOS|Info))
+        (vgd:string (ref-DALOS::DALOS|VirtualGasData))
+    )
+    [
+        ;;Kadena Prices (Main-Net Prices x1000)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "standard"      0.01)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "smart"         0.02)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ats"            0.1)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "swp"           0.15)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "dptf"           0.2)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpmf"           0.3)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpsf"           0.4)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "dpnf"           0.5)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "blue"         0.025)
+
+        ;;Ignis Prices
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|smallest"            1.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|small"               2.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|medium"              3.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|big"                 4.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|biggest"             5.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|branding"          100.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|token-issue"       500.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|ats-issue"        5000.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|swp-issue"        4000.0)
+        (ref-TS01-A::DALOS|A_UpdateUsagePrice "ignis|swp-liquidity"      20.0)
+
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.DALOS)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
+
+        (insert ref-DALOS::DALOS|PropertiesTable info
+            {"global-administrative-pause"  : false
+            ,"demiurgoi"                    :
+                [
+                    (ref-DALOS::GOV|DHV2|SC_NAME)
+                    "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"
+                    "Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι"
+                ]
+            ,"unity-id"                     : bar
+            ,"gas-source-id"                : bar
+            ,"gas-source-id-price"          : 0.0
+            ,"gas-id"                       : bar
+            ,"ats-gas-source-id"            : bar
+            ,"elite-ats-gas-source-id"      : bar
+            ,"wrapped-kda-id"               : bar
+            ,"liquid-kda-id"                : bar
+            ,"treasury-dispo-type"          : 3
+            ,"treasury-dynamic-promille"    : 320.0
+            ,"treasury-static-tds"          : 250.0
+            ,"ouro-auto-price-via-swaps"    : false}
+        )
+        (insert ref-DALOS::DALOS|GasManagementTable vgd
+            {"virtual-gas-tank"             : (ref-DALOS::GOV|DALOS|SC_NAME)
+            ,"virtual-gas-toggle"           : false
+            ,"virtual-gas-spent"            : 0.0
+            ,"native-gas-toggle"            : false
+            ,"native-gas-spent"             : 0.0
+            ,"native-gas-pump"              : false}
+        )
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [03] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [4.1.4] - Dalos INIT [05]: Insert Dalos Table Data")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_DalosAutostake", "caps": [] }
+        { "key": "PK_DalosVesting", "caps": [] }
+
+        { "key": "PK_DHV", "caps": [] }
+        { "key": "PK_CST", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-ATS:module{AutostakeV4} ATS)
+        (ref-VST:module{VestingV4} VST)
+        (ref-LIQUID:module{KadenaLiquidStakingV4} LIQUID)
+        (ref-ORBR:module{OuroborosV4} OUROBOROS)
+        (ref-SWP:module{SwapperV4} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+        (patron:string KST.ANHD)
+    )
+    [
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;Dalos Smart Ouronet Account
+            (ref-DALOS::GOV|DALOS|SC_NAME)
+            (keyset-ref-guard (ref-DALOS::GOV|DalosKey)) 
+            (ref-DALOS::GOV|DALOS|SC_KDA-NAME)
+            patron 
+            (ref-DALOS::GOV|DALOS|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;Autostake Smart Ouronet Account
+            (ref-DALOS::GOV|ATS|SC_NAME) 
+            (keyset-ref-guard (ref-DALOS::GOV|AutostakeKey)) 
+            "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"    ;;Different Main Net Value
+            patron 
+            (ref-DALOS::GOV|ATS|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;Vesting Smart Ouronet Account
+            (ref-DALOS::GOV|VST|SC_NAME)
+            (keyset-ref-guard (ref-DALOS::GOV|VestingKey)) 
+            "k:4728327e1b4790cb5eb4c3b3c531ba1aed00e86cd9f6252bfb78f71c44822d6d"    ;;Different Main Net Value
+            patron 
+            (ref-DALOS::GOV|VST|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;Liquid-Staking Smart Ouronet Account
+            (ref-DALOS::GOV|LIQUID|SC_NAME)
+            (keyset-ref-guard (ref-DALOS::GOV|LiquidKey)) 
+            (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME)
+            patron 
+            (ref-DALOS::GOV|LIQUID|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;Ouroboros Smart Ouronet Account
+            (ref-DALOS::GOV|OUROBOROS|SC_NAME) 
+            (keyset-ref-guard (ref-DALOS::GOV|OuroborosKey)) 
+            (ref-ORBR::GOV|ORBR|SC_KDA-NAME)
+            patron 
+            (ref-DALOS::GOV|OUROBOROS|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;;SWP Smart Ouronet Account
+            (ref-DALOS::GOV|SWP|SC_NAME) 
+            (keyset-ref-guard (ref-DALOS::GOV|SwapKey)) 
+            "k:89faf537ec7282d55488de28c454448a20659607adc52f875da30a4fd4ed2d12"    ;;Different Main Net Value
+            patron 
+            (ref-DALOS::GOV|SWP|PBL)
+        )
+        ;;
+        ;;
+        (ref-TS01-A::DALOS|A_DeployStandardAccount
+            ;;Demiourgos Treasury Standard Ouronet Account
+            (ref-DALOS::GOV|DHV1|SC_NAME) 
+            (keyset-ref-guard (ref-DALOS::GOV|DHVKey)) 
+            "k:1ca97db36aa87fd6fd7be81a263811469bf8b79d6b21ef3a215653bdcf7af55a"    ;;Different Main Net Value
+            (ref-DALOS::GOV|DHV|PBL)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount
+            ;Demiourgos Treasury Smart Ouronet Account
+            (ref-DALOS::GOV|DHV2|SC_NAME)
+            (keyset-ref-guard (ref-DALOS::GOV|DHVKey)) 
+            "k:1ca97db36aa87fd6fd7be81a263811469bf8b79d6b21ef3a215653bdcf7af55a"    ;;Different Main Net Value
+            (ref-DALOS::GOV|DHV1|SC_NAME) 
+            (ref-DALOS::GOV|DHV|PBL)
+        )
+        ;;
+        ;;
+        ;;Genesis Governor Setups
+        (ref-DALOS::DALOS|SetGovernor patron)
+        (ref-ATS::ATS|SetGovernor patron)
+        (ref-VST::VST|SetGovernor patron)
+        (ref-LIQUID::LIQUID|SetGovernor patron)
+        (ref-ORBR::OUROBOROS|SetGovernor patron)
+        (ref-SWP::SWP|SetGovernor patron)  
+        ;;
+        ;;Deploy Kadena Account
+        (ref-coin::create-account 
+            (ref-DALOS::GOV|DALOS|SC_KDA-NAME) 
+            (ref-DALOS::GOV|DALOS|GUARD)
+        )
+        (ref-coin::create-account 
+            (ref-ORBR::GOV|ORBR|SC_KDA-NAME) 
+            (ref-ORBR::GOV|ORBR|GUARD)
+        )
+        (ref-coin::create-account 
+            (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME)
+            (ref-LIQUID::GOV|LIQUID|GUARD)
+        )
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [04] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 [4.1.5] - Dalos INIT [05]: Mint Primordial Tokens")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        ;;
+        (patron:string KST.ANHD)
+        (info:string (ref-DALOS::DALOS|Info))
+        (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
+        (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
+        (ids:list
+            (ref-TS01-C1::DPTF|C_Issue
+                patron
+                dalos
+                ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
+                ["OURO" "AURYN" "ELITEAURYN" "GAS" "DWK" "DLK"]
+                [24 24 24 24 24 24]
+                [true true true true true true]         ;;can change owner
+                [true true true true true true]         ;;can upgrade
+                [true true true true true true]         ;;can can-add-special-role
+                [true false true true false false]      ;;can-freeze
+                [true false true false false false]     ;;can-wipe
+                [true false false true false false]     ;;can pause
+            )
+        )
+        (OuroID:string (at 0 ids))
+        (AurynID:string (at 1 ids))
+        (EliteAurynID:string (at 2 ids))
+        (GasID:string (at 3 ids))
+        (WrappedKadenaID:string (at 4 ids))
+        (StakedKadenaID:string (at 5 ids))
+        ;;
+        (treasury-sc:string (ref-DALOS::GOV|DHV2|SC_NAME))        
+    )
+    [
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.DALOS)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS)
+
+        (update ref-DALOS::DALOS|PropertiesTable info
+            { "gas-source-id"           : OuroID
+            , "gas-id"                  : GasID
+            , "ats-gas-source-id"       : AurynID
+            , "elite-ats-gas-source-id" : EliteAurynID
+            , "wrapped-kda-id"          : WrappedKadenaID
+            , "liquid-kda-id"           : StakedKadenaID
+            }
+        )
+        ;;Set Token Roles Part I
+        (ref-TS01-C1::DPTF|C_SetFee patron AurynID 50.0)
+        (ref-TS01-C1::DPTF|C_SetFee patron EliteAurynID 100.0)
+        (ref-TS01-C1::DPTF|C_ToggleFee patron AurynID true)
+        (ref-TS01-C1::DPTF|C_ToggleFee patron EliteAurynID true)
+        (ref-TS01-C1::DPTF|C_ToggleFeeLock patron AurynID true)
+        (ref-TS01-C1::DPTF|C_ToggleFeeLock patron EliteAurynID true)
+        ;;
+        ;;Set Token Roles Part II
+        (ref-TS01-C1::DPTF|C_SetMinMove patron GasID 1000.0)
+        (ref-TS01-C1::DPTF|C_SetFee patron GasID -1.0)
+        (ref-TS01-C1::DPTF|C_SetFeeTarget patron GasID dalos)
+        (ref-TS01-C1::DPTF|C_ToggleFee patron GasID true)
+        (ref-TS01-C1::DPTF|C_ToggleFeeLock patron GasID true)
+        (ref-TS01-C1::DPTF|C_ToggleBurnRole patron GasID ouroboros true)
+        (ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID ouroboros true)
+        (ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID ouroboros true)
+        (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID ouroboros true)
+        (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury-sc true)
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [05] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-06 [4.1.6] - Dalos INIT [06]: Issue Vested Snake Tokens")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_GasTanker", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        (AurynID:string (ref-DALOS::UR_AurynID))
+        (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
+        ;;
+        (VestedOuroID:string (ref-TS01-C2::VST|C_CreateVestingLink patron OuroID))
+        (VestedAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron AurynID))
+        (VestedEliteAurynID:string (ref-TS01-C2::VST|C_CreateVestingLink patron EliteAurynID))
+    )
+    [VestedOuroID VestedAurynID VestedEliteAurynID]
+)
+
+(format "<<<<<<<Dalos INIT [06] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-07 [4.1.7] - Dalos INIT [07]: Issue Primordial Autostake Pairs")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        (AurynID:string (ref-DALOS::UR_AurynID))
+        (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
+        (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
+        (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
+        (ats-ids:list
+            (ref-TS01-C2::ATS|C_Issue
+                patron
+                patron
+                ["Auryndex" "EliteAuryndex" "KdaLiquindex"]
+                [24 24 24]
+                [OuroID AurynID WrappedKadenaID]
+                [true true false]
+                [AurynID EliteAurynID StakedKadenaID]
+                [false true true]
+            )
+        )
+        (Auryndex:string (at 0 ats-ids))
+        (Elite-Auryndex:string (at 1 ats-ids))
+        (Kadena-Liquid-Index:string (at 2 ats-ids))            
+    )
+    [
+        ;;Set Up <Auryndex> 4795
+        (ref-TS01-C2::ATS|C_SetColdFee patron Auryndex
+            7
+            [50.0 100.0 200.0 350.0 550.0 800.0]
+            [
+                [8.0 7.0 6.0 5.0 4.0 3.0 2.0]
+                [9.0 8.0 7.0 6.0 5.0 4.0 3.0]
+                [10.0 9.0 8.0 7.0 6.0 5.0 4.0]
+                [11.0 10.0 9.0 8.0 7.0 6.0 5.0]
+                [12.0 11.0 10.0 9.0 8.0 7.0 6.0]
+                [13.0 12.0 11.0 10.0 9.0 8.0 7.0]
+                [14.0 13.0 12.0 11.0 10.0 9.0 8.0]
+            ]
+        )
+        (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Auryndex true)
+        ;;Set Up <EliteAuryndex>
+        (ref-TS01-C2::ATS|C_SetColdFee patron Elite-Auryndex 7 [0.0] [[0.0]])
+        (ref-TS01-C2::ATS|C_SetCRD patron Elite-Auryndex false 360 24)
+        (ref-TS01-C2::ATS|C_ToggleElite patron Elite-Auryndex true)
+        (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Elite-Auryndex true)
+        ;;Set Up <KdaLiquindex>
+        (ref-TS01-C2::ATS|C_SetColdFee patron Kadena-Liquid-Index -1 [0.0] [[0.0]])
+        (ref-TS01-C2::ATS|C_SetCRD patron Kadena-Liquid-Index false 12 6)
+        (ref-TS01-C2::ATS|C_TurnRecoveryOn patron Kadena-Liquid-Index true)
+        ats-ids
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [07] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-08 [4.1.8] - Dalos INIT [08]: Mint Ouroboros Token")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        ;;
+        (patron:string KST.ANHD)
+        (ouro-amount:decimal 2000000.0)     ;;Main-Net Value Different
+    )
+    (ref-TS01-C1::DPTF|C_Mint
+        patron
+        (ref-DALOS::UR_OuroborosID)
+        patron
+        ouro-amount
+        true
+    )
+)
+
+(format "<<<<<<<Dalos INIT [08] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-09 [4.1.9] - Dalos INIT [09]: Make Startup GAS(IGNIS)")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        (patron:string KST.ANHD)
+        (aozt:string KST.AOZT)
+        (emma:string KST.EMMA)
+    )
+    [
+        (ref-TS01-C2::ORBR|C_Sublimate patron patron 10000.0)
+        (ref-TS01-C2::ORBR|C_Sublimate patron aozt 1000.0)
+        (ref-TS01-C2::ORBR|C_Sublimate patron emma 1000.0)
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [09] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-10 [4.1.10] - Dalos INIT [10]: Setup WKDA and LKDA")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        ;;
+        (patron:string KST.ANHD)
+        (AurynID:string (ref-DALOS::UR_AurynID))
+        (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
+        (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
+        (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
+        ;;
+        (ats:string (ref-DALOS::GOV|ATS|SC_NAME))
+        (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
+    )
+    [
+        (ref-TS01-A::DALOS|A_IgnisToggle false true)
+        (ref-TS01-A::DALOS|A_IgnisToggle true true)
+        ;;
+        (ref-TS01-C1::DPTF|C_DeployAccount patron AurynID ats)
+        (ref-TS01-C1::DPTF|C_DeployAccount patron EliteAurynID ats)
+        (ref-TS01-C1::DPTF|C_DeployAccount patron WrappedKadenaID liquid)
+        (ref-TS01-C1::DPTF|C_DeployAccount patron StakedKadenaID liquid)
+        ;;Set Token Roles Part III
+        (ref-TS01-C1::DPTF|C_SetFee patron StakedKadenaID -1.0)
+        (ref-TS01-C1::DPTF|C_ToggleFee patron StakedKadenaID true)
+        (ref-TS01-C1::DPTF|C_ToggleFeeLock patron StakedKadenaID true)
+        (ref-TS01-C1::DPTF|C_ToggleBurnRole patron WrappedKadenaID liquid true)
+        (ref-TS01-C1::DPTF|C_ToggleMintRole patron WrappedKadenaID liquid true)
+    ]
+    
+)
+
+(format "<<<<<<<Dalos INIT [10] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-11 [4.1.11] - Dalos INIT [11]: Wrap Kadena")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263",
+          "caps":
+            [
+                (coin.TRANSFER
+                "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                1.0)
+            ]
+        }
+    ]
+)
+
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        (patron:string KST.ANHD)
+    )
+    (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
+)
+
+(format "<<<<<<<Dalos INIT [11] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-12 [4.1.12] - Dalos INIT [12]: Coil Wrapped Kadena")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+    )
+    (ref-TS01-C2::ATS|C_Coil
+        patron
+        patron
+        (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
+        (ref-DALOS::UR_WrappedKadenaID)
+        1.0
+    )
+)
+
+(format "<<<<<<<Dalos INIT [12] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-13 [4.1.13] - Dalos INIT [13]: KickStart Auryndex")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
+        (rt-amounts:[decimal] [418414.8824])
+        (rbt-request-amount:decimal 159016.8713)
+    )
+    (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
+)
+
+(format "<<<<<<<Dalos INIT [13] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-14 [4.1.14] - Dalos INIT [14]: Kickstart EliteAuryndex")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
+        (rt-amounts:[decimal] [114907.2904])
+        (rbt-request-amount:decimal (at 0 rt-amounts))
+    )
+    (ref-TS01-C2::ATS|C_KickStart patron patron atspair rt-amounts rbt-request-amount)
+)
+
+(format "<<<<<<<Dalos INIT [14] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-15 [4.1.15] - Dalos INIT [15]: Transmute")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        ;;
+        (patron:string KST.ANHD)
+        (ouro-id:string (ref-DALOS::UR_OuroborosID))
+
+    )
+    (ref-TS01-C1::DPTF|C_Transmute patron ouro-id patron 10.0)
+)
+
+(format "<<<<<<<Dalos INIT [15] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-16 [4.1.16] - Dalos INIT [16]: Transfer")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        ;;
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+    )
+    (ref-TS01-C1::DPTF|C_Transfer
+        patron
+        OuroID
+        patron
+        emma
+        2.0
+        false
+    )
+)
+
+(format "<<<<<<<Dalos INIT [16] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-17 [4.1.17] - Dalos INIT [17]: Issue Special Tokens")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (+ (* (ref-DALOS::UR_UsagePrice "dptf") 3.0) (ref-DALOS::UR_UsagePrice "dpmf"))
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+
+                    )
+                ]
+            }
+        ]
+    )
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV4} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (OuroID:string (ref-DALOS::UR_OuroborosID))
+        (ids:list
+            (ref-TS01-C1::DPTF|C_Issue
+                patron
+                patron
+                ["Vesta"]
+                ["VST"]
+                [24]
+                [true]
+                [true]
+                [true]
+                [true]
+                [true]
+                [true]
+            )
+        )
+        (VestaID:string (at 0 ids))
+        (FrozenVestaID:string (ref-TS01-C2::VST|C_CreateFrozenLink patron VestaID))
+        (SleepingVestaID:string (ref-TS01-C2::VST|C_CreateSleepingLink patron VestaID))
+        (ReservedOuroID:string (ref-TS01-C2::VST|C_CreateReservationLink patron OuroID))
+    )
+    [VestaID FrozenVestaID SleepingVestaID ReservedOuroID]
+)
+
+(format "<<<<<<<Dalos INIT [17] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-18 [4.1.18] - Dalos INIT [18]: SWP Setup 1")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-SWP:module{SwapperV4} SWP)
+        (u:[string] ["|"])
+    )
+    [
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.SWP)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.SWP)
+        (insert ref-SWP::SWP|Asymmetry ref-SWP::SWP|INFO
+            {"asymmetric"           : false}
+        )
+        (insert ref-SWP::SWP|Properties ref-SWP::SWP|INFO
+            {"principals"           : u
+            ,"primordial-pool"      : "|"
+            ,"liquid-boost"         : false
+            ,"spawn-limit"          : 1000.0
+            ,"inactive-limit"       : 100.0}
+        )
+        (insert ref-SWP::SWP|Pools "P2"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "P3"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "P4"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "P5"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "P6"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "P7"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S2"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S3"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S4"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S5"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S6"
+            {"pools"                : u}
+        )
+        (insert ref-SWP::SWP|Pools "S7"
+            {"pools"                : u}
+        )
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [18] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-18 [4.1.19] - Dalos INIT [19]: SWP Setup 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV4} TS01-C1)
+        (ref-TS01-A:module{TalosStageOne_AdminV4} TS01-A)
+        ;;
+        (patron:string KST.ANHD)
+        (p1:string (ref-DALOS::UR_LiquidKadenaID))
+        (p2:string (ref-DALOS::UR_OuroborosID))
+        (swp:string (ref-DALOS::GOV|SWP|SC_NAME))
+    )
+    (ref-TS01-A::SWP|A_UpdatePrincipal p1 true)
+    (ref-TS01-A::SWP|A_UpdatePrincipal p2 true)
+
+    (ref-TS01-C1::DPTF|C_DeployAccount patron p1 swp)
+    (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p1 swp true)
+    (ref-TS01-C1::DPTF|C_ToggleBurnRole patron p1 swp true)
+
+    (ref-TS01-C1::DPTF|C_DeployAccount patron p2 swp)
+    (ref-TS01-C1::DPTF|C_ToggleFeeExemptionRole patron p2 swp true)
+)
+
+(format "<<<<<<<Dalos INIT [19] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-20 [4.2.1] - Dalos INIT [19]: SWP Setup 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (x true)
+    )
+    [
+        x
+    ]
+)
+
+(format "<<<<<<<Dalos INIT [19] Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")

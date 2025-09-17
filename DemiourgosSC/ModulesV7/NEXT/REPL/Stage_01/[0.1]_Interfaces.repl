@@ -1,0 +1,43 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              LOAD    [0.01]_Utilities.pact (NO PreL; No PostL)               ;;
+;;              LOAD    [0.02]_Core.pact (NO PreL; No PostL)                    ;;
+;;              LOAD    [0.03]_Talos.pact (NO PreL; No PostL)                   ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [0.01] - Deploy Stage One Utility Interfaces")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/0_Interfaces/01_Utilities.pact")
+(format "<<<<<<<Stage One Utility Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [0.02] - Deploy Stage One Core Interfaces")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/0_Interfaces/02_Core.pact")
+(format "<<<<<<<Core Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [0.03] - Deploy Stage One Talos Interfaces")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_01/0_Interfaces/03_Talos.pact")
+(format "<<<<<<<Talos Interfaces Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)

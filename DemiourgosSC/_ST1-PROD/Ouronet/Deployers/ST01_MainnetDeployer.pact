@@ -1,6 +1,10 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (length (keys n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.DALOS|AccountTable))
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 15.5)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  31.0)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  46.5)
+(coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 62.0)
 ;:Disble Ignis Collection
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-A.DALOS|A_IgnisToggle false false)
 ;;Enable Ignis Collection
@@ -165,7 +169,7 @@
 (coin.TRANSFER "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f" 1.0)
 
 ;;WRAP Capability
-(coin.TRANSFER "k:35d9be77f2a414cd8ce6ed83afd9d53bbdb5ef85723417131225b389a6c9e54f" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 35.98973391971)
+(coin.TRANSFER "k:d80ff2efd92ebbf9ca367b4985952c2955e85f9e706bcb0745b2e0492dfe3af3" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 372.213)
 
 (coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" (n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.URC_TotalMBCost 1))
 (coin.TRANSFER "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01" "c:81XjsM008PpbNVk2y91cPt0k7DpWuzWtEE2G8t9VZXY" 10.0)
@@ -384,8 +388,8 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
     "OURO-slLyzPPCo22W"
     "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
-    "Ѻ.0ŤΞAKЛăÁĄαò¥£šÚDΩOg6ρДëΞΓй6QâÞæÇŽÙĐκτãWÊpŘуd6ЫŘØûпσΛЩĐŽÆPςэĂVνпÂLαÜÄÇ₱ψr0ÆáИøÙ$θoŮωIιCĆąPAtNфIÑγÍïξnŠEëpÞLĄÊιÞêWĘuмκпTμisfťÕâýЧδrñWÂ$жщдфœżÊRHδщřηÚĂИ¥€yшѺéŸÔVУæ"
-    25500.0    
+    "Ѻ.łścĞȚôd1ôżδĎOςUжęъóиŠIBÎЭцкøÒ2γlHñЦèĆQ9ȚκιëńÏζD£íÌЦlÇBпhŹșŸÒÜмKêŞàÀΨâѺyÔÈ6ýÃûfĂÖЮψяиъ£òΨΦQżDфÜςCБnθÜÂôşńåĐδàтRx₿bзμăÍŻÒΣþμãмck7ŹzçtòÞÇFjПàθыæΓÚ₱YÀχșŞπfË6ИйØβЬЫm"
+    27253.396848335862527817   
     false
 )
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
@@ -1558,26 +1562,104 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  195.0)
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:U9gIg2OvVyINjXEGFCkar1OYKLGkdJkOeMtglG4hWeo" 260.0)
 
-;;Get Owned Supplies Example
+;;Get Owned Supplies Example QUERY Accounts and Values
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
         (ref-TFT:module{TrueFungibleTransferV7} TFT)
         (ref-U|LST:module{StringProcessor} U|LST)
-        (id:string "WKDA-slLyzPPCo22W")
+        (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+        (id:string "AURYN-slLyzPPCo22W")
         (accounts:[string] (ref-TFT::DPTF-DPMF-ATS|UR_FilterKeysForInfo id 1 false))
         (l:integer (length accounts))
-    )
-    (fold
-        (lambda
-            (acc:[decimal] idx:integer)
-            (ref-U|LST::UC_AppL acc (ref-DPTF::UR_AccountSupply id (at idx accounts)))
+        (s-accounts:[string]
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-I|OURONET::OI|UC_ShortAccount (at idx accounts)))
+                )
+                []
+                (enumerate 0 (- l 1))
+            )
         )
-        []
-        (enumerate 0 (- l 1))
+        (values:[decimal]
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-DPTF::UR_AccountSupply id (at idx accounts)))
+                )
+                []
+                (enumerate 0 (- l 1))
+            )
+        )
     )
+    (format "Ouronet Accounts holding Ouro are {} and their values are {}" [s-accounts values])
 )
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (keyz:[string] (keys DALOS.DALOS|AccountTable))
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (l:integer (length keyz))
+        (s-keys:[string] 
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-I|OURONET::OI|UC_ShortAccount (at idx keys)))
+                )
+                []
+                (enumerate 0 (- l 1))
+            )
+        )
+        (values:[decimal]
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-DALOS::UR_TF_AccountSupply (at idx keys) true))
+                )
+                []
+                (enumerate 0 (- l 1))
+            )
+        )
+    )
+    (format "Ouronet Accounts holding Ouro are {} and their values are {}" [s-keys values])
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-I|OURONET:module{OuronetInfoV2} DALOS)
+        (ref-DALOS:module{OuronetDalosV4} DALOS)
+        (keyz:[string] (keys DALOS.DALOS|AccountTable))
+        (leng:integer (length keyz))
+        (s-keyz:[string] 
+            (fold
+                (lambda
+                    (acc:[string] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-I|OURONET::OI|UC_ShortAccount (at idx keyz)))
+                )
+                []
+                (enumerate 0 (- leng 1))
+            )
+        )
+        (values:[decimal]
+            (fold
+                (lambda
+                    (acc:[decimal] idx:integer)
+                    (ref-U|LST::UC_AppL acc (ref-DALOS::UR_TF_AccountSupply (at idx keyz) true))
+                )
+                []
+                (enumerate 0 (- leng 1))
+            )
+        )
+    )
+    (format "Ouronet Accounts holding Ouro are {} and their values are {}" [s-keyz values])
+)
+
 
 ;;"Σ.fĘĐżØиmΞüȚÓ0âGœȘйцań₿ѺĐЦãúα0šwř4QąйZЛgãŽ₿ßÇöđ2zFtмÄäþťûκpíČX₳ĂBÞãÅhλÚțqýвáêйâ₳ЫDżfÙŃλыêąйíâβPЫůjыáaπÕpnýOĄåęümÚJηğȘôρ8şnνEβęůйΛÑćλòxЧUdÑĎÈčVΞÌFAx£Ы2τżŻzДŽYуRČñÜ"
 [(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C2.ATS|C_Curl
@@ -1593,16 +1675,16 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
     "AURYN-slLyzPPCo22W"
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
     "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
-    1850.388359199942705190510454
+    502.416564938231609361
     true
 )
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
-    "ELITEAURYN-slLyzPPCo22W"
+    "OURO-slLyzPPCo22W"
     "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
-    "Ѻ.ъбąRдqμζøþśĘĐÅДьöщн4ÚÔFòŞå2α£mhΦÁ6ZȘfČZρэЩΘιЗJ7ЖŁ₳69£ânğΩÊÏïñŚvÉtgБBÃșЩБìììфλëΩAïWmaFFVþ$źźSêρQQкѺæρĞюεGîGşđдПȘșψEźβΩT3ìтŚкř£жÖП8ăąźÎξů4ŸЮΩB₳šÝЙ∇řÇwíčăb4₱ďĚOςÉм"
-    1850.388359199942705190510454
-    true
+    "Ѻ.ÇñLŁ€pmœöĐWĂΓБñвíûζαβçŸ¢ETΛĆUтȚΛrFĆØĆξЪп1HěńÚяŹĂ7ζoãЦЩЭЯ₳îÀýJξÙу5юĘȘĂγ9ΩżδéÅęŘЬŽÕĄrëĎЮ₱ÂЦĞψИďâOuć0CżîιIđrÉĄςτYъ$1ìíΣJъjÖğлιÀÄνЧdËЬ$FìÀÅřνòÙфUöÄqEZЩ¢ßØÝÑÆè1õιйñΓ"
+    502.416564938231609361
+    false
 )]
 
 

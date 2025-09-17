@@ -908,6 +908,37 @@
             }
         )
     )
+    (defun URC_0011_AccountSuppliesForSwpair (account:string swpair:string)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DALOS:module{OuronetDalosV4} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV5} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV7} TFT)
+                (ref-SWP:module{SwapperV4} SWP)
+                ;;
+                (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
+                (account-pool-tokens-supplies:[decimal]
+                    (fold
+                        (lambda
+                            (acc:[decimal] idx:integer)
+                            (ref-U|LST::UC_AppL
+                                acc
+                                (ref-DPTF::UR_AccountSupply (at idx pool-tokens) account)
+                            )
+                        )
+                        []
+                        (enumerate 0 (- (length pool-tokens) 1))
+                    )
+                )
+                (virtual-ouro:decimal (ref-TFT::URC_VirtualOuro account))
+            )
+            {"pool-tokens"                      : pool-tokens
+            ,"wallet-pool-tokens-supplies"      : account-pool-tokens-supplies
+            ,"wallet-virtual-ouro"              : (ref-TFT::URC_VirtualOuro account)
+            ,"wallet-ignis"                     : (ref-DALOS::UR_TF_AccountSupply account false)}
+        )
+    )
     ;;
     (defun DALOS|URC_DeployStandardAccount:list ()
         (let

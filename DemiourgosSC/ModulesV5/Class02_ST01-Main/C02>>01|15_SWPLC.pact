@@ -204,6 +204,7 @@
         @event
         (UEV_RemoveLiquidity swpair lp-amount)
         (compose-capability (P|SECURE-CALLER))
+        (compose-capability (P|SWPLC|REMOTE-GOV))
     )
     ;;
     ;;<=======>

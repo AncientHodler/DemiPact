@@ -1,0 +1,47 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              1.1     NONE ==> [REPL] Pre-Loads execs;                        ;;
+;;              1.2     NONE ==> LIVE Pre-Loads execs [only comment]            ;;
+;;              2       TS02-C1, TS01-C2                                        ;;
+;;              3       NONE ==> [REPL] Post-Loads execs                        ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2.1] - TS02-C1 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/3_Talos/01_TS02-C1.pact")
+(format "<<<<<<<TS02-C1 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [2.2] - TS02-C2 Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/3_Talos/02_TS02-C2.pact")
+(format "<<<<<<<TS02-C2 Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [2.2] - TS02-DPAD Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/3_Talos/03_TS02-DPAD.pact")
+(format "<<<<<<<TS02-DPAD Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
