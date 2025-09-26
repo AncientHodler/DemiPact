@@ -115,7 +115,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungible} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
@@ -187,7 +187,7 @@
     (defun A_MigrateMetaToOrtoFungibleId (id:string)
         (let
             (
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+                (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
             )
             (with-capability (GOV|ELITE_ADMIN-CALLER)
@@ -241,10 +241,10 @@
             (enforce iz-id (format "Meta Fungible ID {} must be migrated to Ortofungible for Operation" [id]))
             (let
                 (
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+                    (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
                     
-                    (unit:[object{DemiourgosPactMetaFungibleV5.DPMF|Schema}] (ref-DPMF::UR_AccountUnit id account))
-                    (dpmf-negative:object{DemiourgosPactMetaFungibleV5.DPMF|Schema}
+                    (unit:[object{DemiourgosPactMetaFungibleV6.DPMF|Schema}] (ref-DPMF::UR_AccountUnit id account))
+                    (dpmf-negative:object{DemiourgosPactMetaFungibleV6.DPMF|Schema}
                         {"nonce": -1
                         ,"balance": -1.0
                         ,"meta-data": [{}]}
@@ -258,7 +258,7 @@
                             (total-account-supply:decimal
                                 (fold
                                     (lambda
-                                        (acc:decimal item:object{DemiourgosPactMetaFungibleV5.DPMF|Schema})
+                                        (acc:decimal item:object{DemiourgosPactMetaFungibleV6.DPMF|Schema})
                                         (+ acc (at "balance" item))
                                     )
                                     0.0
@@ -283,12 +283,22 @@
                                 (format "No Orto-Fungible Insertion needed for the MetaFungible ID {} and Account {}" [id account])
                                 (map
                                     (lambda
-                                        (item:object{DemiourgosPactMetaFungibleV5.DPMF|Schema})
-                                        (ref-DPOF::XB_InsertNewNonce
-                                            account id 
-                                            (at "nonce" item)
-                                            (at "balance" item)
-                                            (at "meta-data" item)
+                                        (item:object{DemiourgosPactMetaFungibleV6.DPMF|Schema})
+                                        (let
+                                            (
+                                                (nonce:integer (at "nonce" item))
+                                                (balance:decimal (at "balance" item))
+                                                (meta-data-chain:[object] (at "meta-data" item))
+                                            )
+                                            (if (!= nonce 0)
+                                                (ref-DPOF::XB_InsertNewNonce
+                                                    account id 
+                                                    nonce
+                                                    balance
+                                                    meta-data-chain
+                                                )
+                                                true
+                                            )
                                         )
                                     )
                                     unit

@@ -332,6 +332,37 @@
             (floor (* supply rc) kda-prec)
         )
     )
+    (defun URC_SparkAmountCosts:object{DemiourgosLaunchpad.Costs} (amount:integer)
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
+                ;;
+                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                ;;
+                (spark-id:string (UR_SparkID))
+                (spark-price:decimal (at "pid" (ref-DEMIPAD::UR_Price spark-id)))
+            )
+            (ref-DEMIPAD::UDC_Costs
+                (* (dec amount) spark-price)
+                (floor (* (/ spark-price kda-pid) (dec amount)) kda-prec)
+            )
+        )
+    )
+    (defun URC_Acquire:[string]
+        (buyer:string amount:integer iz-native:bool)
+        (let
+            (
+                (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
+                (asset-id:string (UR_SparkID))
+                (type:integer (if iz-native 0 1))
+                (pid:decimal (at "pid" (URC_SparkAmountCosts amount)))
+            )
+            (ref-DEMIPAD::URC_Acquire buyer asset-id pid type)
+        )
+    )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
@@ -349,11 +380,11 @@
                     (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                     ;;
                     (spark-id:string (UR_SparkID))
-                    (spark-price:decimal (at "pid" (ref-DEMIPAD::UR_Price spark-id)))
-                    (input-dollarz:decimal (* (dec sparks-amount) spark-price))
+                    (costs:object{DemiourgosLaunchpad.Costs} (URC_SparkAmountCosts sparks-amount))
+                    (pid:decimal (at "pid" costs))
                     (type:integer (if iz-native 0 1))
                     (ico1:object{IgnisCollector.OutputCumulator}
-                        (ref-DEMIPAD::C_Deposit buyer spark-id input-dollarz type false)
+                        (ref-DEMIPAD::C_Deposit buyer spark-id pid type false)
                     )
                     (ico2:object{IgnisCollector.OutputCumulator}
                         (ref-TFT::C_Transfer spark-id DEMIPAD|SC_NAME buyer (dec sparks-amount) true)

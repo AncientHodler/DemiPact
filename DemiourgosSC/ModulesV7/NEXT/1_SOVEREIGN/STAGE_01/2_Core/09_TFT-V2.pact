@@ -214,7 +214,7 @@
                 true
             )
             (UEV_DispoLocker id sender)
-            (compose-capability (DPTF|C>X-TRANSFER id sender receiver transfer-amount method))
+            (compose-capability (DPTF|C>X-TRANSFER id sender receiver method))
         )
     )
     ;;

@@ -150,19 +150,20 @@
         \ \
         \ For Sale, both Native KDA and WKDA are accepted, but also LKDA or OURO \
         \ \
-        \ Of the incoming funds, there is an up 15% Retained Royalty by the Launchpad \
+        \ From the incoming funds, The Launchpad Retains a Royalty Fee. This starts at 15%. \
         \ The Royalty Decreases going as low as 0.3% the more an asset sales for. \
-        \ One THIRD goes to the Enviroment as Native KDA (Unwrap would be executed if WKDA Input is used): \
-        \       = 0.5% to Ouronet Gas Station \
-        \       = 1.0% to Demiourgos.Holdings Treasury \
-        \       = 1.5% to Launchpad Maintanance \
-        \       = 2.0% to Liquid Staking \
-        \ TWO THIRDS is injected to Coding Division Pot when acquisitions pool are coming Live \
-        \       Until then, it will be retained in the Pool as WKDA \
+        \ One THIRD of Royalty goes to the Enviroment as Native KDA (Unwrap would be executed if WKDA Input is used): \
+        \       = 10% to Ouronet Gas Station \
+        \       = 20% to Demiourgos.Holdings Treasury \
+        \       = 30$ to Launchpad Maintanance \
+        \       = 40% to Liquid Staking \
+        \ TWO THIRDS is injected to Coding Division Pot (half to Coding Division Collection, half to Shareholders Collection) \
+        \       when acquisitions pool are coming Live \
+        \       Until then, it will be retained in the Pool as Resident WKDA, LKDA or OURO \
         \ \
-        \ If Assets are Sold for LKDA or OURO, then 5% of the value, must be supplied as Native Kadena to satisfy the Enviroment \
+        \ If Assets are Sold for LKDA or OURO, then a third of the Royalty Fee, must be supplied as Native Kadena to satisfy the Enviroment \
         \ \
-        \ Remaining 85% can be withdrawed by Asset Owner or Creator (for SFTs and NFTs), or Launchpad Admin \
+        \ Remaining Tokens (after Royalty deduction) can be withdrawn by Asset Owner or Creator (for SFTs and NFTs), or Launchpad Admin \
         \ \
         \ Launchpad Admin can update <open-for-business>, <price> and <retrieval> for each registered Asset \
         \ \
@@ -176,8 +177,8 @@
         \ \
         \ \
         \ \
-        \ Since this is a Permissioned Launchpad, creted by Demiourogs, it allows for using Internal Client Functions, (not from Talos Module) \
-        \ To concatenate IGNIS Collection (meaning a single IGNIS collection is executed, instead of multiple, as it were the case, had Client Functions from Talos Module been used)"
+        \ Permissioned Launchpad, means its part of the Core Modules from Stage 2 \
+        \ A permissionless Launchpad, in the form of the IGNIS Market Place will be launched after the Acquisition Pools Deployment"
     ;;
     (implements OuronetPolicy)
     (implements DemiourgosLaunchpad)
@@ -554,7 +555,7 @@
             (+
                 ;;Interval Fees
                 (fold
-                    (lambda (total-fee:decimal interval:object{RoyaltyInterval})
+                    (lambda (total-fee:decimal interval:object{DemiourgosLaunchpad.RoyaltyInterval})
                         (let 
                             (
                                 (interval-start (at "start" interval))
@@ -762,6 +763,89 @@
                 ;;CodingDivision and Remainder Split in WKDA, LKDA or OURO, depending on <type>
                 (floor (/ ten-percent-dollarz type-pid) type-prec)
                 (floor (/ remainder-percent-dollarz type-pid) type-prec)
+            )
+        )
+    )
+    (defun URC_Acquire:[string]
+        (buyer:string asset-id:string buy-amount-in-dollarz:decimal type:integer)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                ;;
+                (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
+                (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
+                (prices:object{DemiourgosLaunchpad.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
+                ;;
+                (s1:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-one" prices) (at "amount-one" prices)]))
+                (s2:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-two" prices) (at "amount-two" prices)]))
+                (s3:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-three" prices) (at "amount-three" prices)]))
+                (s4:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-four" prices) (at "amount-four" prices)]))
+            )
+            (if (= type 0)
+                [
+                    (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda lq-kda  (+ (at "coding-amount" prices) (at "remainder-amount" prices))])
+                    s1 s2 s3 s4
+                ]
+                (if (= type 1)
+                    [
+                        (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [lq-kda buyer-kda (at "enviroment-amount" prices)])
+                        s1 s2 s3 s4
+                    ]
+                    [s1 s2 s3 s4]
+                )
+            )
+        )
+    )
+    (defun URCI_Acquire
+        (buyer:string asset-id:string buy-amount-in-dollarz:decimal type:integer)
+        (let
+            (
+                (ref-coin:module{fungible-v2} coin)
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                ;;
+                (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
+                (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
+                (prices:object{DemiourgosLaunchpad.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
+                ;;
+
+                (r1:string (at "receiver-one" prices))
+                (r2:string (at "receiver-two" prices))
+                (r3:string (at "receiver-three" prices))
+                (r4:string (at "receiver-four" prices))
+                (a1:decimal (at "amount-one" prices))
+                (a2:decimal (at "amount-two" prices))
+                (a3:decimal (at "amount-three" prices))
+                (a4:decimal (at "amount-four" prices))
+                (enviroment:decimal (at "enviroment-amount" prices))
+                (coding:decimal (at "coding-amount" prices))
+                (remainder:decimal (at "remainder-amount" prices))
+            )
+            (if (= type 0)
+                (do
+                    (install-capability (ref-coin::TRANSFER buyer-kda lq-kda (+ coding remainder)))
+                    (install-capability (ref-coin::TRANSFER buyer-kda r1 a1))
+                    (install-capability (ref-coin::TRANSFER buyer-kda r2 a2))
+                    (install-capability (ref-coin::TRANSFER buyer-kda r3 a3))
+                    (install-capability (ref-coin::TRANSFER buyer-kda r4 a4))
+
+                )
+                (if (= type 1)
+                    (do
+                        (install-capability (ref-coin::TRANSFER lq-kda buyer-kda enviroment))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r1 a1))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r2 a2))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r3 a3))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r4 a4))
+                    )
+                    (do
+                        (install-capability (ref-coin::TRANSFER buyer-kda r1 a1))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r2 a2))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r3 a3))
+                        (install-capability (ref-coin::TRANSFER buyer-kda r4 a4))
+                    )
+                )
             )
         )
     )
@@ -1173,21 +1257,21 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )
             (if fuel-or-retrieve
                 (with-capability (DEMIPAD|C>FUEL-SEMI-FUNGIBLE asset-id)
-                    (ref-DPDC-T::C_Transfer asset-id son client lpad nonces amounts true)
+                    (ref-DPDC-T::C_Transfer [asset-id] [son] client lpad [nonces] [amounts] true)
                 )
                 (with-capability (DEMIPAD|C>RETRIEVE-SEMI-FUNGIBLE asset-id)
-                    (ref-DPDC-T::C_Transfer asset-id son lpad client nonces amounts true)
+                    (ref-DPDC-T::C_Transfer [asset-id] [son] lpad client [nonces] [amounts] true)
                 )
             )
         )
     )
-    
+    ;;
 )
 
 (create-table P|T)

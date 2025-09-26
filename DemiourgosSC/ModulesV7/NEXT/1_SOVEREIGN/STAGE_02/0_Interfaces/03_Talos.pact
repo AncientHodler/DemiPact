@@ -1,4 +1,36 @@
-(interface TalosStageTwo_ClientOne
+(interface TalosStageTwo_DemiPad
+    ;;
+    ;;  [A]
+    ;;
+    (defun A_RegisterAssetToLaunchpad (patron:string asset-id:string fungibility:[bool]))
+    (defun A_ToggleOpenForBusiness (asset-id:string toggle:bool))
+    (defun A_DefinePrice (asset-id:string price:object))
+    (defun A_ToggleRetrieval (asset-id:string toggle:bool))
+    ;;
+    ;;  [C]
+    ;;
+    (defun DEMIPAD|C_Withdraw (patron:string asset-id:string type:integer destination:string))
+    ;;
+    (defun DEMIPAD|C_FuelTrueFungible (patron:string client:string asset-id:string amount:decimal))
+    (defun DEMIPAD|C_FuelOrtoFungible (patron:string client:string asset-id:string nonces:[integer]))
+    (defun DEMIPAD|C_FuelSemiFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
+    (defun DEMIPAD|C_FuelNonFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
+
+    (defun DEMIPAD|C_RetrieveTrueFungible (patron:string client:string asset-id:string amount:decimal))
+    (defun DEMIPAD|C_RetrieveOrtoFungible (patron:string client:string asset-id:string nonces:[integer]))
+    (defun DEMIPAD|C_RetrieveSemiFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
+    (defun DEMIPAD|C_RetrieveNonFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
+    ;;
+    (defun SPARK|C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
+    (defun SPARK|C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
+    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer))
+    (defun SNAKES|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
+    (defun CUSTODIANS|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
+    ;;
+)
+
+
+(interface TalosStageTwo_ClientOneV3
     @doc "Exposes Client SFT Functions"
     ;;
     ;;  [2] DPDC
@@ -60,6 +92,7 @@
     ;;
     (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPSF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
+    (defun DPSF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     ;;
     ;;  [8] DPDC-S
     ;;
@@ -98,6 +131,7 @@
     (defun DPSF|C_UpdateSetMultiplier (patron:string id:string set-class:integer new-multiplier:decimal))
     ;;
     (defun DPSF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPSF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}]))
     (defun DPSF|C_UpdateSetNonceRoyalty         (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateSetNonceIgnisRoyalty    (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateSetNonceName            (patron:string id:string account:string set-class:integer nos:bool name:string))
@@ -116,6 +150,7 @@
     ;;  [10] DPDC-N
     ;;
     (defun DPSF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPSF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}]))
     (defun DPSF|C_UpdateNonceRoyalty        (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateNonceIgnisRoyalty   (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateNonceName           (patron:string id:string account:string nonce:integer nos:bool name:string))
@@ -138,7 +173,7 @@
     ;;
 )
 
-(interface TalosStageTwo_ClientTwo
+(interface TalosStageTwo_ClientTwoV3
     @doc "Exposes Client NFT Functions"
     ;;
     ;;  [2] DPDC
@@ -199,6 +234,7 @@
     ;;
     (defun DPNF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPNF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)) 
+    (defun DPNF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     ;;
     ;;  [8] DPDC-S
     ;;
@@ -237,6 +273,7 @@
     (defun DPNF|C_UpdateSetMultiplier (patron:string id:string set-class:integer new-multiplier:decimal))
     ;;
     (defun DPNF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPNF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}]))
     (defun DPNF|C_UpdateSetNonceRoyalty         (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateSetNonceIgnisRoyalty    (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateSetNonceName            (patron:string id:string account:string set-class:integer nos:bool name:string))
@@ -255,6 +292,7 @@
     ;;  [10] DPDC-N
     ;;
     (defun DPNF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun DPNF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}]))
     (defun DPNF|C_UpdateNonceRoyalty        (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateNonceIgnisRoyalty   (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateNonceName           (patron:string id:string account:string nonce:integer nos:bool name:string))
@@ -263,36 +301,5 @@
     (defun DPNF|C_RemoveNonceScore          (patron:string id:string account:string nonce:integer nos:bool))
     (defun DPNF|C_UpdateNonceMetaData       (patron:string id:string account:string nonce:integer nos:bool meta-data:object))
     (defun DPNF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdc.URI|Type} u1:object{DpdcUdc.URI|Data} u2:object{DpdcUdc.URI|Data} u3:object{DpdcUdc.URI|Data}))
-    ;;
-)
-
-(interface TalosStageTwo_DemiPad
-    ;;
-    ;;  [A]
-    ;;
-    (defun A_RegisterAssetToLaunchpad (patron:string asset-id:string fungibility:[bool]))
-    (defun A_ToggleOpenForBusiness (asset-id:string toggle:bool))
-    (defun A_DefinePrice (asset-id:string price:object))
-    (defun A_ToggleRetrieval (asset-id:string toggle:bool))
-    ;;
-    ;;  [C]
-    ;;
-    (defun DEMIPAD|C_Withdraw (patron:string asset-id:string type:integer destination:string))
-    ;;
-    (defun DEMIPAD|C_FuelTrueFungible (patron:string client:string asset-id:string amount:decimal))
-    (defun DEMIPAD|C_FuelOrtoFungible (patron:string client:string asset-id:string nonces:[integer]))
-    (defun DEMIPAD|C_FuelSemiFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
-    (defun DEMIPAD|C_FuelNonFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
-
-    (defun DEMIPAD|C_RetrieveTrueFungible (patron:string client:string asset-id:string amount:decimal))
-    (defun DEMIPAD|C_RetrieveOrtoFungible (patron:string client:string asset-id:string nonces:[integer]))
-    (defun DEMIPAD|C_RetrieveSemiFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
-    (defun DEMIPAD|C_RetrieveNonFungible (patron:string client:string asset-id:string nonces:[integer] amounts:[integer]))
-    ;;
-    (defun SPARK|C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
-    (defun SPARK|C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
-    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer))
-    (defun SNAKES|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
-    (defun CUSTODIANS|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
     ;;
 )

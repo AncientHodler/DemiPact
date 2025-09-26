@@ -2,11 +2,12 @@
 (module DALOS GOV
     ;;
     ;;Ouronet DALOS Gas-Station
+    ;;
     (defcap GAS_PAYER:bool (user:string limit:integer price:decimal)
         (let
             (
                 (ref-U|ST:module{OuronetGasStation} U|ST)
-                (iz-continuation:bool (contains "continuation" (read-msg)))
+                (iz-single:bool (contains "exec-code" (read-msg)))
             )
             ;;GENERAL CHECKS
             ;;2]Enforce either GOV|MD_DALOS guard or maximum gas notional 0.02
@@ -17,46 +18,57 @@
                     (enforce-guard (ref-U|ST::UEV_max-gas-notional 0.02))
                 ]
             )
-            ;;Checks Depending on TX Type
-            (if (not iz-continuation)
-                ;;Standard TX
-                (enforce-one
-                    "Payable Modules not satisfied"
-                    [
-                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
-                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
-                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_MovieBoosterBuyer" (take 66 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
-                        (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.MB.C_RedeemMovieBooster" (take 67 (at 0 (at "exec-code" (read-msg))))) "Only Spark Buy allowed")
-                        (enforce
-                            (and
+            (enforce iz-single "Only for transactions with code")
+            (enforce-one
+                "Payable Modules not satisfied"
+                [
+                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                    (enforce
+                        (fold (and) true
+                            [
                                 (= "(namespace \"n_7d40ccda457e374d8eb07b658fd38c282c545038\")" (at 0 (at "exec-code" (read-msg))))
-                                (and
-                                    (= "(IGNIS.C_Collect \"Ѻ." (take 23 (at 1 (at "exec-code" (read-msg)))))
-                                    (= "(IGNIS.UDC_CustomCodeCumulator))" (take -35 (at 1 (at "exec-code" (read-msg)))))
-                                )
-                            )
-                            "Namespace Entry requires Collection with CustomCodeCumulator."
+                                (= "(IGNIS.C_Collect \"Ѻ." (take 20 (at 1 (at "exec-code" (read-msg)))))
+                                (= "(IGNIS.UDC_CustomCodeCumulator))" (take -32 (at 1 (at "exec-code" (read-msg)))))
+                            ]
                         )
-                    ]
-                )
-                ;;Continuation TX
-                (let
-                    (
-                        (cont-obj:object (at "continuation" (read-msg)))
-                        (arguments:list (at "args" cont-obj))
-                        (patron:string (at 0 arguments))
-                        (account:string (at 1 arguments))
-                        (definition:string (at "def" cont-obj))
+                        "Namespace Entry requires Collection with CustomCodeCumulator."
                     )
-                    (enforce (= patron account) "Patron and Client must be similar for a continuation TX!")
-                    ;;Enforce the defpact originates in a Proprietary Module.
-                    ;;Only MTX Modules from Ouronet Namespace will have their defpact continuation paid for.
-                    (enforce (= "n_7d40ccda457e374d8eb07b658fd38c282c545038.MTX" (take 46 definition)))
-                )
+                ]
             )
             ;;
             (compose-capability (DALOS|NATIVE-AUTOMATIC))
         )
+    )
+    (defcap GAS_PAYMENT (patron:string authorized:bool)
+        @managed authorized GAS-AUTH-mgr  ;; Manage the authorization flag
+        (let
+            (
+                (ref-U|ST:module{OuronetGasStation} U|ST)
+                (ref-coin:module{fungible-v2} coin)
+                (iz-continuation:bool (not (contains "exec-code" (read-msg))))
+                (patron-kadena:string (UR_AccountKadena patron))
+                (patron-kadena-guard:guard (at "guard" (ref-coin::details patron-kadena)))
+                (ignis-at-hand:decimal (UR_TF_AccountSupply patron false))
+            )
+            (enforce-guard patron-kadena-guard)
+            (enforce iz-continuation "Only for Continuations")
+            (enforce-one
+                "Add multiple conditions needed to use Ouronet DALOS Gas-Station"
+                [
+                    (enforce-guard GOV|MD_DALOS)
+                    (enforce-guard (ref-U|ST::UEV_max-gas-notional 0.02))
+                ]
+            )
+            (enforce (>= ignis-at-hand 1000.0) "Proof of Balance for Accesing Gas Station Payments")
+            (compose-capability (DALOS|NATIVE-AUTOMATIC))
+        )
+    )
+    (defun GAS-AUTH-mgr:bool (managed:bool requested:bool)
+        ;; Enforce that authorization is still valid
+        (enforce managed "Gas authorization expired")
+        false  ;; Single-use: consumes authorization after one use
+        ;; true   ;; Multi-use: keeps authorization active
     )
     (defun create-gas-payer-guard:guard ()
         GOV|DALOS|GUARD
@@ -389,6 +401,7 @@
         (compose-capability (SECURE))
         (compose-capability (DALOS|F>OWNER account))
     )
+
     ;;
     ;;<=======>
     ;;FUNCTIONS
@@ -550,15 +563,17 @@
     ;;[4.2] TrueFungible INFO
     (defun UR_TrueFungible
         (account:string snake-or-gas:bool)
-        (with-default-read DALOS|AccountTable account
-            { "ouroboros" : DPTF|BLANK }
-            { "ouroboros" := o}
-            o
-        )
-        (with-default-read DALOS|AccountTable account
-            { "ignis" : DPTF|BLANK }
-            { "ignis" := i}
-            i
+        (if snake-or-gas
+            (with-default-read DALOS|AccountTable account
+                { "ouroboros" : DPTF|BLANK }
+                { "ouroboros" := o}
+                o
+            )
+            (with-default-read DALOS|AccountTable account
+                { "ignis" : DPTF|BLANK }
+                { "ignis" := i}
+                i
+            )
         )
     )
     (defun UR_TF_AccountSupply:decimal (account:string snake-or-gas:bool)
@@ -1138,7 +1153,7 @@
         )
     )
     (defun XI_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalosV5.DPTF|BalanceSchemaV2})
-        (require-capability (SECURE))
+        ;(require-capability (SECURE))
         (if snake-or-gas
             (update DALOS|AccountTable account
                 {"ouroboros" : new-obj}
@@ -1149,7 +1164,7 @@
         )
     )
     (defun XB_UpdateBalance (account:string snake-or-gas:bool new-balance:decimal)
-        (UEV_IMC)
+        ;(UEV_IMC)
         (with-capability (SECURE)
             (let
                 (

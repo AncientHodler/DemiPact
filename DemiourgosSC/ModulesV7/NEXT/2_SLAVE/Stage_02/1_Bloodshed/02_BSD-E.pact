@@ -1,7 +1,5 @@
 (module BLOODSHED-E GOV
     ;;
-    (implements BsEpic)
-    ;;
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
@@ -26,6 +24,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
+    (defconst IPFS                  Bloodshed.IPFS)
     ;;
     (defconst LEGENDARY             Bloodshed.LEGENDARY)    ;;Legendary BS Score
     (defconst EPIC                  Bloodshed.EPIC)         ;;Epic BS Score
@@ -122,16 +121,42 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun EpicOM (position:integer)
+    (defun OrderMultiplier:decimal (rarity-range:integer position:integer rarity-elements:integer)
+        (enforce (<= position rarity-elements) "Invalid Position To Rarity Elements Value")
         (let
             (
-                (ref-BSL:module{BsLegendary} BLOODSHED-L)
+                (rr:decimal (dec rarity-range))
+                (p:decimal (dec position))
+                (re:decimal (dec rarity-elements))
             )
-            (ref-BSL::OrderMultiplier 200 position EPIC-S)
+            (floor (- rr (/ (* rr (- p 1)) (- re 1))) BS-PREC)
         )
+    )
+    (defun EpicOM (position:integer)
+        (OrderMultiplier 200 position EPIC-S)
     )
     (defun ES (position:integer)
         (floor (* EPIC (EpicOM position)) BS-PREC)
+    )
+    ;;
+    (defun EpicLink:string (position:integer small-or-big:bool)
+        (let
+            (
+                (type:string (if small-or-big "512x512" "FULL"))
+                (folder:string "/07_Bloodshed/2_Epic/")
+                (p:integer (mod position 48))
+                (l:string "E_")
+                (v:string (format "{}" [(if (= p 0) 48 p)]))
+                (padded-num:string 
+                    (if (< p 10)
+                        (+ "0" v)
+                        v
+                    )
+                )
+                (image-str:string (concat [l padded-num ".jpg"]))
+            )
+            (concat [IPFS type folder image-str])
+        )
     )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
@@ -217,8 +242,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
-                (ref-BSL:module{BsLegendary} BLOODSHED-L)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (b:string BAR)
                 (t:bool true)
                 (f:bool false)
@@ -246,8 +270,8 @@
                                     d-l
                                     (ref-DPDC-UDC::UDC_ScoreMetaData (ES p) (E-x p))
                                     type
-                                    (ref-DPDC-UDC::UDC_URI|Data (ref-BSL::BloodshedLink "Epic" p) b b b b b b)
-                                    zd
+                                    (ref-DPDC-UDC::UDC_URI|Data (EpicLink p true) b b b b b b)
+                                    (ref-DPDC-UDC::UDC_URI|Data (EpicLink p false) b b b b b b)
                                     zd
                                 )
                             )

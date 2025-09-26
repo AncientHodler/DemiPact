@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Client Functiones Part 2 - NFT Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientTwo)
+    (implements TalosStageTwo_ClientTwoV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -571,15 +571,26 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                    ;;
+                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron [id] [false] [[nonce]] [[amount]])
+                    )
+                    (r:[decimal] (at "ignis-royalties" irs))
+                    (s:decimal (fold (+) 0.0 r))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-T::C_Transfer id false sender receiver [nonce] [amount] method)
+                    (ref-DPDC-T::C_Transfer [id] [false] sender receiver [[nonce]] [[amount]] method)
                 )
-                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id false [nonce] [amount])
-                (format "Succesfuly transfered Native NFT {} Nonce {} from {} to {}" [id nonce sa ra])
+                [
+                    (format "Successfully transfered {} NFT {} Nonce {} from {} to {}" [amount id nonce sa ra])
+                    (if (= s 0.0)
+                        (format "Transfer executed without collecting any IGNIS Royalties for the Collectable {}" [id])
+                        (format "Transfer executed while collecting {} IGNIS Royalty to the Collectable {} Creator" [s id])
+                    )
+                ]
             )
         )
     )
@@ -590,15 +601,60 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                    ;;
+                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron [id] [false] [nonces] [amounts])
+                    )
+                    (c:[string] (at "creators" irs))
+                    (r:[decimal] (at "ignis-royalties" irs))
+                    (s:decimal (fold (+) 0.0 r))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-T::C_Transfer id false sender receiver nonces amounts method)
+                    (ref-DPDC-T::C_Transfer [id] [false] sender receiver [nonces] [amounts] method)
                 )
-                (ref-DPDC-T::C_IgnisRoyaltyCollector patron id false nonces amounts)
-                (format "Succesfully transfered {} Amounts Native NFT {} Nonces {} from {} to {}" [amounts id nonces sa ra])
+                [
+                    (format "Successfully transfered {} Amounts NFT {} Nonces {} from {} to {}" [amounts id nonces sa ra])
+                    (if (= s 0.0)
+                        (format "Transfer executed without collecting any IGNIS Royalties for the Collectable {}" [id])
+                        (format "Transfer executed while collecting {} IGNIS Royalty to the Collectable {} Creator" [s id])
+                    )
+                ]
+            )
+        )
+    )
+    (defun DPNF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
+        @doc "Transfer multiple NFT <ids> from <sender> to <receiver>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                    (hm:integer (length ids))
+                    ;;
+                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron ids sons nonces-array amounts-array)
+                    )
+                    (c:[string] (at "creators" irs))
+                    (r:[decimal] (at "ignis-royalties" irs))
+                    (s:decimal (fold (+) 0.0 r))
+                    (l:integer (length c))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-T::C_Transfer ids sons sender receiver nonces-array amounts-array method)
+                )
+                [
+                    (format "Successfully transfered {} Individual Collectables from {} to {}" [hm sa ra])
+                    (if (= s 0.0)
+                        (format "Transfer executed without collecting any IGNIS Royalties for the Collectable(s) {}" [ids])
+                        (format "Transfer executed while collecting {} IGNIS Royalty to {} Collectable Creator(s)" [s l])
+                    )
+                ]
             )
         )
     )
@@ -773,10 +829,25 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonce id false account set-class nos false new-nonce-data)
+                    (ref-DPDC-N::C_UpdateNonces id false account [set-class] nos false [new-nonce-data])
+                )
+            )
+        )
+    )
+    (defun DPNF|C_UpdateSetNonces
+        (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}])
+        @doc "[0] Updates Full Set Nonce Data, either Native or Split, for an NFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonces id false account set-classes nos false new-nonces-data)
                 )
             )
         )
@@ -788,7 +859,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceRoyalty id false account set-class nos false royalty-value)
@@ -803,7 +874,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id false account set-class nos false royalty-value)
@@ -818,7 +889,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceName id false account set-class nos false name)
@@ -833,7 +904,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceDescription id false account set-class nos false description)
@@ -848,7 +919,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceScore id false account set-class nos false score)
@@ -867,7 +938,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceMetaData id false account set-class nos false meta-data)
@@ -885,7 +956,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceURI id false account set-class nos false ay u1 u2 u3)
@@ -951,11 +1022,28 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-N::C_UpdateNonce id false account nonce nos true new-nonce-data)
+                    (ref-DPDC-N::C_UpdateNonces id false account [nonce] nos true [new-nonce-data])
                 )
+                (format "Nonce {} updated successfully!" [nonce])
+            )
+        )
+    )
+    (defun DPNF|C_UpdateNonces
+        (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}])
+        @doc "[0] Updates Full Nonce Data, either Native or Split, for an NFT"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-N::C_UpdateNonces id false account nonces nos true new-nonces-data)
+                )
+                (format "Nonces {} updated successfully!" [nonces])
             )
         )
     )
@@ -966,7 +1054,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceRoyalty id false account nonce nos true royalty-value)
@@ -981,7 +1069,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id false account nonce nos true royalty-value)
@@ -996,7 +1084,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceName id false account nonce nos true name)
@@ -1011,7 +1099,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceDescription id false account nonce nos true description)
@@ -1026,7 +1114,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceScore id false account nonce nos true score)
@@ -1045,7 +1133,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceMetaData id false account nonce nos true meta-data)
@@ -1063,7 +1151,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonce} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV2} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceURI id false account nonce nos true ay u1 u2 u3)

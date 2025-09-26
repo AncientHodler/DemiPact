@@ -244,7 +244,7 @@
 )
 
 (interface OuronetInfoV3
-    @doc "Holds Information Schema"
+    @doc "Holds Information Schemas"
     ;;
     ;;  SCHEMAS
     ;;
@@ -319,20 +319,20 @@
 ;;
 ;;  [Branding]
 ;;
-(interface BrandingUsageV9 ;;10
+(interface BrandingUsageV9
     @doc "Exposes Branding Functions for True-Fungibles (T), Orto-Fungibles (M), ATS-Pairs (A) and SWP-Pairs (S)"
     ;;
     (defun C_UpdatePendingBranding:object{IgnisCollectorV2.OutputCumulator} (entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBranding (patron:string entity-id:string months:integer))
 )
-(interface BrandingUsageV10 ;;11
+(interface BrandingUsageV10
     @doc "Exposes Branding Functions for True-Fungible LP Tokens \
         \ <entity-pos>: 1 (Native LP), 2 (Freezing LP), 3 (Sleeping LP)"
     ;;
     (defun C_UpdatePendingBrandingLPs:object{IgnisCollectorV2.OutputCumulator} (swpair:string entity-pos:integer logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun C_UpgradeBrandingLPs (patron:string swpair:string entity-pos:integer months:integer))
 )
-(interface BrandingUsageV11 ;;12
+(interface BrandingUsageV11
     @doc "Exposes Branding Functions for Semi-Fungibles (S) and Non-Fungibles (N)"
     ;;
     (defun C_UpdatePendingBranding:object{IgnisCollectorV2.OutputCumulator} (entity-id:string son:bool logo:string description:string website:string social:[object{Branding.SocialSchema}]))
@@ -612,6 +612,142 @@
     (defun C_MultiTransfer:object{IgnisCollectorV2.OutputCumulator} (id-lst:[string] sender:string receiver:string transfer-amount-lst:[decimal] method:bool))
     (defun C_MultiBulkTransfer:object{IgnisCollectorV2.OutputCumulator} (id-lst:[string] sender:string receiver-array:[[string]] transfer-amount-array:[[decimal]]))
     ;;
+)
+;;
+;;  [Meta-Fungible]
+;;
+(interface DemiourgosPactMetaFungibleV6
+    @doc "Exposes most of the Functions of the DPMF Module. \
+    \ The ATS Module contains 3 more DPTF Functions that couldnt be brought here logisticaly \
+    \ UR(Utility-Read), URC(Utility-Read-Compute), UEV(Utility-Enforce-Validate) and \
+    \ UDC(Utility-Data-Composition) are NOT sorted alphabetically \
+    \ \
+    \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
+    \ Removes the 2 Branding Functions from this Interface, since they are in their own interface. \
+    \ \
+    \ V3 adds 2 Functions related to single Elite Account Update. \
+    \ \
+    \ V4 Removes <patron> input variable where it is not needed"
+    ;;
+    ;;
+    (defschema DPMF|Schema
+        nonce:integer
+        balance:decimal
+        meta-data:[object]
+    )
+    (defschema DPMF|Nonce-Balance
+        nonce:integer
+        balance:decimal
+    )
+    ;;
+    ;;
+    (defun UR_P-KEYS:[string] ())
+    (defun UR_KEYS:[string] ())
+    ;;
+    (defun UR_Konto:string (id:string))
+    (defun UR_Name:string (id:string))
+    (defun UR_Ticker:string (id:string))
+    (defun UR_Decimals:integer (id:string))
+    (defun UR_CanChangeOwner:bool (id:string))
+    (defun UR_CanUpgrade:bool (id:string))
+    (defun UR_CanAddSpecialRole:bool (id:string))
+    (defun UR_CanFreeze:bool (id:string))
+    (defun UR_CanWipe:bool (id:string))
+    (defun UR_CanPause:bool (id:string))
+    (defun UR_Paused:bool (id:string))
+    (defun UR_Supply:decimal (id:string))
+    (defun UR_TransferRoleAmount:integer (id:string))
+    (defun UR_Vesting:string (id:string))
+    (defun UR_Sleeping:string (id:string))
+    (defun UR_Roles:[string] (id:string rp:integer))
+    (defun UR_CanTransferNFTCreateRole:bool (id:string))
+    (defun UR_CreateRoleAccount:string (id:string))
+    (defun UR_NoncesUsed:integer (id:string))
+    (defun UR_RewardBearingToken:string (id:string))
+    (defun UR_AccountSupply:decimal (id:string account:string))
+    (defun UR_AccountRoleBurn:bool (id:string account:string))
+    (defun UR_AccountRoleCreate:bool (id:string account:string))
+    (defun UR_AccountRoleNFTAQ:bool (id:string account:string))
+    (defun UR_AccountRoleTransfer:bool (id:string account:string))
+    (defun UR_AccountFrozenState:bool (id:string account:string))
+    ;;
+    (defun UR_AccountUnit:[object{DPMF|Schema}] (id:string account:string))
+    (defun UR_AccountNonces:[integer] (id:string account:string))
+    (defun UR_AccountBalances:[decimal] (id:string account:string))
+    (defun UR_AccountMetaDatas:[[object]] (id:string account:string))
+        ;;
+    (defun UR_AccountNonceBalance:decimal (id:string nonce:integer account:string))
+    (defun UR_AccountNonceMetaData:[object] (id:string nonce:integer account:string))
+        ;;
+    (defun UR_AccountNoncesBalances:[decimal] (id:string nonces:[integer] account:string))
+    (defun UR_AccountNoncesMetaDatas:[[object]] (id:string nonces:[integer] account:string))
+    ;;
+    (defun URC_IzRBT:bool (reward-bearing-token:string))
+    (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
+    (defun URC_EliteAurynzSupply (account:string))
+    (defun URC_AccountExist:bool (id:string account:string))
+    (defun URC_HasVesting:bool (id:string))
+    (defun URC_HasSleeping:bool (id:string))
+    (defun URC_Parent:string (dpmf:string))
+    (defun URC_IzIdEA:bool (id:string))
+    ;;
+    (defun UEV_ParentOwnership (dpmf:string))
+    (defun UEV_NoncesToAccount (id:string account:string nonces:[integer]))
+    (defun UEV_id (id:string))
+    (defun UEV_CheckID:bool (id:string))
+    (defun UEV_Amount (id:string amount:decimal))
+    (defun UEV_CheckAmount:bool (id:string amount:decimal))
+    (defun UEV_UpdateRewardBearingToken (id:string))
+    (defun UEV_CanChangeOwnerON (id:string))
+    (defun UEV_CanUpgradeON (id:string))
+    (defun UEV_CanAddSpecialRoleON (id:string))
+    (defun UEV_CanFreezeON (id:string))
+    (defun UEV_CanWipeON (id:string))
+    (defun UEV_CanPauseON (id:string))
+    (defun UEV_PauseState (id:string state:bool))
+    (defun UEV_AccountBurnState (id:string account:string state:bool))
+    (defun UEV_AccountTransferState (id:string account:string state:bool))
+    (defun UEV_AccountFreezeState (id:string account:string state:bool))
+    (defun UEV_CanTransferNFTCreateRoleON (id:string))
+    (defun UEV_AccountAddQuantityState (id:string account:string state:bool))
+    (defun UEV_AccountCreateState (id:string account:string state:bool))
+    (defun UEV_Vesting (id:string existance:bool))
+    (defun UEV_Sleeping (id:string existance:bool))
+    ;;
+    (defun UDC_Compose:object{DPMF|Schema} (nonce:integer balance:decimal meta-data:[object]))
+    (defun UDC_Nonce-Balance:[object{DPMF|Nonce-Balance}] (nonce-lst:[integer] balance-lst:[decimal]))
+    ;;
+    ;;
+    (defun CAP_Owner (id:string))
+    ;;
+    (defun C_AddQuantity:object{IgnisCollectorV2.OutputCumulator} (id:string nonce:integer account:string amount:decimal))
+    (defun C_Burn:object{IgnisCollectorV2.OutputCumulator} (id:string nonce:integer account:string amount:decimal))
+    (defun C_Control:object{IgnisCollectorV2.OutputCumulator} (id:string cco:bool cu:bool casr:bool cf:bool cw:bool cp:bool ctncr:bool))
+    (defun C_Create:object{IgnisCollectorV2.OutputCumulator} (id:string account:string meta-data:[object]))
+    (defun C_DeployAccount (id:string account:string))
+    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator} (patron:string account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool]))
+    (defun C_Mint:object{IgnisCollectorV2.OutputCumulator} (id:string account:string amount:decimal meta-data:[object]))
+    (defun C_MultiBatchTransfer:object{IgnisCollectorV2.OutputCumulator} (id:string nonces:[integer] sender:string receiver:string method:bool))
+    (defun C_RotateOwnership:object{IgnisCollectorV2.OutputCumulator} (id:string new-owner:string))
+    (defun C_SingleBatchTransfer:object{IgnisCollectorV2.OutputCumulator} (id:string nonce:integer sender:string receiver:string method:bool))
+    (defun C_ToggleFreezeAccount:object{IgnisCollectorV2.OutputCumulator} (id:string account:string toggle:bool))
+    (defun C_TogglePause:object{IgnisCollectorV2.OutputCumulator}  (id:string toggle:bool))
+    (defun C_ToggleTransferRole:object{IgnisCollectorV2.OutputCumulator} (id:string account:string toggle:bool))
+    (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator} (id:string nonce:integer sender:string receiver:string transfer-amount:decimal method:bool))
+    (defun C_Wipe:object{IgnisCollectorV2.OutputCumulator} (id:string atbw:string))
+    (defun C_WipePartial:object{IgnisCollectorV2.OutputCumulator} (id:string atbw:string nonces:[integer]))
+    ;;
+    (defun XB_DeployAccountWNE (id:string account:string))
+    (defun XB_IssueFree:object{IgnisCollectorV2.OutputCumulator} (account:string name:[string] ticker:[string] decimals:[integer] can-change-owner:[bool] can-upgrade:[bool] can-add-special-role:[bool] can-freeze:[bool] can-wipe:[bool] can-pause:[bool] can-transfer-nft-create-role:[bool] iz-special:[bool]))
+    (defun XB_UpdateEliteSingle (id:string account:string))
+    (defun XB_UpdateElite (id:string sender:string receiver:string))
+    (defun XB_WriteRoles (id:string account:string rp:integer d:bool))
+    ;;
+    (defun XE_MoveCreateRole (id:string receiver:string))
+    (defun XE_ToggleAddQuantityRole (id:string account:string toggle:bool))
+    (defun XE_ToggleBurnRole (id:string account:string toggle:bool))
+    (defun XE_UpdateRewardBearingToken (atspair:string id:string))
+    (defun XE_UpdateSpecialMetaFungible:object{IgnisCollectorV2.OutputCumulator} (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool))
 )
 ;;
 ;;  [Orto Fungibles]

@@ -553,15 +553,24 @@
 )
 ;;
 ;;
-(interface DpdcTransfer
-    @doc "Holds Dpdc Transfer Related Functions"
+(interface DpdcTransferV2
+    @doc "Holds Dpdc Transfer Related Functions \
+        \ V2 changes to MultiTransfer Architecture"
+    ;;
+    ;;  [Schemas]
+    ;;
+    (defschema AggregatedRoyalties
+        creators:[string]
+        ignis-royalties:[decimal]
+    )
     ;;
     (defun UC_AndTruths:bool (truths:[bool]))
     ;;
     ;;  [URC]
     ;;
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string))
-    (defun URC_SummedIgnisRoyalty:decimal (id:string son:bool nonces:[integer] amounts:[integer]))
+    (defun URC_SummedIgnisRoyalty:decimal (patron:string id:string son:bool nonces:[integer] amounts:[integer]))
+    (defun URC_TotalTransferPrice:decimal (id:string son:bool nonces:[integer] amounts:[integer]))
     ;;
     ;;  [UEV]
     ;;
@@ -571,12 +580,12 @@
     ;;
     ;;  [UDC]
     ;;
-    (defun UDC_TransferCumulator:object{IgnisCollectorV2.OutputCumulator} (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer]))
+    (defun UDC_MultiTransferCumulator:object{IgnisCollectorV2.OutputCumulator} (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]]))
     ;;
     ;;  [C]
     ;;
-    (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator} (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
-    (defun C_IgnisRoyaltyCollector (patron:string id:string son:bool nonces:[integer] amounts:[integer]))
+    (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator} (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
+    (defun C_IgnisRoyaltyCollector:object{AggregatedRoyalties} (patron:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]]))
 )
 ;;
 (interface DpdcSets
@@ -672,7 +681,8 @@
     )
 )
 ;;
-(interface DpdcNonce
+
+(interface DpdcNonceV2
     @doc "Contains exported Functions from DPDC-UtilityTwo Module"
     ;;
     ;; [UR]
@@ -690,7 +700,7 @@
     ;;
     ;; [C]
     ;;
-    (defun C_UpdateNonce                (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData}))
+    (defun C_UpdateNonces               (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}]))
     (defun C_UpdateNonceRoyalty         (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal))
     (defun C_UpdateNonceIgnisRoyalty    (id:string son:bool account:string nosc:integer nos:bool nost:bool royalty-value:decimal))
     (defun C_UpdateNonceName            (id:string son:bool account:string nosc:integer nos:bool nost:bool name:string))

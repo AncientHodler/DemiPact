@@ -33,6 +33,10 @@
         (compose-capability (P|DPOF|CALLER))
         (compose-capability (SECURE))
     )
+    (defcap SECURE-ADMIN ()
+        (compose-capability (SECURE))
+        (compose-capability (GOV|DPOF_ADMIN))
+    )
     ;;{P4}
     (defconst P|I                   (P|Info))
     (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
@@ -1744,30 +1748,29 @@
         @doc "Transfer DPOF <id> <nonces> from <sender> to <receiver> by changing their Ownership"
         (UEV_IMC)
         (with-capability (DPOF|C>TRANSFER id nonces sender receiver method)
-            ;;1]Deploy Receiver account if it doesnt exist
-            (XB_DeployAccountWNE receiver id)
-            ;;2]Transfer <nonces> to <receiver>
-            (map
-                (lambda
-                    (element:integer)
-                    (let
-                        (
-                            (nonce-supply:decimal (UR_NonceSupply id element))
-                            (sender-supply:decimal (UR_AccountSupply id sender))
-                            (receiver-supply:decimal (UR_AccountSupply id receiver))
-                        )
-                        ;;Decrease Account Supply for Sender
-                        (XI_UpdateAccountSupply id sender (- sender-supply nonce-supply))
-                        ;;Increase Account Supply for Receiver
-                        (XI_UpdateAccountSupply id sender (+ receiver-supply nonce-supply))
-                        ;;Change Nonce Ownership
+            (let
+                (
+                    (sender-supply:decimal (UR_AccountSupply id sender))
+                    (receiver-supply:decimal (UR_AccountSupply id receiver))
+                    (nonces-supplies:[decimal] (UR_NoncesSupplies id nonces))
+                    (sum:decimal (fold (+) 0.0 nonces-supplies))
+                )
+                ;;1]Deploy Receiver account if it doesnt exist
+                (XB_DeployAccountWNE receiver id)
+                ;;2]Decrease Supply for Sender and increase for Receiver
+                (XI_UpdateAccountSupply id sender (- sender-supply sum))
+                (XI_UpdateAccountSupply id receiver (+ receiver-supply sum))
+                ;;2]Transfer <nonces> to <receiver>
+                (map
+                    (lambda
+                        (element:integer)
                         (XI_UpdateNonceHolder id element receiver)
                     )
+                    nonces
                 )
-                nonces
+                ;;3]Output Costs 1 IGNIS per Nonce Transfered
+                (UC_MoveCumulator id nonces false)
             )
-            ;;3]Output Costs 1 IGNIS per Nonce Transfered
-            (UC_MoveCumulator id nonces false)
         )
     )
     ;;{F7}  [X]
@@ -2005,7 +2008,7 @@
                 (tas:decimal (UR_AccountSupply id account))
                 (sum:decimal (fold (+) 0.0 amounts))
             )
-            ;;Update Total Account Supply
+            ;;Update Total Individual Account Supply
             (XI_UpdateAccountSupply id account (+ tas sum))
             (if iz-singular
                 (XI_UpdateNonceSupply id (at 0 nonces) (+ (UR_NonceSupply id (at 0 nonces)) (at 0 amounts)))
@@ -2236,6 +2239,18 @@
         )
     )
     ;;
+    (defun FixSupply (user:string id:string)
+        (let
+            (
+                (owned-nonces:[integer] (URD_AccountNonces user id))
+                (supplies:[decimal] (UR_NoncesSupplies id owned-nonces))
+                (sum:decimal (fold (+) 0.0 supplies))
+            )
+            (with-capability (SECURE-ADMIN)
+                (XI_UpdateAccountSupply id user sum)
+            )
+        )
+    )
 )
 
 (create-table P|T)

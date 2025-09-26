@@ -158,19 +158,15 @@
     ;;CREDIT
     ;;Single-Credit
     (defcap DPSF|C>CREDIT-FRAGMENT-NONCE (id:string nonce:integer)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-CREDIT id true nonce true))
     )
     (defcap DPNF|C>CREDIT-FRAGMENT-NONCE (id:string nonce:integer)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-CREDIT id false nonce true))
     )
     (defcap DPSF|C>CREDIT-NONCE (id:string nonce:integer)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-CREDIT id true nonce false))
     )
     (defcap DPNF|C>CREDIT-NONCE (id:string nonce:integer amount:integer)
-        @event
         (enforce (= amount 1) "Credit amount is must be 1 for NFTs")
         (compose-capability (DPDC-C|C>SINGLE-CREDIT id false nonce false))
     )
@@ -186,19 +182,15 @@
     ;;
     ;;Multi-Credit
     (defcap DPSF|C>CREDIT-FRAGMENT-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC-C|C>MULTI-CREDIT id true nonces amounts true))
     )
     (defcap DPNF|C>CREDIT-FRAGMENT-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC-C|C>MULTI-CREDIT id false nonces amounts true))
     )
     (defcap DPSF|C>CREDIT-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC-C|C>MULTI-CREDIT id true nonces amounts false))
     )
     (defcap DPNF|C>CREDIT-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC-C|C>MULTI-CREDIT id false nonces amounts false))
         (enforce (= amounts (make-list (length amounts) 1)) "Invalid Amounts for NFT Crediting")
     )
@@ -209,11 +201,9 @@
     ;;
     ;;Hybrid Multi Credit
     (defcap DPSF|C>CREDIT-HYBRID-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|C>HYBRID-MULTI-CREDIT id true nonces amounts))
     )
     (defcap DPNF|C>CREDIT-HYBRID-NONCES (id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|C>HYBRID-MULTI-CREDIT id false nonces amounts))
     )
     (defcap DPDC|C>HYBRID-MULTI-CREDIT (id:string son:bool nonces:[integer] amounts:[integer])
@@ -236,20 +226,16 @@
     ;;DEBIT
     ;;Single Debit
     (defcap DPSF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount true false))
     )
     (defcap DPNF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount true false))
     )
     ;;
     (defcap DPSF|C>DEBIT-NONCE (account:string id:string nonce:integer amount:integer wipe-mode:bool)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount false wipe-mode))
     )
     (defcap DPNF|C>DEBIT-NONCE (account:string id:string nonce:integer amount:integer wipe-mode:bool)
-        @event
         (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount false wipe-mode))
     )
     (defcap DPDC-C|C>SINGLE-DEBIT 
@@ -272,19 +258,15 @@
     )
     ;;Multi-Debit
     (defcap DPSF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts true false))
     )
     (defcap DPNF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts true false))
     )
     (defcap DPSF|C>DEBIT-NONCES (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
-        @event
         (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts false wipe-mode))
     )
     (defcap DPNF|C>DEBIT-NONCES (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
-        @event
         (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts false wipe-mode))
     )
     (defcap DPDC|C>MULTI-DEBIT 
@@ -300,11 +282,9 @@
     )
     ;;Hybrid Multi Debit
     (defcap DPSF|C>DEBIT-HYBRID-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|CX>MULTI-DEBIT account id true nonces amounts false))
     )
     (defcap DPNF|C>DEBIT-HYBRID-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        @event
         (compose-capability (DPDC|CX>MULTI-DEBIT account id false nonces amounts false))
     )
     (defcap DPDC|CX>MULTI-DEBIT 
@@ -676,14 +656,22 @@
                 )
                 ;;
                 ;;Compute Cumulator Parameters
+                (nu:integer (ref-DPDC::UR_NoncesUsed id son))
                 (s-amounts:integer (fold (+) 0 amounts))
                 (smallest:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
-                (price:decimal (* smallest (dec s-amounts)))
+                (ft:string (take 2 id))
+                (sh:string "E|")
+                (raw-price:decimal (* smallest (dec s-amounts)))
+                (price:decimal
+                    (if (fold (and) true [(= ft sh) son (= nu 0)])
+                        (/ raw-price 1000.0)
+                        raw-price
+                    )
+                )
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
                 ;;
                 ;;Computing Nonces that will be generated
                 (current-nonce:integer (ref-DPDC::UR_NoncesUsed id son))
-                
                 (nonces-to-be-created:[integer]
                     (take (- 0 l) (enumerate 0 (+ current-nonce l)))
                 )

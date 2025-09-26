@@ -648,12 +648,12 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
                         ;;1]Transfer <nonces> to <dpdc>
-                        (ref-DPDC-T::C_Transfer id son account dpdc nonces (make-list (length nonces) 1) true)
+                        (ref-DPDC-T::C_Transfer [id] [son] account dpdc [nonces] [(make-list (length nonces) 1)] true)
                     )
                     (ico2:object{IgnisCollectorV2.OutputCumulator}
                         (if son
@@ -683,7 +683,7 @@
                                     )
                                     (ico4:object{IgnisCollectorV2.OutputCumulator}
                                         ;;3]Transfer new set nonce to <account>
-                                        (ref-DPDC-T::C_Transfer id false dpdc account [(ref-DPDC::UR_NoncesUsed id son)] [1] true)
+                                        (ref-DPDC-T::C_Transfer [id] [false] dpdc account [[(ref-DPDC::UR_NoncesUsed id son)]] [[1]] true)
                                     )
                                 )
                                 (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico3 ico4] [])
@@ -709,12 +709,12 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
                         ;;1]Transfer the SFT|NFT from <account> to <dpdc>
-                        (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [1] true)
+                        (ref-DPDC-T::C_Transfer [id] [son] account dpdc [[nonce]] [[1]] true)
                     )
                     (constituents:[integer] 
                         (if son
@@ -724,7 +724,7 @@
                     )
                     (ico2:object{IgnisCollectorV2.OutputCumulator}
                         ;;2]Release the Set Elements from <dpdc> to <account>
-                        (ref-DPDC-T::C_Transfer id son dpdc account constituents (make-list (length constituents) 1) true)
+                        (ref-DPDC-T::C_Transfer [id] [son] dpdc account [constituents] [(make-list (length constituents) 1)] true)
                     )
                 )
                 ;;3]Burn the input SFT|NFT nonce

@@ -10,6 +10,7 @@
         MainHand:string
         OffHand:string
     )
+    (defconst IPFS                  "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
     (defconst LEGENDARY             277.0)      ;;Legendary BS Score
     (defconst EPIC                  43.0)       ;;Epic BS Score
     (defconst RARE                  25.0)       ;;Rare BS Score
@@ -92,42 +93,8 @@
     (defconst NAME                  "Bloodshed")
     (defconst DS                    "A Collection of 12928 NFTs depicting 272 unique Dacian Warriors, representing Bloodshed.gg, a gaming Guild within Age of Zalmoxis - a Web3 MMORPG, spawned on Ouronet, powered by Kadena")
 )
-;;Not Needed
-(interface BsLegendary
-    (defun OrderMultiplier:decimal (rarity-range:integer position:integer rarity-elements:integer))
-    (defun BloodshedLink:string (rarity:string position:integer))
-    ;;
-    (defun A_Issue (patron:string collection-owner:string collection-creator:string))
-    (defun A_Legendary (patron:string dhb:string pos:[integer]))
-)
-(interface BsEpic
-    (defun A_Epic (patron:string dhb:string pos:[integer]))
-)
-(interface BsRare
-    (defun A_Rare (patron:string dhb:string pos:[integer]))
-)
-(interface BsCommon
-    (defun A_Common (patron:string dhb:string pos:[integer]))
-)
-(interface BsSets
-    (defun A01_TierOneCommonComati (patron:string dhb:string))
-    (defun A02_TierOneCommonUrsoi (patron:string dhb:string))
-    (defun A03_TierOneCommonPileati (patron:string dhb:string))
-    (defun A04_TierOneCommonSmardoi (patron:string dhb:string))
-    (defun A05_TierOneCommonCarpian (patron:string dhb:string))
-    (defun A06_TierOneCommonTarabostes (patron:string dhb:string))
-    (defun A07_TierOneCommonCostoboc (patron:string dhb:string))
-    (defun A08_TierOneCommonBuridavensRareComati (patron:string dhb:string))
-    ;;
-    (defun A09_TierOneRare (patron:string dhb:string))
-    ;;
-    (defun A10_TierOneEpic (patron:string dhb:string))
-    ;;
-    (defun A11_TierTwoThreeFour (patron:string dhb:string))
-)
+;;
 (module BLOODSHED-L GOV
-    ;;
-    (implements BsLegendary)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -153,6 +120,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
+    (defconst IPFS                  Bloodshed.IPFS)
     ;;
     (defconst LEGENDARY             Bloodshed.LEGENDARY)    ;;Legendary BS Score
     (defconst EPIC                  Bloodshed.EPIC)         ;;Epic BS Score
@@ -260,22 +228,26 @@
             (floor (- rr (/ (* rr (- p 1)) (- re 1))) BS-PREC)
         )
     )
-    (defun BloodshedLink:string (rarity:string position:integer)
-        (let
-            (
-                (ipfs:string "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/")
-            )
-            (format "{}{}/{}.png"
-                [ipfs rarity position]
-            )
-        )
-    )
-    ;;
     (defun LegendaryOM (position:integer)
         (OrderMultiplier 100 position LEGENDARY-S)
     )
     (defun LS (position:integer)
         (floor (* LEGENDARY (LegendaryOM position)) BS-PREC)
+    )
+    ;;
+    (defun LegendaryLink:string (position:integer small-or-big:bool)
+        (let
+            (
+                (type:string (if small-or-big "512x512" "FULL"))
+                (folder:string "/07_Bloodshed/1_Legendary/")
+                (p:integer (mod position 8))
+                (l:string "L_")
+                (image-str:string 
+                    (concat ["L_" (if (= p 0) "8" (format "{}" [p])) ".jpg"])
+                )
+            )
+            (concat [IPFS type folder image-str])
+        )
     )
     ;;
     ;;{F0}  [UR]
@@ -322,7 +294,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
             )
             (ref-TS02-C2::DPNF|C_Issue
                 patron
@@ -337,7 +309,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (b:string BAR)
                 (t:bool true)
                 (f:bool false)
@@ -365,8 +337,8 @@
                                     d-l
                                     (ref-DPDC-UDC::UDC_ScoreMetaData (LS p) (L-x p))
                                     type
-                                    (ref-DPDC-UDC::UDC_URI|Data (BloodshedLink "Legendary" p) b b b b b b)
-                                    zd
+                                    (ref-DPDC-UDC::UDC_URI|Data (LegendaryLink p true) b b b b b b)
+                                    (ref-DPDC-UDC::UDC_URI|Data (LegendaryLink p false) b b b b b b)
                                     zd
                                 )
                             )

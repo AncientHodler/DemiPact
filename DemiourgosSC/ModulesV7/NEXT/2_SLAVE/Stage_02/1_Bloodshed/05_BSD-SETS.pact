@@ -1,7 +1,5 @@
 (module BLOODSHED-SETS GOV
     ;;
-    (implements BsSets)
-    ;;
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
@@ -26,6 +24,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
+    (defconst IPFS                  Bloodshed.IPFS)
     ;;
     ;;
     (defconst R                     Bloodshed.R)            ;;Native Bloodshed Royalty
@@ -61,6 +60,23 @@
             (ref-DPDC-UDC::C input)
         )
     )
+    (defun SetLink:string (position:integer small-or-big:bool)
+        (let
+            (
+                (type:string (if small-or-big "512x512" "FULL"))
+                (folder:string "/07_Bloodshed/5_Sets/")
+                (ps:string (format "{}" [position]))
+                (padded-num:string 
+                    (if (< position 10)
+                        (+ "0" ps)
+                        ps
+                    )
+                )
+                (image-str:string (concat [padded-num ".jpg"]))
+            )
+            (concat [IPFS type folder image-str])
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -73,12 +89,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Comati Photo Link")
             )
             ;;Set Class 1
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -110,8 +125,8 @@
                     "All Common Comati Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 1 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 1 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -121,12 +136,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Ursoi Photo Link")
             )
             ;;Set Class 2
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -158,8 +172,8 @@
                     "All Common Ursoi Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 2 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 2 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -169,12 +183,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Pileati Photo Link")
             )
             ;;Set Class 3
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -206,8 +219,8 @@
                     "All Common Pileati Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 3 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 3 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -217,12 +230,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Smardoi Photo Link")
             )
             ;;Set Class 4
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -254,8 +266,8 @@
                     "All Common Smardoi Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 4 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 4 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -265,12 +277,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Carpian Photo Link")
             )
             ;;Set Class 5
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -302,8 +313,8 @@
                     "All Common Carpian Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 5 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 5 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -313,12 +324,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Tarabostes Photo Link")
             )
             ;;Set Class 6
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -350,8 +360,8 @@
                     "All Common Tarabostes Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 6 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 6 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -361,12 +371,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Costoboc Photo Link")
             )
             ;;Set Class 7
             (ref-TS02-C2::DPNF|C_DefinePrimordialSet
@@ -398,8 +407,8 @@
                     "All Common Costoboc Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    (ref-DPDC-UDC::UDC_ZeroURI|Data)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 7 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 7 false) b b b b b b)
                     (ref-DPDC-UDC::UDC_ZeroURI|Data)
                 )
             )
@@ -409,7 +418,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 ;;
@@ -418,8 +427,6 @@
                 ;;
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s:string "IPFS T1 Buridavens Photo Link")
-                (s1:string "IPFS T1 Comati Photo Link")
                 ;;
                 (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type true false false false false false false))
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
@@ -452,8 +459,9 @@
                     "Tier 1 Common Buridavens"
                     "All Common Buridavens Dacians in a Set. 13.5% (90% of Native Bloodshed Royalty) Royalty and 90% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 8 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 8 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 9
@@ -475,29 +483,23 @@
                     "Tier 1 Rare Comati"
                     "All Rare Comati Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s1 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 9 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 9 false) b b b b b b)
+                    zd
                 )
             )]
         )
     )
     ;;
-    (defun A09_TierOneRare (patron:string dhb:string)
+    (defun A09a_TierOneRare (patron:string dhb:string)
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.85 R))
                 (ir:decimal (fold (*) 1.0 [9.0 0.85 IR-R]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s2:string "IPFS T1 Ursoi Photo Link")
-                (s3:string "IPFS T1 Pileati Photo Link")
-                (s4:string "IPFS T1 Smardoi Photo Link")
-                (s5:string "IPFS T1 Carpian Photo Link")
-                (s6:string "IPFS T1 Tarabostes Photo Link")
-                (s7:string "IPFS T1 Costoboc Photo Link")
-                (s8:string "IPFS T1 Buridavens Photo Link")
                 ;;
                 (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type true false false false false false false))
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
@@ -522,8 +524,9 @@
                     "Tier 1 Rare Ursoi"
                     "All Rare Ursoi Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s2 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 10 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 10 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 11
@@ -546,8 +549,9 @@
                     "Tier 1 Rare Pileati"
                     "All Rare Pileati Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s3 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 11 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 11 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 12
@@ -570,8 +574,9 @@
                     "Tier 1 Rare Smardoi"
                     "All Rare Smardoi Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s4 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 12 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 12 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 13
@@ -594,12 +599,28 @@
                     "Tier 1 Rare Carpian"
                     "All Rare Carpian Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s5 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 13 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 13 false) b b b b b b)
+                    zd
                 )
+            )]
+        )
+    )
+    (defun A09b_TierOneRare (patron:string dhb:string)
+        (let
+            (
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
+                (r:decimal (* 0.85 R))
+                (ir:decimal (fold (*) 1.0 [9.0 0.85 IR-R]))
+                (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
+                (b:string BAR)
+                ;;
+                (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type true false false false false false false))
+                (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             )
             ;;Set Class 14
-            (ref-TS02-C2::DPNF|C_DefinePrimordialSet
+            [(ref-TS02-C2::DPNF|C_DefinePrimordialSet
                 patron dhb "Tier 1 Rare Tarabostes" 1.1
                 [
                     (N (enumerate 1742 4864 72))
@@ -618,8 +639,9 @@
                     "Tier 1 Rare Tarabostes"
                     "All Rare Tarabostes Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s6 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 14 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 14 false) b b b b b b) 
+                    zd
                 )
             )
             ;;Set Class 15
@@ -642,8 +664,9 @@
                     "Tier 1 Rare Costoboc"
                     "All Rare Costoboc Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s7 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 15 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 15 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 16
@@ -666,8 +689,9 @@
                     "Tier 1 Rare Buridavens"
                     "All Rare Buridavens Dacians in a Set. 12.75% (85% of Native Bloodshed Royalty) Royalty and 85% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s8 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 16 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 16 false) b b b b b b)
+                    zd
                 )
             )]
         )
@@ -676,19 +700,11 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.80 R))
                 (ir:decimal (fold (*) 1.0 [6.0 0.80 IR-E]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s1:string "IPFS T1 Comati Photo Link")
-                (s2:string "IPFS T1 Ursoi Photo Link")
-                (s3:string "IPFS T1 Pileati Photo Link")
-                (s4:string "IPFS T1 Smardoi Photo Link")
-                (s5:string "IPFS T1 Carpian Photo Link")
-                (s6:string "IPFS T1 Tarabostes Photo Link")
-                (s7:string "IPFS T1 Costoboc Photo Link")
-                (s8:string "IPFS T1 Buridavens Photo Link")
                 ;;
                 (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type true false false false false false false))
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
@@ -710,8 +726,9 @@
                     "Tier 1 Epic Comati"
                     "All Epic Comati Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s1 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 17 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 17 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 18
@@ -731,8 +748,9 @@
                     "Tier 1 Epic Ursoi"
                     "All Epic Ursoi Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s2 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 18 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 18 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 19
@@ -752,8 +770,9 @@
                     "Tier 1 Epic Pileati"
                     "All Epic Pileati Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s3 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 19 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 19 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 20
@@ -773,8 +792,9 @@
                     "Tier 1 Epic Smardoi"
                     "All Epic Smardoi Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s4 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 20 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 20 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 21
@@ -794,8 +814,9 @@
                     "Tier 1 Epic Carpian"
                     "All Epic Carpian Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s5 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 21 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 21 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 22
@@ -815,8 +836,9 @@
                     "Tier 1 Epic Tarabostes"
                     "All Epic Tarabostes Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s6 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 22 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 22 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 23
@@ -836,8 +858,9 @@
                     "Tier 1 Epic Costoboc"
                     "All Epic Costoboc Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s7 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 23 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 23 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 24
@@ -857,8 +880,9 @@
                     "Tier 1 Epic Buridavens"
                     "All Epic Buridavens Dacians in a Set. 12% (80% of Native Bloodshed Royalty) Royalty and 80% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s8 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 24 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 24 false) b b b b b b)
+                    zd
                 )
             )]
         )
@@ -867,7 +891,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (r:decimal (* 0.75 R))
                 (ir-c:decimal (* 18 IR-C))
                 (ir-r:decimal (* 9 IR-R))
@@ -887,21 +911,8 @@
                 ;;
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
                 (b:string BAR)
-                (s1:string "IPFS T2 Comati Photo Link")
-                (s2:string "IPFS T2 Ursoi Photo Link")
-                (s3:string "IPFS T2 Pileati Photo Link")
-                (s4:string "IPFS T2 Smardoi Photo Link")
-                (s5:string "IPFS T2 Carpian Photo Link")
-                (s6:string "IPFS T2 Tarabostes Photo Link")
-                (s7:string "IPFS T2 Costoboc Photo Link")
-                (s8:string "IPFS T2 Buridavens Photo Link")
-                ;;
-                (s9:string "IPFS T3 Common Link")
-                (s10:string "IPFS T3 Rare Link")
-                (s11:string "IPFS T3 Epic Link")
-                (s12:string "IPFS T3 Legendary Link")
-                ;;
-                (s13:string "IPFS T4 Link")
+                (fs:string "https://ipfs.io/ipfs/QmWjMoqfX7tunGd7krv7VrfnKPfCqZf7q9KnrzKMadXGiv/512x512.jpg")
+                (fb:string "https://ipfs.io/ipfs/QmWjMoqfX7tunGd7krv7VrfnKPfCqZf7q9KnrzKMadXGiv/FULL.jpg")
                 ;;
                 (type:object{DpdcUdc.URI|Type} (ref-DPDC-UDC::UDC_URI|Type true false false false false false false))
                 (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
@@ -917,8 +928,9 @@
                     "Tier 2 Comati"
                     "All Comati Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s1 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 25 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 25 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 26
@@ -931,8 +943,9 @@
                     "Tier 2 Ursoi"
                     "All Ursoi Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s2 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 26 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 26 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 27
@@ -945,8 +958,9 @@
                     "Tier 2 Pileati"
                     "All Pileati Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s3 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 27 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 27 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 28
@@ -959,8 +973,9 @@
                     "Tier 2 Smardoi"
                     "All Smardoi Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s4 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 28 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 28 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 29
@@ -973,8 +988,9 @@
                     "Tier 2 Carpian"
                     "All Carpian Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s5 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 29 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 29 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 30
@@ -987,8 +1003,9 @@
                     "Tier 2 Tarabostes"
                     "All Tarabostes Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s6 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 30 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 30 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 31
@@ -1001,8 +1018,9 @@
                     "Tier 2 Costoboc"
                     "All Costoboc Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s7 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 31 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 31 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 32
@@ -1015,8 +1033,9 @@
                     "Tier 2 Buridavens"
                     "All Buridavens Dacians in a Set. 11.25% (75% of Native Bloodshed Royalty) Royalty and 75% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s8 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 32 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 32 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 33
@@ -1028,8 +1047,9 @@
                     "Tier 3 Common"
                     "All Common Dacians in a Set. 10.5% (70% of Native Bloodshed Royalty) Royalty and 70% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s9 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 33 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 33 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 34
@@ -1041,8 +1061,9 @@
                     "Tier 3 Rare"
                     "All Rare Dacians in a Set. 10.5% (70% of Native Bloodshed Royalty) Royalty and 70% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s10 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 34 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 34 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 35
@@ -1054,8 +1075,9 @@
                     "Tier 3 Epic"
                     "All Epic Dacians in a Set. 10.5% (70% of Native Bloodshed Royalty) Royalty and 70% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s11 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 35 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 35 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 36
@@ -1077,8 +1099,9 @@
                     "All Legendary Dacians in a Set. 10.5% (70% of Native Bloodshed Royalty) Royalty and 70% Ignis-Royalty relative to individual Elements"
                     md
                     (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
-                    (ref-DPDC-UDC::UDC_URI|Data s12 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 36 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 36 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 37
@@ -1090,8 +1113,9 @@
                     "Tier 4"
                     "All Unique 272 Dacians in a Set. 9.75% (65% of Native Bloodshed Royalty) Royalty and 65% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 37 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 37 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Class 38
@@ -1103,8 +1127,9 @@
                     "Tier 4"
                     "All Unique 272 Dacians in a Set. 9.75% (65% of Native Bloodshed Royalty) Royalty and 65% Ignis-Royalty relative to individual Elements"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 38 true) b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data (SetLink 38 false) b b b b b b)
+                    zd
                 )
             )
             ;;Set Fragmentation for Class 37 and 38
@@ -1115,8 +1140,9 @@
                     "Tier 4 Fragments"
                     "Bloodshed Tier 4 Fragments. 9.75% (65% of Native Bloodshed Royalty) Royalty and 1000th Ignis-Royalty relative to the Full Set"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data fs b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data fb b b b b b b)
+                    zd
                 )
             )
             (ref-TS02-C2::DPNF|C_EnableSetClassFragmentation
@@ -1126,8 +1152,9 @@
                     "Tier 4 Fragments"
                     "Bloodshed Tier 4 Fragments. 9.75% (65% of Native Bloodshed Royalty) Royalty and 1000th Ignis-Royalty relative to the Full Set"
                     md type
-                    (ref-DPDC-UDC::UDC_URI|Data s13 b b b b b b)
-                    zd zd
+                    (ref-DPDC-UDC::UDC_URI|Data fs b b b b b b)
+                    (ref-DPDC-UDC::UDC_URI|Data fb b b b b b b)
+                    zd
                 )
             )
             ]

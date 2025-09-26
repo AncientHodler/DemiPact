@@ -73,6 +73,51 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
+    (defun UC_IpfsLink:string (rarity:string starting-position:integer idx:integer small-or-big:bool)
+        (let
+            (
+                (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
+                (type:string (if small-or-big "512x512" "FULL"))
+                (folder:string
+                    (cond
+                        ((= rarity "Legendary")     "/04_Nosferatu/1_Legendary/")
+                        ((= rarity "Epic")          "/04_Nosferatu/2_Epic/")
+                        ((= rarity "Rare")          "/04_Nosferatu/3_Rare/")
+                        ((= rarity "Common")        "/04_Nosferatu/4_Common/")
+                        ""
+                    )
+                )
+                (pn:string (UC_PaddedNumber rarity (+ starting-position idx)))
+            )
+            (concat [ipfs type folder pn])
+        )
+    )
+    (defun UC_PaddedNumber:string (rarity:string number:integer)
+        (let
+            (
+                (num-str:string (format "{}" [number]))
+                (padded-num:string
+                    (if (< number 100)
+                        (if (< number 10)
+                            (+ "00" num-str)
+                            (+ "0" num-str)
+                        )
+                        num-str
+                    )
+                )
+                (letter:string
+                    (cond
+                        ((= rarity "Legendary")     "L_")
+                        ((= rarity "Epic")          "E_")
+                        ((= rarity "Rare")          "R_")
+                        ((= rarity "Common")        "C_")
+                        ""
+                    )
+                )
+            )
+            (concat [letter padded-num ".jpg"])
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
@@ -96,66 +141,171 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun NosferatuNonceDataMaker:[object{DpdcUdc.DPDC|NonceData}]
+        (rarity:string starting-position:integer mdm:[[string]])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
+                (rarities:[string] ["Legendary" "Epic" "Rare" "Common"])
+                (iz-rarity-ok:bool (contains rarity rarities))
+                (IR:decimal
+                    (cond
+                        ((= rarity "Legendary") IR-L)
+                        ((= rarity "Epic") IR-E)
+                        ((= rarity "Rare") IR-R)
+                        ((= rarity "Common") IR-C)
+                        0.0
+                    )
+                )
+                (D:string
+                    (cond
+                        ((= rarity "Legendary") D-L)
+                        ((= rarity "Epic") D-E)
+                        ((= rarity "Rare") D-R)
+                        ((= rarity "Common") D-C)
+                        ""
+                    )
+                )
+            )
+            (enforce iz-rarity-ok "Rarity string is invalid")
+            (fold
+                (lambda
+                    (acc:[object{DpdcUdc.DPDC|NonceData}] idx:integer)
+                    (ref-U|LST::UC_AppL acc
+                        (ref-DPDC-UDC::UDC_NonceData
+                            R
+                            IR
+                            (format "Nosferatu {} #{}" [rarity (+ starting-position idx)])
+                            D
+                            (ref-DPDC-UDC::UDC_MetaData (N (at idx mdm)))
+                            TYPE
+                            (ref-DPDC-UDC::UDC_URI|Data (UC_IpfsLink rarity starting-position idx true) B B B B B B)
+                            (ref-DPDC-UDC::UDC_URI|Data (UC_IpfsLink rarity starting-position idx false) B B B B B B)
+                            ZD
+                        )
+                    )
+                )
+                []
+                (enumerate 0 (- (length mdm) 1))
+            )
+        )
+    )
     (defun NosferatuSpawner (patron:string dhn-id:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
         (let
             (
-                (rarities:[string] ["Legendary" "Epic" "Rare" "Common"])
-                (iz-rarity-ok:bool (contains rarity rarities))
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
+                (l:integer (length mdm))
             )
-            (enforce iz-rarity-ok "Rarity string is invalid")
-            (let
-                (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                    (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
-                    ;;
-                    (IR:decimal
-                        (cond
-                            ((= rarity "Legendary") IR-L)
-                            ((= rarity "Epic") IR-E)
-                            ((= rarity "Rare") IR-R)
-                            ((= rarity "Common") IR-C)
-                            0.0
-                        )
-                    )
-                    (D:string
-                        (cond
-                            ((= rarity "Legendary") D-L)
-                            ((= rarity "Epic") D-E)
-                            ((= rarity "Rare") D-R)
-                            ((= rarity "Common") D-C)
-                            ""
-                        )
-                    )
-                    (l:integer (length mdm))
-                )
-                (enforce (= l number-of-positions) "Invalid Number of Positions")
-                (ref-TS02-C2::DPNF|C_Create
-                    patron dhn-id
-                    (fold
-                        (lambda
-                            (acc:[object{DpdcUdc.DPDC|NonceData}] idx:integer)
-                            (ref-U|LST::UC_AppL acc
-                                (ref-DPDC-UDC::UDC_NonceData
-                                    R
-                                    IR
-                                    (format "Nosferatu {} #{}" [rarity (+ starting-position idx)])
-                                    D-L
-                                    (ref-DPDC-UDC::UDC_MetaData (N (at idx mdm)))
-                                    TYPE
-                                    (ref-DPDC-UDC::UDC_URI|Data (fold (+) IPFS ["/" rarity "_" (format "{}" [(+ idx starting-position)]) ".png"]) B B B B B B)
-                                    ZD
-                                    ZD
-                                )
-                            )
-                        )
-                        []
-                        (enumerate 0 (- (length mdm) 1))
-                    )
-                )
+            (enforce (= l number-of-positions) "Invalid Number of Positions")
+            (ref-TS02-C2::DPNF|C_Create patron dhn-id
+                (NosferatuNonceDataMaker rarity starting-position mdm)
             )
-            
         )
+    )
+    (defun NosferatuFixer (patron:string dhn-id:string account:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
+        (let
+            (
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
+                (l:integer (length mdm))
+                (nonces:[integer] (NonceComputer rarity starting-position number-of-positions))
+            )
+            (enforce (= l number-of-positions) "Invalid Number of Positions")
+            (ref-TS02-C2::DPNF|C_UpdateNonces patron dhn-id account nonces true
+                (NosferatuNonceDataMaker rarity starting-position mdm)
+            )
+        )
+    )
+    (defun NonceComputer:[integer] (rarity:string starting-position:integer number-of-positions:integer)
+        (let
+            (
+                (starting-point:integer
+                    (cond
+                        ((= rarity "Legendary") 0)
+                        ((= rarity "Epic") 100)
+                        ((= rarity "Rare") 300)
+                        ((= rarity "Common") 700)
+                        0
+                    )
+                )
+                (start:integer (+ starting-point starting-position))
+                (end:integer (+ (- start 1) number-of-positions))
+            )
+            (enumerate start end)
+        )
+    )
+    ;;
+    (defun A_Fix01 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Legendary" 1 100 mdm)
+    )
+    (defun A_Fix02a (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Legendary" 71 30 mdm)
+    )
+    (defun A_Fix02b (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Epic" 1 40 mdm)
+    )
+    (defun A_Fix03 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Epic" 41 70 mdm)
+    )
+    (defun A_Fix04 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Epic" 111 70 mdm)
+    )
+    (defun A_Fix05a (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Epic" 181 20 mdm)
+    )
+    (defun A_Fix05b (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 1 50 mdm)
+    )
+    (defun A_Fix06 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 51 70 mdm)
+    )
+    (defun A_Fix07 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 121 70 mdm)
+    )
+    (defun A_Fix08 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 191 70 mdm)
+    )
+    (defun A_Fix09 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 261 70 mdm)
+    )
+    (defun A_Fix10 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Rare" 331 70 mdm)
+    )
+    (defun A_Fix11 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 1 70 mdm)
+    )
+    (defun A_Fix12 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 71 70 mdm)
+    )
+    (defun A_Fix13 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 141 70 mdm)
+    )
+    (defun A_Fix14 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 211 70 mdm)
+    )
+    (defun A_Fix15 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 281 70 mdm)
+    )
+    (defun A_Fix16 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 351 70 mdm)
+    )
+    (defun A_Fix17 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 421 70 mdm)
+    )
+    (defun A_Fix18 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 491 70 mdm)
+    )
+    (defun A_Fix19 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 561 70 mdm)
+    )
+    (defun A_Fix20 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 631 70 mdm)
+    )
+    (defun A_Fix21 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 701 70 mdm)
+    )
+    (defun A_Fix22 (patron:string dhn-id:string account:string mdm:[[string]])
+        (NosferatuFixer patron dhn-id account "Common" 771 30 mdm)
     )
     ;;
     (defun A_Step01 (patron:string dhn-id:string mdm:[[string]])

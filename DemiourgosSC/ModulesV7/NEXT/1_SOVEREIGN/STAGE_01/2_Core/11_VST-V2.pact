@@ -49,6 +49,7 @@
         (compose-capability (VST|GOV))
         (compose-capability (P|VST|CALLER))
         (compose-capability (SECURE))
+        (compose-capability (P|VST|REMOTE-GOV))
     )
     ;;{P4}
     (defconst P|I                   (P|Info))

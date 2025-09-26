@@ -76,7 +76,7 @@
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -244,7 +244,7 @@
         (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
         (ref-DPDC:module{Dpdc} DPDC)
         (ref-DPDC-S:module{DpdcSets} DPDC-S)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -374,7 +374,7 @@
     (
         (ref-DPDC:module{Dpdc} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -446,7 +446,7 @@
     (
         (ref-DPDC:module{Dpdc} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -575,8 +575,8 @@
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{Dpdc} DPDC)
         (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-        (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -587,8 +587,8 @@
     (ref-TS02-C1::DPSF|C_TogglePause patron id false)
     [
         (format "Patron has {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
-        (format "Summed Ignis Royalty is {}" [(ref-DPDC-T::URC_SummedIgnisRoyalty id true [1] [7])])
-        (format "Transfer Cumulator is {}" [(ref-DPDC-T::UDC_TransferCumulator id true patron emma [1] [7])])
+        (format "Summed Ignis Royalty is {}" [(ref-DPDC-T::URC_SummedIgnisRoyalty patron id true [1] [7])])
+        (format "Transfer Cumulator is {}" [(ref-DPDC-T::UDC_MultiTransferCumulator [id] [true] patron emma [[1]] [[7]])])
         (ref-TS02-C1::DPSF|C_TransferNonce patron id patron lumy 1 7 false)
         (format "Patron has after transfer {} IGNIS" [(ref-DALOS::UR_TF_AccountSupply patron false)])
         (ref-DPDC::URD_SemiFungibleAccountHoldings lumy id)
@@ -622,18 +622,17 @@
 (let
     (
         (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
         (id1:string "DHCD-98c486052a51")
         (id2:string "DHN-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
     )
-    (ref-TS02-C1::DPSF|C_TransferNonces patron id1 patron lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
-    ;(ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
-
     [
+        (ref-TS02-C1::DPSF|C_TransferNonces patron id1 patron lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
+        (ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
         (ref-DPDC::URD_SemiFungibleAccountHoldings emma id1)
         (ref-DPDC::URD_SemiFungibleAccountHoldings lumy id1)
     ]
@@ -662,8 +661,8 @@
 (let
     (
         (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
         (id:string "DHOC-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -796,7 +795,7 @@
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (ref-DPDC:module{Dpdc} DPDC)
         (ref-DPDC-S:module{DpdcSets} DPDC-S)
         (patron:string KST.ANHD)
@@ -858,9 +857,9 @@
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{Dpdc} DPDC)
         
-        (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
-        (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+        (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
         (patron:string KST.ANHD)
         (ouro:string "OURO-98c486052a51")
         (id:string "E|DH-98c486052a51")
@@ -871,9 +870,9 @@
     [
         ;;
         ;;Fragment Some DHOC to Fuel Launchpad
-        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 1 100)
+        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 1 10000)
         (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 2 1000)
-        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 3 10000)
+        (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 3 100)
         ;;
         ;;Fuel Launchpad with OURO, E|DH and DHOC
         (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron "OURO-98c486052a51" [true true])
@@ -884,12 +883,12 @@
 
 
         (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron id [4] [240])
-        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-1] [45000])
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-1] [4500000])
+        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-3] [45000])
         (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-2] [450000])
-        (ref-TS02-DPAD::DEMIPAD|C_FuelSemiFungible patron patron dhoc [-3] [4500000])
-        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-1] [45000])
-        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-2] [450000])
-        ;(ref-DPDC-T::UDC_TransferCumulator dhoc true patron lpad [-3] [4500000])
+        ;(ref-DPDC-T::UDC_MultiTransferCumulator [dhoc] [true] patron lpad [[-1]] [[4500000]])
+        ;(ref-DPDC-T::UDC_MultiTransferCumulator [dhoc] [true] patron lpad [[-3]] [[45000]])
+        ;(ref-DPDC-T::UDC_MultiTransferCumulator [dhoc] [true] patron lpad [[-2]] [[450000]])
     ]
     [
         (free.DEMIPAD.UC_GenerateRoyaltyIntervals)
@@ -923,7 +922,7 @@
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
         (ref-DPAD:module{DemiourgosLaunchpad} DEMIPAD)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         ;;
         (total-kadena-amount:decimal 5000.0)
@@ -940,7 +939,7 @@
         (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
         (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
         ;;
-        
+        (aquire-snakes:[string] (DEMIPAD-SNAKES.URC_Acquire patron 4 1 false))
     )
     (env-sigs
         [   
@@ -950,17 +949,19 @@
               "caps": 
                 [
                     ;;for C_WrapKadena
-                    (coin.TRANSFER 
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                    total-kadena-amount)
+                    ;(coin.TRANSFER 
+                    ;    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    ;    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                    ;    total-kadena-amount
+                    ;)
                     ;;
                     ;;
                     ;;for C_Acquire with <iz-native> = false, which will unwrap WKDA to KDA
                     (coin.TRANSFER 
-                    "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                    "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                    total-kadena-amount)
+                        "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        250.0       ;;total-kadena-amount
+                    )
                     ;;
                     ;;
                     ;;Satisfying Enviroment in C_Acquire
@@ -968,25 +969,25 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at "amount-one" prices-obj)
+                        25.0        ;;(at "amount-one" prices-obj)
                     )
                     ;;<amount-two> to <receiver-two>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        (at "amount-two" prices-obj)
+                        50.0        ;;(at "amount-two" prices-obj)
                     )
                     ;;<amount-three> to <receiver-three>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at "amount-three" prices-obj)
+                        75.0        ;;(at "amount-three" prices-obj)
                     )
                     ;;<amount-four> to <receiver-four>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at "amount-four" prices-obj)
+                        100.0       ;;(at "amount-four" prices-obj)
                     )
                 ]
             }
@@ -995,11 +996,12 @@
     
     [
         [
-            (format "Price OBJ iz {}" [prices-obj])
+            ;(format "Price OBJ iz {}" [prices-obj])
+            (format "Acquire String LIST is {}" [aquire-snakes])
         ]
-        [
-            (ref-TS01-C2::LQD|C_WrapKadena patron patron total-kadena-amount)
-        ]
+        ;[
+        ;    (ref-TS01-C2::LQD|C_WrapKadena patron patron total-kadena-amount)
+        ;]
         [
             (format "AH has Native Kadena {}" [(ref-coin::get-balance patron-kda)])
             (format "AH has WKDA {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
@@ -1017,7 +1019,7 @@
             (format "Launchpad Properties after Buy are {}" [(ref-DPAD::UR_LaunchpadState)])
             (format "Launchpad Holdings for {} are {}" [id (ref-DPAD::UR_AssetState id)])
         ]
-        ;(free.LAUNCHPAD.UC_ComputeDepositRoyalty 20000000.0 5000000.0)
+        (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 25000000.0)
         
     ]
 )

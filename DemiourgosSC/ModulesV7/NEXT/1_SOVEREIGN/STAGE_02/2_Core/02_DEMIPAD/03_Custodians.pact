@@ -163,9 +163,9 @@
     ;;FUNCTIONS
     (defun UC_NonceQuintessence:integer (nonce:integer validation:bool)
         (UEV_ConditionalAcquisitionNonce nonce validation)
-        (if (= nonce -3)
+        (if (= nonce -1)
             1
-            (if (= nonce 2)
+            (if (= nonce -2)
                 10
                 100
             )
@@ -224,7 +224,7 @@
                 (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                 ;;
                 (q-costs:object{DemiourgosLaunchpad.Costs} (URC_QuintessenceCosts))
-                (nonce-value-in-quintessence:integer (UC_NonceQuintessence nonce))
+                (nonce-value-in-quintessence:integer (UC_NonceQuintessence nonce true))
                 ;;
                 (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
                 (wkda-prec:integer (ref-DPTF::UR_Decimals wkda-id))
@@ -252,6 +252,30 @@
                 (floor (* (at "wkda" nonce-costs) (dec amount)) wkda-prec)
             )
         )       
+    )
+    (defun URC_Acquire:[string]
+        (buyer:string nonce:integer amount:integer iz-native:bool)
+        (let
+            (
+                (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
+                (asset-id:string (UR_AssetID))
+                (type:integer (if iz-native 0 1))
+                (pid:decimal (at "pid" (URC_NonceAmountCosts nonce amount)))
+            )
+            (ref-DEMIPAD::URC_Acquire buyer asset-id pid type)
+        )
+    )
+    (defun URCI_Acquire
+        (buyer:string nonce:integer amount:integer iz-native:bool)
+        (let
+            (
+                (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
+                (asset-id:string (UR_AssetID))
+                (type:integer (if iz-native 0 1))
+                (pid:decimal (at "pid" (URC_NonceAmountCosts nonce amount)))
+            )
+            (ref-DEMIPAD::URCI_Acquire buyer asset-id pid type)
+        )
     )
     ;;{F2}  [UEV]
     (defun UEV_AcquisitionNonce (nonce:integer)
@@ -292,7 +316,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                 (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                 ;;
                 (asset:string (UR_AssetID))
@@ -303,7 +327,7 @@
                     (ref-DEMIPAD::C_Deposit buyer asset pid type false)
                 )
                 (ico2:object{IgnisCollector.OutputCumulator}
-                    (ref-DPDC-T::C_Transfer asset true DEMIPAD|SC_NAME buyer [nonce] [amount] true)
+                    (ref-DPDC-T::C_Transfer [asset] [true] DEMIPAD|SC_NAME buyer [[nonce]] [[amount]] true)
                 )
                 (sb:string (ref-I|OURONET::OI|UC_ShortAccount buyer))
             )

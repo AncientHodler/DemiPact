@@ -236,7 +236,7 @@
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
                     (ref-ATS:module{AutostakeV5} ATS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
                     (ouro:string (ref-DALOS::UR_OuroborosID))
                     (op:integer (ref-DPTF::UR_Decimals ouro))
                     (daily:decimal (URC_DailyOURO))
@@ -317,7 +317,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
                     (ref-AOZ:module{AgeOfZalmoxis} AOZ)
                     ;;
                     (PrimordialKosonID:string       (ref-AOZ::UR_PrimalTrueFungible 1))
@@ -351,7 +351,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+                    (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
                     (ref-AOZ:module{AgeOfZalmoxis} AOZ)
                     ;;
                     (EsothericKosonID:string        (ref-AOZ::UR_PrimalTrueFungible 2))

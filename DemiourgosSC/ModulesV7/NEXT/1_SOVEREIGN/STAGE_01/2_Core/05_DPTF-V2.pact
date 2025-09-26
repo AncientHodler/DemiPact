@@ -2211,42 +2211,6 @@
         )
     )
     ;;3]DPTF|BalanceTable
-    (defun XI_UpdateBalance (id:string account:string new-balance:decimal)
-        (require-capability (SECURE))
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-            )
-            (if (URC_IzCoreDPTF id)
-                ;;Updates for Core Tokens
-                (ref-DALOS::XB_UpdateBalance account (= id (ref-DALOS::UR_OuroborosID)) new-balance)
-                ;;Updates for Non Core Tokens
-                (XII_UpdateBalance id account new-balance)
-            )
-        )
-    )
-    (defun XII_UpdateBalance (id:string account:string new-balance:decimal)
-        (require-capability (SECURE))
-        (let
-            (
-                (tk:string (UC_IdAccount id account))
-                (data-obj:object (read DPTF|BalanceTable tk))
-                (has-removable:bool (contains "exist" data-obj))
-                (new-balance-obj:object
-                    (+
-                        {"balance" : new-balance}
-                        (remove "balance" data-obj)
-                    )
-                )
-            )
-            (write DPTF|BalanceTable tk
-                (if has-removable
-                    (remove "exist" new-balance-obj)
-                    new-balance-obj
-                )
-            )
-        )
-    )
     (defun XI_ToggleFreezeAccount (id:string account:string toggle:bool)
         @doc "Toggle Verum 1"
         (require-capability (DPTF|C>X_FREEZE id account toggle))
@@ -2352,6 +2316,42 @@
                     (current-supply:decimal (UR_AccountSupply id account))
                 )
                 (XI_UpdateBalance id account (+ current-supply amount))
+            )
+        )
+    )
+    (defun XI_UpdateBalance (id:string account:string new-balance:decimal)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
+            )
+            (if (URC_IzCoreDPTF id)
+                ;;Updates for Core Tokens
+                (ref-DALOS::XB_UpdateBalance account (= id (ref-DALOS::UR_OuroborosID)) new-balance)
+                ;;Updates for Non Core Tokens
+                (XII_UpdateBalance id account new-balance)
+            )
+        )
+    )
+    (defun XII_UpdateBalance (id:string account:string new-balance:decimal)
+        (require-capability (SECURE))
+        (let
+            (
+                (tk:string (UC_IdAccount id account))
+                (data-obj:object (read DPTF|BalanceTable tk))
+                (has-removable:bool (contains "exist" data-obj))
+                (new-balance-obj:object
+                    (+
+                        {"balance" : new-balance}
+                        (remove "balance" data-obj)
+                    )
+                )
+            )
+            (write DPTF|BalanceTable tk
+                (if has-removable
+                    (remove "exist" new-balance-obj)
+                    new-balance-obj
+                )
             )
         )
     )

@@ -81,7 +81,7 @@
         ;;
         ;;Set DPDC Governor
         ;;REPL-VARIANT:
-        (acquire-module-admin free.DPDC)
+        ;(acquire-module-admin free.DPDC)
         ;;MAIN-NET VARIANT
         ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DPDC)
         (ref-TS01-C1::DALOS|C_RotateGovernor patron dpdc
@@ -154,9 +154,12 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
             ;;
             ;;Input Variables
+            ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            ;(collection-owner:string patron)
+            ;(collection-creator:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
             (patron:string issuing-account)
             (collection-owner:string patron)
             (collection-creator:string patron)
@@ -170,6 +173,7 @@
                     true true true true
                 )
             )
+            (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
             (b:string "|")
             (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
             (i-asset-type:object{DpdcUdc.URI|Type}
@@ -177,28 +181,40 @@
             )
             (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             ;;
-            (royalty:[decimal]                  [70.0 60.0 50.0])
-            (ignis-royalty:[decimal]            [5000.0 500.0 50.0])
+            (royalty:[decimal]                  [50.0 60.0 70.0 80.0])
+            (ignis-royalty:[decimal]            [50.0 500.0 5000.0 500.0])
             (names:[string]
                 [
-                    "Ouronet Golden Star"
-                    "Ouronet Silver Star"
                     "Ouronet Bronze Star"
+                    "Ouronet Silver Star"
+                    "Ouronet Golden Star"
+                    "Ouronet OG Founder"
                 ]
             )
             (descriptions:[string]
                 [
-                    "Golden Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 100 Units"
-                    "Silver Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 1000 Units"
                     "Bronze Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 10000 Units"
+                    "Silver Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 1000 Units"
+                    "Golden Ouronet Custodian SFTs, represents a third of Ouronet Financial Ownership, spread over 100 Units"
+                    "Ouronet OG Founder SFTs, given to first Ouronet contributors, in the first sale end of 2023"
                 ]
             )
             (image-links:[string]
                 ;;MAIN_NET: Needs New IPFS Links
                 [
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/1f.png"
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/2f.png"
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/3f.png"
+                    (+ ipfs "512x512/01_Custodians/1_BronzeStar.jpg")
+                    (+ ipfs "512x512/01_Custodians/2_SilverStar.jpg")
+                    (+ ipfs "512x512/01_Custodians/3_GoldenStar.jpg")
+                    (+ ipfs "512x512/01_Custodians/4_OG.jpg")
+                ]
+            )
+            (image-links2:[string]
+                ;;MAIN_NET: Needs New IPFS Links
+                [
+                    (+ ipfs "FULL/01_Custodians/1_BronzeStar.jpg")
+                    (+ ipfs "FULL/01_Custodians/2_SilverStar.jpg")
+                    (+ ipfs "FULL/01_Custodians/3_GoldenStar.jpg")
+                    (+ ipfs "FULL/01_Custodians/4_OG.jpg")
                 ]
             )
             (primary-uri-lst:[object{DpdcUdc.URI|Data}]
@@ -210,11 +226,23 @@
                         )
                     )
                     []
-                    [0 1 2]
+                    (enumerate 0 3)
+                )
+            )
+            (secondary-uri-lst:[object{DpdcUdc.URI|Data}]
+                (fold
+                    (lambda
+                        (acc:[object{DpdcUdc.URI|Data}] idx:integer)
+                        (ref-U|LST::UC_AppL acc 
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
+                        )
+                    )
+                    []
+                    (enumerate 0 3)
                 )
             )
             (native-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
-                ;;Construct the Native Nonce Data in a 3 element list
+                ;;Construct the Native Nonce Data in a 4 element list
                 (fold
                     (lambda
                         (acc:[object{DpdcUdc.DPDC|NonceData}] idx:integer)
@@ -227,13 +255,13 @@
                                 md
                                 i-asset-type
                                 (at idx primary-uri-lst)
-                                zd
+                                (at idx secondary-uri-lst)
                                 zd
                             )
                         )
                     )
                     []
-                    [0 1 2]
+                    (enumerate 0 3)
                 )
             )
             ;;
@@ -241,24 +269,30 @@
             (fragments-ignis-royalty:[decimal]  [10.0 2.0 0.4])
             (fragments-names:[string]
                 [
-                    "Ouronet Golden Star Fragments"
-                    "Ouronet Silver Star Fragments"
                     "Ouronet Bronze Star Fragments"
+                    "Ouronet Silver Star Fragments"
+                    "Ouronet Golden Star Fragments"
                 ]
             )
             (fragments-descriptions:[string]
                 [
-                    "Golden Ouronet Fragment: 1/1000th of a Golden Custodian SFT, representing 1/100,000th of one-third of Ouronet’s Financial Ownership. Perfect for affordable investment in the Ouronet Virtual Blockchain."
-                    "Silver Ouronet Fragment: 1/1000th of a Silver Custodian SFT, representing 1/1,000,000th of one-third of Ouronet’s Financial Ownership. Ideal for accessible investment in the Ouronet Virtual Blockchain."
                     "Bronze Ouronet Fragment: 1/1000th of a Bronze Custodian SFT, representing 1/10,000,000th of one-third of Ouronet’s Financial Ownership. Good cost-effective investment in the Ouronet Virtual Blockchain."
+                    "Silver Ouronet Fragment: 1/1000th of a Silver Custodian SFT, representing 1/1,000,000th of one-third of Ouronet’s Financial Ownership. Ideal for accessible investment in the Ouronet Virtual Blockchain."
+                    "Golden Ouronet Fragment: 1/1000th of a Golden Custodian SFT, representing 1/100,000th of one-third of Ouronet’s Financial Ownership. Perfect for affordable investment in the Ouronet Virtual Blockchain."
                 ]
             )
             (fragments-image-links:[string]
-                ;;MAIN_NET: Needs New IPFS Links
                 [
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/1s.png"
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/2s.png"
-                    "https://gateway.pinata.cloud/ipfs/QmUemLvfaJqKGMeXkxbinCQhNBKnRFMMn9fFnSF6FJ3FoP/3s.png"
+                    (+ ipfs "512x512/01_Custodians/1_BronzeFragment.jpg")
+                    (+ ipfs "512x512/01_Custodians/2_SilverFragment.jpg")
+                    (+ ipfs "512x512/01_Custodians/3_GoldenFragment.jpg")
+                ]
+            )
+            (fragments-image-links2:[string]
+                [
+                    (+ ipfs "FULL/01_Custodians/1_BronzeFragment.jpg")
+                    (+ ipfs "FULL/01_Custodians/2_SilverFragment.jpg")
+                    (+ ipfs "FULL/01_Custodians/3_GoldenFragment.jpg")
                 ]
             )
             (fragments-primary-uri-lst:[object{DpdcUdc.URI|Data}]
@@ -270,7 +304,19 @@
                         )
                     )
                     []
-                    [0 1 2]
+                    (enumerate 0 2)
+                )
+            )
+            (fragments-secondary-uri-lst:[object{DpdcUdc.URI|Data}]
+                (fold
+                    (lambda
+                        (acc:[object{DpdcUdc.URI|Data}] idx:integer)
+                        (ref-U|LST::UC_AppL acc 
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx fragments-image-links2) b b b b b b)
+                        )
+                    )
+                    []
+                    (enumerate 0 2)
                 )
             )
             (fragments-nonce-data:[object{DpdcUdc.DPDC|NonceData}]
@@ -286,19 +332,19 @@
                                 md
                                 i-asset-type
                                 (at idx fragments-primary-uri-lst)
-                                zd
+                                (at idx fragments-secondary-uri-lst)
                                 zd
                             )
                         )
                     )
                     []
-                    [0 1 2]
+                    (enumerate 0 2)
                 )
             )
         )
         [
             ;;2]Create Nonces [1 2 3]
-            (ref-TS02-C1::DPSF|C_Create patron dhoc-id [100 1000 10000] native-nonce-data)
+            (ref-TS02-C1::DPSF|C_Create patron dhoc-id [10000 1000 100 105] native-nonce-data)
             ;;3]Enable Fragmentations for Nonces [1 2 3]
             (ref-TS02-C1::DPSF|C_EnableNonceFragmentation patron dhoc-id 1 (at 0 fragments-nonce-data))
             (ref-TS02-C1::DPSF|C_EnableNonceFragmentation patron dhoc-id 2 (at 1 fragments-nonce-data))
@@ -362,10 +408,15 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
             ;;
             ;;Input Variables
+            ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            ;(collection-creator:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+            (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
+
             (patron:string issuing-account)
+            ;(collection-owner:string patron)
             (collection-creator:string patron)
         )
         [
@@ -374,15 +425,32 @@
                 "DemiourgosHoldings" "DH"
                 150.0 1000.0
                 [
-                    ;;MAIN-NET: Need Proper Image IPFS Links
-                    "Native Share IPFS Link"
-                    "Tier 1 IPFS Link"
-                    "Tier 2 IPFS Link"
-                    "Tier 3 IPFS Link"
-                    "Tier 4 IPFS Link"
-                    "Tier 5 IPFS Link"
-                    "Tier 6 IPFS Link"
-                    "Tier 7 IPFS Link"
+                    (+ ipfs "512x512/02_Snakes/1_Share.jpg")
+                    (+ ipfs "512x512/02_Snakes/2_Tier1.jpg")
+                    (+ ipfs "512x512/02_Snakes/3_Tier2.jpg")
+                    (+ ipfs "512x512/02_Snakes/4_Tier3.jpg")
+                    (+ ipfs "512x512/02_Snakes/5_Tier4.jpg")
+                    (+ ipfs "512x512/02_Snakes/6_Tier5.jpg")
+                    (+ ipfs "512x512/02_Snakes/7_Tier6.jpg")
+                    (+ ipfs "512x512/02_Snakes/8_Tier7.jpg")
+
+                    (+ ipfs "FULL/02_Snakes/1_Share.jpg")
+                    (+ ipfs "FULL/02_Snakes/2_Tier1.jpg")
+                    (+ ipfs "FULL/02_Snakes/3_Tier2.jpg")
+                    (+ ipfs "FULL/02_Snakes/4_Tier3.jpg")
+                    (+ ipfs "FULL/02_Snakes/5_Tier4.jpg")
+                    (+ ipfs "FULL/02_Snakes/6_Tier5.jpg")
+                    (+ ipfs "FULL/02_Snakes/7_Tier6.jpg")
+                    (+ ipfs "FULL/02_Snakes/8_Tier7.jpg")
+
+                    "|"
+                    "|"
+                    "|"
+                    "|"
+                    "|"
+                    "|"
+                    "|"
+                    "|"
                 ]
             )
         ]
@@ -446,9 +514,14 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
             ;;
             ;;Input Variables
+            ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            ;(collection-owner:string patron)
+            ;(collection-creator:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+            (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
+
             (patron:string issuing-account)
             (collection-owner:string patron)
             (collection-creator:string patron)
@@ -468,9 +541,6 @@
             (i-asset-type:object{DpdcUdc.URI|Type}
                 (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
             )
-            (v-asset-type:object{DpdcUdc.URI|Type}
-                (ref-DPDC-UDC::UDC_URI|Type false false true false false false false)
-            )
             (zd:object{DpdcUdc.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             ;;
             (royalty:decimal            150.0)
@@ -479,7 +549,7 @@
             (set-ignis-royalty:decimal  400.0)
             (names:[string]
                 [
-                    "Snake Eye" "Rudis" "Gwen" "Clutter" "Bangai" "Binos" "Rubia" "Ocultus" "Oretta" "Binar" "TheCodingDivision"
+                    "Snake Eye" "Rudis" "Gwen" "Clutter" "Bangai" "Binos" "Rubia" "Ocultus" "Oreta" "Binar" "TheCodingDivision"
                 ]
             )
             (descriptions:[string]
@@ -494,35 +564,68 @@
                     "He is the mastermind behind the Coding Division. As nobody knows his true identity, most of us believe Ocultus managed to clone himself by awakening and using Snake Eye. Archive footage of strange occult rituals between androids and humans leaked to the press. He is one of the most wanted coders between friends and foes."
                     "At age 17 she saved London from the great ocean flood that came during the War between East and West by using a code to align electronical devices and hardware memory. After the government stole her work, she was recruited by Ocultus for a greater cause."
                     "In his youth, Binar developed the Elrond Blockchain. Nobody knows exactly his whereabouts and most forgot his name. During The Great War, people priorities their lives over the development of new technologies. Binar helped fund the war efforts of the West against the East. Today he is rarely seen in public. About once a year he visits our Coding Division. He brings lots of champagne."
-                    "Full Coding Division Complement, working Day and Night for Demiourgos Holdings, to conquer the World"
+                    "Full Coding Division Complement, working Day and Night, to liberate the free World!"
                 ]
             )
             (image-links:[string]
                 [
-                    ;;MAIN-NET: Need New IPFS Image Links
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/1.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/2.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/3.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/4.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/5.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/6.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/7.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/8.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/9.mp4"
-                    "https://ipfs.io/ipfs/QmXSBRXv3Uj2nZ8fUcnHEioDTiwCkxAQz96BZvcLhFTVyk/10.mp4"
-                    "https://ipfs.io/ipfs/SetLink.png"
+                    "/03_CodingDivision/01_SnakeEye.jpg"
+                    "/03_CodingDivision/02_Rudis.jpg"
+                    "/03_CodingDivision/03_Gwen.jpg"
+                    "/03_CodingDivision/04_Clutter.jpg"
+                    "/03_CodingDivision/05_Bangai.jpg"
+                    "/03_CodingDivision/06_Binos.jpg"
+                    "/03_CodingDivision/07_Rubia.jpg"
+                    "/03_CodingDivision/08_Ocultus.jpg"
+                    "/03_CodingDivision/09_Oreta.jpg"
+                    "/03_CodingDivision/10_Binar.jpg"
+                    "/03_CodingDivision/11_CodingDivision."
                 ]
+            )
+            (small:string "512x512")
+            (large:string "FULL")
+            (image-links1:[string]
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (= idx 10)
+                            (concat [ipfs small (at idx image-links) "jpg"])
+                            (concat [ipfs small (at idx image-links)])
+                        )
+                    )
+                    (enumerate 0 10)
+                )
+            )
+            (image-links2:[string]
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (= idx 10)
+                            (concat [ipfs large (at idx image-links) "png"])
+                            (concat [ipfs large (at idx image-links)])
+                        )
+                    )
+                    (enumerate 0 10)
+                )
             )
             (primary-uri-lst:[object{DpdcUdc.URI|Data}]
                 (fold
                     (lambda
                         (acc:[object{DpdcUdc.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc
-                            (if (!= idx 10)
-                                (ref-DPDC-UDC::UDC_URI|Data b b (at idx image-links) b b b b)
-                                (ref-DPDC-UDC::UDC_URI|Data (at idx image-links) b b b b b b)
-                            )
-                            
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links1) b b b b b b)
+                        )
+                    )
+                    []
+                    (enumerate 0 10)
+                )
+            )
+            (secondary-uri-lst:[object{DpdcUdc.URI|Data}]
+                (fold
+                    (lambda
+                        (acc:[object{DpdcUdc.URI|Data}] idx:integer)
+                        (ref-U|LST::UC_AppL acc
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
                         )
                     )
                     []
@@ -541,9 +644,9 @@
                                 (at idx names)
                                 (at idx descriptions)
                                 md
-                                (if (!= idx 10) v-asset-type i-asset-type)
+                                i-asset-type
                                 (at idx primary-uri-lst)
-                                zd
+                                (at idx secondary-uri-lst)
                                 zd
                             )
                         )
@@ -634,7 +737,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -777,9 +880,14 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOne} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
             ;;
             ;;Input Variables
+            ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            ;(collection-owner:string patron)
+            ;(collection-creator:string "Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ")
+            (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
+            ;;
             (patron:string issuing-account)
             (collection-owner:string patron)
             (collection-creator:string patron)
@@ -820,7 +928,7 @@
                     "Wonder Coach Bronze Frame #8"
                     "Wonder Coach Bronze Frame #9"
                     "Wonder Coach Bronze Frame #10"
-
+                    ;;
                     "Wonder Coach Silver Frame #1"
                     "Wonder Coach Silver Frame #2"
                     "Wonder Coach Silver Frame #3"
@@ -831,7 +939,7 @@
                     "Wonder Coach Silver Frame #8"
                     "Wonder Coach Silver Frame #9"
                     "Wonder Coach Silver Frame #10"
-
+                    ;;
                     "Wonder Coach Golden Frame #1"
                     "Wonder Coach Golden Frame #2"
                     "Wonder Coach Golden Frame #3"
@@ -842,7 +950,7 @@
                     "Wonder Coach Golden Frame #8"
                     "Wonder Coach Golden Frame #9"
                     "Wonder Coach Golden Frame #10"
-
+                    ;;
                     "Wonder Coach Bronze Chapter"
                     "Wonder Coach Silver Chapter"
                     "Wonder Coach Golden Chapter"
@@ -861,7 +969,7 @@
                     "Rising corner, fear behind glass."
                     "Alone in crowd, isolated gaze."
                     "Silent conviction, truth’s heavy stare."
-
+                    ;;
                     "Success clashes, coaching tensions rise."
                     "Waiting gaze, eyes on tomorrow."
                     "Hope’s gift, love in lights."
@@ -872,7 +980,7 @@
                     "First steps, story begins, destiny touches."
                     "Taxi tears, mistaken return, letting go."
                     "Gentle truths, cat’s wisdom lesson."
-
+                    ;;
                     "Inner superhero, power in thoughts."
                     "Quiet victory, smile after storm."
                     "Time spares none, patience slaps fury."
@@ -883,7 +991,7 @@
                     "News post-ruin, breaker lifts again."
                     "Trembling silence, fear’s skin, guilty alone."
                     "Forced yes, scorn in receiver."
-
+                    ;;
                     "The Woander Coach Bronze Chapter represents a complete Set of all Bronze Wonder Coach Frames. 7% Royalty and 95% Ignis-Royalty relative to individual Elements"
                     "The Wonder Coach Silver Chapter represents a complete Set of all Silver Wonder Coach Frames. 6% Royalty and 90% Ignis-Royalty relative to individual Elements"
                     "The Wonder Coach Golden Chapter represents a complete Set of all Golden Wonder Coach Frames. 5% Royalty and 85% Ignis-Royalty relative to individual Elements"
@@ -892,52 +1000,86 @@
             )
             (image-links:[string]
                 [
-                    ;;MAIN-NET New Photos.
-                    "https://ipfs.io/ipfs/QmdNyUynFZEs3Qtw4UZR6UFabg9AvsTdTzb1D66XHAwsGy"
-                    "https://ipfs.io/ipfs/QmaBitPm9zDtZigmjUwNv29CuX3breQCxAUtx5CpmdA2Re"
-                    "https://ipfs.io/ipfs/QmeEf95o2CxTuxdbAWYZkDSqhLHLNaKDr15gfdMrEQ8iPt"
-                    "https://ipfs.io/ipfs/QmavUDhJ9pi9UzE783ft24Ti2smEBZWkig2GjhxZhExeXz"
-                    "https://ipfs.io/ipfs/QmbP4DTsAkcUnrYp9PU7Gie7idtbxvvkXqiwnVNmZKyudT"
-                    "https://ipfs.io/ipfs/QmezgN8EJfP4DAxuUMFXkjYVsLusyWZkJmfWyMFCr5eoj6"
-                    "https://ipfs.io/ipfs/QmZNLenWkaRJRobobb6mPFRCWww3YF26Qi9FD3tULehWMk"
-                    "https://ipfs.io/ipfs/QmRNrj76DUhsXyzYoWtEL3upY7FBpTLiqBpKfjpuJ9wux6"
-                    "https://ipfs.io/ipfs/QmdJp8RTzgQ3ikjJu6XP1UDHtXfUB9HRw4DyoPWH2uoFQu"
-                    "https://ipfs.io/ipfs/QmcH3NvyhtKuGjja7wTBF3Jy4yEU684ibD3QMZDk6QQh1r"
-
-                    "https://ipfs.io/ipfs/QmTihLCsqxqakVmqYnkMoeVhknFQCQ2nmRA6UjwdLrCHWJ"
-                    "https://ipfs.io/ipfs/QmWJ73VJ8FthkXF8xdvbhfFY26T8BEZyKqUV7A4JNzwFhy"
-                    "https://ipfs.io/ipfs/QmcbPCpCL7mJZ7WXKqaYBBzZW53QEGZTSPUY8cXdquyXug"
-                    "https://ipfs.io/ipfs/QmZeEFsG96SsVZm9Ka3vXu4zx99T2ryxtYo9HLH6EEiqiy"
-                    "https://ipfs.io/ipfs/QmeoLjGL1FifK2QmjA72jkdTXGaLzJieWNYaWQC4uaVSP2"
-                    "https://ipfs.io/ipfs/QmYDZJkMCeCo2PU5ByLGmVhNAdX2N4oEpjveJdQpzBdsrb"
-                    "https://ipfs.io/ipfs/QmZ4ppMuYoNMEbroytgMhozxJSPJT94JfK4pmogzH1oi4t"
-                    "https://ipfs.io/ipfs/QmS6hzw2sr3cr9rZQC86f9yU7jy3uVqCbZQXzA2utbcyYK"
-                    "https://ipfs.io/ipfs/QmV64EEbEiP9YNGXpdExX8hxUjHXcS7wTdGaZjiMUWinQH"
-                    "https://ipfs.io/ipfs/QmcKq3aRpvgksHFVT2gPvpgVqJRK1xskoumsjUco7K2187"
-
-                    "https://ipfs.io/ipfs/QmS7SP1BK53pxRxwff8yYc2AaXC9NCpPa2QFk5tWomXwqt"
-                    "https://ipfs.io/ipfs/QmQU14hEPnooFQcWfVfhBKy69jCpW3wZ3F6Dgeocxsd81G"
-                    "https://ipfs.io/ipfs/QmSVnL8CTd4a7zYHeptj5dH6MXtfxz1o5gPqL2k8qk9Uzf"
-                    "https://ipfs.io/ipfs/QmbVcTCgswd9v8HixeUru6tbXkq8GLKQ6FXF5N21etbG6C"
-                    "https://ipfs.io/ipfs/QmTZT1LCw6yb8qxNr6twHLLFuReYspseb99DftaiEkzaJR"
-                    "https://ipfs.io/ipfs/QmZCoG2TY7Hi3c3CzL4Dvz7bvVPCAnSCuehZx1e9Jh1zCJ"
-                    "https://ipfs.io/ipfs/QmcPnMURPCdk8qpEXc3q6V7UUqAPmDHVbFMRYTZheeuNDs"
-                    "https://ipfs.io/ipfs/QmPMNgtXCd9Pe9Qsnen9Tg2koLKXKriMAgMd9rAeHk6V77"
-                    "https://ipfs.io/ipfs/QmQWWhJ4T8sfwTYFAz5evz3ZX6mxof9KgDxBb7EHyirG1f"
-                    "https://ipfs.io/ipfs/QmQBByq28rgrce5UNxmJpP9TRE4Sj5SZeyEWhyyCqTFw63"
-
-                    "https://ipfs.io/ipfs/QmT9HM77wfod92eXeSbKkVXJiVKaWmSdaSUpkJmE6GozuB"
-                    "https://ipfs.io/ipfs/QmQhCbuWKALbakWFtf2cNJCzwbXiB8PxuSNf9sv8CC5BMa"
-                    "https://ipfs.io/ipfs/QmeKFGGsgsnMpYFifdc61pvgNyEQnrVX7QDgZHtgpDBA85"
-                    "Link for Movie Collectable Here"
+                    "05_WonderCoach/WC_01.jpg"
+                    "05_WonderCoach/WC_02.jpg"
+                    "05_WonderCoach/WC_03.jpg"
+                    "05_WonderCoach/WC_04.jpg"
+                    "05_WonderCoach/WC_05.jpg"
+                    "05_WonderCoach/WC_06.jpg"
+                    "05_WonderCoach/WC_07.jpg"
+                    "05_WonderCoach/WC_08.jpg"
+                    "05_WonderCoach/WC_09.jpg"
+                    "05_WonderCoach/WC_10.jpg"
+                    "05_WonderCoach/WC_11.jpg"
+                    "05_WonderCoach/WC_12.jpg"
+                    "05_WonderCoach/WC_13.jpg"
+                    "05_WonderCoach/WC_14.jpg"
+                    "05_WonderCoach/WC_15.jpg"
+                    "05_WonderCoach/WC_16.jpg"
+                    "05_WonderCoach/WC_17.jpg"
+                    "05_WonderCoach/WC_18.jpg"
+                    "05_WonderCoach/WC_19.jpg"
+                    "05_WonderCoach/WC_20.jpg"
+                    "05_WonderCoach/WC_21.jpg"
+                    "05_WonderCoach/WC_22.jpg"
+                    "05_WonderCoach/WC_23.jpg"
+                    "05_WonderCoach/WC_24.jpg"
+                    "05_WonderCoach/WC_25.jpg"
+                    "05_WonderCoach/WC_26.jpg"
+                    "05_WonderCoach/WC_27.jpg"
+                    "05_WonderCoach/WC_28.jpg"
+                    "05_WonderCoach/WC_29.jpg"
+                    "05_WonderCoach/WC_30.jpg"
+                    "05_WonderCoach/WC_31.jpg"
+                    "05_WonderCoach/WC_32.jpg"
+                    "05_WonderCoach/WC_33.jpg"
+                    "05_WonderCoach/WC_34."
                 ]
+            )
+            (small:string "512x512")
+            (large:string "FULL")
+            (image-links1:[string]
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (= idx 33)
+                            (concat [ipfs small (at idx image-links) "jpg"])
+                            (concat [ipfs small (at idx image-links)])
+                        )
+                    )
+                    (enumerate 0 33)
+                )
+            )
+            (image-links2:[string]
+                (map
+                    (lambda
+                        (idx:integer)
+                        (if (= idx 33)
+                            (concat [ipfs large (at idx image-links) "png"])
+                            (concat [ipfs large (at idx image-links)])
+                        )
+                    )
+                    (enumerate 0 33)
+                )
             )
             (primary-uri-lst:[object{DpdcUdc.URI|Data}]
                 (fold
                     (lambda
                         (acc:[object{DpdcUdc.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
-                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links) b b b b b b)
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links1) b b b b b b)
+                        )
+                    )
+                    []
+                    (enumerate 0 33)
+                )
+            )
+            (secondary-uri-lst:[object{DpdcUdc.URI|Data}]
+                (fold
+                    (lambda
+                        (acc:[object{DpdcUdc.URI|Data}] idx:integer)
+                        (ref-U|LST::UC_AppL acc 
+                            (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
                         )
                     )
                     []
@@ -957,7 +1099,7 @@
                                 md
                                 i-asset-type
                                 (at idx primary-uri-lst)
-                                zd
+                                (at idx secondary-uri-lst)
                                 zd
                             )
                         )
@@ -974,7 +1116,7 @@
                 (fold (+) [] [(make-list 10 1000) (make-list 10 500) (make-list 10 200)])
                 (drop -4 native-nonce-data)
             )
-            ;;2]Define the Bronze, Silver, Golden and Movie Sets
+            ;;2]Define the Bronze Set
             (ref-TS02-C1::DPSF|C_DefinePrimordialSet
                 patron dhwc-id (at 30 names) 1.0
                 [
@@ -991,6 +1133,7 @@
                 ]
                 (at 30 native-nonce-data)
             )
+            ;;3]Define Silver Set
             (ref-TS02-C1::DPSF|C_DefinePrimordialSet
                 patron dhwc-id (at 31 names) 1.0
                 [
@@ -1007,6 +1150,7 @@
                 ]
                 (at 31 native-nonce-data)
             )
+            ;;4]Define Golden Set
             (ref-TS02-C1::DPSF|C_DefinePrimordialSet
                 patron dhwc-id (at 32 names) 1.0
                 [
@@ -1023,6 +1167,7 @@
                 ]
                 (at 32 native-nonce-data)
             )
+            ;;5]Define Movie Set
             (ref-TS02-C1::DPSF|C_DefineCompositeSet
                 patron dhwc-id (at 33 names) 1.0
                 [
@@ -1095,7 +1240,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -1121,7 +1266,7 @@
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 (print "")
-(begin-tx "TX-08 [4.8] - Issue Bloodshed Collection")
+(begin-tx "TX-08 [4.8] - Issue Bloodshed Collection and Bunny")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
@@ -1132,7 +1277,7 @@
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 issuing-account
-                (ref-DALOS::UR_UsagePrice "dpnf")
+                (* 2.0 (ref-DALOS::UR_UsagePrice "dpnf"))
             )
         )
     )
@@ -1172,7 +1317,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -1184,6 +1329,11 @@
             (ref-TS02-C2::DPNF|C_Issue
                 patron
                 collection-owner collection-creator "DemiourgosHoldingsBloodshed" "DHB"
+                true true true true true true true true
+            )
+            (ref-TS02-C2::DPNF|C_Issue
+                patron
+                collection-owner collection-creator "DemiBunnies" "KBN"
                 true true true true true true true true
             )
         ]

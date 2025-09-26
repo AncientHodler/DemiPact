@@ -60,9 +60,6 @@
         (ref-P|CUSTODIANS::P|A_Define)
         (ref-P|TS02-DPAD::P|A_Define)
         ;;
-        (format "TFT IMC is {}"
-            [(ref-TFT::P|UR_IMP)]
-        )
         ;;Governor
         (ref-TS01-C1::DALOS|C_RotateGovernor
             KST.ANHD
@@ -143,7 +140,7 @@
     (let
         (
             (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpad} DEMIPAD)
             (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
@@ -286,6 +283,10 @@
     ]
 )
 
+;"Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+;"DHN-vQePGHkCAkR1"
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+;(IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
 
 (print "")
 (print "")
@@ -295,3 +296,4 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+

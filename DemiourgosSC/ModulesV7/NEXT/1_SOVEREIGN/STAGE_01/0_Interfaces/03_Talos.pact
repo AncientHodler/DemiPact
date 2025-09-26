@@ -143,12 +143,13 @@
 ;;
 ;;  [TALOS Stage One Client Two]
 ;;
-(interface TalosStageOne_ClientTwoV5
+(interface TalosStageOne_ClientTwoV6
     @doc "V2 Removes <patron> input variable where it is not needed \
         \ V3 brings the improved liquidity engine, two more liquidity addition types \
         \ V4 removed manual kda-pid from adding liquidity functions \
         \ for a total of 5 with improved Swap Logistics\
-        \ V5 brings Hibernation, Royalties, Direct Recovery and optimized architecture"
+        \ V5 brings Hibernation, Royalties, Direct Recovery and optimized architecture \
+        \ V6 Moves SWP-Pair Client Functions in TS01-C3 Modulue due to gas constraints."
     ;;
     ;;ATS (Autostake) Functions
     (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
@@ -251,6 +252,9 @@
     (defun ORBR|C_SublimateV2 (client:string target:string ouro-amount:decimal))
     (defun ORBR|C_WithdrawFees (patron:string id:string target:string))
     ;;
+)
+(interface TalosStageOne_ClientThree
+    @doc "Exposes SWP-Pair Client Functions"
     ;;
     ;;SWP (Swap-Pair) Functions
     (defun SWP|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))

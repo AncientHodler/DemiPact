@@ -89,6 +89,31 @@
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+
+(print "")
+(begin-tx "TX-05 [2.1] - DPMF Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(load "../../1_SOVEREIGN/STAGE_01/2_Core/00_DPMF.pact")
+(format "<<<<<<<DPMF Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
 (print "")
 (begin-tx "TX-06 [2.1] - DPOF Module")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)

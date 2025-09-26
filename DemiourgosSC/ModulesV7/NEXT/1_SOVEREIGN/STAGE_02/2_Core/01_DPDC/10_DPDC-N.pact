@@ -1,8 +1,7 @@
-
 (module DPDC-N GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcNonce)
+    (implements DpdcNonceV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -97,16 +96,30 @@
     ;;{C3}
     ;;{C4}
     (defcap DPDC-N|C>SET-DATA
-        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
-        @doc "[0] Controls Full Nonce Updating"
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}])
+        @doc "[0] Controls Full Noce Updating, for multiple Nonces at a time"
         @event
         (let
             (
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (l1:integer (length nosc))
+                (l2:integer (length new-nonces-data))
             )
+            (enforce (= l1 l2) "Invalid Inputs for Updating Nonces")
             (UEV_RoleNftRecreateON id son account)
-            (ref-DPDC-C::UEV_NonceDataForCreation new-nonce-data)
-            (compose-capability (DPDC-N|C>DATA id son account nosc nos nost))
+            (ref-DALOS::CAP_EnforceAccountOwnership account)
+            (map
+                (lambda
+                    (idx:integer)
+                    (do
+                        (ref-DPDC-C::UEV_NonceDataForCreation (at idx new-nonces-data))
+                        (UEV_NonceDataUpdater id son account (at idx nosc) nos nost)
+                    )
+                )
+                (enumerate 0 (- l1 1))
+            )
+            (compose-capability (P|SECURE-CALLER))
         )
     )
     (defcap DPDC-N|C>SET-ROYALTY
@@ -295,17 +308,23 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_UpdateNonce
-        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
-        @doc "[0] Updates Full Nonce Data"
+    (defun C_UpdateNonces
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdc.DPDC|NonceData}])
+        @doc "[0] Updates Full Nonce Data for multiple Nonces at a time"
         (UEV_IMC)
         (let
             (
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                (smallest:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                (how-many:decimal (dec (length nosc)))
+                (price:decimal (* how-many smallest))
+                (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
             )
-            (with-capability (DPDC-N|C>SET-DATA id son account nosc nos nost new-nonce-data)
-                (XI_U|NonceData id son account nosc nos nost new-nonce-data)
-                (ref-IGNIS::UDC_BiggestCumulator account)
+            (with-capability (DPDC-N|C>SET-DATA id son account nosc nos nost new-nonces-data)
+                (XI_U|NoncesData id son account nosc nos nost new-nonces-data)
+                ;;Cumulator
+                (ref-IGNIS::UDC_ConstructOutputCumulator price account trigger [])
             )
         )
     )
@@ -411,19 +430,25 @@
         )
     )
     ;;{F7}  [X]
-    (defun XI_U|NonceData
-        (id:string son:bool account:string nosc:integer nos:bool nost:bool new-nonce-data:object{DpdcUdc.DPDC|NonceData})
+    (defun XI_U|NoncesData
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonce-data:[object{DpdcUdc.DPDC|NonceData}])
         (require-capability (SECURE))
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (ref-DPDC-S:module{DpdcSets} DPDC-S)
             )
-            (if nost
-                ;;Nonce
-                (ref-DPDC::XE_U|NonceOrSplitData id son nosc nos new-nonce-data)
-                ;;Sets
-                (ref-DPDC-S::XB_U|NonceOrSplitData id son nosc nos new-nonce-data)
+            (map
+                (lambda
+                    (idx:integer)
+                    (if nost
+                        ;;Nonce
+                        (ref-DPDC::XE_U|NonceOrSplitData id son (at idx nosc) nos (at idx new-nonce-data))
+                        ;;Sets
+                        (ref-DPDC-S::XB_U|NonceOrSplitData id son (at idx nosc) nos (at idx new-nonce-data))
+                    )
+                )
+                (enumerate 0 (- (length nosc) 1))
             )
         )
     )
@@ -446,7 +471,7 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
+            (XI_U|NoncesData id son account [nosc] nos nost [new-nonce-data])
         )
     )
     (defun XI_U|NonceNoD 
@@ -468,7 +493,7 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
+            (XI_U|NoncesData id son account [nosc] nos nost [new-nonce-data])
         )
     )
     (defun XI_U|NonceScore
@@ -492,7 +517,7 @@
                     )
                 )
             )
-            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
+            (XI_U|NoncesData id son account [nosc] nos nost [new-nonce-data])
         )
     )
     (defun XI|U_NonceMetaData 
@@ -516,7 +541,7 @@
                     )
                 )
             )
-            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
+            (XI_U|NoncesData id son account [nosc] nos nost [new-nonce-data])
         )
     )
     (defun XI_U|NonceUri
@@ -544,7 +569,7 @@
                     ) 
                 )
             )
-            (XI_U|NonceData id son account nosc nos nost new-nonce-data)
+            (XI_U|NoncesData id son account [nosc] nos nost [new-nonce-data])
         )
     )
     ;;

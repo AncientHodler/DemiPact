@@ -1,4 +1,4 @@
-(interface SaleShareholders
+(interface SaleSnakes
     ;;
     ;;  [UR]
     ;;
@@ -23,7 +23,7 @@
     @doc "Module defining the Sale Mechanics for Demiourgos Share Holder Collection"
     ;;
     (implements OuronetPolicy)
-    (implements SaleShareholders)
+    (implements SaleSnakes)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -248,6 +248,18 @@
             )
         )
     )
+    (defun URC_Acquire:[string]
+        (buyer:string nonce:integer amount:integer iz-native:bool)
+        (let
+            (
+                (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
+                (asset-id:string (UR_AssetID))
+                (type:integer (if iz-native 0 1))
+                (pid:decimal (at "pid" (URC_NonceAmountCosts nonce amount)))
+            )
+            (ref-DEMIPAD::URC_Acquire buyer asset-id pid type)
+        )
+    )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     ;;{F4}  [CAP]
@@ -274,7 +286,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                     ;;
                     (asset:string (UR_AssetID))
@@ -285,7 +297,7 @@
                         (ref-DEMIPAD::C_Deposit buyer asset pid type false)
                     )
                     (ico2:object{IgnisCollector.OutputCumulator}
-                        (ref-DPDC-T::C_Transfer asset true DEMIPAD|SC_NAME buyer [nonce] [amount] true)
+                        (ref-DPDC-T::C_Transfer [asset] [true] DEMIPAD|SC_NAME buyer [[nonce]] [[amount]] true)
                     )
                     (sb:string (ref-I|OURONET::OI|UC_ShortAccount buyer))
                 )

@@ -149,6 +149,7 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_MigrateLiquidFunds migration-target-kda-account)
+                (format "Liquid Funds succesfuly migrated to {}" [migration-target-kda-account])
             )
         )
     )
@@ -160,6 +161,10 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_ToggleOAPU oapu)
+                (if oapu
+                    "Ouroboros Autonomous Price Update successfully turned ON"
+                    "Ouroboros Autonomous Price Update successfully turned OFF"
+                )
             )
         )
     )
@@ -171,6 +176,10 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_ToggleGAP gap)
+                (if gap
+                    "Global Administrative Pause successfully turned ON"
+                    "Global Administrative Pause successfully turned OFF"
+                )
             )
         )
     )
@@ -180,8 +189,11 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
+                (format "Succesfuly deployed Smart Account {} in Admin Mode!" [sa])
             )
         )
     )
@@ -191,8 +203,11 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeployStandardAccount account guard kadena public)
+                (format "Succesfuly deployed Standard Account {} in Admin Mode!" [sa])
             )
         )
     )
@@ -205,7 +220,17 @@
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
-                (ref-DALOS::A_IgnisToggle native toggle)
+                (ref-DALOS::A_ToggleGasCollection native toggle)
+                (if native
+                    (if toggle
+                        "KDA Collection succesfully turned ON"
+                        "KDA Collection succesfully turned OFF"
+                    )
+                    (if toggle
+                        "IGNIS Collection succesfully turned ON"
+                        "IGNIS Collection succesfully turned OFF"
+                    )
+                )
             )
         )
     )
@@ -217,6 +242,7 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_SetIgnisSourcePrice price)
+                (format "Succesfuly set IGNIS price to {}" [price])
             )
         )
     )
@@ -228,6 +254,10 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_SetAutoFueling toggle)
+                (if toggle
+                    "LiquidStaking Autofueling successfully turned ON"
+                    "LiquidStaking Autofueling successfully turned OFF"
+                )
             )
         )
     )
@@ -237,8 +267,11 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_UpdatePublicKey account new-public)
+                (format "Public Key for Account {} successfully updated!" [sa])
             )
         )
     )
@@ -250,6 +283,7 @@
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                 )
                 (ref-DALOS::A_UpdateUsagePrice action new-price)
+                (format "Price for Action {} successfully updated with {}" [action new-price])
             )
         )
     )

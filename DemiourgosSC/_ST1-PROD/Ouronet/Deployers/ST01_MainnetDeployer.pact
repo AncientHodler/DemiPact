@@ -1,6 +1,27 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (length (keys n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.DALOS|AccountTable))
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.IGNIS.GAS_PAYER "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL" 0 0.0)
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYMENT "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL" true)
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(let
+    (
+        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+    )
+    (ref-TS01-A::DALOS|A_IgnisToggle true false)
+    
+    (ref-TS01-A::DALOS|A_IgnisToggle true true)
+)
+
+(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
+    "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"
+    "OURO-slLyzPPCo22W"
+    "Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"
+    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+    1.0
+    false
+)
+
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:2e5ffa38bf42d216f5e5773303250c40ae4a9453cea02bbdb2ae390b0205e2b0" 15.5)
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "c:EX0XSNfVxsm906AyVouFPXiLZPYObybqBCCtOpbb3HQ"  31.0)
 (coin.TRANSFER "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8" "k:1d9909881642d0bdfa39d6ff74165e0e632b6125cb6d772579fb51ac248bf9d8"  46.5)
@@ -394,11 +415,11 @@ n_7d40ccda457e374d8eb07b658fd38c282c545038
 )
 (n_7d40ccda457e374d8eb07b658fd38c282c545038.TS01-C1.DPTF|C_Transfer
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
-    "OURO-slLyzPPCo22W"
-    "Σ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"
+    "ELITEAURYN-slLyzPPCo22W"
     "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
-    65969.926016377959603888   
-    true
+    "Ѻ.ÙÉlgЖ2ЦζGČŃчΔ7ÈehĂpУΨΛжXчNøÒäεИbôłξ6σæ₱þğÕнwŸêτńsιφÏþfÏŘÿQθкшμΦgiЗΣωõásŒΦ€ýюĄBнчěþЧαsČÅyȘИöSŁÁVSłßДgNЩиřβÅMΦöÞXšÞbQЫбzĎŮe₿ñÔŚďæğЖžCDìÿ7ÒÆB2knΩúÓcíŮłŸnκΓÒΩBÅĄÂБΣ"
+    10.0  
+    false
 )
 
 ;;Treasury Supplz

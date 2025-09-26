@@ -37,9 +37,7 @@
 )
 (module EQUITY GOV
     ;;
-    @doc "A Post Talos Module made By Demiourgos Holdings \
-        \ As a Post Talos Module, it is an external Modules, which uses only Client (Talos) Functions for writing Data \
-        \ As a Demiourgos Holdings Module, it uses autonomic ownership of the <DPDC|SC_NAME> Smart Ouronet Account."
+    @doc "Defines the rules for creating Shareholder DPSF Collections"
     (implements OuronetPolicy)
     (implements Equity)
     ;;
@@ -389,8 +387,9 @@
                     )
                 )
                 (equity-id:string (at 0 (at "output" ico)))
-                
+                (l:integer (length ipfs-links))
             )
+            (enforce (= l 24) "24 IPFS links must be provided for an Equity Collection")
             (ref-IGNIS::UDC_ConcatenateOutputCumulators 
                 [
                     ico
@@ -400,35 +399,51 @@
                         [
                             ;;Barebone Share, Nonce 1
                             (ref-DPDC-UDC::UDC_NonceData royalty 0.001 (at 0 n) (at 0 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 0 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 0 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 8 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 16 ipfs-links) b b b b b b)
                             )
                             ;;0.1 Promille representing 100 Shares per Million, Nonce 2
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 100.0) (at 1 n) (at 1 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 1 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 1 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 9 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 17 ipfs-links) b b b b b b)
                             )
                             ;;0.2 Promille representing 200 Shares per Million, Nonce 3
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 50.0) (at 2 n) (at 2 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 2 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 2 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 10 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 18 ipfs-links) b b b b b b)
                             )
                             ;;0.5 Promille representing 500 Shares per Million, Nonce 4
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 20.0) (at 3 n) (at 3 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 3 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 3 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 11 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 19 ipfs-links) b b b b b b)
                             )
                             ;;1 Promille representing 1000 Shares per Million, Nonce 5
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 10.0) (at 4 n) (at 4 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 4 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 4 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 12 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 20 ipfs-links) b b b b b b)
                             )
                             ;;2 Promille representing 2000 Shares per Million, Nonce 6
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 5.0) (at 5 n) (at 5 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 5 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 5 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 13 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 21 ipfs-links) b b b b b b)
                             )
                             ;;5 Promille representing 5000 Shares per Million, Nonce 7
                             (ref-DPDC-UDC::UDC_NonceData royalty (/ ignis-royalty 2.0) (at 6 n) (at 6 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 6 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 6 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 14 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 22 ipfs-links) b b b b b b)
                             )
                             ;;1 Percent representing 10000 Shares per Million, Nonce 8
                             (ref-DPDC-UDC::UDC_NonceData royalty ignis-royalty (at 7 n) (at 7 d) md type
-                                (ref-DPDC-UDC::UDC_URI|Data (at 6 ipfs-links) b b b b b b) zd zd
+                                (ref-DPDC-UDC::UDC_URI|Data (at 7 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 15 ipfs-links) b b b b b b)
+                                (ref-DPDC-UDC::UDC_URI|Data (at 23 ipfs-links) b b b b b b)
                             )
                         ]
                     )
@@ -465,7 +480,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (input-nonce:integer (+ 1 input-package-share-tier))
@@ -474,7 +489,7 @@
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
                         ;;1]Transfer <input-package-share-tier> with <input-package-share-tier-amount> to <dpdc>
-                        (ref-DPDC-T::C_Transfer id true account dpdc [input-nonce] [input-package-share-tier-amount] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] account dpdc [[input-nonce]] [[input-package-share-tier-amount]] true)
                     )
                     (ico2:object{IgnisCollectorV2.OutputCumulator}
                         ;;2]Burn it
@@ -486,7 +501,7 @@
                     )
                     (ico4:object{IgnisCollectorV2.OutputCumulator}
                         ;;4]Transfer it to <account>
-                        (ref-DPDC-T::C_Transfer id true dpdc account [output-nonce] [output-amount] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] dpdc account [[output-nonce]] [[output-amount]] true)
                     )
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators 
@@ -506,7 +521,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (output-nonce:integer (+ 1 package-share-tier))
@@ -514,7 +529,7 @@
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
                         ;;1]Transfer Shares to <dpdc>
-                        (ref-DPDC-T::C_Transfer id true account dpdc [1] [shares-amount] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] account dpdc [[1]] [[shares-amount]] true)
                     )
                     (ico2:object{IgnisCollectorV2.OutputCumulator}
                         ;;2]Add Quantity for the Package-Share on <dpdc> Account
@@ -522,7 +537,7 @@
                     )
                     (ico3:object{IgnisCollectorV2.OutputCumulator}
                         ;;3]Transfer it to <account>
-                        (ref-DPDC-T::C_Transfer id true dpdc account [output-nonce] [output-amount] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] dpdc account [[output-nonce]] [[output-amount]] true)
                     )
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators 
@@ -542,7 +557,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (sspm:integer (URC_SingleSharePerMillions id package-share-tier))
@@ -551,7 +566,7 @@
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
                         ;;1]Transfer Package-Share-Tier nonce to dpdc
-                        (ref-DPDC-T::C_Transfer id true account dpdc [nonce-to-break] [amount] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] account dpdc [[nonce-to-break]] [[amount]] true)
                     )
                     (ico2:object{IgnisCollectorV2.OutputCumulator}
                         ;;2]Burn it
@@ -559,7 +574,7 @@
                     )
                     (ico3:object{IgnisCollectorV2.OutputCumulator}
                         ;;3]Release Shares to <account>
-                        (ref-DPDC-T::C_Transfer id true dpdc account [1] [output-shares] true)
+                        (ref-DPDC-T::C_Transfer [id] [true] dpdc account [[1]] [[output-shares]] true)
                     )
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators 

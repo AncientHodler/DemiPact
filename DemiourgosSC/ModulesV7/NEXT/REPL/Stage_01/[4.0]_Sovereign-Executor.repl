@@ -42,6 +42,7 @@
         (ref-P|DPOF:module{OuronetPolicy} DPOF)
         (ref-P|ELITE:module{OuronetPolicy} ELITE)
         (ref-P|DPTF:module{OuronetPolicy} DPTF)
+        (ref-P|TS01-C3:module{OuronetPolicy} TS01-C3)
         ;;
         (mg1:guard (create-capability-guard (ATS.P|ATS|CALLER)))
         (mg2:guard (create-capability-guard (TFT.P|TFT|CALLER)))
@@ -65,12 +66,13 @@
         (ref-P|IGNIS::P|A_Define)
         (ref-P|DPOF::P|A_Define)
         (ref-P|ELITE::P|A_Define)
-
+        (ref-P|TS01-C3::P|A_Define)
+        ;;
         ;;Forward IMC
         (ref-P|IGNIS::P|A_AddIMP mg14)
         (ref-P|IGNIS::P|A_AddIMP mg15)
         (ref-P|IGNIS::P|A_AddIMP mg16)
-
+        ;;
         (ref-P|DPOF::P|A_AddIMP mg1)
         (ref-P|DPOF::P|A_AddIMP mg2)
         (ref-P|DPOF::P|A_AddIMP mg3)
@@ -80,7 +82,7 @@
         (ref-P|DPOF::P|A_AddIMP mg14)
         (ref-P|DPOF::P|A_AddIMP mg15)
         (ref-P|DPOF::P|A_AddIMP mg16)
-
+        ;;
         (ref-P|ELITE::P|A_AddIMP mg15)
     
     ]
@@ -108,13 +110,13 @@
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPMF:module{DemiourgosPactMetaFungibleV5} DPMF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
         (ref-ATS:module{AutostakeV5} ATS)
     )
     [
         ;(ref-DPMF::UR_P-KEYS)
-        ;(ref-DPMF::UR_KEYS)
-        (ref-ATS::UR_P-KEYS)
+        (ref-DPMF::UR_KEYS)
+        ;(ref-ATS::UR_P-KEYS)
     ]
 )
 
@@ -136,11 +138,18 @@
         ;{ "key": "PK_Emma", "caps": [] }
     ]
 )
+;;(map (ELITE.A_MigrateMetaToOrtoFungibleId) (DPMF.UR_P-KEYS))
+;(map (A_MigrateMetaToOrtoFungibleId) (DPMF.UR_P-KEYS))
+
+;;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+
+
 
 (let
     (
         (ref-ELITE:module{Elite} ELITE)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
         (ref-ATS:module{AutostakeV5} ATS)
         ;;
         (vo:string "V|OURO-98c486052a51")
@@ -152,19 +161,24 @@
     )
     [
         ;;1]Migrate DPMF to DPOF
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleId vo)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleId va)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleId vea)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleId zv)
+        (map (ref-ELITE::A_MigrateMetaToOrtoFungibleId) (ref-DPMF::UR_P-KEYS))
+        (DPMF.UR_KEYS)
+        
+        
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleId vo)
+
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleId va)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleId vea)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleId zv)
         ;;(acquire-module-admin free.DPOF)
         ;;(read DPOF.DPOF|T|Properties "V|AURYN-98c486052a51")
         ;;
 
         ;;2]Migrate DPMF Accounts to DPTF Accounts
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleAccount vo k1)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleAccount va k1)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleAccount vea k1)
-        (ref-ELITE::A_MigrateMetaToOrtoFungibleAccount zv k1)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleAccount vo k1)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleAccount va k1)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleAccount vea k1)
+        ;(ref-ELITE::A_MigrateMetaToOrtoFungibleAccount zv k1)
         ;;
         ;;
         ;;3]Upgrade DPTF to V2
@@ -189,7 +203,21 @@
                 "KdaLiquindex-98c486052a51"
             ]
         )
-
+        (TS01-C2.ATS|C_Coil
+            "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+            "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+            "Auryndex-98c486052a51"
+            "OURO-98c486052a51"
+            1.0
+        )
+        (TS01-C1.DPTF|C_Transfer
+            KST.ANHD
+            "OURO-98c486052a51"
+            KST.ANHD
+            KST.EMMA
+            10.0  
+            false
+        )
     
     ]
 )
@@ -201,6 +229,9 @@
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+
+
 (print "")
 (begin-tx "TX-02 [4.1.2] - Dalos INIT [02]: Define IMC Policies")
 (namespace "free")
@@ -282,7 +313,7 @@
             (ref-coin:module{fungible-v2} coin)
             (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV5} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
             (ref-ATS:module{AutostakeV5} ATS)
             ;;
             (patron:string KST.ANHD)
@@ -352,6 +383,7 @@
                 (ref-TS01-C2::ATS|C_SwitchDirectRecovery patron KoriID true)
                 (ref-TS01-C2::ATS|C_Control patron KoriID true false true)
                 (ref-TS01-C2::ATS|C_UpdateRoyalty patron KoriID 10.0)
+                (ref-TS01-C2::ATS|C_SetDirectRecoveryFee patron KoriID 100.0)
             ]
         ]
     )

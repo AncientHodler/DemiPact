@@ -241,7 +241,7 @@
         )
     )
     ;;
-    (defun ATS|S>CONTROL-RECOVERY (atspair:string)
+    (defcap ATS|S>CONTROL-RECOVERY (atspair:string)
         (CAP_Owner atspair)
         (UEV_ParameterLockState atspair false)
     )
@@ -2143,8 +2143,8 @@
         )
     )
     ;;
-    (defun XI_SetDirectFee (atspair:string promile:decimal decay:integer)
-        (require-capability (ATS|C>SET_DIRECT_FEE atspair promile decay))
+    (defun XI_SetDirectFee (atspair:string promile:decimal)
+        (require-capability (ATS|C>SET_DIRECT_FEE atspair promile))
         (update ATS|Pairs atspair
             {"d-promile"    : promile}
         )

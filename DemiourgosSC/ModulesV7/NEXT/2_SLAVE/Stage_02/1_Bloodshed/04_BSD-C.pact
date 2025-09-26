@@ -1,7 +1,5 @@
 (module BLOODSHED-C GOV
     ;;
-    (implements BsCommon)
-    ;;
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
@@ -26,6 +24,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
+    (defconst IPFS                  Bloodshed.IPFS)
     ;;
     ;;
     (defconst LEGENDARY             Bloodshed.LEGENDARY)    ;;Legendary BS Score
@@ -122,16 +121,45 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun CommonOM (position:integer)
+    (defun OrderMultiplier:decimal (rarity-range:integer position:integer rarity-elements:integer)
+        (enforce (<= position rarity-elements) "Invalid Position To Rarity Elements Value")
         (let
             (
-                (ref-BSL:module{BsLegendary} BLOODSHED-L)
+                (rr:decimal (dec rarity-range))
+                (p:decimal (dec position))
+                (re:decimal (dec rarity-elements))
             )
-            (ref-BSL::OrderMultiplier 400 position COMMON-S)
+            (floor (- rr (/ (* rr (- p 1)) (- re 1))) BS-PREC)
         )
+    )
+    (defun CommonOM (position:integer)
+        (OrderMultiplier 400 position COMMON-S)
     )
     (defun CS (position:integer)
         (floor (* COMMON (CommonOM position)) BS-PREC)
+    )
+    ;;
+    (defun CommonLink:string (position:integer small-or-big:bool)
+        (let
+            (
+                (type:string (if small-or-big "512x512" "FULL"))
+                (folder:string "/07_Bloodshed/4_Common/")
+                (p:integer (mod position 144))
+                (l:string "C_")
+                (v:string (format "{}" [(if (= p 0) 144 p)]))
+                (padded-num:string 
+                    (if (< p 100)
+                        (if (< p 10)
+                            (+ "00" v)
+                            (+ "0" v)
+                        )
+                        v
+                    )
+                )
+                (image-str:string (concat [l padded-num ".jpg"]))
+            )
+            (concat [IPFS type folder image-str])
+        )
     )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
@@ -313,8 +341,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwo} TS02-C2)
-                (ref-BSL:module{BsLegendary} BLOODSHED-L)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
                 (b:string BAR)
                 (t:bool true)
                 (f:bool false)
@@ -342,8 +369,8 @@
                                     d-l
                                     (ref-DPDC-UDC::UDC_ScoreMetaData (CS p) (C-x p))
                                     type
-                                    (ref-DPDC-UDC::UDC_URI|Data (ref-BSL::BloodshedLink "Common" p) b b b b b b)
-                                    zd
+                                    (ref-DPDC-UDC::UDC_URI|Data (CommonLink p true) b b b b b b)
+                                    (ref-DPDC-UDC::UDC_URI|Data (CommonLink p false) b b b b b b)
                                     zd
                                 )
                             )

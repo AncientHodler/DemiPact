@@ -363,10 +363,12 @@
                 ;;
                 (auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken auryn)))
                 (elite-auryndex:string (at 0 (ref-DPTF::UR_RewardBearingToken elite-auryn)))
+                (korindex:string (at 0 (ref-DPTF::UR_RewardToken lkda)))
                 ;;
                 (auryndex-value:decimal (ref-ATS::URC_Index auryndex))
                 (elite-auryndex-value:decimal (ref-ATS::URC_Index elite-auryndex))
                 (projected-kda:[decimal] (ref-ORBR::URC_ProjectedKdaLiquindex))
+                (korindex-value:decimal (ref-ATS::URC_Index korindex))
 
             )
             {"ouro-price-display"               : (UC_ConvertPrice p0)
@@ -385,6 +387,7 @@
             ,"eauryndex-display"                : (UC_FormatIndex elite-auryndex-value)
             ,"liquid-display"                   : (UC_FormatIndex (at 0 projected-kda))
             ,"projected-liquid-display"         : (UC_FormatIndex (at 1 projected-kda))
+            ,"kori-display"                     : (UC_FormatIndex korindex-value)
             ,"standby-index-kda-display"        : (UC_FormatTokenAmount (at 2 projected-kda))
             ;;
             ,"wallet-ouro-display"              : (UC_FormatTokenAmount wallet-ouro)

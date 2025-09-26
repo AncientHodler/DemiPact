@@ -1,7 +1,7 @@
 (module DPDC-T GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcTransfer)
+    (implements DpdcTransferV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -94,30 +94,53 @@
     (defcap SECURE ()
         true
     )
-    (defcap IGNIS|C>NO-ROYALTY (text:string)
+    (defcap IGNIS|C>NO-ROYALTY ()
         true
     )
     ;;{C2}
     ;;{C3}
     ;;{C4}
-    (defcap DPDC-T|C>TRANSFER (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
+    (defcap DPDC-T|C>TRANSFER (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
         @event
         (let
             (
+                (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-DPDC:module{Dpdc} DPDC)
+                (l1:integer (length ids))
+                (l2:integer (length sons))
+                (l3:integer (length nonces-array))
+                (l4:integer (length amounts-array))
             )
+            ;;Single
+            (ref-U|INT::UEV_UniformList [l1 l2 l3 l4])
             (if (and method (ref-DALOS::UR_AccountType receiver))
                 (ref-DALOS::CAP_EnforceAccountOwnership receiver)
                 true
             )
             (ref-DALOS::CAP_EnforceAccountOwnership sender)
             (ref-DALOS::UEV_EnforceTransferability sender receiver method)
-            (ref-DPDC::UEV_PauseState id son false)
-            (ref-DPDC::UEV_AccountFreezeState id son sender false)
-            (ref-DPDC::UEV_AccountFreezeState id son receiver false)
-            (UEV_TransferRoles id son sender receiver)
-            (UEV_AmountsForTransfer id son nonces amounts)
+            ;;Multi
+            (map
+                (lambda
+                    (idx:integer)
+                    (let
+                        (
+                            (id:string (at idx ids))
+                            (son:bool (at idx sons))
+                            (nonces:[integer] (at idx nonces-array))
+                            (amounts:[integer] (at idx amounts-array))
+                        )
+                        (ref-DPDC::UEV_PauseState id son false)
+                        (ref-DPDC::UEV_AccountFreezeState id son sender false)
+                        (ref-DPDC::UEV_AccountFreezeState id son receiver false)
+                        (UEV_TransferRoles id son sender receiver)
+                        (UEV_AmountsForTransfer id son nonces amounts)
+                    )
+                )
+                (enumerate 0 (- l1 1))
+            )
+            ;;Capabilities
             (compose-capability (P|SECURE-CALLER))
         )
     )
@@ -161,6 +184,76 @@
     (defun UC_AndTruths:bool (truths:[bool])
         (fold (and) true truths)
     )
+    (defun UC_CleanseAggregatedRoyalties:object{DpdcTransferV2.AggregatedRoyalties} (agg:object{DpdcTransferV2.AggregatedRoyalties})
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (agg-creators:[string] (at "creators" agg))
+                (agg-royalties:[decimal] (at "ignis-royalties" agg))
+                (non-zero-indices:[integer]
+                    (filter
+                        (lambda 
+                            (idx:integer) 
+                            (!= (at idx agg-royalties) 0.0)
+                        )
+                        (enumerate 0 (- (length agg-royalties) 1))
+                    )
+                )
+                (how-many-non-zeroes:integer (length non-zero-indices))
+                (how-many-zeroes:integer (- (length agg-royalties) how-many-non-zeroes))
+            )
+            (if (= how-many-zeroes 0)
+                agg
+                (UDCX_AggregatedRoyalties
+                    ;;Creators
+                    (map
+                        (lambda (idx:integer) (at idx agg-creators))
+                        non-zero-indices
+                    )
+                    ;;Royalties
+                    (map
+                        (lambda (idx:integer) (at idx agg-royalties))
+                        non-zero-indices
+                    )
+                )
+            )
+        )
+    )
+    (defun UC_AggregateRoyalties:object{DpdcTransferV2.AggregatedRoyalties}
+        (creators:[string] id-ignis-royalties:[decimal])
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (d-creators:[string] (distinct creators))
+            )
+            (UDCX_AggregatedRoyalties
+                d-creators
+                (fold
+                    (lambda
+                        (acc:[decimal] idx:integer)
+                        (let
+                            (
+                                (creator:string (at idx d-creators))
+                                (c-idxes:[integer] (ref-U|LST::UC_Search creators creator))
+                            )
+                            (ref-U|LST::UC_AppL acc
+                                (fold
+                                    (lambda
+                                        (accc:decimal idx:integer)
+                                        (+ accc (at (at idx c-idxes) id-ignis-royalties))
+                                    )
+                                    0.0
+                                    (enumerate 0 (- (length c-idxes) 1))
+                                )
+                            )
+                        )
+                    )
+                    []
+                    (enumerate 0 (- (length d-creators) 1))
+                )
+            )
+        )
+    )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string)
@@ -183,10 +276,42 @@
             )
         )
     )
-    (defun URC_SummedIgnisRoyalty:decimal (id:string son:bool nonces:[integer] amounts:[integer])
+    (defun URC_SummedIgnisRoyalty:decimal (patron:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
+                (creator:string (ref-DPDC::UR_CreatorKonto id son))
+            )
+            (if (= patron creator)
+                0.0
+                (fold
+                    (lambda
+                        (acc:decimal idx:integer)
+                        (+ 
+                            acc 
+                            (* 
+                                (dec (at idx amounts)) 
+                                (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id son (at idx nonces)))
+                            )
+                        )
+                    )
+                    0.0
+                    (enumerate 0 (- (length nonces) 1))
+                )
+            )
+        )
+    )
+    (defun URC_TotalTransferPrice:decimal
+        (id:string son:bool nonces:[integer] amounts:[integer])
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ft:string (take 2 id))
+                (sh:string "E|")
+                (sl:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                (s:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                (m:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                (th:decimal (/ sl 1000.0))
             )
             (fold
                 (lambda
@@ -195,10 +320,24 @@
                         (
                             (nonce:integer (at idx nonces))
                             (amount:integer (at idx amounts))
-                            (ir:decimal (ref-DPDC::UR_N|IgnisRoyalty (ref-DPDC::UR_NonceData id son nonce)))
-                            (sir:decimal (* (dec amount) ir))
+                            (price-per-nonce:decimal
+                                (if (or (< nonce 0) (fold (and) true [(= ft sh) son (= nonce 1)]))
+                                    th
+                                    (if son s m)
+                                )
+                            )
+                            (total-price-per-nonce:decimal (* price-per-nonce (dec amount)))
+                            (flat-price-per-nonce:decimal
+                                (if (> nonce 0)
+                                    0.0
+                                    (if (= (mod amount 1000) 0)
+                                        (dec (/ amount 1000))
+                                        (dec (+ (/ amount 1000) 1))
+                                    )
+                                )
+                            )
                         )
-                        (+ acc sir)
+                        (fold (+) 0.0 [acc total-price-per-nonce flat-price-per-nonce])
                     )
                 )
                 0.0
@@ -259,87 +398,100 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_TransferCumulator:object{IgnisCollectorV2.OutputCumulator} 
-        (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer])
+    (defun UDC_MultiTransferCumulator:object{IgnisCollectorV2.OutputCumulator}
+        (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]])
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ft:string (take 2 id))
-                (sh:string "E|")
-                (sl:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
-                (s:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
-                (m:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
-                (th:decimal (/ sl 1000.0))
-                (total-price:decimal
-                    (fold
-                        (lambda
-                            (acc:decimal idx:integer)
-                            (let
-                                (
-                                    (nonce:integer (at idx nonces))
-                                    (amount:integer (at idx amounts))
-                                    (price-per-nonce:decimal
-                                        (if (or (< nonce 0) (fold (and) true [(= ft sh) son (= nonce 1)]))
-                                            th
-                                            (if son s m)
-                                        )
-                                    )
-                                    (total-price-per-nonce:decimal (* price-per-nonce (dec amount)))
-                                    (flat-price-per-nonce:decimal
-                                        (if (> nonce 0)
-                                            0.0
-                                            (if (= (mod amount 1000) 0)
-                                                (dec (/ amount 1000))
-                                                (dec (+ (/ amount 1000) 1))
-                                            )
-                                        )
-                                    )
-                                )
-                                (fold (+) 0.0 [acc total-price-per-nonce flat-price-per-nonce])
-                            )
-                        )
-                        0.0
-                        (enumerate 0 (- (length nonces) 1))
-                    )
-                )
             )
             (ref-IGNIS::UDC_ConstructOutputCumulator
-                total-price  sender
+                (fold
+                    (lambda
+                        (acc:decimal idx:integer)
+                        (+ acc (URC_TotalTransferPrice (at idx ids) (at idx sons) (at idx nonces-array) (at idx amounts-array)))
+                    )
+                    0.0
+                    (enumerate 0 (- (length ids) 1))
+                )
+                sender
                 (ref-IGNIS::URC_ZeroEliteGAZ sender receiver) []
             )
         )
+    )
+    (defun UDCX_AggregatedRoyalties:object{DpdcTransferV2.AggregatedRoyalties}
+        (a:[string] b:[decimal])
+        {"creators"         : a
+        ,"ignis-royalties"  : b}
     )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
     (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator}
-        (id:string son:bool sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)
+        (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
         (UEV_IMC)
-        (with-capability (DPDC-T|C>TRANSFER id son sender receiver nonces amounts method)
-            (XI_TransferNonces id son sender receiver nonces amounts)
-            (UDC_TransferCumulator id son sender receiver nonces amounts)
+        (with-capability (DPDC-T|C>TRANSFER ids sons sender receiver nonces-array amounts-array method)
+            (map
+                (lambda
+                    (idx:integer)
+                    (XI_TransferNonces (at idx ids) (at idx sons) sender receiver (at idx nonces-array) (at idx amounts-array))
+                )
+                (enumerate 0 (- (length ids) 1))
+            )
+            (UDC_MultiTransferCumulator ids sons sender receiver nonces-array amounts-array)
         )
     )
-    (defun C_IgnisRoyaltyCollector (patron:string id:string son:bool nonces:[integer] amounts:[integer])
+    (defun C_IgnisRoyaltyCollector:object{DpdcTransferV2.AggregatedRoyalties}
+        (patron:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]])
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC:module{Dpdc} DPDC)
-                (creator:string (ref-DPDC::UR_CreatorKonto id son))
-                (sc:string (ref-I|OURONET::OI|UC_ShortAccount creator))
-                (summed-ignis-royalty:decimal (URC_SummedIgnisRoyalty id son nonces amounts))
-                (dpdc:string (if son "SFT" "NFT"))
-                (text:string (format "{} {} Creator {} Ignis Royalty Free" [dpdc id sc]))
-            )
-            (if (!= patron creator)
-                (with-capability (IGNIS|C>ROYALTY patron creator summed-ignis-royalty)
-                    (XI_IgnisTransfer patron creator summed-ignis-royalty)
+                ;;
+                (ivgz:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                ;;
+                (creators:[string]
+                    (map
+                        (lambda
+                            (idx:integer)
+                            (ref-DPDC::UR_CreatorKonto (at idx ids) (at idx sons))
+                        )
+                        (enumerate 0 (- (length ids) 1))
+                    )
                 )
-                (with-capability (IGNIS|C>NO-ROYALTY text)
-                    true
+                (ids-ignis-royalties:[decimal]
+                    (map
+                        (lambda
+                            (idx:integer)
+                            (URC_SummedIgnisRoyalty patron (at idx ids) (at idx sons) (at idx nonces-array) (at idx amounts-array))
+                        )
+                        (enumerate 0 (- (length ids) 1))
+                    )
+                )
+                (sum:decimal (fold (+) 0.0 ids-ignis-royalties))
+            )
+            (if (or ivgz (= sum 0.0))
+                (with-capability (IGNIS|C>NO-ROYALTY )
+                    (UDCX_AggregatedRoyalties [""] [0.0])
+                )
+                (let
+                    (
+                        (agg:object{DpdcTransferV2.AggregatedRoyalties} (UC_AggregateRoyalties creators ids-ignis-royalties))
+                        (cleansed-agg:object{DpdcTransferV2.AggregatedRoyalties} (UC_CleanseAggregatedRoyalties agg))
+                        (agg-creators:[string] (at "creators" cleansed-agg))
+                        (agg-royalties:[decimal] (at "ignis-royalties" cleansed-agg))
+                    )
+                    (map
+                        (lambda
+                            (idx:integer)
+                            (with-capability (IGNIS|C>ROYALTY patron (at idx agg-creators) (at idx agg-royalties))
+                                (XI_IgnisTransfer patron (at idx agg-creators) (at idx agg-royalties))
+                            )
+                        )
+                        (enumerate 0 (- (length agg-creators) 1))
+                    )
+                    (UDCX_AggregatedRoyalties agg-creators agg-royalties)
                 )
             )
         )

@@ -1,4 +1,3 @@
-
 (module MTX-SWP GOV
     ;;
     (implements OuronetPolicy)
@@ -29,6 +28,9 @@
         true
     )
     (defcap P|MTX-SWP|REMOTE-GOV ()
+        true
+    )
+    (defcap P|MTX-SWP|GAS-STATION-ACCESS ()
         true
     )
     (defcap P|SECURE-CALLER ()
@@ -75,6 +77,7 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|DALOS:module{OuronetPolicy} DALOS)
                 (ref-P|BRD:module{OuronetPolicy} BRD)
                 (ref-P|DPTF:module{OuronetPolicy} DPTF)
                 (ref-P|DPOF:module{OuronetPolicy} DPOF)
@@ -85,6 +88,10 @@
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPL:module{OuronetPolicy} SWPL)
                 (mg:guard (create-capability-guard (P|MTX-SWP|CALLER)))
+            )
+            (ref-P|DALOS::P|A_Add
+                "MTX-SWP|GasStationAccess"
+                (create-capability-guard (P|MTX-SWP|GAS-STATION-ACCESS))
             )
             (ref-P|VST::P|A_Add
                 "MTX-SWP|RemoteSwpGov"
@@ -425,7 +432,7 @@
                 {"primary-lp-amount"    := primary
                 ,"secondary-lp-amount"  := secondary
                 }
-                (with-capability (P|MTX-SWP|CALLER)
+                (with-capability (P|DT)
                     (let
                         (
                             (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
@@ -572,7 +579,7 @@
         (step
             (resume
                 {"secondary-lp-amount"  := secondary}
-                (with-capability (P|MTX-SWP|CALLER)
+                (with-capability (P|DT)
                     (let
                         (
                             (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
@@ -718,7 +725,7 @@
             (resume
                 {"primary-lp-amount"    := primary
                 ,"time-diff"            := dt}
-                (with-capability (P|MTX-SWP|CALLER)
+                (with-capability (P|DT)
                     (let
                         (
                             (ref-IGNIS:module{IgnisCollectorV2} IGNIS)

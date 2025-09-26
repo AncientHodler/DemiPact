@@ -199,20 +199,20 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (neg-nonce:integer (- 0 nonce))
                     (f-amount:integer (* 1000 amount))
                 )
                 ;;1]Transfer <nonce> <amount> from <account> to <DPDC|SC_NAME>
-                (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
+                (ref-DPDC-T::C_Transfer [id] [son] account dpdc [[nonce]] [[amount]] true)
                 ;;2]Fragment Nonces are credited to the <DPDC|SC_NAME>
                 (if son
                     (ref-DPDC-C::XE_CreditSFT-FragmentNonce dpdc id neg-nonce f-amount)
                     (ref-DPDC-C::XE_CreditNFT-FragmentNonce dpdc id neg-nonce f-amount)
                 )
                 ;;3]They are then transfered to the <account>
-                (ref-DPDC-T::C_Transfer id son dpdc account [neg-nonce] [f-amount] true)
+                (ref-DPDC-T::C_Transfer [id] [son] dpdc account [[neg-nonce]] [[f-amount]] true)
                 ;;4]Output Cumulator
                 (ref-IGNIS::UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
             )
@@ -227,20 +227,20 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransfer} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (pos-nonce:integer (abs nonce))
                     (merged-amount:integer (/ amount 1000))
                 )
                 ;;1]Transfer <nonce> <amount> from <account> to <DPDC|SC_NAME>
-                (ref-DPDC-T::C_Transfer id son account dpdc [nonce] [amount] true)
+                (ref-DPDC-T::C_Transfer [id] [son] account dpdc [[nonce]] [[amount]] true)
                 ;;2]Fragment Nonces are debited from the <DPDC|SC_NAME>
                 (if son
                     (ref-DPDC-C::XE_DebitSFT-FragmentNonce dpdc id nonce amount)
                     (ref-DPDC-C::XE_DebitNFT-FragmentNonce dpdc id nonce amount)
                 )
                 ;;3]Native <nonces> are transfered from <DPDC|SC_NAME> to <account>
-                (ref-DPDC-T::C_Transfer id son dpdc account [pos-nonce] [merged-amount] true)
+                (ref-DPDC-T::C_Transfer [id] [son] dpdc account [[pos-nonce]] [[merged-amount]] true)
                 ;;4]Output Cumulator
                 (ref-IGNIS::UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
             )
