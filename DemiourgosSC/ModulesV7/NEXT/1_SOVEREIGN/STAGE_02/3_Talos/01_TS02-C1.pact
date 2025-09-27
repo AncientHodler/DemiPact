@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientOneV3)
+    (implements TalosStageTwo_ClientOneV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -143,6 +143,39 @@
     ;;
     ;;  [2] DPDC
     ;;
+    (defun DPDC|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
+        @doc "Transfer multiple SFT <ids> from <sender> to <receiver>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
+                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
+                    (hm:integer (length ids))
+                    ;;
+                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender ids sons nonces-array amounts-array)
+                    )
+                    (c:[string] (at "creators" irs))
+                    (r:[decimal] (at "ignis-royalties" irs))
+                    (s:decimal (fold (+) 0.0 r))
+                    (l:integer (length c))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-T::C_Transfer ids sons sender receiver nonces-array amounts-array method)
+                )
+                [
+                    (format "Successfully transfered DPDC(s) {} Nonce-Array {} using Amount-Array {} from {} to {}" [ids nonces-array amounts-array sa ra])
+                    (if (= s 0.0)
+                        (format "Transfer executed without collecting any IGNIS Royalties for the Collectable(s) {}" [ids])
+                        (format "Transfer executed while collecting {} IGNIS Royalty to {} Collectable Creator(s)" [s l])
+                    )
+                ]
+            )
+        )
+    )
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
         @doc "Updates <pending-branding> for DPSF Token <entity-id> costing 400 IGNIS"
         (with-capability (P|TS)
@@ -603,12 +636,12 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
                     ;;
-                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
-                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron [id] [true] [[nonce]] [[amount]])
+                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender [id] [true] [[nonce]] [[amount]])
                     )
                     (r:[decimal] (at "ignis-royalties" irs))
                     (s:decimal (fold (+) 0.0 r))
@@ -617,7 +650,7 @@
                     (ref-DPDC-T::C_Transfer [id] [true] sender receiver [[nonce]] [[amount]] method)
                 )
                 [
-                    (format "Successfully transfered {} SFT {} Nonce {} from {} to {}" [amount id nonce sa ra])
+                    (format "Successfully transfered SFT {} Nonce {} and Amount {} from {} to {}" [id nonce amount sa ra])
                     (if (= s 0.0)
                         (format "Transfer executed without collecting any IGNIS Royalties for the Collectable {}" [id])
                         (format "Transfer executed while collecting {} IGNIS Royalty to the Collectable {} Creator" [s id])
@@ -633,12 +666,12 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
                     ;;
-                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
-                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron [id] [true] [nonces] [amounts])
+                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender [id] [true] [nonces] [amounts])
                     )
                     (c:[string] (at "creators" irs))
                     (r:[decimal] (at "ignis-royalties" irs))
@@ -648,43 +681,10 @@
                     (ref-DPDC-T::C_Transfer [id] [true] sender receiver [nonces] [amounts] method)
                 )
                 [
-                    (format "Successfully transfered {} Amounts SFT {} Nonces {} from {} to {}" [amounts id nonces sa ra])
+                    (format "Successfully transfered SFT {} Nonces {} with Amounts {} from {} to {}" [id nonces amounts sa ra])
                     (if (= s 0.0)
                         (format "Transfer executed without collecting any IGNIS Royalties for the Collectable {}" [id])
                         (format "Transfer executed while collecting {} IGNIS Royalty to the Collectable {} Creator" [s id])
-                    )
-                ]
-            )
-        )
-    )
-    (defun DPSF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
-        @doc "Transfer multiple SFT <ids> from <sender> to <receiver>"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
-                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
-                    (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
-                    (hm:integer (length ids))
-                    ;;
-                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
-                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron ids sons nonces-array amounts-array)
-                    )
-                    (c:[string] (at "creators" irs))
-                    (r:[decimal] (at "ignis-royalties" irs))
-                    (s:decimal (fold (+) 0.0 r))
-                    (l:integer (length c))
-                )
-                (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-T::C_Transfer ids sons sender receiver nonces-array amounts-array method)
-                )
-                [
-                    (format "Successfully transfered {} Individual Collectables from {} to {}" [hm sa ra])
-                    (if (= s 0.0)
-                        (format "Transfer executed without collecting any IGNIS Royalties for the Collectable(s) {}" [ids])
-                        (format "Transfer executed while collecting {} IGNIS Royalty to {} Collectable Creator(s)" [s l])
                     )
                 ]
             )
@@ -1238,7 +1238,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (ref-EQUITY:module{Equity} EQUITY)
                     ;;
                     (ico:object{IgnisCollectorV2.OutputCumulator}
@@ -1251,8 +1251,8 @@
                     (ir-amounts:[integer] (at 1 output))
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     ;;
-                    (irs:object{DpdcTransferV2.AggregatedRoyalties}
-                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron [id] [true] [ir-nonces] [ir-amounts])
+                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                        (ref-DPDC-T::C_IgnisRoyaltyCollector patron account [id] [true] [ir-nonces] [ir-amounts])
                     )
                     (c:[string] (at "creators" irs))
                     (r:[decimal] (at "ignis-royalties" irs))

@@ -286,7 +286,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                     ;;
                     (asset:string (UR_AssetID))

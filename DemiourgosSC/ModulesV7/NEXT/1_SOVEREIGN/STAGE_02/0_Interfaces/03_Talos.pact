@@ -30,11 +30,14 @@
 )
 
 
-(interface TalosStageTwo_ClientOneV3
-    @doc "Exposes Client SFT Functions"
+(interface TalosStageTwo_ClientOneV4
+    @doc "Exposes Client DPDC and SFT Functions \
+    \ V3 added improved Collectable Transfer Function \
+    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module"
     ;;
     ;;  [2] DPDC
     ;;
+    (defun DPDC|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     (defun DPSF|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}]))
     (defun DPSF|C_UpgradeBranding (patron:string entity-id:string months:integer))
     ;;
@@ -92,7 +95,6 @@
     ;;
     (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPSF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
-    (defun DPSF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     ;;
     ;;  [8] DPDC-S
     ;;
@@ -173,8 +175,10 @@
     ;;
 )
 
-(interface TalosStageTwo_ClientTwoV3
-    @doc "Exposes Client NFT Functions"
+(interface TalosStageTwo_ClientTwoV4
+    @doc "Exposes Client NFT Functions \
+    \ V3 added improved Collectable Transfer Function \
+    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module"
     ;;
     ;;  [2] DPDC
     ;;
@@ -234,7 +238,6 @@
     ;;
     (defun DPNF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPNF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)) 
-    (defun DPNF|C_MultiTransfer (patron:string ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     ;;
     ;;  [8] DPDC-S
     ;;

@@ -553,7 +553,7 @@
 )
 ;;
 ;;
-(interface DpdcTransferV2
+(interface DpdcTransferV3
     @doc "Holds Dpdc Transfer Related Functions \
         \ V2 changes to MultiTransfer Architecture"
     ;;
@@ -569,7 +569,7 @@
     ;;  [URC]
     ;;
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string))
-    (defun URC_SummedIgnisRoyalty:decimal (patron:string id:string son:bool nonces:[integer] amounts:[integer]))
+    (defun URC_SummedIgnisRoyalty:decimal (sender:string id:string son:bool nonces:[integer] amounts:[integer]))
     (defun URC_TotalTransferPrice:decimal (id:string son:bool nonces:[integer] amounts:[integer]))
     ;;
     ;;  [UEV]
@@ -585,7 +585,7 @@
     ;;  [C]
     ;;
     (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator} (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
-    (defun C_IgnisRoyaltyCollector:object{AggregatedRoyalties} (patron:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]]))
+    (defun C_IgnisRoyaltyCollector:object{AggregatedRoyalties} (patron:string sender:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]]))
 )
 ;;
 (interface DpdcSets

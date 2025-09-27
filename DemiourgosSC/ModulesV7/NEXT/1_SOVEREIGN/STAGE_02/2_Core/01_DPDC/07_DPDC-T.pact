@@ -1,7 +1,7 @@
 (module DPDC-T GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcTransferV2)
+    (implements DpdcTransferV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -184,7 +184,7 @@
     (defun UC_AndTruths:bool (truths:[bool])
         (fold (and) true truths)
     )
-    (defun UC_CleanseAggregatedRoyalties:object{DpdcTransferV2.AggregatedRoyalties} (agg:object{DpdcTransferV2.AggregatedRoyalties})
+    (defun UC_CleanseAggregatedRoyalties:object{DpdcTransferV3.AggregatedRoyalties} (agg:object{DpdcTransferV3.AggregatedRoyalties})
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -219,7 +219,7 @@
             )
         )
     )
-    (defun UC_AggregateRoyalties:object{DpdcTransferV2.AggregatedRoyalties}
+    (defun UC_AggregateRoyalties:object{DpdcTransferV3.AggregatedRoyalties}
         (creators:[string] id-ignis-royalties:[decimal])
         (let
             (
@@ -276,13 +276,13 @@
             )
         )
     )
-    (defun URC_SummedIgnisRoyalty:decimal (patron:string id:string son:bool nonces:[integer] amounts:[integer])
+    (defun URC_SummedIgnisRoyalty:decimal (sender:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
                 (ref-DPDC:module{Dpdc} DPDC)
                 (creator:string (ref-DPDC::UR_CreatorKonto id son))
             )
-            (if (= patron creator)
+            (if (= sender creator)
                 0.0
                 (fold
                     (lambda
@@ -418,7 +418,7 @@
             )
         )
     )
-    (defun UDCX_AggregatedRoyalties:object{DpdcTransferV2.AggregatedRoyalties}
+    (defun UDCX_AggregatedRoyalties:object{DpdcTransferV3.AggregatedRoyalties}
         (a:[string] b:[decimal])
         {"creators"         : a
         ,"ignis-royalties"  : b}
@@ -441,8 +441,8 @@
             (UDC_MultiTransferCumulator ids sons sender receiver nonces-array amounts-array)
         )
     )
-    (defun C_IgnisRoyaltyCollector:object{DpdcTransferV2.AggregatedRoyalties}
-        (patron:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]])
+    (defun C_IgnisRoyaltyCollector:object{DpdcTransferV3.AggregatedRoyalties}
+        (patron:string sender:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]])
         (UEV_IMC)
         (let
             (
@@ -464,7 +464,7 @@
                     (map
                         (lambda
                             (idx:integer)
-                            (URC_SummedIgnisRoyalty patron (at idx ids) (at idx sons) (at idx nonces-array) (at idx amounts-array))
+                            (URC_SummedIgnisRoyalty sender (at idx ids) (at idx sons) (at idx nonces-array) (at idx amounts-array))
                         )
                         (enumerate 0 (- (length ids) 1))
                     )
@@ -477,8 +477,8 @@
                 )
                 (let
                     (
-                        (agg:object{DpdcTransferV2.AggregatedRoyalties} (UC_AggregateRoyalties creators ids-ignis-royalties))
-                        (cleansed-agg:object{DpdcTransferV2.AggregatedRoyalties} (UC_CleanseAggregatedRoyalties agg))
+                        (agg:object{DpdcTransferV3.AggregatedRoyalties} (UC_AggregateRoyalties creators ids-ignis-royalties))
+                        (cleansed-agg:object{DpdcTransferV3.AggregatedRoyalties} (UC_CleanseAggregatedRoyalties agg))
                         (agg-creators:[string] (at "creators" cleansed-agg))
                         (agg-royalties:[decimal] (at "ignis-royalties" cleansed-agg))
                     )

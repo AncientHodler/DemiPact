@@ -648,7 +648,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
@@ -709,7 +709,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}

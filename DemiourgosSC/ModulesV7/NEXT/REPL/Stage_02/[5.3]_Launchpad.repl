@@ -139,6 +139,8 @@
     )
     (let
         (
+            (ref-VST:module{VestingV5} VST)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV6} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
@@ -164,8 +166,12 @@
             (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
             (SparkID:string (at 0 ids))
             (FrozenSparkID:string (at 1 (ref-TS01-C2::VST|C_CreateFrozenLink patron SparkID)))
+            (vst-sc:string (ref-VST::GOV|VST|SC_NAME))
+            (tr:bool (ref-DPTF::UR_AccountRoleTransfer FrozenSparkID vst-sc))
         )
         [
+            ;;Check Role
+            (format "Frozen Token Role on VST|SC_NAME after issue is {}" [tr])
             ;;Permissions
             (ref-TS01-C1::DPTF|C_Mint patron SparkID lpad-sc 35000.0 true)
             (ref-TS01-C1::DPTF|C_ToggleMintRole patron SparkID lpad-sc true)

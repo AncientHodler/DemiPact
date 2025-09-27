@@ -1244,6 +1244,7 @@
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
                 ;;
+                (dptf-owner:string (ref-DPTF::UR_Konto dptf))
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
                 (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
                 (dptf-decimals:integer (ref-DPTF::UR_Decimals dptf))
@@ -1276,14 +1277,17 @@
                 (special-dptf:string (at 0 (at "output" ico0)))
                 (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dptf"))
             )
-            ;;Create DPTF Account 
-            ;;Required Roles are on by default for VST|SC_NAME and dont need to be set.
+            ;;Create DPTF Account
             (ref-DPTF::C_DeployAccount dptf VST|SC_NAME)
             (ref-IGNIS::KDA|C_Collect patron kda-costs)
             (ref-IGNIS::UDC_ConcatenateOutputCumulators 
                 [
                     ico0 
                     (ref-DPTF::XE_UpdateSpecialTrueFungible dptf special-dptf fr-tag)
+                    ;;Required Roles are on by default for VST|SC_NAME and dont need to be set except for the active transfer role
+                    ;;Which technically isnt needed, but when set, makes the issued special token transfer restricted.
+                    ;;Frozen and Reserved Tokens are transfer restricted
+                    (ref-DPTF::C_ToggleTransferRole special-dptf VST|SC_NAME true)
                 ] 
                 [special-dptf]
             )
@@ -1337,13 +1341,19 @@
                 (kda-costs:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
             )
             ;;Create DPTF Account 
-            ;;Required Roles are on by default for VST|SC_NAME and dont need to be set.
             (ref-DPTF::C_DeployAccount dptf VST|SC_NAME)
             (ref-IGNIS::KDA|C_Collect patron kda-costs)
             (ref-IGNIS::UDC_ConcatenateOutputCumulators 
                 [
                     ico0 
                     (ref-DPOF::XE_UpdateSpecialOrtoFungible dptf special-dpof vzh-tag)
+                    ;;Required Roles are on by default for VST|SC_NAME and dont need to be set except for the active transfer role
+                    ;;Which technically isnt needed, but when set, makes the issued special token transfer restricted.
+                    ;;Vested Tokens and Sleeping Tokens are transfer restricted, Hibernated Tokens are not
+                    (if (or (= vzh-tag 1)(= vzh-tag 2))
+                        (ref-DPOF::C_ToggleTransferRole special-dpof VST|SC_NAME true)
+                        EOC
+                    )
                 ]
                 [special-dpof]
             )

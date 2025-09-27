@@ -480,7 +480,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (input-nonce:integer (+ 1 input-package-share-tier))
@@ -521,7 +521,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (output-nonce:integer (+ 1 package-share-tier))
@@ -557,7 +557,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{Dpdc} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
-                    (ref-DPDC-T:module{DpdcTransferV2} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (sspm:integer (URC_SingleSharePerMillions id package-share-tier))

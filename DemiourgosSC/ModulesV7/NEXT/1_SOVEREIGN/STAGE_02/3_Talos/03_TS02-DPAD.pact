@@ -138,8 +138,8 @@
             (let
                 (
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-                    (ref-TS02-C1:module{TalosStageTwo_ClientOneV3} TS02-C1)
-                    (ref-TS02-C2:module{TalosStageTwo_ClientTwoV3} TS02-C2)
+                    (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+                    (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
                     (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                     (lpad:string (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME))
                     (tf:[bool] [true true])

@@ -449,10 +449,19 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (special:[string] ["F|" "R|"])
+                (ft:string (take 2 id))
+                (iz-special:bool (contains ft special))
             )
-            (ref-DALOS::UEV_NotSmartOuronetAccount account)
+            ;;Frozen and Reserved Special Tokens can use Core Smart Ouronet Accounts for Transfer Roles Setup.
+            (if (not iz-special)
+                (do
+                    (ref-DALOS::UEV_NotSmartOuronetAccount account)
+                    (UEV_AccountTransferState id account (not toggle))
+                )
+                true
+            )
             (CAP_Owner id)
-            (UEV_AccountTransferState id account (not toggle))
             (if toggle
                 (UEV_CanAddSpecialRoleON id)
                 true
