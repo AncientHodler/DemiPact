@@ -169,7 +169,7 @@
     (defun UR_NonceSaleAvailability:integer (nonce:integer)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                 (lpad:string (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME))
                 (asset:string (UR_AssetID))

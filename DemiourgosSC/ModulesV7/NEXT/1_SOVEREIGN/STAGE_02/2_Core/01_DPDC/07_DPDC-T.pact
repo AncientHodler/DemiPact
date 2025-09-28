@@ -106,7 +106,7 @@
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (l1:integer (length ids))
                 (l2:integer (length sons))
                 (l3:integer (length nonces-array))
@@ -259,7 +259,7 @@
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (verum:[string] (ref-DPDC::UR_Verum11 id son))
                 (lv:integer (length verum))
@@ -279,7 +279,7 @@
     (defun URC_SummedIgnisRoyalty:decimal (sender:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (creator:string (ref-DPDC::UR_CreatorKonto id son))
             )
             (if (= sender creator)
@@ -349,7 +349,7 @@
     (defun UEV_TransferRoles (id:string son:bool sender:string receiver:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (trc:bool (URC_TransferRoleChecker id son sender))
                 (s:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
                 (r:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
@@ -373,7 +373,7 @@
     (defun UEV_AmountsForTransfer (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -447,7 +447,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 ;;
                 (ivgz:bool (ref-IGNIS::URC_IsVirtualGasZero))
                 ;;

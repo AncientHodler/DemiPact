@@ -147,7 +147,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC:module{DpdcV2} DPDC)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC::C_UpdatePendingBranding entity-id false logo description website social)
@@ -161,7 +161,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC:module{DpdcV2} DPDC)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 )
                 (ref-DPDC::C_UpgradeBranding patron entity-id false months)
@@ -636,13 +636,15 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC:module{Dpdc} DPDC)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC:module{DpdcV2} DPDC)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
+                    (nonce:decimal (+ 1 (ref-DPDC::UR_NoncesUsed id false)))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-S::C_Make account id false nonces set-class)
+                    (ref-DPDC-S::C_MakeNonFungibleSet account id nonces set-class)
                 )
-                (format "Set Class {} NFT with Nonce {} generated succesfully on Account {}" [set-class (ref-DPDC::UR_NoncesUsed id false) (ref-I|OURONET::OI|UC_ShortAccount account)])
+                (format "Successfully generated Class {} Set (Nonce {}) of NFT Collection {} on Account {}" [set-class nonce id sa])
             )
         )
     )
@@ -654,12 +656,15 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC:module{DpdcV2} DPDC)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
+                    (set-class:integer (ref-DPDC::UR_NonceClass id false nonce))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-S::C_Break account id false nonce)
+                    (ref-DPDC-S::C_BreakNonFungibleSet account id nonce)
                 )
-                (format "NFT {} Nonce {} succesfully broken down into its constituents to Account {}" [id nonce (ref-I|OURONET::OI|UC_ShortAccount account)])
+                (format "Successfully broken Class {} Set (Nonce {}) of NFT Collection {} on Account {}" [set-class nonce id sa])
             )
         )
     )
@@ -674,7 +679,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefinePrimordialSet id false set-name score-multiplier set-definition ind)
@@ -694,7 +699,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineCompositeSet id false set-name score-multiplier set-definition ind)
@@ -715,7 +720,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineHybridSet id false set-name score-multiplier primordial-sd composite-sd ind)
@@ -734,7 +739,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_EnableSetClassFragmentation id false set-class fragmentation-ind)
@@ -749,7 +754,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_ToggleSet id false set-class toggle)
@@ -764,7 +769,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_RenameSet id false set-class new-name)
@@ -779,7 +784,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_UpdateSetMultiplier id false set-class new-multiplier)

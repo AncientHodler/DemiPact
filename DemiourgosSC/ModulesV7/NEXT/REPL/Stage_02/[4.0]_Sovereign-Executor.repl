@@ -39,7 +39,7 @@
     (
         (ref-U|G:module{OuronetGuards} U|G)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -154,7 +154,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -408,7 +408,7 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -514,7 +514,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -737,7 +737,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -880,7 +880,7 @@
         (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")

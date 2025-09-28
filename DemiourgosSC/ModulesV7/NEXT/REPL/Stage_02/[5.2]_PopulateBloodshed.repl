@@ -4256,8 +4256,8 @@
 )
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "DHB-98c486052a51")

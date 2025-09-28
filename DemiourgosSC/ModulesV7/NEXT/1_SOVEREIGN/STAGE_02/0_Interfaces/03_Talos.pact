@@ -30,10 +30,11 @@
 )
 
 
-(interface TalosStageTwo_ClientOneV4
+(interface TalosStageTwo_ClientOneV5
     @doc "Exposes Client DPDC and SFT Functions \
     \ V3 added improved Collectable Transfer Function \
-    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module"
+    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module \
+    \ V5 added quantity for Set Making and Breaking"
     ;;
     ;;  [2] DPDC
     ;;
@@ -98,8 +99,8 @@
     ;;
     ;;  [8] DPDC-S
     ;;
-    (defun DPSF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer))
-    (defun DPSF|C_Break (patron:string account:string id:string nonce:integer))
+    (defun DPSF|C_Make (patron:string account:string id:string nonces:[integer] set-class:integer how-many-sets:integer))
+    (defun DPSF|C_Break (patron:string account:string id:string nonce:integer how-many-sets:integer))
     (defun DPSF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal

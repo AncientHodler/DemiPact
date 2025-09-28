@@ -34,7 +34,7 @@
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (id:string "DHCD-98c486052a51")
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
@@ -75,8 +75,8 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -179,7 +179,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -242,9 +242,9 @@
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-DPDC-S:module{DpdcSets} DPDC-S)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -372,9 +372,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -444,9 +444,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -509,7 +509,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -573,10 +573,10 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-C:module{DpdcCreate} DPDC-C)
         (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -621,8 +621,8 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
         (id1:string "DHCD-98c486052a51")
         (id2:string "DHN-98c486052a51")
@@ -660,8 +660,8 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
         (id:string "DHOC-98c486052a51")
         (patron:string KST.ANHD)
@@ -700,7 +700,7 @@
 )
 (let
     (
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "DHCD-98c486052a51")
@@ -795,9 +795,9 @@
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
-        (ref-DPDC:module{Dpdc} DPDC)
-        (ref-DPDC-S:module{DpdcSets} DPDC-S)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-DPDC:module{DpdcV2} DPDC)
+        (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "E|DH-98c486052a51")
@@ -855,9 +855,9 @@
     (
         (ref-coin:module{fungible-v2} coin)
         (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{Dpdc} DPDC)
+        (ref-DPDC:module{DpdcV2} DPDC)
         
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV4} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
         (patron:string KST.ANHD)

@@ -2,7 +2,7 @@
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV11)
-    (implements Dpdc)
+    (implements DpdcV2)
     ;;
     ;;<========>
     ;;GOVERNANCE

@@ -128,7 +128,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_Royalty royalty-value)
@@ -141,7 +141,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_IgnisRoyalty royalty-value)
@@ -210,8 +210,8 @@
             \ nost = <NoNCe-Or-SET>       ; designates if <nosc> is either a <nonce> or <set-class> value"
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                (ref-DPDC:module{DpdcV2} DPDC)
+                (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
             )
             (if nost
                 (if nos
@@ -234,7 +234,7 @@
             ;;Nonce
             (let
                 (
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC:module{DpdcV2} DPDC)
                     (ref-DPDC-F:module{DpdcFragments} DPDC-F)
                 )
                 (ref-DPDC::UEV_Nonce id son nosc)
@@ -246,7 +246,7 @@
             ;;Sets
             (let
                 (
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-DPDC-S::UEV_SetClass id son nosc)
                 (if (not nos)
@@ -259,7 +259,7 @@
     (defun UEV_RoleNftRecreateON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-Recreate id son account))
             )
             (enforce x (format "{} Collection {} Element Data cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -268,7 +268,7 @@
     (defun UEV_RoleNftUpdateON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-Update id son account))
             )
             (enforce x (format "{} Collection {} Element Data cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -277,7 +277,7 @@
     (defun UEV_RoleModifyRoyaltiesON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-ModifyRoyalties id son account))
             )
             (enforce x (format "{} Collection {} Element Data Royalties cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -286,7 +286,7 @@
     (defun UEV_RoleSetNewUriON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
+                (ref-DPDC:module{DpdcV2} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-SetUri id son account))
             )
             (enforce x (format "{} Collection {} Element Data URIs cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -435,8 +435,8 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC:module{Dpdc} DPDC)
-                (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                (ref-DPDC:module{DpdcV2} DPDC)
+                (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
             )
             (map
                 (lambda

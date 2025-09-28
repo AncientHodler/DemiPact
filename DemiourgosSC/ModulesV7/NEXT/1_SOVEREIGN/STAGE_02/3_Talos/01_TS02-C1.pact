@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientOneV4)
+    (implements TalosStageTwo_ClientOneV5)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -182,7 +182,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC:module{DpdcV2} DPDC)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC::C_UpdatePendingBranding patron entity-id true logo description website social)
@@ -196,7 +196,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPDC:module{Dpdc} DPDC)
+                    (ref-DPDC:module{DpdcV2} DPDC)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 )
                 (ref-DPDC::C_UpgradeBranding patron entity-id true months)
@@ -694,36 +694,41 @@
     ;;  [8] DPDC-S
     ;;
     (defun DPSF|C_Make
-        (patron:string account:string id:string nonces:[integer] set-class:integer)
+        (patron:string account:string id:string nonces:[integer] set-class:integer how-many-sets:integer)
         @doc "Makes a Set SFT of Class <set-class>"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
+                    (nonce:integer (ref-DPDC-S::UR_NonceOfSet id set-class))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-S::C_Make account id true nonces set-class)
+                    (ref-DPDC-S::C_MakeSemiFungibleSet account id nonces set-class how-many-sets)
                 )
-                (format "Set Class {} SFT generated succesfully on Account {}" [set-class (ref-I|OURONET::OI|UC_ShortAccount account)])
+                (format "Successfully generated {} Class {} Sets (Nonce {}) of SFT Collection {} on Account {}" [how-many-sets set-class nonce id sa])
             )
         )
     )
     (defun DPSF|C_Break
-        (patron:string account:string id:string nonce:integer)
+        (patron:string account:string id:string nonce:integer how-many-sets:integer)
         @doc "Brakes an SFT Nonce representing an SFT Set"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC:module{DpdcV2} DPDC)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
+                    (set-class:integer (ref-DPDC::UR_NonceClass id true nonce))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-DPDC-S::C_Break account id true nonce)
+                    (ref-DPDC-S::C_BreakSemiFungibleSet account id nonce how-many-sets)
                 )
-                (format "SFT {} Nonce {} succesfully broken down into its constituents to Account {}" [id nonce (ref-I|OURONET::OI|UC_ShortAccount account)])
+                (format "Successfully broken {} Class {} Sets (Nonce {}) of SFT Collection {} on Account {}" [how-many-sets set-class nonce id sa])
             )
         )
     )
@@ -738,7 +743,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefinePrimordialSet id true set-name score-multiplier set-definition ind)
@@ -758,7 +763,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineCompositeSet id true set-name score-multiplier set-definition ind)
@@ -779,7 +784,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineHybridSet id true set-name score-multiplier primordial-sd composite-sd ind)
@@ -798,7 +803,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_EnableSetClassFragmentation id true set-class fragmentation-ind)
@@ -813,7 +818,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_ToggleSet id true set-class toggle)
@@ -828,7 +833,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_RenameSet id true set-class new-name)
@@ -843,7 +848,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSets} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_UpdateSetMultiplier id true set-class new-multiplier)
