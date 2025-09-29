@@ -173,7 +173,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
             )
             (ref-DPDC::CAP_Owner id son)
             (ref-DPDC-C::UEV_NonceDataForCreation ind)
@@ -189,7 +189,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (iz-fragmented:bool (UEV_IzSetClassFragmented id son set-class))
             )
             (enforce (not iz-fragmented) "Set Class must not be fragmented in order to enable fragmentation for it !")
@@ -646,7 +646,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (son:bool true)
@@ -667,7 +667,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (son:bool true)
@@ -702,7 +702,7 @@
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (son:bool false)
@@ -751,7 +751,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (son:bool false)
@@ -792,7 +792,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     ;;
                     (creator:string (ref-DPDC::UR_CreatorKonto id son))
                     (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -824,7 +824,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     ;;
                     (creator:string (ref-DPDC::UR_CreatorKonto id son))
                     (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -857,7 +857,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
                     (creator:string (ref-DPDC::UR_CreatorKonto id son))

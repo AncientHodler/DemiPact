@@ -574,7 +574,7 @@
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{DpdcV2} DPDC)
-        (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+        (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
@@ -867,6 +867,8 @@
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
         (ouro:string "OURO-98c486052a51")
         (id:string "E|DH-98c486052a51")
         (dhoc:string "DHOC-98c486052a51")
@@ -879,6 +881,7 @@
         (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 1 10000)
         (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 2 1000)
         (ref-TS02-C1::DPSF|C_MakeFragments patron patron dhoc 3 100)
+        (ref-TS02-C1::DPSF|C_TransferNonce patron dhoc patron emma -2 25 false)
         ;;
         ;;Fuel Launchpad with OURO, E|DH and DHOC
         (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron "OURO-98c486052a51" [true true])
@@ -904,6 +907,39 @@
 (print "")
 (print "")
 (format "<<<<<<<TX 014 -- LAUNCHPAD TESTS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 015 -- LAUNCHPAD TESTS")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_Lumy", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (dhoc:string "DHOC-98c486052a51")
+    )
+    [
+        ;;
+        (ref-TS02-C1::DPSF|C_RepurposeFragments lumy dhoc emma lumy [-2] [10])
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 014b -- Repurpose Fragments TESTS Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

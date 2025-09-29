@@ -470,7 +470,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
             )
             (with-capability (DPDC-MNG|C>RESPAWN-NFT account id nonce)
                 (ref-DPDC-C::XB_CreditNFT-Nonce account id nonce 1)
@@ -520,7 +520,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
             )
             (with-capability (DPDC-MNG|C>BURN-NFT account id nonce)
                 (ref-DPDC-C::XI_DecreaseClassZeroNonFungibles id account [nonce] false)
@@ -649,7 +649,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
             )
             ;;Credit SFT Nonce
@@ -666,7 +666,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 ;;
                 (l1:integer (length nonces))
             )
@@ -700,7 +700,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 ;;
                 (l1:integer (length nonces))
             )

@@ -420,8 +420,9 @@
     (defun XE_W|Supply (account:string id:string son:bool nonce-value:integer amount:integer))
 )
 ;;
-(interface DpdcCreate
-    @doc "Holds the Create Functions, which also include the Credit and Debit Functions"
+(interface DpdcCreateV2
+    @doc "Holds the Create Functions, which also include the Credit and Debit Functions \
+    \ V2 adds <wipe-mode> for Debit Fragments. While Fragmetns cannot be wiped, it is needed for repurpose"
     ;;
     ;;  [UC]
     ;;
@@ -453,8 +454,8 @@
     ;;
     (defun XE_CreditSFT-FragmentNonce (account:string id:string nonce:integer amount:integer))
     (defun XE_CreditNFT-FragmentNonce (account:string id:string nonce:integer amount:integer))
-    (defun XE_DebitSFT-FragmentNonce (account:string id:string nonce:integer amount:integer))
-    (defun XE_DebitNFT-FragmentNonce (account:string id:string nonce:integer amount:integer))
+    (defun XE_DebitSFT-FragmentNonce (account:string id:string nonce:integer amount:integer wipe-mode:bool))
+    (defun XE_DebitNFT-FragmentNonce (account:string id:string nonce:integer amount:integer wipe-mode:bool))
     ;;
     (defun XB_CreditSFT-Nonce (account:string id:string nonce:integer amount:integer))
     (defun XB_CreditNFT-Nonce (account:string id:string nonce:integer amount:integer))
@@ -463,8 +464,8 @@
     ;;
     (defun XE_CreditSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer]))
     (defun XE_CreditNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer]))
-    (defun XE_DebitSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer]))
-    (defun XE_DebitNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer]))
+    (defun XE_DebitSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool))
+    (defun XE_DebitNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool))
     ;;
     (defun XB_CreditSFT-Nonces (account:string id:string nonces:[integer] amounts:[integer]))
     (defun XB_CreditNFT-Nonces (account:string id:string nonces:[integer] amounts:[integer]))

@@ -111,12 +111,10 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV2} DPDC)
                 (l1:integer (length fragment-nonces))
                 (l2:integer (length fragment-amounts))
             )
             (enforce (= l1 l2) "Invalid Repurpose data")
-            (ref-DPDC::CAP_Owner id son)
         )
     )
     (defcap DPDC-F|C>ENABLE-FRAGMENTATION
@@ -128,7 +126,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
                 (iz-fragmented:bool (UEV_IzNonceFragmented id son nonce))
             )
@@ -211,7 +209,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV5} DALOS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     ;;
                     (l:integer (length fragment-nonces))
                     (owner:string (ref-DPDC::UR_OwnerKonto id son))
@@ -231,8 +229,8 @@
                         )
                         ;;1]Debit from <repurpose-from>
                         (if son
-                            (ref-DPDC-C::XE_DebitSFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount)
-                            (ref-DPDC-C::XE_DebitNFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount)
+                            (ref-DPDC-C::XE_DebitSFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount true)
+                            (ref-DPDC-C::XE_DebitNFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount true)
                         )
                         ;;2]Credit to <repurpose-to>
                         (if son
@@ -244,8 +242,8 @@
                     (do
                         (if son
                             ;;1]Debit from <repurpose-from>
-                            (ref-DPDC-C::XE_DebitSFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts)
-                            (ref-DPDC-C::XE_DebitNFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts)
+                            (ref-DPDC-C::XE_DebitSFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts true)
+                            (ref-DPDC-C::XE_DebitNFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts true)
                         )
                         (if son
                             ;;2]Credit to <repurpose-to>
@@ -267,7 +265,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (neg-nonce:integer (- 0 nonce))
@@ -295,7 +293,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (pos-nonce:integer (abs nonce))
@@ -305,8 +303,8 @@
                 (ref-DPDC-T::C_Transfer [id] [son] account dpdc [[nonce]] [[amount]] true)
                 ;;2]Fragment Nonces are debited from the <DPDC|SC_NAME>
                 (if son
-                    (ref-DPDC-C::XE_DebitSFT-FragmentNonce dpdc id nonce amount)
-                    (ref-DPDC-C::XE_DebitNFT-FragmentNonce dpdc id nonce amount)
+                    (ref-DPDC-C::XE_DebitSFT-FragmentNonce dpdc id nonce amount false)
+                    (ref-DPDC-C::XE_DebitNFT-FragmentNonce dpdc id nonce amount false)
                 )
                 ;;3]Native <nonces> are transfered from <DPDC|SC_NAME> to <account>
                 (ref-DPDC-T::C_Transfer [id] [son] dpdc account [[pos-nonce]] [[merged-amount]] true)

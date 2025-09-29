@@ -361,7 +361,7 @@
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
                 (ref-DPDC:module{DpdcV2} DPDC)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                 ;;
                 (special-sft:[string] (ref-U|VST::UC_EquityID collection-name collection-ticker))

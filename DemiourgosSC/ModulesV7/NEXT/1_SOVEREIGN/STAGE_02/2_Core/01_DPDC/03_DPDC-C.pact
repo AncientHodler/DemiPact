@@ -1,7 +1,7 @@
 (module DPDC-C GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcCreate)
+    (implements DpdcCreateV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -225,11 +225,11 @@
     ;;
     ;;DEBIT
     ;;Single Debit
-    (defcap DPSF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount true false))
+    (defcap DPSF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer wipe-mode:bool)
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id true nonce amount true wipe-mode))
     )
-    (defcap DPNF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer)
-        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount true false))
+    (defcap DPNF|C>DEBIT-FRAGMENT-NONCE (account:string id:string nonce:integer amount:integer wipe-mode:bool)
+        (compose-capability (DPDC-C|C>SINGLE-DEBIT account id false nonce amount true wipe-mode))
     )
     ;;
     (defcap DPSF|C>DEBIT-NONCE (account:string id:string nonce:integer amount:integer wipe-mode:bool)
@@ -257,11 +257,11 @@
         )
     )
     ;;Multi-Debit
-    (defcap DPSF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts true false))
+    (defcap DPSF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
+        (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts true wipe-mode))
     )
-    (defcap DPNF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer])
-        (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts true false))
+    (defcap DPNF|C>DEBIT-FRAGMENT-NONCES (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
+        (compose-capability (DPDC|C>MULTI-DEBIT account id false nonces amounts true wipe-mode))
     )
     (defcap DPSF|C>DEBIT-NONCES (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
         (compose-capability (DPDC|C>MULTI-DEBIT account id true nonces amounts false wipe-mode))
@@ -407,16 +407,16 @@
             (XI_CreditNFT account id [nonce] [amount])
         )
     )
-    (defun XE_DebitSFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
+    (defun XE_DebitSFT-FragmentNonce (account:string id:string nonce:integer amount:integer wipe-mode:bool)
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id nonce amount)
-            (XI_DebitSFT account id [nonce] [amount] false)
+        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id nonce amount wipe-mode)
+            (XI_DebitSFT account id [nonce] [amount] wipe-mode)
         )
     )
-    (defun XE_DebitNFT-FragmentNonce (account:string id:string nonce:integer amount:integer)
+    (defun XE_DebitNFT-FragmentNonce (account:string id:string nonce:integer amount:integer wipe-mode:bool)
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id nonce amount)
-            (XI_DebitNFT account id [nonce] [amount] false)
+        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id nonce amount wipe-mode)
+            (XI_DebitNFT account id [nonce] [amount] wipe-mode)
         )
     )
     ;;
@@ -457,16 +457,16 @@
             (XI_CreditNFT account id nonces amounts)
         )
     )
-    (defun XE_DebitSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitSFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
         (UEV_IMC)
-        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)
-            (XI_DebitSFT account id nonces amounts false)
+        (with-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts wipe-mode)
+            (XI_DebitSFT account id nonces amounts wipe-mode)
         )
     )
-    (defun XE_DebitNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer])
+    (defun XE_DebitNFT-FragmentNonces (account:string id:string nonces:[integer] amounts:[integer] wipe-mode:bool)
         (UEV_IMC)
-        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)
-            (XI_DebitNFT account id nonces amounts false)
+        (with-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts wipe-mode)
+            (XI_DebitNFT account id nonces amounts wipe-mode)
         )
     )
     ;;
@@ -576,8 +576,8 @@
                 ;;Fragment Nonce
                 ((UC_AndTruths [isg inn cod son])                                   (require-capability (DPSF|C>CREDIT-FRAGMENT-NONCE id n0)))
                 ((UC_AndTruths [isg inn cod (not son)])                             (require-capability (DPNF|C>CREDIT-FRAGMENT-NONCE id n0)))
-                ((UC_AndTruths [isg inn (not cod) son])                             (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id n0 a0)))
-                ((UC_AndTruths [isg inn (not cod) (not son)])                       (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id n0 a0)))
+                ((UC_AndTruths [isg inn (not cod) son])                             (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCE account id n0 a0 wipe-mode)))
+                ((UC_AndTruths [isg inn (not cod) (not son)])                       (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCE account id n0 a0 wipe-mode)))
                 ;;
                 ;;MULTI
                 ;;Native Nonces
@@ -588,8 +588,8 @@
                 ;;Fragment Nonces
                 ((UC_AndTruths [(not isg) ong cod son])                             (require-capability (DPSF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)))
                 ((UC_AndTruths [(not isg) ong cod (not son)])                       (require-capability (DPNF|C>CREDIT-FRAGMENT-NONCES id nonces amounts)))
-                ((UC_AndTruths [(not isg) ong (not cod) son])                       (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)))
-                ((UC_AndTruths [(not isg) ong (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts)))
+                ((UC_AndTruths [(not isg) ong (not cod) son])                       (require-capability (DPSF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts wipe-mode)))
+                ((UC_AndTruths [(not isg) ong (not cod) (not son)])                 (require-capability (DPNF|C>DEBIT-FRAGMENT-NONCES account id nonces amounts wipe-mode)))
                 ;;Hybrid (Native and Fragment) Nonces
                 ((UC_AndTruths [(not isg) (not ong) (not onp) cod son])             (require-capability (DPSF|C>CREDIT-HYBRID-NONCES id nonces amounts)))
                 ((UC_AndTruths [(not isg) (not ong) (not onp) cod (not son)])       (require-capability (DPNF|C>CREDIT-HYBRID-NONCES id nonces amounts)))

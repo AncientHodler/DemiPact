@@ -102,7 +102,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                 (l1:integer (length nosc))
                 (l2:integer (length new-nonces-data))
             )
@@ -192,7 +192,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
             )
             (UEV_NonceDataUpdater id son account nosc nos nost)
             (ref-DALOS::CAP_EnforceAccountOwnership account)

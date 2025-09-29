@@ -183,7 +183,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV2} DPDC-C)
                     (l:integer (length input-nonce-data))
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (if (= l 1)
