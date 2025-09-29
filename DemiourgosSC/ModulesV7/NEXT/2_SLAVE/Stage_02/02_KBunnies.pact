@@ -110,7 +110,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 ;;
                 (l:integer (length mdm))
                 (legendary:[integer] [25 175 274 388 407 873 880 954 1033 1095])

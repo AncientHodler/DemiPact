@@ -1,7 +1,7 @@
 (module DPDC-F GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcFragments)
+    (implements DpdcFragmentsV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -107,6 +107,18 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
+    (defcap DPDC-F|C>REPURPOSE (id:string son:bool repurpose-from:string repurpose-to:string fragment-nonces:[integer] fragment-amounts:[integer])
+        @event
+        (let
+            (
+                (ref-DPDC:module{DpdcV2} DPDC)
+                (l1:integer (length fragment-nonces))
+                (l2:integer (length fragment-amounts))
+            )
+            (enforce (= l1 l2) "Invalid Repurpose data")
+            (ref-DPDC::CAP_Owner id son)
+        )
+    )
     (defcap DPDC-F|C>ENABLE-FRAGMENTATION
         (
             id:string son:bool nonce:integer
@@ -190,6 +202,63 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_RepurposeCollectableFragments:object{IgnisCollectorV2.OutputCumulator}
+        (id:string son:bool repurpose-from:string repurpose-to:string fragment-nonces:[integer] fragment-amounts:[integer])
+        (UEV_IMC)
+        (with-capability (DPDC-F|C>REPURPOSE id son repurpose-from repurpose-to fragment-nonces fragment-amounts)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DPDC:module{DpdcV2} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    ;;
+                    (l:integer (length fragment-nonces))
+                    (owner:string (ref-DPDC::UR_OwnerKonto id son))
+                    (s:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                    (m:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                    (p:decimal (/ (if son s m) 1000.0))
+                    (sum-amounts:decimal (dec (fold (+) 1 fragment-amounts)))
+                    (price:decimal (* p sum-amounts))
+                    (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                )
+                (if (= l 1)
+                    ;;Single Mode
+                    (let
+                        (
+                            (fragment-nonce:integer (at 0 fragment-nonces))
+                            (fragment-amount:integer (at 0 fragment-amounts))
+                        )
+                        ;;1]Debit from <repurpose-from>
+                        (if son
+                            (ref-DPDC-C::XE_DebitSFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount)
+                            (ref-DPDC-C::XE_DebitNFT-FragmentNonce repurpose-from id fragment-nonce fragment-amount)
+                        )
+                        ;;2]Credit to <repurpose-to>
+                        (if son
+                            (ref-DPDC-C::XE_CreditSFT-FragmentNonce repurpose-to id fragment-nonce fragment-amount)
+                            (ref-DPDC-C::XE_CreditNFT-FragmentNonce repurpose-to id fragment-nonce fragment-amount)
+                        )
+                    )
+                    ;;Multi Mode
+                    (do
+                        (if son
+                            ;;1]Debit from <repurpose-from>
+                            (ref-DPDC-C::XE_DebitSFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts)
+                            (ref-DPDC-C::XE_DebitNFT-FragmentNonces repurpose-from id fragment-nonces fragment-amounts)
+                        )
+                        (if son
+                            ;;2]Credit to <repurpose-to>
+                            (ref-DPDC-C::XE_CreditSFT-FragmentNonces repurpose-to id fragment-nonces fragment-amounts)
+                            (ref-DPDC-C::XE_CreditNFT-FragmentNonces repurpose-to id fragment-nonces fragment-amounts)
+                        )
+                    )
+                )
+                ;;3]Output Cumulator
+                (ref-IGNIS::UDC_ConstructOutputCumulator price owner trigger [])
+            )
+        )
+    )
     (defun C_MakeFragments:object{IgnisCollectorV2.OutputCumulator}
         (account:string id:string son:bool nonce:integer amount:integer)
         (UEV_IMC)
@@ -199,7 +268,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{DpdcV2} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (neg-nonce:integer (- 0 nonce))
                     (f-amount:integer (* 1000 amount))
@@ -227,7 +296,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC:module{DpdcV2} DPDC)
                     (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     (pos-nonce:integer (abs nonce))
                     (merged-amount:integer (/ amount 1000))

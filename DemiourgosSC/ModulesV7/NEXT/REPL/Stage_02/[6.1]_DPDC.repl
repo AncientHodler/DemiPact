@@ -76,7 +76,7 @@
     (
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{DpdcV2} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -244,7 +244,7 @@
         (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
         (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -374,7 +374,7 @@
     (
         (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -446,7 +446,7 @@
     (
         (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -575,8 +575,8 @@
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-C:module{DpdcCreate} DPDC-C)
-        (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -616,14 +616,15 @@
     [   
         { "key": "PK_AncientHodler", "caps": [] }
         { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
     ]
 )
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
         (ref-DPDC:module{DpdcV2} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
         (id1:string "DHCD-98c486052a51")
         (id2:string "DHN-98c486052a51")
         (patron:string KST.ANHD)
@@ -631,8 +632,10 @@
         (lumy:string KST.LUMY)
     )
     [
-        (ref-TS02-C1::DPSF|C_TransferNonces patron id1 patron lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
-        (ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
+        ;(ref-TS02-C1::DPSF|C_TransferNonces patron id1 patron lumy [1 2 3 4 5 6 7 8 9 10] [7 7 7 7 7 7 7 7 7 7] false)
+        ;(ref-TS02-C2::DPNF|C_TransferNonce patron id2 emma lumy 1 1 false)
+        (ref-TS02-C1::DPSF|C_Repurpose patron id1 patron lumy [1] [2])
+        (ref-TS02-C2::DPNF|C_Repurpose patron id2 emma lumy [1] [1])
         (ref-DPDC::URD_SemiFungibleAccountHoldings emma id1)
         (ref-DPDC::URD_SemiFungibleAccountHoldings lumy id1)
     ]
@@ -661,8 +664,8 @@
 (let
     (
         (ref-DPDC:module{DpdcV2} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
         (id:string "DHOC-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -713,6 +716,7 @@
             id
             [1 2 3 4 5 6 7 8 9 10]
             1
+            1
         )
         
         (ref-DPDC::URD_AccountNonces patron id true)
@@ -735,6 +739,7 @@
             id
             [1 2 3 4 5 6 7 8 9 10]
             1
+            1
         )
         (format "After Second Making of Nonce {}" [11])
         (ref-DPDC::UR_AccountNonceSupply patron id true 1)
@@ -753,6 +758,7 @@
             patron
             id
             11
+            2
         )
         (format "After Breaking of Nonce {}" [11])
         (ref-DPDC::UR_AccountNonceSupply patron id true 1)
@@ -795,7 +801,7 @@
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (ref-DPDC:module{DpdcV2} DPDC)
         (ref-DPDC-S:module{DpdcSetsV2} DPDC-S)
         (patron:string KST.ANHD)
@@ -857,9 +863,9 @@
         (ref-DALOS:module{OuronetDalosV5} DALOS)
         (ref-DPDC:module{DpdcV2} DPDC)
         
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV5} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV6} TS02-C1)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
-        (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+        (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (patron:string KST.ANHD)
         (ouro:string "OURO-98c486052a51")
         (id:string "E|DH-98c486052a51")
@@ -1022,6 +1028,7 @@
         (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 25000000.0)
         
     ]
+
 )
 
 (print "")

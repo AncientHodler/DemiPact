@@ -235,7 +235,7 @@
             (let
                 (
                     (ref-DPDC:module{DpdcV2} DPDC)
-                    (ref-DPDC-F:module{DpdcFragments} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV2} DPDC-F)
                 )
                 (ref-DPDC::UEV_Nonce id son nosc)
                 (if (not nos)

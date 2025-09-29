@@ -1,7 +1,7 @@
 (module DPDC-T GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcTransferV3)
+    (implements DpdcTransferV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -97,6 +97,16 @@
     (defcap IGNIS|C>NO-ROYALTY ()
         true
     )
+    (defcap DPDC-T|C>REPURPOSE (id:string son:bool repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer])
+        @event
+        (let
+            (
+                (l1:integer (length nonces))
+                (l2:integer (length amounts))
+            )
+            (enforce (= l1 l2) "Invalid Repurpose data")
+        )
+    )
     ;;{C2}
     ;;{C3}
     ;;{C4}
@@ -184,7 +194,7 @@
     (defun UC_AndTruths:bool (truths:[bool])
         (fold (and) true truths)
     )
-    (defun UC_CleanseAggregatedRoyalties:object{DpdcTransferV3.AggregatedRoyalties} (agg:object{DpdcTransferV3.AggregatedRoyalties})
+    (defun UC_CleanseAggregatedRoyalties:object{DpdcTransferV4.AggregatedRoyalties} (agg:object{DpdcTransferV4.AggregatedRoyalties})
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
@@ -219,7 +229,7 @@
             )
         )
     )
-    (defun UC_AggregateRoyalties:object{DpdcTransferV3.AggregatedRoyalties}
+    (defun UC_AggregateRoyalties:object{DpdcTransferV4.AggregatedRoyalties}
         (creators:[string] id-ignis-royalties:[decimal])
         (let
             (
@@ -418,7 +428,7 @@
             )
         )
     )
-    (defun UDCX_AggregatedRoyalties:object{DpdcTransferV3.AggregatedRoyalties}
+    (defun UDCX_AggregatedRoyalties:object{DpdcTransferV4.AggregatedRoyalties}
         (a:[string] b:[decimal])
         {"creators"         : a
         ,"ignis-royalties"  : b}
@@ -427,6 +437,63 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_RepurposeCollectable:object{IgnisCollectorV2.OutputCumulator}
+        (id:string son:bool repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer])
+        (UEV_IMC)
+        (with-capability (DPDC-T|C>REPURPOSE id son repurpose-from repurpose-to nonces amounts)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DPDC:module{DpdcV2} DPDC)
+                    (ref-DPDC-C:module{DpdcCreate} DPDC-C)
+                    ;;
+                    (l:integer (length nonces))
+                    (owner:string (ref-DPDC::UR_OwnerKonto id son))
+                    (s:decimal (ref-DALOS::UR_UsagePrice "ignis|small"))
+                    (m:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
+                    (p:decimal (if son s m))
+                    (sum-amounts:decimal (dec (fold (+) 1 amounts)))
+                    (price:decimal (* p sum-amounts))
+                    (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                )
+                (if (= l 1)
+                    ;;Single Mode
+                    (let
+                        (
+                            (nonce:integer (at 0 nonces))
+                            (amount:integer (at 0 amounts))
+                        )
+                        ;;1]Debit from <repurpose-from>
+                        (if son
+                            (ref-DPDC-C::XE_DebitSFT-Nonce repurpose-from id nonce amount true)
+                            (ref-DPDC-C::XE_DebitNFT-Nonce repurpose-from id nonce amount true)
+                        )
+                        ;;2]Credit to <repurpose-to>
+                        (if son
+                            (ref-DPDC-C::XB_CreditSFT-Nonce repurpose-to id nonce amount)
+                            (ref-DPDC-C::XB_CreditNFT-Nonce repurpose-to id nonce amount)
+                        )
+                    )
+                    ;;Multi Mode
+                    (do
+                        (if son
+                            ;;1]Debit from <repurpose-from>
+                            (ref-DPDC-C::XE_DebitSFT-Nonces repurpose-from id nonces amounts true)
+                            (ref-DPDC-C::XE_DebitNFT-Nonces repurpose-from id nonces amounts true)
+                        )
+                        (if son
+                            ;;2]Credit to <repurpose-to>
+                            (ref-DPDC-C::XB_CreditSFT-Nonces repurpose-to id nonces amounts)
+                            (ref-DPDC-C::XB_CreditNFT-Nonces repurpose-to id nonces amounts)
+                        )
+                    )
+                )
+                ;;3]Output Cumulator
+                (ref-IGNIS::UDC_ConstructOutputCumulator price owner trigger [])
+            )
+        )
+    )
     (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator}
         (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool)
         (UEV_IMC)
@@ -441,7 +508,7 @@
             (UDC_MultiTransferCumulator ids sons sender receiver nonces-array amounts-array)
         )
     )
-    (defun C_IgnisRoyaltyCollector:object{DpdcTransferV3.AggregatedRoyalties}
+    (defun C_IgnisRoyaltyCollector:object{DpdcTransferV4.AggregatedRoyalties}
         (patron:string sender:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]])
         (UEV_IMC)
         (let
@@ -477,8 +544,8 @@
                 )
                 (let
                     (
-                        (agg:object{DpdcTransferV3.AggregatedRoyalties} (UC_AggregateRoyalties creators ids-ignis-royalties))
-                        (cleansed-agg:object{DpdcTransferV3.AggregatedRoyalties} (UC_CleanseAggregatedRoyalties agg))
+                        (agg:object{DpdcTransferV4.AggregatedRoyalties} (UC_AggregateRoyalties creators ids-ignis-royalties))
+                        (cleansed-agg:object{DpdcTransferV4.AggregatedRoyalties} (UC_CleanseAggregatedRoyalties agg))
                         (agg-creators:[string] (at "creators" cleansed-agg))
                         (agg-royalties:[decimal] (at "ignis-royalties" cleansed-agg))
                     )

@@ -341,7 +341,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (b:string BAR)
                 (t:bool true)
                 (f:bool false)

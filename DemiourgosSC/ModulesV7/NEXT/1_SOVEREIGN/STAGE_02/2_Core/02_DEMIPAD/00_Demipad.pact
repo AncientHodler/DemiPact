@@ -1257,7 +1257,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )

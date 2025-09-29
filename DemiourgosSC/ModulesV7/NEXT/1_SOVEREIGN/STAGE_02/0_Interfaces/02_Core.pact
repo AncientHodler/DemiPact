@@ -554,9 +554,10 @@
 )
 ;;
 ;;
-(interface DpdcTransferV3
+(interface DpdcTransferV4
     @doc "Holds Dpdc Transfer Related Functions \
-        \ V2 changes to MultiTransfer Architecture"
+        \ V2 changes to MultiTransfer Architecture \
+        \ V4 adds Repurpose"
     ;;
     ;;  [Schemas]
     ;;
@@ -585,6 +586,9 @@
     ;;
     ;;  [C]
     ;;
+    (defun C_RepurposeCollectable:object{IgnisCollectorV2.OutputCumulator}
+        (id:string son:bool repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer])
+    )
     (defun C_Transfer:object{IgnisCollectorV2.OutputCumulator} (ids:[string] sons:[bool] sender:string receiver:string nonces-array:[[integer]] amounts-array:[[integer]] method:bool))
     (defun C_IgnisRoyaltyCollector:object{AggregatedRoyalties} (patron:string sender:string ids:[string] sons:[bool] nonces-array:[[integer]] amounts-array:[[integer]]))
 )
@@ -667,8 +671,9 @@
     (defun XB_U|NonceOrSplitData (id:string son:bool set-class:integer nos:bool nd:object{DpdcUdc.DPDC|NonceData}))
 )
 ;;
-(interface DpdcFragments
-    @doc "Holds Dpdc Fragmentation Related Functions"
+(interface DpdcFragmentsV2
+    @doc "Holds Dpdc Fragmentation Related Functions \
+    \ V2 Adds Repurpose"
     ;;
     ;; [UEV]
     ;;
@@ -677,6 +682,9 @@
     ;;
     ;; [C]
     ;;
+    (defun C_RepurposeCollectableFragments:object{IgnisCollectorV2.OutputCumulator}
+        (id:string son:bool repurpose-from:string repurpose-to:string fragment-nonces:[integer] fragment-amounts:[integer])
+    )
     (defun C_MakeFragments:object{IgnisCollectorV2.OutputCumulator} (account:string id:string son:bool nonce:integer amount:integer))
     (defun C_MergeFragments:object{IgnisCollectorV2.OutputCumulator} (account:string id:string son:bool nonce:integer amount:integer))
     (defun C_EnableNonceFragmentation:object{IgnisCollectorV2.OutputCumulator}

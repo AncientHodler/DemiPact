@@ -194,7 +194,7 @@
     (defun NosferatuSpawner (patron:string dhn-id:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
         (let
             (
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (l:integer (length mdm))
             )
             (enforce (= l number-of-positions) "Invalid Number of Positions")
@@ -206,7 +206,7 @@
     (defun NosferatuFixer (patron:string dhn-id:string account:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
         (let
             (
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (l:integer (length mdm))
                 (nonces:[integer] (NonceComputer rarity starting-position number-of-positions))
             )

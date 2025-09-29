@@ -89,7 +89,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -136,7 +136,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -183,7 +183,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -230,7 +230,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -277,7 +277,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -324,7 +324,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -371,7 +371,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -418,7 +418,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.9 R))
                 (ir:decimal (fold (*) 1.0 [18.0 0.9 IR-C]))
                 ;;
@@ -495,7 +495,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.85 R))
                 (ir:decimal (fold (*) 1.0 [9.0 0.85 IR-R]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -610,7 +610,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.85 R))
                 (ir:decimal (fold (*) 1.0 [9.0 0.85 IR-R]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -700,7 +700,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.80 R))
                 (ir:decimal (fold (*) 1.0 [6.0 0.80 IR-E]))
                 (md:object{DpdcUdc.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
@@ -891,7 +891,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdc} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV4} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV5} TS02-C2)
                 (r:decimal (* 0.75 R))
                 (ir-c:decimal (* 18 IR-C))
                 (ir-r:decimal (* 9 IR-R))

@@ -323,6 +323,172 @@
         )
     )
     ;;
+    (defun URC_0001_HeaderV2 (account:string)
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungible} DPOF)
+                (ref-ELITE:module{Elite} ELITE)
+                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-ORBR:module{OuroborosV5} OUROBOROS)
+                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                ;;
+                (IgnisID:string "IGNIS-slLyzPPCo22W")
+                (OuroID:string "OURO-slLyzPPCo22W")
+                (AurynID:string "AURYN-slLyzPPCo22W")
+                (EAurynID:string "ELITEAURYN-slLyzPPCo22W")
+                (WkdaID:string "WKDA-slLyzPPCo22W")
+                (LkdaID:string "LKDA-slLyzPPCo22W")
+                (PkdaID:string "PKDA-F5mCIB8tKfCu")
+                (HpkdaID:string "H|PKDA-F5mCIB8tKfCu")
+                ;;
+                (LiquidIndex:string "LiquidKadenaIndex-ds4il5rO7vDC")
+                (KoriIndex:string "KORIndex-F5mCIB8tKfCu")
+                (Auryndex:string "Auryndex-ds4il5rO7vDC")
+                (EAuryndex:string "EliteAuryndex-ds4il5rO7vDC")
+                ;;
+                (projected-kda:[decimal] (ref-ORBR::URC_ProjectedKdaLiquindex))
+                ;;
+                (gsh-ignis:decimal (ref-DPTF::UR_Supply IgnisID))
+                (gsh-ouro:decimal (ref-DPTF::UR_Supply OuroID))
+                (gsh-auryn:decimal (ref-DPTF::UR_Supply AurynID))
+                (gsh-elite-auryn:decimal (ref-DPTF::UR_Supply EAurynID))
+                (gsh-wkda:decimal (ref-DPTF::UR_Supply WkdaID))
+                (gsh-wkda-standby:decimal (at 2 projected-kda))
+                (gsh-lkda:decimal (ref-DPTF::UR_Supply LkdaID))
+                (gsh-pkda:decimal (ref-DPTF::UR_Supply PkdaID))
+                (gsh-hpkda:decimal (ref-DPOF::UR_Supply HpkdaID))
+                ;;
+                (wsh-ignis:decimal (ref-DPTF::UR_AccountSupply IgnisID account))
+                (wsh-ouro:decimal (ref-DPTF::UR_AccountSupply OuroID account))
+                (wsh-virtual-ouro:decimal (ref-TFT::URC_VirtualOuro account))
+                (wsh-elite-aurynz:decimal (ref-ELITE::URC_EliteAurynzSupply account))
+                (wsh-wkda:decimal (ref-DPTF::UR_AccountSupply WkdaID account))
+                (wsh-lkda:decimal (ref-DPTF::UR_AccountSupply LkdaID account))
+                (wsh-pkda:decimal (ref-DPTF::UR_AccountSupply PkdaID account))
+                (wsh-hpkda:decimal (ref-DPOF::UR_AccountSupply HpkdaID account))
+                (wsh-pkda-total:decimal (+ wsh-pkda wsh-hpkda))
+                ;;
+                (ih-liquid-projected:decimal (at 1 projected-kda))
+                (ih-liquid:decimal (at 0 projected-kda))
+                (ih-kori:decimal (ref-ATS::URC_Index KoriIndex))
+                (ih-auryndex:decimal (ref-ATS::URC_Index Auryndex))
+                (ih-elite-auryndex:decimal (ref-ATS::URC_Index EAuryndex))
+                ;;
+                (price-ouro:decimal (ref-SWPI::URC_OuroPrimordialPrice))
+                (price-auryn:decimal (floor (* price-ouro ih-auryndex) 24))
+                (price-elite-auryn:decimal (floor (* price-auryn ih-elite-auryndex) 24))
+                (price-wkda:decimal (ref-U|CT|DIA::UR|KDA-PID))
+                (price-lkda:decimal (floor (* price-wkda ih-liquid) 24))
+                (price-pkda:decimal (floor (* price-lkda ih-kori) 24))
+                (price-pkda-wallet:decimal (floor (* price-pkda wsh-pkda-total) 24))
+                ;;
+                (et:[decimal] (ref-U|CT::CT_ET))
+                (et-last:decimal (at (- (length et) 1) et))
+                (wsh-elite-aurynz-next:decimal
+                    (if (>= wsh-elite-aurynz et-last)
+                        0.0
+                        (-
+                            (fold
+                                (lambda
+                                    (acc:decimal tier:decimal)
+                                    (if (and (> tier wsh-elite-aurynz) (< tier acc))
+                                        tier
+                                        acc
+                                    )
+                                )
+                                et-last
+                                et
+                            )
+                            wsh-elite-aurynz
+                        )
+                    )
+                )
+                (wsh-ouro-next:decimal (fold (*) 1.0 [wsh-elite-aurynz-next ih-auryndex ih-elite-auryndex]))
+                (price-next:decimal (floor (* price-ouro wsh-ouro-next) 24))
+            )
+                ;;
+                ;;HOVER value, FULL precision value to display on Hover
+                ;;Global Supply Hover = GSH (full precision values)
+            {"GSH-ignis"                        : gsh-ignis
+            ,"GSH-ouro"                         : gsh-ouro
+            ,"GSH-auryn"                        : gsh-auryn
+            ,"GSH-elite-auryn"                  : gsh-elite-auryn
+            ,"GSH-wkda"                         : gsh-wkda
+            ,"GSH-wkda-standby"                 : gsh-wkda-standby
+            ,"GSH-lkda"                         : gsh-lkda
+            ,"GSH-pkda"                         : gsh-pkda
+            ,"GSH-hpkda"                        : gsh-hpkda
+                ;;Wallet Supply Hover = WSH (full precision values)    
+            ,"WSH-ignis"                        : wsh-ignis
+            ,"WSH-ouro"                         : wsh-ouro
+            ,"WSH-ouro-next"                    : wsh-ouro-next
+            ,"WSH-virtual-ouro"                 : wsh-virtual-ouro
+            ,"WSH-elite-aurynz"                 : wsh-elite-aurynz
+            ,"WSH-elite-aurynz-next"            : wsh-elite-aurynz-next
+            ,"WSH-wkda"                         : wsh-wkda
+            ,"WSH-lkda"                         : wsh-lkda
+            ,"WSH-pkda"                         : wsh-pkda
+            ,"WSH-hpkda"                        : wsh-hpkda
+            ,"WSH-pkda-total"                   : wsh-pkda-total
+                ;;Indices Hover = IH (full precision values)
+            ,"IH-liquid-projected"              : ih-liquid-projected
+            ,"IH-liquid"                        : ih-liquid
+            ,"IH-kori"                          : ih-kori
+            ,"IH-auryndex"                      : ih-auryndex
+            ,"IH-elite-auryndex"                : ih-elite-auryndex
+                ;;
+                ;;DISPLAY values, formated from full values.
+                ;;Global Supply Display = GSD (formated values for display purposes)
+            ,"GSD-ignis"                        : (UC_FormatTokenAmount gsh-ignis)
+            ,"GSD-ouro"                         : (UC_FormatTokenAmount gsh-ouro)
+            ,"GSD-auryn"                        : (UC_FormatTokenAmount gsh-auryn)
+            ,"GSD-elite-auryn"                  : (UC_FormatTokenAmount gsh-elite-auryn)
+            ,"GSD-wkda"                         : (UC_FormatTokenAmount gsh-wkda)
+            ,"GSD-wkda-standby"                 : (UC_FormatTokenAmount gsh-wkda-standby)
+            ,"GSD-lkda"                         : (UC_FormatTokenAmount gsh-lkda)
+            ,"GSD-pkda"                         : (UC_FormatTokenAmount gsh-pkda)
+            ,"GSD-hpkda"                        : (UC_FormatTokenAmount gsh-hpkda)
+            ,"GSD-hpkda-nonce-count"            : (ref-DPOF::UR_NoncesUsed HpkdaID)
+                ;;Wallet Supply Display = WSD (formated values for display purposes)
+            ,"WSD-ignis"                        : (UC_FormatTokenAmount wsh-ignis)
+            ,"WSD-ouro"                         : (UC_FormatTokenAmount wsh-ouro)
+            ,"WSD-ouro-next"                    : (UC_FormatTokenAmount wsh-ouro-next)
+            ,"WSD-virtual-ouro"                 : (UC_FormatTokenAmount wsh-virtual-ouro)
+            ,"WSD-elite-aurynz"                 : (UC_FormatTokenAmount wsh-elite-aurynz)
+            ,"WSD-elite-aurynz-next"            : (UC_FormatTokenAmount wsh-elite-aurynz-next)
+            ,"WSD-wkda"                         : (UC_FormatTokenAmount wsh-wkda)
+            ,"WSD-lkda"                         : (UC_FormatTokenAmount wsh-lkda)
+            ,"WSD-pkda"                         : (UC_FormatTokenAmount wsh-pkda)
+            ,"WSD-hpkda"                        : (UC_FormatTokenAmount wsh-hpkda)
+            ,"WSD-hpkda-nonce-count"            : (length (ref-DPOF::URD_AccountNonces account HpkdaID))
+            ,"WSD-pkda-total"                   : (UC_FormatTokenAmount wsh-pkda-total)
+                ;;Indices to display = ID (Formated Indices for display-purposes)
+            ,"ID-liquid-projected"              : (UC_FormatIndex ih-liquid-projected)
+            ,"ID-liquid"                        : (UC_FormatIndex ih-liquid)
+            ,"ID-kori"                          : (UC_FormatIndex ih-kori)
+            ,"ID-auryndex"                      : (UC_FormatIndex ih-auryndex)
+            ,"ID-elite-auryndex"                : (UC_FormatIndex ih-elite-auryndex)
+                ;;Prices = P (Formated Prices for display-purposes)
+            ,"P-ignis"                          : "1¢"
+            ,"P-ouro"                           : (UC_ConvertPrice price-ouro)
+            ,"P-auryn"                          : (UC_ConvertPrice price-auryn)
+            ,"P-elite-auryn"                    : (UC_ConvertPrice price-elite-auryn)
+            ,"P-wkda"                           : (UC_ConvertPrice price-wkda)
+            ,"P-lkda"                           : (UC_ConvertPrice price-lkda)
+            ,"P-pkda"                           : (UC_ConvertPrice price-pkda)
+            ,"P-pkda-total-wallet"              : (UC_ConvertPrice price-pkda-wallet)
+            ,"P-next"                           : (UC_ConvertPrice price-next)
+                ;;ELITE Tier Data = ET
+            ,"ET-tier"                          : (ref-DALOS::UR_Elite-Tier account)
+            ,"ET-name"                          : (ref-DALOS::UR_Elite-Name account)
+            }
+        )
+    )
     (defun URC_0001_Header (account:string)
         (let
             (

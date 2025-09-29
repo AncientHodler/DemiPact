@@ -30,11 +30,12 @@
 )
 
 
-(interface TalosStageTwo_ClientOneV5
+(interface TalosStageTwo_ClientOneV6
     @doc "Exposes Client DPDC and SFT Functions \
     \ V3 added improved Collectable Transfer Function \
     \ V4 switched to single Multi Transfer Function in the TS02-C1 Module \
-    \ V5 added quantity for Set Making and Breaking"
+    \ V5 added quantity for Set Making and Breaking \
+    \ V6 added Repurpose"
     ;;
     ;;  [2] DPDC
     ;;
@@ -94,6 +95,7 @@
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPSF|C_Repurpose (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPSF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool))
     ;;
@@ -146,6 +148,7 @@
     ;;
     ;;  [9] DPDC-F
     ;;
+    (defun DPSF|C_RepurposeFragments (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPSF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPSF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))
@@ -175,11 +178,11 @@
     (defun DPSF|C_MorphEquity (patron:string account:string id:string input-nonce:integer input-amount:integer output-nonce:integer))
     ;;
 )
-
-(interface TalosStageTwo_ClientTwoV4
+(interface TalosStageTwo_ClientTwoV5
     @doc "Exposes Client NFT Functions \
     \ V3 added improved Collectable Transfer Function \
-    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module"
+    \ V4 switched to single Multi Transfer Function in the TS02-C1 Module \
+    \ V5 added Repurpose"
     ;;
     ;;  [2] DPDC
     ;;
@@ -237,6 +240,7 @@
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPNF|C_Repurpose (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPNF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool))
     (defun DPNF|C_TransferNonces (patron:string id:string sender:string receiver:string nonces:[integer] amounts:[integer] method:bool)) 
     ;;
@@ -289,6 +293,7 @@
     ;;
     ;;  [9] DPDC-F
     ;;
+    (defun DPNF|C_RepurposeFragments (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPNF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPNF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdc.DPDC|NonceData}))

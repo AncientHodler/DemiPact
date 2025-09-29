@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientOneV5)
+    (implements TalosStageTwo_ClientOneV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -150,12 +150,12 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
                     (hm:integer (length ids))
                     ;;
-                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                    (irs:object{DpdcTransferV4.AggregatedRoyalties}
                         (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender ids sons nonces-array amounts-array)
                     )
                     (c:[string] (at "creators" irs))
@@ -629,6 +629,24 @@
     ;;
     ;;  [7] DPDC-T
     ;;
+    (defun DPSF|C_Repurpose (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer])
+        @doc "Repurpose SFT(s) from <repurpose-from> to <repurpose-to>. Requires <id> ownerhsip"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
+                    (sf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
+                    (st:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-T::C_RepurposeCollectable id true repurpose-from repurpose-to nonces amounts)
+                )
+                (format "Successfully repurposed SFT {} Nonces {} with Amounts {} from {} to {}" [id nonces amounts sf st])
+            )
+        )
+    )
     (defun DPSF|C_TransferNonce (patron:string id:string sender:string receiver:string nonce:integer amount:integer method:bool)
         @doc "Transfer an SFT <nonce> of <amount> from <sender> to <receiver> using <method>"
         (with-capability (P|TS)
@@ -636,11 +654,11 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
                     ;;
-                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                    (irs:object{DpdcTransferV4.AggregatedRoyalties}
                         (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender [id] [true] [[nonce]] [[amount]])
                     )
                     (r:[decimal] (at "ignis-royalties" irs))
@@ -666,11 +684,11 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
                     ;;
-                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                    (irs:object{DpdcTransferV4.AggregatedRoyalties}
                         (ref-DPDC-T::C_IgnisRoyaltyCollector patron sender [id] [true] [nonces] [amounts])
                     )
                     (c:[string] (at "creators" irs))
@@ -1003,13 +1021,31 @@
     ;;
     ;;  [9] DPDC-F
     ;;
+    (defun DPSF|C_RepurposeFragments (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer])
+        @doc "Repurpose SFT Fragment(s) from <repurpose-from> to <repurpose-to>. Requires <id> ownerhsip"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-DPDC-F:module{DpdcFragmentsV2} DPDC-F)
+                    (sf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
+                    (st:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-DPDC-F::C_RepurposeCollectableFragments id true repurpose-from repurpose-to nonces amounts)
+                )
+                (format "Successfully repurposed SFT {} Fragment-Nonces {} with Amounts {} from {} to {}" [id nonces amounts sf st])
+            )
+        )
+    )
     (defun DPSF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer)
         @doc "Fragments SFT nonce of the given amount into its respective Fragments."
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragments} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV2} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_MakeFragments account id true nonce amount)
@@ -1024,7 +1060,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragments} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV2} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_MergeFragments account id true nonce amount)
@@ -1039,7 +1075,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragments} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV2} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_EnableNonceFragmentation id true nonce fragmentation-ind)
@@ -1243,7 +1279,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-T:module{DpdcTransferV3} DPDC-T)
+                    (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (ref-EQUITY:module{Equity} EQUITY)
                     ;;
                     (ico:object{IgnisCollectorV2.OutputCumulator}
@@ -1256,7 +1292,7 @@
                     (ir-amounts:[integer] (at 1 output))
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     ;;
-                    (irs:object{DpdcTransferV3.AggregatedRoyalties}
+                    (irs:object{DpdcTransferV4.AggregatedRoyalties}
                         (ref-DPDC-T::C_IgnisRoyaltyCollector patron account [id] [true] [ir-nonces] [ir-amounts])
                     )
                     (c:[string] (at "creators" irs))
