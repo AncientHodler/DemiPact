@@ -1,7 +1,97 @@
-;;Ouronet Policy Remains as is
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;
 ;;  [DALOS]
 ;;
+(interface OuronetPolicy
+    @doc "Interface exposing OuronetPolicy Functions, which are needed for intermodule communication \
+        \ Each Module must have these Functions for these Purposes"
+    ;;
+    (defschema P|S
+        policy:guard
+    )
+    (defschema P|MS
+        m-policies:[guard]
+    )
+    (defun P|UR:guard (policy-name:string)
+        @doc "Reads a Policy from the local module Policy Table"
+    )
+    (defun P|UR_IMP:[guard] ()
+        @doc "Reads the whole Intermodule Policy Guard Chain"
+    )
+    (defun P|A_Add (policy-name:string policy-guard:guard)
+        @doc "Adds a Policy in the local module Policy Table"
+    )
+    (defun P|A_AddIMP (policy-guard:guard)
+        @doc "Add a Policy in the local Policy Guard Chain"
+    )
+    (defun P|A_Define ()
+        @doc "Defines in each module the policies that are needed for intermodule communication"
+    )
+    (defun UEV_IMC ()
+        @doc "Defines the Intermodule Guards"
+    )
+)
+(interface IgnisCollectorV2
+    ;;
+    ;;  SCHEMAS
+    ;;
+    (defschema PrimedCumulator
+        primed-cumulator:object{CompressedCumulator}
+    )
+    (defschema CompressedCumulator
+        ignis-prices:[decimal]
+        interactors:[string]
+    )
+    (defschema OutputCumulator
+        cumulator-chain:[object{ModularCumulator}]
+        output:list
+    )
+    (defschema ModularCumulator
+        ignis:decimal
+        interactor:string
+    )
+    ;;
+    ;;  [URC]
+    ;;
+    (defun URC_Exception (account:string))
+    (defun URC_ZeroEliteGAZ (sender:string receiver:string))
+    (defun URC_ZeroGAZ:bool (id:string sender:string receiver:string))
+    (defun URC_ZeroGAS:bool (id:string sender:string))
+    (defun URC_IsVirtualGasZeroAbsolutely:bool (id:string))
+    (defun URC_IsVirtualGasZero:bool ())
+    (defun URC_IsNativeGasZero:bool ())
+    ;;
+    ;;  [UEV]
+    ;;
+    (defun UEV_TwentyFourPrecision (amount:decimal))
+    (defun UEV_Patron (patron:string))
+    ;;
+    ;;  [UDC]
+    ;;
+    (defun UDC_MakeIDP:string (ignis-discount:decimal))
+    (defun UDC_ConstructOutputCumulator:object{OutputCumulator} (price:decimal active-account:string trigger:bool output-lst:list))
+    (defun UDC_BrandingCumulator:object{OutputCumulator} (active-account:string multiplier:decimal))
+    (defun UDC_SmallestCumulator:object{OutputCumulator} (active-account:string))
+    (defun UDC_SmallCumulator:object{OutputCumulator} (active-account:string))
+    (defun UDC_MediumCumulator:object{OutputCumulator} (active-account:string))
+    (defun UDC_BigCumulator:object{OutputCumulator} (active-account:string))
+    (defun UDC_BiggestCumulator:object{OutputCumulator} (active-account:string))
+    (defun UDC_CustomCodeCumulator:object{OutputCumulator} ())
+        ;;
+    (defun UDC_MakeModularCumulator:object{ModularCumulator} (price:decimal active-account:string trigger:bool))
+    (defun UDC_MakeOutputCumulator:object{OutputCumulator} (input-modular-cumulator-chain:[object{ModularCumulator}] output-lst:list))
+    (defun UDC_ConcatenateOutputCumulators:object{OutputCumulator} (input-output-cumulator-chain:[object{OutputCumulator}] new-output-lst:list))
+    (defun UDC_CompressOutputCumulator:object{CompressedCumulator} (input-output-cumulator:object{OutputCumulator}))
+    (defun UDC_PrimeIgnisCumulator:object{PrimedCumulator} (patron:string input:object{CompressedCumulator}))
+    ;;
+    ;;  [C]
+    ;;
+    (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal))
+    (defun C_Collect  (patron:string input-output-cumulator:object{OutputCumulator}))
+    (defun KDA|C_Collect (sender:string amount:decimal))
+    (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool))
+    ;;
+)
 (interface OuronetDalosV5
     ;;
     ;;  SCHEMAS
@@ -180,69 +270,6 @@
     (defun XE_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool))
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
 )
-
-(interface IgnisCollectorV2
-    ;;
-    ;;  SCHEMAS
-    ;;
-    (defschema PrimedCumulator
-        primed-cumulator:object{CompressedCumulator}
-    )
-    (defschema CompressedCumulator
-        ignis-prices:[decimal]
-        interactors:[string]
-    )
-    (defschema OutputCumulator
-        cumulator-chain:[object{ModularCumulator}]
-        output:list
-    )
-    (defschema ModularCumulator
-        ignis:decimal
-        interactor:string
-    )
-    ;;
-    ;;  [URC]
-    ;;
-    (defun URC_Exception (account:string))
-    (defun URC_ZeroEliteGAZ (sender:string receiver:string))
-    (defun URC_ZeroGAZ:bool (id:string sender:string receiver:string))
-    (defun URC_ZeroGAS:bool (id:string sender:string))
-    (defun URC_IsVirtualGasZeroAbsolutely:bool (id:string))
-    (defun URC_IsVirtualGasZero:bool ())
-    (defun URC_IsNativeGasZero:bool ())
-    ;;
-    ;;  [UEV]
-    ;;
-    (defun UEV_TwentyFourPrecision (amount:decimal))
-    (defun UEV_Patron (patron:string))
-    ;;
-    ;;  [UDC]
-    ;;
-    (defun UDC_MakeIDP:string (ignis-discount:decimal))
-    (defun UDC_ConstructOutputCumulator:object{OutputCumulator} (price:decimal active-account:string trigger:bool output-lst:list))
-    (defun UDC_BrandingCumulator:object{OutputCumulator} (active-account:string multiplier:decimal))
-    (defun UDC_SmallestCumulator:object{OutputCumulator} (active-account:string))
-    (defun UDC_SmallCumulator:object{OutputCumulator} (active-account:string))
-    (defun UDC_MediumCumulator:object{OutputCumulator} (active-account:string))
-    (defun UDC_BigCumulator:object{OutputCumulator} (active-account:string))
-    (defun UDC_BiggestCumulator:object{OutputCumulator} (active-account:string))
-    (defun UDC_CustomCodeCumulator:object{OutputCumulator} ())
-        ;;
-    (defun UDC_MakeModularCumulator:object{ModularCumulator} (price:decimal active-account:string trigger:bool))
-    (defun UDC_MakeOutputCumulator:object{OutputCumulator} (input-modular-cumulator-chain:[object{ModularCumulator}] output-lst:list))
-    (defun UDC_ConcatenateOutputCumulators:object{OutputCumulator} (input-output-cumulator-chain:[object{OutputCumulator}] new-output-lst:list))
-    (defun UDC_CompressOutputCumulator:object{CompressedCumulator} (input-output-cumulator:object{OutputCumulator}))
-    (defun UDC_PrimeIgnisCumulator:object{PrimedCumulator} (patron:string input:object{CompressedCumulator}))
-    ;;
-    ;;  [C]
-    ;;
-    (defun C_TransferDalosFuel (sender:string receiver:string amount:decimal))
-    (defun C_Collect  (patron:string input-output-cumulator:object{OutputCumulator}))
-    (defun KDA|C_Collect (sender:string amount:decimal))
-    (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool))
-    ;;
-)
-
 (interface OuronetInfoV3
     @doc "Holds Information Schemas"
     ;;
@@ -299,7 +326,6 @@
     (defun OI|UDC_NoIgnisCosts:object{ClientIgnisCosts} ())
     (defun OI|UDC_DynamicIgnisCost:object{ClientIgnisCosts} (patron:string ifp:decimal))
 )
-
 (interface DalosInfoV3
     @doc "Exposes Information Function for the Dalos Client Functions"
     ;;
@@ -319,6 +345,52 @@
 ;;
 ;;  [Branding]
 ;;
+(interface Branding
+    @doc "Interface Exposing the Branding Functions needed to create the Branding Functionality \
+    \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
+    \ Should Future entities be added, they too can be branded via this module \
+    \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
+    \ are NOT sorted alphabetically"
+    ;;
+    (defschema Schema
+        logo:string
+        description:string
+        website:string
+        social:[object{SocialSchema}]
+        flag:integer
+        genesis:time
+        premium-until:time
+    )
+    (defschema SocialSchema
+        social-media-name:string
+        social-media-link:string
+    )
+    ;;
+    (defun UR_Branding:object{Schema} (id:string pending:bool))
+    (defun UR_Logo:string (id:string pending:bool))
+    (defun UR_Description:string (id:string pending:bool))
+    (defun UR_Website:string (id:string pending:bool))
+    (defun UR_Social:[object{SocialSchema}] (id:string pending:bool))
+    (defun UR_Flag:integer (id:string pending:bool))
+    (defun UR_Genesis:time (id:string pending:bool))
+    (defun UR_PremiumUntil:time (id:string pending:bool))
+    ;;
+    (defun URC_MaxBluePayment (account:string))
+    ;;
+    (defun UDC_BrandingLogo:object{Schema} (input:object{Schema} logo:string))
+    (defun UDC_BrandingDescription:object{Schema} (input:object{Schema} description:string))
+    (defun UDC_BrandingWebsite:object{Schema} (input:object{Schema} website:string))
+    (defun UDC_BrandingSocial:object{Schema} (input:object{Schema} social:[object{SocialSchema}]))
+    (defun UDC_BrandingFlag:object{Schema} (input:object{Schema} flag:integer))
+    (defun UDC_BrandingPremium:object{Schema} (input:object{Schema} premium:time))
+    ;;
+    (defun A_Live (entity-id:string))
+    (defun A_SetFlag (entity-id:string flag:integer))
+    ;;
+    (defun XE_Issue (entity-id:string))
+    (defun XE_UpdatePendingBranding (entity-id:string logo:string description:string website:string social:[object{SocialSchema}]))
+    (defun XE_UpgradeBranding:decimal (entity-id:string entity-owner-account:string months:integer))
+)
 (interface BrandingUsageV9
     @doc "Exposes Branding Functions for True-Fungibles (T), Orto-Fungibles (M), ATS-Pairs (A) and SWP-Pairs (S)"
     ;;
@@ -535,7 +607,6 @@
     (defun XB_DebitTrueFungible (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData} wipe-mode:bool))
     (defun XB_CreditTrueFungible (id:string account:string amount:decimal))
 )
-
 (interface TrueFungibleTransferV8
     @doc "Exposes True Fungible Transfer Functions \
     \ V8 brings more gas optimisations"
@@ -814,7 +885,7 @@
     )
 )
 
-(interface DemiourgosPactOrtoFungible
+(interface DemiourgosPactOrtoFungibleV2
     @doc "Exposes Functions related to Orto-Fungibles \
     \ Orto-Fungibles are the next Evoloution of the Meta-Fungibles \
     \ using a newer and more efficient Architecture, and fixing discovered bugs \
@@ -824,7 +895,9 @@
     \ which was the main reason Orto-Fungible was created \
     \ \
     \ Existing Meta-Fungible <id> and <accounts> will have to be migrated to Orto-Fungibles \
-    \ Luckily Meta-Fungible usage hasnt properly started at the time of Orto-Fungible Deployment"
+    \ Luckily Meta-Fungible usage hasnt properly started at the time of Orto-Fungible Deployment \
+    \ \
+    \ V2 adds two missing XE Functions"
     ;;
     ;;  [UC]
     ;;
@@ -1011,6 +1084,10 @@
     )
     (defun XB_DeployAccountWNE (account:string id:string))
     (defun XB_InsertNewNonce (nonce-owner:string id:string nonce:integer amount:decimal meta-data-chain:[object]))
+    (defun XE_UpdateRewardBearingToken (atspair:string hot-rbt:string))
+    (defun XE_UpdateSpecialOrtoFungible:object{IgnisCollectorV2.OutputCumulator}
+        (main-dptf:string secondary-dpof:string vzh-tag:integer)
+    )
     (defun XB_W|AccountRoles (id:string account:string account-data:object{DpofUdc.DPOF|AccountRoles}))
 
 )
@@ -1037,9 +1114,6 @@
     (defun XE_UpdateElite (id:string sender:string receiver:string))
 
 )
-;;
-;;  [AUTOSTAKE]
-;;
 (interface AutostakeV5
     @doc "Brings not only Improved Autostake Architecture but also added Functionality: \
         \ \
@@ -1388,6 +1462,9 @@
     (defun C_Brumate:object{IgnisCollectorV2.OutputCumulator} (brumator:string ats1:string ats2:string rt:string amount:decimal dayz:integer))
     ;;
 )
+;;
+;;  [LIQUID]
+;;
 (interface KadenaLiquidStakingV5
     @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA"
     ;;
@@ -1403,6 +1480,9 @@
     (defun C_UnwrapKadena:object{IgnisCollectorV2.OutputCumulator} (unwrapper:string amount:decimal))
     (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator} (wrapper:string amount:decimal))
 )
+;;
+;;  [OUROBOROS]
+;;
 (interface OuroborosV5
     @doc "Exposes Functions related to the OUROBOROS Module \
         \ \
@@ -1426,7 +1506,36 @@
     (defun C_Sublimate:object{IgnisCollectorV2.OutputCumulator} (client:string target:string ouro-amount:decimal))
     (defun C_WithdrawFees:object{IgnisCollectorV2.OutputCumulator} (id:string target:string))
 )
-
+;;
+;;  [SWP]
+;;
+(interface SwapTracer
+    @doc "Exposes Tracer Functions, needed to compute Paths between Tokens existing on Liquidity Pools"
+    ;;
+    (defschema Edges
+        principal:string
+        swpairs:[string]
+    )
+    ;;
+    (defun UC_PSwpairsFTO:[string] (traces:[object{Edges}] id:string principal:string principals-lst:[string]))
+    (defun UC_PrincipalsFromTraces:[string] (traces:[object{Edges}]))
+    ;;
+    (defun UR_PathTrace:[object{Edges}] (id:string))
+    ;;
+    (defun URC_PathTracer:[object{Edges}] (old-path-tracer:[object{Edges}] id:string swpair:string principals-lst:[string]))
+    (defun URC_ContainsPrincipals:bool (swpair:string principals-lst:[string]))
+    (defun URC_ComputeGraphPath:[string] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_AllGraphPaths:[[string]] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_MakeGraph:[object{BreadthFirstSearch.GraphNode}] (input:string output:string swpairs:[string] principal-lst:[string]))
+    (defun URC_TokenNeighbours:[string] (token-id:string principal-lst:[string]))
+    (defun URC_TokenSwpairs:[string] (token-id:string principal-lst:[string]))
+    (defun URC_PrincipalSwpairs:[string] (id:string principal:string principal-lst:[string]))
+    (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])) ;;1
+    ;;
+    (defun UEV_IdAsPrincipal (id:string for-trace:bool principals-lst:[string]))
+    ;;
+    (defun XE_MultiPathTracer (swpair:string principals-lst:[string]))
+)
 (interface SwapperV5
     @doc "Exposes Swapper Related Functions, except those related to adding and swapping liquidity \
         \ \

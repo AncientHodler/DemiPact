@@ -1,0 +1,44 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                                                                              ;;
+;;              STAGE ONE TESTER [57 TXs]                                       ;;
+;;              Loads Individual Repl Files                                     ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+;;STARTER
+(load "Stage_01/[0.0]_Starter.repl")
+
+;;SOVEREING DEPLOYER
+(load "Stage_01/[0.1]_Interfaces.repl")
+(load "Stage_01/[1]_Utilities.repl")
+(load "Stage_01/[2.1]_Dalos.repl")
+(load "Stage_01/[2.2]_Core.repl")
+(load "Stage_01/[3]_Talos.repl")
+
+;;SOVEREIGN EXECUTOR (contains executions to initialise the SOVEREIGN Functionality)
+(load "Stage_01/[4.0]_Sovereign-Executor.repl")
+
+;;SLAVE DEPLOYER + EXECUTOR
+(load "Stage_01/[5.1]_Aoz+.repl")
+(load "Stage_01/[5.2]_Dispenser+.repl")
+(load "Stage_01/[5.3]_Reader+.repl")
+
+;;SLAVE TESTER
+;(load "Stage_01/[6.1]_Cumulator.repl")
+    ;;
+;(load "Stage_01/[6.2]_DPTF.repl")
+;(load "Stage_01/[6.3]_SWP.repl")
+;(load "Stage_01/[6.4]_Admin.repl")
+    ;;
+;(load "Stage_01/[6.5]_DPOF.repl")
+    ;;
+(load "Stage_01/[6.6]_ATS.repl")
+    ;;
+;(load "Stage_01/[6.7]_VST.repl")
+    ;;
+;(load "Stage_01/[6.8]_Dispenser.repl")

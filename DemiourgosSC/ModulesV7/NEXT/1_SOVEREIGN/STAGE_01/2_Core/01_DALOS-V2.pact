@@ -406,6 +406,11 @@
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
+    (defun URD_AccountCounter ()
+        (format "Ouronet has {} real Accounts!"
+            [(length (keys DALOS|AccountTable))]
+        )
+    )
     ;;[0]   DALOS|KadenaLedger:{DALOS|KadenaSchema}
     (defun UR_KadenaLedger:[string] (kadena:string)
         (with-default-read DALOS|KadenaLedger kadena

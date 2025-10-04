@@ -1,0 +1,211 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "DPTF Tx 001 Cumulator Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (patron:string KST.ANHD)
+        (receiver:string KST.EMMA)
+        (ats:string KST.ATSTK)
+        (vst:string KST.VESTG)
+        (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+
+        (cum1:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 5.0 patron false))
+        (cum2:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 7.0 receiver false))
+        (cum3:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 8.0 ats false))
+        (cum4:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 5.0 ats false))
+        (cum5:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 17.0 vst false))
+        (l1:[object{IgnisCollectorV2.ModularCumulator}] [cum3 cum4 cum1 cum2 cum5])
+        (lst:list ["coco" "poco" 1])
+        (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
+        ;;
+        (ocv2:object{IgnisCollectorV2.OutputCumulator}
+            (ref-IGNIS::UDC_MakeOutputCumulator l1 lst)
+        )
+        (ccv2:object{IgnisCollectorV2.CompressedCumulator}
+            (ref-IGNIS::UDC_CompressOutputCumulator ocv2)
+        )
+        (pcv2:object{IgnisCollectorV2.PrimedCumulator}
+            (ref-IGNIS::UDC_PrimeIgnisCumulator patron ccv2)
+        )
+        (oc1:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_MakeOutputCumulator [cum1] []))
+        (oc2:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_MakeOutputCumulator [cum2] []))
+        (oc3:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_MakeOutputCumulator [cum3] []))
+        (oc4:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_MakeOutputCumulator [cum4] []))
+        (oc5:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_MakeOutputCumulator [cum5] []))
+
+        (try:object{IgnisCollectorV2.OutputCumulator} (ref-IGNIS::UDC_ConcatenateOutputCumulators [oc1 oc2 oc3 oc4 oc5] ["coco" "pisu"]))
+        (try2:object{IgnisCollectorV2.CompressedCumulator}
+            (ref-IGNIS::UDC_CompressOutputCumulator try)
+        )
+        (try3:object{IgnisCollectorV2.PrimedCumulator}
+            (ref-IGNIS::UDC_PrimeIgnisCumulator patron try2)
+        )
+    )
+    [
+        ;cum1
+        ;cum2
+        ;cum3
+        ;cum4
+        ;cum5
+
+        ;oc1
+        ;oc3
+        ;try
+    ]
+    try3
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<STEP 001 Cumulator Tests costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "LOL Tests")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(let
+    (
+        (m1:bool true)
+        (m2:bool false)
+        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+        (keyz:[string]
+            [
+                "Account1|ID1|1"
+                "Account1|ID1|2"
+                "Account1|ID1|3"
+                "Account1|ID1|4"
+                "Account1|ID1|5"
+                "Account1|ID1|6"
+                "Account1|ID1|7"
+                "Account1|ID2|1"
+                "Account1|ID3|2"
+                "Account1|ID4|3"
+                "Account1|ID5|4"
+                "Account1|ID6|5"
+                "Account1|ID7|6"
+                "Account1|ID8|7"
+                "Account2|ID1|1"
+                "Account2|ID1|2"
+                "Account2|ID1|3"
+                "Account2|ID1|4"
+                "Account2|ID1|5"
+                "Account2|ID1|6"
+                "Account2|ID1|7"
+                "Account2|ID2|1"
+                "Account2|ID3|2"
+                "Account2|ID4|3"
+                "Account2|ID5|4"
+                "Account2|ID6|5"
+                "Account2|ID7|6"
+                "Account2|ID8|7"
+            ]
+        )
+        (keyz2:[string]
+            [
+                "Account1|ID11"
+                "Account1|ID12"
+                "Account1|ID13"
+                "Account1|ID14"
+                "Account1|ID15"
+                "Account1|ID16"
+                "Account1|ID17"
+                "Account1|ID21"
+                "Account1|ID32"
+                "Account1|ID43"
+                "Account1|ID54"
+                "Account1|ID65"
+                "Account1|ID76"
+                "Account1|ID87"
+                "Account2|ID11"
+                "Account2|ID12"
+                "Account2|ID13"
+                "Account2|ID14"
+                "Account2|ID15"
+                "Account2|ID16"
+                "Account2|ID17"
+                "Account2|ID21"
+                "Account2|ID32"
+                "Account2|ID43"
+                "Account2|ID54"
+                "Account2|ID65"
+                "Account2|ID76"
+                "Account2|ID87"
+            ]
+        )
+        (lst:[string] ["Account1" "ID1" "5"])
+        (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString "|" x)) keyz))
+        ;(cwb:string (ref-U|DALOS::UC_ConcatWithBar lst))
+        (strlst:[string] (ref-U|DALOS::UC_InverseFilterId listoflists "Account1|ID1"))
+    )
+    (fold
+        (lambda
+            (acc:[integer] idx:integer)
+            (ref-U|LST::UC_AppL acc 
+                (str-to-int (at idx strlst))
+            )
+        )
+        []
+        (enumerate 0 (- (length strlst) 1))
+    )
+    ;;true
+    ;(ref-U|DALOS::UC_DirectFilterId listoflists "Account1")
+    ;;false
+    
+
+    ;cwb
+    ;listoflists
+    
+
+)
+
+(print "")
+(print "")
+(format "<<<<<<<LOL Tests costs {} KDA GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;

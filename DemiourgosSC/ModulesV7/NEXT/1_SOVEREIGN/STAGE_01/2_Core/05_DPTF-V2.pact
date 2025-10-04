@@ -512,7 +512,7 @@
             )
             (UEV_CanWipeON id)
             (UEV_AccountFreezeState id account-to-be-wiped true)
-            (compose-capability (DPTF|C>DEBIT account-to-be-wiped id (ref-U|DPTF::EmptyDispo) true))
+            (compose-capability (DPTF|C>DEBIT account-to-be-wiped id amount (ref-U|DPTF::EmptyDispo) true))
         )
     )
     ;;

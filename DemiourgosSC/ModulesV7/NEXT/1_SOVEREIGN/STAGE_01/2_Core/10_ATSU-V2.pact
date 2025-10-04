@@ -237,7 +237,7 @@
                 (h2:bool (ref-ATS::UR_Hibernate ats2))
             )
             (ref-ATS::UEV_RewardTokenExistance ats1 curl-token true)
-            (enforce (and (not h1) (not h2)) "Curl requires both {} and {} to have Hibernation set to off" [ats1 ats2])
+            (enforce (and (not h1) (not h2)) (format "Curl requires both {} and {} to have Hibernation set to off" [ats1 ats2]))
             (compose-capability (P|TT))
         )
     )

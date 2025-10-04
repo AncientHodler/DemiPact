@@ -254,7 +254,7 @@
                 (ref-DALOS:module{OuronetDalosV5} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
             )
-            (enforce (>= ouro-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to make gas!")
+            (enforce (>= ouro-amount 0.99) "Only amounts greater than or equal to 1.0 can be used to make gas!")
             (ref-DPTF::UEV_Amount (ref-DALOS::UR_OuroborosID) ouro-amount)
             (let
                 (

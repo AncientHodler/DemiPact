@@ -1,0 +1,270 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [3 TXs]                                                 ;;
+;;              1.1     [REPL] Pre-Loads execs                                  ;;
+;;              1.2     LIVE Pre-Loads execs [only comment]                     ;;
+;;              2       DPDC - CORE Deployments                                 ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.1     Repl Pre-Loads execs                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [1.1] - Define Keys Used in Stage 02 Modules")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (module KC2 GOVERNANCE
+        (defcap GOVERNANCE () true)
+
+        ;;User Names
+        
+        ;;Smart Contracts
+        (defconst KADN_NAME_0001 "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8")
+        (defconst KADN_PBKY_0001 (drop 2 KADN_NAME_0001))
+        (defconst DPTS_NAME_0001 "Σ.μЖâAáпδÃàźфнMAŸôIÌjȘЛδεЬÍБЮoзξ4κΩøΠÒçѺłœщÌĘчoãueUøVlßHšδLτε£σž£ЙLÛòCÎcďьčfğÅηвČïnÊвÞIwÇÝмÉŠвRмWć5íЮzGWYвьżΨπûEÃdйdGЫŁŤČçПχĘŚślьЙŤğLУ0SýЭψȘÔÜнìÆkČѺȘÍÍΛ4шεнÄtИςȘ4")
+        (defconst DPDC DPTS_NAME_0001)
+        (defconst DPTS_PBKY_0001 "PK_Collectables")
+        (defconst PBLC_0001 "9G.2j95rkomKqd207CDg5yycyKcAy1AqFhjy6D0rCr0Kbwe9E6libtveIHsAIw9F2c43v6IHILIBf62r2LD58xHE09kypyoevL62E81wHL4zj9tIyspf5df82upuBGGKmIsHGuvH86fHMMi99n0htsypL9h3dMHFCIx8ogeynkmCIghxK871rlkas8iDfce7AwAbiajr7H1LHi17mLD7aJu6m7xmcAABkhxtwb4Kqbk8xLpehakyu3AvajgJvtfeysoH67irvplA0as86Jls1r3d3oHms9Maaja9856wzybpthMGs6qDAzacE24skcA30wvm77BLhrdh0ymkl3vbJ9lG641J7ofg5K9gEbHD4ioFHLEajL28qsD4cFEhdDthDzwF8EnBBc74Dikqn9xixFap5Jxhl7D0owz5d9MDJzfjgx3jbdpD3zglsq83iC4fhcpbz3KeAi11Ig2pgIqnmwwqA0Exr5073w7lgzlrw3Ff7Co9uuxbnLuJvlFzgfGeIwM2Dmev1JskqEGK0Ck0B87iagsHFI76HC6sKnwrHnkl0sl8pAf0pbBaw9MbqLs")
+
+        (defconst KADN_NAME_0002 "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01")
+        (defconst KADN_PBKY_0002 (drop 2 KADN_NAME_0002))
+        (defconst DPTS_NAME_0002 "Σ.Îäć$ЬчýφVεÎÿůпΨÖůηüηŞйnюŽXΣşpЩß5ςĂκ£RäbE₳èËłŹŘYшÆgлoюýRαѺÑÏρζt∇ŹÏýжIŒațэVÞÛщŹЭδźvëȘĂтPЖÃÇЭiërđÈÝДÖšжzČđзUĚĂsкιnãñOÔIKпŞΛI₳zÄû$ρśθ6ΨЬпYпĞHöÝйÏюşí2ćщÞΔΔŻTж€₿ŞhTțŽ")
+        (defconst LPAD DPTS_NAME_0002)
+        (defconst DPTS_PBKY_0002 "PK_LPAD")
+        (defconst PBLC_0002 "9F.gGCkuc2wMAnFAjuFphikftLdl6qFqBD4yfeMEe9u65yMqf4r340Jd6dphh1d7E1cE20btMwl4HJ2cBEMvp209GA1eD4syB96hu4nmpFbB7dKnJEMz4p8fGLcmhvrBCfDmM0axnGin8qedl5vDtwbgL3l1aK5BsmjkEEJartqCH8qG8ialtjxwCcIMf50t2lkeww6Dct5LlmmLG25FmfpcgnwMMnkJl4Gfn9gwoA6vm0jKebjhodeJLjxnh9L11ss8f26866dqv1tEphxFFqutGetH4Itj3rHkrcrGsnlqpf4gfJp94b0gBwIBe4vCj6ha8jm6kd3f8B6pEaJtkJ3fbs6rCcGibltz1BAMn0vvKME5ddFyGBnzssk1s2s0vFzwxs6vjC61Ma2l1xDxqdg1thAk2u01hDiGndLhzK73HAfgtk7bxscn0qKhymG6JAqnEFt282pyHAq5nIthK9bA8nH76x7FEpLz4eK9tLIBsyjb8M5DxaeEei6pEnLxFCAg7ulacgtjjpjMiAaqhpmM1jEHqjt4G85q4L33zrME7whgIkIpIgwnF2qKd4")
+
+    )
+    (env-data
+        {
+            ;;DEMI-SC-KEYS
+            "KEY_SC_Collectables": { "keys": [KC2.DPTS_PBKY_0001]},
+            "KEY_SC_Launchpad": { "keys": [KC2.DPTS_PBKY_0002]},
+
+            "KEY_KDA_Collectables": { "keys": [KC2.KADN_PBKY_0001]},
+            "KEY_KDA_Launchpad": { "keys": [KC2.KADN_PBKY_0002]}
+        }
+    )
+
+    ;;DALOS Defined Keysets ==> For Repl Using Named Keys, ex PK_AncientHodler
+    (define-keyset "free.dh_sc_dpdc-keyset" (read-keyset "KEY_SC_Collectables"))
+    (define-keyset "free.dh_sc_mb-keyset" (read-keyset "KEY_SC_Launchpad"))
+
+    ;;Create Collectables KDA Accounts and Fuel Them (for use in Repl)
+    (env-sigs
+        [
+            {
+                "key": "alice-key",
+                "caps":
+                    [
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_0001 5000.0)    ;;<PK_Collectables>    "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8"
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_0002 5000.0)    ;;<PK_LPAD>            "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01"
+                    ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-coin:module{fungible-v2} coin)
+        )
+        ;;Create Accounts:
+        (ref-coin::create-account KC2.KADN_NAME_0001 (read-keyset "KEY_KDA_Collectables"))
+        (ref-coin::create-account KC2.KADN_NAME_0002 (read-keyset "KEY_KDA_Launchpad"))
+        ;;Fuel Account
+        (ref-coin::transfer "alice" KC2.KADN_NAME_0001 5000.0)
+        (ref-coin::transfer "alice" KC2.KADN_NAME_0002 5000.0)
+    )
+
+    ;;Create Collectables Smart Ouronet Account
+    (env-sigs 
+        [ 
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Collectables", "caps": [] }
+            { "key": "PK_LPAD", "caps": [] }
+        ]
+    )
+    (let
+        (
+            (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+            (patron:string KST.ANHD)
+        )
+        (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0001 (keyset-ref-guard "free.dh_sc_dpdc-keyset")  KC2.KADN_NAME_0001 patron KC2.PBLC_0001)
+        (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0002 (keyset-ref-guard "free.dh_sc_mb-keyset")    KC2.KADN_NAME_0002 patron KC2.PBLC_0002)
+    )
+
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              1.2     LIVE Pre-Loads execs                                    ;;
+;;                      Deploy "free.dh_sc_dpdc-keyset"                          ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       DPDC-Core Deployments                                   ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-02 [2.1] - DPDC-UDC Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/01_DPDC-UDC.pact")
+(format "<<<<<<<DPDC-UDC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 [2.2] - DPDC Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/02_DPDC.pact")
+(format "<<<<<<<DPDC Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [2.3] - DPDC-C Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/03_DPDC-C.pact")
+(format "<<<<<<<DPDC-C Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 [2.4] - DPDC-I Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/04_DPDC-I.pact")
+(format "<<<<<<<DPDC-I Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-06 [2.5] - DPDC-R Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/05_DPDC-R.pact")
+(format "<<<<<<<DPDC-R Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-07 [2.6] - DPDC-MNG Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/06_DPDC-MNG.pact")
+(format "<<<<<<<DPDC-MNG Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-08 [2.7] - DPDC-T Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/07_DPDC-T.pact")
+(format "<<<<<<<DPDC-T Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-09 [2.8] - DPDC-S Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/08_DPDC-S.pact")
+(format "<<<<<<<DPDC-S Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-10 [2.9] - DPDC-F Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/09_DPDC-F.pact")
+(format "<<<<<<<DPDC-F Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-11 [2.10] - DPDC-N Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/10_DPDC-N.pact")
+(format "<<<<<<<DPDC-N Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-12 [2.11] - EQUITY Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/01_DPDC/11_EQUITY+.pact")
+(format "<<<<<<<EQUITY Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;

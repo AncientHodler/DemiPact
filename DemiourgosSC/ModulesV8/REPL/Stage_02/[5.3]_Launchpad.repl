@@ -1,0 +1,307 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(begin-tx "TX-01 - Initialise Launchpad Properties Table")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+
+(let
+    (
+        (ref-U|G:module{OuronetGuards} U|G)
+        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+        (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
+        (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
+        (ref-P|CUSTODIANS:module{OuronetPolicy} DEMIPAD-CUSTODIANS)
+        (ref-P|TS02-DPAD:module{OuronetPolicy} TS02-DPAD)
+        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
+        (pkey:string DEMIPAD.PP)
+    )
+    [
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.DEMIPAD)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD)
+        (insert DEMIPAD.DEMIPAD|T|Properties pkey
+            {"direct-injection" : false
+            ,"resident-wkda"    : 0.0
+            ,"resident-lkda"    : 0.0
+            ,"resident-ouro"    : 0.0}
+        )
+        ;;IMC
+        (ref-P|DPAD::P|A_Define)
+        (ref-P|SPARK::P|A_Define)
+        (ref-P|SNAKES::P|A_Define)
+        (ref-P|CUSTODIANS::P|A_Define)
+        (ref-P|TS02-DPAD::P|A_Define)
+        ;;
+        ;;Governor
+        (ref-TS01-C1::DALOS|C_RotateGovernor
+            KST.ANHD
+            lpad-sc
+            (ref-U|G::UEV_GuardOfAny
+                [
+                    (create-capability-guard (DEMIPAD.DEMIPAD|GOV))
+                    (ref-P|DPAD::P|UR "SPARK|RemoteGov")
+                    (ref-P|DPAD::P|UR "SNAKES|RemoteGov")
+                    (ref-P|DPAD::P|UR "CUSTODIANS|RemoteGov")
+                ]
+            )
+        )
+    ]
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Init Launchpad (1-75) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Movie Booster aka Spark")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (* (ref-DALOS::UR_UsagePrice "dptf") 2.0)
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-VST:module{VestingV5} VST)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+            (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
+            (patron:string KST.ANHD)
+            (ids:list
+                (ref-TS01-C1::DPTF|C_Issue
+                    patron
+                    patron
+                    ["Spark"]
+                    ["SPARK"]
+                    [6]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                )
+            )
+            (s-key:string DEMIPAD-SPARK.SPARK|INFO)
+            (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
+            (SparkID:string (at 0 ids))
+            (FrozenSparkID:string (at 1 (ref-TS01-C2::VST|C_CreateFrozenLink patron SparkID)))
+            (vst-sc:string (ref-VST::GOV|VST|SC_NAME))
+            (tr:bool (ref-DPTF::UR_AccountRoleTransfer FrozenSparkID vst-sc))
+        )
+        [
+            ;;Check Role
+            (format "Frozen Token Role on VST|SC_NAME after issue is {}" [tr])
+            ;;Permissions
+            (ref-TS01-C1::DPTF|C_Mint patron SparkID lpad-sc 35000.0 true)
+            (ref-TS01-C1::DPTF|C_ToggleMintRole patron SparkID lpad-sc true)
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron SparkID lpad-sc true)
+            ;;REPL-VARIANT:
+            (acquire-module-admin free.DEMIPAD-SPARK)
+            ;;MAIN-NET VARIANT
+            ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.SPARK)
+            (insert DEMIPAD-SPARK.SPARK|T|Properties s-key
+                {"spark-id"            : SparkID}
+            )
+            ;;Register Spark To Launchpad
+            (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron SparkID [true true])
+            (ref-TS02-DPAD::A_DefinePrice SparkID 
+                {"pid"      : 1.01
+                ,"boost"    : 400.0
+                ,"id"       : SparkID}
+            )
+            (ref-TS02-DPAD::A_ToggleRetrieval SparkID true)
+            (ref-TS02-DPAD::A_ToggleOpenForBusiness SparkID true)
+        ]
+    )
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Init Spark Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Shareholders")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (patron:string KST.ANHD)
+        (shareholders-id "E|DH-98c486052a51")
+        (s-key:string DEMIPAD-SNAKES.SNAKES|INFO)
+    )
+    [
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.DEMIPAD-SNAKES)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-SNAKES)
+        (insert  DEMIPAD-SNAKES.SNAKES|T|Properties s-key
+            {"asset-id"     : shareholders-id}
+        )
+        ;;Register Shareholders Collection To Launchpad
+        (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron shareholders-id [false true])
+        (ref-TS02-DPAD::A_DefinePrice shareholders-id 
+            {"price-per-share-in-dollars"   : 10.0}
+        )
+        (ref-TS02-DPAD::A_ToggleRetrieval shareholders-id true)
+        (ref-TS02-DPAD::A_ToggleOpenForBusiness shareholders-id true)
+        ;;Fuel Assets for Sale must be done separately
+    ]
+)
+
+
+(print "")
+(print "")
+(format "<<<<<<<Init Shareholders Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Custodians")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (patron:string KST.ANHD)
+        (custodians-id "DHOC-98c486052a51")
+        (s-key:string DEMIPAD-CUSTODIANS.CUSTODIANS|INFO)
+    )
+    [
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.DEMIPAD-CUSTODIANS)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-CUSTODIANS)
+        (insert  DEMIPAD-CUSTODIANS.CUSTODIANS|T|Properties s-key
+            {"asset-id"     : custodians-id}
+        )
+        ;;Register Shareholders Collection To Launchpad
+        (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron custodians-id [false true])
+        (ref-TS02-DPAD::A_DefinePrice custodians-id 
+            {"quintessence-price"   : 1.5}
+        )
+        (ref-TS02-DPAD::A_ToggleRetrieval custodians-id true)
+        (ref-TS02-DPAD::A_ToggleOpenForBusiness custodians-id true)
+        ;;Fuel Assets for Sale must be done separately
+    ]
+)
+
+;"Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+;"DHN-vQePGHkCAkR1"
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
+;(IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
+;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+
+
+(print "")
+(print "")
+(format "<<<<<<<Init Custodians Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+

@@ -1,0 +1,1679 @@
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [15 TXs]                                                ;;
+;;              1.1     NONE: [REPL] Pre-Loads execs (already done)             ;;
+;;              1.2     NONE: LIVE Pre-Loads execs [only comment]               ;;
+;;              2       NOSFERATU Deployment                                    ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       NOSFERATU Deployment                                    ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2] - DALOS Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../2_SLAVE/Stage_02/02_KBunnies.pact")
+(format "<<<<<<<AOZ Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;              3      Post-Loads execs                                         ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step01 patron kbn-id
+        [
+            ["Common" "Movie Set" "Purple Suit & Tie" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Top Hat" "Resting"]
+            ["Common" "Photo Shoot" "White T-Shirt" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White Button Up" "Helix Piercing" "Red" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Helix Cone Piercing" "Red" "Captain Cap" "Balloon"]
+            ["Common" "Money Vault" "Green Camouflage T-Shirt" "Rook Piercing" "Aviator Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Blue Coat" "Rook Piercing" "Round Sunglasses" "Black Cap" "Rose"]
+            ["Common" "Money Vault" "Brown Jacket" "Helix Piercing" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Money Vault" "White Trench Coat" "Helix Cone Piercing" "Glowing Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "White Coat" "Helix Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Dinamite"]
+            ["Common" "Basement" "White Button Up" "Helix Piercing" "Blue" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Set" "Black Jacket" "Helix Piercing" "Blue" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Red Hoodie" "Helix Piercing" "Green" "White Bucket Hat" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Trench Coat" "Helix Cone Piercing" "Round Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Photo Studio" "Green Vest" "Rook Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Basement" "Black Puffer Jacket" "Demiourgos Earring" "Aviator Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Filming Gear" "White Button Up" "Helix Piercing" "Round Sunglasses" "Black Beanie" "Cigar"]
+            ["Common" "Photo Studio" "White Puffer Jacket" "Demiourgos Earring" "Osmiridium Unity Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Set" "Red Puffer Jacket" "Rook Piercing" "Elk0nite Unity Glasses" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Cigar"]
+            ["Common" "Photo Studio" "White Coat" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Basement" "White Coat" "Rook Piercing" "Elk0nite Unity Glasses" "Black Fedora Hat" "Cigar"]
+            ["Common" "Filming Gear" "White T-Shirt" "Helix Piercing" "Elk0nite Unity Glasses" "Captain Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Purple Suit & Tie" "Rook Piercing" "Elk0nite Unity Glasses" "Black Cap" "Joint"]
+            ["Legendary" "Legendary Photo Shoot" "Black Puffer Jacket" "Legendary Demiourgos Earring" "Aviator Sunglasses" "Black Cap" "Legendary Balloon"]
+            ["Common" "Hall of Fame" "Black Vest" "Rook Piercing" "Glowing Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Money Vault" "Black Jacket" "Helix Cone Piercing" "Thug Life Glasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "White Puffer Jacket" "Helix Piercing" "Aviator Sunglasses" "White Cap" "Balloon"]
+            ["Common" "Bunnyship" "Green Camouflage T-Shirt" "Rook Piercing" "Glowing Green" "Black Beanie" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Purple Vest" "Helix Piercing" "Red" "White Beanie" "Resting"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Demiourgos Earring" "Aviator Sunglasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "White Hoodie" "Demiourgos Earring" "Red" "White Bucket Hat" "Balloon"]
+            ["Common" "Movie Set" "Purple Vest" "Helix Piercing" "Aviator Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Filming Gear" "Purple Vest" "Helix Piercing" "Green" "White Bucket Hat" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "White Button Up" "Helix Cone Piercing" "Blue" "Pirate Hat" "Joint"]
+            ["Common" "Photo Studio" "White Trench Coat" "Demiourgos Earring" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Studio" "Red Trench Coat" "Rook Piercing" "Round Sunglasses" "White Bucket Hat" "Cigar"]
+            ["Common" "Photo Studio" "White Button Up" "Helix Cone Piercing" "Green" "Top Hat" "Joint"]
+            ["Common" "Filming Gear" "White Trench Coat" "Rook Piercing" "Blue" "Captain Cap" "Rose"]
+            ["Common" "Basement" "White Camouflage T-Shirt" "Helix Piercing" "Red" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Black Trench Coat" "Rook Piercing" "Blue" "Black Beanie" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Jacket" "Helix Piercing" "Red" "Brown Sleeping Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set" "Police Vest" "Demiourgos Earring" "Osmiridium Unity Glasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Black Trench Coat" "Demiourgos Earring" "Red" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Helix Piercing" "Red" "Black Fedora Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Helix Cone Piercing" "Blue" "White Cap" "Cigarette"]
+            ["Common" "To the Moon" "Purple Suit & Tie" "Helix Cone Piercing" "Aviator Sunglasses" "White Bucket Hat" "Rose"]
+            ["Common" "Hall of Fame" "White Button Up" "Rook Piercing" "Green" "Black Beanie" "Rose"]
+            ["Common" "Basement" "White Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Captain Cap" "Cigarette"]
+            ["Common" "Bunnyship" "White Puffer Jacket" "Helix Cone Piercing" "Green" "White Beanie" "Balloon"]
+            ["Common" "Photo Studio" "Black Vest" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Rose"]
+            ["Common" "Money Vault" "Black Vest" "Helix Cone Piercing" "Blue" "Pirate Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Trench Coat" "Demiourgos Earring" "Thug Life Glasses" "White Bucket Hat" "Balloon"]
+            ["Common" "Movie Set" "Black Hoodie" "Demiourgos Earring" "Blue" "Brown Sleeping Cap" "Cigarette"]
+            ["Common" "Photo Shoot" "Green Vest" "Rook Piercing" "Glowing Blue" "Top Hat" "Cigarette"]
+            ["Common" "Bunnyship" "Police Vest" "Helix Piercing" "Glowing Red" "White Bucket Hat" "Resting"]
+            ["Common" "Ouroboros Rain" "Red Waist Coat" "Sword" "Red" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "Black Coat" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "Hall of Fame" "White Hoodie" "Sword" "Elk0nite Unity Glasses" "Top Hat" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Sword" "Elk0nite Unity Glasses" "White Fedora Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Green Vest" "Demiourgos Earring" "Thug Life Glasses" "White Cap" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Puffer Jacket" "Demiourgos Earring" "Thug Life Glasses" "Black Cap" "Balloon"]
+            ["Common" "Photo Shoot" "White Button Up" "Helix Piercing" "Thug Life Glasses" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Hall of Fame" "Green Vest" "Demiourgos Earring" "Red" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "Red Hoodie" "Helix Cone Piercing" "Round Sunglasses" "White Cap" "Balloon"]
+            ["Common" "Ouroboros Rain" "Purple Suit & Tie" "Sword" "Green" "White Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Helix Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Movie Set" "Black Hoodie" "Helix Piercing" "Green" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Demiourgos Earring" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Helix Piercing" "Red" "Black Cap" "Dinamite"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step02 patron kbn-id
+        [
+            ["Common" "Filming Gear" "White Camouflage T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "White Beanie" "Resting"]
+            ["Common" "Photo Studio" "Red Waist Coat" "Helix Cone Piercing" "Thug Life Glasses" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Filming Gear" "MultiversX T-Shirt" "Sword" "Blue" "Black Cap" "Resting"]
+            ["Common" "Hall of Fame" "Black Hoodie" "Rook Piercing" "Glowing Blue" "White Fedora Hat" "Balloon"]
+            ["Common" "Auryn Rain" "Purple Vest" "Rook Piercing" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Hall of Fame" "White Coat" "Sword" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Red Puffer Jacket" "Helix Cone Piercing" "Thug Life Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Photo Shoot" "Black Coat" "Helix Piercing" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Purple Vest" "Sword" "Red" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "To the Moon" "Orange Safety Vest" "Rook Piercing" "vEGLD Focus" "Black Beanie" "Rose"]
+            ["Common" "Filming Gear" "Purple Vest" "Rook Piercing" "Glowing Red" "Pirate Hat" "Dinamite"]
+            ["Common" "Filming Gear" "White Hoodie" "Rook Piercing" "Aviator Sunglasses" "Captain Cap" "Cigarette"]
+            ["Common" "Filming Gear" "Brown Jacket" "Demiourgos Earring" "Red" "Black Beanie" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Hoodie" "Rook Piercing" "Glowing Green" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Auryn Rain" "Blue Suit & Tie" "Demiourgos Earring" "Blue" "White Bucket Hat" "Cigar"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Demiourgos Earring" "Green" "White Bucket Hat" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Demiourgos Earring" "Aviator Sunglasses" "Black Beanie" "Dinamite"]
+            ["Common" "Hall of Fame" "Green Vest" "Demiourgos Earring" "Green" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Green Waist Coat" "Rook Piercing" "Red" "White Cap" "Resting"]
+            ["Common" "Auryn Rain" "Black Hoodie" "Demiourgos Earring" "Green" "White Cap" "Rose"]
+            ["Common" "Money Vault" "Blue Coat" "Rook Piercing" "Green" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "White Hoodie" "Demiourgos Earring" "Silver Demiourgos Sci-Fi Glasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Green Safety Vest" "Rook Piercing" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Bunnyship" "Black Hoodie" "Rook Piercing" "Round Sunglasses" "White Bucket Hat" "Cigar"]
+            ["Common" "Auryn Rain" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Trench Coat" "Helix Cone Piercing" "Blue" "Black Bucket Hat" "Joint"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Sword" "Thug Life Glasses" "Black Bucket Hat" "Cigar"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Demiourgos Earring" "Blue" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Basement" "Blue Coat" "Helix Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Vest" "Sword" "Round Sunglasses" "White Cap" "Resting"]
+            ["Common" "Bunnyship" "Red Puffer Jacket" "Helix Cone Piercing" "Blue" "Black Bucket Hat" "Rose"]
+            ["Common" "To the Moon" "Purple Suit & Tie" "Rook Piercing" "Thug Life Glasses" "White Beanie" "Balloon"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Helix Piercing" "Green" "White Cap" "Resting"]
+            ["Common" "Bunnyship" "White Trench Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Black Cap" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Helix Piercing" "Red" "Black Beanie" "Resting"]
+            ["Common" "Photo Studio" "White Hoodie" "Sword" "vEGLD Focus" "White Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "White Coat" "Rook Piercing" "Green" "Captain Cap" "Joint"]
+            ["Common" "Movie Set Rooms" "White Puffer Jacket" "Helix Cone Piercing" "Round Sunglasses" "Pirate Hat" "Rose"]
+            ["Common" "Photo Studio" "Blue Coat" "Helix Piercing" "Green" "Pirate Hat" "Cigarette"]
+            ["Common" "Basement" "White Hoodie" "Rook Piercing" "Glowing Red" "Black Cap" "Balloon"]
+            ["Common" "Filming Gear" "Black Coat" "Sword" "Glowing Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Vest" "Rook Piercing" "Green" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Red Hoodie" "Helix Cone Piercing" "Glowing Green" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Studio" "Red Trench Coat" "Helix Cone Piercing" "Thug Life Glasses" "Black Cap" "Dinamite"]
+            ["Common" "Basement" "White Coat" "Helix Cone Piercing" "Thug Life Glasses" "White Bucket Hat" "Joint"]
+            ["Common" "Basement" "Black Coat" "Rook Piercing" "Silver Demiourgos Sci-Fi Glasses" "White Beanie" "Resting"]
+            ["Common" "Movie Set Rooms" "White Coat" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Cigar"]
+            ["Common" "Movie Set" "Red Puffer Jacket" "Helix Piercing" "Red" "White Bucket Hat" "Rose"]
+            ["Common" "Photo Shoot" "White T-Shirt" "Rook Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Balloon"]
+            ["Common" "Filming Gear" "Blue Coat" "Sword" "Glowing Green" "Black Beanie" "Balloon"]
+            ["Common" "Movie Set Rooms" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Blue" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "MultiversX T-Shirt" "Helix Cone Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "To the Moon" "Green Waist Coat" "Rook Piercing" "Red" "White Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Black Trench Coat" "Helix Cone Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Bunnyship" "Black Hoodie" "Helix Piercing" "Thug Life Glasses" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Hall of Fame" "White Hoodie" "Helix Piercing" "Golden Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Ouroboros Rain" "Black Jacket" "Helix Piercing" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "Auryn Rain" "White Trench Coat" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Basement" "Black Hoodie" "Demiourgos Earring" "Red" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "Black Coat" "Demiourgos Earring" "Red" "Black Cap" "Dinamite"]
+            ["Common" "Photo Studio" "White Hoodie" "Sword" "Blue" "Pirate Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Purple Suit & Tie" "Bandage" "Glowing Red" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Demiourgos Earring" "Elk0nite Unity Glasses" "White Beanie" "Dinamite"]
+            ["Common" "Bunnyship" "Black Trench Coat" "Demiourgos Earring" "Silver Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "Red Waist Coat" "Helix Piercing" "Aviator Sunglasses" "Black Cap" "Resting"]
+            ["Common" "Bunnyship" "Black Hoodie" "Rook Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Basement" "Purple Suit & Tie" "Helix Cone Piercing" "Aviator Sunglasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "Red Trench Coat" "Helix Piercing" "Glowing Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Ouroboros Rain" "Red Puffer Jacket" "Demiourgos Earring" "Green" "Black Bucket Hat" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Waist Coat" "Rook Piercing" "Glowing Blue" "White Beanie" "Rose"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step03 patron kbn-id
+        [
+            ["Common" "Photo Studio" "Green Waist Coat" "Rook Piercing" "Round Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "To the Moon" "Black Coat" "Sword" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Black Vest" "Helix Piercing" "Green" "Black Beanie" "Metal Coin"]
+            ["Common" "Filming Gear" "White Hoodie" "Rook Piercing" "Elk0nite Unity Glasses" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Blue Suit & Tie" "Helix Cone Piercing" "Elk0nite Unity Glasses" "White Cap" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Green Vest" "Demiourgos Earring" "Red" "White Beanie" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Green Waist Coat" "Rook Piercing" "Aviator Sunglasses" "Captain Cap" "Joint"]
+            ["Common" "Money Vault" "Black Coat" "Rook Piercing" "Glowing Red" "White Beanie" "Joint"]
+            ["Common" "Photo Shoot" "White Hoodie" "Sword" "Thug Life Glasses" "Captain Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Coat" "Helix Cone Piercing" "Red" "Black Beanie" "Joint"]
+            ["Common" "Movie Set" "Red Trench Coat" "Bandage" "Glowing Blue" "Captain Cap" "Cigarette"]
+            ["Common" "Movie Set Rooms" "White Hoodie" "Demiourgos Earring" "Glowing Green" "Black Beanie" "Balloon"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Helix Piercing" "Green" "White Bucket Hat" "Resting"]
+            ["Common" "Basement" "Green Vest" "Rook Piercing" "Blue" "Black Fedora Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Green Camouflage T-Shirt" "Helix Piercing" "Blue" "White Fedora Hat" "Balloon"]
+            ["Common" "Money Vault" "Green Waist Coat" "Demiourgos Earring" "vEGLD Focus" "White Fedora Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Waist Coat" "Demiourgos Earring" "Glowing Blue" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Money Vault" "Black Jacket" "Demiourgos Earring" "Blue" "Pirate Hat" "Rose"]
+            ["Common" "To the Moon" "Blue Coat" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Photo Studio" "White Camouflage T-Shirt" "Demiourgos Earring" "Aviator Sunglasses" "White Beanie" "Dinamite"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Demiourgos Earring" "Osmiridium Unity Glasses" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "Photo Studio" "Black Trench Coat" "Helix Piercing" "Aviator Sunglasses" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "White T-Shirt" "Sword" "Blue" "White Beanie" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Helix Piercing" "Red" "Black Cap" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "White Trench Coat" "Helix Piercing" "Green" "Black Fedora Hat" "Joint"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Sword" "Aviator Sunglasses" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Blue Suit & Tie" "Sword" "Red" "White Beanie" "Cigarette"]
+            ["Common" "Bunnyship" "Police Vest" "Helix Piercing" "Silver Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "Green Vest" "Sword" "Glowing Green" "Black Cap" "Joint"]
+            ["Common" "Ouroboros Rain" "MultiversX T-Shirt" "Demiourgos Earring" "Red" "Black Cap" "Metal Coin"]
+            ["Common" "Auryn Rain" "Green Safety Vest" "Helix Cone Piercing" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Blue Suit & Tie" "Helix Cone Piercing" "Thug Life Glasses" "White Bucket Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Jacket" "Rook Piercing" "Thug Life Glasses" "White Cap" "Joint"]
+            ["Common" "Ouroboros Rain" "Red Hoodie" "Helix Cone Piercing" "Green" "White Cap" "Cigarette"]
+            ["Legendary" "Elite-Auryn Rain" "MultiversX T-Shirt" "Legendary Demiourgos Earring" "Thug Life Glasses" "White Beanie" "Legendary Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "White Camouflage T-Shirt" "Rook Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Money Vault" "Black Jacket" "Sword" "Green" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Filming Gear" "Black Trench Coat" "Rook Piercing" "Round Sunglasses" "White Cap" "Resting"]
+            ["Common" "Basement" "White T-Shirt" "Demiourgos Earring" "Green" "Black Beanie" "Dinamite"]
+            ["Common" "To the Moon" "Black Coat" "Rook Piercing" "Titaniumgold Unity Glasses" "Top Hat" "Rose"]
+            ["Common" "Basement" "Black Vest" "Rook Piercing" "Aviator Sunglasses" "Captain Cap" "Rose"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Rook Piercing" "Thug Life Glasses" "Black Bucket Hat" "Rose"]
+            ["Common" "Basement" "Black Coat" "Rook Piercing" "Green" "White Fedora Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "Purple Vest" "Rook Piercing" "Round Sunglasses" "White Cap" "Metal Coin"]
+            ["Common" "Photo Shoot" "Black Coat" "Sword" "Silver Demiourgos Sci-Fi Glasses" "Captain Cap" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Green Waist Coat" "Rook Piercing" "Blue" "White Fedora Hat" "Resting"]
+            ["Common" "Basement" "Police Vest" "Helix Cone Piercing" "Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "Green Camouflage T-Shirt" "Demiourgos Earring" "Green" "Captain Cap" "Cigar"]
+            ["Common" "To the Moon" "Black Coat" "Rook Piercing" "Elk0nite Unity Glasses" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Helix Cone Piercing" "Blue" "White Beanie" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "White Hoodie" "Demiourgos Earring" "Round Sunglasses" "White Cap" "Cigarette"]
+            ["Common" "To the Moon" "Black Coat" "Helix Cone Piercing" "Aviator Sunglasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Helix Piercing" "Glowing Green" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Money Vault" "Red Hoodie" "Rook Piercing" "Red" "White Bucket Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Puffer Jacket" "Helix Cone Piercing" "Elk0nite Unity Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "White Button Up" "Sword" "vEGLD Focus" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Filming Gear" "White Coat" "Helix Piercing" "Glowing Red" "White Cap" "Resting"]
+            ["Common" "Ouroboros Rain" "Black Coat" "Rook Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "White T-Shirt" "Demiourgos Earring" "Red" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Basement" "Black Trench Coat" "Sword" "Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Basement" "Black Jacket" "Helix Cone Piercing" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Photo Shoot" "MultiversX T-Shirt" "Demiourgos Earring" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Black Hoodie" "Helix Cone Piercing" "Blue" "White Fedora Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Rook Piercing" "Red" "Pirate Hat" "Dinamite"]
+            ["Common" "Bunnyship" "Red Puffer Jacket" "Demiourgos Earring" "Green" "White Cap" "Dinamite"]
+            ["Common" "Movie Set" "White Trench Coat" "Helix Cone Piercing" "Thug Life Glasses" "Top Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Purple Vest" "Rook Piercing" "Green" "Pirate Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Coat" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Helix Cone Piercing" "Osmiridium Unity Glasses" "Top Hat" "Dinamite"]
+            ["Common" "Filming Gear" "Green Camouflage T-Shirt" "Helix Piercing" "Osmiridium Unity Glasses" "White Fedora Hat" "Balloon"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step04 patron kbn-id
+        [
+            ["Common" "Hall of Fame" "Black Vest" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Cap" "Cigarette"]
+            ["Common" "Photo Studio" "Red Trench Coat" "Demiourgos Earring" "Blue" "Black Beanie" "Balloon"]
+            ["Common" "Bunnyship" "Black Puffer Jacket" "Helix Piercing" "Green" "Pirate Hat" "Balloon"]
+            ["Common" "Ouroboros Rain" "Black Jacket" "Rook Piercing" "Blue" "White Beanie" "Balloon"]
+            ["Common" "Ouroboros Rain" "Purple Vest" "Helix Piercing" "Green" "Black Fedora Hat" "Joint"]
+            ["Common" "Ouroboros Rain" "Blue Suit & Tie" "Helix Piercing" "Green" "Black Cap" "Resting"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Helix Cone Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Basement" "Brown Jacket" "Helix Cone Piercing" "Golden Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "Orange Safety Vest" "Rook Piercing" "Green" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "Purple Vest" "Demiourgos Earring" "Blue" "MultiversX Gangsta Cap" "Cigarette"]
+            ["Common" "Basement" "White Puffer Jacket" "Demiourgos Earring" "Blue" "White Beanie" "Resting"]
+            ["Common" "Movie Set" "Red Trench Coat" "Helix Piercing" "Round Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Hall of Fame" "Blue Suit & Tie" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Pirate Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "Black Vest" "Rook Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Helix Cone Piercing" "Red" "White Bucket Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Trench Coat" "Sword" "Round Sunglasses" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "To the Moon" "Black Coat" "Helix Cone Piercing" "Aviator Sunglasses" "White Beanie" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Trench Coat" "Rook Piercing" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Photo Studio" "Black Vest" "Rook Piercing" "Round Sunglasses" "Black Beanie" "Resting"]
+            ["Common" "Bunnyship" "Black Hoodie" "Helix Cone Piercing" "Aviator Sunglasses" "Pirate Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Trench Coat" "Helix Cone Piercing" "Glowing Red" "White Cap" "Balloon"]
+            ["Common" "Movie Set" "Brown Jacket" "Demiourgos Earring" "Red" "White Cap" "Metal Coin"]
+            ["Common" "Movie Set" "White Trench Coat" "Rook Piercing" "Round Sunglasses" "Black Cap" "Metal Coin"]
+            ["Common" "Filming Gear" "Green Camouflage T-Shirt" "Demiourgos Earring" "Red" "White Beanie" "Dinamite"]
+            ["Common" "Movie Set" "Red Hoodie" "Sword" "Red" "Black Bucket Hat" "Joint"]
+            ["Common" "Money Vault" "Red Waist Coat" "Rook Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Set" "Black Coat" "Rook Piercing" "Blue" "White Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Purple Vest" "Demiourgos Earring" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Helix Piercing" "Round Sunglasses" "White Fedora Hat" "Resting"]
+            ["Common" "Photo Studio" "Purple Vest" "Helix Cone Piercing" "Thug Life Glasses" "Black Fedora Hat" "Cigarette"]
+            ["Common" "Basement" "White Button Up" "Helix Piercing" "Green" "Pirate Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "Black Hoodie" "Sword" "Glowing Red" "White Bucket Hat" "Rose"]
+            ["Common" "Filming Gear" "White Button Up" "Demiourgos Earring" "Green" "White Beanie" "Balloon"]
+            ["Common" "Movie Set Rooms" "White Puffer Jacket" "Helix Cone Piercing" "Thug Life Glasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "To the Moon" "Blue Coat" "Demiourgos Earring" "Glowing Green" "White Beanie" "Metal Coin"]
+            ["Common" "Money Vault" "Black Coat" "Rook Piercing" "Glowing Blue" "Black Cap" "Metal Coin"]
+            ["Common" "Auryn Rain" "Blue Coat" "Demiourgos Earring" "Green" "Black Beanie" "Joint"]
+            ["Common" "Auryn Rain" "Black Puffer Jacket" "Rook Piercing" "Blue" "White Fedora Hat" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Demiourgos Earring" "Titaniumgold Unity Glasses" "White Bucket Hat" "Rose"]
+            ["Common" "Ouroboros Rain" "White Button Up" "Rook Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Rose"]
+            ["Common" "Auryn Rain" "White Trench Coat" "Sword" "Round Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Basement" "Red Hoodie" "Rook Piercing" "Aviator Sunglasses" "Pirate Hat" "Balloon"]
+            ["Common" "Bunnyship" "White T-Shirt" "Helix Cone Piercing" "Elk0nite Unity Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set" "White Camouflage T-Shirt" "Rook Piercing" "Blue" "Black Beanie" "Metal Coin"]
+            ["Common" "Money Vault" "Brown Jacket" "Sword" "Green" "Black Cap" "Balloon"]
+            ["Common" "Photo Shoot" "White Puffer Jacket" "Sword" "Blue" "Top Hat" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Sword" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Shoot" "Blue Coat" "Rook Piercing" "Red" "White Cap" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Helix Cone Piercing" "Red" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Helix Cone Piercing" "Green" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Money Vault" "White Hoodie" "Rook Piercing" "Titaniumgold Unity Glasses" "White Beanie" "Joint"]
+            ["Common" "To the Moon" "White Coat" "Rook Piercing" "Glowing Green" "Black Fedora Hat" "Resting"]
+            ["Common" "Photo Shoot" "Red Waist Coat" "Rook Piercing" "Elk0nite Unity Glasses" "White Beanie" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Puffer Jacket" "Rook Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Shoot" "Black Puffer Jacket" "Sword" "Elk0nite Unity Glasses" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "White Puffer Jacket" "Helix Cone Piercing" "Red" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Red Waist Coat" "Helix Cone Piercing" "Green" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Demiourgos Earring" "Round Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "Red Puffer Jacket" "Sword" "Thug Life Glasses" "Black Bucket Hat" "Rose"]
+            ["Common" "Money Vault" "Red Puffer Jacket" "Helix Piercing" "Green" "White Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "Red Puffer Jacket" "Helix Cone Piercing" "Red" "Black Cap" "Cigarette"]
+            ["Common" "Photo Studio" "White Coat" "Demiourgos Earring" "Aviator Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Auryn Rain" "White Puffer Jacket" "Demiourgos Earring" "Red" "Black Beanie" "Rose"]
+            ["Legendary" "Legendary Photo Shoot" "Black Jacket" "Legendary Demiourgos Earring" "Thug Life Glasses" "Black Beanie" "Legendary Joint"]
+            ["Common" "Photo Shoot" "White Hoodie" "Rook Piercing" "Blue" "White Bucket Hat" "Joint"]
+            ["Common" "Basement" "White Coat" "Demiourgos Earring" "Glowing Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "Orange Safety Vest" "Rook Piercing" "Green" "Black Bucket Hat" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Jacket" "Rook Piercing" "Round Sunglasses" "Captain Cap" "Metal Coin"]
+            ["Common" "Money Vault" "Purple Vest" "Helix Cone Piercing" "Blue" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Ouroboros Rain" "Red Trench Coat" "Rook Piercing" "Aviator Sunglasses" "White Beanie" "Balloon"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step05 patron kbn-id
+        [
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Rook Piercing" "Red" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Hall of Fame" "White Hoodie" "Rook Piercing" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Demiourgos Earring" "Green" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "Blue Suit & Tie" "Helix Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Helix Cone Piercing" "Thug Life Glasses" "White Beanie" "Dinamite"]
+            ["Common" "Filming Gear" "White Button Up" "Rook Piercing" "Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Green Vest" "Helix Piercing" "Aviator Sunglasses" "Pirate Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Blue Coat" "Helix Piercing" "Green" "Pirate Hat" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Camouflage T-Shirt" "Rook Piercing" "vEGLD Focus" "White Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Ouroboros Rain" "Black Hoodie" "Rook Piercing" "Red" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Helix Piercing" "Round Sunglasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "Bunnyship" "Police Vest" "Helix Piercing" "Blue" "Captain Cap" "Cigar"]
+            ["Common" "Photo Shoot" "White Hoodie" "Demiourgos Earring" "Glowing Red" "White Cap" "Balloon"]
+            ["Common" "To the Moon" "Red Hoodie" "Helix Piercing" "Green" "Pirate Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Puffer Jacket" "Helix Cone Piercing" "Round Sunglasses" "Pirate Hat" "Metal Coin"]
+            ["Common" "Money Vault" "White Camouflage T-Shirt" "Demiourgos Earring" "Glowing Green" "Black Cap" "Joint"]
+            ["Common" "Basement" "Green Waist Coat" "Rook Piercing" "Thug Life Glasses" "Pirate Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Coat" "Helix Piercing" "Blue" "White Beanie" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Jacket" "Demiourgos Earring" "Red" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Rook Piercing" "Glowing Blue" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Movie Set" "White Puffer Jacket" "Helix Cone Piercing" "Thug Life Glasses" "Black Cap" "Balloon"]
+            ["Common" "Basement" "Purple Vest" "Rook Piercing" "Blue" "White Fedora Hat" "Cigar"]
+            ["Common" "Photo Studio" "White Puffer Jacket" "Bandage" "Bronze Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "MultiversX T-Shirt" "Helix Cone Piercing" "Golden Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Photo Studio" "Blue Coat" "Demiourgos Earring" "Elk0nite Unity Glasses" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Set" "Red Hoodie" "Demiourgos Earring" "vEGLD Focus" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Green Waist Coat" "Helix Piercing" "Thug Life Glasses" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Photo Shoot" "Black Vest" "Helix Piercing" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "Bunnyship" "Black Trench Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Metal Coin"]
+            ["Common" "Photo Studio" "Black Coat" "Sword" "Red" "Black Bucket Hat" "Rose"]
+            ["Common" "Bunnyship" "Blue Coat" "Demiourgos Earring" "Green" "Black Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Red Hoodie" "Helix Piercing" "vEGLD Focus" "White Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Bandage" "vEGLD Focus" "White Bucket Hat" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Orange Safety Vest" "Helix Cone Piercing" "Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "White Hoodie" "Helix Cone Piercing" "Glowing Red" "Pirate Hat" "Rose"]
+            ["Common" "Photo Studio" "Black Vest" "Sword" "Round Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Filming Gear" "Black Coat" "Helix Piercing" "Thug Life Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Hall of Fame" "Red Puffer Jacket" "Sword" "Glowing Red" "White Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "White Coat" "Bandage" "Red" "White Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Hall of Fame" "Red Hoodie" "Helix Piercing" "Aviator Sunglasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Photo Shoot" "White Coat" "Helix Piercing" "Thug Life Glasses" "White Beanie" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Helix Cone Piercing" "Round Sunglasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Bunnyship" "Brown Jacket" "Demiourgos Earring" "Red" "White Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "White Coat" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Pirate Hat" "Balloon"]
+            ["Common" "To the Moon" "Purple Suit & Tie" "Helix Piercing" "Green" "Black Beanie" "Rose"]
+            ["Common" "Movie Set" "Black Trench Coat" "Helix Cone Piercing" "Blue" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Filming Gear" "White Camouflage T-Shirt" "Demiourgos Earring" "Glowing Blue" "Pirate Hat" "Resting"]
+            ["Common" "Basement" "Black Puffer Jacket" "Demiourgos Earring" "Osmiridium Unity Glasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "Blue Suit & Tie" "Helix Piercing" "Osmiridium Unity Glasses" "Black Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "Red Trench Coat" "Demiourgos Earring" "Osmiridium Unity Glasses" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Demiourgos Earring" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Red Hoodie" "Helix Piercing" "Aviator Sunglasses" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "MultiversX T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "Black Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "White T-Shirt" "Rook Piercing" "Blue" "White Cap" "Resting"]
+            ["Common" "Basement" "White Coat" "Helix Piercing" "Green" "Black Bucket Hat" "Joint"]
+            ["Common" "To the Moon" "Black Jacket" "Rook Piercing" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Green Waist Coat" "Helix Cone Piercing" "Blue" "Black Fedora Hat" "Rose"]
+            ["Common" "Filming Gear" "MultiversX T-Shirt" "Bandage" "Glowing Green" "Black Bucket Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Coat" "Rook Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Demiourgos Earring" "Blue" "White Cap" "Balloon"]
+            ["Common" "Filming Gear" "White Trench Coat" "Sword" "Glowing Blue" "Black Fedora Hat" "Cigar"]
+            ["Common" "Filming Gear" "Black Hoodie" "Demiourgos Earring" "Blue" "Captain Cap" "Dinamite"]
+            ["Common" "Photo Shoot" "White Coat" "Helix Piercing" "Round Sunglasses" "Black Beanie" "Dinamite"]
+            ["Common" "Filming Gear" "Black Vest" "Sword" "Red" "White Cap" "Metal Coin"]
+            ["Common" "Filming Gear" "White Trench Coat" "Demiourgos Earring" "Blue" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "To the Moon" "Brown Jacket" "Demiourgos Earring" "Glowing Green" "White Cap" "Balloon"]
+            ["Common" "Movie Set Rooms" "Green Vest" "Demiourgos Earring" "Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Hall of Fame" "White Trench Coat" "Rook Piercing" "Red" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "To the Moon" "White Trench Coat" "Demiourgos Earring" "Aviator Sunglasses" "White Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Purple Suit & Tie" "Demiourgos Earring" "Titaniumgold Unity Glasses" "Black Cap" "Rose"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step06 patron kbn-id
+        [
+            ["Common" "Movie Set" "Black Coat" "Sword" "Thug Life Glasses" "Black Cap" "Dinamite"]
+            ["Common" "Money Vault" "Red Trench Coat" "Rook Piercing" "Red" "Top Hat" "Cigarette"]
+            ["Common" "Hall of Fame" "White T-Shirt" "Demiourgos Earring" "Aviator Sunglasses" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Brown Jacket" "Rook Piercing" "Red" "White Fedora Hat" "Dinamite"]
+            ["Common" "Filming Gear" "MultiversX T-Shirt" "Demiourgos Earring" "Red" "Black Cap" "Balloon"]
+            ["Common" "Photo Shoot" "Black Coat" "Demiourgos Earring" "Red" "Black Cap" "Metal Coin"]
+            ["Common" "Basement" "Red Waist Coat" "Demiourgos Earring" "Glowing Green" "Black Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Black Trench Coat" "Rook Piercing" "Green" "White Cap" "Tobacco Pipe"]
+            ["Common" "Hall of Fame" "White Coat" "Helix Cone Piercing" "Glowing Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Hoodie" "Helix Cone Piercing" "Blue" "Black Beanie" "Metal Coin"]
+            ["Common" "Basement" "White Hoodie" "Rook Piercing" "Thug Life Glasses" "White Beanie" "Joint"]
+            ["Common" "Hall of Fame" "Red Waist Coat" "Rook Piercing" "Red" "Black Fedora Hat" "Joint"]
+            ["Common" "Filming Gear" "White Puffer Jacket" "Helix Piercing" "Green" "White Fedora Hat" "Dinamite"]
+            ["Common" "To the Moon" "Green Vest" "Helix Piercing" "Blue" "Pirate Hat" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "White T-Shirt" "Helix Piercing" "Red" "Pirate Hat" "Tobacco Pipe"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Camouflage T-Shirt" "Bandage" "Glowing Green" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Red Trench Coat" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Hoodie" "Sword" "Blue" "White Fedora Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "MultiversX T-Shirt" "Helix Cone Piercing" "Silver Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Filming Gear" "Black Coat" "Helix Piercing" "Green" "Pirate Hat" "Rose"]
+            ["Common" "Auryn Rain" "Red Hoodie" "Bandage" "Red" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Money Vault" "Black Trench Coat" "Helix Piercing" "Blue" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Money Vault" "White Coat" "Demiourgos Earring" "Round Sunglasses" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Money Vault" "Black Trench Coat" "Rook Piercing" "Red" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Rook Piercing" "Red" "White Bucket Hat" "Resting"]
+            ["Common" "Hall of Fame" "Purple Suit & Tie" "Demiourgos Earring" "Glowing Blue" "Pirate Hat" "Dinamite"]
+            ["Common" "Auryn Rain" "Brown Jacket" "Helix Piercing" "Green" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Trench Coat" "Helix Piercing" "Blue" "Black Fedora Hat" "Joint"]
+            ["Common" "Movie Set Rooms" "White Puffer Jacket" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Pirate Hat" "Resting"]
+            ["Common" "To the Moon" "White Hoodie" "Helix Cone Piercing" "Glowing Green" "Black Fedora Hat" "Balloon"]
+            ["Common" "Photo Shoot" "White Button Up" "Helix Piercing" "vEGLD Focus" "Pirate Hat" "Cigar"]
+            ["Common" "Hall of Fame" "Red Puffer Jacket" "Helix Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Resting"]
+            ["Common" "Filming Gear" "White Trench Coat" "Rook Piercing" "Elk0nite Unity Glasses" "White Beanie" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Button Up" "Helix Piercing" "Round Sunglasses" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set Rooms" "White Button Up" "Demiourgos Earring" "Aviator Sunglasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "MultiversX T-Shirt" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Puffer Jacket" "Rook Piercing" "Elk0nite Unity Glasses" "Black Bucket Hat" "Resting"]
+            ["Legendary" "Legendary Studio" "MultiversX T-Shirt" "Legendary Demiourgos Earring" "Aviator Sunglasses" "Top Hat" "Legendary Cigar"]
+            ["Common" "To the Moon" "Purple Vest" "Rook Piercing" "Glowing Green" "White Cap" "Joint"]
+            ["Common" "Ouroboros Rain" "White Button Up" "Rook Piercing" "Red" "Captain Cap" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Demiourgos Earring" "Red" "White Cap" "Balloon"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Demiourgos Earring" "Blue" "Black Fedora Hat" "Cigar"]
+            ["Common" "To the Moon" "Red Hoodie" "Demiourgos Earring" "Red" "Black Beanie" "Rose"]
+            ["Common" "Money Vault" "MultiversX T-Shirt" "Demiourgos Earring" "Green" "White Cap" "Balloon"]
+            ["Common" "Filming Gear" "Black Coat" "Demiourgos Earring" "Green" "White Beanie" "Resting"]
+            ["Common" "Photo Studio" "Black Jacket" "Sword" "Green" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "Green Camouflage T-Shirt" "Helix Piercing" "Red" "Black Bucket Hat" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Black Trench Coat" "Helix Cone Piercing" "Round Sunglasses" "White Cap" "Balloon"]
+            ["Common" "Photo Studio" "Black Vest" "Sword" "Thug Life Glasses" "White Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "Brown Jacket" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Captain Cap" "Balloon"]
+            ["Common" "Ouroboros Rain" "Red Trench Coat" "Bandage" "Aviator Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Hall of Fame" "Black Coat" "Demiourgos Earring" "Red" "White Beanie" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "White T-Shirt" "Rook Piercing" "Aviator Sunglasses" "White Beanie" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "White T-Shirt" "Rook Piercing" "Glowing Red" "Black Fedora Hat" "Joint"]
+            ["Common" "Photo Shoot" "White Puffer Jacket" "Helix Cone Piercing" "Green" "White Fedora Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Sword" "Blue" "Black Fedora Hat" "Balloon"]
+            ["Legendary" "Legendary Studio" "White Button Up" "Legendary Demiourgos Earring" "Round Sunglasses" "White Fedora Hat" "Legendary Rose"]
+            ["Common" "Bunnyship" "White Hoodie" "Helix Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Black Coat" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Cigar"]
+            ["Common" "Photo Studio" "Black Vest" "Sword" "Glowing Green" "Pirate Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Purple Vest" "Helix Piercing" "Osmiridium Unity Glasses" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Hall of Fame" "Black Coat" "Demiourgos Earring" "Aviator Sunglasses" "Black Beanie" "Rose"]
+            ["Common" "Basement" "Black Trench Coat" "Sword" "Green" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Bunnyship" "Red Hoodie" "Sword" "Thug Life Glasses" "White Cap" "Dinamite"]
+            ["Common" "Hall of Fame" "Green Camouflage T-Shirt" "Helix Piercing" "Green" "White Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "White T-Shirt" "Helix Piercing" "Glowing Red" "White Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Green Vest" "Bandage" "Blue" "White Cap" "Metal Coin"]
+            ["Common" "Basement" "Red Hoodie" "Sword" "Elk0nite Unity Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White Trench Coat" "Sword" "Elk0nite Unity Glasses" "White Fedora Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Helix Piercing" "Osmiridium Unity Glasses" "Black Beanie" "Joint"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step07 patron kbn-id
+        [
+            ["Common" "Ouroboros Rain" "White Hoodie" "Demiourgos Earring" "Green" "Black Fedora Hat" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Black Vest" "Demiourgos Earring" "Osmiridium Unity Glasses" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Vest" "Helix Piercing" "Red" "Captain Cap" "Metal Coin"]
+            ["Common" "Filming Gear" "Green Waist Coat" "Helix Cone Piercing" "Blue" "Captain Cap" "Cigarette"]
+            ["Common" "Basement" "White Camouflage T-Shirt" "Rook Piercing" "Glowing Blue" "Black Beanie" "Resting"]
+            ["Common" "Bunnyship" "Green Safety Vest" "Helix Cone Piercing" "Glowing Green" "Black Cap" "Balloon"]
+            ["Common" "Bunnyship" "Green Camouflage T-Shirt" "Demiourgos Earring" "Golden Demiourgos Sci-Fi Glasses" "Black Beanie" "Cigar"]
+            ["Common" "Photo Shoot" "Orange Safety Vest" "Bandage" "Bronze Demiourgos Sci-Fi Glasses" "White Beanie" "Joint"]
+            ["Common" "Ouroboros Rain" "Red Hoodie" "Demiourgos Earring" "Red" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Basement" "White Hoodie" "Helix Piercing" "Thug Life Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Red Hoodie" "Rook Piercing" "Glowing Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Auryn Rain" "White Button Up" "Helix Cone Piercing" "Red" "White Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Money Vault" "White Button Up" "Helix Piercing" "Green" "Black Beanie" "Balloon"]
+            ["Common" "To the Moon" "Green Camouflage T-Shirt" "Helix Piercing" "Round Sunglasses" "Black Cap" "Dinamite"]
+            ["Common" "Photo Studio" "Blue Suit & Tie" "Helix Piercing" "Glowing Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "Purple Vest" "Helix Piercing" "Aviator Sunglasses" "Top Hat" "Balloon"]
+            ["Common" "Photo Studio" "Red Hoodie" "Helix Piercing" "Osmiridium Unity Glasses" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Basement" "Red Hoodie" "Helix Piercing" "Red" "White Cap" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Helix Piercing" "Thug Life Glasses" "Pirate Hat" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Camouflage T-Shirt" "Sword" "Blue" "Black Cap" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "White T-Shirt" "Helix Piercing" "Red" "Captain Cap" "Balloon"]
+            ["Common" "Basement" "Black Trench Coat" "Helix Cone Piercing" "Green" "White Cap" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Green Camouflage T-Shirt" "Sword" "Green" "Black Cap" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Demiourgos Earring" "Blue" "White Beanie" "Resting"]
+            ["Common" "Hall of Fame" "White T-Shirt" "Helix Cone Piercing" "Blue" "White Bucket Hat" "Tobacco Pipe"]
+            ["Common" "To the Moon" "White Camouflage T-Shirt" "Rook Piercing" "Thug Life Glasses" "White Cap" "Tobacco Pipe"]
+            ["Common" "Money Vault" "Black Coat" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Cap" "Joint"]
+            ["Common" "Hall of Fame" "Red Trench Coat" "Helix Cone Piercing" "Green" "White Beanie" "Cigarette"]
+            ["Common" "Money Vault" "Black Trench Coat" "Demiourgos Earring" "Blue" "Pirate Hat" "Resting"]
+            ["Common" "Photo Shoot" "Purple Vest" "Sword" "Round Sunglasses" "Black Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Demiourgos Earring" "Red" "Black Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "Black Trench Coat" "Helix Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Green Camouflage T-Shirt" "Helix Piercing" "Red" "White Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "White Coat" "Rook Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Black Hoodie" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "Orange Safety Vest" "Demiourgos Earring" "Green" "White Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "White Camouflage T-Shirt" "Helix Piercing" "Red" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Photo Studio" "Black Hoodie" "Rook Piercing" "Elk0nite Unity Glasses" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "White Coat" "Helix Piercing" "Glowing Green" "Pirate Hat" "Resting"]
+            ["Common" "Auryn Rain" "Black Trench Coat" "Rook Piercing" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Bunnyship" "White T-Shirt" "Demiourgos Earring" "Elk0nite Unity Glasses" "White Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "Purple Vest" "Rook Piercing" "Elk0nite Unity Glasses" "Black Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Orange Safety Vest" "Helix Piercing" "Red" "White Bucket Hat" "Joint"]
+            ["Common" "Movie Set Rooms" "Green Safety Vest" "Rook Piercing" "Glowing Blue" "White Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "Black Trench Coat" "Helix Cone Piercing" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "White T-Shirt" "Helix Piercing" "Round Sunglasses" "Captain Cap" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Camouflage T-Shirt" "Rook Piercing" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Blue Coat" "Demiourgos Earring" "Green" "Black Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "White Camouflage T-Shirt" "Helix Cone Piercing" "Blue" "Captain Cap" "Cigar"]
+            ["Common" "Ouroboros Rain" "Brown Jacket" "Sword" "Green" "White Bucket Hat" "Joint"]
+            ["Common" "Movie Set" "Orange Safety Vest" "Rook Piercing" "vEGLD Focus" "Black Bucket Hat" "Rose"]
+            ["Common" "Ouroboros Rain" "Black Puffer Jacket" "Sword" "Green" "White Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "Green Vest" "Demiourgos Earring" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Hall of Fame" "White Camouflage T-Shirt" "Rook Piercing" "Thug Life Glasses" "Pirate Hat" "Tobacco Pipe"]
+            ["Common" "Filming Gear" "Blue Coat" "Sword" "Round Sunglasses" "Black Cap" "Joint"]
+            ["Common" "To the Moon" "Orange Safety Vest" "Helix Piercing" "Thug Life Glasses" "Top Hat" "Resting"]
+            ["Common" "Movie Set" "Black Trench Coat" "Helix Cone Piercing" "vEGLD Focus" "White Cap" "Metal Coin"]
+            ["Common" "Photo Studio" "White T-Shirt" "Bandage" "vEGLD Focus" "Black Fedora Hat" "Resting"]
+            ["Common" "Bunnyship" "Black Hoodie" "Sword" "Round Sunglasses" "White Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Suit & Tie" "Demiourgos Earring" "Aviator Sunglasses" "White Cap" "Resting"]
+            ["Common" "Hall of Fame" "Green Vest" "Helix Piercing" "Green" "White Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Green Waist Coat" "Rook Piercing" "Red" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Basement" "White Puffer Jacket" "Demiourgos Earring" "Round Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "To the Moon" "Black Vest" "Helix Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Photo Shoot" "Black Trench Coat" "Helix Piercing" "Blue" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Photo Studio" "White Coat" "Rook Piercing" "Blue" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "White Puffer Jacket" "Helix Piercing" "Thug Life Glasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Basement" "White Hoodie" "Helix Piercing" "Red" "Black Cap" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Vest" "Helix Piercing" "Round Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "Bunnyship" "Green Safety Vest" "Bandage" "Glowing Red" "White Fedora Hat" "Dinamite"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step08 patron kbn-id
+        [
+            ["Common" "Basement" "Purple Vest" "Helix Cone Piercing" "Red" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "White T-Shirt" "Rook Piercing" "Aviator Sunglasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Purple Vest" "Rook Piercing" "Thug Life Glasses" "Black Beanie" "Dinamite"]
+            ["Common" "Filming Gear" "Red Puffer Jacket" "Helix Cone Piercing" "Green" "Top Hat" "Resting"]
+            ["Common" "Movie Set" "Black Vest" "Demiourgos Earring" "Round Sunglasses" "Pirate Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Sword" "Aviator Sunglasses" "Black Beanie" "Balloon"]
+            ["Common" "Hall of Fame" "Red Trench Coat" "Bandage" "Bronze Demiourgos Sci-Fi Glasses" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Black Vest" "Demiourgos Earring" "Green" "White Bucket Hat" "Balloon"]
+            ["Common" "Hall of Fame" "White Trench Coat" "Rook Piercing" "Glowing Green" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Auryn Rain" "White Coat" "Bandage" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Sword" "Elk0nite Unity Glasses" "Black Beanie" "Joint"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Black Bucket Hat" "Joint"]
+            ["Common" "Money Vault" "Black Jacket" "Sword" "Red" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "Black Vest" "Demiourgos Earring" "Bronze Demiourgos Sci-Fi Glasses" "White Beanie" "Rose"]
+            ["Common" "Movie Set Rooms" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Blue" "Black Fedora Hat" "Rose"]
+            ["Common" "Ouroboros Rain" "Police Vest" "Helix Cone Piercing" "Green" "Black Beanie" "Joint"]
+            ["Common" "Photo Studio" "Black Coat" "Helix Cone Piercing" "Blue" "Black Cap" "Balloon"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Rook Piercing" "Thug Life Glasses" "White Fedora Hat" "Resting"]
+            ["Common" "Photo Studio" "White Trench Coat" "Rook Piercing" "Thug Life Glasses" "Black Fedora Hat" "Rose"]
+            ["Common" "Money Vault" "Brown Jacket" "Demiourgos Earring" "Round Sunglasses" "Black Cap" "Metal Coin"]
+            ["Common" "Bunnyship" "White Camouflage T-Shirt" "Bandage" "Bronze Demiourgos Sci-Fi Glasses" "White Beanie" "Balloon"]
+            ["Common" "Filming Gear" "White Camouflage T-Shirt" "Helix Piercing" "vEGLD Focus" "White Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "Black Coat" "Sword" "Glowing Green" "White Bucket Hat" "Dinamite"]
+            ["Common" "Ouroboros Rain" "White Puffer Jacket" "Helix Piercing" "Green" "White Bucket Hat" "Balloon"]
+            ["Common" "To the Moon" "Blue Coat" "Helix Cone Piercing" "Elk0nite Unity Glasses" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Set" "White Button Up" "Helix Piercing" "Red" "Brown Sleeping Cap" "Cigar"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Bandage" "Glowing Blue" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "Blue Suit & Tie" "Sword" "Red" "Black Beanie" "Rose"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Helix Cone Piercing" "Aviator Sunglasses" "Black Cap" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Blue Coat" "Helix Piercing" "Aviator Sunglasses" "Top Hat" "Joint"]
+            ["Common" "To the Moon" "White Coat" "Rook Piercing" "Round Sunglasses" "White Bucket Hat" "Resting"]
+            ["Common" "Photo Shoot" "White T-Shirt" "Helix Cone Piercing" "Blue" "White Beanie" "Balloon"]
+            ["Common" "Hall of Fame" "Black Jacket" "Helix Piercing" "Blue" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "Blue Coat" "Helix Piercing" "Red" "White Beanie" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Rook Piercing" "Aviator Sunglasses" "White Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Green Vest" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Cap" "Dinamite"]
+            ["Common" "Photo Shoot" "White Puffer Jacket" "Rook Piercing" "vEGLD Focus" "White Fedora Hat" "Resting"]
+            ["Common" "To the Moon" "White Button Up" "Demiourgos Earring" "vEGLD Focus" "Pirate Hat" "Joint"]
+            ["Common" "Filming Gear" "Purple Vest" "Demiourgos Earring" "Glowing Red" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Sword" "Glowing Blue" "Black Cap" "Metal Coin"]
+            ["Common" "Auryn Rain" "Brown Jacket" "Helix Piercing" "Green" "Black Cap" "Dinamite"]
+            ["Common" "To the Moon" "Black Hoodie" "Helix Piercing" "Aviator Sunglasses" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Red Hoodie" "Demiourgos Earring" "Blue" "White Bucket Hat" "Cigarette"]
+            ["Common" "Movie Set" "White Coat" "Helix Piercing" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "Black Jacket" "Demiourgos Earring" "Red" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Suit & Tie" "Helix Cone Piercing" "Round Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Photo Studio" "Red Puffer Jacket" "Helix Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Balloon"]
+            ["Common" "Photo Shoot" "Blue Coat" "Helix Piercing" "Green" "Black Cap" "Joint"]
+            ["Common" "Filming Gear" "Purple Vest" "Helix Cone Piercing" "Blue" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Demiourgos Earring" "Round Sunglasses" "White Bucket Hat" "Tobacco Pipe"]
+            ["Common" "To the Moon" "Black Hoodie" "Demiourgos Earring" "Round Sunglasses" "White Beanie" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Brown Jacket" "Demiourgos Earring" "Glowing Green" "White Cap" "Balloon"]
+            ["Common" "Bunnyship" "Red Hoodie" "Helix Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Rose"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Helix Cone Piercing" "vEGLD Focus" "Black Beanie" "Cigarette"]
+            ["Common" "Money Vault" "Black Trench Coat" "Demiourgos Earring" "Golden Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Set" "Green Waist Coat" "Sword" "Round Sunglasses" "White Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "Red Waist Coat" "Rook Piercing" "Green" "White Beanie" "Rose"]
+            ["Common" "Photo Shoot" "Black Trench Coat" "Demiourgos Earring" "Blue" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Rook Piercing" "Green" "Pirate Hat" "Cigarette"]
+            ["Common" "Photo Studio" "Black Vest" "Rook Piercing" "Round Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Rose"]
+            ["Common" "Ouroboros Rain" "Purple Suit & Tie" "Helix Piercing" "Green" "Captain Cap" "Joint"]
+            ["Common" "Bunnyship" "Purple Vest" "Helix Cone Piercing" "Round Sunglasses" "Black Beanie" "Balloon"]
+            ["Common" "Money Vault" "Black Jacket" "Rook Piercing" "Round Sunglasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "White Puffer Jacket" "Demiourgos Earring" "Round Sunglasses" "Black Beanie" "Joint"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Helix Piercing" "Round Sunglasses" "White Bucket Hat" "Joint"]
+            ["Common" "Ouroboros Rain" "Black Jacket" "Helix Cone Piercing" "Blue" "Pirate Hat" "Cigarette"]
+            ["Common" "To the Moon" "Purple Suit & Tie" "Sword" "vEGLD Focus" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Money Vault" "Purple Vest" "Sword" "Thug Life Glasses" "Black Bucket Hat" "Resting"]
+            ["Common" "Photo Shoot" "White Puffer Jacket" "Helix Piercing" "Blue" "White Cap" "Metal Coin"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step09 patron kbn-id
+        [
+            ["Common" "Basement" "White Hoodie" "Helix Cone Piercing" "Blue" "Black Beanie" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Blue Suit & Tie" "Demiourgos Earring" "Green" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "White Coat" "Helix Cone Piercing" "Red" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Brown Jacket" "Rook Piercing" "Thug Life Glasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Movie Set" "Red Trench Coat" "Sword" "Blue" "MultiversX Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "White Button Up" "Sword" "Thug Life Glasses" "White Fedora Hat" "Joint"]
+            ["Common" "To the Moon" "White Trench Coat" "Rook Piercing" "Round Sunglasses" "White Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "Purple Vest" "Rook Piercing" "Green" "White Cap" "Metal Coin"]
+            ["Common" "Photo Shoot" "Red Puffer Jacket" "Rook Piercing" "Green" "White Bucket Hat" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Purple Vest" "Helix Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Cigarette"]
+            ["Common" "Bunnyship" "White Hoodie" "Sword" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Rook Piercing" "Aviator Sunglasses" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "White Trench Coat" "Rook Piercing" "Aviator Sunglasses" "White Bucket Hat" "Dinamite"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Helix Piercing" "Osmiridium Unity Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Green Waist Coat" "Demiourgos Earring" "vEGLD Focus" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Demiourgos Earring" "Round Sunglasses" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Helix Cone Piercing" "Green" "White Beanie" "Resting"]
+            ["Common" "Basement" "Black Jacket" "Rook Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Helix Piercing" "Round Sunglasses" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Ouroboros Rain" "Black Jacket" "Helix Piercing" "Red" "White Fedora Hat" "Cigarette"]
+            ["Common" "Movie Set" "Red Hoodie" "Demiourgos Earring" "Elk0nite Unity Glasses" "White Fedora Hat" "Cigar"]
+            ["Common" "Money Vault" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Elk0nite Unity Glasses" "White Fedora Hat" "Dinamite"]
+            ["Common" "Hall of Fame" "White Hoodie" "Sword" "Red" "Top Hat" "Balloon"]
+            ["Common" "Basement" "White T-Shirt" "Rook Piercing" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Set" "Green Camouflage T-Shirt" "Demiourgos Earring" "Bronze Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Basement" "Green Vest" "Helix Cone Piercing" "Glowing Green" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Hoodie" "Helix Cone Piercing" "Thug Life Glasses" "White Cap" "Dinamite"]
+            ["Common" "Filming Gear" "Black Vest" "Helix Cone Piercing" "Red" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White T-Shirt" "Helix Cone Piercing" "Aviator Sunglasses" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Money Vault" "Brown Jacket" "Rook Piercing" "Aviator Sunglasses" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Money Vault" "White Trench Coat" "Sword" "Osmiridium Unity Glasses" "Black Beanie" "Rose"]
+            ["Common" "Photo Studio" "Black Trench Coat" "Helix Piercing" "Green" "Black Bucket Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Helix Cone Piercing" "Blue" "White Cap" "Resting"]
+            ["Common" "Bunnyship" "Red Trench Coat" "Demiourgos Earring" "Red" "White Fedora Hat" "Balloon"]
+            ["Common" "Bunnyship" "White Hoodie" "Helix Piercing" "Blue" "Black Beanie" "Balloon"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Helix Piercing" "Glowing Blue" "White Beanie" "Rose"]
+            ["Common" "Money Vault" "Red Trench Coat" "Helix Piercing" "Green" "White Fedora Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Brown Jacket" "Helix Piercing" "Round Sunglasses" "White Fedora Hat" "Cigarette"]
+            ["Common" "Basement" "Red Hoodie" "Demiourgos Earring" "Round Sunglasses" "White Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Purple Vest" "Demiourgos Earring" "Round Sunglasses" "Pirate Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "White T-Shirt" "Rook Piercing" "Thug Life Glasses" "White Cap" "Joint"]
+            ["Common" "Movie Set Rooms" "Red Trench Coat" "Sword" "Blue" "White Cap" "Joint"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Demiourgos Earring" "Glowing Blue" "White Fedora Hat" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Helix Cone Piercing" "Thug Life Glasses" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Set" "Black Vest" "Helix Cone Piercing" "Thug Life Glasses" "Top Hat" "Joint"]
+            ["Common" "Money Vault" "White Coat" "Bandage" "Silver Demiourgos Sci-Fi Glasses" "White Beanie" "Joint"]
+            ["Common" "Photo Studio" "Green Safety Vest" "Demiourgos Earring" "Glowing Green" "Captain Cap" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "Brown Jacket" "Helix Cone Piercing" "Blue" "Pirate Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "Black Jacket" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Demiourgos Earring" "Round Sunglasses" "Top Hat" "Balloon"]
+            ["Common" "Hall of Fame" "Black Trench Coat" "Helix Cone Piercing" "Round Sunglasses" "White Bucket Hat" "Resting"]
+            ["Common" "Basement" "Black Coat" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Beanie" "Rose"]
+            ["Common" "Filming Gear" "Red Waist Coat" "Sword" "vEGLD Focus" "Pirate Hat" "Resting"]
+            ["Common" "Photo Shoot" "White Hoodie" "Demiourgos Earring" "Red" "White Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Rook Piercing" "Green" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Money Vault" "Orange Safety Vest" "Helix Cone Piercing" "Blue" "White Beanie" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Sword" "Aviator Sunglasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Photo Studio" "Red Puffer Jacket" "Bandage" "Silver Demiourgos Sci-Fi Glasses" "Black Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Black Trench Coat" "Helix Piercing" "Elk0nite Unity Glasses" "Pirate Hat" "Cigarette"]
+            ["Common" "Photo Studio" "Blue Coat" "Helix Piercing" "Round Sunglasses" "White Cap" "Dinamite"]
+            ["Common" "Photo Studio" "Green Vest" "Rook Piercing" "Red" "Black Beanie" "Rose"]
+            ["Common" "Photo Studio" "MultiversX T-Shirt" "Rook Piercing" "Titaniumgold Unity Glasses" "Brown Sleeping Cap" "Cigar"]
+            ["Common" "Ouroboros Rain" "Red Puffer Jacket" "Demiourgos Earring" "Red" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Money Vault" "White Puffer Jacket" "Sword" "Golden Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Ouroboros Rain" "Red Puffer Jacket" "Rook Piercing" "Blue" "White Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "Red Hoodie" "Helix Piercing" "Round Sunglasses" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Shoot" "Red Hoodie" "Helix Piercing" "Osmiridium Unity Glasses" "Top Hat" "Joint"]
+            ["Common" "Photo Shoot" "Brown Jacket" "Helix Cone Piercing" "Green" "Black Beanie" "Cigar"]
+            ["Common" "Money Vault" "Red Puffer Jacket" "Demiourgos Earring" "Green" "White Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "Red Hoodie" "Demiourgos Earring" "Glowing Blue" "White Beanie" "Metal Coin"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step10 patron kbn-id
+        [
+            ["Common" "Hall of Fame" "Police Vest" "Sword" "vEGLD Focus" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Movie Post Processing Studio" "Blue Coat" "Rook Piercing" "Thug Life Glasses" "White Beanie" "Cigarette"]
+            ["Common" "To the Moon" "Brown Jacket" "Helix Cone Piercing" "Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "MultiversX T-Shirt" "Helix Cone Piercing" "Blue" "White Beanie" "Resting"]
+            ["Common" "Bunnyship" "White Button Up" "Helix Piercing" "Red" "Black Cap" "Rose"]
+            ["Common" "Movie Set" "Red Puffer Jacket" "Sword" "Red" "Pirate Hat" "Rose"]
+            ["Common" "Basement" "Purple Vest" "Helix Piercing" "Blue" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Helix Piercing" "Blue" "White Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Blue Coat" "Sword" "Red" "White Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Metal Coin"]
+            ["Common" "Basement" "Black Vest" "Sword" "Green" "Black Cap" "Rose"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Demiourgos Earring" "Glowing Green" "White Cap" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Helix Cone Piercing" "Blue" "Pirate Hat" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Waist Coat" "Rook Piercing" "Red" "White Cap" "Cigarette"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Sword" "Red" "Pirate Hat" "Resting"]
+            ["Common" "Photo Shoot" "Black Vest" "Helix Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Set" "Black Puffer Jacket" "Helix Piercing" "Glowing Green" "White Fedora Hat" "Cigarette"]
+            ["Common" "Money Vault" "White Coat" "Rook Piercing" "Glowing Blue" "White Cap" "Dinamite"]
+            ["Common" "To the Moon" "Blue Coat" "Helix Piercing" "Red" "White Bucket Hat" "Balloon"]
+            ["Common" "Bunnyship" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Set" "Red Hoodie" "Sword" "Thug Life Glasses" "Captain Cap" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Helix Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Hall of Fame" "Red Hoodie" "Rook Piercing" "Glowing Green" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Green Safety Vest" "Demiourgos Earring" "Green" "White Fedora Hat" "Dinamite"]
+            ["Common" "Filming Gear" "Orange Safety Vest" "Helix Piercing" "Round Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "Money Vault" "Red Hoodie" "Helix Piercing" "Glowing Red" "White Fedora Hat" "Joint"]
+            ["Common" "Movie Set" "Blue Suit & Tie" "Helix Piercing" "vEGLD Focus" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Photo Studio" "Purple Vest" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Balloon"]
+            ["Common" "Hall of Fame" "White Coat" "Demiourgos Earring" "Green" "Top Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Purple Vest" "Helix Cone Piercing" "Red" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set" "Black Vest" "Sword" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Bunnyship" "Red Puffer Jacket" "Demiourgos Earring" "Glowing Blue" "Captain Cap" "Dinamite"]
+            ["Common" "Movie Set" "Red Puffer Jacket" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Cigar"]
+            ["Common" "Ouroboros Rain" "Purple Vest" "Rook Piercing" "Green" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Helix Piercing" "Green" "White Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "Green Vest" "Helix Piercing" "Blue" "Captain Cap" "Dinamite"]
+            ["Common" "Photo Studio" "Blue Suit & Tie" "Demiourgos Earring" "Aviator Sunglasses" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Set" "White Coat" "Demiourgos Earring" "Round Sunglasses" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Movie Set" "Red Waist Coat" "Helix Cone Piercing" "Green" "Black Beanie" "Joint"]
+            ["Common" "Bunnyship" "Purple Suit & Tie" "Helix Cone Piercing" "Green" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Money Vault" "White Coat" "Demiourgos Earring" "Glowing Blue" "Pirate Hat" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "White T-Shirt" "Sword" "Green" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Basement" "Green Waist Coat" "Rook Piercing" "Blue" "White Cap" "Dinamite"]
+            ["Common" "Money Vault" "Red Hoodie" "Helix Cone Piercing" "Round Sunglasses" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Demiourgos Earring" "Blue" "White Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "White Camouflage T-Shirt" "Sword" "Glowing Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Trench Coat" "Rook Piercing" "Red" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Helix Piercing" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "Hall of Fame" "White Hoodie" "Helix Cone Piercing" "Silver Demiourgos Sci-Fi Glasses" "Black Beanie" "Joint"]
+            ["Common" "Basement" "Red Waist Coat" "Helix Piercing" "Glowing Red" "White Cap" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Jacket" "Rook Piercing" "Green" "Black Bucket Hat" "Balloon"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Demiourgos Earring" "Round Sunglasses" "White Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "Blue Coat" "Rook Piercing" "Aviator Sunglasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "To the Moon" "Black Vest" "Helix Piercing" "Glowing Blue" "White Beanie" "Balloon"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Demiourgos Earring" "Aviator Sunglasses" "White Beanie" "Resting"]
+            ["Common" "Money Vault" "White Coat" "Rook Piercing" "Round Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Set" "White Button Up" "Sword" "Green" "White Bucket Hat" "Rose"]
+            ["Common" "To the Moon" "Black Puffer Jacket" "Helix Piercing" "Glowing Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Hall of Fame" "Black Puffer Jacket" "Sword" "Round Sunglasses" "Black Beanie" "Resting"]
+            ["Common" "Money Vault" "Red Hoodie" "Helix Cone Piercing" "Blue" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Hall of Fame" "Green Waist Coat" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "White Button Up" "Helix Piercing" "Blue" "Pirate Hat" "Rose"]
+            ["Common" "Photo Studio" "Red Hoodie" "Helix Cone Piercing" "Glowing Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Sword" "Round Sunglasses" "Black Beanie" "Cigar"]
+            ["Common" "Basement" "White Hoodie" "Rook Piercing" "Blue" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Studio" "Black Hoodie" "Helix Cone Piercing" "Blue" "Pirate Hat" "Rose"]
+            ["Common" "To the Moon" "Black Jacket" "Demiourgos Earring" "Green" "White Fedora Hat" "Joint"]
+            ["Common" "To the Moon" "Red Hoodie" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Filming Gear" "Black Jacket" "Helix Cone Piercing" "Glowing Blue" "Black Cap" "Balloon"]
+            ["Common" "Bunnyship" "Black Trench Coat" "Sword" "Round Sunglasses" "White Fedora Hat" "Rose"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step11 patron kbn-id
+        [
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Sword" "Aviator Sunglasses" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Filming Gear" "Black Hoodie" "Rook Piercing" "Aviator Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Money Vault" "White Camouflage T-Shirt" "Rook Piercing" "Red" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Rook Piercing" "Glowing Green" "White Bucket Hat" "Balloon"]
+            ["Common" "Filming Gear" "Black Vest" "Rook Piercing" "Elk0nite Unity Glasses" "White Cap" "Resting"]
+            ["Common" "Movie Set Rooms" "Red Trench Coat" "Sword" "Red" "Black Fedora Hat" "Balloon"]
+            ["Common" "Filming Gear" "Black Vest" "Rook Piercing" "Green" "Pirate Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Green Waist Coat" "Helix Cone Piercing" "Green" "White Beanie" "Tobacco Pipe"]
+            ["Common" "To the Moon" "Green Camouflage T-Shirt" "Sword" "Silver Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Set" "White Coat" "Helix Cone Piercing" "Golden Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Rook Piercing" "Glowing Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Helix Piercing" "Round Sunglasses" "Black Cap" "Rose"]
+            ["Common" "Filming Gear" "Purple Vest" "Helix Cone Piercing" "Thug Life Glasses" "Black Beanie" "Dinamite"]
+            ["Common" "Movie Set" "White T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "White Cap" "Metal Coin"]
+            ["Common" "Movie Set" "Police Vest" "Helix Piercing" "Thug Life Glasses" "White Beanie" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "White Trench Coat" "Rook Piercing" "Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Green Waist Coat" "Helix Cone Piercing" "Round Sunglasses" "Pirate Hat" "Balloon"]
+            ["Common" "Photo Studio" "Green Camouflage T-Shirt" "Helix Piercing" "Thug Life Glasses" "White Beanie" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "White Puffer Jacket" "Helix Piercing" "vEGLD Focus" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Black Coat" "Rook Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Basement" "White Coat" "Bandage" "Glowing Green" "Captain Cap" "Resting"]
+            ["Common" "Photo Shoot" "Black Vest" "Helix Cone Piercing" "Aviator Sunglasses" "Pirate Hat" "Joint"]
+            ["Common" "Hall of Fame" "White Puffer Jacket" "Rook Piercing" "Aviator Sunglasses" "White Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Red Trench Coat" "Rook Piercing" "Glowing Green" "White Fedora Hat" "Resting"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Demiourgos Earring" "Glowing Red" "Black Fedora Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "White Button Up" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Balloon"]
+            ["Common" "Filming Gear" "Purple Vest" "Demiourgos Earring" "Bronze Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "White Puffer Jacket" "Rook Piercing" "Blue" "Black Fedora Hat" "Cigarette"]
+            ["Common" "Money Vault" "White Puffer Jacket" "Helix Piercing" "Green" "Pirate Hat" "Rose"]
+            ["Common" "Movie Set" "White Puffer Jacket" "Sword" "Aviator Sunglasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Purple Suit & Tie" "Rook Piercing" "Glowing Blue" "White Beanie" "Rose"]
+            ["Common" "Movie Set Rooms" "White Puffer Jacket" "Helix Cone Piercing" "Blue" "White Bucket Hat" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Green Vest" "Rook Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Ouroboros Rain" "White Hoodie" "Helix Cone Piercing" "Blue" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Basement" "Blue Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "Basement" "Green Camouflage T-Shirt" "Helix Piercing" "Blue" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "White T-Shirt" "Helix Piercing" "Blue" "Pirate Hat" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Purple Suit & Tie" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Camouflage T-Shirt" "Demiourgos Earring" "Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Basement" "Red Waist Coat" "Sword" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Red Waist Coat" "Sword" "Thug Life Glasses" "MultiversX Gangsta Cap" "Rose"]
+            ["Common" "Ouroboros Rain" "MultiversX T-Shirt" "Rook Piercing" "Blue" "White Fedora Hat" "Rose"]
+            ["Common" "Movie Set" "Red Puffer Jacket" "Helix Cone Piercing" "Thug Life Glasses" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Movie Set Rooms" "Black Vest" "Helix Cone Piercing" "Red" "Black Beanie" "Cigar"]
+            ["Common" "Photo Shoot" "Red Trench Coat" "Helix Piercing" "Green" "Black Beanie" "Rose"]
+            ["Common" "Money Vault" "Black Puffer Jacket" "Helix Cone Piercing" "Blue" "Black Cap" "Resting"]
+            ["Common" "Hall of Fame" "White Coat" "Demiourgos Earring" "Thug Life Glasses" "White Beanie" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Purple Suit & Tie" "Helix Cone Piercing" "Red" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "White Hoodie" "Sword" "Green" "Top Hat" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Black Vest" "Demiourgos Earring" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Set Rooms" "Blue Coat" "Demiourgos Earring" "Silver Demiourgos Sci-Fi Glasses" "Black Beanie" "Resting"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Demiourgos Earring" "Green" "White Beanie" "Resting"]
+            ["Common" "To the Moon" "Black Hoodie" "Rook Piercing" "Round Sunglasses" "Black Beanie" "Rose"]
+            ["Common" "Money Vault" "Police Vest" "Helix Piercing" "Blue" "White Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Orange Safety Vest" "Helix Cone Piercing" "Green" "Black Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "White Puffer Jacket" "Rook Piercing" "Round Sunglasses" "White Cap" "Resting"]
+            ["Common" "Hall of Fame" "Red Hoodie" "Rook Piercing" "Blue" "White Cap" "Joint"]
+            ["Common" "Money Vault" "Purple Vest" "Sword" "Aviator Sunglasses" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Photo Studio" "Blue Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Joint"]
+            ["Common" "Bunnyship" "Red Hoodie" "Helix Piercing" "Green" "Brown Sleeping Cap" "Rose"]
+            ["Common" "To the Moon" "Brown Jacket" "Helix Cone Piercing" "Blue" "White Beanie" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Hoodie" "Helix Piercing" "Round Sunglasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "White Button Up" "Demiourgos Earring" "Blue" "Top Hat" "Rose"]
+            ["Common" "Photo Studio" "Red Hoodie" "Helix Cone Piercing" "Red" "Black Beanie" "Rose"]
+            ["Common" "Movie Set Rooms" "Black Coat" "Sword" "Thug Life Glasses" "Pirate Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "Brown Jacket" "Demiourgos Earring" "Glowing Green" "Black Cap" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Blue Coat" "Rook Piercing" "Round Sunglasses" "Black Cap" "Balloon"]
+            ["Common" "Bunnyship" "White Puffer Jacket" "Sword" "Glowing Blue" "Pirate Hat" "Dinamite"]
+            ["Common" "To the Moon" "White Button Up" "Rook Piercing" "Red" "Black Bucket Hat" "Rose"]
+            ["Common" "Photo Studio" "White Puffer Jacket" "Demiourgos Earring" "Round Sunglasses" "Black Bucket Hat" "Balloon"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step12 patron kbn-id
+        [
+            ["Common" "To the Moon" "Black Trench Coat" "Rook Piercing" "Round Sunglasses" "White Cap" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Rook Piercing" "Green" "Pirate Hat" "Cigarette"]
+            ["Common" "Bunnyship" "Police Vest" "Helix Piercing" "Thug Life Glasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Basement" "White Button Up" "Helix Cone Piercing" "Green" "Brown Sleeping Cap" "Joint"]
+            ["Common" "Filming Gear" "Black Trench Coat" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Ouroboros Rain" "White Camouflage T-Shirt" "Demiourgos Earring" "Round Sunglasses" "White Cap" "Joint"]
+            ["Common" "Hall of Fame" "Black Vest" "Helix Cone Piercing" "Titaniumgold Unity Glasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Money Vault" "White Hoodie" "Helix Cone Piercing" "Titaniumgold Unity Glasses" "Captain Cap" "Balloon"]
+            ["Common" "Movie Set Rooms" "Green Vest" "Helix Cone Piercing" "Aviator Sunglasses" "MultiversX Gangsta Cap" "Rose"]
+            ["Common" "Movie Set" "White Hoodie" "Helix Piercing" "Elk0nite Unity Glasses" "Top Hat" "Resting"]
+            ["Common" "Money Vault" "Black Coat" "Demiourgos Earring" "Red" "Black Bucket Hat" "Dinamite"]
+            ["Common" "Photo Shoot" "Red Puffer Jacket" "Sword" "Round Sunglasses" "White Cap" "Tobacco Pipe"]
+            ["Common" "Hall of Fame" "Black Vest" "Demiourgos Earring" "Red" "Black Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Orange Safety Vest" "Helix Piercing" "Round Sunglasses" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Photo Studio" "Black Coat" "Helix Cone Piercing" "Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Black Coat" "Demiourgos Earring" "Round Sunglasses" "White Beanie" "Dinamite"]
+            ["Common" "Hall of Fame" "Red Waist Coat" "Demiourgos Earring" "Round Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "Filming Gear" "Red Puffer Jacket" "Helix Piercing" "Round Sunglasses" "Black Cap" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Helix Piercing" "Titaniumgold Unity Glasses" "Pirate Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "Black Coat" "Helix Piercing" "Titaniumgold Unity Glasses" "Black Cap" "Resting"]
+            ["Common" "Money Vault" "Black Coat" "Bandage" "vEGLD Focus" "White Bucket Hat" "Rose"]
+            ["Common" "Money Vault" "White Button Up" "Rook Piercing" "Red" "White Cap" "Rose"]
+            ["Common" "Money Vault" "Black Hoodie" "Rook Piercing" "Aviator Sunglasses" "White Cap" "Rose"]
+            ["Common" "Photo Studio" "White Puffer Jacket" "Sword" "Blue" "Black Bucket Hat" "Rose"]
+            ["Common" "Money Vault" "Blue Suit & Tie" "Rook Piercing" "Red" "Black Cap" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Helix Piercing" "Thug Life Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Demiourgos Earring" "vEGLD Focus" "White Cap" "Cigarette"]
+            ["Common" "Ouroboros Rain" "Red Trench Coat" "Helix Piercing" "Red" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Red Trench Coat" "Helix Piercing" "Glowing Red" "Pirate Hat" "Balloon"]
+            ["Common" "Money Vault" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "Captain Cap" "Metal Coin"]
+            ["Common" "To the Moon" "Blue Coat" "Helix Cone Piercing" "Green" "Black Fedora Hat" "Dinamite"]
+            ["Common" "Bunnyship" "Police Vest" "Demiourgos Earring" "Silver Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Joint"]
+            ["Common" "To the Moon" "White Hoodie" "Helix Piercing" "Glowing Blue" "Pirate Hat" "Resting"]
+            ["Common" "To the Moon" "Green Vest" "Rook Piercing" "Green" "Black Cap" "Resting"]
+            ["Common" "Basement" "Red Trench Coat" "Sword" "Blue" "White Bucket Hat" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Orange Safety Vest" "Rook Piercing" "Blue" "White Beanie" "Resting"]
+            ["Common" "Hall of Fame" "Black Vest" "Sword" "Thug Life Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Money Vault" "Purple Vest" "Helix Piercing" "Glowing Red" "Black Fedora Hat" "Joint"]
+            ["Common" "Ouroboros Rain" "White Puffer Jacket" "Helix Piercing" "Green" "White Fedora Hat" "Rose"]
+            ["Common" "Money Vault" "Black Trench Coat" "Bandage" "Glowing Green" "White Cap" "Dinamite"]
+            ["Common" "Ouroboros Rain" "Purple Vest" "Helix Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Money Vault" "Black Trench Coat" "Helix Piercing" "Glowing Red" "Black Fedora Hat" "Rose"]
+            ["Common" "Hall of Fame" "Green Vest" "Helix Cone Piercing" "Glowing Green" "Black Fedora Hat" "Joint"]
+            ["Common" "Filming Gear" "Purple Vest" "Demiourgos Earring" "Green" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Hall of Fame" "Red Trench Coat" "Helix Piercing" "Thug Life Glasses" "White Beanie" "Balloon"]
+            ["Common" "Movie Set" "Blue Coat" "Helix Cone Piercing" "Round Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Red Trench Coat" "Demiourgos Earring" "Thug Life Glasses" "Black Fedora Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Puffer Jacket" "Demiourgos Earring" "Blue" "Black Cap" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Trench Coat" "Helix Piercing" "Thug Life Glasses" "Pirate Hat" "Dinamite"]
+            ["Common" "To the Moon" "White Puffer Jacket" "Demiourgos Earring" "Red" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Movie Set Rooms" "White Coat" "Demiourgos Earring" "Blue" "Black Beanie" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Hoodie" "Helix Piercing" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Basement" "Black Trench Coat" "Demiourgos Earring" "Glowing Red" "White Bucket Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "White Hoodie" "Helix Piercing" "Round Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set" "Red Waist Coat" "Rook Piercing" "Round Sunglasses" "White Beanie" "Rose"]
+            ["Common" "Filming Gear" "Black Coat" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Dinamite"]
+            ["Common" "Filming Gear" "White Camouflage T-Shirt" "Rook Piercing" "Elk0nite Unity Glasses" "White Bucket Hat" "Cigar"]
+            ["Common" "Filming Gear" "Black Vest" "Rook Piercing" "Elk0nite Unity Glasses" "Pirate Hat" "Resting"]
+            ["Common" "Photo Studio" "Red Hoodie" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Basement" "Red Waist Coat" "Sword" "Glowing Blue" "Black Beanie" "Resting"]
+            ["Common" "Photo Studio" "Red Hoodie" "Helix Cone Piercing" "vEGLD Focus" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Set" "Brown Jacket" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Bunnyship" "Black Trench Coat" "Helix Piercing" "Golden Demiourgos Sci-Fi Glasses" "Black Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "Blue Coat" "Helix Cone Piercing" "Red" "Pirate Hat" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Waist Coat" "Sword" "Aviator Sunglasses" "Pirate Hat" "Balloon"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Helix Cone Piercing" "Thug Life Glasses" "Captain Cap" "Metal Coin"]
+            ["Common" "Hall of Fame" "Green Vest" "Demiourgos Earring" "Blue" "Black Bucket Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Hoodie" "Sword" "Round Sunglasses" "MultiversX Cap" "Tobacco Pipe"]
+            ["Common" "Money Vault" "White Camouflage T-Shirt" "Sword" "vEGLD Focus" "White Cap" "Resting"]
+            ["Common" "Basement" "Green Camouflage T-Shirt" "Rook Piercing" "Silver Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Cigarette"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step13 patron kbn-id
+        [
+            ["Common" "Money Vault" "Black Jacket" "Helix Piercing" "Thug Life Glasses" "MultiversX Cap" "Metal Coin"]
+            ["Common" "Hall of Fame" "Black Hoodie" "Helix Piercing" "Red" "MultiversX Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Rook Piercing" "Green" "Pirate Hat" "Resting"]
+            ["Common" "Money Vault" "Police Vest" "Helix Piercing" "Red" "White Beanie" "Rose"]
+            ["Common" "Hall of Fame" "Black Coat" "Helix Piercing" "Green" "Captain Cap" "Rose"]
+            ["Common" "Bunnyship" "Black Jacket" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Cap" "Cigarette"]
+            ["Common" "Ouroboros Rain" "White Button Up" "Demiourgos Earring" "Green" "Black Bucket Hat" "Rose"]
+            ["Common" "Filming Gear" "White Hoodie" "Rook Piercing" "Green" "MultiversX Gangsta Cap" "Joint"]
+            ["Common" "Movie Set" "Black Trench Coat" "Sword" "Round Sunglasses" "White Fedora Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Helix Piercing" "Green" "Black Fedora Hat" "Resting"]
+            ["Common" "Hall of Fame" "Blue Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Movie Set" "White Trench Coat" "Demiourgos Earring" "Green" "Black Cap" "Rose"]
+            ["Common" "Filming Gear" "Blue Suit & Tie" "Rook Piercing" "Green" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Red Trench Coat" "Helix Piercing" "Green" "Pirate Hat" "Dinamite"]
+            ["Common" "Movie Set" "Red Hoodie" "Helix Piercing" "Glowing Green" "White Bucket Hat" "Joint"]
+            ["Common" "Bunnyship" "Blue Coat" "Helix Piercing" "vEGLD Focus" "Black Beanie" "Rose"]
+            ["Common" "Filming Gear" "White Button Up" "Helix Cone Piercing" "Green" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Filming Gear" "Green Camouflage T-Shirt" "Helix Piercing" "Thug Life Glasses" "White Cap" "Balloon"]
+            ["Common" "Movie Set" "Purple Suit & Tie" "Helix Piercing" "Blue" "Black Beanie" "Cigar"]
+            ["Common" "Bunnyship" "White Camouflage T-Shirt" "Demiourgos Earring" "Blue" "Pirate Hat" "Resting"]
+            ["Common" "Photo Studio" "White Trench Coat" "Bandage" "Glowing Green" "White Fedora Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "Black Puffer Jacket" "Rook Piercing" "Thug Life Glasses" "White Cap" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Black Trench Coat" "Helix Piercing" "Round Sunglasses" "Pirate Hat" "Rose"]
+            ["Common" "Basement" "Blue Coat" "Helix Piercing" "Green" "Pirate Hat" "Rose"]
+            ["Common" "Bunnyship" "Black Puffer Jacket" "Helix Piercing" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Filming Gear" "Red Hoodie" "Rook Piercing" "Aviator Sunglasses" "Pirate Hat" "Resting"]
+            ["Common" "Movie Set" "Black Coat" "Rook Piercing" "Glowing Red" "White Cap" "Metal Coin"]
+            ["Common" "Photo Shoot" "Purple Suit & Tie" "Rook Piercing" "Aviator Sunglasses" "Black Fedora Hat" "Rose"]
+            ["Common" "Filming Gear" "White Hoodie" "Helix Piercing" "Aviator Sunglasses" "Brown Sleeping Cap" "Cigarette"]
+            ["Common" "Auryn Rain" "Purple Suit & Tie" "Demiourgos Earring" "Aviator Sunglasses" "White Fedora Hat" "Joint"]
+            ["Common" "Movie Set" "White Trench Coat" "Rook Piercing" "Blue" "White Beanie" "Joint"]
+            ["Common" "To the Moon" "Purple Vest" "Demiourgos Earring" "Thug Life Glasses" "White Fedora Hat" "Rose"]
+            ["Legendary" "Elite-Auryn Rain" "Brown Jacket" "Legendary Demiourgos Earring" "Aviator Sunglasses" "Brown Sleeping Cap" "Legendary Metal Coin"]
+            ["Common" "Photo Shoot" "Black Trench Coat" "Rook Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "To the Moon" "White T-Shirt" "Helix Cone Piercing" "Green" "White Cap" "Joint"]
+            ["Common" "Photo Studio" "White Coat" "Helix Cone Piercing" "Round Sunglasses" "Top Hat" "Resting"]
+            ["Common" "Movie Set" "White Button Up" "Sword" "Green" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "White Coat" "Sword" "Green" "Black Fedora Hat" "Balloon"]
+            ["Common" "Photo Shoot" "Black Vest" "Helix Cone Piercing" "Blue" "Black Cap" "Dinamite"]
+            ["Legendary" "Legendary Photo Shoot" "Green Camouflage T-Shirt" "Legendary Demiourgos Earring" "Thug Life Glasses" "Black Fedora Hat" "Legendary Dinamite"]
+            ["Common" "Basement" "Black Coat" "Rook Piercing" "Red" "Black Beanie" "Balloon"]
+            ["Common" "Filming Gear" "Red Trench Coat" "Demiourgos Earring" "Green" "Black Beanie" "Tobacco Pipe"]
+            ["Common" "Money Vault" "Black Puffer Jacket" "Helix Piercing" "Thug Life Glasses" "Black Fedora Hat" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Demiourgos Earring" "Glowing Blue" "White Cap" "Resting"]
+            ["Common" "Ouroboros Rain" "White Coat" "Helix Piercing" "Blue" "Black Fedora Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "MultiversX T-Shirt" "Sword" "Thug Life Glasses" "Black Bucket Hat" "Rose"]
+            ["Common" "Money Vault" "Black Hoodie" "Helix Cone Piercing" "Glowing Red" "White Fedora Hat" "Cigar"]
+            ["Common" "Basement" "Police Vest" "Sword" "Aviator Sunglasses" "White Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set" "Red Hoodie" "Demiourgos Earring" "Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Basement" "Black Hoodie" "Helix Piercing" "Red" "Black Beanie" "Balloon"]
+            ["Common" "To the Moon" "Green Camouflage T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White Button Up" "Helix Piercing" "Osmiridium Unity Glasses" "Captain Cap" "Cigarette"]
+            ["Common" "Hall of Fame" "Red Waist Coat" "Rook Piercing" "Blue" "White Fedora Hat" "Rose"]
+            ["Common" "Movie Set" "Green Vest" "Helix Piercing" "Green" "White Bucket Hat" "Dinamite"]
+            ["Common" "Photo Shoot" "White Hoodie" "Helix Piercing" "Green" "Black Fedora Hat" "Resting"]
+            ["Common" "Ouroboros Rain" "Green Safety Vest" "Helix Piercing" "Red" "Brown Sleeping Cap" "Cigar"]
+            ["Common" "Movie Post Processing Studio" "Red Hoodie" "Helix Cone Piercing" "Glowing Blue" "White Beanie" "Cigar"]
+            ["Common" "Bunnyship" "Red Puffer Jacket" "Sword" "Green" "Brown Sleeping Cap" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "Black Jacket" "Helix Cone Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Puffer Jacket" "Demiourgos Earring" "Thug Life Glasses" "Top Hat" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Black Puffer Jacket" "Helix Cone Piercing" "Blue" "White Beanie" "Balloon"]
+            ["Common" "To the Moon" "White Puffer Jacket" "Helix Piercing" "Thug Life Glasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Helix Piercing" "Thug Life Glasses" "Black Beanie" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Black Hoodie" "Sword" "Red" "White Cap" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Green Camouflage T-Shirt" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "White Coat" "Demiourgos Earring" "Green" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Photo Studio" "Green Camouflage T-Shirt" "Rook Piercing" "Glowing Blue" "Black Fedora Hat" "Rose"]
+            ["Common" "Bunnyship" "Red Trench Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Black Beanie" "Rose"]
+            ["Common" "To the Moon" "Green Vest" "Sword" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Red Trench Coat" "Helix Cone Piercing" "Thug Life Glasses" "Black Fedora Hat" "Dinamite"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step14 patron kbn-id
+        [
+            ["Common" "Photo Shoot" "Black Trench Coat" "Rook Piercing" "Red" "Black Beanie" "Metal Coin"]
+            ["Common" "Photo Studio" "Black Trench Coat" "Rook Piercing" "Glowing Green" "White Bucket Hat" "Resting"]
+            ["Common" "Photo Studio" "White Trench Coat" "Rook Piercing" "Golden Demiourgos Sci-Fi Glasses" "White Cap" "Joint"]
+            ["Common" "Photo Shoot" "Green Waist Coat" "Helix Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Money Vault" "Purple Vest" "Helix Piercing" "Blue" "Black Cap" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Helix Piercing" "Green" "White Bucket Hat" "Cigar"]
+            ["Common" "Hall of Fame" "Red Puffer Jacket" "Helix Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Basement" "Black Coat" "Rook Piercing" "Glowing Blue" "White Fedora Hat" "Joint"]
+            ["Common" "To the Moon" "Black Vest" "Sword" "Aviator Sunglasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "White T-Shirt" "Helix Cone Piercing" "Green" "White Bucket Hat" "Dinamite"]
+            ["Common" "Photo Shoot" "Black Vest" "Rook Piercing" "Blue" "Black Beanie" "Cigarette"]
+            ["Common" "Hall of Fame" "Green Vest" "Rook Piercing" "Red" "Pirate Hat" "Tobacco Pipe"]
+            ["Common" "Auryn Rain" "Purple Vest" "Rook Piercing" "Red" "Captain Cap" "Resting"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Sword" "vEGLD Focus" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Red Waist Coat" "Helix Piercing" "Red" "Black Fedora Hat" "Resting"]
+            ["Common" "Filming Gear" "Green Vest" "Rook Piercing" "Glowing Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Coat" "Sword" "Glowing Red" "Black Cap" "Cigarette"]
+            ["Common" "Photo Studio" "White Camouflage T-Shirt" "Helix Piercing" "Round Sunglasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Camouflage T-Shirt" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "White Beanie" "Balloon"]
+            ["Common" "Money Vault" "White Coat" "Sword" "Aviator Sunglasses" "Black Beanie" "Dinamite"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Hoodie" "Bandage" "Glowing Green" "Black Bucket Hat" "Balloon"]
+            ["Common" "Ouroboros Rain" "Red Puffer Jacket" "Sword" "Round Sunglasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "White Button Up" "Sword" "Glowing Green" "Black Fedora Hat" "Resting"]
+            ["Common" "Basement" "Black Coat" "Demiourgos Earring" "Round Sunglasses" "Brown Sleeping Cap" "Balloon"]
+            ["Common" "Movie Post Processing Studio" "White Coat" "Helix Cone Piercing" "Glowing Blue" "White Beanie" "Resting"]
+            ["Common" "Photo Shoot" "Red Trench Coat" "Rook Piercing" "Silver Demiourgos Sci-Fi Glasses" "White Fedora Hat" "Joint"]
+            ["Common" "Bunnyship" "White Button Up" "Demiourgos Earring" "Thug Life Glasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "Photo Studio" "White T-Shirt" "Helix Piercing" "Round Sunglasses" "White Cap" "Resting"]
+            ["Common" "To the Moon" "Purple Vest" "Rook Piercing" "Blue" "Black Cap" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Hoodie" "Demiourgos Earring" "Round Sunglasses" "Black Beanie" "Resting"]
+            ["Common" "To the Moon" "Red Puffer Jacket" "Helix Piercing" "Round Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "MultiversX T-Shirt" "Demiourgos Earring" "Blue" "Black Fedora Hat" "Rose"]
+            ["Common" "Hall of Fame" "White T-Shirt" "Rook Piercing" "Blue" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Ouroboros Rain" "Red Puffer Jacket" "Helix Piercing" "Blue" "White Cap" "Metal Coin"]
+            ["Common" "Photo Shoot" "Black Vest" "Demiourgos Earring" "Green" "White Beanie" "Metal Coin"]
+            ["Common" "Filming Gear" "Black Coat" "Helix Piercing" "Round Sunglasses" "Black Beanie" "Rose"]
+            ["Common" "Photo Studio" "White Coat" "Sword" "Blue" "White Cap" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Helix Piercing" "Blue" "White Beanie" "Rose"]
+            ["Common" "Movie Set" "Purple Vest" "Rook Piercing" "Blue" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Hall of Fame" "Blue Coat" "Rook Piercing" "Glowing Red" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White T-Shirt" "Rook Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "Black Jacket" "Helix Piercing" "Thug Life Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Money Vault" "White Hoodie" "Rook Piercing" "Aviator Sunglasses" "White Bucket Hat" "Rose"]
+            ["Legendary" "Elite-Auryn Rain" "White Camouflage T-Shirt" "Legendary Demiourgos Earring" "Thug Life Glasses" "Pirate Hat" "Legendary Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Blue Coat" "Helix Piercing" "Thug Life Glasses" "White Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Photo Shoot" "Orange Safety Vest" "Helix Cone Piercing" "Aviator Sunglasses" "MultiversX Cap" "Rose"]
+            ["Common" "Filming Gear" "White Button Up" "Helix Piercing" "Green" "Brown Sleeping Cap" "Joint"]
+            ["Common" "To the Moon" "White Trench Coat" "Sword" "Blue" "Black Beanie" "Cigar"]
+            ["Common" "Photo Studio" "MultiversX T-Shirt" "Helix Cone Piercing" "Aviator Sunglasses" "White Cap" "Resting"]
+            ["Common" "Basement" "Black Trench Coat" "Rook Piercing" "Green" "White Bucket Hat" "Resting"]
+            ["Common" "Filming Gear" "White Trench Coat" "Helix Piercing" "Red" "White Fedora Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "Purple Vest" "Helix Piercing" "Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "Black Jacket" "Rook Piercing" "Green" "Pirate Hat" "Cigarette"]
+            ["Common" "Photo Shoot" "Police Vest" "Helix Piercing" "Aviator Sunglasses" "Black Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Bunnyship" "MultiversX T-Shirt" "Helix Piercing" "Glowing Red" "White Beanie" "Rose"]
+            ["Common" "Photo Studio" "Red Trench Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Black Beanie" "Resting"]
+            ["Common" "Auryn Rain" "Orange Safety Vest" "Demiourgos Earring" "Aviator Sunglasses" "Black Bucket Hat" "Resting"]
+            ["Common" "Bunnyship" "Green Waist Coat" "Rook Piercing" "Red" "Top Hat" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Red Puffer Jacket" "Rook Piercing" "Thug Life Glasses" "White Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Rook Piercing" "Glowing Red" "Black Bucket Hat" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "White Coat" "Sword" "Green" "Pirate Hat" "Dinamite"]
+            ["Common" "Movie Set" "White T-Shirt" "Helix Cone Piercing" "Thug Life Glasses" "White Beanie" "Rose"]
+            ["Common" "Bunnyship" "Black Hoodie" "Helix Piercing" "Blue" "White Beanie" "Balloon"]
+            ["Common" "Photo Shoot" "White Coat" "Helix Piercing" "Osmiridium Unity Glasses" "Top Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Red Trench Coat" "Sword" "Silver Demiourgos Sci-Fi Glasses" "White Cap" "Balloon"]
+            ["Common" "Basement" "White Trench Coat" "Helix Piercing" "vEGLD Focus" "White Bucket Hat" "Dinamite"]
+            ["Common" "Photo Studio" "Purple Suit & Tie" "Helix Piercing" "Red" "Black Beanie" "Cigarette"]
+            ["Common" "Photo Studio" "Black Vest" "Demiourgos Earring" "Blue" "White Fedora Hat" "Dinamite"]
+            ["Common" "Filming Gear" "Black Puffer Jacket" "Rook Piercing" "Thug Life Glasses" "Brown Sleeping Cap" "Tobacco Pipe"]
+            ["Common" "Filming Gear" "Black Vest" "Sword" "Green" "White Bucket Hat" "Joint"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step15 patron kbn-id
+        [
+            ["Common" "Movie Post Processing Studio" "Black Hoodie" "Demiourgos Earring" "Round Sunglasses" "Pirate Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Red Trench Coat" "Helix Piercing" "Blue" "White Beanie" "Tobacco Pipe"]
+            ["Common" "To the Moon" "Red Waist Coat" "Demiourgos Earring" "Blue" "Black Fedora Hat" "Dinamite"]
+            ["Common" "To the Moon" "Green Safety Vest" "Rook Piercing" "Blue" "Black Beanie" "Balloon"]
+            ["Common" "Photo Shoot" "Black Coat" "Demiourgos Earring" "Blue" "Black Cap" "Dinamite"]
+            ["Common" "Movie Set" "White Trench Coat" "Demiourgos Earring" "Red" "Top Hat" "Balloon"]
+            ["Common" "Hall of Fame" "Blue Coat" "Helix Piercing" "Green" "Black Cap" "Rose"]
+            ["Common" "Photo Shoot" "Brown Jacket" "Demiourgos Earring" "Aviator Sunglasses" "White Bucket Hat" "Resting"]
+            ["Common" "Money Vault" "Purple Suit & Tie" "Helix Cone Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Purple Suit & Tie" "Helix Piercing" "Thug Life Glasses" "Captain Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set" "Purple Vest" "Helix Piercing" "Round Sunglasses" "Pirate Hat" "Cigarette"]
+            ["Common" "Filming Gear" "Red Waist Coat" "Sword" "Thug Life Glasses" "MultiversX Gangsta Cap" "Balloon"]
+            ["Common" "Photo Shoot" "White Button Up" "Demiourgos Earring" "Green" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Hoodie" "Demiourgos Earring" "Aviator Sunglasses" "Black Beanie" "Metal Coin"]
+            ["Common" "Photo Shoot" "Red Trench Coat" "Helix Piercing" "Aviator Sunglasses" "White Cap" "Cigarette"]
+            ["Common" "Money Vault" "Black Jacket" "Helix Cone Piercing" "Red" "Captain Cap" "Balloon"]
+            ["Common" "Photo Shoot" "Black Trench Coat" "Rook Piercing" "Glowing Red" "Brown Sleeping Cap" "Tobacco Pipe"]
+            ["Common" "Movie Set Rooms" "Police Vest" "Helix Cone Piercing" "Blue" "White Bucket Hat" "Balloon"]
+            ["Common" "Basement" "White Trench Coat" "Helix Piercing" "Green" "White Beanie" "Balloon"]
+            ["Common" "Photo Studio" "Blue Suit & Tie" "Demiourgos Earring" "Thug Life Glasses" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "Photo Studio" "Black Trench Coat" "Helix Cone Piercing" "Red" "Pirate Hat" "Metal Coin"]
+            ["Common" "Money Vault" "Blue Coat" "Helix Cone Piercing" "Round Sunglasses" "Black Fedora Hat" "Balloon"]
+            ["Common" "Basement" "Black Vest" "Helix Cone Piercing" "Green" "Black Cap" "Metal Coin"]
+            ["Common" "Hall of Fame" "White Button Up" "Helix Piercing" "Red" "White Beanie" "Resting"]
+            ["Common" "Filming Gear" "White Trench Coat" "Helix Cone Piercing" "Blue" "Pirate Hat" "Joint"]
+            ["Common" "Photo Studio" "Blue Coat" "Helix Piercing" "Blue" "White Bucket Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Green Vest" "Helix Piercing" "Glowing Green" "Captain Cap" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Trench Coat" "Helix Piercing" "Blue" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Money Vault" "Green Vest" "Helix Cone Piercing" "Round Sunglasses" "Captain Cap" "Resting"]
+            ["Common" "To the Moon" "Red Waist Coat" "Helix Piercing" "Blue" "White Beanie" "Balloon"]
+            ["Common" "To the Moon" "White Puffer Jacket" "Helix Cone Piercing" "Thug Life Glasses" "Pirate Hat" "Balloon"]
+            ["Common" "Money Vault" "Black Puffer Jacket" "Rook Piercing" "Red" "White Cap" "Resting"]
+            ["Common" "Photo Studio" "Red Hoodie" "Rook Piercing" "Glowing Blue" "Black Cap" "Rose"]
+            ["Common" "Basement" "Blue Suit & Tie" "Sword" "Aviator Sunglasses" "Black Bucket Hat" "Tobacco Pipe"]
+            ["Common" "Movie Set" "White Trench Coat" "Rook Piercing" "Blue" "White Cap" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Trench Coat" "Rook Piercing" "Red" "Black Cap" "Rose"]
+            ["Common" "Hall of Fame" "Green Camouflage T-Shirt" "Demiourgos Earring" "Aviator Sunglasses" "Black Cap" "Dinamite"]
+            ["Common" "Movie Set Rooms" "White T-Shirt" "Sword" "Thug Life Glasses" "White Fedora Hat" "Balloon"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Sword" "Thug Life Glasses" "Black Bucket Hat" "Cigarette"]
+            ["Common" "Money Vault" "Brown Jacket" "Helix Piercing" "Red" "White Cap" "Cigar"]
+            ["Common" "Basement" "White Coat" "Helix Cone Piercing" "Red" "Pirate Hat" "Cigarette"]
+            ["Common" "Basement" "White Trench Coat" "Helix Cone Piercing" "Red" "Pirate Hat" "Joint"]
+            ["Common" "Hall of Fame" "Red Waist Coat" "Helix Cone Piercing" "Round Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Red Waist Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Balloon"]
+            ["Common" "To the Moon" "Black Puffer Jacket" "Demiourgos Earring" "Red" "Top Hat" "Joint"]
+            ["Common" "Movie Set" "White Trench Coat" "Helix Cone Piercing" "Thug Life Glasses" "Black Cap" "Joint"]
+            ["Common" "To the Moon" "Black Coat" "Helix Cone Piercing" "Red" "Brown Sleeping Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Trench Coat" "Helix Piercing" "Green" "Black Cap" "Dinamite"]
+            ["Common" "Money Vault" "Black Trench Coat" "Helix Cone Piercing" "Aviator Sunglasses" "Captain Cap" "Balloon"]
+            ["Common" "To the Moon" "Green Waist Coat" "Helix Piercing" "Glowing Red" "Black Cap" "Dinamite"]
+            ["Legendary" "Elite-Auryn Rain" "White Coat" "Legendary Demiourgos Earring" "Aviator Sunglasses" "White Fedora Hat" "Legendary Tobacco Pipe"]
+            ["Common" "Money Vault" "Black Trench Coat" "Rook Piercing" "Glowing Red" "Black Bucket Hat" "Rose"]
+            ["Common" "Hall of Fame" "Black Puffer Jacket" "Rook Piercing" "Golden Demiourgos Sci-Fi Glasses" "Black Fedora Hat" "Rose"]
+            ["Common" "Money Vault" "Red Hoodie" "Rook Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "Black Trench Coat" "Helix Cone Piercing" "Green" "Black Beanie" "Rose"]
+            ["Common" "Movie Post Processing Studio" "Black Vest" "Helix Cone Piercing" "Thug Life Glasses" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Movie Set" "Black Vest" "Rook Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Movie Set Rooms" "White Coat" "Helix Piercing" "Aviator Sunglasses" "White Beanie" "Cigarette"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Helix Cone Piercing" "Aviator Sunglasses" "Black Bucket Hat" "Rose"]
+            ["Common" "To the Moon" "Green Camouflage T-Shirt" "Rook Piercing" "Round Sunglasses" "Black Cap" "Tobacco Pipe"]
+            ["Common" "Movie Post Processing Studio" "Black Puffer Jacket" "Rook Piercing" "Blue" "Black Fedora Hat" "Resting"]
+            ["Common" "Photo Shoot" "Green Vest" "Rook Piercing" "Thug Life Glasses" "Black Beanie" "Joint"]
+            ["Common" "Photo Studio" "Green Vest" "Demiourgos Earring" "Thug Life Glasses" "White Fedora Hat" "Dinamite"]
+            ["Common" "Basement" "Black Vest" "Rook Piercing" "Green" "Black Fedora Hat" "Rose"]
+            ["Common" "Photo Studio" "White Camouflage T-Shirt" "Helix Cone Piercing" "Blue" "White Beanie" "Cigar"]
+            ["Common" "Basement" "Black Jacket" "Helix Piercing" "Round Sunglasses" "White Cap" "Rose"]
+            ["Common" "Basement" "Blue Coat" "Sword" "Aviator Sunglasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Movie Set" "Green Waist Coat" "Rook Piercing" "Round Sunglasses" "White Fedora Hat" "Resting"]
+            ["Common" "Basement" "MultiversX T-Shirt" "Helix Cone Piercing" "Green" "White Bucket Hat" "Cigar"]
+            ["Common" "Basement" "White Hoodie" "Helix Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Rose"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-02 [3.1] - Mint Nosferatu Legendary (1-70)")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+(namespace "free")
+
+(let
+    (
+        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (kbn-id:string "KBN-98c486052a51")
+    )
+    (KBN.A_Step16 patron kbn-id
+        [
+            ["Common" "Basement" "MultiversX T-Shirt" "Helix Cone Piercing" "Green" "White Bucket Hat" "Cigar"]
+            ["Common" "Basement" "White Hoodie" "Helix Piercing" "Round Sunglasses" "Brown Sleeping Cap" "Rose"]
+            ["Common" "Photo Studio" "White Trench Coat" "Helix Piercing" "Titaniumgold Unity Glasses" "Black Cap" "Metal Coin"]
+            ["Common" "Basement" "Black Jacket" "Rook Piercing" "Blue" "Black Fedora Hat" "Rose"]
+            ["Common" "Movie Set Rooms" "Green Vest" "Rook Piercing" "Blue" "Black Fedora Hat" "Cigar"]
+            ["Common" "Movie Set Rooms" "Black Hoodie" "Demiourgos Earring" "Green" "Black Cap" "Cigarette"]
+            ["Common" "Money Vault" "Black Hoodie" "Demiourgos Earring" "Thug Life Glasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Black Trench Coat" "Helix Piercing" "Green" "White Bucket Hat" "Cigarette"]
+            ["Common" "Ouroboros Rain" "Green Waist Coat" "Rook Piercing" "Red" "White Beanie" "Metal Coin"]
+            ["Common" "To the Moon" "MultiversX T-Shirt" "Sword" "Thug Life Glasses" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Photo Shoot" "White Camouflage T-Shirt" "Rook Piercing" "Red" "Top Hat" "Rose"]
+            ["Common" "Basement" "Black Hoodie" "Sword" "Red" "White Cap" "Resting"]
+            ["Common" "Auryn Rain" "Green Camouflage T-Shirt" "Sword" "Thug Life Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "Filming Gear" "Black Vest" "Helix Piercing" "Osmiridium Unity Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Photo Studio" "Blue Suit & Tie" "Helix Cone Piercing" "Round Sunglasses" "Pirate Hat" "Balloon"]
+            ["Common" "Photo Studio" "White Hoodie" "Helix Piercing" "Blue" "White Bucket Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "White Hoodie" "Demiourgos Earring" "Blue" "Black Beanie" "Dinamite"]
+            ["Common" "To the Moon" "Black Jacket" "Rook Piercing" "Round Sunglasses" "White Fedora Hat" "Tobacco Pipe"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Demiourgos Earring" "Aviator Sunglasses" "Black Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Hoodie" "Demiourgos Earring" "Red" "White Beanie" "Cigarette"]
+            ["Common" "Movie Set" "Police Vest" "Sword" "Blue" "Black Beanie" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Hoodie" "Rook Piercing" "Red" "Black Fedora Hat" "Cigarette"]
+            ["Common" "To the Moon" "Red Hoodie" "Rook Piercing" "Blue" "Brown Sleeping Cap" "Dinamite"]
+            ["Common" "Photo Shoot" "White Coat" "Helix Cone Piercing" "Green" "Brown Sleeping Cap" "Cigar"]
+            ["Common" "Photo Studio" "MultiversX T-Shirt" "Sword" "Round Sunglasses" "Black Cap" "Rose"]
+            ["Common" "Hall of Fame" "Black Hoodie" "Rook Piercing" "Aviator Sunglasses" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "White Button Up" "Sword" "Bronze Demiourgos Sci-Fi Glasses" "White Bucket Hat" "Dinamite"]
+            ["Common" "Money Vault" "Red Hoodie" "Demiourgos Earring" "Thug Life Glasses" "Pirate Hat" "Rose"]
+            ["Common" "Low Planet Orbit Spaceship" "White Button Up" "Helix Cone Piercing" "Green" "White Fedora Hat" "Resting"]
+            ["Common" "Movie Post Processing Studio" "Red Puffer Jacket" "Helix Cone Piercing" "Aviator Sunglasses" "Captain Cap" "Resting"]
+            ["Common" "Low Planet Orbit Spaceship" "Black Jacket" "Helix Cone Piercing" "Green" "Black Fedora Hat" "Rose"]
+            ["Common" "Photo Studio" "Green Camouflage T-Shirt" "Helix Piercing" "Round Sunglasses" "White Cap" "Joint"]
+            ["Common" "Filming Gear" "Purple Suit & Tie" "Helix Piercing" "Aviator Sunglasses" "Black Cap" "Joint"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Hoodie" "Helix Piercing" "Red" "White Beanie" "Dinamite"]
+            ["Common" "Photo Studio" "Black Puffer Jacket" "Rook Piercing" "Red" "White Bucket Hat" "Metal Coin"]
+            ["Common" "Movie Post Processing Studio" "Black Coat" "Demiourgos Earring" "Blue" "Black Beanie" "Cigarette"]
+            ["Common" "Movie Set Rooms" "White Hoodie" "Demiourgos Earring" "Blue" "Pirate Hat" "Resting"]
+            ["Common" "Movie Set Rooms" "White Camouflage T-Shirt" "Rook Piercing" "Blue" "Black Fedora Hat" "Metal Coin"]
+            ["Common" "Bunnyship" "Red Trench Coat" "Sword" "Round Sunglasses" "White Bucket Hat" "Rose"]
+            ["Common" "Hall of Fame" "Blue Coat" "Helix Piercing" "Green" "Black Cap" "Balloon"]
+            ["Common" "Movie Set" "Black Trench Coat" "Rook Piercing" "Aviator Sunglasses" "Black Fedora Hat" "Cigarette"]
+            ["Common" "Hall of Fame" "Black Jacket" "Rook Piercing" "Thug Life Glasses" "Black Cap" "Metal Coin"]
+            ["Common" "Filming Gear" "White Coat" "Helix Piercing" "Blue" "Black Bucket Hat" "Balloon"]
+            ["Common" "Photo Studio" "Green Camouflage T-Shirt" "Helix Piercing" "Glowing Red" "Black Cap" "Joint"]
+            ["Legendary" "Elite-Auryn Rain" "Police Vest" "Legendary Demiourgos Earring" "Round Sunglasses" "Captain Cap" "Legendary Cigarette"]
+            ["Common" "Money Vault" "Black Vest" "Helix Piercing" "Glowing Blue" "Pirate Hat" "Metal Coin"]
+            ["Common" "Low Planet Orbit Spaceship" "Green Vest" "Demiourgos Earring" "Blue" "Black Cap" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "White Hoodie" "Demiourgos Earring" "Thug Life Glasses" "White Fedora Hat" "Metal Coin"]
+            ["Common" "To the Moon" "Black Puffer Jacket" "Helix Piercing" "Red" "Captain Cap" "Rose"]
+            ["Common" "To the Moon" "Black Vest" "Sword" "Green" "Black Beanie" "Cigarette"]
+            ["Common" "To the Moon" "Black Jacket" "Helix Piercing" "Red" "White Bucket Hat" "Rose"]
+            ["Common" "Photo Shoot" "Black Hoodie" "Sword" "Green" "Captain Cap" "Dinamite"]
+            ["Common" "Movie Post Processing Studio" "Orange Safety Vest" "Helix Cone Piercing" "Green" "White Cap" "Balloon"]
+            ["Common" "Bunnyship" "White Puffer Jacket" "Rook Piercing" "Thug Life Glasses" "White Cap" "Resting"]
+            ["Common" "Filming Gear" "Red Waist Coat" "Demiourgos Earring" "Green" "Captain Cap" "Rose"]
+            ["Common" "Filming Gear" "White Trench Coat" "Helix Cone Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Black Beanie" "Balloon"]
+            ["Common" "Filming Gear" "Purple Vest" "Sword" "Osmiridium Unity Glasses" "Black Fedora Hat" "Resting"]
+            ["Common" "Photo Studio" "Black Vest" "Helix Piercing" "Glowing Red" "Black Beanie" "Resting"]
+            ["Common" "Movie Set Rooms" "Red Hoodie" "Helix Piercing" "Green" "Brown Sleeping Cap" "Metal Coin"]
+            ["Common" "Filming Gear" "Blue Coat" "Sword" "Red" "Black Bucket Hat" "Rose"]
+            ["Common" "Hall of Fame" "Black Puffer Jacket" "Rook Piercing" "Thug Life Glasses" "Black Cap" "Metal Coin"]
+            ["Common" "To the Moon" "White Coat" "Helix Cone Piercing" "Green" "White Fedora Hat" "Joint"]
+            ["Common" "Basement" "White T-Shirt" "Rook Piercing" "Blue" "Pirate Hat" "Metal Coin"]
+            ["Common" "Movie Set Rooms" "Green Vest" "Helix Piercing" "Red" "Black Beanie" "Balloon"]
+            ["Common" "Photo Studio" "Black Hoodie" "Sword" "Red" "Black Cap" "Balloon"]
+            ["Common" "Low Planet Orbit Spaceship" "Red Waist Coat" "Helix Cone Piercing" "Thug Life Glasses" "White Bucket Hat" "Cigarette"]
+            ["Common" "Low Planet Orbit Spaceship" "Brown Jacket" "Sword" "Thug Life Glasses" "Captain Cap" "Cigar"]
+            ["Common" "Basement" "Black Trench Coat" "Rook Piercing" "Osmiridium Unity Glasses" "Black Bucket Hat" "Rose"]
+            ["Common" "Bunnyship" "Black Jacket" "Helix Piercing" "vEGLD Focus" "White Cap" "Resting"]
+            ["Common" "Basement" "Black Jacket" "Rook Piercing" "Bronze Demiourgos Sci-Fi Glasses" "Brown Sleeping Cap" "Resting"]
+        ]
+    )
+)
+(print "")
+(print "")
+(format "<<<<<<<Mint Nosferatu Legendary (1-70) Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -408,7 +408,7 @@
                         )
                     )
                 )
-                (wsh-ouro-next:decimal (fold (*) 1.0 [wsh-elite-aurynz-next ih-auryndex ih-elite-auryndex]))
+                (wsh-ouro-next:decimal (floor (fold (*) 1.0 [wsh-elite-aurynz-next ih-auryndex ih-elite-auryndex]) 24))
                 (price-next:decimal (floor (* price-ouro wsh-ouro-next) 24))
             )
                 ;;
@@ -486,6 +486,8 @@
                 ;;ELITE Tier Data = ET
             ,"ET-tier"                          : (ref-DALOS::UR_Elite-Tier account)
             ,"ET-name"                          : (ref-DALOS::UR_Elite-Name account)
+                ;;OURONET Accounts
+            ,"OURONET-Accounts"                 : (ref-DALOS::URD_AccountCounter)
             }
         )
     )
@@ -1017,6 +1019,25 @@
             ,"wallet-pool-tokens-supplies"      : account-pool-tokens-supplies
             ,"wallet-virtual-ouro"              : (ref-TFT::URC_VirtualOuro account)
             ,"wallet-ignis"                     : (ref-DALOS::UR_TF_AccountSupply account false)}
+        )
+    )
+    (defun URC_0012_HibernateFee:string (ats:string dayz:integer)
+        (let
+            (
+                (ref-ATS:module{AutostakeV5} ATS)
+                (peak:decimal (ref-ATS::UR_PeakHibernatePromile ats))
+                (decay:decimal (ref-ATS::UR_HibernateDecay ats))
+                (dec-dayz:decimal (dec dayz))
+                (v1:decimal (* dec-dayz decay))
+                (v2:decimal (- decay v1))
+                (fee-promile:decimal 
+                    (if (<= v2 0.0)
+                        0.0
+                        v2
+                    )
+                )
+            )
+            (format "{}%" [(/ fee-promile 10.0)])
         )
     )
     ;;

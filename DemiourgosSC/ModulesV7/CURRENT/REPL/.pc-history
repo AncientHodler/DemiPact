@@ -1,3 +1,4 @@
+(load "Z.repl")
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
@@ -71,7 +72,6 @@
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
 (take -1 [1 23 4 5])
-(load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")

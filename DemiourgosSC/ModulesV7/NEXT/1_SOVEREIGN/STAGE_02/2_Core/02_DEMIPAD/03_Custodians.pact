@@ -187,7 +187,7 @@
         (UEV_AcquisitionNonce nonce)
         (let
             (
-                (ref-DPDC:module{DpdcV2} DPDC)
+                (ref-DPDC:module{DpdcV3} DPDC)
                 (ref-DEMIPAD:module{DemiourgosLaunchpad} DEMIPAD)
                 (lpad:string (ref-DEMIPAD::GOV|LAUNCHPAD|SC_NAME))
                 (asset:string (UR_AssetID))

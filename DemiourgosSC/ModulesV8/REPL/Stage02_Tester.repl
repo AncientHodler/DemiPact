@@ -1,0 +1,35 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                                                                              ;;
+;;              STAGE ONE TESTER [57 TXs]                                       ;;
+;;              Loads Individual Repl Files                                     ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+;;STARTER - Loads Stage 0 and 1 as Starter - Use for Standalone Run
+;;          Dont Use for Z.repl Run
+(load "Stage00.repl")
+(load "Stage01_Tester.repl")
+
+;;SOVEREING DEPLOYER
+(load "Stage_02/[0.1]_Interfaces.repl")
+(load "Stage_02/[2.1]_DpdcCore.repl")
+(load "Stage_02/[2.2]_DemiPad.repl")
+(load "Stage_02/[3]_Talos.repl")
+
+;;SOVEREIGN EXECUTOR (contains executions to initialise the SOVEREIGN Functionality)
+(load "Stage_02/[4.0]_Sovereign-Executor.repl")
+
+;;SLAVE DEPLOYER + EXECUTOR
+(load "Stage_02/[5.1]_PopulateNosferatu.repl")
+(load "Stage_02/[5.2]_PopulateBloodshed.repl")
+(load "Stage_02/[5.4]_PopulateBunnies.repl")
+
+(load "Stage_02/[5.3]_Launchpad.repl")
+(load "Stage_02/[6.1]_DPDC.repl")
+
+;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")

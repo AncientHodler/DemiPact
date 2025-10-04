@@ -26,7 +26,7 @@
 ;;SLAVE DEPLOYER + EXECUTOR
 (load "Stage_02/[5.1]_PopulateNosferatu.repl")
 ;(load "Stage_02/[5.2]_PopulateBloodshed.repl")
-;(load "Stage_02/[5.4]_PopulateBunnies.repl")
+(load "Stage_02/[5.4]_PopulateBunnies.repl")
 
 (load "Stage_02/[5.3]_Launchpad.repl")
 (load "Stage_02/[6.1]_DPDC.repl")
