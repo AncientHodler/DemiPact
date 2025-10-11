@@ -28,9 +28,9 @@
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
 
         (cum1:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 5.0 patron false))
         (cum2:object{IgnisCollectorV2.ModularCumulator} (ref-IGNIS::UDC_MakeModularCumulator 7.0 receiver false))

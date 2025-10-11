@@ -13,9 +13,9 @@
     (defcap GOV ()                  (compose-capability (GOV|SWPL_ADMIN)))
     (defcap GOV|SWPL_ADMIN ()       (enforce-guard GOV|MD_SWPL))
     ;;
-    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -33,7 +33,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -271,7 +271,7 @@
     (defun URC|KDA-PID_LpToIgnis:decimal (swpair:string amount:decimal kda-pid:decimal)
         (let
             (
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (ignis-prec:integer (URC_IgnisPrecision))
                 (pool-value:[decimal] (ref-SWPI::URC_PoolValue swpair))
@@ -283,7 +283,7 @@
     (defun URC|KDA-PID_TokenToIgnis (id:string amount:decimal kda-pid:decimal)
         (let
             (
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (ignis-prec:integer (URC_IgnisPrecision))
                 (a-price:decimal (ref-SWPI::URC_TokenDollarPrice id kda-pid))
@@ -300,12 +300,12 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (iz-balanced:bool (at "iz-balanced" (at "sorted-lq-type" ld)))
                 (iz-asymmetric:bool (at "iz-asymmetric" (at "sorted-lq-type" ld)))
@@ -650,7 +650,7 @@
     (defun URC_TokenPrecision (id:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DPTF::UR_Decimals id)
         )
@@ -658,7 +658,7 @@
     (defun URC_IgnisPrecision ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (URC_TokenPrecision (ref-DALOS::UR_IgnisID))
         )
@@ -674,8 +674,8 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (sorted-lq:object{SwapperLiquidityV2.LiquiditySplit} (URC_SortLiquidity swpair input-amounts))
                 (sorted-lq-type:object{SwapperLiquidityV2.LiquiditySplitType} (UC_DetermineLiquidity sorted-lq))
@@ -758,8 +758,8 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|VST:module{UtilityVstV2} U|VST)
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (li:integer (at "li" lcd))
                 (pool-type:string (at "pool-type" lcd))
@@ -873,7 +873,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (pool-type:string (ref-U|SWP::UC_PoolType swpair))
                 (how-many:decimal (dec (length current)))
                 (weigths:[decimal] (ref-SWP::UR_Weigths swpair))
@@ -910,9 +910,9 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 ;;Unwrap Object Data
                 (iz-balanced:bool (at "iz-balanced" (at "sorted-lq-type" ld)))
@@ -1102,7 +1102,7 @@
                     (
                         (ref-U|LST:module{StringProcessor} U|LST)
                         (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                        (ref-SWPI:module{SwapperIssueV3} SWPI)
+                        (ref-SWPI:module{SwapperIssueV4} SWPI)
                         ;;
                         ;;Unwrap VSE Object Data for fixed Variables
                         (account:string (at "account" vse))
@@ -1185,7 +1185,7 @@
                         )
                         (let
                             (
-                                (ref-SWP:module{SwapperV5} SWP)
+                                (ref-SWP:module{SwapperV6} SWP)
                                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                                 (balanced-chain:[decimal]
                                     (fold
@@ -1252,7 +1252,7 @@
                     (let
                         (
                             (ref-U|LST:module{StringProcessor} U|LST)
-                            (ref-SWPI:module{SwapperIssueV3} SWPI)
+                            (ref-SWPI:module{SwapperIssueV4} SWPI)
                             (positive-amounts:[decimal] (ref-U|LST::UC_RemoveItem input-amounts 0.0))
                             (positive-ids:[string] (ref-SWPI::URC_TrimIdsWithZeroAmounts swpair input-amounts))
                         )
@@ -1284,8 +1284,8 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (input-position:integer (ref-SWP::UR_PoolTokenPosition swpair input-id))
                 (input-precision:integer (ref-DPTF::UR_Decimals input-id))
@@ -1307,7 +1307,7 @@
     (defun URC_LpBreakAmounts:[decimal] (swpair:string input-lp-amount:decimal)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (pool-token-supplies:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                 (lp-supply:decimal (ref-SWP::URC_LpCapacity swpair))
             )
@@ -1321,7 +1321,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (ratio:decimal (floor (/ input-lp-amount swpair-lp-supply) 24))
                 (pool-token-precisions:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
                 (l1:integer (length swpair-pool-token-supplies))
@@ -1365,7 +1365,7 @@
             \ If no asymmetric liq exists within the LD, then outputs zero, as no Deviation would occur"
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 ;;Unwrap Object Data
                 (balanced-liquidity:[decimal] (at "balanced" (at "sorted-lq" ld)))
@@ -1387,7 +1387,7 @@
                 [0.0 0.0]
                 (let
                     (
-                        (ref-SWPI:module{SwapperIssueV3} SWPI)
+                        (ref-SWPI:module{SwapperIssueV4} SWPI)
                         ;;
                         (w:[decimal] (ref-SWP::UR_Weigths swpair))
                         (n:decimal (dec (length w)))
@@ -1403,8 +1403,8 @@
     (defun UEV_BalancedLiquidity (swpair:string input-id:string input-amount:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (iz-on-pool:bool (contains input-id pool-tokens))
             )
@@ -1418,7 +1418,7 @@
         (account:string account-liq:[decimal] swpair:string pool-liq:[decimal])
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (A:decimal (ref-SWP::UR_Amplifier swpair))
                 (W:[decimal] (ref-SWP::UR_Weigths swpair))
             )
@@ -1436,7 +1436,7 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (pool-tokens:[string] (ref-U|SWP::UC_TokensFromSwpairString swpair))
                 (zero-lst:[decimal] (make-list (length pool-tokens) 0.0))
             )
@@ -1453,7 +1453,7 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (lb:bool (ref-SWP::UR_LiquidBoost))
                 (lp-fee:decimal (ref-SWP::UR_FeeLP swpair))
                 (special-fee:decimal (ref-SWP::UR_FeeSP swpair))
@@ -1571,7 +1571,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (balanced-liquidity:[decimal] (at "balanced" (at "sorted-lq" ld)))
                 (asymmetric-liquidity:[decimal] (at "asymmetric" (at "sorted-lq" ld)))
@@ -1608,11 +1608,11 @@
                         (let
                             (
                                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                                 (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                                (ref-SWPI:module{SwapperIssueV4} SWPI)
                                 ;;
                                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -1696,8 +1696,8 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
             )
             (ref-TFT::C_MultiTransfer
                 (at "mt-ids" (at "clad-op" clad))
@@ -1712,8 +1712,8 @@
         (UEV_IMC)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 (pool-worth:decimal (at 0 (ref-SWPI::URC_PoolValue swpair)))
                 (inactive-limit:decimal (ref-SWP::UR_InactiveLimit))
             )

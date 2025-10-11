@@ -27,8 +27,8 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
 
         (p-k:string "PKOSON-98c486052a51")
@@ -99,11 +99,11 @@
 (namespace "free")
 (let 
     (
-        (ref-INFO-ONE:module{InfoOneV3} INFO-ONE)
+        (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
         (aoz:string KST.AOZT)
         ;(atsc:string KST.ATSTK)
-        ;(ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        ;(ref-ATS:module{AutostakeV5} ATS)
+        ;(ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        ;(ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
 
         (p-k:string "PKOSON-98c486052a51")
@@ -151,8 +151,8 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -203,9 +203,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -277,9 +277,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -319,9 +319,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -368,9 +368,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -415,9 +415,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -490,9 +490,9 @@
     (
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -566,9 +566,9 @@
         (patron:string KST.ANHD)
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -645,9 +645,9 @@
         (aoz:string KST.AOZT)
         (atsc:string KST.ATSTK)
         (patron:string KST.ANHD)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -735,9 +735,9 @@
         (atsc:string KST.ATSTK)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -834,9 +834,9 @@
         (atsc:string KST.ATSTK)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -914,9 +914,9 @@
         (atsc:string KST.ATSTK)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -998,10 +998,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1109,10 +1109,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1182,10 +1182,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1256,10 +1256,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1313,11 +1313,11 @@
         (ref-U|LST:module{StringProcessor} U|LST)
         (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
-        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-TFT:module{TrueFungibleTransferV9} TFT)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1382,10 +1382,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1464,10 +1464,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1533,10 +1533,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1621,10 +1621,10 @@
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
@@ -1704,6 +1704,526 @@
 (print "")
 (print "")
 (format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+    "block-time": (time "2024-11-22T00:00:00Z")}
+)
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        
+        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        ;;
+        (lq-idx:string "KdaLiquindex-98c486052a51")
+        (lkda:string "DWK-98c486052a51")
+    )
+    [
+        [
+            (ref-TS01-C1::DPTF|C_Transfer patron lkda patron emma 150.0 false)
+            (format "User AH has LKDA {}" [(DPTF.UR_AccountSupply lkda patron)])
+            (format "User EMMA has LKDA {}" [(DPTF.UR_AccountSupply lkda emma)])
+            (format "User LUMY has LKDA {}" [(DPTF.UR_AccountSupply lkda lumy)])
+            (format "User AOZ has LKDA {}" [(DPTF.UR_AccountSupply lkda aoz)])
+        ]
+        [
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+        ]
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+    "block-time": (time "2024-11-22T00:00:00Z")}
+)
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        
+        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        ;;
+        (lq-idx:string "KdaLiquindex-98c486052a51")
+        (lkda:string "DWK-98c486052a51")
+    )
+    [
+        [
+            (ref-TS01-C1::DPTF|C_Transfer patron lkda patron emma 150.0 false)
+            (format "User AH has LKDA {}" [(DPTF.UR_AccountSupply lkda patron)])
+            (format "User EMMA has LKDA {}" [(DPTF.UR_AccountSupply lkda emma)])
+            (format "User LUMY has LKDA {}" [(DPTF.UR_AccountSupply lkda lumy)])
+            (format "User AOZ has LKDA {}" [(DPTF.UR_AccountSupply lkda aoz)])
+        ]
+        [
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+        ]
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+    "block-time": (time "2024-11-22T00:00:00Z")}
+)
+(let
+    (
+        (aoz:string KST.AOZT)
+        (atsc:string KST.ATSTK)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lumy:string KST.LUMY)
+        (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        
+        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        ;;
+        (lq-idx:string "KdaLiquindex-98c486052a51")
+        (lkda:string "DWK-98c486052a51")
+    )
+    [
+        [
+            (ref-TS01-C1::DPTF|C_Transfer patron lkda patron emma 150.0 false)
+            (format "User AH has LKDA {}" [(DPTF.UR_AccountSupply lkda patron)])
+            (format "User EMMA has LKDA {}" [(DPTF.UR_AccountSupply lkda emma)])
+            (format "User LUMY has LKDA {}" [(DPTF.UR_AccountSupply lkda lumy)])
+            (format "User AOZ has LKDA {}" [(DPTF.UR_AccountSupply lkda aoz)])
+        ]
+        [
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+            ;(ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+        ]
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Add Secondary AGAIN with Hybrid Cull Test 3|3 {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Add Secondary AGAIN with Hybrid Cull Test 3|3")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        ;;
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        (lq-idx:string "KdaLiquindex-98c486052a51")
+        
+    )
+    [
+        [
+            (ref-TS01-C2::ATS|C_ColdRecovery patron emma lq-idx 0.1)
+
+        ]
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+            "block-time": (time "2025-11-22T00:00:00Z")}
+        )
+    ]
+    
+)
+
+(print "")
+(print "")
+(format "<<<<<<<251th Cold Recovery costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Cull A LOT")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
+        ;;
+        (lq-idx:string "KdaLiquindex-98c486052a51")
+    )
+    (ref-TS01-C2::ATS|C_Cull patron emma lq-idx)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Cull costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")

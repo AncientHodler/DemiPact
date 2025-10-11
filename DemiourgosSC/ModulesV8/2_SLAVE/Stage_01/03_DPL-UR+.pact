@@ -45,7 +45,7 @@
     (defcap GOV|DPL_UR_ADMIN ()             (enforce-guard GOV|MD_DPL-UR))
     ;;{G3}
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -221,7 +221,7 @@
     (defun URC_TrueFungibleAmountPrice:decimal (id:string amount:decimal price:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (idp:integer (ref-DPTF::UR_Decimals id))
             )
             (floor (* amount price) idp)
@@ -230,7 +230,7 @@
     (defun URC_PrimordialIDs:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ignis:string (ref-DALOS::UR_IgnisID))
                 (auryn:string (ref-DALOS::UR_AurynID))
@@ -247,10 +247,10 @@
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 (p-ids:[string] (URC_PrimordialIDs))
@@ -285,7 +285,7 @@
     (defun URC_KadenaCollectionReceivers:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (r1:string (ref-DALOS::UR_AccountKadena (at 2 (ref-DALOS::UR_DemiurgoiID))))
                 (r2:string (ref-DALOS::UR_AccountKadena (ref-DALOS::GOV|DALOS|SC_NAME)))
                 (r3:string (ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID))))
@@ -317,8 +317,8 @@
         @doc "Computes an UI allowed <output-id> amount as a <promille> relative to its total <swpair> supply"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (output-id-supply:decimal (ref-SWP::UR_PoolTokenSupply swpair output-id))
                 (output-id-prec:integer (ref-DPTF::UR_Decimals output-id))
@@ -330,8 +330,8 @@
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (ptp:[string] (UC_PoolTypeWord swpair))
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
@@ -361,14 +361,14 @@
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (ref-ELITE:module{Elite} ELITE)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (IgnisID:string "IGNIS-slLyzPPCo22W")
                 (OuroID:string "OURO-slLyzPPCo22W")
@@ -528,10 +528,10 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-ORBR:module{OuroborosV5} OUROBOROS)
                 ;;
                 (payment-key:string (ref-DALOS::UR_AccountKadena account))
@@ -628,10 +628,10 @@
     (defun URC_0002_Primordials (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
                 (ouro:string (at 0 p-ids))
@@ -768,7 +768,7 @@
     (defun URC_0003_SWPairGeneralInfo ()
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
                 (glsb-word:string (if glsb "ON" "OFF"))
                 (asm:bool (ref-SWP::UR_Asymetric))
@@ -808,7 +808,7 @@
     (defun URC_0004_SWPairDashboardInfo (swpair:string)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -868,8 +868,8 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (dsid:object{UtilitySwpV2.DirectSwapInputData}
@@ -908,8 +908,8 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (rsid:object{UtilitySwpV2.ReverseSwapInputData}
@@ -962,8 +962,8 @@
     (defun URC_0010_SwpairInternalDashboard (swpair:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (read-pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -1027,10 +1027,10 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (account-pool-tokens-supplies:[decimal]
@@ -1054,30 +1054,178 @@
             ,"wallet-ignis"                     : (ref-DALOS::UR_TF_AccountSupply account false)}
         )
     )
-    (defun URC_0012_HibernateFee:string (ats:string dayz:integer)
+    (defun URC_0012_RecoveryDashboard (ats:string recoverer:string recovery-type:integer)
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
-                (peak:decimal (ref-ATS::UR_PeakHibernatePromile ats))
-                (decay:decimal (ref-ATS::UR_HibernateDecay ats))
-                (dec-dayz:decimal (dec dayz))
-                (v1:decimal (* dec-dayz decay))
-                (v2:decimal (- peak v1))
-                (fee-promile:decimal 
-                    (if (<= v2 0.0)
-                        0.0
-                        v2
+                (max:decimal
+                    (if (= recovery-type 2) 0.0
+                        (URC_MaxRecoveryAmount ats recoverer recovery-type)
+                    )
+                )
+                (t0:string "Recovery recovers Autostake Reward Tokens (RTs)")
+                (t00:string "from the Autostake Reward-Bearing Token (RBT)")
+                (t01:string (format "Cold {}" [t0]))
+                (t02:string "after a Period of Time (that inversely scales with your Elite Account Tier),")
+                (t03:string "with or without a Cold-Recovery Fee (depending on the Autostake Pool Settings).")
+                (t04:string "Cold Recovery needs Recovery Positions to recover RTs;")
+                (t05:string "The Number of Recovery Positions depends on Autostake Pool Settings.")
+                ;;
+                (t07:string (format "Hot {}" [t0]))
+                (t08:string "by converting it to a Hot-RBT Ortofungible 1:1 storing its Mint-Time.")
+                (t09:string "The Hot-RBT can be redeemed at any time recovering the RTs;")
+                (t10:string "A Redemption Fee is incurred that depends on 3 Factors:")
+                (t11:string "Ortofungible Mint Time, Its Redemption Time, and Hot-Recovery Autostake Settings.")
+                ;;
+                (t12:string (format "Direct {}" [t0]))
+                (t13:string "immediately, with or without a Direct-Recovery Fee.")
+                ;;
+                ;;
+                (cold-text:string (format "{}\n{}\n{}\n{}\n{}\n{}" [t01 t00 t01 t03 t04 t05]))
+                (hot-text:string (format "{}\n{}\n{}\n{}\n{}\n{}" [t07 t00 t08 t09 t10 t11]))
+                (direct-text:string (format "{}\n{}\n{}" [t12 t00 t13]))
+            )
+            {"max"                  : max
+            ,"cold-text"            : cold-text
+            ,"hot-text"             : hot-text
+            ,"direct-text"          : direct-text}
+        
+        )
+    )
+    (defun URC_0013_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)
+        (let
+            (
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                ;;
+                (cold-r:bool (ref-ATS::UR_ToggleColdRecovery ats))
+                (cold-recovery-info:object{OuronetInfoV3.ClientInfo}
+                    (ref-INFO-ONE::ATS|INFO_ColdRecovery patron recoverer ats ra)
+                )
+                (cull-info:object{OuronetInfoV3.ClientInfo}
+                    (ref-INFO-ONE::ATS|INFO_Cull patron recoverer ats)
+                )
+                (cold-recovery-execute-text:[string]
+                    (if (not cold-r)
+                        ["Cold Recovery for this Autostake Pool is turned OFF"]
+                        (at "pre-text" cold-recovery-info)
+                    )
+                )
+                (cull-execute-text:[string] 
+                    (at "pre-text" cull-info)
+                )
+                ;;
+                (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats recoverer))
+                (p0-size:integer (length p0))
+                (p7:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P-Seven ats recoverer))
+            )
+            {"recovery-dashboard"           : (URC_0012_RecoveryDashboard ats recoverer 1)
+            ,"cold-recovery-info"           : cold-recovery-info
+            ,"cold-recovery-execute-text"   : cold-recovery-execute-text
+            ,"cull-execute-text"            : cull-execute-text
+            ,"unlimited-positions-obj"      : p0
+            ,"sevenfold-positions-obj"      : p7
+            ;;
+            ,"cold-recovery-positions"      : (ref-ATS::UR_ColdRecoveryPositions ats)
+            ,"fee-table"                    : (ref-ATS::UR_ColdRecoveryFeeTable ats)
+            ,"fee-thresholds"               : (ref-ATS::UR_ColdRecoveryFeeThresholds ats)
+            ,"durations-table"              : (ref-ATS::UR_ColdRecoveryDuration ats)
+            ,"elite-mode-text"              : (if (ref-ATS::UR_EliteMode ats) "ON" "OFF")
+            }
+        )
+    )
+    (defun URC_0014_HotRecovery (ats:string recoverer:string)
+        (let
+            (
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                ;;
+                (hot-r:bool (ref-ATS::UR_ToggleHotRecovery ats))
+                (hot-recovery-execute-text:[string]
+                    (if (not hot-r)
+                        ["Hot Recovery for this Autostake Pool is turned OFF"]
+                        ["Hot Recovery can only be executed from the Autostake Menu"]
                     )
                 )
             )
-            (format "{}%" [(/ fee-promile 10.0)])
+            {"recovery-dashboard"           : (URC_0012_RecoveryDashboard ats recoverer 2)}
         )
+    )
+    (defun URC_0015_DirectRecovery (patron:string recoverer:string ats:string ra:decimal)
+        (let
+            (
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                ;;
+                (direct-r:bool (ref-ATS::UR_ToggleDirectRecovery ats))
+                (direct-recovery-info:object{OuronetInfoV3.ClientInfo}
+                    (ref-INFO-ONE::ATS|INFO_DirectRecovery patron recoverer ats ra)
+                )
+                (direct-recovery-execute-text:[string]
+                    (if (not direct-r)
+                        ["Direct Recovery for this Autostake Pool is turned OFF"]
+                        (at "pre-text" direct-recovery-info)
+                    )
+                )
+            )
+            {"recovery-dashboard"           : (URC_0012_RecoveryDashboard ats recoverer 3)
+            ,"direct-recovery-info"         : direct-recovery-info
+            ,"direct-recovery-execute-text" : direct-recovery-execute-text
+            }
+        )
+    )
+    (defun URC_MaxRecoveryAmount (ats:string recoverer:string recovery-type:integer)
+        @doc "Recovery-Type 1 and 3 are allowed wit this Function"
+        (let
+            (
+                (allowed-recovery-type:integer [1 3])
+                (iz-allowed:bool (contains recovery-type allowed-recovery-type))
+            )
+            (enforce iz-allowed "Invalid Recovery Type")
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    ;;
+                    (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                    (c-rbt-supply:decimal (ref-DPTF::UR_AccountSupply c-rbt recoverer))
+                    (usable-cold-recovery-position:integer (ref-ATS::URC_WhichPosition ats c-rbt-supply recoverer))
+                )
+                (if (or (= recovery-type 3) (= usable-cold-recovery-position -1))
+                    c-rbt-supply
+                    (let
+                        (
+                            (ref-DALOS:module{OuronetDalosV6} DALOS)
+                            ;;
+                            (elite:bool (ref-ATS::UR_EliteMode ats))
+                            (iz-ea:bool (= c-rbt (ref-DALOS::UR_EliteAurynID)))
+                        )
+                        (if (or (= usable-cold-recovery-position 1) (and (not elite) (not iz-ea)))
+                            c-rbt-supply
+                            (let
+                                (
+                                    (ref-U|CT:module{OuronetConstants} U|CT)
+                                    (thresholds:[decimal] (ref-U|CT::CT_ET))
+                                    (remain-pos:integer (+ (* (- usable-cold-recovery-position 1) 7) 1))
+                                    (must-remain:decimal (at remain-pos thresholds))
+                                )
+                                (- c-rbt-supply must-remain)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (defun URC_UnstakeTime:decimal (input:time)
+        @doc "Outputs Time in Seconds untill Cull \
+        \ If output is negative, RTs are cullable."
+        (diff-time input (at "block-time" (chain-data)))
     )
     ;;
     (defun DALOS|URC_DeployStandardAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "standard"))
             )
             (URC_SplitKdaPriceForReceivers price)
@@ -1086,7 +1234,7 @@
     (defun DALOS|URC_DeploySmartAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "smart"))
             )
             (URC_SplitKdaPriceForReceivers price)
@@ -1097,8 +1245,8 @@
         (let
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-ORBR:module{OuroborosV5} OUROBOROS)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -1122,7 +1270,7 @@
     (defun URC_KadenaDiscount (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::URC_GasDiscount account true)
         )
@@ -1130,7 +1278,7 @@
     (defun URC_IgnisDiscount (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::URC_GasDiscount account false)
         )

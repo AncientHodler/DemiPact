@@ -28,11 +28,15 @@
     ]
 )
 
+
+
+
+
 (let
     (
         (ref-U|G:module{OuronetGuards} U|G)
-        (ref-TFT:module{TrueFungibleTransferV8} TFT)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TFT:module{TrueFungibleTransferV9} TFT)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
         (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
         (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
@@ -98,7 +102,7 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -140,8 +144,8 @@
     (let
         (
             (ref-VST:module{VestingV5} VST)
-            (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
@@ -305,3 +309,143 @@
 (env-sigs [])
 (commit-tx)
 
+
+
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Movie Booster aka Spark")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (ref-DALOS::UR_UsagePrice "dptf")
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+            (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
+            (ref-P|TS02-DPAD:module{OuronetPolicy} TS02-DPAD)
+            ;;
+            (ref-U|G:module{OuronetGuards} U|G)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+            ;;
+            ;;
+            (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
+            ;;
+            (patron:string KST.ANHD)
+            (ids:list
+                (ref-TS01-C1::DPTF|C_Issue
+                    patron
+                    patron
+                    ["KadenaPay"]
+                    ["KPAY"]
+                    [24]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                    [true]
+                )
+            )
+            (KpayID:string (at 0 ids))
+            (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
+            (s-key:string DEMIPAD-KPAY.KPAY|INFO)
+        )
+        [
+            ;;Backward IMC
+            (ref-P|KPAY::P|A_Define)
+            ;;Forward IMC
+            ;(ref-P|KPAY::P|A_AddIMP mg)    ;;Needed on Mainnet
+            ;;Governor
+            (ref-TS01-C1::DALOS|C_RotateGovernor
+                KST.ANHD
+                lpad-sc
+                (ref-U|G::UEV_GuardOfAny
+                    [
+                        (create-capability-guard (DEMIPAD.DEMIPAD|GOV))
+                        (ref-P|DPAD::P|UR "SPARK|RemoteGov")
+                        (ref-P|DPAD::P|UR "SNAKES|RemoteGov")
+                        (ref-P|DPAD::P|UR "CUSTODIANS|RemoteGov")
+                        (ref-P|DPAD::P|UR "KPAY|RemoteGov")
+                    ]
+                )
+            )
+            ;;
+            ;;
+            ;;Permissions
+            (ref-TS01-C1::DPTF|C_Mint patron KpayID lpad-sc 250000000.0 true)
+            (ref-TS01-C1::DPTF|C_ToggleBurnRole patron KpayID lpad-sc true)
+            ;;REPL-VARIANT:
+            (acquire-module-admin free.DEMIPAD-KPAY)
+            ;;MAIN-NET VARIANT
+            ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-KPAY)
+            (insert DEMIPAD-KPAY.KPAY|T|Properties s-key
+                {"asset-id"            : KpayID}
+            )
+            ;;Register KPAY To Launchpad
+            (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron KpayID [true true])
+            ;;Defines the starting point, which is the base for the price and ending period.
+            (ref-TS02-DPAD::A_DefinePrice KpayID
+                {"starting-time" : (at "block-time" (chain-data))}
+            )
+            (ref-TS02-DPAD::A_ToggleOpenForBusiness KpayID true)
+        ]
+    )
+)
+
+
+(print "")
+(print "")
+(format "<<<<<<<Init Spark Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

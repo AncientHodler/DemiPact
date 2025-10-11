@@ -3,11 +3,11 @@
 (let
     (
         (ref-IGNIS:module{IgnisCollector} DALOS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TFT:module{TrueFungibleTransferV9} TFT)
         (ref-U|LST:module{StringProcessor} U|LST)
         (ref-SWPI:module{SwapperIssueV2} SWPI)
-        (ref-SWP:module{SwapperV5} SWP)
+        (ref-SWP:module{SwapperV6} SWP)
         (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (ignis-id:string (ref-DALOS::UR_IgnisID))
         (account "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -66,7 +66,7 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (lp-id:string "W|LKDA-OURO-WKDA|LP-jxrD_V4ts9Ht")
         (swpair:string "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W")

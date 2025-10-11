@@ -30,11 +30,11 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (id:string "DHCD-98c486052a51")
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
@@ -74,9 +74,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{DpdcV3} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -170,7 +170,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -179,7 +179,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -240,11 +240,11 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)
-        (ref-DPDC:module{DpdcV3} DPDC)
-        (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (orbr:string KST.OURBR)
@@ -253,7 +253,7 @@
         (t:bool true)
         (f:bool false)
         (b:string "|")
-        (snake-eye-fragmentation-data:object{DpdcUdcV2.DPDC|NonceData} 
+        (snake-eye-fragmentation-data:object{DpdcUdcV3.DPDC|NonceData} 
             (ref-DPDC-UDC::UDC_NonceData
                 7.0
                 7.0
@@ -372,9 +372,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -444,9 +444,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -500,7 +500,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -509,7 +509,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -572,11 +572,11 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{DpdcV3} DPDC)
-        (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -623,10 +623,10 @@
 (let
     (
         
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV6} TS02-C2)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
         (id1:string "DHCD-98c486052a51")
         (id2:string "DHN-98c486052a51")
         (patron:string KST.ANHD)
@@ -691,9 +691,9 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV3} DPDC)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
-        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV6} TS02-C2)
+        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+        (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
         (id:string "DHOC-98c486052a51")
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -734,7 +734,7 @@
 )
 (let
     (
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DPDC:module{DpdcV4} DPDC)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "DHCD-98c486052a51")
@@ -831,10 +831,10 @@
 )
 (let
     (
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
-        (ref-DPDC:module{DpdcV3} DPDC)
-        (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "E|DH-98c486052a51")
@@ -891,10 +891,10 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPDC:module{DpdcV3} DPDC)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPDC:module{DpdcV4} DPDC)
         
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (patron:string KST.ANHD)
@@ -956,8 +956,8 @@
 )
 (let
     (
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-        (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         (dhoc:string "DHOC-98c486052a51")
@@ -995,8 +995,8 @@
 (let
     (
         (ref-coin:module{fungible-v2} coin)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
@@ -1100,6 +1100,154 @@
     ]
 
 
+)
+
+(print "")
+(print "")
+(format "<<<<<<<TX 014 -- LAUNCHPAD TESTS Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX 015 -- LAUNCHPAD TESTS")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME07}
+)
+(let
+    (
+        (ref-coin:module{fungible-v2} coin)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-DPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        ;;
+        (kpay-amount:integer 1400)
+        (kpay-price:decimal (ref-DPAD-KPAY::UR_KpayPID))
+        (KpayID:string (ref-DPAD-KPAY::UR_KpayID))
+        (KpayCosts:object{DemiourgosLaunchpadV2.Costs} 
+            (ref-DPAD-KPAY::URC_KpayAmountCosts kpay-amount 0.0)
+        )
+        (correct-pid:decimal (at "pid" KpayCosts))
+        (correct-wkda:decimal (at "wkda" KpayCosts))
+
+        ;;\ Type 0 = Native Kadena \
+        ;;\ Type 1 = WKDA \
+        ;;\ Type 2 = LKDA \
+        ;;\ Type 3 = OURO \
+
+        (prices-obj:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
+            (ref-DPAD::URC_Prices KpayID correct-pid 1)
+        )
+        ;;
+        (patron:string KST.ANHD)
+        (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
+        (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
+        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
+        ;;
+        (acquire-kpay:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount false))
+        (acquire-kpay2:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount true))
+        ;;
+        (env-amount:decimal (at "enviroment-amount" prices-obj))
+        (a1:decimal (at "amount-one" prices-obj))
+        (a2:decimal (at "amount-two" prices-obj))
+        (a3:decimal (at "amount-three" prices-obj))
+        (a4:decimal (at "amount-four" prices-obj))
+        ;;
+        (mb1:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD false))   ;;wkda
+        (mb2:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD true))    ;;kda
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            ;{ "key": "PK_Emma", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
+              "caps": 
+                [
+                    ;;for C_WrapKadena
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                        env-amount
+                    )
+                    ;;
+                    ;;
+                    ;;for C_Acquire with <iz-native> = false, which will unwrap WKDA to KDA
+                    (coin.TRANSFER 
+                        "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        env-amount       ;;total-kadena-amount
+                    )
+                    ;;
+                    ;;
+                    ;;Satisfying Enviroment in C_Acquire
+                    ;;<amount-one> to <receiver-one>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        a1       ;;(at "amount-one" prices-obj)
+                    )
+                    ;;<amount-two> to <receiver-two>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        a2        ;;(at "amount-two" prices-obj)
+                    )
+                    ;;<amount-three> to <receiver-three>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        a3        ;;(at "amount-three" prices-obj)
+                    )
+                    ;;<amount-four> to <receiver-four>
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        a4       ;;(at "amount-four" prices-obj)
+                    )
+                ]
+            }
+        ]
+    )
+    
+    [
+        [
+            (format "Price OBJ iz {}" [prices-obj])
+            (format "Acquire String LIST is {}" [acquire-kpay])
+            (format "Acquire String LIST2 is {}" [acquire-kpay2])
+
+        ]
+        (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 100000000.0)
+        (env-chain-data
+            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+             "block-time": TV.TIME00}
+        )
+        [env-amount a1 a2 a3 a4]
+        [mb1 mb2]
+        (format "Resident WKDA before buy is {}" [(ref-DPAD::UR_WKDA)])
+        (format "Before Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
+        (ref-TS02-DPAD::KPAY|C_BuyKpay KST.ANHD KST.ANHD kpay-amount true)
+        (format "Resident WKDA after buy is {}" [(ref-DPAD::UR_WKDA)])
+        (format "After Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
+
+
+    ]
 )
 
 (print "")

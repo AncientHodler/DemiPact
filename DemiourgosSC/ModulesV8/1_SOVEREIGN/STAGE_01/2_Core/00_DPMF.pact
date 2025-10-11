@@ -12,7 +12,7 @@
     (defcap GOV ()                  (compose-capability (GOV|DPMF_ADMIN)))
     (defcap GOV|DPMF_ADMIN ()       (enforce-guard GOV|MD_DPMF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -30,7 +30,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -163,7 +163,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_Konto id) new-owner)
             (ref-DALOS::UEV_EnforceAccountExists new-owner)
@@ -203,7 +203,7 @@
     (defcap DPMF|S>X_TG_TRANSFER-R (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
             )
@@ -221,7 +221,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_CreateRoleAccount id) receiver)
             (CAP_Owner id)
@@ -256,7 +256,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-U|INT::UEV_PositionalVariable rp 5 "Invalid Role Position")
             (ref-DALOS::UEV_EnforceAccountExists account)
@@ -268,7 +268,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_Amount id amount)
@@ -287,7 +287,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length name))
                 (l2:integer (length ticker))
                 (l3:integer (length decimals))
@@ -332,7 +332,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_Amount id amount)
@@ -344,7 +344,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_AccountCreateState id client true)
@@ -360,7 +360,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                 (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
             )
@@ -400,7 +400,7 @@
     (defcap DPMF|C>UPDATE-SPECIAL (main-dptf:string secondary-dpmf:string vesting-or-sleeping:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (main-special-id:string
                     (if vesting-or-sleeping
                         (ref-DPTF::UR_Vesting main-dptf)
@@ -776,8 +776,8 @@
     (defun URC_EliteAurynzSupply (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
@@ -849,7 +849,7 @@
             (enforce (!= fourth BAR) "Sleeping LP Tokens not allowed for this operation")
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (first-two:string (take 2 dpmf))
                 )
                 (if (= first-two "V|")
@@ -865,8 +865,8 @@
     (defun URC_IzIdEA:bool (id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (fea:string (ref-DPTF::UR_Frozen ea-id))
                 (rea:string (ref-DPTF::UR_Reservation ea-id))
@@ -885,7 +885,7 @@
             \ While ensuring a Sleeping LP cant be used for this operation."
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (parent:string (URC_Parent dpmf))
             )
             (if (= parent dpmf)
@@ -1108,7 +1108,7 @@
         @doc "Enforces DPMF Token ID Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
@@ -1134,9 +1134,9 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (parent:string (URC_Parent entity-id))
                 (parent-owner:string
                     (if (= parent entity-id)
@@ -1199,7 +1199,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|medium"))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
                 (new-nonce:integer
@@ -1215,7 +1215,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (create-role-account:string (UR_CreateRoleAccount id))
                 (role-nft-create-boolean:bool (if (= create-role-account account) true false))
             )
@@ -1253,7 +1253,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length name))
                 (mf-cost:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
                 (kda-costs:decimal (* (dec l1) mf-cost))
@@ -1274,7 +1274,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (new-nonce:integer
                     (with-capability (DPMF|C>MINT id account amount)
                         (XI_Mint id account amount meta-data)
@@ -1447,7 +1447,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-BRD:module{Branding} BRD)
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (l1:integer (length name))
@@ -1493,7 +1493,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (a-type:bool (ref-DALOS::UR_AccountType account))
             )
@@ -1512,7 +1512,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (s-type:bool (ref-DALOS::UR_AccountType sender))
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))
@@ -1647,7 +1647,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 )
                 (if vesting-or-sleeping
                     (do
@@ -1891,7 +1891,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (XI_DebitPure id nonce account amount)
@@ -1988,7 +1988,7 @@
         (require-capability (DPMF|C>TRANSFER id sender receiver transfer-amount method))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (current-nonce-meta-data (UR_AccountNonceMetaData id nonce sender))
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )

@@ -30,13 +30,13 @@
 )
 
 
-(interface TalosStageTwo_ClientOneV7
+(interface TalosStageTwo_ClientOneV8
     @doc "Exposes Client DPDC and SFT Functions \
     \ V3 added improved Collectable Transfer Function \
     \ V4 switched to single Multi Transfer Function in the TS02-C1 Module \
     \ V5 added quantity for Set Making and Breaking \
     \ V6 added Repurpose \
-    \ V7 moves to DpdcUdcV2"
+    \ V8 moves to DpdcUdcV3"
     ;;
     ;;  [2] DPDC
     ;;
@@ -49,7 +49,7 @@
     (defun DPSF|C_Create:string
         (
             patron:string id:string amount:[integer]
-            input-nonce-data:[object{DpdcUdcV2.DPDC|NonceData}]
+            input-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
         )
     )
     ;;
@@ -107,37 +107,37 @@
     (defun DPSF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPSF|C_DefineCompositeSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPSF|C_DefineHybridSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            primordial-sd:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            composite-sd:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            primordial-sd:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPSF|C_EnableSetClassFragmentation
         (
             patron:string id:string set-class:integer
-            fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData}
+            fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPSF|C_ToggleSet (patron:string id:string set-class:integer toggle:bool))
     (defun DPSF|C_RenameSet (patron:string id:string set-class:integer new-name:string))
     (defun DPSF|C_UpdateSetMultiplier (patron:string id:string set-class:integer new-multiplier:decimal))
     ;;
-    (defun DPSF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}))
-    (defun DPSF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}]))
+    (defun DPSF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}))
+    (defun DPSF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}]))
     (defun DPSF|C_UpdateSetNonceRoyalty         (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateSetNonceIgnisRoyalty    (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateSetNonceName            (patron:string id:string account:string set-class:integer nos:bool name:string))
@@ -145,19 +145,19 @@
     (defun DPSF|C_UpdateSetNonceScore           (patron:string id:string account:string set-class:integer nos:bool score:decimal))
     (defun DPSF|C_RemoveSetNonceScore           (patron:string id:string account:string set-class:integer nos:bool))
     (defun DPSF|C_UpdateSetNonceMetaData        (patron:string id:string account:string set-class:integer nos:bool meta-data:object))
-    (defun DPSF|C_UpdateSetNonceURI             (patron:string id:string account:string set-class:integer nos:bool ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}))
+    (defun DPSF|C_UpdateSetNonceURI             (patron:string id:string account:string set-class:integer nos:bool ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}))
     ;;
     ;;  [9] DPDC-F
     ;;
     (defun DPSF|C_RepurposeFragments (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPSF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPSF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
-    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData}))
+    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData}))
     ;;
     ;;  [10] DPDC-N
     ;;
-    (defun DPSF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}))
-    (defun DPSF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}]))
+    (defun DPSF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}))
+    (defun DPSF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}]))
     (defun DPSF|C_UpdateNonceRoyalty        (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateNonceIgnisRoyalty   (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPSF|C_UpdateNonceName           (patron:string id:string account:string nonce:integer nos:bool name:string))
@@ -165,7 +165,7 @@
     (defun DPSF|C_UpdateNonceScore          (patron:string id:string account:string nonce:integer nos:bool score:decimal))
     (defun DPSF|C_RemoveNonceScore          (patron:string id:string account:string nonce:integer nos:bool))
     (defun DPSF|C_UpdateNonceMetaData       (patron:string id:string account:string nonce:integer nos:bool meta-data:object))
-    (defun DPSF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}))
+    (defun DPSF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}))
     ;;
     ;;
     ;;  [10] EQUITY
@@ -179,12 +179,12 @@
     (defun DPSF|C_MorphEquity (patron:string account:string id:string input-nonce:integer input-amount:integer output-nonce:integer))
     ;;
 )
-(interface TalosStageTwo_ClientTwoV6
+(interface TalosStageTwo_ClientTwoV7
     @doc "Exposes Client NFT Functions \
     \ V3 added improved Collectable Transfer Function \
     \ V4 switched to single Multi Transfer Function in the TS02-C1 Module \
     \ V5 added Repurpose \
-    \ V6 moves to DpdcUdcV2"
+    \ V6 moves to DpdcUdcV3"
     ;;
     ;;  [2] DPDC
     ;;
@@ -196,7 +196,7 @@
     (defun DPNF|C_Create:string
         (
             patron:string id:string
-            input-nonce-data:[object{DpdcUdcV2.DPDC|NonceData}]
+            input-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
         )
     )
     ;;
@@ -253,37 +253,37 @@
     (defun DPNF|C_DefinePrimordialSet 
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPNF|C_DefineCompositeSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPNF|C_DefineHybridSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            primordial-sd:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            composite-sd:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            primordial-sd:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPNF|C_EnableSetClassFragmentation
         (
             patron:string id:string set-class:integer
-            fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData}
+            fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData}
         )
     )
     (defun DPNF|C_ToggleSet (patron:string id:string set-class:integer toggle:bool))
     (defun DPNF|C_RenameSet (patron:string id:string set-class:integer new-name:string))
     (defun DPNF|C_UpdateSetMultiplier (patron:string id:string set-class:integer new-multiplier:decimal))
     ;;
-    (defun DPNF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}))
-    (defun DPNF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}]))
+    (defun DPNF|C_UpdateSetNonce                (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}))
+    (defun DPNF|C_UpdateSetNonces               (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}]))
     (defun DPNF|C_UpdateSetNonceRoyalty         (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateSetNonceIgnisRoyalty    (patron:string id:string account:string set-class:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateSetNonceName            (patron:string id:string account:string set-class:integer nos:bool name:string))
@@ -291,19 +291,19 @@
     (defun DPNF|C_UpdateSetNonceScore           (patron:string id:string account:string set-class:integer nos:bool score:decimal))
     (defun DPNF|C_RemoveSetNonceScore           (patron:string id:string account:string set-class:integer nos:bool))
     (defun DPNF|C_UpdateSetNonceMetaData        (patron:string id:string account:string set-class:integer nos:bool meta-data:object))
-    (defun DPNF|C_UpdateSetNonceURI             (patron:string id:string account:string set-class:integer nos:bool ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}))
+    (defun DPNF|C_UpdateSetNonceURI             (patron:string id:string account:string set-class:integer nos:bool ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}))
     ;;
     ;;  [9] DPDC-F
     ;;
     (defun DPNF|C_RepurposeFragments (patron:string id:string repurpose-from:string repurpose-to:string nonces:[integer] amounts:[integer]))
     (defun DPNF|C_MakeFragments (patron:string account:string id:string nonce:integer amount:integer))
     (defun DPNF|C_MergeFragments (patron:string account:string id:string nonce:integer amount:integer))
-    (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData}))
+    (defun DPNF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData}))
     ;;
     ;;  [10] DPDC-N
     ;;
-    (defun DPNF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}))
-    (defun DPNF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}]))
+    (defun DPNF|C_UpdateNonce               (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}))
+    (defun DPNF|C_UpdateNonces              (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}]))
     (defun DPNF|C_UpdateNonceRoyalty        (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateNonceIgnisRoyalty   (patron:string id:string account:string nonce:integer nos:bool royalty-value:decimal))
     (defun DPNF|C_UpdateNonceName           (patron:string id:string account:string nonce:integer nos:bool name:string))
@@ -311,6 +311,6 @@
     (defun DPNF|C_UpdateNonceScore          (patron:string id:string account:string nonce:integer nos:bool score:decimal))
     (defun DPNF|C_RemoveNonceScore          (patron:string id:string account:string nonce:integer nos:bool))
     (defun DPNF|C_UpdateNonceMetaData       (patron:string id:string account:string nonce:integer nos:bool meta-data:object))
-    (defun DPNF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}))
+    (defun DPNF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}))
     ;;
 )

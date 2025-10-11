@@ -3,7 +3,7 @@
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV9)
-    (implements DemiourgosPactOrtoFungibleV2)
+    (implements DemiourgosPactOrtoFungibleV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -13,7 +13,7 @@
     (defcap GOV ()                          (compose-capability (GOV|DPOF_ADMIN)))
     (defcap GOV|DPOF_ADMIN ()               (enforce-guard GOV|MD_DPOF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
@@ -39,7 +39,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -102,15 +102,15 @@
         meta-data-array:[[object]]
     )
     ;;{2}
-    (deftable DPOF|T|Properties:{DpofUdc.DPOF|Properties})      ;;Key = <DPOF-id>      
-    (deftable DPOF|T|Nonces:{DpofUdc.DPOF|NonceElement})        ;;Key = <DSOF-id> + BAR + <nonce>
-    (deftable DPOF|T|VerumRoles:{DpofUdc.DPOF|VerumRoles})      ;;Key = <DPOF-id>
-    (deftable DPOF|T|AccountRoles:{DpofUdc.DPOF|AccountRoles})  ;;Key = <DPOF-id> + BAR + <account> 
+    (deftable DPOF|T|Properties:{DpofUdcV2.DPOF|PropertiesV2})      ;;Key = <DPOF-id>      
+    (deftable DPOF|T|Nonces:{DpofUdcV2.DPOF|NonceElement})          ;;Key = <DSOF-id> + BAR + <nonce>
+    (deftable DPOF|T|VerumRoles:{DpofUdcV2.DPOF|VerumRoles})        ;;Key = <DPOF-id>
+    (deftable DPOF|T|AccountRoles:{DpofUdcV2.DPOF|AccountRolesV2})  ;;Key = <DPOF-id> + BAR + <account> 
     ;;{3}
     (defun CT_Bar ()        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR           (CT_Bar))
     (defconst OF            (at 0 ["Orto-Fungible"]))
-    (defconst ATS|SC_NAME   (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
+    (defconst ATS|SC_NAME   (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -123,7 +123,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_Konto id) new-owner)
             (ref-DALOS::UEV_EnforceAccountExists new-owner)
@@ -173,7 +173,7 @@
         @doc "Toggle Verum 1"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -188,7 +188,7 @@
         @doc "Toggle Verum 2"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -203,7 +203,7 @@
         @doc "Toggle Verum 4"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -218,7 +218,7 @@
         @doc "Switch Verum 4"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (current:string (UR_Verum4 id))
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount receiver)
@@ -231,7 +231,7 @@
         @doc "Toggle Verum 5"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (special:[string] ["V|" "Z|"])
                 (ft:string (take 2 id))
                 (iz-special:bool (contains ft special))
@@ -254,7 +254,7 @@
     (defcap DPOF|S>MOVE (id:string sender:string receiver:string method:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             ;;1]Ownership
             (if (and method (ref-DALOS::UR_AccountType receiver))
@@ -295,7 +295,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-U|INT::UEV_UniformList 
                 [
@@ -322,7 +322,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership client)
             (UEV_AccountAddQuantityState id client true)
@@ -347,7 +347,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (nonces-used:integer (UR_NoncesUsed id))
                 (owner:string (UR_Konto id))
             )
@@ -383,7 +383,7 @@
     (defcap DPOF|C>DEBIT (account:string id:string nonces:[integer] amounts:[decimal] wipe-mode:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))    
             )
@@ -508,7 +508,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership sender)
             (UEV_NoncesToAccount id sender nonces)
@@ -521,7 +521,7 @@
         (enforce (contains vzh-tag [1 2 3]) "Invalid Vesting|Sleeping|Hibernation Tag")
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (main-special-id:string
                     (cond
                         ((= vzh-tag 1) (ref-DPTF::UR_Vesting main-dptf))
@@ -624,9 +624,9 @@
             )
         )
     )
-    (defun UC_TakePureWipe:object{DpofUdc.RemovableNonces} 
-        (input:object{DpofUdc.RemovableNonces} size:integer)
-        @doc "Takes <size> and returns a smaller |object{DpofUdc.RemovableNonces}|"
+    (defun UC_TakePureWipe:object{DpofUdcV2.RemovableNonces} 
+        (input:object{DpofUdcV2.RemovableNonces} size:integer)
+        @doc "Takes <size> and returns a smaller |object{DpofUdcV2.RemovableNonces}|"
         (let
             (
                 (nonces:[integer] (at "r-nonces" input))
@@ -644,7 +644,7 @@
         (id:string nonces:[integer] transmit-or-transfer:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UCX_NoncesCumulator 
                 id 
@@ -658,10 +658,10 @@
         )
     )
     (defun UC_WipeCumulator:object{IgnisCollectorV2.OutputCumulator}
-        (id:string removable-nonces-obj:object{DpofUdc.RemovableNonces})
+        (id:string removable-nonces-obj:object{DpofUdcV2.RemovableNonces})
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UCX_NoncesCumulator 
                 id 
@@ -854,7 +854,7 @@
         ;;(at "frozen" (read DPOF|T|AccountRoles (UC_IdAccount id account) ["frozen"]))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (and
                 (with-default-read DPOF|T|AccountRoles (UC_IdAccount id account)
@@ -870,7 +870,7 @@
         ;;(at "role-oft-add-quantity" (read DPOF|T|AccountRoles (UC_IdAccount id account) ["role-oft-add-quantity"]))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (with-default-read DPOF|T|AccountRoles (UC_IdAccount id account)
@@ -886,7 +886,7 @@
         ;;(at "role-oft-burn" (read DPOF|T|AccountRoles (UC_IdAccount id account) ["role-oft-burn"]))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (with-default-read DPOF|T|AccountRoles (UC_IdAccount id account)
@@ -902,7 +902,7 @@
         ;;(at "role-oft-create" (read DPOF|T|AccountRoles (UC_IdAccount id account) ["role-oft-create"]))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (owner:string (UR_Konto id))
             )
             (fold (or) false
@@ -922,7 +922,7 @@
         ;;(at "role-transfer" (read DPOF|T|AccountRoles (UC_IdAccount id account) ["role-transfer"]))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (with-default-read DPOF|T|AccountRoles (UC_IdAccount id account)
@@ -952,19 +952,9 @@
     )
     ;;
     ;;
-    (defun URD_AccountNonces:[integer] (account:string dpof-id:string)
-        (map (at "value")
-            (select DPOF|T|Nonces ["value"]
-                (and?
-                    (where "id" (= dpof-id))
-                    (where "holder" (= account))
-                )
-            )
-        )
-    )
     ;;{F1}  [URC]
-    (defun URDC_WipePure:object{DpofUdc.RemovableNonces} (account:string id:string)
-        @doc "Uses Expensive Read Functions to obtain a |object{DpofUdc.RemovableNonces}| that can be used \
+    (defun URDC_WipePure:object{DpofUdcV2.RemovableNonces} (account:string id:string)
+        @doc "Uses Expensive Read Functions to obtain a |object{DpofUdcV2.RemovableNonces}| that can be used \
             \ to execute a <C_WipePure>, bypassing the expensive gas costs of using (keys...) or (select...) functions"
         (let
             (
@@ -1024,7 +1014,7 @@
             (enforce (!= fourth BAR) "Sleeping LP Tokens not allowed for this operation")
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (first-two:string (take 2 dpof))
                 )
                 (cond
@@ -1036,6 +1026,48 @@
             )
         )
     )
+    ;;
+    ;;  [URD]
+    ;;
+    ;;1] Returns True Fungibles held by Account
+    (defun URD_HeldOrtoFungibles:[string] (account:string)
+        @doc "Returns all Orto Fungibles that are registered for a given <account>"
+        (map (at "id")
+            (select DPOF|T|AccountRoles ["id"]
+                (where "account" (= account))
+            )
+        )
+    )
+    ;;2]Returns Accounts that are registered for a given DPTF
+    (defun URD_ExistingOrtoFungibles:[string] (dotf:string)
+        @doc "Returns all Ouronet Accounts that are registered for a given <dotf>"
+        (map (at "account")
+            (select DPOF|T|AccountRoles ["account"]
+                (where "id" (= dotf))
+            )
+        )
+    )
+    ;;3]Returns a List of DPOFs that are owned by a given Account for Management Purposes
+    (defun URD_OwnedOrtoFungibles:[string] (account:string)
+        @doc "Returns all Orto Fungibles that can be managed by the given <account>"
+        (map (at "id")
+            (select DPOF|T|Properties ["id"]
+                (where "owner-konto" (= account))
+            )
+        )
+    )
+    ;;4]
+    (defun URD_AccountNonces:[integer] (account:string dpof-id:string)
+        (map (at "value")
+            (select DPOF|T|Nonces ["value"]
+                (and?
+                    (where "id" (= dpof-id))
+                    (where "holder" (= account))
+                )
+            )
+        )
+    )
+    ;;3]Returns a 
     ;;{F2}  [UEV]
     (defun UEV_id (id:string)
         (with-default-read DPOF|T|Properties id
@@ -1074,7 +1106,7 @@
             \ While ensuring a Sleeping LP cant be used for this operation."
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (parent:string (URC_Parent id))
             )
             (if (= parent id)
@@ -1285,7 +1317,7 @@
             (if are-transfer-roles-active
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalosV5} DALOS)
+                        (ref-DALOS:module{OuronetDalosV6} DALOS)
                         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
                         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
                         ;;
@@ -1305,7 +1337,7 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_NonceElement:object{DpofUdc.DPOF|NonceElement}
+    (defun UDC_NonceElement:object{DpofUdcV2.DPOF|NonceElement}
         (a:string b:string c:integer d:decimal e:[object])
         {"holder"           : a
         ,"id"               : b
@@ -1313,7 +1345,7 @@
         ,"supply"           : d
         ,"meta-data-chain"  : e}
     )
-    (defun UDC_VerumRoles:object{DpofUdc.DPOF|VerumRoles}
+    (defun UDC_VerumRoles:object{DpofUdcV2.DPOF|VerumRoles}
         (a:[string] b:[string] c:[string] d:string e:[string])
         {"a-frozen"             : a
         ,"r-oft-add-quantity"   : b
@@ -1321,16 +1353,18 @@
         ,"r-oft-create"         : d
         ,"r-transfer"           : e}
     )
-    (defun UDC_AccountRoles:object{DpofUdc.DPOF|AccountRoles}
-        (a:decimal b:bool c:bool d:bool e:bool f:bool)
+    (defun UDC_AccountRoles:object{DpofUdcV2.DPOF|AccountRolesV2}
+        (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string)
         {"total-account-supply"     : a
         ,"frozen"                   : b
         ,"role-oft-add-quantity"    : c
         ,"role-oft-burn"            : d
         ,"role-oft-create"          : e
-        ,"role-transfer"            : f}
+        ,"role-transfer"            : f
+        ,"id"                       : g
+        ,"account"                  : h}
     )
-    (defun UDC_RemovableNonces:object{DpofUdc.RemovableNonces}
+    (defun UDC_RemovableNonces:object{DpofUdcV2.RemovableNonces}
         (a:[integer] b:[decimal])
         {"r-nonces"     : a
         ,"r-amounts"    : b}
@@ -1347,7 +1381,7 @@
         @doc "Enforces DPOF Token ID Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
@@ -1375,7 +1409,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (parent:string (URC_Parent entity-id))
                 (parent-owner:string
                     (if (= parent entity-id)
@@ -1403,7 +1437,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (l1:integer (length name))
                 (mf-cost:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
@@ -1469,7 +1503,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (create-role-account:string (UR_Verum4 id))
                 (f:bool false)
                 (role-oft-create-boolean:bool (if (= create-role-account account) true f))
@@ -1477,16 +1511,18 @@
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id)
             (with-default-read DPOF|T|AccountRoles (UC_IdAccount id account)
-                (UDC_AccountRoles 0.0 f f f role-oft-create-boolean f)
+                (UDC_AccountRoles 0.0 f f f role-oft-create-boolean f id account)
                 {"total-account-supply"     := tas
                 ,"frozen"                   := fz
                 ,"role-oft-add-quantity"    := roaq
                 ,"role-oft-burn"            := rob
                 ,"role-oft-create"          := roc
-                ,"role-transfer"            := rt}
+                ,"role-transfer"            := rt
+                ,"id"                       := i
+                ,"account"                  := a}
                 (with-capability (SECURE)
                     (XB_W|AccountRoles id account
-                        (UDC_AccountRoles tas fz roaq rob roc rt)
+                        (UDC_AccountRoles tas fz roaq rob roc rt i a)
                     )
                 )
             )
@@ -1647,7 +1683,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (supply:decimal (UR_Supply id))
                 (nonces-used:integer (UR_NoncesUsed id))
@@ -1697,7 +1733,7 @@
         (C_WipePure id account (URDC_WipePure account id))
     )
     (defun C_WipePure:object{IgnisCollectorV2.OutputCumulator}
-        (id:string account:string removable-nonces-obj:object{DpofUdc.RemovableNonces})
+        (id:string account:string removable-nonces-obj:object{DpofUdcV2.RemovableNonces})
         @doc "Wipes all <id> Nonces of an DPOF <account>, presented via an <removable-nonces-obj> object \
             \ \
             \ The object must be pre-read (dirty read) \
@@ -1823,7 +1859,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-BRD:module{Branding} BRD)
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (l1:integer (length name))
@@ -1910,7 +1946,8 @@
             (ref-U|DALOS::UEV_NameOrTicker ticker false iz-special)
             ;;
             (XI_InsertNewId id
-                {"owner-konto"                  : account
+                {"id"                           : id
+                ,"owner-konto"                  : account
                 ,"name"                         : name
                 ,"ticker"                       : ticker
                 ,"decimals"                     : decimals
@@ -2048,7 +2085,7 @@
     ;;
     ;;Pure Write/Update Functions
     ;;1]DPOF|T|Properties
-    (defun XI_InsertNewId (id:string id-data:object{DpofUdc.DPOF|Properties})
+    (defun XI_InsertNewId (id:string id-data:object{DpofUdcV2.DPOF|PropertiesV2})
         (UEV_IMC)
         (insert DPOF|T|Properties id id-data)
     )
@@ -2127,7 +2164,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 )
                 (cond
                     ((= vzh-tag 1)
@@ -2193,7 +2230,7 @@
         )
     )
     ;;3]DPOF|T|VerumRoles
-    (defun XI_WriteRoles (id:string verum-roles:object{DpofUdc.DPOF|VerumRoles})
+    (defun XI_WriteRoles (id:string verum-roles:object{DpofUdcV2.DPOF|VerumRoles})
         (UEV_IMC)
         (write DPOF|T|VerumRoles id verum-roles)
     )
@@ -2228,7 +2265,7 @@
         )
     )
     ;;4]DPOF|T|AccountRoles
-    (defun XB_W|AccountRoles (id:string account:string account-data:object{DpofUdc.DPOF|AccountRoles})
+    (defun XB_W|AccountRoles (id:string account:string account-data:object{DpofUdcV2.DPOF|AccountRolesV2})
         (UEV_IMC)
         (write DPOF|T|AccountRoles (UC_IdAccount id account)
             account-data
@@ -2271,6 +2308,44 @@
         (require-capability (SECURE))
         (update  DPOF|T|AccountRoles (UC_IdAccount id account)
             {"total-account-supply" : new-tas}
+        )
+    )
+    ;;
+    ;;{F8}  [AUP - Admin Update Functions]
+    ;;
+    (defcap AHU ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ah:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership ah)
+            (compose-capability (SECURE))
+        )
+    )
+    (defun AUP_OrtoFungibleAccounts (keyz:[string])
+        @doc "Get <keyz> with <(UR_KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_OrtoFungibleAccount) keyz)
+        )
+    )
+    (defun AUP_OrtoFungibleAccount (ky:string)
+        (require-capability (SECURE))
+        (update DPOF|T|AccountRoles ky
+            {"id"       : (drop -163 ky)
+            ,"account"  : (take -162 ky)}
+        )
+    )
+    (defun AUP_OrtoFungibles (ids:[string])
+        @doc "Get <ids> with <(UR_P-KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_OrtoFungible) ids)
+        )
+    )
+    (defun AUP_OrtoFungible (id:string)
+        (require-capability (SECURE))
+        (update DPOF|T|Properties id
+            {"id"       : id}
         )
     )
     ;;

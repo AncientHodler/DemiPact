@@ -3,7 +3,7 @@
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV9)
-    (implements DemiourgosPactTrueFungibleV6)
+    (implements DemiourgosPactTrueFungibleV8)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -13,7 +13,7 @@
     (defcap GOV ()                  (compose-capability (GOV|DPTF_ADMIN)))
     (defcap GOV|DPTF_ADMIN ()       (enforce-guard GOV|MD_DPTF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -31,7 +31,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -85,7 +85,8 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
-    (defschema DPTF|PropertiesSchemaV2
+    (defschema DPTF|PropertiesSchemaV3
+        id:string                               ;added in V3
         owner-konto:string
         name:string
         ticker:string
@@ -104,7 +105,7 @@
         origin-mint:bool
         origin-mint-amount:decimal
         ;;
-        ;;role-transfer-amount:integer      [x]Removed in V2
+        ;;role-transfer-amount:integer          [x]Removed in V2
         ;;
         fee-toggle:bool
         min-move:decimal
@@ -120,7 +121,7 @@
         ;;
         vesting-link:string
         sleeping-link:string
-        hibernation-link:string             ;[x]Added in V2
+        hibernation-link:string                 ;[x]Added in V2
         frozen-link:string
         reservation-link:string
         reservation:bool
@@ -133,14 +134,14 @@
         r-transfer:[string]
     )
     ;;{2}
-    (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchemaV2})           ;;Key = <DPTF-id>
+    (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchemaV3})           ;;Key = <DPTF-id>
     (deftable DPTF|RoleTable:{DPTF|RoleSchema})                         ;;Key = <DPTF-id>
-    (deftable DPTF|BalanceTable:{OuronetDalosV5.DPTF|BalanceSchemaV2})  ;;Key = <DPTF-id> + BAR + <account> 
+    (deftable DPTF|BalanceTable:{OuronetDalosV6.DPTF|BalanceSchemaV3})  ;;Key = <DPTF-id> + BAR + <account> 
     ;;{3}
     (defun CT_Bar ()            (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR               (CT_Bar))
-    (defconst DALOS|SC_NAME     (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
-    (defconst OUROBOROS|SC_NAME (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defconst DALOS|SC_NAME     (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defconst OUROBOROS|SC_NAME (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -153,7 +154,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_Konto id) new-owner)
             (ref-DALOS::UEV_EnforceAccountExists new-owner)
@@ -196,7 +197,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (current-fee-target:string (UR_FeeTarget id))
                 (target-type:bool (ref-DALOS::UR_AccountType target))
                 (dalos-sc:string (ref-DALOS::GOV|DALOS|SC_NAME))
@@ -230,7 +231,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (fee-promile:decimal (UR_FeePromile id))
             )
             (enforce (or (= fee-promile -1.0) (and (>= fee-promile 0.0) (<= fee-promile 1000.0))) "Please Set up Fee Promile before Turning Fee Collection on !")
@@ -250,7 +251,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ouro-supply:decimal (UR_Supply ouro))
                 (op:integer (UR_Decimals ouro))
@@ -279,7 +280,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ouro-supply:decimal (UR_Supply ouro))
                 (op:integer (UR_Decimals ouro))
@@ -295,7 +296,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ouro-supply:decimal (UR_Supply ouro))
                 (op:integer (UR_Decimals ouro))
@@ -328,7 +329,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length name))
                 (l2:integer (length ticker))
                 (l3:integer (length decimals))
@@ -363,7 +364,7 @@
     (defcap DPTF|C>X_FREEZE (id:string account:string frozen:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -384,7 +385,7 @@
     (defcap DPTF|C>X_TOGGLE-BURN-ROLE (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -405,7 +406,7 @@
     (defcap DPTF|C>X_TOGGLE-MINT-ROLE (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (CAP_Owner id)
@@ -426,7 +427,7 @@
     (defcap DPTF|C>X_TOGGLE-FEE-EXEMPTION-ROLE (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_NotSmartOuronetAccount account)
             (ref-DALOS::UEV_EnforceAccountType account true)
@@ -448,7 +449,7 @@
     (defcap DPTF|C>X_TOGGLE-TRANSFER-ROLE (id:string account:string toggle:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (special:[string] ["F|" "R|"])
                 (ft:string (take 2 id))
                 (iz-special:bool (contains ft special))
@@ -483,7 +484,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (lp-prefix:[string] ["S|" "W|" "P|"])
                 (ft:string (take 2 id))
                 (iz-lp:bool (contains ft lp-prefix))
@@ -526,7 +527,7 @@
         (UEV_Amount id amount)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (current-supply:decimal (UR_AccountSupply id account))
                 (debit-result:decimal (- current-supply amount))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -819,7 +820,7 @@
     (defun UR_AccountSupply:decimal (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::UR_TF_AccountSupply account (= id (ref-DALOS::UR_OuroborosID)))
@@ -834,7 +835,7 @@
     (defun UR_AccountFrozenState:bool (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (and
                 (if (URC_IzCoreDPTF id)
@@ -852,7 +853,7 @@
     (defun UR_AccountRoleBurn:bool (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (if (URC_IzCoreDPTF id)
@@ -871,7 +872,7 @@
     (defun UR_AccountRoleMint:bool (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (if (URC_IzCoreDPTF id)
@@ -889,7 +890,7 @@
     (defun UR_AccountRoleTransfer:bool (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (or
                 (if (URC_IzCoreDPTF id)
@@ -908,7 +909,7 @@
     (defun UR_AccountRoleFeeExemption:bool (id:string account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (owner:string (UR_Konto id))
             )
             (fold (or) false
@@ -972,7 +973,7 @@
         (UEV_id id)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (iz-ouro-defined:bool (not (= ouro-id BAR)))
@@ -1088,7 +1089,7 @@
     (defun URC_TreasuryLowestDispo:decimal ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
             )
             (UC_TreasuryLowestDispo
@@ -1097,6 +1098,36 @@
                 (ref-DALOS::UR_DispoType)
                 (ref-DALOS::UR_DispoTDP)
                 (ref-DALOS::UR_DispoTDS)
+            )
+        )
+    )
+    ;;
+    ;;  [URD]
+    ;;
+    ;;1] Returns True Fungibles held by Account
+    (defun URD_HeldTrueFungibles:[string] (account:string)
+        @doc "Returns all True Fungibles that are registered for a given <account>"
+        (map (at "id")
+            (select DPTF|BalanceTable ["id"]
+                (where "account" (= account))
+            )
+        )
+    )
+    ;;2]Returns Accounts that are registered for a given DPTF
+    (defun URD_ExistingTrueFungibles:[string] (dptf:string)
+        @doc "Returns all Ouronet Accounts that are registered for a given <dptf>"
+        (map (at "account")
+            (select DPTF|BalanceTable ["account"]
+                (where "id" (= dptf))
+            )
+        )
+    )
+    ;;3]Returns a List of DPTFs that are owned by a given Account for Management Purposes
+    (defun URD_OwnedTrueFungibles:[string] (account:string)
+        @doc "Returns all True Fungibles that can be managed by the given <account>"
+        (map (at "id")
+            (select DPTF|PropertiesTable ["id"]
+                (where "owner-konto" (= account))
             )
         )
     )
@@ -1347,21 +1378,21 @@
         ,"r-fee-exemption"      : d
         ,"r-transfer"           : e}
     )
-    (defun UDC_TrueFungibleAccount:object{OuronetDalosV5.DPTF|BalanceSchemaV2}
-        (a:decimal b:bool c:bool d:bool e:bool f:bool)
-        {"balance"              : a
-        ,"frozen"               : b
-        ,"role-burn"            : c
-        ,"role-mint"            : d
-        ,"role-transfer"        : e
-        ,"role-fee-exemption"   : f}
+    (defun UDC_TrueFungibleAccount:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
+        (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string)
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+            )
+            (ref-DALOS::UDC_TrueFungibleAccount a b c d e f g h)
+        )
     )
     ;;{F4}  [CAP]
     (defun CAP_Owner (id:string)
         @doc "Enforces DPTF Token ID Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_Konto id))
         )
@@ -1372,7 +1403,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (with-capability (GOV|SET_TREASURY-DISPO type tdp tds)
                 (ref-DALOS::XE_UpdateTreasury type tdp tds)
@@ -1383,7 +1414,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
                 (treasury-supply:decimal (UR_AccountSupply ouro treasury))
@@ -1398,7 +1429,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (treasury:string (at 0 (ref-DALOS::UR_DemiurgoiID)))
                 (treasury-supply:decimal (UR_AccountSupply ouro treasury))
@@ -1427,7 +1458,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-BRD:module{Branding} BRD)
                 (parent:string (URC_Parent entity-id))
@@ -1448,7 +1479,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length name))
                 (tl:[bool] (make-list l1 false))
                 (tf-cost:decimal (ref-DALOS::UR_UsagePrice "dptf"))
@@ -1575,7 +1606,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (toggle-costs:[decimal] (XI_ToggleFeeLock id toggle))
                     (g:decimal (at 0 toggle-costs))
                     (gas-costs:decimal (+ (ref-DALOS::UR_UsagePrice "ignis|small") g))
@@ -1599,23 +1630,25 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (f:bool false)
                 (tk:string (UC_IdAccount id account))
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
             (UEV_id id)
             (with-default-read DPTF|BalanceTable tk
-                (UDC_TrueFungibleAccount 0.0 f f f f f)
+                (UDC_TrueFungibleAccount 0.0 f f f f f id account)
                 {"balance"                  := b
                 ,"frozen"                   := f
                 ,"role-burn"                := rb
                 ,"role-mint"                := rm
                 ,"role-transfer"            := rt
                 ,"role-fee-exemption"       := rfe
+                ,"id"                       := i
+                ,"account"                  := a
                 }
                 (write DPTF|BalanceTable tk
-                    (UDC_TrueFungibleAccount b f rb rm rt rfe)
+                    (UDC_TrueFungibleAccount b f rb rm rt rfe i a)
                 )
             )
         )
@@ -1741,7 +1774,7 @@
         (let
             (
                 (ref-U|DPTF:module{UtilityDptf} U|DPTF)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
             )
             (with-capability (DPTF|C>BURN id account amount)
@@ -1762,7 +1795,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (with-capability (DPTF|C>MINT id account amount origin)
                 (XB_CreditTrueFungible id account amount)
@@ -1826,7 +1859,7 @@
         (with-capability (SECURE)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
                 )
                 (XB_IssueFree swp-sc [name] [ticker] [24] [false] [false] [true] [false] [false] [false] [true])
@@ -1855,7 +1888,7 @@
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-BRD:module{Branding} BRD)
                     (l1:integer (length name))
@@ -1921,7 +1954,8 @@
             (ref-U|DALOS::UEV_NameOrTicker name true iz-special)
             (ref-U|DALOS::UEV_NameOrTicker ticker false iz-special)
             (insert DPTF|PropertiesTable id
-                {"owner-konto"          : account
+                {"id"                   : id
+                ,"owner-konto"          : account
                 ,"name"                 : name
                 ,"ticker"               : ticker
                 ,"decimals"             : decimals
@@ -2241,7 +2275,7 @@
         (require-capability (DPTF|C>X_FREEZE id account toggle))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::XE_UpdateFreeze account (= id (ref-DALOS::UR_OuroborosID)) toggle)
@@ -2256,7 +2290,7 @@
         (require-capability (DPTF|C>X_TOGGLE-BURN-ROLE id account toggle))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::XE_UpdateBurnRole account (= id (ref-DALOS::UR_OuroborosID)) toggle)
@@ -2271,7 +2305,7 @@
         (require-capability (DPTF|C>X_TOGGLE-MINT-ROLE id account toggle))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::XE_UpdateMintRole account (= id (ref-DALOS::UR_OuroborosID)) toggle)
@@ -2286,7 +2320,7 @@
         (require-capability (DPTF|C>X_TOGGLE-FEE-EXEMPTION-ROLE id account toggle))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::XE_UpdateFeeExemptionRole account (= id (ref-DALOS::UR_OuroborosID)) toggle)
@@ -2301,7 +2335,7 @@
         (require-capability (DPTF|C>X_TOGGLE-TRANSFER-ROLE id account toggle))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 (ref-DALOS::XE_UpdateTransferRole account (= id (ref-DALOS::UR_OuroborosID)) toggle)
@@ -2348,7 +2382,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (URC_IzCoreDPTF id)
                 ;;Updates for Core Tokens
@@ -2381,7 +2415,65 @@
         )
     )
     ;;
-    
+    ;;{F8}  [AUP - Admin Update Functions]
+    ;;
+    (defcap AHU ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ah:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership ah)
+            (compose-capability (SECURE))
+        )
+    )
+    (defun AUP_TrueFungibleAccounts (keyz:[string])
+        @doc "Get <keyz> with <(UR_KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_TrueFungibleAccount) keyz)
+        )
+    )
+    (defun AUP_TrueFungibleAccount (ky:string)
+        (require-capability (SECURE))
+        (let
+            (
+                (input-obj:object (read DPTF|BalanceTable ky))
+                (has-exist:bool (contains "exist" input-obj))
+                (v1:object
+                    (+
+                        {"id" : (drop -163 ky)}
+                        (remove "id" input-obj)
+                    )
+                )
+                (v2:object
+                    (+
+                        {"account" : (take -162 ky)}
+                        (remove "account" v1)
+                    )
+                )
+                (v3:object
+                    (if has-exist
+                        (remove "exist" v2)
+                        v2
+                    )
+                )
+            )
+            (write DPTF|BalanceTable ky v3)
+        )
+    )
+    (defun AUP_TrueFungibles (ids:[string])
+        @doc "Get <ids> with <(UR_P-KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_TrueFungible) ids)
+        )
+    )
+    (defun AUP_TrueFungible (id:string)
+        (require-capability (SECURE))
+        (update DPTF|PropertiesTable id
+            {"id"       : id}
+        )
+    )
+    ;;
 )
 
 (create-table P|T)

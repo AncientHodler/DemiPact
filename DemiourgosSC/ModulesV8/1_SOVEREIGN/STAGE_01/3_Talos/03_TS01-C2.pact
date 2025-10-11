@@ -12,7 +12,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C2))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -24,7 +24,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -176,7 +176,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_HOT-RBT|UpdatePendingBranding entity-id logo description website social)
@@ -189,7 +189,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 )
                 (ref-ATS::C_HOT-RBT|UpgradeBranding patron entity-id months)
@@ -204,7 +204,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -221,7 +221,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
@@ -239,7 +239,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_RotateOwnership ats new-owner)
@@ -254,7 +254,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_Control ats can-change-owner syphoning hibernate)
@@ -269,7 +269,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_UpdateRoyalty ats royalty)
@@ -284,7 +284,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_UpdateSyphon ats syphon)
@@ -299,7 +299,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetHibernationFees ats peak decay)
@@ -315,7 +315,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATS::C_ToggleParameterLock patron ats toggle)
@@ -333,7 +333,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_AddSecondary ats reward-token rt-nfr)
@@ -353,7 +353,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ControlColdRecoveryFees ats c-nfr c-fr)
@@ -369,7 +369,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetColdRecoveryFees ats fee-positions fee-thresholds fee-array)
@@ -385,7 +385,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetColdRecoveryDuration ats soft-or-hard base growth)
@@ -401,7 +401,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ToggleElite ats toggle)
@@ -419,7 +419,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchColdRecovery ats toggle)
@@ -441,7 +441,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_AddHotRBT ats hot-rbt)
@@ -456,7 +456,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ControlHotRecoveryFee ats h-fr)
@@ -471,7 +471,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetHotRecoveryFees ats promile decay)
@@ -486,7 +486,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchHotRecovery ats toggle)
@@ -506,7 +506,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetDirectRecoveryFee ats promile)
@@ -521,7 +521,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchDirectRecovery ats toggle)
@@ -542,7 +542,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_RemoveSecondary remover ats reward-token)
@@ -558,7 +558,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount target))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -575,7 +575,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATSU::C_KickStart kickstarter ats rt-amounts rbt-request-amount)
                     )
@@ -591,8 +591,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (prev-index:decimal (ref-ATS::URC_Index ats))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -611,7 +611,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATSU::C_Coil coiler ats rt amount)
                     )
@@ -629,7 +629,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATSU::C_Curl curler ats1 ats2 rt amount)
                     )
@@ -654,11 +654,11 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ref-VST:module{VestingV5} VST)
                     ;;
-                    (coil-data:object{AutostakeV5.CoilData} 
+                    (coil-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats coil-token amount)
                     )
                     (c-rbt:string (at "rbt-id" coil-data))
@@ -689,14 +689,14 @@
             (let*
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ref-VST:module{VestingV5} VST)
                     ;;
-                    (coil1-data:object{AutostakeV5.CoilData} 
+                    (coil1-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 curl-token amount)
                     )
-                    (coil2-data:object{AutostakeV5.CoilData} 
+                    (coil2-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats2 (at "rbt-id" coil1-data) (at "rbt-amount" coil1-data))
                     )
                     (c-rbt2-amount:decimal (at "rbt-amount" coil2-data))
@@ -763,7 +763,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount syphon-target))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -781,7 +781,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_ColdRecovery recoverer ats ra)
@@ -796,7 +796,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATSU::C_Cull culler ats)
                     )
@@ -815,7 +815,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_HotRecovery recoverer ats ra)
@@ -831,8 +831,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ats:string (ref-DPOF::UR_RewardBearingToken id))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -848,8 +848,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                     (ats:string (ref-DPOF::UR_RewardBearingToken id))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -866,7 +866,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_DirectRecovery recoverer ats ra)

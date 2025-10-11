@@ -1029,7 +1029,7 @@
                 (decay:decimal (ref-ATS::UR_HibernateDecay ats))
                 (dec-dayz:decimal (dec dayz))
                 (v1:decimal (* dec-dayz decay))
-                (v2:decimal (- decay v1))
+                (v2:decimal (- peak v1))
                 (fee-promile:decimal 
                     (if (<= v2 0.0)
                         0.0

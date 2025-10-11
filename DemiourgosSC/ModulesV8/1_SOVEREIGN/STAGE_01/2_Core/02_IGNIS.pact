@@ -12,7 +12,7 @@
     (defcap GOV ()                          (compose-capability (GOV|IGNIS_ADMIN)))
     (defcap GOV|IGNIS_ADMIN ()              (enforce-guard GOV|MD_IGNIS))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;
     ;;<====>
@@ -31,7 +31,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -88,8 +88,8 @@
     (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
     ;;
-    (defconst DALOS|SC_NAME                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
-    (defconst OUROBOROS|SC_NAME             (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defconst DALOS|SC_NAME                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defconst OUROBOROS|SC_NAME             (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
     (defconst GAS_QUARTER 0.25)
     (defconst GAS_EXCEPTION
         [
@@ -134,7 +134,7 @@
     (defcap IGNIS|C>DC (patron:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (compose-capability (IGNIS|S>DISCOUNT patron (UDC_MakeIDP (ref-DALOS::URC_IgnisGasDiscount patron))))
             (compose-capability (P|IGNIS|CALLER))
@@ -145,7 +145,7 @@
         (UEV_Patron patron)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (first:string (take 1 interactor))
                 (sigma:string "Σ")
                 (tanker:string (ref-DALOS::UR_Tanker))
@@ -174,7 +174,7 @@
     (defcap IGNIS|C>DEBIT (sender:string ta:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (read-gas:decimal (ref-DALOS::UR_TF_AccountSupply sender false))
             )
             (enforce (<= ta read-gas) "Insufficient GAS for GAS-Debiting")
@@ -186,7 +186,7 @@
     (defcap IGNIS|C>CREDIT (receiver:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountExists receiver)
             (compose-capability (SECURE))
@@ -230,7 +230,7 @@
     (defun URC_IsVirtualGasZeroAbsolutely:bool (id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (t1:bool (URC_IsVirtualGasZero))
                 (gas-id:string (ref-DALOS::UR_IgnisID))
                 (t2:bool (if (or (= gas-id BAR)(= id gas-id)) true false))
@@ -241,7 +241,7 @@
     (defun URC_IsVirtualGasZero:bool ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (ref-DALOS::UR_VirtualToggle)
                 false
@@ -252,7 +252,7 @@
     (defun URC_IsNativeGasZero:bool ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (ref-DALOS::UR_NativeToggle)
                 false
@@ -272,7 +272,7 @@
         @doc "Capability that ensures a DALOS account can act as gas payer, enforcing all necesarry restrictions"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (if (ref-DALOS::UR_AccountType patron)
                 (do
@@ -304,7 +304,7 @@
         (active-account:string multiplier:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (* multiplier (ref-DALOS::UR_UsagePrice "ignis|branding"))
@@ -318,7 +318,7 @@
         (active-account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (ref-DALOS::UR_UsagePrice "ignis|smallest")
@@ -332,7 +332,7 @@
         (active-account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (ref-DALOS::UR_UsagePrice "ignis|small")
@@ -346,7 +346,7 @@
         (active-account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (ref-DALOS::UR_UsagePrice "ignis|medium")
@@ -360,7 +360,7 @@
         (active-account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (ref-DALOS::UR_UsagePrice "ignis|big")
@@ -374,7 +374,7 @@
         (active-account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (ref-DALOS::UR_UsagePrice "ignis|biggest")
@@ -387,7 +387,7 @@
     (defun UDC_CustomCodeCumulator:object{IgnisCollectorV2.OutputCumulator} ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UDC_ConstructOutputCumulator
                 (* 5.0 (ref-DALOS::UR_UsagePrice "ignis|biggest"))
@@ -402,7 +402,7 @@
         (price:decimal active-account:string trigger:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (interactor:string
                     (if (ref-DALOS::UR_AccountType active-account)
                         active-account
@@ -505,7 +505,7 @@
         (patron:string input:object{IgnisCollectorV2.CompressedCumulator})
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (fll:integer (length (at "ignis-prices" input)))
                 (ignis-discount:decimal (ref-DALOS::URC_IgnisGasDiscount patron))
@@ -605,7 +605,7 @@
         (patron:string input-output-cumulator:object{IgnisCollectorV2.OutputCumulator})
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (compressed-cumulator:object{IgnisCollectorV2.CompressedCumulator}
                     (UDC_CompressOutputCumulator input-output-cumulator)
                 )
@@ -655,7 +655,7 @@
     (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (split-discounted-kda:[decimal] (ref-DALOS::URC_SplitKDAPrices sender amount))
                 (am0:decimal (at 0 split-discounted-kda))
                 (am1:decimal (at 1 split-discounted-kda))
@@ -684,7 +684,7 @@
         (require-capability (IGNIS|C>COLLECT patron interactor amount))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (collector:string
                     (if (= interactor BAR)
                         (ref-DALOS::UR_Tanker)
@@ -705,7 +705,7 @@
         (require-capability (IGNIS|C>DEBIT sender ta))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::XB_UpdateBalance sender false 
                 (- (ref-DALOS::UR_TF_AccountSupply sender false) ta)
@@ -716,7 +716,7 @@
         (require-capability (IGNIS|C>CREDIT receiver))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::XB_UpdateBalance receiver false 
                 (+ (ref-DALOS::UR_TF_AccountSupply receiver false) ta)

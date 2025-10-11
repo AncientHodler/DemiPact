@@ -48,6 +48,7 @@
         (defconst TIME04 (time "2024-12-15T16:00:00Z"))
         (defconst TIME05 (time "2024-12-29T16:00:00Z"))
         (defconst TIME06 (time "2024-10-15T00:00:00Z"))
+        (defconst TIME07 (time "2025-02-17T00:00:00Z"))
     )
     (module KC GOVERNANCE
         @doc "Only Used in this REPL, to define Keys"

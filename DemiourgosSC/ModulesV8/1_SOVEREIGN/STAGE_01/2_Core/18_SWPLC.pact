@@ -13,9 +13,9 @@
     (defcap GOV ()                  (compose-capability (GOV|SWPLC_ADMIN)))
     (defcap GOV|SWPLC_ADMIN ()      (enforce-guard GOV|MD_SWPLC))
     ;;
-    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -40,7 +40,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -134,7 +134,7 @@
         @event
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
             )
             (ref-SWP::CAP_Owner swpair)
             (compose-capability (P|SWPLC|CALLER))
@@ -144,7 +144,7 @@
         @event
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
             )
             (ref-SWP::CAP_Owner swpair)
             (compose-capability (P|SWPLC|CALLER))
@@ -218,12 +218,12 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
             )
             (ref-U|INT::UEV_PositionalVariable entity-pos 3 "Invalid entity position")
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
                 )
                 (if (= entity-pos 1)
@@ -240,8 +240,8 @@
     (defun UEV_InputsForLP (swpair:string input-amounts:[decimal])
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (l1:integer (length input-amounts))
                 (l2:integer (length pool-tokens))
@@ -272,8 +272,8 @@
         (swpair:string frozen-dptf:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (dptf:string (ref-DPTF::UR_Frozen frozen-dptf))
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
@@ -286,9 +286,9 @@
         (account:string swpair:string sleeping-dpof:string nonce:integer)
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (ref-VST:module{VestingV5} VST)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (dptf:string (ref-DPOF::UR_Sleeping sleeping-dpof))
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
@@ -302,7 +302,7 @@
     (defun UEV_AddDormantLiquidity (swpair:string)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (iz-sleeping:bool (ref-SWP::UR_IzSleepingLP swpair))
             )
             (enforce iz-sleeping (format "Sleeping LP Functionality is not enabled on Swpair {}" [swpair]))
@@ -311,7 +311,7 @@
     (defun UEV_AddChilledLiquidity (swpair:string ld:object{SwapperLiquidityV2.LiquidityData})
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (iz-frozen:bool (ref-SWP::UR_IzFrozenLP swpair))
                 (iz-asymmetric:bool (at "iz-asymmetric" (at "sorted-lq-type" ld)))
             )
@@ -322,7 +322,7 @@
     (defun UEV_AddLiquidity (swpair:string ld:object{SwapperLiquidityV2.LiquidityData})
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (can-add:bool (ref-SWP::UR_CanAdd swpair))
                 (read-lp-supply:decimal (ref-SWP::URC_LpCapacity swpair))
@@ -346,8 +346,8 @@
     (defun UEV_RemoveLiquidity (swpair:string lp-amount:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 ;;
                 (can-add:bool (ref-SWP::UR_CanAdd swpair))
                 (lp-id:string (ref-SWP::UR_TokenLP swpair))
@@ -371,8 +371,8 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (entity-id:string (URC_EntityPosToID swpair entity-pos))
                 (entity-owner:string
                     (if (= entity-pos 3)
@@ -393,7 +393,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-BRD:module{Branding} BRD)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (owner:string (ref-SWP::UR_OwnerKonto swpair))
                 (entity-id:string (URC_EntityPosToID swpair entity-pos))
                 (kda-payment:decimal
@@ -411,7 +411,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
             )
             (with-capability (P|SWPLC|CALLER)
                 (ref-SWP::C_ToggleAddOrSwap swpair toggle true)
@@ -424,9 +424,9 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (pt-current-amounts:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
@@ -477,8 +477,8 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                        (ref-SWP:module{SwapperV5} SWP)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                        (ref-SWP:module{SwapperV6} SWP)
                         
                         ;;
                         (lp-id:string (ref-SWP::UR_TokenLP swpair))
@@ -525,9 +525,9 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
                         (ref-VST:module{VestingV5} VST)
-                        (ref-SWP:module{SwapperV5} SWP)
+                        (ref-SWP:module{SwapperV6} SWP)
                         ;;
                         (lp-id:string (ref-SWP::UR_TokenLP swpair))
                         ;;
@@ -578,9 +578,9 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
                         (ref-VST:module{VestingV5} VST)
-                        (ref-SWP:module{SwapperV5} SWP)
+                        (ref-SWP:module{SwapperV6} SWP)
                         ;;
                         (lp-id:string (ref-SWP::UR_TokenLP swpair))
                         ;;
@@ -626,8 +626,8 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (dptf:string (ref-DPTF::UR_Frozen frozen-dptf))
@@ -641,8 +641,8 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-DALOS:module{OuronetDalosV5} DALOS)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                        (ref-DALOS:module{OuronetDalosV6} DALOS)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
                         (ref-VST:module{VestingV5} VST)
                         ;;
                         (vst-sc:string (ref-DALOS::GOV|VST|SC_NAME))
@@ -691,9 +691,9 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-SWP:module{SwapperV6} SWP)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (dptf:string (ref-DPOF::UR_Sleeping sleeping-dpof))
@@ -708,7 +708,7 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-DALOS:module{OuronetDalosV5} DALOS)
+                        (ref-DALOS:module{OuronetDalosV6} DALOS)
                         (ref-VST:module{VestingV5} VST)
                         ;;
                         (vst-sc:string (ref-DALOS::GOV|VST|SC_NAME))
@@ -773,9 +773,9 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                     ;;
                     (pool-token-ids:[string] (ref-SWP::UR_PoolTokens swpair))

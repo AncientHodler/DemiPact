@@ -33,9 +33,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
-    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
+    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
     (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (GOV|ORBR|GUARD)))
     (defun GOV|ORBR|GUARD ()        (create-capability-guard (ORBR|NATIVE-AUTOMATIC)))
     ;;
@@ -55,7 +55,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -153,7 +153,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (compose-capability (IGNIS|C>CONVERT client))
@@ -167,7 +167,7 @@
     (defcap IGNIS|C>CONVERT(client:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType client false)
             (UEV_Exchange)
@@ -179,8 +179,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (ref-DPTF::CAP_Owner id)
@@ -198,9 +198,9 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (orb-sc ORBR|SC_NAME)
                 (present-kda-balance:decimal (ref-coin::get-balance (ref-DALOS::UR_AccountKadena orb-sc)))
                 (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
@@ -227,8 +227,8 @@
         (let
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
             (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
@@ -251,8 +251,8 @@
     (defun URC_Sublimate:decimal (ouro-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (enforce (>= ouro-amount 0.99) "Only amounts greater than or equal to 1.0 can be used to make gas!")
             (ref-DPTF::UEV_Amount (ref-DALOS::UR_OuroborosID) ouro-amount)
@@ -279,8 +279,8 @@
     (defun UEV_Exchange ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (orb-sc ORBR|SC_NAME)
 
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -310,10 +310,10 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
@@ -344,9 +344,9 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATSU:module{AutostakeUsageV5} ATSU)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATSU:module{AutostakeUsageV6} ATSU)
                 (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
                 (orb-sc ORBR|SC_NAME)
                 (orb-kda ORBR|SC_KDA-NAME)
@@ -385,9 +385,9 @@
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -421,9 +421,9 @@
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -462,9 +462,9 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id ORBR|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))

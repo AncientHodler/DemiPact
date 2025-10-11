@@ -172,7 +172,7 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
         ;;
         (bar:string (ref-U|CT::CT_BAR))
@@ -274,14 +274,14 @@
         (ref-P|SWP:module{OuronetPolicy} SWP)
         ;;
         (ref-U|G:module{OuronetGuards} U|G)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-ATS:module{AutostakeV5} ATS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-ATS:module{AutostakeV6} ATS)
         (ref-VST:module{VestingV5} VST)
         (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
         (ref-ORBR:module{OuroborosV5} OUROBOROS)
-        (ref-SWP:module{SwapperV5} SWP)
+        (ref-SWP:module{SwapperV6} SWP)
         (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
         (dalos-sc:string (ref-DALOS::GOV|DALOS|SC_NAME))
@@ -444,8 +444,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
         (info:string (ref-DALOS::DALOS|Info))
@@ -533,7 +533,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -568,7 +568,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -642,8 +642,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
         (ouro-amount:decimal 2000000.0)     ;;Main-Net Value Different
@@ -711,9 +711,9 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
         (AurynID:string (ref-DALOS::UR_AurynID))
@@ -797,8 +797,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -832,8 +832,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -864,8 +864,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -896,8 +896,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
         (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -926,8 +926,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (OuroID:string (ref-DALOS::UR_OuroborosID))
         ;;
         (patron:string KST.ANHD)
@@ -963,7 +963,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -1006,8 +1006,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;;
         (patron:string KST.ANHD)
@@ -1055,7 +1055,7 @@
 
 (let
     (
-        (ref-SWP:module{SwapperV5} SWP)
+        (ref-SWP:module{SwapperV6} SWP)
         (u:[string] ["|"])
     )
     [
@@ -1132,8 +1132,8 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
         ;;
         (patron:string KST.ANHD)
@@ -1172,7 +1172,7 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -1238,10 +1238,10 @@
             (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
             ;;
             (ref-coin:module{fungible-v2} coin)
-            (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
-            (ref-ATS:module{AutostakeV5} ATS)
+            (ref-ATS:module{AutostakeV6} ATS)
             ;;
             (patron:string KST.ANHD)
             (patron-kda:string (ref-DALOS::UR_AccountKadena patron))

@@ -36,7 +36,7 @@
     (defcap GOV ()                             (compose-capability (GOV|SPARK_ADMIN)))
     (defcap GOV|SPARK_ADMIN ()                 (enforce-guard GOV|MD_SPARK))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                    (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                    (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|DEMIPAD|SC_NAME ()              (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;<====>
@@ -58,7 +58,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -144,7 +144,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (spark-id:string (UR_SparkID))
                 (remaining-supply:decimal (ref-DPTF::UR_AccountSupply spark-id DEMIPAD|SC_NAME))
                 (amount:decimal (dec sparks-amount))
@@ -157,7 +157,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (spark-id:string (UR_SparkID))
                 (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account-to-redeem))
             )
@@ -171,7 +171,7 @@
     (defcap SPARK|C>X_REEDEM (account-to-redeem:string redemption-quantity:integer)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (spark-id:string (UR_SparkID))
                 (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account-to-redeem))
             )
@@ -214,7 +214,7 @@
     (defun UR_FrozenSparkID:string ()
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DPTF::UR_Frozen (UR_SparkID))
         )
@@ -222,8 +222,8 @@
     (defun UR_Sparks (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (spark-id:string (UR_SparkID))
                 (f-spark-id:string (UR_FrozenSparkID))
             )
@@ -252,14 +252,14 @@
     ;;{F1}  [URC]
     (defun URC_GetMaxBuy:integer (account:string native:bool)
         @doc "Returns the maximum amount of Tokens that can still be bought \
-            \ Conisdering the amount left, and the User Funds"
+            \ Considering the amount left, and the User Funds"
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
@@ -280,7 +280,7 @@
                 (client-kadena-value-in-dollarz:decimal (floor (* client-kadena-supply kda-pid) 2))
                 (can-buy-with-client-supply:decimal (floor (/ client-kadena-value-in-dollarz spark-price)))
             )
-            (dec
+            (floor
                 (if (<= can-buy-with-client-supply still-for-sale)
                     can-buy-with-client-supply
                     still-for-sale
@@ -323,7 +323,7 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (spark-id:string (UR_SparkID))
                 (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account))
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
@@ -376,7 +376,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     ;;
                     (spark-id:string (UR_SparkID))
@@ -402,7 +402,7 @@
         (with-capability (SPARK|C>REEDEM-ALL account-to-redeem)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (spark-id:string (UR_SparkID))
                     (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account-to-redeem))
                 )
@@ -422,11 +422,11 @@
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-VST:module{VestingV5} VST)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 ;;

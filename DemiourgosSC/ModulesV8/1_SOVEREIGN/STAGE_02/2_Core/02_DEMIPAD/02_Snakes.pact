@@ -35,7 +35,7 @@
     (defcap GOV ()                             (compose-capability (GOV|SNAKES_ADMIN)))
     (defcap GOV|SNAKES_ADMIN ()                (enforce-guard GOV|MD_SNAKES))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                    (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                    (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|DEMIPAD|SC_NAME ()              (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;<====>
@@ -57,7 +57,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -169,7 +169,7 @@
     (defun UR_NonceSaleAvailability:integer (nonce:integer)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 (lpad:string (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME))
                 (asset:string (UR_AssetID))
@@ -195,8 +195,8 @@
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (share-pid:decimal (UR_DollarSharePrice))
@@ -214,8 +214,8 @@
     (defun URC_NonceCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (share-costs:object{DemiourgosLaunchpadV2.Costs} (URC_ShareCosts))
@@ -233,8 +233,8 @@
     (defun URC_NonceAmountCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer amount:integer)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (nonce-costs:object{DemiourgosLaunchpadV2.Costs} (URC_NonceCosts nonce))

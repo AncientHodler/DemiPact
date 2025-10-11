@@ -12,7 +12,7 @@
     (defcap GOV ()                   (compose-capability (GOV|TS02-DPAD_ADMIN)))
     (defcap GOV|TS02-DPAD_ADMIN ()    (enforce-guard GOV|MD_TS02-DPAD))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -24,7 +24,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -75,12 +75,14 @@
                 (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
                 (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
                 (ref-P|CUSTODIANS:module{OuronetPolicy} DEMIPAD-CUSTODIANS)
+                (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|DPAD::P|A_AddIMP mg)
             (ref-P|SPARK::P|A_AddIMP mg)
             (ref-P|SNAKES::P|A_AddIMP mg)
             (ref-P|CUSTODIANS::P|A_AddIMP mg)
+            (ref-P|KPAY::P|A_AddIMP mg)
         )
     )
     (defun UEV_IMC ()
@@ -137,9 +139,9 @@
         (with-capability (P|TALOS-SUMMONER)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-                    (ref-TS02-C1:module{TalosStageTwo_ClientOneV7} TS02-C1)
-                    (ref-TS02-C2:module{TalosStageTwo_ClientTwoV6} TS02-C2)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                    (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+                    (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     (lpad:string (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME))
                     (tf:[bool] [true true])
@@ -365,10 +367,16 @@
             )
         )
     )
-    ;;
-    ;;  [2] DEMIPAD
-    ;;
-    
+    (defun KPAY|C_BuyKpay (patron:string buyer:string kpay-amount:integer iz-native:bool)
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+                )
+                (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native)
+            )
+        )
+    )
     ;;{F7}  [X]
     ;;
 )

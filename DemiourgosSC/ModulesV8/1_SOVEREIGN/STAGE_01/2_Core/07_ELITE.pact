@@ -15,7 +15,7 @@
         (compose-capability (P|ELITE|CALLER))
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -113,9 +113,9 @@
     (defun URC_EliteAurynzSupply (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
@@ -167,8 +167,8 @@
     (defun URC_IzIdEA:bool (id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (fea:string (ref-DPTF::UR_Frozen ea-id))
                 (rea:string (ref-DPTF::UR_Reservation ea-id))
@@ -188,7 +188,7 @@
         (let
             (
                 (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
             )
             (with-capability (GOV|ELITE_ADMIN-CALLER)
                 (ref-DPOF::XI_InsertNewId id
@@ -235,7 +235,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (iz-id:bool (ref-DPOF::UR_IzId id))
             )
             (enforce iz-id (format "Meta Fungible ID {} must be migrated to Ortofungible for Operation" [id]))
@@ -276,6 +276,8 @@
                                     (ref-DPMF::UR_AccountRoleBurn id account)
                                     (ref-DPMF::UR_AccountRoleCreate id account)
                                     (ref-DPMF::UR_AccountRoleTransfer id account)
+                                    id
+                                    account
                                 )
                             )
                             ;;Insert Nonces
@@ -319,7 +321,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (a-type:bool (ref-DALOS::UR_AccountType account))
             )
@@ -338,7 +340,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (s-type:bool (ref-DALOS::UR_AccountType sender))
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))

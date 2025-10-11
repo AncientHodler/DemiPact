@@ -31,9 +31,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|VestingKey ()        (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|VestingKey)))
-    (defun GOV|VST|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|VestingKey ()        (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|VestingKey)))
+    (defun GOV|VST|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
     ;;
     ;;<====>
     ;;POLICY
@@ -53,7 +53,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -127,7 +127,7 @@
     (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
-    (defconst ATS|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
+    (defconst ATS|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -146,8 +146,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType freeze-output false)
             (ref-DPTF::UEV_Frozen dptf true)
@@ -163,8 +163,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (iz-reservation:bool (ref-DPTF::UR_IzReservationOpen dptf))
             )
             (ref-DALOS::UEV_EnforceAccountType reserver false)
@@ -177,8 +177,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (dptf:string (ref-DPTF::UR_Reservation r-dptf))
             )
             (ref-DALOS::UEV_EnforceAccountType unreserver true)
@@ -197,8 +197,8 @@
         (let
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-U|VST::UEV_MilestoneWithTime offset duration milestones 788400000)
             (ref-DALOS::UEV_EnforceAccountType vester false)
@@ -212,8 +212,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
             )
             (enforce (> culled-amount 0.0) (format "Nonce {} cant be culled" [nonce]))
             (ref-DALOS::UEV_EnforceAccountType unvester false)
@@ -231,8 +231,8 @@
         (let
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             ;;Limit <Sleep> to 25 Years
             (ref-U|VST::UEV_MilestoneWithTime 0 duration 1 788400000)
@@ -245,9 +245,9 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 ;;
                 (dptf:string (ref-DPOF::UR_Sleeping dpof))
             )
@@ -273,7 +273,7 @@
     (defcap VST|X>MERGE (merger:string dpof:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership merger)
             (ref-DALOS::UEV_EnforceAccountType merger false)
@@ -285,8 +285,8 @@
         (let
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target-account false)
             (ref-DPTF::UEV_Hibernation dptf true)
@@ -300,8 +300,8 @@
     (defcap VST|C>AWAKE (awaker:string dpof:string nonce:integer)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
             )
             (ref-DALOS::UEV_EnforceAccountType awaker false)
             (ref-DPOF::UEV_Hibernation dpof true)
@@ -345,8 +345,8 @@
         (enforce (contains fr-tag [1 2]) "Invalid Frozen|Reserve Tag")
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (dptf:string
                     (cond
                         ((= fr-tag 1) (ref-DPTF::UR_Frozen dptf-to-repurpose))
@@ -364,7 +364,7 @@
     (defcap VST|C>REPURPOSE-ORTO-FUNGIBLE (dpof-to-repurpose:string nonces:[integer] repurpose-from:string repurpose-to:string vzh-tag:integer)
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
             )
             (ref-DPOF::UEV_NoncesToAccount dpof-to-repurpose repurpose-from nonces)
             (compose-capability (VST|X>REPURPOSE-ORTO-FUNGIBLE dpof-to-repurpose repurpose-from repurpose-to vzh-tag))
@@ -374,9 +374,9 @@
         (enforce (contains vzh-tag [1 2 3]) "Invalid Vesting|Sleeping|Hibernation Tag")
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (dptf:string
                     (cond
                         ((= vzh-tag 1) (ref-DPOF::UR_Vesting dpof-to-repurpose))
@@ -405,7 +405,7 @@
     (defcap VST|X>TOGGLE-SPECIAL-TF-TR (s-dptf:string target:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DPTF::UEV_ParentOwnership s-dptf)
             (compose-capability (P|TT))
@@ -424,7 +424,7 @@
     (defcap VST|X>TOGGLE-SPECIAL-OF-TR (s-dpof:string target:string)
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
             )
             (ref-DPOF::UEV_ParentOwnership s-dpof)
             (compose-capability (P|TT))
@@ -434,7 +434,7 @@
     (defcap VST|C>LINK (dptf:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (ref-DPTF::CAP_Owner dptf)
         )
@@ -445,7 +445,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (h:bool (ref-ATS::UR_Hibernate ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
@@ -457,7 +457,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (h1:bool (ref-ATS::UR_Hibernate ats1))
                 (h2:bool (ref-ATS::UR_Hibernate ats2))
             )
@@ -533,7 +533,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (meta-data-chain:[object{VestingV5.VST|MetaDataSchema}] 
                     (ref-DPOF::UR_NonceMetaData id nonce)
                 )
@@ -574,7 +574,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (meta-data-array (ref-DPOF::UR_NoncesMetaDatas id nonces))
                 (present-time:time (at "block-time" (chain-data)))
             )
@@ -606,7 +606,7 @@
     (defun UEV_StillHasSleeping (sleeping-dpof:string nonce:integer)
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (meta-data-chain:[object] (ref-DPOF::UR_NonceMetaData sleeping-dpof nonce))
                 (release-date:time (at "release-date" (at 0 meta-data-chain)))
                 (present-time:time (at "block-time" (chain-data)))
@@ -621,7 +621,7 @@
         (let
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (amount-lst:[decimal] (ref-U|VST::UC_SplitBalanceForVesting (ref-DPTF::UR_Decimals dptf) amount milestones))
                 (date-lst:[time] (ref-U|VST::UC_MakeVestingDateList offset duration milestones))
                 (meta-data-chain:[object{VestingV5.VST|MetaDataSchema}] (zip (lambda (x:decimal y:time) { "release-amount": x, "release-date": y }) amount-lst date-lst))
@@ -677,8 +677,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (f-dptf:string (ref-DPTF::UR_Frozen dptf))
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators
@@ -711,7 +711,7 @@
         (with-capability (VST|C>TOGGLE-FROZEN-TF-TR s-dptf target)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 )
                 (ref-DPTF::C_ToggleTransferRole s-dptf target toggle)
             )
@@ -725,8 +725,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (r-dptf:string (ref-DPTF::UR_Reservation dptf))
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators
@@ -753,8 +753,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (dptf:string (ref-DPTF::UR_Reservation r-dptf))
                 )
                 (ref-IGNIS::UDC_ConcatenateOutputCumulators
@@ -784,7 +784,7 @@
         (with-capability (VST|C>TOGGLE-RESERVED-TF-TR s-dptf target)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 )
                 (ref-DPTF::C_ToggleTransferRole s-dptf target toggle)
             )
@@ -798,9 +798,9 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (dpof-id:string (ref-DPTF::UR_Vesting dptf))
                     (meta-data-chain:[object{VestingV5.VST|MetaDataSchema}] 
@@ -837,9 +837,9 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-DALOS:module{OuronetDalosV5} DALOS)
-                        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                        (ref-DALOS:module{OuronetDalosV6} DALOS)
+                        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
                         ;;
                         (dptf-id:string (ref-DPOF::UR_Vesting dpof))
                         (nonces-used:integer (ref-DPOF::UR_NoncesUsed dpof))
@@ -905,9 +905,9 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (dpof-id:string (ref-DPTF::UR_Sleeping dptf))
                     (meta-data-chain:[object{VestingV5.VST|MetaDataSchema}] 
@@ -937,7 +937,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (nonce-supply:decimal (ref-DPOF::UR_NonceSupply dpof nonce))
                 (culled-amount:decimal (at 0 (URC_CullMetaDataAmountWithObject dpof nonce)))
             )
@@ -945,7 +945,7 @@
                 (let
                     (
                         (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                        (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                        (ref-TFT:module{TrueFungibleTransferV9} TFT)
                         ;;
                         (dptf-id:string (ref-DPOF::UR_Sleeping dpof))
                     )
@@ -991,7 +991,7 @@
         (with-capability (VST|C>TOGGLE-SLEEPING-OF-TR s-dpof target)
             (let
                 (
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 )
                 (ref-DPOF::C_ToggleTransferRole s-dpof target toggle)
             )
@@ -1006,9 +1006,9 @@
                 (
                     (ref-U|VST:module{UtilityVstV2} U|VST)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (dpof-id:string (ref-DPTF::UR_Hibernation dptf))
                     (duration:integer (* dayz 86400))
@@ -1048,9 +1048,9 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (dptf-id:string (ref-DPOF::UR_Hibernation dpof))
                     (precision:integer (ref-DPOF::UR_Decimals dpof))
@@ -1124,7 +1124,7 @@
         (with-capability (VST|C>TOGGLE-HIBERNATING-OF-TR s-dpof target)
             (let
                 (
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 )
                 (ref-DPOF::C_ToggleTransferRole s-dpof target toggle)
             )
@@ -1141,12 +1141,12 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     ;;
                     ;;<ats>
-                    (coil-data:object{AutostakeV5.CoilData} 
+                    (coil-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats rt amount dayz)
                     )
                     (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1184,12 +1184,12 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     ;;
                     ;;<ats1>
-                    (coil1-data:object{AutostakeV5.CoilData} 
+                    (coil1-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                     )
                     (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1198,7 +1198,7 @@
                     (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                     ;;
                     ;;<ats2>
-                    (coil2-data:object{AutostakeV5.CoilData} 
+                    (coil2-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats2 c-rbt1 c-rbt1-amount dayz)
                     )
                     (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -1241,8 +1241,8 @@
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 ;;
                 (dptf-owner:string (ref-DPTF::UR_Konto dptf))
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
@@ -1300,9 +1300,9 @@
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 ;;
                 (dptf-name:string (ref-DPTF::UR_Name dptf))
                 (dptf-ticker:string (ref-DPTF::UR_Ticker dptf))
@@ -1365,8 +1365,8 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (amount:decimal (ref-DPTF::UR_AccountSupply dptf-to-repurpose repurpose-from))
             )
@@ -1393,7 +1393,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 ;;
                 (nonces-used:integer (ref-DPOF::UR_NoncesUsed dpof-to-repurpose))
                 (amount:decimal (ref-DPOF::UR_NonceSupply dpof-to-repurpose nonce))
@@ -1426,9 +1426,9 @@
             (
                 (ref-U|VST:module{UtilityVstV2} U|VST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (dptf:string 
                     (if (= vzh-tag 2)

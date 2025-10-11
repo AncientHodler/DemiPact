@@ -3,7 +3,7 @@
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV9)
-    (implements AutostakeV5)
+    (implements AutostakeV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -29,9 +29,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
-    (defun GOV|ATS|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
+    (defun GOV|ATS|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     ;;
     ;;<====>
     ;;POLICY
@@ -49,7 +49,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -107,7 +107,8 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
-    (defschema ATS|PropertiesSchemaV2
+    (defschema ATS|PropertiesSchemaV3
+        id:string                       ;[x] Added in V3
         owner-konto:string
         can-upgrade:bool                ;[x] Added in V2
         can-change-owner:bool
@@ -124,7 +125,7 @@
         parameter-lock:bool
         unlocks:integer
         ;;
-        reward-tokens:[object{AutostakeV5.ATS|RewardTokenSchemaV2}]
+        reward-tokens:[object{AutostakeV6.ATS|RewardTokenSchemaV2}]
         ;;
         ;;Cold Recovery
         c-rbt:string
@@ -150,7 +151,7 @@
         hot-recovery:bool
         direct-recovery:bool            ;[x] Added in V2
     )
-    (defschema ATS|BalanceSchema
+    (defschema ATS|BalanceSchemaV2
         @doc "Key = <ATS-Pair> + BAR + <account>"
         P0:[object{UtilityAtsV2.Awo}]
         P1:object{UtilityAtsV2.Awo}
@@ -160,10 +161,14 @@
         P5:object{UtilityAtsV2.Awo}
         P6:object{UtilityAtsV2.Awo}
         P7:object{UtilityAtsV2.Awo}
+        ;;
+        ;;ForSelect, store Key Make-up
+        id:string
+        account:string
     )
     ;;{2}
-    (deftable ATS|Pairs:{ATS|PropertiesSchemaV2})   ;;Key = <ATS-Pair-id>
-    (deftable ATS|Ledger:{ATS|BalanceSchema})       ;;Key = <ATS-Pair-id> + BAR + <account>
+    (deftable ATS|Pairs:{ATS|PropertiesSchemaV3})   ;;Key = <ATS-Pair-id>
+    (deftable ATS|Ledger:{ATS|BalanceSchemaV2})     ;;Key = <ATS-Pair-id> + BAR + <account>
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
@@ -183,7 +188,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_SenderWithReceiver (UR_OwnerKonto atspair) new-owner)
             (ref-DALOS::UEV_EnforceAccountExists new-owner)
@@ -196,7 +201,7 @@
         (if hibernate
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 )
                 (ref-DPTF::UEV_Hibernation c-rbt true)
@@ -280,7 +285,7 @@
         @event
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (atspair:string (ref-DPOF::UR_RewardBearingToken hot-rbt))
             )
             (CAP_Owner atspair)
@@ -294,7 +299,7 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length atspair))
                 (l2:integer (length index-decimals))
                 (l3:integer (length reward-token))
@@ -350,7 +355,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (n:integer (length (UR_RewardTokens atspair)))
             )
             (enforce (<= n 6) "An ATS Pair can have a maximum of 7 RTs")
@@ -379,7 +384,7 @@
         (let
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (c-rbt-prec:integer (ref-DPTF::UR_Decimals (UR_ColdRewardBearingToken atspair)))
             )
             (ref-U|ATS::UEV_CRF|Positions fee-positions)
@@ -424,7 +429,7 @@
         @event
         (let
             (
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (hot-rbt-supply:decimal (ref-DPOF::UR_Supply hot-rbt))
                 (hot-rbt-ftc:string (take 2 hot-rbt))
             )
@@ -632,7 +637,7 @@
         (at "unlocks" (read ATS|Pairs atspair ["unlocks"]))
     )
     ;;
-    (defun UR_RewardTokens:[object{AutostakeV5.ATS|RewardTokenSchemaV2}] (atspair:string)
+    (defun UR_RewardTokens:[object{AutostakeV6.ATS|RewardTokenSchemaV2}] (atspair:string)
         (let
             (
                 (temp:list (at "reward-tokens" (read ATS|Pairs atspair ["reward-tokens"])))
@@ -645,10 +650,10 @@
                     (
                         (default-royalty:decimal 0.0)
                         (ref-U|LST:module{StringProcessor} U|LST)
-                        (new-obj:[object{AutostakeV5.ATS|RewardTokenSchemaV2}]
+                        (new-obj:[object{AutostakeV6.ATS|RewardTokenSchemaV2}]
                             (fold
                                 (lambda
-                                    (acc:[object{AutostakeV5.ATS|RewardTokenSchemaV2}] idx:integer)
+                                    (acc:[object{AutostakeV6.ATS|RewardTokenSchemaV2}] idx:integer)
                                     (ref-U|LST::UC_AppL acc
                                         (+
                                             (at idx temp)
@@ -673,7 +678,7 @@
     (defun UR_RewardTokenList:[string] (atspair:string)
         (fold
             (lambda
-                (acc:[string] item:object{AutostakeV5.ATS|RewardTokenSchemaV2})
+                (acc:[string] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
                 (+ acc [(at "token" item)])
             )
             []
@@ -683,7 +688,7 @@
     (defun UR_RewardTokenNFR:[bool] (atspair:string)
         (fold
             (lambda
-                (acc:[bool] item:object{AutostakeV5.ATS|RewardTokenSchemaV2})
+                (acc:[bool] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
                 (+ acc [(at "nfr" item)])
             )
             []
@@ -703,7 +708,7 @@
             (ref-U|INT::UEV_PositionalVariable rur 3 "Invalid RUR Integer")
             (fold
                 (lambda
-                    (acc:[decimal] item:object{AutostakeV5.ATS|RewardTokenSchemaV2})
+                    (acc:[decimal] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
                     (ref-U|LST::UC_AppL acc
                         (cond
                             ((= rur 1) (at "resident" item))
@@ -812,7 +817,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (fold
                 (lambda
@@ -846,6 +851,24 @@
             )
         )
     )
+    (defun UR_P-Seven:[object{UtilityAtsV2.Awo}]
+        (atspair:string account:string)
+        (let
+            (
+                (k:string (UC_AtspairAccount atspair account))
+            )
+            [
+                (at "P1" (read ATS|Ledger k ["P1"]))
+                (at "P2" (read ATS|Ledger k ["P2"]))
+                (at "P3" (read ATS|Ledger k ["P3"]))
+                (at "P4" (read ATS|Ledger k ["P4"]))
+                (at "P5" (read ATS|Ledger k ["P5"]))
+                (at "P6" (read ATS|Ledger k ["P6"]))
+                (at "P7" (read ATS|Ledger k ["P7"]))
+            ]
+        )
+        
+    )
     ;;{F1}  [URC]
     (defun URC_Index (atspair:string)
         @doc "Computes the Index of an <atspair>"
@@ -871,8 +894,8 @@
             \ Also inludes the Hot-RBT amount"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 (c-rbt-supply:decimal (ref-DPTF::UR_Supply c-rbt))
             )
@@ -892,7 +915,7 @@
         @doc "Computes the value in RBT of a given <rt> Token <rt-amount> for an <atspair>"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (index:decimal (abs (URC_Index atspair)))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
                 (p-rbt:integer (ref-DPTF::UR_Decimals c-rbt))
@@ -924,7 +947,7 @@
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (index:decimal (URC_Index atspair))
                 (syphon:decimal (UR_Syphon atspair))
                 (resident-amounts:[decimal] (UR_RewardTokenRUR atspair 1))
@@ -1031,7 +1054,7 @@
         )
     )
     (defun URC_WhichPosition:integer (atspair:string c-rbt-amount:decimal account:string)
-        @doc "Computes which Positio can be used next for uncoiling"
+        @doc "Computes which Position can be used next for uncoiling"
         (let
             (
                 (elite:bool (UR_EliteMode atspair))
@@ -1047,8 +1070,8 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-ELITE:module{Elite} ELITE)
                 (positions:integer (UR_ColdRecoveryPositions atspair))
                 (c-rbt:string (UR_ColdRewardBearingToken atspair))
@@ -1115,9 +1138,28 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
+                (zero:object{UtilityAtsV2.Awo} 
+                    ;;Opened
+                    (UDC_MakeZeroUnstakeObject atspair)
+                )
+                (negative:object{UtilityAtsV2.Awo} 
+                    ;;Closed
+                    (UDC_MakeNegativeUnstakeObject atspair)
+                )
+                (elite:bool (UR_EliteMode atspair))
+                (hybrid:object{UtilityAtsV2.Awo}
+                    (if elite negative zero)
+                )
             )
             (ref-U|INT::UEV_PositionalVariable position 7 "Input Position out of bounds")
-            (with-read ATS|Ledger (UC_AtspairAccount atspair account)
+            (with-default-read ATS|Ledger (UC_AtspairAccount atspair account)
+                {"P1"   : zero
+                ,"P2"   : hybrid
+                ,"P3"   : hybrid
+                ,"P4"   : hybrid
+                ,"P5"   : hybrid
+                ,"P6"   : hybrid
+                ,"P7"   : hybrid}
                 { "P1" := p1, "P2" := p2, "P3" := p3, "P4" := p4, "P5" := p5, "P6" := p6, "P7" := p7 }
                 (cond
                     ((= position 1) (URCX_PosObjSt atspair p1))
@@ -1203,7 +1245,7 @@
         @doc "Computes the Cull Time for Cold Recovery for a given <atspair> and <account>"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (major:integer (ref-DALOS::UR_Elite-Tier-Major account))
                 (minor:integer (ref-DALOS::UR_Elite-Tier-Minor account))
                 (position:integer
@@ -1227,22 +1269,22 @@
         )
     )
     ;;
-    (defun URC_RewardBearingTokenAmounts:object{AutostakeV5.CoilData}
+    (defun URC_RewardBearingTokenAmounts:object{AutostakeV6.CoilData}
         (ats:string rt:string amount:decimal)
         (URCX_RBT-Amount ats rt amount 1)
     )
-    (defun URC_RewardBearingTokenAmountsWithHibernation:object{AutostakeV5.CoilData}
+    (defun URC_RewardBearingTokenAmountsWithHibernation:object{AutostakeV6.CoilData}
         (ats:string rt:string amount:decimal hibernation-dayz:integer)
         (URCX_RBT-Amount ats rt amount hibernation-dayz)
     )
-    (defun URCX_RBT-Amount:object{AutostakeV5.CoilData} 
+    (defun URCX_RBT-Amount:object{AutostakeV6.CoilData} 
         (ats:string rt:string amount:decimal dayz:integer)
         (let
             (
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 ;;
                 (h:bool (ref-ATS::UR_Hibernate ats))
                 (royalty:decimal (ref-ATS::UR_Royalty ats))
@@ -1290,6 +1332,36 @@
             )
         )
     )
+    ;;
+    ;;  [URD]
+    ;;
+    ;;1] Returns ATSPairs that Have the Account registered in the ATS|Ledger (has used unstake)
+    (defun URD_HeldAutostakePairs:[string] (account:string)
+        @doc "Returns all ATSpairs for which the <account> existsin the ATS|Ledger Table"
+        (map (at "id")
+            (select ATS|Ledger ["id"]
+                (where "account" (= account))
+            )
+        )
+    )
+    ;;2]Returns Accounts have used a given ATSpair Unstaking
+    (defun URD_ExistingAutostakePairs:[string] (ats:string)
+        @doc "Returns all Ouronet Accounts that exist in a given <ats> ATS|Ledger"
+        (map (at "account")
+            (select ATS|Ledger ["account"]
+                (where "id" (= ats))
+            )
+        )
+    )
+    ;;3]Returns a List of ATSPairs that are owned by a given Account for Management Purposes
+    (defun URD_OwnedAutostakePairs:[string] (account:string)
+        @doc "Returns all ATSPairs that can be managed by the given <account>"
+        (map (at "id")
+            (select ATS|Pairs ["id"]
+                (where "owner-konto" (= account))
+            )
+        )
+    )
     ;;{F2}  [UEV]
     (defun UEV_id (atspair:string)
         (let
@@ -1328,7 +1400,7 @@
     (defun UEV_RewardTokenExistance (atspair:string reward-token:string existance:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (existance-check:bool (ref-DPTF::URC_IzRTg atspair reward-token))
             )
             (enforce 
@@ -1340,8 +1412,8 @@
     (defun UEV_RewardBearingTokenExistance (atspair:string reward-bearing-token:string existance:bool cold-or-hot:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (existance-check:bool
                     (if cold-or-hot
                         (ref-DPTF::URC_IzRBTg atspair reward-bearing-token)
@@ -1396,7 +1468,7 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (rt-ftc:string (take 2 reward-token))
                 (rbt-ftc:string (take 2 reward-bearing-token))
             )
@@ -1428,10 +1500,10 @@
     (defun UDC_MakeNegativeUnstakeObject:object{UtilityAtsV2.Awo} (atspair:string)
         (UDC_MakeUnstakeObject atspair ANTITIME)
     )
-    (defun UDC_ComposePrimaryRewardToken:object{AutostakeV5.ATS|RewardTokenSchemaV2} (token:string nfr:bool)
+    (defun UDC_ComposePrimaryRewardToken:object{AutostakeV6.ATS|RewardTokenSchemaV2} (token:string nfr:bool)
         (UDC_RT token nfr 0.0 0.0 0.0)
     )
-    (defun UDC_RT:object{AutostakeV5.ATS|RewardTokenSchemaV2} 
+    (defun UDC_RT:object{AutostakeV6.ATS|RewardTokenSchemaV2} 
         (a:string b:bool c:decimal d:decimal e:decimal)
         (enforce 
             (fold (and) true [(>= c 0.0)(>= d 0.0)(>= e 0.0)]) 
@@ -1443,23 +1515,26 @@
         ,"unbonding"    : d
         ,"royalty"      : e}
     )
-    (defun UDCX_Balance:object{ATS|BalanceSchema}
+    (defun UDCX_Balance:object{ATS|BalanceSchemaV2}
         (
             a:[object{UtilityAtsV2.Awo}] b:object{UtilityAtsV2.Awo} 
             c:object{UtilityAtsV2.Awo} d:object{UtilityAtsV2.Awo}
             e:object{UtilityAtsV2.Awo} f:object{UtilityAtsV2.Awo}
             g:object{UtilityAtsV2.Awo} h:object{UtilityAtsV2.Awo}
+            i:string j:string
         )
-        {"P0"   : a
-        ,"P1"   : b
-        ,"P2"   : c
-        ,"P3"   : d
-        ,"P4"   : e
-        ,"P5"   : f
-        ,"P6"   : g
-        ,"P7"   : h}
+        {"P0"       : a
+        ,"P1"       : b
+        ,"P2"       : c
+        ,"P3"       : d
+        ,"P4"       : e
+        ,"P5"       : f
+        ,"P6"       : g
+        ,"P7"       : h
+        ,"id"       : i
+        ,"account"  : j}
     )
-    (defun UDC_CoilData:object{AutostakeV5.CoilData}
+    (defun UDC_CoilData:object{AutostakeV6.CoilData}
         (a:decimal b:decimal c:decimal d:decimal e:decimal f:decimal g:string)
         {"primal-input-amount"  : a
         ,"first-input-amount"   : b
@@ -1474,7 +1549,7 @@
         @doc "Enforces Atspair Ownership"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership (UR_OwnerKonto id))
         )
@@ -1541,7 +1616,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                     ;;
                     (nonce-holder:string (ref-DPOF::UR_NonceHolder hot-rbt nonce))
                     (nonce-supply:decimal (ref-DPOF::UR_NonceSupply hot-rbt nonce))
@@ -1583,7 +1658,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (l1:integer (length atspair))
                     (ats-cost:decimal (ref-DALOS::UR_UsagePrice "ats"))
                     (gas-costs:decimal (* (dec l1) (ref-DALOS::UR_UsagePrice "ignis|ats-issue")))
@@ -1672,7 +1747,7 @@
         (with-capability (ATS|C>TOGGLE-PARAMETER-LOCK atspair toggle)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     ;;
                     (toggle-costs:[decimal] (XI_ToggleParameterLock atspair toggle))
@@ -1699,8 +1774,8 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 ;;
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -1733,7 +1808,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (gas-costs:decimal (* (ref-DALOS::UR_UsagePrice "ignis|biggest") 20.0))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
             )
@@ -1791,8 +1866,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                     ;;
                     (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                     (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -1902,7 +1977,7 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-BRD:module{Branding} BRD)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             )
             (fold
                 (lambda
@@ -1946,7 +2021,7 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                 (ats-sc:string ATS|SC_NAME)
                 (id:string (ref-U|DALOS::UDC_Makeid atspair))
@@ -1954,7 +2029,8 @@
             (ref-U|DALOS::UEV_Decimals index-decimals)
             (ref-U|ATS::UEV_AutostakeIndex)
             (insert ATS|Pairs id
-                {"owner-konto"              : account
+                {"id"                       : id
+                ,"owner-konto"              : account
                 ,"can-upgrade"              : true
                 ,"can-change-owner"         : true
                 ,"syphoning"                : false
@@ -2200,7 +2276,7 @@
                         0.0
                     )
                 )
-                (new-rt-obj:object{AutostakeV5.ATS|RewardTokenSchemaV2}
+                (new-rt-obj:object{AutostakeV6.ATS|RewardTokenSchemaV2}
                     (cond
                         ((= rur 1) (UDC_RT reward-token nfr rur-amount unbonding royalty))
                         ((= rur 2) (UDC_RT reward-token nfr resident rur-amount royalty))
@@ -2225,10 +2301,19 @@
                 (n:object{UtilityAtsV2.Awo} (UDC_MakeNegativeUnstakeObject atspair))
             )
             (with-default-read ATS|Ledger (UC_AtspairAccount atspair account)
-                (UDCX_Balance [zero] n n n n n n n )
-                {"P0" := p0, "P1" := p1, "P2" := p2, "P3" := p3, "P4" := p4, "P5" := p5, "P6" := p6, "P7" := p7}
+                (UDCX_Balance [zero] n n n n n n n atspair account)
+                {"P0"       := p0
+                ,"P1"       := p1
+                ,"P2"       := p2
+                ,"P3"       := p3
+                ,"P4"       := p4
+                ,"P5"       := p5
+                ,"P6"       := p6
+                ,"P7"       := p7
+                ,"id"       := i
+                ,"account"  := a}
                 (write ATS|Ledger (UC_AtspairAccount atspair account)
-                    (UDCX_Balance p0 p1 p2 p3 p4 p5 p6 p7)
+                    (UDCX_Balance p0 p1 p2 p3 p4 p5 p6 p7 i a)
                 )
             )
         )
@@ -2302,6 +2387,44 @@
         (UEV_IMC)
         (update ATS|Ledger (UC_AtspairAccount atspair account)
             { "P7"  : obj}
+        )
+    )
+    ;;
+    ;;{F8}  [AUP - Admin Update Functions]
+    ;;
+    (defcap AHU ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ah:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership ah)
+            (compose-capability (SECURE))
+        )
+    )
+    (defun AUP_UnstakeAccounts (keyz:[string])
+        @doc "Get <keyz> with <(UR_KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_UnstakeAccount) keyz)
+        )
+    )
+    (defun AUP_UnstakeAccount (ky:string)
+        (require-capability (SECURE))
+        (update ATS|Ledger ky
+            {"id"       : (drop -163 ky)
+            ,"account"  : (take -162 ky)}
+        )
+    )
+    (defun AUP_AutostakePairs (ids:[string])
+        @doc "Get <ids> with <(UR_P-KEYS)>, or update one a time"
+        (with-capability (AHU)
+            (map (AUP_AutostakePair) ids)
+        )
+    )
+    (defun AUP_AutostakePair (id:string)
+        (require-capability (SECURE))
+        (update ATS|Pairs id
+            {"id"       : id}
         )
     )
     ;;

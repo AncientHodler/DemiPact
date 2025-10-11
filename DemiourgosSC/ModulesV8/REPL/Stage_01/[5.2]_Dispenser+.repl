@@ -137,7 +137,7 @@
     )
     (let
         (
-            (ref-DALOS:module{OuronetDalosV5} DALOS)
+            (ref-DALOS:module{OuronetDalosV6} DALOS)
             (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
             ;;
             (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -201,8 +201,8 @@
     (
         (ref-U|G:module{OuronetGuards} U|G)
         (ref-P|DALOS:module{OuronetPolicy} DALOS)
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
         (ref-P|DSP:module{OuronetPolicy} DSP)
         (ref-DSP:module{Dispenser} DSP)

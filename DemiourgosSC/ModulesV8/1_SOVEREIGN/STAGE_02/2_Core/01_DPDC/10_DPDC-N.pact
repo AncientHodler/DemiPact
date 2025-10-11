@@ -1,7 +1,7 @@
 (module DPDC-N GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcNonceV3)
+    (implements DpdcNonceV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -11,7 +11,7 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-N_ADMIN)))
     (defcap GOV|DPDC-N_ADMIN ()             (enforce-guard GOV|MD_DPDC-N))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -96,13 +96,13 @@
     ;;{C3}
     ;;{C4}
     (defcap DPDC-N|C>SET-DATA
-        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}])
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}])
         @doc "[0] Controls Full Noce Updating, for multiple Nonces at a time"
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (l1:integer (length nosc))
                 (l2:integer (length new-nonces-data))
             )
@@ -128,7 +128,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_Royalty royalty-value)
@@ -141,7 +141,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (UEV_RoleModifyRoyaltiesON id son account)
             (ref-DPDC::UEV_IgnisRoyalty royalty-value)
@@ -191,8 +191,8 @@
         (id:string son:bool account:string nosc:integer nos:bool nost:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
             )
             (UEV_NonceDataUpdater id son account nosc nos nost)
             (ref-DALOS::CAP_EnforceAccountOwnership account)
@@ -203,15 +203,15 @@
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
-    (defun UR_Nonce:object{DpdcUdcV2.DPDC|NonceData}
+    (defun UR_Nonce:object{DpdcUdcV3.DPDC|NonceData}
         (id:string son:bool nosc:integer nos:bool nost:bool)
         @doc "nosc = <Nonce-Or-Set-Class> ; value of either a Nonce or Set-Class \
             \ nos  = <Native-Or-Split>    ; designates either native or split for Nonce-Data \
             \ nost = <NoNCe-Or-SET>       ; designates if <nosc> is either a <nonce> or <set-class> value"
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
-                (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
             )
             (if nost
                 (if nos
@@ -234,8 +234,8 @@
             ;;Nonce
             (let
                 (
-                    (ref-DPDC:module{DpdcV3} DPDC)
-                    (ref-DPDC-F:module{DpdcFragmentsV3} DPDC-F)
+                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                 )
                 (ref-DPDC::UEV_Nonce id son nosc)
                 (if (not nos)
@@ -246,7 +246,7 @@
             ;;Sets
             (let
                 (
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-DPDC-S::UEV_SetClass id son nosc)
                 (if (not nos)
@@ -259,7 +259,7 @@
     (defun UEV_RoleNftRecreateON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-Recreate id son account))
             )
             (enforce x (format "{} Collection {} Element Data cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -268,7 +268,7 @@
     (defun UEV_RoleNftUpdateON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-Update id son account))
             )
             (enforce x (format "{} Collection {} Element Data cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -277,7 +277,7 @@
     (defun UEV_RoleModifyRoyaltiesON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-ModifyRoyalties id son account))
             )
             (enforce x (format "{} Collection {} Element Data Royalties cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -286,7 +286,7 @@
     (defun UEV_RoleSetNewUriON (id:string son:bool account:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (x:bool (ref-DPDC::UR_CA|R-SetUri id son account))
             )
             (enforce x (format "{} Collection {} Element Data URIs cannot be Updated while using the {} Ouronet Account" [(if son "SFT" "NFT") id account]))
@@ -309,12 +309,12 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     (defun C_UpdateNonces
-        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}])
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}])
         @doc "[0] Updates Full Nonce Data for multiple Nonces at a time"
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (smallest:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
                 (how-many:decimal (dec (length nosc)))
@@ -415,7 +415,7 @@
     (defun C_UpdateNonceURI
         (
             id:string son:bool account:string nosc:integer nos:bool nost:bool
-            ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}
+            ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}
         )
         @doc "[7] Updates Nonce URIs"
         (UEV_IMC)
@@ -431,12 +431,12 @@
     )
     ;;{F7}  [X]
     (defun XI_U|NoncesData
-        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonce-data:[object{DpdcUdcV2.DPDC|NonceData}])
+        (id:string son:bool account:string nosc:[integer] nos:bool nost:bool new-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}])
         (require-capability (SECURE))
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
-                (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
             )
             (map
                 (lambda
@@ -457,8 +457,8 @@
         (require-capability (SECURE))
         (let
             (
-                (read-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
-                (new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+                (read-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
                     (if r-or-ir
                         (+
                             {"royalty" : royalty-value}
@@ -479,8 +479,8 @@
         (require-capability (SECURE))
         (let
             (
-                (read-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
-                (new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+                (read-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
                     (if name-or-description
                         (+
                             {"name" : name-description}
@@ -501,16 +501,16 @@
         (require-capability (SECURE))
         (let
             (
-                (read-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
-                (read-md:object{DpdcUdcV2.NonceMetaData} (at "meta-data" read-nonce-data))
+                (read-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (read-md:object{DpdcUdcV3.NonceMetaData} (at "meta-data" read-nonce-data))
                 ;;
-                (updated-md:object{DpdcUdcV2.NonceMetaData}
+                (updated-md:object{DpdcUdcV3.NonceMetaData}
                     (+
                         {"score" : score}
                         (remove "score" read-md)
                     )
                 )
-                (new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+                (new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
                     (+
                         {"meta-data" : updated-md}
                         (remove "meta-data" read-nonce-data)
@@ -525,16 +525,16 @@
         (require-capability (SECURE))
         (let
             (
-                (read-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
-                (read-md:object{DpdcUdcV2.NonceMetaData} (at "meta-data" read-nonce-data))
+                (read-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (read-md:object{DpdcUdcV3.NonceMetaData} (at "meta-data" read-nonce-data))
                 ;;
-                (updated-md:object{DpdcUdcV2.NonceMetaData}
+                (updated-md:object{DpdcUdcV3.NonceMetaData}
                     (+
                         {"meta-data" : meta-data}
                         (remove "meta-data" read-md)
                     )
                 )
-                (new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+                (new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
                     (+
                         {"meta-data" : updated-md}
                         (remove "meta-data" read-nonce-data)
@@ -547,13 +547,13 @@
     (defun XI_U|NonceUri
         (
             id:string son:bool account:string nosc:integer nos:bool nost:bool
-            ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}
+            ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}
         )
         (require-capability (SECURE))
         (let
             (
-                (read-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
-                (new-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+                (read-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (UR_Nonce id son nosc nos nost))
+                (new-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
                     (+
                         {"uri-tertiary" : u3}
                         (+

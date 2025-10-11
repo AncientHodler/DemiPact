@@ -11,7 +11,7 @@
     (defcap GOV|DPL_NFT_ADMIN ()            (enforce-guard GOV|MD_NOSFERATU))
     ;;{G3}
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -58,8 +58,8 @@
     (defconst D-R "Rare Nosferat Earning 0.1 Percent of Nosferatu Movie Profits, and 0.0625 Promile of all Future Movie Profits")
     (defconst D-C "Common Nosferat Earning 0.5 Promile of Nosferatu Movie Profits, and 0.03125 Promile of all Future Movie Profits")
     ;;
-    (defconst TYPE                          (let ((ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)) (ref-DPDC-UDC::UDC_URI|Type T F F F F F F)))
-    (defconst ZD                            (let ((ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)) (ref-DPDC-UDC::UDC_ZeroURI|Data)))
+    (defconst TYPE                          (let ((ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)) (ref-DPDC-UDC::UDC_URI|Type T F F F F F F)))
+    (defconst ZD                            (let ((ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)) (ref-DPDC-UDC::UDC_ZeroURI|Data)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -141,12 +141,12 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun NosferatuNonceDataMaker:[object{DpdcUdcV2.DPDC|NonceData}]
+    (defun NosferatuNonceDataMaker:[object{DpdcUdcV3.DPDC|NonceData}]
         (rarity:string starting-position:integer mdm:[[string]])
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)
+                (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
                 (rarities:[string] ["Legendary" "Epic" "Rare" "Common"])
                 (iz-rarity-ok:bool (contains rarity rarities))
                 (IR:decimal
@@ -171,7 +171,7 @@
             (enforce iz-rarity-ok "Rarity string is invalid")
             (fold
                 (lambda
-                    (acc:[object{DpdcUdcV2.DPDC|NonceData}] idx:integer)
+                    (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
                     (ref-U|LST::UC_AppL acc
                         (ref-DPDC-UDC::UDC_NonceData
                             R
@@ -194,7 +194,7 @@
     (defun NosferatuSpawner (patron:string dhn-id:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
         (let
             (
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV6} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
                 (l:integer (length mdm))
             )
             (enforce (= l number-of-positions) "Invalid Number of Positions")
@@ -206,7 +206,7 @@
     (defun NosferatuFixer (patron:string dhn-id:string account:string rarity:string starting-position:integer number-of-positions:integer mdm:[[string]])
         (let
             (
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV6} TS02-C2)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
                 (l:integer (length mdm))
                 (nonces:[integer] (NonceComputer rarity starting-position number-of-positions))
             )

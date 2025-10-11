@@ -2,7 +2,7 @@
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientThree)
+    (implements TalosStageOne_ClientThreeV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,7 +12,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C3))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -24,7 +24,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -197,7 +197,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -213,8 +213,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     ;;
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
@@ -244,8 +244,8 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     ;;
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
@@ -269,7 +269,7 @@
             )
         )
     )
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal amp:decimal p:bool)
         @doc "Issues a Stable Liquidity Pool. First Token in the liquidity Pool must have a connection to a principal Token \
             \ Stable Pools have the S designation. \
             \ Stable Pools can be created with up to 7 Tokens, and have by design equal weighting. \
@@ -279,7 +279,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWPI:module{SwapperIssueV3} SWPI)
+                    (ref-SWPI:module{SwapperIssueV4} SWPI)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
                     (ico:object{IgnisCollectorV2.OutputCumulator}
@@ -292,14 +292,14 @@
             )
         )
     )
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal p:bool)
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal p:bool)
         @doc "Issues a Standard, Constant Product Pool. \
             \ Constant Product Pools have the P Designation, and they are by design equal weigthed \
             \ Can also be created with up to 7 Tokens, also the <p> boolean determines if its a Principal Pool or not \
             \ The First Token must be a Principal Token"
         (SWP|C_IssueStable patron account pool-tokens fee-lp -1.0 p)
     )
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool)
         @doc "Issues a Weigthed Constant Liquidity Pool \
             \ Weigthed Pools have the W Designation, and the weights can be changed at will. \
             \ Can also be created with up to 7 Tokens, <p> boolean determines if its a Principal Pool or not \
@@ -308,7 +308,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWPI:module{SwapperIssueV3} SWPI)
+                    (ref-SWPI:module{SwapperIssueV4} SWPI)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
@@ -326,7 +326,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_ModifyCanChangeOwner swpair new-boolean)
@@ -341,7 +341,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_ModifyWeights swpair new-weights)
@@ -400,7 +400,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
@@ -419,7 +419,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_UpdateAmplifier swpair amp)
@@ -441,7 +441,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_UpdateFee swpair new-fee lp-or-special)
@@ -450,13 +450,13 @@
             )
         )
     )
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV5.FeeSplit}])
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV6.FeeSplit}])
         @doc "Updates the Special Fee Targets, along with their Split, for an SWPair"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_UpdateSpecialFeeTargets swpair targets)
@@ -653,11 +653,11 @@
             (let
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
                     (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (ref-SWPU:module{SwapperUsageV5} SWPU)
                     ;;
                     (ouro:string (ref-DALOS::UR_OuroborosID))

@@ -11,7 +11,7 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-I_ADMIN)))
     (defcap GOV|DPDC-I_ADMIN ()             (enforce-guard GOV|MD_DPDC-I))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -100,7 +100,7 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-U|DALOS::UEV_NameOrTicker collection-name true iz-special)
             (ref-U|DALOS::UEV_NameOrTicker collection-ticker false iz-special)
@@ -126,7 +126,7 @@
     (defun C_DeployAccountSFT (account:string id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (f:bool false)
             )
             (ref-DPDC::XB_DeployAccountSFT account id f f f f f f f f f f f)
@@ -135,7 +135,7 @@
     (defun C_DeployAccountNFT (account:string id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (f:bool false)
             )
             (ref-DPDC::XB_DeployAccountNFT account id f f f f f f f f f f)
@@ -153,10 +153,10 @@
         (with-capability (DPDC-I|C>ISSUE owner-account creator-account collection-name collection-ticker iz-special)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-BRD:module{Branding} BRD)
-                    (ref-DPDC:module{DpdcV3} DPDC)
+                    (ref-DPDC:module{DpdcV4} DPDC)
                     ;;
                     (multiplier:decimal (if son 5.0 10.0))
                     (ti:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -287,24 +287,24 @@
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (id:string (ref-U|DALOS::UDC_Makeid collection-ticker))
-                (specifications:object{DpdcUdcV2.DPDC|Properties}
-                    (ref-DPDC-UDC::UDC_DPDC|Properties
-                        owner-account creator-account collection-name collection-ticker
+                (specifications:object{DpdcUdcV3.DPDC|PropertiesV2}
+                    (ref-DPDC-UDC::UDC_DPDC|PropertiesV2
+                        id owner-account creator-account collection-name collection-ticker
                         can-upgrade can-change-owner can-change-creator can-add-special-role
                         can-transfer-nft-create-role can-freeze can-wipe can-pause
                         false 0 0
                     )
                 )
-                (zne:[object{DpdcUdcV2.DPDC|NonceElement}]
+                (zne:[object{DpdcUdcV3.DPDC|NonceElement}]
                     [(ref-DPDC-UDC::UDC_ZeroNonceElement)]
                 )
                 (ca:string creator-account)
                 (oa:string owner-account)
-                (verum-chain:object{DpdcUdcV2.DPDC|VerumRoles}
+                (verum-chain:object{DpdcUdcV3.DPDC|VerumRoles}
                     (if son
                         (if (!= owner-account creator-account)
                             (ref-DPDC-UDC::UDC_DPDC|VerumRoles 

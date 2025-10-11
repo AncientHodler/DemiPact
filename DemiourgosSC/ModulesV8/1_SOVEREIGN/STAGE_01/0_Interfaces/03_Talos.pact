@@ -55,12 +55,13 @@
 ;;
 ;;  [TALOS Stage One Client One]
 ;;
-(interface TalosStageOne_ClientOneV5
+(interface TalosStageOne_ClientOneV6
     @doc "Supports new TFT Architecture \
     \ V2 Adds manual Update for Elite Account Data, and IGNIS Cost for manualy creating DPTF and DPMF Account \
     \ V3 Adds MultiBulk Support, and with it, even further optimized architecture in the TFT Module \
     \ V4 remove <integer> output from 2 DPMF Function due to Info Upgrade \
-    \ V5 moves migrates Meta to Orto Fungible"
+    \ V5 moves migrates Meta to Orto Fungible \
+    \ V6 ties into the new DpdcUdcV2 interface"
     ;;
     ;;DALOS Functions
     (defun DALOS|C_ControlSmartAccount (patron:string account:string payable-as-smart-contract:bool payable-by-smart-contract:bool payable-by-method:bool))
@@ -133,7 +134,7 @@
     (defun DPOF|C_Mint (patron:string id:string account:string amount:decimal meta-data-chain:[object]))
     (defun DPOF|C_WipeSlim (patron:string id:string account:string nonce:integer amount:decimal))
     (defun DPOF|C_WipeHeavy (patron:string id:string account:string))
-    (defun DPOF|C_WipePure (patron:string id:string account:string removable-nonces-obj:object{DpofUdc.RemovableNonces}))
+    (defun DPOF|C_WipePure (patron:string id:string account:string removable-nonces-obj:object{DpofUdcV2.RemovableNonces}))
     (defun DPOF|C_WipeClean (patron:string id:string account:string nonces:[integer]))
         ;;
     (defun DPOF|C_Transmit (patron:string id:string nonces:[integer] amounts:[decimal] sender:string receiver:string method:bool))
@@ -256,7 +257,7 @@
 ;;
 ;;  [TALOS Stage One Client Three]
 ;;
-(interface TalosStageOne_ClientThree
+(interface TalosStageOne_ClientThreeV2
     @doc "Exposes SWP-Pair Client Functions"
     ;;
     ;;SWP (Swap-Pair) Functions
@@ -269,9 +270,9 @@
     (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
     (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
     ;;Issue
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     ;;Management
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
@@ -280,7 +281,7 @@
     (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool))
     (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV5.FeeSplit}]))
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV6.FeeSplit}]))
     ;;Liquidity
     (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
@@ -297,18 +298,19 @@
 ;;
 ;;  [TALOS Stage One PactedMultistep]
 ;;
-(interface TalosStageOne_ClientPactsV4
+(interface TalosStageOne_ClientPactsV5
     @doc "Removes DPTF Bulk and Multi Transfer in Multistep, to be added later on \
     \ Due to the optimization of DPTF Transfers there are no longer needed in the near future \
-    \ V3 Adds Liquidity Addition and moves all Defpacts in MTX Modules"
+    \ V3 Adds Liquidity Addition and moves all Defpacts in MTX Modules \
+    \ V5 moves to SwapperV6 Interface"
 
     ;;
     ;;
     ;;SWP (Swap-Pair) Pact Initiating Functions
     ;;Issue
-    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal p:bool))
     ;;
     (defun SWP|C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))

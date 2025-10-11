@@ -1,4 +1,4 @@
-(interface InfoOneV3
+(interface InfoOneV4
     @doc "Exposes Functions from Information One Module"
     ;;
     ;;
@@ -64,7 +64,15 @@
     (defun DPOF|INFO_Issue:object{OuronetInfoV3.ClientInfo} (patron:string account:string name:[string]))
     (defun DPOF|INFO_Mint:object{OuronetInfoV3.ClientInfo} (patron:string id:string account:string amount:decimal))
     ;;
+    (defun VST|INFO_Hibernate:object{OuronetInfoV3.ClientInfo} (patron:string hibernator:string target-account:string dptf:string amount:decimal dayz:integer))
+    ;;
     (defun ATS|INFO_Coil:object{OuronetInfoV3.ClientInfo} (patron:string coiler:string ats:string rt:string amount:decimal))
+    (defun ATS|INFO_Constrict:object{OuronetInfoV3.ClientInfo}(patron:string constricter:string ats:string rt:string amount:decimal dayz:integer))
+    (defun ATS|INFO_Curl:object{OuronetInfoV3.ClientInfo} (patron:string curler:string ats1:string ats2:string rt:string amount:decimal))
+    (defun ATS|INFO_Brumate:object{OuronetInfoV3.ClientInfo} (patron:string brumator:string ats1:string ats2:string rt:string amount:decimal dayz:integer))
+    (defun ATS|INFO_ColdRecovery:object{OuronetInfoV3.ClientInfo} (patron:string recoverer:string ats:string ra:decimal))
+    (defun ATS|INFO_Cull:object{OuronetInfoV3.ClientInfo} (patron:string culler:string ats:string))
+    (defun ATS|INFO_DirectRecovery:object{OuronetInfoV3.ClientInfo} (patron:string recoverer:string ats:string ra:decimal))
     ;;
     (defun SWP|INFO_AddLiquidity:object{OuronetInfoV3.ClientInfo} (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
     (defun SWP|INFO_IcedLiquidity:object{OuronetInfoV3.ClientInfo} (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
@@ -74,7 +82,7 @@
 )
 (module INFO-ONE GOV
     ;;
-    (implements InfoOneV3)
+    (implements InfoOneV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -84,7 +92,7 @@
     (defcap GOV ()                  (compose-capability (GOV|INFO|DPTF_ADMIN)))
     (defcap GOV|INFO|DPTF_ADMIN ()  (enforce-guard GOV|MD_INFO|DPTF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -100,7 +108,7 @@
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
-    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
@@ -124,7 +132,7 @@
         )
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 (ld:object{SwapperLiquidityV2.LiquidityData}
@@ -153,7 +161,7 @@
         )
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
                 (primary:decimal (at "primary-lp" clad))
                 (secondary:decimal (at "secondary-lp" clad))
@@ -208,7 +216,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (ref-DALOS::UR_UsagePrice "ignis|small")
@@ -224,7 +232,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (ref-DALOS::UR_UsagePrice "ignis|medium")
@@ -237,7 +245,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (ref-DALOS::UR_UsagePrice "ignis|big")
@@ -253,7 +261,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (ref-DALOS::UR_UsagePrice "ignis|biggest")
@@ -266,7 +274,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (* m (ref-DALOS::UR_UsagePrice "ignis|branding"))
@@ -279,7 +287,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (ref-DALOS::UR_UsagePrice "ignis|small")
@@ -292,7 +300,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (* (dec (length name)) (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -305,7 +313,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (UC|GasPrice 
                 (if origin (ref-DALOS::UR_UsagePrice "ignis|biggest") (ref-DALOS::UR_UsagePrice "ignis|small"))
@@ -320,7 +328,7 @@
         @doc "<DPTF|C_UpgradeBranding>"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (blue:decimal (ref-DALOS::UR_UsagePrice "blue"))
             )
             (* (dec months) blue)
@@ -332,7 +340,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (l1:integer (length name))
                 (dptf:decimal (ref-DALOS::UR_UsagePrice "dptf"))
                 (dpof:decimal (ref-DALOS::UR_UsagePrice "dpmf"))
@@ -449,7 +457,7 @@
         (patron:string id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
                 ;;
                 (sa:string (ref-I|OURONET::OI|UC_ShortAccount (ref-DALOS::GOV|DALOS|SC_NAME)))
@@ -514,7 +522,7 @@
         (patron:string id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
                 ;;
                 (sa:string (ref-I|OURONET::OI|UC_ShortAccount (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
@@ -775,7 +783,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (what-type:integer (at "type" (ref-TFT::URC_TransferClasses id sender receiver transfer-amount)))
                 (ico:object{IgnisCollectorV2.OutputCumulator}
@@ -811,7 +819,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ico:object{IgnisCollectorV2.OutputCumulator}
                     (ref-TFT::UDC_MultiTransferCumulator id-lst sender receiver transfer-amount-lst)
                 )
@@ -839,7 +847,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ico:object{IgnisCollectorV2.OutputCumulator}
                     (ref-TFT::UDC_BulkTransferCumulator id sender receiver-lst transfer-amount-lst)
@@ -863,7 +871,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ico:object{IgnisCollectorV2.OutputCumulator}
                     (ref-TFT::UDC_MultiBulkTransferCumulator id-lst sender receiver-array transfer-amount-array)
@@ -1032,7 +1040,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-VST:module{VestingV5} VST)
                 (vst-sc:string (ref-VST::GOV|VST|SC_NAME))
                 ;;
@@ -1067,11 +1075,11 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
-                (coil-data:object{AutostakeV5.CoilData}
+                (coil-data:object{AutostakeV6.CoilData}
                     (ref-ATS::URC_RewardBearingTokenAmounts ats rt amount)
                 )
                 (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1120,12 +1128,12 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
-                (coil-data:object{AutostakeV5.CoilData} 
+                (coil-data:object{AutostakeV6.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats rt amount dayz)
                 )
                 (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1185,12 +1193,12 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 ;;<ats1>
-                (coil1-data:object{AutostakeV5.CoilData} 
+                (coil1-data:object{AutostakeV6.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                 )
                 (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1199,7 +1207,7 @@
                 (c-rbt1-amount (at "rbt-amount" coil1-data))
                 ;;
                 ;;<ats2>
-                (coil2-data:object{AutostakeV5.CoilData} 
+                (coil2-data:object{AutostakeV6.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats2 c-rbt1 c-rbt1-amount)
                 )
                 (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -1257,13 +1265,13 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 ;;<ats1>
-                (coil1-data:object{AutostakeV5.CoilData} 
+                (coil1-data:object{AutostakeV6.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                 )
                 (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1272,7 +1280,7 @@
                 (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                 ;;
                 ;;<ats2>
-                (coil2-data:object{AutostakeV5.CoilData} 
+                (coil2-data:object{AutostakeV6.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats2 c-rbt1 c-rbt1-amount dayz)
                 )
                 (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -1336,6 +1344,215 @@
             )
         )
     )
+    (defun ATS|INFO_ColdRecovery:object{OuronetInfoV3.ClientInfo}
+        (patron:string recoverer:string ats:string ra:decimal)
+        (let
+            (
+                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                ;;
+                (index-name:string (ref-ATS::UR_IndexName ats))
+                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                (c-fr:bool (ref-ATS::UR_ColdRecoveryFeeRedirection ats))
+                (elite:bool (ref-ATS::UR_EliteMode ats))
+                ;;
+                (c-rbt-precision:integer (ref-DPTF::UR_Decimals c-rbt))
+                (usable-cold-recovery-position:integer (ref-ATS::URC_WhichPosition ats ra recoverer))
+                (fee-promile:decimal (ref-ATS::URC_ColdRecoveryFee ats ra usable-cold-recovery-position))
+                (c-rbt-fee-split:[decimal] (ref-U|ATS::UC_PromilleSplit fee-promile ra c-rbt-precision))
+                (c-rbt-remainder:decimal (at 0 c-rbt-fee-split))
+                (c-rbt-fee:decimal (at 1 c-rbt-fee-split))
+                ;;
+                ;;Time Computation for Cold Recovery
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (major:integer (ref-DALOS::UR_Elite-Tier-Major recoverer))
+                (minor:integer (ref-DALOS::UR_Elite-Tier-Minor recoverer))
+                (position:integer
+                    (if (= major 0)
+                        0
+                        (+ (* (- major 1) 7) minor)
+                    )
+                )
+                (crd:[integer] (ref-ATS::UR_ColdRecoveryDuration ats))
+                (h:integer (at position crd))
+                ;;
+                ;;IGNIS Costs
+                ;;Operation 1 10 IGNIS Flat Fee for Cold Recovery
+                (ifp1:decimal 10.0)
+                ;;Operation 2 - 1 IGNIS per existing used Recovery Positions when in unlimited Mode
+                (ico2:object{IgnisCollectorV2.OutputCumulator}
+                    (if (!= usable-cold-recovery-position -1)
+                        EOC
+                        (ref-ATSU::UDC_UnlimitedUncoilCumulator ats recoverer)
+                    )
+                )
+                (ifp2:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico2))
+                ;;Operation 3 - Transfer
+                (wt3:integer (at "type" (ref-TFT::URC_TransferClasses c-rbt recoverer ats-sc ra)))
+                (ico3:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-TFT::UDC_TransferCumulator wt3 c-rbt recoverer ats-sc)
+                )
+                (ifp3:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico3))
+                ;;Operation 3 - Burn
+                (ifp3:decimal (SIP|URC_Burn c-rbt ats-sc))
+                (ifp4:decimal
+                    (if (= c-rbt-fee 0.0)
+                        0.0
+                        (if c-fr
+                            0.0
+                            (* (dec (length rt-lst)) ifp3)
+                        )
+                    )
+                )
+                (ifp:decimal (fold (+) 0.0 [ifp1 ifp2 ifp3 ifp4]))
+            )
+            (ref-I|OURONET::OI|UDC_ClientInfo
+                [
+                    (format "Operation: Places {} {} into Cold Recovery" [ra c-rbt])
+                    (if (= usable-cold-recovery-position -1)
+                        (format "You have 250 Recovery Slots")
+                        (if elite
+                            (format "You have up to 7 Recovery Slots")
+                            (format "You have 7 Recovery Slots ")
+                        )
+                    )
+                    (if (!= c-rbt-fee 0.0)
+                        (format "{}\n{}\n{}"
+                            [
+                                (format "Cold Recovery will incurr a Col-Recovery-Fee of {}‰ (promile)" [fee-promile])
+                                (if c-fr
+                                    (format "This Fee is collected by strengthening the {}" [index-name])
+                                    (format "This Fee is collected by burning the Reward Tokens {}" [rt-lst])
+                                )
+                                (format "And Amounts to {} {}" [(ref-ATS::URC_RTSplitAmounts ats c-rbt-fee) rt-lst])
+                            ]
+                        )
+                        (format "Cold Recovery will be executed without any Cold-Recovery-Fee")
+                    )
+                    (format "{} {} will be recovarable after {} hour(s)" [(ref-ATS::URC_RTSplitAmounts ats c-rbt-remainder) rt-lst h])
+                ]
+                [
+                    (format "Succesfully placed {} {} ATS-Pair RBT into Cold Recovery" [ra ats])
+                ]
+                (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
+                (ref-I|OURONET::OI|UDC_NoKadenaCosts)
+            )
+
+        )
+    )
+    (defun ATS|INFO_Cull:object{OuronetInfoV3.ClientInfo}
+        (patron:string culler:string ats:string)
+        (let
+            (
+                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                ;;
+                (c0:[decimal] (at "summed-culled-values" (ref-ATSU::URC_MultiCull ats culler)))
+                (c1:[decimal] (ref-ATSU::URC_SingleCull ats culler 1))
+                (c2:[decimal] (ref-ATSU::URC_SingleCull ats culler 2))
+                (c3:[decimal] (ref-ATSU::URC_SingleCull ats culler 3))
+                (c4:[decimal] (ref-ATSU::URC_SingleCull ats culler 4))
+                (c5:[decimal] (ref-ATSU::URC_SingleCull ats culler 5))
+                (c6:[decimal] (ref-ATSU::URC_SingleCull ats culler 6))
+                (c7:[decimal] (ref-ATSU::URC_SingleCull ats culler 7))
+                (ca:[[decimal]] [c0 c1 c2 c3 c4 c5 c6 c7])
+                (cw:[decimal] (ref-U|DEC::UC_AddHybridArray ca))
+                ;;
+                (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
+                (how-many-tokens:integer (length rt-lst))
+                (empty:[decimal] (make-list how-many-tokens 0.0))
+                ;;
+                (ico1:object{IgnisCollectorV2.OutputCumulator}
+                    (if (= cw empty)
+                        EOC
+                        (ref-TFT::UDC_MultiTransferCumulator rt-lst ats-sc culler cw)
+                    )
+                )
+                (ifp1:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico1))
+                (ifp2:decimal (* 2.0 (ref-DALOS::UR_UsagePrice "ignis|biggest")))
+                (ifp:decimal (+ ifp1 ifp2))
+            )
+            (ref-I|OURONET::OI|UDC_ClientInfo
+                [
+                    (format "Operation: Culls the Cold Recovery Positions, recovering RTs")
+                    (if (= cw empty)
+                        "Currently no RTs can be collected"
+                        (format "Currently RTs {} can be recovered with amounts of: {}" [rt-lst cw])
+                    )
+                ]
+                [
+                    (format "Succesfully Culled {} RT(s) Tokens with amounts of {} from ATS-Pair {}" [how-many-tokens cw ats])
+                ]
+                (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
+                (ref-I|OURONET::OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
+    (defun ATS|INFO_DirectRecovery:object{OuronetInfoV3.ClientInfo}
+        (patron:string recoverer:string ats:string ra:decimal)
+        (let
+            (
+                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
+                ;;
+                (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
+                (fee:decimal (ref-ATS::UR_DirectRecoveryFee ats))
+                (c-rbt-remainder:decimal
+                    (if (= fee 0.0)
+                        ra
+                        (at 0 (ref-U|ATS::UC_PromilleSplit fee ra (ref-DPTF::UR_Decimals c-rbt)))
+                    )
+                )
+                (reward-tokens:[string] (ref-ATS::UR_RewardTokenList ats))
+                (release-amounts:[decimal] (ref-ATS::URC_RTSplitAmounts ats c-rbt-remainder))
+                ;;
+                ;;Operation 1 Transfer
+                (wt1:integer (at "type" (ref-TFT::URC_TransferClasses c-rbt recoverer ats-sc ra)))
+                (ico1:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-TFT::UDC_TransferCumulator c-rbt recoverer ats-sc)
+                )
+                (ifp1:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico1))
+                ;;Operation 2 Burn DPTF
+                (ifp2:decimal (SIP|URC_Burn c-rbt ats-sc))
+                ;;Operation 3 Multi Transfer
+                (ico3:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-TFT::UDC_MultiTransferCumulator reward-tokens ats-sc recoverer release-amounts)
+                )
+                (ifp3:decimal (ref-I|OURONET::OI|UC_IfpFromOutputCumulator ico3))
+                (ifp:decimal (fold (+) 0.0 [ifp1 ifp2 ifp3]))
+            )
+            (ref-I|OURONET::OI|UDC_ClientInfo
+                [
+                    (format "Operation: Directly Recovers {} {}" [ra c-rbt])
+                    (if (= fee 0.0)
+                        "Direct Recovery will be executed without any Direct-Recovery Fee"
+                        (format "Direct Recovery will be executed with {}‰ (promile) Direct Recovery Fee" [fee])
+                    )
+                    (format "Direct Recovery will yield {} {} Tokens" [release-amounts reward-tokens])
+                ]
+                [
+                    (format "Succesfully recovered directly {} RBT Token on ATS-Pair" [ra ats])
+                ]
+                (ref-I|OURONET::OI|UDC_DynamicIgnisCost patron ifp)
+                (ref-I|OURONET::OI|UDC_NoKadenaCosts)
+            )
+        )
+    )
     ;;  [SWP]
     (defun SWP|INFO_AddLiquidity:object{OuronetInfoV3.ClientInfo}
         (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
@@ -1354,10 +1571,10 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (dptf:string (ref-DPTF::UR_Frozen frozen-dptf))
@@ -1385,10 +1602,10 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 ;;
                 (dptf:string (ref-DPOF::UR_Sleeping sleeping-dpof))

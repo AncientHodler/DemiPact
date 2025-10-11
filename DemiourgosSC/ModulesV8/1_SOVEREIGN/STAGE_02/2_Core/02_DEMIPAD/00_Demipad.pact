@@ -200,7 +200,7 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
@@ -228,7 +228,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -403,7 +403,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-type:bool (contains type [0 1 2 3]))
                 (read-direct-injection:bool (UR_DirectInjection))
                 (iz-registered:bool (UR_CheckRegistration asset-id))
@@ -448,7 +448,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-type:bool (contains type [1 2 3]))
             )
             ;;Validate <type> to be either 0, 1, 2 or 3, and that the required Token Deposit is turned on
@@ -702,9 +702,9 @@
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 ;;
                 (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
                 (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
@@ -770,7 +770,7 @@
         (buyer:string asset-id:string buy-amount-in-dollarz:decimal type:integer)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
@@ -802,7 +802,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
@@ -922,9 +922,9 @@
         (let
             (
                 (fungibility:[bool] (UR_Fungibility asset-id))
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (cond
                 ((= fungibility TF) (ref-DPTF::CAP_Owner asset-id))
@@ -984,9 +984,9 @@
         (with-capability (DEMIPAD|C>DEPOSIT donor asset-id amount-in-dollars type direct-injection)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
                     ;;
                     (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}  (URC_Prices asset-id amount-in-dollars type))
@@ -1050,8 +1050,8 @@
             (with-capability (DEMIPAD|C>WITHDRAW asset-id type retrieval-amount destination)
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalosV5} DALOS)
-                        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+                        (ref-DALOS:module{OuronetDalosV6} DALOS)
+                        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
                         (working-id:string
                             (if (= type 1)
                                 (ref-DALOS::UR_WrappedKadenaID)
@@ -1076,7 +1076,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )
@@ -1097,7 +1097,7 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )
@@ -1222,7 +1222,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 ;;
                 (donor-kda:string (ref-DALOS::UR_AccountKadena donor))
             )
@@ -1235,20 +1235,33 @@
     (defun XI_DepositResidents (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices} type:integer)
         (require-capability (SECURE))
         (with-capability (SECURE)
-            (if (or (= type 0) (= type 1))
-                (XI_U|WKDA (at "coding-amount" prices))
-                (if (= type 2)
-                    (XI_U|LKDA (at "coding-amount" prices))
-                    (XI_U|OURO (at "coding-amount" prices))
+            (let
+                (
+                    (v0:decimal (at "coding-amount" prices))
+                    (v1:decimal (UR_WKDA))
+                    (v2:decimal (UR_LKDA))
+                    (v3:decimal (UR_OURO))
+                )
+                (if (or (= type 0) (= type 1))
+                    (XI_U|WKDA (+ v0 v1))
+                    (if (= type 2)
+                        (XI_U|LKDA (+ v0 v2))
+                        (XI_U|OURO (+ v0 v3))
+                    )
                 )
             )
         ) 
     )
     (defun XI_DepositForAsset 
         (asset-id:string amount-in-dollars:decimal remainder:decimal type:integer)
-        (XI_U|TotalDollarzRaised asset-id (+ (UR_TotalDollarzRaised asset-id) amount-in-dollars))
-        (XI_U|TotalRaised asset-id (+ remainder (UR_TotalRaised asset-id type)) type)
-        (XI_U|Funds asset-id (+ remainder (UR_Funds asset-id type)) type)
+        (let
+            (
+                (used-type:integer (if (= type 0) 1 type))
+            )
+            (XI_U|TotalDollarzRaised asset-id (+ (UR_TotalDollarzRaised asset-id) amount-in-dollars))
+            (XI_U|TotalRaised asset-id (+ remainder (UR_TotalRaised asset-id used-type)) used-type)
+            (XI_U|Funds asset-id (+ remainder (UR_Funds asset-id used-type)) used-type)
+        )
     )
     ;;
     (defun X_TransmitCollectables:object{IgnisCollectorV2.OutputCumulator}

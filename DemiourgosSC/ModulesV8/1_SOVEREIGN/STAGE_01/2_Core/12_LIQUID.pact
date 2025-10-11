@@ -33,9 +33,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|LiquidKey ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|LiquidKey)))
-    (defun GOV|LIQUID|SC_NAME ()    (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|LiquidKey ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|LiquidKey)))
+    (defun GOV|LIQUID|SC_NAME ()    (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
     (defun GOV|LIQUID|SC_KDA-NAME () (create-principal (GOV|LIQUID|GUARD)))
     (defun GOV|LIQUID|GUARD ()      (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
     ;;
@@ -51,7 +51,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -136,7 +136,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (target-balance:decimal (ref-coin::get-balance migration-target-kda-account))
                 (gap:bool (ref-DALOS::UR_GAP))
             )
@@ -169,7 +169,7 @@
     ;(defun URC_WrapKadena:list (wrap-amount:decimal)
     ;    (let
     ;        (
-    ;            (ref-DALOS:module{OuronetDalosV5} DALOS)
+    ;            (ref-DALOS:module{OuronetDalosV6} DALOS)
     ;            (receiver:string (ref-DALOS::UR_AccountKadena LIQUID|SC_NAME))
     ;        )
     ;        [receiver wrap-amount]
@@ -180,8 +180,8 @@
         @doc "Enforces Liquid Staking is live with an existing Autostake Pair"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
                 (l-kda:string (ref-DALOS::UR_LiquidKadenaID))
             )
@@ -221,7 +221,7 @@
             (let
                 (
                     (ref-coin:module{fungible-v2} coin)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (lq-kda:string LIQUID|SC_KDA-NAME)
                     (present-kda-balance:decimal (ref-coin::get-balance lq-kda))
                 )
@@ -239,9 +239,9 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena unwrapper))
@@ -275,9 +275,9 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))

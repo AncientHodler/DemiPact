@@ -11,7 +11,7 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-T_ADMIN)))
     (defcap GOV|DPDC-T_ADMIN ()             (enforce-guard GOV|MD_DPDC-T))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -115,8 +115,8 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (l1:integer (length ids))
                 (l2:integer (length sons))
                 (l3:integer (length nonces-array))
@@ -170,7 +170,7 @@
     (defcap IGNIS|C>CREDIT (receiver:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountExists receiver)
             (compose-capability (P|DPDC-T|CALLER))
@@ -179,7 +179,7 @@
     (defcap IGNIS|C>DEBIT (sender:string ta:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (read-gas:decimal (ref-DALOS::UR_TF_AccountSupply sender false))
             )
             (enforce (<= ta read-gas) "Insufficient IGNIS for Debiting")
@@ -269,7 +269,7 @@
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (verum:[string] (ref-DPDC::UR_Verum11 id son))
                 (lv:integer (length verum))
@@ -289,7 +289,7 @@
     (defun URC_SummedIgnisRoyalty:decimal (sender:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (creator:string (ref-DPDC::UR_CreatorKonto id son))
             )
             (if (= sender creator)
@@ -315,7 +315,7 @@
         (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ft:string (take 2 id))
                 (sh:string "E|")
                 (sl:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
@@ -359,7 +359,7 @@
     (defun UEV_TransferRoles (id:string son:bool sender:string receiver:string)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (trc:bool (URC_TransferRoleChecker id son sender))
                 (s:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
                 (r:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
@@ -383,7 +383,7 @@
     (defun UEV_AmountsForTransfer (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -444,9 +444,9 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
-                    (ref-DPDC:module{DpdcV3} DPDC)
-                    (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     ;;
                     (l:integer (length nonces))
                     (owner:string (ref-DPDC::UR_OwnerKonto id son))
@@ -514,7 +514,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 ;;
                 (ivgz:bool (ref-IGNIS::URC_IsVirtualGasZero))
                 ;;
@@ -568,7 +568,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 ;;
                 (split:object{OuronetIntegersV2.NonceSplitter} (ref-U|INT::UC_NonceSplitter nonces amounts))
                 (negative-nonces:[integer] (at "negative-nonces" split))
@@ -670,7 +670,7 @@
         (require-capability (IGNIS|C>CREDIT receiver))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::XB_UpdateBalance receiver false (+ (ref-DALOS::UR_TF_AccountSupply receiver false) ta))
         )
@@ -679,7 +679,7 @@
         (require-capability (IGNIS|C>DEBIT sender ta))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::XB_UpdateBalance sender false (- (ref-DALOS::UR_TF_AccountSupply sender false) ta))
         )

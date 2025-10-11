@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Client Functiones Part 1 - SFT Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientOneV7)
+    (implements TalosStageTwo_ClientOneV8)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,7 +12,7 @@
     (defcap GOV ()                  (compose-capability (GOV|TS02-C1_ADMIN)))
     (defcap GOV|TS02-C1_ADMIN ()    (enforce-guard GOV|MD_TS02-C1))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -24,7 +24,7 @@
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -182,7 +182,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV3} DPDC)
+                    (ref-DPDC:module{DpdcV4} DPDC)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC::C_UpdatePendingBranding patron entity-id true logo description website social)
@@ -196,7 +196,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPDC:module{DpdcV3} DPDC)
+                    (ref-DPDC:module{DpdcV4} DPDC)
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 )
                 (ref-DPDC::C_UpgradeBranding patron entity-id true months)
@@ -210,7 +210,7 @@
     (defun DPSF|C_Create:string
         (
             patron:string id:string amount:[integer]
-            input-nonce-data:[object{DpdcUdcV2.DPDC|NonceData}]
+            input-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
         )
         @doc "Creates a new SFT Collection Element(s), having a new nonce, \
             \ of amount <amount>, on the Account that has <r-nft-create> \
@@ -219,7 +219,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-C:module{DpdcCreateV3} DPDC-C)
+                    (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     (l:integer (length input-nonce-data))
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (if (= l 1)
@@ -719,7 +719,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     (nonce:integer (ref-DPDC-S::UR_NonceOfSet id set-class))
                 )
@@ -738,8 +738,8 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC:module{DpdcV3} DPDC)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (set-class:integer (ref-DPDC::UR_NonceClass id true nonce))
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
@@ -753,15 +753,15 @@
     (defun DPSF|C_DefinePrimordialSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
         @doc "Defines a New Primordial SFT Set. Primordial Sets are composed of Class 0 Nonces"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefinePrimordialSet id true set-name score-multiplier set-definition ind)
@@ -773,15 +773,15 @@
     (defun DPSF|C_DefineCompositeSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            set-definition:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            set-definition:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
         @doc "Defines a New Composite SFT Set. Composite Sets are composed of Class (!=0) Nonces"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineCompositeSet id true set-name score-multiplier set-definition ind)
@@ -793,16 +793,16 @@
     (defun DPSF|C_DefineHybridSet
         (
             patron:string id:string set-name:string score-multiplier:decimal
-            primordial-sd:[object{DpdcUdcV2.DPDC|AllowedNonceForSetPosition}]
-            composite-sd:[object{DpdcUdcV2.DPDC|AllowedClassForSetPosition}]
-            ind:object{DpdcUdcV2.DPDC|NonceData}
+            primordial-sd:[object{DpdcUdcV3.DPDC|AllowedNonceForSetPosition}]
+            composite-sd:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}]
+            ind:object{DpdcUdcV3.DPDC|NonceData}
         )
         @doc "Defines a New Hybrid SFT Set. Hybrid Sets are composed of both Class 0 and Non-0 Nonces"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_DefineHybridSet id true set-name score-multiplier primordial-sd composite-sd ind)
@@ -814,14 +814,14 @@
     (defun DPSF|C_EnableSetClassFragmentation
         (
             patron:string id:string set-class:integer
-            fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData}
+            fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData}
         )
         @doc "Enables Fragmentation for a given Set Class. This allows all SFTs of the given Set Class to be Fragmented"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_EnableSetClassFragmentation id true set-class fragmentation-ind)
@@ -836,7 +836,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_ToggleSet id true set-class toggle)
@@ -851,7 +851,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_RenameSet id true set-class new-name)
@@ -866,7 +866,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-S:module{DpdcSetsV3} DPDC-S)
+                    (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-S::C_UpdateSetMultiplier id true set-class new-multiplier)
@@ -877,13 +877,13 @@
     )
     ;;
     (defun DPSF|C_UpdateSetNonce 
-        (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData})
+        (patron:string id:string account:string set-class:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData})
         @doc "[0] Updates Full Set Nonce Data, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonces id true account [set-class] nos false [new-nonce-data])
@@ -892,13 +892,13 @@
         )
     )
     (defun DPSF|C_UpdateSetNonces
-        (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}])
+        (patron:string id:string account:string set-classes:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}])
         @doc "[0] Updates Full Set Nonce Data, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonces id true account set-classes nos false new-nonces-data)
@@ -913,7 +913,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceRoyalty id true account set-class nos false royalty-value)
@@ -928,7 +928,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account set-class nos false royalty-value)
@@ -943,7 +943,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceName id true account set-class nos false name)
@@ -958,7 +958,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceDescription id true account set-class nos false description)
@@ -973,7 +973,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceScore id true account set-class nos false score)
@@ -992,7 +992,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceMetaData id true account set-class nos false meta-data)
@@ -1003,14 +1003,14 @@
     (defun DPSF|C_UpdateSetNonceURI
         (
             patron:string id:string account:string set-class:integer nos:bool
-            ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}
+            ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}
         )
         @doc "[7] Updates Set Nonce URI, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceURI id true account set-class nos false ay u1 u2 u3)
@@ -1028,7 +1028,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                    (ref-DPDC-F:module{DpdcFragmentsV3} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                     (sf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1045,7 +1045,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragmentsV3} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_MakeFragments account id true nonce amount)
@@ -1060,7 +1060,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragmentsV3} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_MergeFragments account id true nonce amount)
@@ -1069,13 +1069,13 @@
             )
         )
     )
-    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV2.DPDC|NonceData})
+    (defun DPSF|C_EnableNonceFragmentation (patron:string id:string nonce:integer fragmentation-ind:object{DpdcUdcV3.DPDC|NonceData})
         @doc "Enables Fragmentation for a given SFT Nonce"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-F:module{DpdcFragmentsV3} DPDC-F)
+                    (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-F::C_EnableNonceFragmentation id true nonce fragmentation-ind)
@@ -1088,13 +1088,13 @@
     ;;  [10] DPDC-N
     ;;
     (defun DPSF|C_UpdateNonce
-        (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV2.DPDC|NonceData})
+        (patron:string id:string account:string nonce:integer nos:bool new-nonce-data:object{DpdcUdcV3.DPDC|NonceData})
         @doc "[0] Updates Full Nonce Data, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonces id true account [nonce] nos true [new-nonce-data])
@@ -1103,13 +1103,13 @@
         )
     )
     (defun DPSF|C_UpdateNonces
-        (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV2.DPDC|NonceData}])
+        (patron:string id:string account:string nonces:[integer] nos:bool new-nonces-data:[object{DpdcUdcV3.DPDC|NonceData}])
         @doc "[0] Updates Full Nonce Data, either Native or Split, for an SFT, for multiple Nonces at a time"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonces id true account nonces nos true new-nonces-data)
@@ -1124,7 +1124,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceRoyalty id true account nonce nos true royalty-value)
@@ -1139,7 +1139,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceIgnisRoyalty id true account nonce nos true royalty-value)
@@ -1154,7 +1154,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceName id true account nonce nos true name)
@@ -1169,7 +1169,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceDescription id true account nonce nos true description)
@@ -1184,7 +1184,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceScore id true account nonce nos true score)
@@ -1203,7 +1203,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceMetaData id true account nonce nos true meta-data)
@@ -1214,14 +1214,14 @@
     (defun DPSF|C_UpdateNonceURI
         (
             patron:string id:string account:string nonce:integer nos:bool
-            ay:object{DpdcUdcV2.URI|Type} u1:object{DpdcUdcV2.URI|Data} u2:object{DpdcUdcV2.URI|Data} u3:object{DpdcUdcV2.URI|Data}
+            ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}
         )
         @doc "[7] Updates Nonce URI, either Native or Split, for an SFT"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC-N:module{DpdcNonceV3} DPDC-N)
+                    (ref-DPDC-N:module{DpdcNonceV4} DPDC-N)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC-N::C_UpdateNonceURI id true account nonce nos true ay u1 u2 u3)

@@ -92,11 +92,11 @@
     (defun KDA|C_CollectWT (sender:string amount:decimal trigger:bool))
     ;;
 )
-(interface OuronetDalosV5
+(interface OuronetDalosV6
     ;;
     ;;  SCHEMAS
     ;;
-    (defschema DPTF|BalanceSchemaV2
+    (defschema DPTF|BalanceSchemaV3
         @doc "Schema that Stores Account Balances for DPTF Tokens (True Fungibles)\
             \ Key for the Table is a string composed of: <DPTF id> + BAR + <account> \
             \ This ensure a single entry per DPTF id per account. \
@@ -108,6 +108,10 @@
         role-mint:bool
         role-fee-exemption:bool
         role-transfer:bool
+        ;;
+        ;;ForSelect, store Key Make-up
+        id:string
+        account:string
     )
     ;;
     ;;  [GOV]
@@ -194,7 +198,7 @@
     (defun UR_Elite-Tier-Minor:integer (account:string))
     (defun UR_Elite-DEB (account:string))
     ;;  [4.2]   TrueFungible INFO
-    (defun UR_TrueFungible (account:string snake-or-gas:bool))
+    (defun UR_TrueFungible:object{DPTF|BalanceSchemaV3} (account:string snake-or-gas:bool))
     (defun UR_TF_AccountSupply:decimal (account:string snake-or-gas:bool))
     (defun UR_TF_AccountRoleBurn:bool (account:string snake-or-gas:bool))
     (defun UR_TF_AccountRoleMint:bool (account:string snake-or-gas:bool))
@@ -226,6 +230,13 @@
     (defun UEV_IgnisCollectionRequirements ())
         ;;
     (defun UEV_Glyph (account:string))
+    ;;
+    ;;  [UDC]
+    ;;
+    (defun UDC_TrueFungibleAccount:object{DPTF|BalanceSchemaV3}
+        (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string)
+    )
+    (defun UDC_BlankTrueFungible:object{DPTF|BalanceSchemaV3} (account:string))
     ;;
     ;;  [CAP]
     ;;
@@ -413,10 +424,12 @@
 ;;
 ;;  [True Fungibles]
 ;;
-(interface DemiourgosPactTrueFungibleV6
+(interface DemiourgosPactTrueFungibleV8
     @doc "Exposes most of the Functions related to True-Fungibles \
     \ \
-    \ V6 moves to a more improved efficient architecture while adding support for Hibernating Tokens"
+    \ V6 moves to a more improved efficient architecture while adding support for Hibernating Tokens \
+    \ V7 updates Ownerhsip Tables so that <select> may be used to efficiently query data \
+    \ V8 brings table optimisations for use with <select>"
     ;;
     ;;  [UC]
     ;;
@@ -430,7 +443,7 @@
     (defun UR_P-KEYS:[string] ())
     (defun UR_KEYS:[string] ())
     ;;
-    ;;  [0] DPTF|PropertiesTable:{DPTF|PropertiesSchemaV2}
+    ;;  [0] DPTF|PropertiesTable:{DPTF|PropertiesSchemaV3}
     (defun UR_Konto:string (id:string))
     (defun UR_Name:string (id:string))
     (defun UR_Ticker:string (id:string))
@@ -468,7 +481,7 @@
     (defun UR_Verum3:[string] (id:string))
     (defun UR_Verum4:[string] (id:string))
     (defun UR_Verum5:[string] (id:string))
-    ;;  [2]     DPTF|BalanceTable:{OuronetDalosV5.DPTF|BalanceSchemaV2}
+    ;;  [2]     DPTF|BalanceTable:{OuronetDalosV6.DPTF|BalanceSchemaV3}
     (defun UR_IzAccount:bool (id:string account:string))
     (defun UR_AccountSupply:decimal (id:string account:string))
     (defun UR_AccountFrozenState:bool (id:string account:string))
@@ -493,6 +506,12 @@
     (defun URC_HasReserved:bool (id:string))
     (defun URC_Parent:string (dptf:string))
     (defun URC_TreasuryLowestDispo:decimal ())
+    ;;
+    ;;  [URD]
+    ;;
+    (defun URD_HeldTrueFungibles:[string] (account:string))
+    (defun URD_ExistingTrueFungibles:[string] (dptf:string))
+    (defun URD_OwnedTrueFungibles:[string] (account:string))
     ;;
     ;;  [UEV]
     ;;
@@ -527,7 +546,7 @@
     ;;
     ;;  [UDC]
     ;;
-    (defun UDC_TrueFungibleAccount:object{OuronetDalosV5.DPTF|BalanceSchemaV2} (a:decimal b:bool c:bool d:bool e:bool f:bool))
+    (defun UDC_TrueFungibleAccount:object{OuronetDalosV6.DPTF|BalanceSchemaV3} (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string))
     ;;
     ;;  [CAP]
     ;;
@@ -607,9 +626,10 @@
     (defun XB_DebitTrueFungible (id:string account:string amount:decimal dispo-data:object{UtilityDptf.DispoData} wipe-mode:bool))
     (defun XB_CreditTrueFungible (id:string account:string amount:decimal))
 )
-(interface TrueFungibleTransferV8
+(interface TrueFungibleTransferV9
     @doc "Exposes True Fungible Transfer Functions \
-    \ V8 brings more gas optimisations"
+    \ V8 brings more gas optimisations \
+    \ V9 Removes Key based Query from this module, replaced by select based query in individual Modules"
     ;;
     ;;  SCHEMAS
     ;;
@@ -623,13 +643,6 @@
     (defun UC_ContainsEliteAurynz:bool (id-lst:[string]))
     (defun UC_BulkRemainders:[decimal] (id:string transfer-amount-lst:[decimal]))
     (defun UC_BulkFees:[decimal] (id:string transfer-amount-lst:[decimal]))
-    ;;
-    ;;  [UR]
-    ;;
-    (defun DPTF-DPOF-ATS|UR_OwnedTokens (account:string table-to-query:integer))
-    (defun DPTF-DPOF-ATS|UR_FilterKeysForInfo:[string] (account-or-token-id:string table-to-query:integer mode:bool))
-    (defun DPTF-DPOF-ATS|UR_TableKeys:[string] (position:integer poi:bool))
-    (defun DPTF|URC_GetOwnedSupplies:[decimal] (id:string))
     ;;
     ;;  [URC]
     ;;
@@ -823,11 +836,13 @@
 ;;
 ;;  [Orto Fungibles]
 ;;
-(interface DpofUdc
+(interface DpofUdcV2
+    @doc "V2 brings Table optimisations to use with <select>"
     ;;
     ;;  SCHEMAS
     ;;
-    (defschema DPOF|Properties
+    (defschema DPOF|PropertiesV2
+        id:string
         owner-konto:string
         name:string
         ticker:string
@@ -869,13 +884,17 @@
         r-oft-create:string
         r-transfer:[string]
     )
-    (defschema DPOF|AccountRoles
+    (defschema DPOF|AccountRolesV2
         total-account-supply:decimal        ;; Holds the Total Account Supply for id
         frozen:bool                         ;; multiple
         role-oft-add-quantity:bool          ;; multiple
         role-oft-burn:bool                  ;; multiple
         role-oft-create:bool                ;; single
         role-transfer:bool                  ;; multiple
+        ;;
+        ;;ForSelect, store Key Make-up
+        id:string
+        account:string
     )
     (defschema RemovableNonces
         @doc "Removable Nonces are Class 0 Nonces held by a given Account with greater than 0 supply \
@@ -885,7 +904,7 @@
     )
 )
 
-(interface DemiourgosPactOrtoFungibleV2
+(interface DemiourgosPactOrtoFungibleV3
     @doc "Exposes Functions related to Orto-Fungibles \
     \ Orto-Fungibles are the next Evoloution of the Meta-Fungibles \
     \ using a newer and more efficient Architecture, and fixing discovered bugs \
@@ -897,7 +916,8 @@
     \ Existing Meta-Fungible <id> and <accounts> will have to be migrated to Orto-Fungibles \
     \ Luckily Meta-Fungible usage hasnt properly started at the time of Orto-Fungible Deployment \
     \ \
-    \ V2 adds two missing XE Functions"
+    \ V2 adds two missing XE Functions \
+    \ V3 brings table optimisations for use with <select>"
     ;;
     ;;  [UC]
     ;;
@@ -905,9 +925,9 @@
     (defun UC_IdAccount:string (id:string account:string))
     (defun UC_IzSingular:bool (id:string nonces:[integer]))
     (defun UC_IzConsecutive:bool (id:string nonces:[integer]))
-    (defun UC_TakePureWipe:object{DpofUdc.RemovableNonces} (input:object{DpofUdc.RemovableNonces} size:integer))
+    (defun UC_TakePureWipe:object{DpofUdcV2.RemovableNonces} (input:object{DpofUdcV2.RemovableNonces} size:integer))
     (defun UC_MoveCumulator:object{IgnisCollectorV2.OutputCumulator} (id:string nonces:[integer] transmit-or-transfer:bool))
-    (defun UC_WipeCumulator:object{IgnisCollectorV2.OutputCumulator} (id:string removable-nonces-obj:object{DpofUdc.RemovableNonces}))
+    (defun UC_WipeCumulator:object{IgnisCollectorV2.OutputCumulator} (id:string removable-nonces-obj:object{DpofUdcV2.RemovableNonces}))
     ;;
     ;;  [UR]
     ;;
@@ -916,7 +936,7 @@
     (defun UR_V-KEYS:[string] ())
     (defun UR_KEYS:[string] ())
     ;;
-    ;;  [0] DPOF|T|Properties:{DpofUdc.DPOF|Properties}
+    ;;  [0] DPOF|T|Properties:{DpofUdcV2.DPOF|PropertiesV2}
     (defun UR_Konto:string (id:string))
     (defun UR_Name:string (id:string))
     (defun UR_Ticker:string (id:string))
@@ -939,7 +959,7 @@
     (defun UR_Hibernation:string (id:string))
     (defun UR_IzId:bool (id:string))
     ;;
-    ;;  [1] DPOF|T|Nonces:{DpofUdc.DPOF|NonceElement}
+    ;;  [1] DPOF|T|Nonces:{DpofUdcV2.DPOF|NonceElement}
     (defun UR_NonceHolder:string (id:string nonce:integer))
     (defun UR_NonceID:string (id:string nonce:integer))
     (defun UR_NonceValue:integer (id:string nonce:integer))
@@ -949,14 +969,14 @@
     (defun UR_NoncesMetaDatas:[[object]] (id:string nonces:[integer]))
     (defun UR_IzNonce:bool (id:string nonce:integer))
     ;;
-    ;;  [2] DPOF|T|VerumRoles:{DpofUdc.DPOF|VerumRoles}
+    ;;  [2] DPOF|T|VerumRoles:{DpofUdcV2.DPOF|VerumRoles}
     (defun UR_Verum1:[string] (id:string))
     (defun UR_Verum2:[string] (id:string))
     (defun UR_Verum3:[string] (id:string))
     (defun UR_Verum4:string (id:string))
     (defun UR_Verum5:[string] (id:string))
     ;;
-    ;;  [3] DPOF|T|AccountRoles:{DpofUdc.DPOF|AccountRoles}
+    ;;  [3] DPOF|T|AccountRoles:{DpofUdcV2.DPOF|AccountRolesV2}
     (defun UR_R-Frozen:bool (id:string account:string))
     (defun UR_R-AddQuantity:bool (id:string account:string))
     (defun UR_R-Burn:bool (id:string account:string))
@@ -964,12 +984,10 @@
     (defun UR_R-Transfer:bool (id:string account:string))
     (defun UR_AccountSupply:decimal (id:string account:string))
     (defun UR_IzAccount:bool (id:string account:string))
-        ;;
-    (defun URD_AccountNonces:[integer] (account:string dpof-id:string))
     ;;
     ;;  [URC]
     ;;
-    (defun URDC_WipePure:object{DpofUdc.RemovableNonces} (account:string id:string))
+    (defun URDC_WipePure:object{DpofUdcV2.RemovableNonces} (account:string id:string))
     (defun URC_IzRBT:bool (reward-bearing-token:string))
     (defun URC_IzRBTg:bool (atspair:string reward-bearing-token:string))
         ;;
@@ -977,6 +995,13 @@
     (defun URC_HasSleeping:bool (id:string))
     (defun URC_HasHibernation:bool (id:string))
     (defun URC_Parent:string (dpof:string))
+    ;;
+    ;;  [URD]
+    ;;
+    (defun URD_HeldOrtoFungibles:[string] (account:string))
+    (defun URD_ExistingOrtoFungibles:[string] (dotf:string))
+    (defun URD_OwnedOrtoFungibles:[string] (account:string))
+    (defun URD_AccountNonces:[integer] (account:string dpof-id:string))
     ;;
     ;;  [UEV]
     ;;
@@ -1010,16 +1035,16 @@
     ;;
     ;;  [UDC]
     ;;
-    (defun UDC_NonceElement:object{DpofUdc.DPOF|NonceElement}
+    (defun UDC_NonceElement:object{DpofUdcV2.DPOF|NonceElement}
         (a:string b:string c:integer d:decimal e:[object])
     )
-    (defun UDC_VerumRoles:object{DpofUdc.DPOF|VerumRoles}
+    (defun UDC_VerumRoles:object{DpofUdcV2.DPOF|VerumRoles}
         (a:[string] b:[string] c:[string] d:string e:[string])
     )
-    (defun UDC_AccountRoles:object{DpofUdc.DPOF|AccountRoles}
-        (a:decimal b:bool c:bool d:bool e:bool f:bool)
+    (defun UDC_AccountRoles:object{DpofUdcV2.DPOF|AccountRolesV2}
+        (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string)
     )
-    (defun UDC_RemovableNonces:object{DpofUdc.RemovableNonces}
+    (defun UDC_RemovableNonces:object{DpofUdcV2.RemovableNonces}
         (a:[integer] b:[decimal])
     )
     ;;
@@ -1054,7 +1079,7 @@
         ;;
     (defun C_WipeSlim:object{IgnisCollectorV2.OutputCumulator} (id:string account:string nonce:integer amount:decimal))
     (defun C_WipeHeavy:object{IgnisCollectorV2.OutputCumulator} (id:string account:string))
-    (defun C_WipePure:object{IgnisCollectorV2.OutputCumulator} (id:string account:string removable-nonces-obj:object{DpofUdc.RemovableNonces}))
+    (defun C_WipePure:object{IgnisCollectorV2.OutputCumulator} (id:string account:string removable-nonces-obj:object{DpofUdcV2.RemovableNonces}))
     (defun C_WipeClean:object{IgnisCollectorV2.OutputCumulator} (id:string account:string nonces:[integer]))
         ;;
     (defun C_Transmit:object{IgnisCollectorV2.OutputCumulator} (id:string nonces:[integer] amounts:[decimal] sender:string receiver:string method:bool))
@@ -1088,7 +1113,7 @@
     (defun XE_UpdateSpecialOrtoFungible:object{IgnisCollectorV2.OutputCumulator}
         (main-dptf:string secondary-dpof:string vzh-tag:integer)
     )
-    (defun XB_W|AccountRoles (id:string account:string account-data:object{DpofUdc.DPOF|AccountRoles}))
+    (defun XB_W|AccountRoles (id:string account:string account-data:object{DpofUdcV2.DPOF|AccountRolesV2}))
 
 )
 ;;
@@ -1114,7 +1139,7 @@
     (defun XE_UpdateElite (id:string sender:string receiver:string))
 
 )
-(interface AutostakeV5
+(interface AutostakeV6
     @doc "Brings not only Improved Autostake Architecture but also added Functionality: \
         \ \
         \ \
@@ -1161,7 +1186,11 @@
         \ \
         \ Also, similar as for DPTFs, the ATS|SC_NAME has innate <role-burn> <role-mint> for any DPOF \
         \ completly solving the Permission Issues for its functioning, which allows discarding of complex Logic \
-        \ that was used prior to DPOFs"
+        \ that was used prior to DPOFs \
+        \ \
+        \ \
+        \ \
+        \ V6 brings table optimisations for use with <select>"
     ;;
     ;;  SCHEMAS
     ;;
@@ -1266,6 +1295,12 @@
     (defun URC_RewardBearingTokenAmounts:object{CoilData} (ats:string rt:string amount:decimal))
     (defun URC_RewardBearingTokenAmountsWithHibernation:object{CoilData} (ats:string rt:string amount:decimal hibernation-dayz:integer))
     ;;
+    ;;  [URD]
+    ;;
+    (defun URD_HeldAutostakePairs:[string] (account:string))
+    (defun URD_ExistingAutostakePairs:[string] (ats:string))
+    (defun URD_OwnedAutostakePairs:[string] (account:string))
+    ;;
     ;;  [UEV]
     ;;
     (defun UEV_id (atspair:string))
@@ -1351,9 +1386,19 @@
     ;;
 )
 
-(interface AutostakeUsageV5
+(interface AutostakeUsageV6
     @doc "Exposes Autostake Usage Functions, which involve Token Transfers \
-    \ V5 comes with new Autostake Features such as Hibernation, Royalty, and Direct Recovery"
+    \ V5 comes with new Autostake Features such as Hibernation, Royalty, and Direct Recovery \
+    \ V6 brings culling Computation in their own URC Functions and the UnlimitedUncoilCumulator"
+    ;;
+    ;;  [URC]
+    ;;
+    (defun URC_MultiCull:object (ats:string acc:string))
+    (defun URC_SingleCull:[decimal] (ats:string acc:string position:integer))
+    ;;
+    ;;  [UDC]
+    ;;
+    (defun UDC_UnlimitedUncoilCumulator:object{IgnisCollectorV2.OutputCumulator} (ats:string account:string))
     ;;
     ;;  [A]
     ;;
@@ -1536,7 +1581,7 @@
     ;;
     (defun XE_MultiPathTracer (swpair:string principals-lst:[string]))
 )
-(interface SwapperV5
+(interface SwapperV6
     @doc "Exposes Swapper Related Functions, except those related to adding and swapping liquidity \
         \ \
         \ V2 switches to IgnisCumulatorV2 Architecture repairing the collection of Ignis for Smart Ouronet Accounts \
@@ -1546,7 +1591,8 @@
         \ \
         \ V3 Removes <patron> input variable where it is not needed \
         \ V4 Adds Asymetric toggle, and global variable for the LKDA-OURO-WKDA Pool \
-        \ V5 moves to Orto Fungibile Improvements Architecture"
+        \ V5 moves to Orto Fungibile Improvements Architecture \
+        \ V6 brings table optimisations for use with <select>"
     ;;
     (defschema PoolTokens
         token-id:string
@@ -1607,6 +1653,8 @@
     (defun URC_Swpairs:[string] ())
     (defun URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
     ;;
+    (defun URD_OwnedSwapPairs:[string] (account:string))
+    ;;
     (defun UEV_FeeSplit (input:object{FeeSplit}))
     (defun UEV_id (swpair:string))
     (defun UEV_CanChangeOwnerON (swpair:string))
@@ -1645,10 +1693,11 @@
     (defun XE_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool))
     ;;
 )
-(interface SwapperIssueV3
+(interface SwapperIssueV4
     @doc "Exposes SWP Issuing Functions. \
     \ Also contains Swap Computation Functions, and the Hopper Function \
-    \ V2 Adds OuroPrimordialPrice"
+    \ V2 Adds OuroPrimordialPrice \
+    \ V4 ties to the new SwaperV6 Interface"
     ;;
     ;;
     ;;  SCHEMAS
@@ -1723,7 +1772,7 @@
     (defun UEV_SwapData (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}))
     (defun UEV_InverseSwapData (swpair:string rsid:object{UtilitySwpV2.ReverseSwapInputData}))
         ;;
-    (defun UEV_Issue (account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
+    (defun UEV_Issue (account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     ;;
     ;;
     ;;  [UDC] Functions
@@ -1740,7 +1789,7 @@
     ;;  []C] Functions
     ;;
     ;;
-    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator} (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))    
+    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator} (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))    
 )
 (interface SwapperLiquidityV2
     @doc "Exposes Liquidity Functions;"
@@ -1971,16 +2020,16 @@
     (defun C_ToggleSwapCapability:object{IgnisCollectorV2.OutputCumulator} (swpair:string toggle:bool))
     (defun C_Swap:object{IgnisCollectorV2.OutputCumulator} (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal kda-pid:decimal))
 )
-(interface SwapperMtxV2
+(interface SwapperMtxV3
     @doc "Exposes SWP MultiStep (via defpact) Functions."
     ;;
     ;;
     ;;  []C] Functions
     ;;
     ;;
-    (defun C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    (defun C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV5.PoolTokens}] fee-lp:decimal p:bool))
+    (defun C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV6.PoolTokens}] fee-lp:decimal p:bool))
     ;;
     (defun C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
     (defun C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))

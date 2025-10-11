@@ -25,10 +25,10 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         ;(ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
         ;(ref-VST:module{Vesting} VST)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;(ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         ;(patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -112,13 +112,13 @@
 (let
     (
         ;(ref-U|CT:module{OuronetConstants} U|CT)
-        ;(ref-DALOS:module{OuronetDalosV5} DALOS)
+        ;(ref-DALOS:module{OuronetDalosV6} DALOS)
         ;(ref-BRD:module{Branding} BRD)
         ;(ref-SWP:module{Swapper} SWP)
         ;(ref-TS01-A:module{TalosStageOne_Admin} TS01-A)
         ;(ref-DPTF:module{DemiourgosPactTrueFungible} DPTF)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (dpmf:string "MVST-98c486052a51")

@@ -11,7 +11,7 @@
     (defcap GOV ()                  (compose-capability (GOV|BRD_ADMIN)))
     (defcap GOV|BRD_ADMIN ()        (enforce-guard GOV|MD_DPTF))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -25,7 +25,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -124,7 +124,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (mp:integer (URC_MaxBluePayment entity-owner-account))
                 (flag:integer (UR_Flag entity-id false))
                 (premium:time (UR_PremiumUntil entity-id false))
@@ -185,7 +185,7 @@
     (defun URC_MaxBluePayment (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (mt:integer (ref-DALOS::UR_Elite-Tier-Major account))
             )
             (if (<= mt 2)
@@ -325,7 +325,7 @@
         (with-capability (BRD|C>UPGRADE entity-id entity-owner-account months)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (blue:decimal (ref-DALOS::UR_UsagePrice "blue"))
                     (branding:object{Branding.Schema} (UR_Branding entity-id false))
                     (branding-pending:object{Branding.Schema} (UR_Branding entity-id true))

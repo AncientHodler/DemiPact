@@ -61,3 +61,15 @@
 (print "")
 (commit-tx)
 (print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [3] - PAD-KPAY Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/02_DEMIPAD/04_KPAY.pact")
+(format "<<<<<<<PAD-SH Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")

@@ -2,7 +2,7 @@
 (module ATSU GOV
     ;;
     (implements OuronetPolicy)
-    (implements AutostakeUsageV5)
+    (implements AutostakeUsageV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -21,8 +21,8 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|AutostakeKey ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|AutostakeKey)))
     ;;
     ;;<====>
     ;;POLICY
@@ -52,7 +52,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -125,7 +125,7 @@
     (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
-    (defconst ATS|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
+    (defconst ATS|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -140,7 +140,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (compose-capability (GOV|ATSU_ADMIN))
             (compose-capability (ATSU|C>X_REMOVE-SECONDARY ats reward-token))
@@ -150,7 +150,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (ref-ATS::CAP_Owner ats)
             (compose-capability (ATSU|C>X_REMOVE-SECONDARY ats reward-token))
@@ -159,7 +159,7 @@
     (defcap ATSU|C>X_REMOVE-SECONDARY (ats:string reward-token:string)
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (rt-position:integer (ref-ATS::URC_RewardTokenPosition ats reward-token))
             )
             (enforce (> rt-position 0) "Primal RT cannot be removed")
@@ -173,8 +173,8 @@
     (defcap ATSU|C>WITHDRAW-ROYALTIES (ats:string target:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (royalties:[decimal] (ref-ATS::UR_RewardTokenRUR ats 3))
                 (sum:decimal (fold (+) 0.0 royalties))
             )
@@ -189,8 +189,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l1:integer (length rt-amounts))
@@ -208,7 +208,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats reward-token true)
@@ -220,7 +220,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (h:bool (ref-ATS::UR_Hibernate ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
@@ -232,7 +232,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (h1:bool (ref-ATS::UR_Hibernate ats1))
                 (h2:bool (ref-ATS::UR_Hibernate ats2))
             )
@@ -245,8 +245,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (cold-recovery-positions:integer (ref-ATS::UR_ColdRecoveryPositions ats))
             )
             (enforce (<= usable-cold-recovery-position cold-recovery-positions) 
@@ -260,7 +260,7 @@
     (defcap ATSU|C>DEPLOY (ats:string acc:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountExists acc)
             (compose-capability (ATSU|C>NORMALIZE_LEDGER ats acc))
@@ -269,8 +269,8 @@
     (defcap ATSU|C>NORMALIZE_LEDGER (ats:string acc:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (dalos-admin:guard GOV|MD_ATSU)
                 (autos-admin:guard GOV|SC_ATSU)
                 (acc-g:guard (ref-DALOS::UR_AccountGuard acc))
@@ -296,7 +296,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership culler)
             (compose-capability (ATSU|C>NORMALIZE_LEDGER ats culler))
@@ -308,8 +308,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_HotRecoveryState ats true)
@@ -320,8 +320,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (iz-rbt:bool (ref-DPOF::URC_IzRBT id))
             )
             (ref-DALOS::UEV_EnforceAccountType recoverer false)
@@ -333,8 +333,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (iz-rbt:bool (ref-DPOF::URC_IzRBT id))
             )
             (ref-DALOS::UEV_EnforceAccountType redeemer false)
@@ -347,8 +347,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_DirectRecoveryState ats true)
@@ -360,7 +360,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l0:integer (length syphon-amounts))
@@ -394,8 +394,112 @@
     ;;FUNCTIONS
     ;;{F0}  [UR]
     ;;{F1}  [URC]
+    (defun URC_MultiCull:object (ats:string acc:string)
+        @doc "Outputs <after-cull> <to-be-culled> <culled-values> and <summed-culled-values> values in an object"
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
+                ;;
+                (zr:object{UtilityAtsV2.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
+                (ng:object{UtilityAtsV2.Awo} (ref-ATS::UDC_MakeNegativeUnstakeObject ats))
+                (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats acc))
+                (p0l:integer (length p0))
+                (boolean-lst:[bool]
+                    (fold
+                        (lambda
+                            (acc:[bool] item:object{UtilityAtsV2.Awo})
+                            (ref-U|LST::UC_AppL acc (ref-U|ATS::UC_IzCullable item))
+                        )
+                        []
+                        p0
+                    )
+                )
+                (zr-output:[decimal] (make-list (length (ref-ATS::UR_RewardTokens ats)) 0.0))
+                (cullables:[integer] (ref-U|LST::UC_Search boolean-lst true))
+                (immutables:[integer] (ref-U|LST::UC_Search boolean-lst false))
+                (how-many-cullables:integer (length cullables))
+            )
+            (if (= how-many-cullables 0)
+                zr-output
+                (let
+                    (
+                        (after-cull:[object{UtilityAtsV2.Awo}]
+                            (if (< how-many-cullables p0l)
+                                (fold
+                                    (lambda
+                                        (acc:[object{UtilityAtsV2.Awo}] idx:integer)
+                                        (ref-U|LST::UC_AppL acc (at (at idx immutables) p0))
+                                    )
+                                    []
+                                    (enumerate 0 (- (length immutables) 1))
+                                )
+                                [zr]
+                            )
+                        )
+                        (to-be-culled:[object{UtilityAtsV2.Awo}]
+                            (fold
+                                (lambda
+                                    (acc:[object{UtilityAtsV2.Awo}] idx:integer)
+                                    (ref-U|LST::UC_AppL acc (at (at idx cullables) p0))
+                                )
+                                []
+                                (enumerate 0 (- (length cullables) 1))
+                            )
+                        )
+                        (culled-values:[[decimal]]
+                            (fold
+                                (lambda
+                                    (acc:[[decimal]] idx:integer)
+                                    (ref-U|LST::UC_AppL acc (ref-ATS::URC_CullValue ats (at idx to-be-culled)))
+                                )
+                                []
+                                (enumerate 0 (- (length to-be-culled) 1))
+                            )
+                        )
+                        (summed-culled-values:[decimal] (ref-U|DEC::UC_AddHybridArray culled-values))
+                    )
+                    {"after-cull"           : after-cull
+                    ,"to-be-culled"         : to-be-culled
+                    ,"culled-values"        : culled-values
+                    ,"summed-culled-values" : summed-culled-values}
+                )
+            )
+        )
+    )
+    (defun URC_SingleCull:[decimal] (ats:string acc:string position:integer)
+        @doc "Outputs <cull-output> as a value of RTs"
+        (let
+            (
+                (ref-ATS:module{AutostakeV6} ATS)
+                ;;
+                (unstake-obj:object{UtilityAtsV2.Awo} (ref-ATS::UR_P1-7 ats acc position))
+                (cull-output:[decimal] (ref-ATS::URC_CullValue ats unstake-obj))
+            )
+            cull-output
+        )
+    )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
+    (defun UDC_UnlimitedUncoilCumulator:object{IgnisCollectorV2.OutputCumulator}
+        (ats:string account:string)
+        (let
+            (
+                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
+                ;;
+                (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats account))
+                (size:decimal (dec (length p0)))
+                (smallest:decimal (ref-DALOS::UR_UsagePrice "ignis|smallest"))
+                (price:decimal (* size smallest))
+                (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+            )
+            (ref-IGNIS::UDC_ConstructOutputCumulator price account trigger [])
+        )
+    )
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
@@ -416,7 +520,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (accounts-with-ats-data:[string] (ref-TFT::DPTF-DPOF-ATS|UR_FilterKeysForInfo ats 3 false))
             )
             (with-capability (ATSU|C>REMOVE-SECONDARY ats reward-token)
@@ -430,8 +534,8 @@
         (with-capability (ATSU|C>WITHDRAW-ROYALTIES ats target)
             (let
                 (
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (reward-tokens:[string] (ref-ATS::UR_RewardTokenList ats))
                     (royalties:[decimal] (ref-ATS::UR_RewardTokenRUR ats 3))
                 )
@@ -456,9 +560,9 @@
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     ;;
                     (rbt-id:string (ref-ATS::UR_ColdRewardBearingToken ats))
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -499,8 +603,8 @@
         (UEV_IMC)
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
             )
             (with-capability (ATSU|C>FUEL ats reward-token)
                 (ref-ATS::XE_UpdateRUR ats reward-token 1 true amount)
@@ -518,12 +622,12 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     ;;
                     ;;<ats>
-                    (coil-data:object{AutostakeV5.CoilData} 
+                    (coil-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats rt amount)
                     )
                     (input-amount:decimal (at "first-input-amount" coil-data))
@@ -559,12 +663,12 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     ;;
                     ;;<ats1>
-                    (coil1-data:object{AutostakeV5.CoilData} 
+                    (coil1-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                     )
                     (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -573,7 +677,7 @@
                     (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                     ;;
                     ;;<ats2>
-                    (coil2-data:object{AutostakeV5.CoilData} 
+                    (coil2-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats2 c-rbt1 c-rbt1-amount)
                     )
                     (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -616,7 +720,7 @@
             (XI_DeployAccount ats recoverer)
             (let
                 (
-                    (ref-ATS:module{AutostakeV5} ATS)
+                    (ref-ATS:module{AutostakeV6} ATS)
                     (usable-cold-recovery-position:integer (ref-ATS::URC_WhichPosition ats ra recoverer))
                 )
                 (enforce (!= usable-cold-recovery-position 0) "Cold Recovery Unavailable! All existing Positions are used!")
@@ -626,19 +730,34 @@
                             (ref-U|LST:module{StringProcessor} U|LST)
                             (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                             (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                            (ref-DALOS:module{OuronetDalosV5} DALOS)
-                            (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                            (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                            (ref-DALOS:module{OuronetDalosV6} DALOS)
+                            (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                            (ref-TFT:module{TrueFungibleTransferV9} TFT)
                             ;;
                             (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                             (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                             (c-rbt-precision:integer (ref-DPTF::UR_Decimals c-rbt))
                             (fee-promile:decimal (ref-ATS::URC_ColdRecoveryFee ats ra usable-cold-recovery-position))
                             (c-rbt-fee-split:[decimal] (ref-U|ATS::UC_PromilleSplit fee-promile ra c-rbt-precision))
+                            (c-rbt-remainder:decimal (at 0 c-rbt-fee-split))
+                            (c-rbt-fee:decimal (at 1 c-rbt-fee-split))
+                            ;;
+                            (positive-c-fr:[decimal]
+                                ;;For true <c-fr>
+                                ;:Remainder
+                                (ref-ATS::URC_RTSplitAmounts ats c-rbt-remainder)
+                            )
+                            (ng-c-fr:[decimal]
+                                ;For false <c-fre>
+                                ;Fee-Part
+                                (ref-ATS::URC_RTSplitAmounts ats c-rbt-fee)
+                            )
                             ;;
                             (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                             (price:decimal (* 2.0 biggest))
                             (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                            ;;
+
                             (ico0:object{IgnisCollectorV2.OutputCumulator}
                                 ;;10 Flat IGNIS cost for Cold Recovery
                                 (ref-IGNIS::UDC_ConstructOutputCumulator price ATS|SC_NAME trigger [])
@@ -652,44 +771,34 @@
                             ;;
                             (c-fr:bool (ref-ATS::UR_ColdRecoveryFeeRedirection ats))
                             (cull-time:time (ref-ATS::URC_CullColdRecoveryTime ats recoverer))
-                            (c-rbt-remainder:decimal (at 0 c-rbt-fee-split))
-                            (c-rbt-fee:decimal (at 1 c-rbt-fee-split))
                             ;;
-                            (positive-c-fr:[decimal]
-                                ;;For true <c-fr>
-                                ;:Remainder
-                                (ref-ATS::URC_RTSplitAmounts ats c-rbt-remainder)
-                            )
                             (ico3:object{IgnisCollectorV2.OutputCumulator}
+                                (if (!= usable-cold-recovery-position -1)
+                                    EOC
+                                    (UDC_UnlimitedUncoilCumulator ats recoverer)
+                                )
+                            )
+                            (ico4:object{IgnisCollectorV2.OutputCumulator}
                                 ;;Handle the Fee Part
                                 (if (= c-rbt-fee 0.0)
                                     EOC
                                     (if c-fr
                                         EOC
-                                        (let
-                                            (
-                                                (ng-c-fr:[decimal]
-                                                    ;For false <c-fre>
-                                                    ;Fee-Part
-                                                    (ref-ATS::URC_RTSplitAmounts ats c-rbt-fee)
-                                                )
-                                            )
-                                            (ref-IGNIS::UDC_ConcatenateOutputCumulators 
-                                                (fold
-                                                    (lambda
-                                                        (acc:[object{IgnisCollectorV2.OutputCumulator}] idx:integer)
-                                                        (do
-                                                            (ref-ATS::XE_UpdateRUR ats (at idx rt-lst) 1 false (at idx ng-c-fr))
-                                                            (ref-U|LST::UC_AppL acc 
-                                                                (ref-DPTF::C_Burn (at idx rt-lst) ATS|SC_NAME (at idx ng-c-fr))
-                                                            )
+                                        (ref-IGNIS::UDC_ConcatenateOutputCumulators 
+                                            (fold
+                                                (lambda
+                                                    (acc:[object{IgnisCollectorV2.OutputCumulator}] idx:integer)
+                                                    (do
+                                                        (ref-ATS::XE_UpdateRUR ats (at idx rt-lst) 1 false (at idx ng-c-fr))
+                                                        (ref-U|LST::UC_AppL acc 
+                                                            (ref-DPTF::C_Burn (at idx rt-lst) ATS|SC_NAME (at idx ng-c-fr))
                                                         )
                                                     )
-                                                    []
-                                                    (enumerate 0 (- (length rt-lst) 1))
                                                 )
                                                 []
+                                                (enumerate 0 (- (length rt-lst) 1))
                                             )
+                                            []
                                         )
                                     )
                                 )
@@ -709,7 +818,7 @@
                             , "cull-time"       : cull-time}
                         )
                         (XI_Normalize ats recoverer)
-                        (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico0 ico1 ico2 ico3] [])
+                        (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico0 ico1 ico2 ico3 ico4] [])
                     )
                 )
             )
@@ -724,9 +833,9 @@
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-U|DEC:module{OuronetDecimals} U|DEC)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DALOS:module{OuronetDalosV5} DALOS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c0:[decimal] (XI_MultiCull ats culler))
@@ -781,16 +890,16 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (h-rbt:string (ref-ATS::UR_HotRewardBearingToken ats))
                 (present-time:time (at "block-time" (chain-data)))
-                (meta-data-obj:object{AutostakeV5.ATS|Hot} {"mint-time" : present-time})
+                (meta-data-obj:object{AutostakeV6.ATS|Hot} {"mint-time" : present-time})
                 (new-nonce:integer (+ (ref-DPOF::UR_NoncesUsed h-rbt) 1))
                 ;;
             )
@@ -829,10 +938,10 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (ats:string (ref-DPOF::UR_RewardBearingToken id))
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -866,10 +975,10 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV2} DPOF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 ;;
                 (precision:integer (ref-DPOF::UR_Decimals id))
                 (nonce-supply:decimal (ref-DPOF::UR_NonceSupply id nonce))
@@ -956,13 +1065,12 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV2} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
-                    (c-rbt-precision:integer (ref-DPTF::UR_Decimals c-rbt))
                     (fee:decimal (ref-ATS::UR_DirectRecoveryFee ats))
                     (c-rbt-remainder:decimal
                         (if (= fee 0.0)
@@ -1004,8 +1112,8 @@
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATS:module{AutostakeV5} ATS)
-                    (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                     (folded-obj:[object{IgnisCollectorV2.OutputCumulator}]
@@ -1037,7 +1145,7 @@
         (require-capability (ATSU|C>DEPLOY ats acc))
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (ref-ATS::XE_SpawnAutostakeAccount ats acc)
             (XI_Normalize ats acc)
@@ -1047,8 +1155,8 @@
         (require-capability (ATSU|C>NORMALIZE_LEDGER ats acc))
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats acc))
                 (p1:object{UtilityAtsV2.Awo} (ref-ATS::UR_P1-7 ats acc 1))
                 (p2:object{UtilityAtsV2.Awo} (ref-ATS::UR_P1-7 ats acc 2))
@@ -1114,7 +1222,7 @@
     (defun XI_UUP (ats:string acc:string data:[object{UtilityAtsV2.Awo}])
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
             )
             (ref-ATS::XE_UpP0 ats acc (drop -7 data))
             (ref-ATS::XE_UpP1 ats acc (at 0 (take 1 (take -7 data))))
@@ -1131,20 +1239,26 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats acc))
+                (size:integer (length p0))
             )
+            
             (if (= position -1)
-                (if (and
-                        (= (length p0) 1)
-                        (=
-                            (at 0 p0)
-                            (ref-ATS::UDC_MakeZeroUnstakeObject ats)
+                (do
+                    (enforce (< size 250) "Unstake Storage limited to 250 Elements. Cull your list to add more !")
+                    (if (and
+                            (= size 1)
+                            (=
+                                (at 0 p0)
+                                (ref-ATS::UDC_MakeZeroUnstakeObject ats)
+                            )
                         )
+                        (ref-ATS::XE_UpP0 ats acc [obj])
+                        (ref-ATS::XE_UpP0 ats acc (ref-U|LST::UC_AppL p0 obj))
                     )
-                    (ref-ATS::XE_UpP0 ats acc [obj])
-                    (ref-ATS::XE_UpP0 ats acc (ref-U|LST::UC_AppL p0 obj))
                 )
+                
                 (cond
                     ((= position 1) (ref-ATS::XE_UpP1 ats acc obj))
                     ((= position 2) (ref-ATS::XE_UpP2 ats acc obj))
@@ -1162,87 +1276,26 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-ATS:module{AutostakeV5} ATS)
-                ;;
-                (zr:object{UtilityAtsV2.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
-                (ng:object{UtilityAtsV2.Awo} (ref-ATS::UDC_MakeNegativeUnstakeObject ats))
-                (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats acc))
-                (p0l:integer (length p0))
-                (boolean-lst:[bool]
-                    (fold
-                        (lambda
-                            (acc:[bool] item:object{UtilityAtsV2.Awo})
-                            (ref-U|LST::UC_AppL acc (ref-U|ATS::UC_IzCullable item))
-                        )
-                        []
-                        p0
-                    )
-                )
-                (zr-output:[decimal] (make-list (length (ref-ATS::UR_RewardTokens ats)) 0.0))
-                (cullables:[integer] (ref-U|LST::UC_Search boolean-lst true))
-                (immutables:[integer] (ref-U|LST::UC_Search boolean-lst false))
-                (how-many-cullables:integer (length cullables))
+                (ref-ATS:module{AutostakeV6} ATS)
+                (multi-cull-obj:object (URC_MultiCull ats acc))
+                (after-cull:[object{UtilityAtsV2.Awo}] (at "after-cull" multi-cull-obj))
+                (culled-values:[[decimal]] (at "culled-values" multi-cull-obj))
+                (summed-culled-values:[decimal] (at "summed-culled-values" multi-cull-obj))
             )
-            (if (= how-many-cullables 0)
-                zr-output
-                (let
-                    (
-                        (after-cull:[object{UtilityAtsV2.Awo}]
-                            (if (< how-many-cullables p0l)
-                                (fold
-                                    (lambda
-                                        (acc:[object{UtilityAtsV2.Awo}] idx:integer)
-                                        (ref-U|LST::UC_AppL acc (at (at idx immutables) p0))
-                                    )
-                                    []
-                                    (enumerate 0 (- (length immutables) 1))
-                                )
-                                [zr]
-                            )
-                        )
-                        (to-be-culled:[object{UtilityAtsV2.Awo}]
-                            (fold
-                                (lambda
-                                    (acc:[object{UtilityAtsV2.Awo}] idx:integer)
-                                    (ref-U|LST::UC_AppL acc (at (at idx cullables) p0))
-                                )
-                                []
-                                (enumerate 0 (- (length cullables) 1))
-                            )
-                        )
-                        (culled-values:[[decimal]]
-                            (fold
-                                (lambda
-                                    (acc:[[decimal]] idx:integer)
-                                    (ref-U|LST::UC_AppL acc (ref-ATS::URC_CullValue ats (at idx to-be-culled)))
-                                )
-                                []
-                                (enumerate 0 (- (length to-be-culled) 1))
-                            )
-                        )
-                        (summed-culled-values:[decimal] (ref-U|DEC::UC_AddHybridArray culled-values))
-                    )
-                    (ref-ATS::XE_UpP0 ats acc after-cull)
-                    summed-culled-values
-                )
-            )
+            (ref-ATS::XE_UpP0 ats acc after-cull)
+            summed-culled-values
         )
     )
     (defun XI_SingleCull:[decimal] (ats:string acc:string position:integer)
         (let
             (
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-ATS:module{AutostakeV6} ATS)
                 ;;
+                (cull-output:[decimal] (URC_SingleCull ats acc position))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l:integer (length rt-lst))
                 (empty:[decimal] (make-list l 0.0))
                 (zr:object{UtilityAtsV2.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
-                (unstake-obj:object{UtilityAtsV2.Awo} (ref-ATS::UR_P1-7 ats acc position))
-                (rt-amounts:[decimal] (at "reward-tokens" unstake-obj))
-                (cull-output:[decimal] (ref-ATS::URC_CullValue ats unstake-obj))
             )
             (if (!= cull-output empty)
                 (XI_StoreUnstakeObject ats acc position zr)
@@ -1258,10 +1311,10 @@
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))

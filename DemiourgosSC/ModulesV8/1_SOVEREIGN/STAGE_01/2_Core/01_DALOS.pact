@@ -76,7 +76,7 @@
     ;;
     (implements gas-payer-v1)
     (implements OuronetPolicy)
-    (implements OuronetDalosV5)
+    (implements OuronetDalosV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -234,7 +234,7 @@
     (defschema DALOS|PricesSchema
         price:decimal                       ;;Stores price for action
     )
-    (defschema DALOS|AccountSchema
+    (defschema DALOS|AccountSchemaV2
         @doc "Schema that stores DALOS Account Information"
         public:string
         guard:guard
@@ -249,8 +249,8 @@
         ;;
         nonce:integer
         elite:object{DALOS|EliteSchema}
-        ouroboros:object{OuronetDalosV5.DPTF|BalanceSchemaV2}
-        ignis:object{OuronetDalosV5.DPTF|BalanceSchemaV2}
+        ouroboros:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
+        ignis:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
     )
     (defschema DALOS|EliteSchema
         class:string
@@ -259,11 +259,11 @@
         deb:decimal
     )
     ;;{2}
-    (deftable DALOS|KadenaLedger:{DALOS|KadenaSchema})
-    (deftable DALOS|PropertiesTable:{DALOS|PropertiesSchema})
-    (deftable DALOS|GasManagementTable:{DALOS|GasManagementSchema})
-    (deftable DALOS|PricesTable:{DALOS|PricesSchema})
-    (deftable DALOS|AccountTable:{DALOS|AccountSchema})
+    (deftable DALOS|KadenaLedger:{DALOS|KadenaSchema})              ;;Key = <k:account>
+    (deftable DALOS|PropertiesTable:{DALOS|PropertiesSchema})       ;;Key = DALOS|INFO
+    (deftable DALOS|GasManagementTable:{DALOS|GasManagementSchema}) ;;Key = DALOS|VGD
+    (deftable DALOS|PricesTable:{DALOS|PricesSchema})               ;;Key = <action>
+    (deftable DALOS|AccountTable:{DALOS|AccountSchemaV2})           ;;Key = <account>
     ;;{3}
     (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
     (defun DALOS|Info ()                    (at 0 ["DalosInformation"]))
@@ -271,14 +271,6 @@
     (defconst BAR                           (CT_Bar))
     (defconst DALOS|INFO                    (DALOS|Info))
     (defconst DALOS|VGD                     (DALOS|VirtualGasData))
-    (defconst DPTF|BLANK
-        {"balance"              : 0.0
-        ,"role-burn"            : false
-        ,"role-mint"            : false
-        ,"role-transfer"        : false
-        ,"role-fee-exemption"   : false
-        ,"frozen"               : false }
-    )
     (defconst DALOS|PLEB
         {"class"    : "NOVICE"
         ,"name"     : "Infidel"
@@ -497,7 +489,7 @@
     (defun UR_UsagePrice:decimal (action:string)
         (at "price" (read DALOS|PricesTable action ["price"]))
     )
-    ;;[4]   DALOS|AccountTable:{DALOS|AccountSchema}
+    ;;[4]   DALOS|AccountTable:{DALOS|AccountSchemaV2}
     (defun UR_AccountPublicKey:string (account:string)
         (at "public" (read DALOS|AccountTable account ["public"]))
     )
@@ -566,16 +558,16 @@
         (at "deb" (UR_Elite account))
     )
     ;;[4.2] TrueFungible INFO
-    (defun UR_TrueFungible
+    (defun UR_TrueFungible:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
         (account:string snake-or-gas:bool)
         (if snake-or-gas
             (with-default-read DALOS|AccountTable account
-                { "ouroboros" : DPTF|BLANK }
+                { "ouroboros" : (UDC_BlankTrueFungible account) }
                 { "ouroboros" := o}
                 o
             )
             (with-default-read DALOS|AccountTable account
-                { "ignis" : DPTF|BLANK }
+                { "ignis" : (UDC_BlankTrueFungible account) }
                 { "ignis" := i}
                 i
             )
@@ -800,6 +792,20 @@
         )
     )
     ;;{F3}  [UDC]
+    (defun UDC_TrueFungibleAccount:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
+        (a:decimal b:bool c:bool d:bool e:bool f:bool g:string h:string)
+        {"balance"              : a
+        ,"frozen"               : b
+        ,"role-burn"            : c
+        ,"role-mint"            : d
+        ,"role-fee-exemption"   : e
+        ,"role-transfer"        : f
+        ,"id"                   : g
+        ,"account"              : h}
+    )
+    (defun UDC_BlankTrueFungible:object{OuronetDalosV6.DPTF|BalanceSchemaV3} (account:string)
+        (UDC_TrueFungibleAccount 0.0 false false false false false BAR account)
+    )
     ;;
     ;;{F4}  [CAP]
     (defun CAP_EnforceAccountOwnership (account:string)
@@ -981,8 +987,8 @@
                 ;;
                 , "nonce"                       : 0
                 , "elite"                       : DALOS|PLEB
-                , "ouroboros"                   : DPTF|BLANK
-                , "ignis"                       : DPTF|BLANK
+                , "ouroboros"                   : (UDC_BlankTrueFungible account)
+                , "ignis"                       : (UDC_BlankTrueFungible account)
                 }
             )
             (XI_UpdateKadenaLedger kadena account true)
@@ -1005,8 +1011,8 @@
                 ;;
                 , "nonce"                       : 0
                 , "elite"                       : DALOS|PLEB
-                , "ouroboros"                   : DPTF|BLANK
-                , "ignis"                       : DPTF|BLANK
+                , "ouroboros"                   : (UDC_BlankTrueFungible account)
+                , "ignis"                       : (UDC_BlankTrueFungible account)
                 }
             )
             (XI_UpdateKadenaLedger kadena account true)
@@ -1157,8 +1163,8 @@
             )
         )
     )
-    (defun XI_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalosV5.DPTF|BalanceSchemaV2})
-        ;(require-capability (SECURE))
+    (defun XI_UpdateTF (account:string snake-or-gas:bool new-obj:object{OuronetDalosV6.DPTF|BalanceSchemaV3})
+        (require-capability (SECURE))
         (if snake-or-gas
             (update DALOS|AccountTable account
                 {"ouroboros" : new-obj}
@@ -1169,7 +1175,7 @@
         )
     )
     (defun XB_UpdateBalance (account:string snake-or-gas:bool new-balance:decimal)
-        ;(UEV_IMC)
+        (UEV_IMC)
         (with-capability (SECURE)
             (let
                 (
@@ -1243,6 +1249,56 @@
                     {"role-transfer" : new-transfer}
                     (remove "role-transfer" (UR_TrueFungible account snake-or-gas))
                 )
+            )
+        )
+    )
+    ;;
+    ;;{F8}  [AUP - Admin Update Functions]
+    ;;
+    (defcap AHU ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ah:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership ah)
+            (compose-capability (SECURE))
+        )
+    )
+    (defun AUP_OuronetAccounts (accounts:[string])
+        @doc "Get Accounts with <(keys DALOS|AccountTable)>"
+        (with-capability (AHU)
+            (map (AUP_OuronetAccount) accounts)
+        )
+    )
+    (defun AUP_OuronetAccount (account:string)
+        (require-capability (SECURE))
+        (update DALOS|AccountTable account
+            {"ouroboros"    : (AUPX_UpdateTrueFungibleObject (UR_TrueFungible account true) account)
+            ,"ignis"        : (AUPX_UpdateTrueFungibleObject (UR_TrueFungible account false) account)}
+        )
+    )
+    (defun AUPX_UpdateTrueFungibleObject:object{OuronetDalosV6.DPTF|BalanceSchemaV3}
+        (input-obj:object account:string)
+        (let
+            (
+                (has-exist:bool (contains "exist" input-obj))
+                (v1:object
+                    (+
+                        {"id" : BAR}
+                        (remove "id" input-obj)
+                    )
+                )
+                (v2:object
+                    (+
+                        {"account" : account}
+                        (remove "account" v1)
+                    )
+                )
+            )
+            (if has-exist
+                (remove "exist" v2)
+                v2
             )
         )
     )

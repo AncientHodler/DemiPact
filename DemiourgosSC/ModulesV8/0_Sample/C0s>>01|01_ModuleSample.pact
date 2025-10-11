@@ -11,7 +11,7 @@
     (defcap GOV ()                          (compose-capability (GOV|SAMPLE_ADMIN)))
     (defcap GOV|SAMPLE_ADMIN ()             (enforce-guard GOV|MD_SAMPLE))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
     (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
@@ -39,7 +39,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -122,3 +122,99 @@
 
 (create-table P|T)
 (create-table P|MT)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
+(let
+    
+    (
+        (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+        (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
+        ;;
+        (ref-U|G:module{OuronetGuards} U|G)
+        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        ;;
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+        (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
+        (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
+        ;;
+        (s-key:string DEMIPAD-KPAY.KPAY|INFO)
+    )
+    [
+        ;;1]Turn Off KDA Collection to Mint DPTF without KDA Cost
+        (ref-TS01-A::DALOS|A_IgnisToggle true false)    ;;turn off KDA Collection
+        (let
+            (
+                (ids:list
+                    (ref-TS01-C1::DPTF|C_Issue
+                        patron
+                        patron
+                        ["KadenaPay"]
+                        ["KPAY"]
+                        [24]
+                        [true]
+                        [true]
+                        [true]
+                        [true]
+                        [true]
+                        [true]
+                    )
+                )
+                (KpayID:string (at 0 ids))
+            )
+            [   
+                ;;2]Turn back On KDA Collection
+                (ref-TS01-A::DALOS|A_IgnisToggle true true)     ;;Turn on KDA Collection
+                ;;3]Backward IMC
+                (ref-P|KPAY::P|A_Define)
+                ;;4]Forward IMC
+                (ref-P|KPAY::P|A_AddIMP mg)
+                ;;5]Demipad Governer Update
+                (ref-TS01-C1::DALOS|C_RotateGovernor
+                    patron
+                    lpad-sc
+                    (ref-U|G::UEV_GuardOfAny
+                        [
+                            (create-capability-guard (DEMIPAD.DEMIPAD|GOV))
+                            (ref-P|DPAD::P|UR "SPARK|RemoteGov")
+                            (ref-P|DPAD::P|UR "SNAKES|RemoteGov")
+                            (ref-P|DPAD::P|UR "CUSTODIANS|RemoteGov")
+                            (ref-P|DPAD::P|UR "KPAY|RemoteGov")
+                        ]
+                    )
+                )
+                ;;6]Permissions
+                (ref-TS01-C1::DPTF|C_Mint patron KpayID lpad-sc 250000000.0 true)
+                (ref-TS01-C1::DPTF|C_ToggleBurnRole patron KpayID lpad-sc true)
+                ;;7]Store Kpay ID
+                (acquire-module-admin DEMIPAD-KPAY)
+                (insert DEMIPAD-KPAY.KPAY|T|Properties s-key
+                    {"asset-id"            : KpayID}
+                )
+                ;;8]Register KPAY To Launchpad
+                (ref-TS02-DPAD::A_RegisterAssetToLaunchpad patron KpayID [true true])
+            ]
+        )
+    ]
+)
+
+(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
+(IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
+(let
+    (
+        (ref-DEMIPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        ;;
+        (KpayID:string (ref-DEMIPAD-KPAY::UR_KpayID))
+    )
+    [
+        ;;9]Defines the starting point, which is the base for the price and ending period.
+        (ref-TS02-DPAD::A_DefinePrice KpayID
+            {"starting-time" : (at "block-time" (chain-data))}
+        )
+        (ref-TS02-DPAD::A_ToggleOpenForBusiness KpayID true)
+    ]
+)

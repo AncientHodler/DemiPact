@@ -107,7 +107,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.AOZT
@@ -147,7 +147,7 @@
     )
     (let
         (
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-AOZ:module{AgeOfZalmoxis} AOZ)
             (patron:string AOZ.AOZ|SC_NAME)
             ;;
@@ -197,7 +197,7 @@
 
 (let
     (
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
         (patron:string AOZ.AOZ|SC_NAME)
         ;;
@@ -248,7 +248,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.AOZT
@@ -288,7 +288,7 @@
     )
     (let
         (
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-AOZ:module{AgeOfZalmoxis} AOZ)
             (patron:string AOZ.AOZ|SC_NAME)
             ;;
@@ -334,7 +334,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.AOZT
@@ -419,7 +419,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.AOZT
@@ -504,7 +504,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV5} DALOS)
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.AOZT
@@ -778,7 +778,7 @@
 
 (let
     (
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV5} TS01-C1)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
         (patron:string AOZ.AOZ|SC_NAME)
         ;;

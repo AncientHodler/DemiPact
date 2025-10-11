@@ -13,9 +13,9 @@
     (defcap GOV ()                  (compose-capability (GOV|SWPU_ADMIN)))
     (defcap GOV|SWPU_ADMIN ()       (enforce-guard GOV|MD_SWPU))
     ;;
-    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -36,7 +36,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -154,8 +154,8 @@
         (if toggle
             (let
                 (
-                    (ref-SWP:module{SwapperV5} SWP)
-                    (ref-SWPI:module{SwapperIssueV3} SWPI)
+                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWPI:module{SwapperIssueV4} SWPI)
                     (pool-worth:decimal (at 0 (ref-SWPI::URC_PoolValue swpair)))
                     (inactive-limit:decimal (ref-SWP::UR_InactiveLimit))
                 )
@@ -217,8 +217,8 @@
                 (output-id:string (at "output-id" dsid))
                 ;;
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWP:module{SwapperV6} SWP)
                 (l1:integer (length input-ids))
                 (l2:integer (length input-amounts))
                 (can-swap:bool (ref-SWP::UR_CanSwap swpair))
@@ -278,8 +278,8 @@
         @doc "Makes a Slippage Object from <input amounts>"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 (o-prec:integer (ref-DPTF::UR_Decimals (at "output-id" dsid)))
                 (expected:decimal (ref-SWPI::URC_Swap swpair dsid false))
             )
@@ -306,7 +306,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
             )
             (with-capability (SPWU|C>TOGGLE-SWAP swpair toggle)
                 (ref-SWP::C_ToggleAddOrSwap swpair toggle false)
@@ -319,7 +319,7 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV5} SWP)
+                (ref-SWP:module{SwapperV6} SWP)
                 (dsid:object{UtilitySwpV2.DirectSwapInputData}
                     (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
                 )
@@ -380,7 +380,7 @@
                         (XI_Swap account swpair dsid)
                         (let
                             (
-                                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                                (ref-SWPI:module{SwapperIssueV4} SWPI)
                                 ;;
                                 (max-toa:decimal (ref-SWPI::URC_Swap swpair dsid true))
                                 (min-max:[decimal] (UC_SlippageMinMax (UDC_SlippageObject swpair dsid slippage)))
@@ -429,9 +429,9 @@
                 ;;
                 (ref-U|SWP:module{UtilitySwpV2} U|SWP)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-TFT:module{TrueFungibleTransferV8} TFT)
-                (ref-SWP:module{SwapperV5} SWP)
-                (ref-SWPI:module{SwapperIssueV3} SWPI)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWPI:module{SwapperIssueV4} SWPI)
                 (ref-SWPL:module{SwapperLiquidityV2} SWPL)
                 (ref-SWPLC:module{SwapperLiquidityClientV2} SWPLC)
                 ;;
@@ -531,9 +531,9 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                (ref-ATS:module{AutostakeV5} ATS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-ATS:module{AutostakeV6} ATS)
                 ;;
                 (lkda:string (ref-DALOS::UR_LiquidKadenaID))
                 (liquidindex:string (at 0 (ref-DPTF::UR_RewardBearingToken lkda)))
@@ -546,9 +546,9 @@
                 )
                 (let
                     (
-                        (ref-SWPI:module{SwapperIssueV3} SWPI)
+                        (ref-SWPI:module{SwapperIssueV4} SWPI)
                         ;;
-                        (h-obj:object{SwapperIssueV3.Hopper} (ref-SWPI::URC_Hopper id lkda amount))
+                        (h-obj:object{SwapperIssueV4.Hopper} (ref-SWPI::URC_Hopper id lkda amount))
                         (path-to-lkda:[string] (at "nodes" h-obj))
                         (edges:[string] (at "edges" h-obj))
                         (ovs:[decimal] (at "output-values" h-obj))
@@ -570,7 +570,7 @@
         (if (= (length raw-liquid-pump-data) 5)
             (let
                 (
-                    (ref-SWP:module{SwapperV5} SWP)
+                    (ref-SWP:module{SwapperV6} SWP)
                     (path-to-dlk:[string] (at 1 raw-liquid-pump-data))
                     (edges:[string] (at 2 raw-liquid-pump-data))
                     (ovs:[decimal] (at 3 raw-liquid-pump-data))
@@ -610,14 +610,14 @@
             \ Ouro price moves more that 1 promile, update price"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (iz-auto:bool (ref-DALOS::UR_OuroAutoPriceUpdate))
             )
             (if iz-auto
                 (let
                     (
-                        (ref-DPTF:module{DemiourgosPactTrueFungibleV6} DPTF)
-                        (ref-SWPI:module{SwapperIssueV3} SWPI)
+                        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                        (ref-SWPI:module{SwapperIssueV4} SWPI)
                         (ouro-id:string (ref-DALOS::UR_OuroborosID))
                         (ouro-prec:integer (ref-DPTF::UR_Decimals ouro-id))
                         (stored-ouro-price:decimal (ref-DALOS::UR_OuroborosPrice))

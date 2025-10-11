@@ -1,7 +1,7 @@
 (module DPDC-C GOV
     ;;
     (implements OuronetPolicy)
-    (implements DpdcCreateV3)
+    (implements DpdcCreateV4)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -11,7 +11,7 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-C_ADMIN)))
     (defcap GOV|DPDC-C_ADMIN ()             (enforce-guard GOV|MD_DPDC-C))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV5} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -97,12 +97,12 @@
     ;;{C4}
     ;;Register Nonces
     (defcap DPDC-C|C>REGISTER-SINGLE-NONCE
-        (id:string son:bool amount:integer ind:object{DpdcUdcV2.DPDC|NonceData} sft-set-mode:bool)
+        (id:string son:bool amount:integer ind:object{DpdcUdcV3.DPDC|NonceData} sft-set-mode:bool)
         @event
         (compose-capability (DPDC-C|C>REGISTER-NONCES  id son [amount] [ind] sft-set-mode))
     )
     (defcap DPDC-C|C>REGISTER-MULTIPLE-NONCES
-        (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdcV2.DPDC|NonceData}])
+        (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdcV3.DPDC|NonceData}])
         @event
         (let
             (
@@ -113,11 +113,11 @@
         )
     )
     (defcap DPDC-C|C>REGISTER-NONCES
-        (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdcV2.DPDC|NonceData}] sft-set-mode:bool)
+        (id:string son:bool amounts:[integer] input-nonce-datas:[object{DpdcUdcV3.DPDC|NonceData}] sft-set-mode:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 ;;
                 (l1:integer (length amounts))
                 (l2:integer (length input-nonce-datas))
@@ -136,7 +136,7 @@
                     (let
                         (
                             (amount:integer (at idx amounts))
-                            (input-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (at idx input-nonce-datas))
+                            (input-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (at idx input-nonce-datas))
                         )
                         (UEV_NonceDataForCreation input-nonce-data)
                         ;;Amount enforcement
@@ -173,7 +173,7 @@
     (defcap DPDC-C|C>SINGLE-CREDIT (id:string son:bool nonce:integer fragments-or-native:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (UEV_NonceType nonce fragments-or-native)
             (compose-capability (P|DPDC-C|CALLER))
@@ -213,7 +213,7 @@
     (defcap DPDC-C|CX>MULTI-CREDIT (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -242,8 +242,8 @@
         (account:string id:string son:bool nonce:integer amount:integer fragments-or-native:bool wipe-mode:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (if wipe-mode
                 (ref-DPDC::CAP_Owner id son)
@@ -273,7 +273,7 @@
         (account:string id:string son:bool nonces:[integer] amounts:[integer] fragments-or-native:bool wipe-mode:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
             )
             (UEV_NonceTypeMapper nonces fragments-or-native)
             (compose-capability (DPDC|CX>MULTI-DEBIT account id son nonces amounts wipe-mode))
@@ -291,8 +291,8 @@
         (account:string id:string son:bool nonces:[integer] amounts:[integer] wipe-mode:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 ;;
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
@@ -315,14 +315,14 @@
     ;;{F0}  [UR]
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
-    (defun UEV_NonceDataForCreation (ind:object{DpdcUdcV2.DPDC|NonceData})
+    (defun UEV_NonceDataForCreation (ind:object{DpdcUdcV3.DPDC|NonceData})
         @doc "Validates the ind for creation of new nonce"
         (let
             (
-                (ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 ;;
-                (empty-data-dc:object{DpdcUdcV2.DPDC|NonceData}
+                (empty-data-dc:object{DpdcUdcV3.DPDC|NonceData}
                     (ref-DPDC-UDC::UDC_ZeroNonceData)
                 )
                 (royalty:decimal (at "royalty" ind))
@@ -373,7 +373,7 @@
     (defun C_CreateNewNonce:object{IgnisCollectorV2.OutputCumulator}
         (
             id:string son:bool nonce-class:integer amount:integer
-            input-nonce-data:object{DpdcUdcV2.DPDC|NonceData} sft-set-mode:bool
+            input-nonce-data:object{DpdcUdcV3.DPDC|NonceData} sft-set-mode:bool
         )
         (UEV_IMC)
         (with-capability (DPDC-C|C>REGISTER-SINGLE-NONCE id son amount input-nonce-data sft-set-mode)
@@ -383,7 +383,7 @@
     (defun C_CreateNewNonces:object{IgnisCollectorV2.OutputCumulator}
         (
             id:string son:bool amounts:[integer]
-            input-nonce-datas:[object{DpdcUdcV2.DPDC|NonceData}]
+            input-nonce-datas:[object{DpdcUdcV3.DPDC|NonceData}]
         )
         (UEV_IMC)
         (with-capability (DPDC-C|C>REGISTER-MULTIPLE-NONCES id son amounts input-nonce-datas)
@@ -546,7 +546,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 ;;
                 (split:object{OuronetIntegersV2.NonceSplitter} (ref-U|INT::UC_NonceSplitter nonces amounts))
                 (negative-nonces:[integer] (at "negative-nonces" split))
@@ -636,13 +636,13 @@
     (defun XI_RegisterCollectables:object{IgnisCollectorV2.OutputCumulator}
         (
             id:string son:bool nonce-classes:[integer] amounts:[integer]
-            input-nonce-datas:[object{DpdcUdcV2.DPDC|NonceData}] sft-set-mode:bool
+            input-nonce-datas:[object{DpdcUdcV3.DPDC|NonceData}] sft-set-mode:bool
         )
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV5} DALOS)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
                 ;;
                 (l:integer (length amounts))
@@ -700,7 +700,7 @@
     (defun XI_RegisterMultipleNonces:[string]
         (
             id:string son:bool nonce-classes:[integer] amounts:[integer]
-            input-nonce-datas:[object{DpdcUdcV2.DPDC|NonceData}]
+            input-nonce-datas:[object{DpdcUdcV3.DPDC|NonceData}]
         )
         (require-capability (DPDC-C|C>REGISTER-MULTIPLE-NONCES id son amounts input-nonce-datas))
         (with-capability (SECURE)
@@ -715,7 +715,7 @@
                             (
                                 (nonce-class:integer (at idx nonce-classes))
                                 (amount:integer (at idx amounts))
-                                (input-nonce-data:object{DpdcUdcV2.DPDC|NonceData} (at idx input-nonce-datas))
+                                (input-nonce-data:object{DpdcUdcV3.DPDC|NonceData} (at idx input-nonce-datas))
                             )
                             (ref-U|LST::UC_AppL acc
                                 (XI_RegisterCollectionElement id son nonce-class amount input-nonce-data)
@@ -731,7 +731,7 @@
     (defun XI_RegisterSingleNonce:string
         (
             id:string son:bool nonce-class:integer amount:integer
-            input-nonce-data:object{DpdcUdcV2.DPDC|NonceData} sft-set-mode:bool
+            input-nonce-data:object{DpdcUdcV3.DPDC|NonceData} sft-set-mode:bool
         )
         (require-capability (DPDC-C|C>REGISTER-SINGLE-NONCE id son amount input-nonce-data sft-set-mode))
         (with-capability (SECURE)
@@ -741,14 +741,14 @@
     (defun XI_RegisterCollectionElement:string
         (
             id:string son:bool nonce-class:integer amount:integer
-            input-nonce-data:object{DpdcUdcV2.DPDC|NonceData}
+            input-nonce-data:object{DpdcUdcV3.DPDC|NonceData}
         )
         (require-capability (SECURE))
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
-                (ref-DPDC-UDC:module{DpdcUdcV2} DPDC-UDC)
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (new-element-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id son) 1))
                 (account-for-supply-registering:string (ref-DPDC::UR_Verum5 id son))
                 (nonce-holder:string
@@ -757,7 +757,7 @@
                         (ref-I|OURONET::OI|UC_ShortAccount account-for-supply-registering)
                     )
                 )
-                (element:object{DpdcUdcV2.DPDC|NonceElement} 
+                (element:object{DpdcUdcV3.DPDC|NonceElement} 
                     (ref-DPDC-UDC::UDC_NonceElement
                         nonce-class
                         new-element-nonce
@@ -778,7 +778,7 @@
     (defun MappedUpdateOwnerNFT (id:string nonces:[integer] account:string iz-bar:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (new-owner:string
                     (if iz-bar
                         BAR
@@ -808,7 +808,7 @@
     (defun CreditOrDebitDPDC (account:string id:string son:bool nonce:integer amount:integer cod:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV3} DPDC)
+                (ref-DPDC:module{DpdcV4} DPDC)
                 (read-current-supply:integer (ref-DPDC::UR_AccountNonceSupply account id son nonce))
                 (current-supply:integer 
                     (if (= read-current-supply -1)
