@@ -397,6 +397,7 @@
             ]
         )
         (compose-capability (DEMIPAD|GOV))
+        (compose-capability (SECURE))
     )
     ;;Deposti and Withdrawal
     (defcap DEMIPAD|C>DEPOSIT (donor:string asset-id:string amount-in-dollars:decimal type:integer direct-injection:bool)
@@ -418,7 +419,7 @@
             ;;Validate the <amount-in-dollars> to be greater than zero with 3 decimals
             (enforce
                 (and
-                    (= (floor amount-in-dollars 2) amount-in-dollars)
+                    (= (floor amount-in-dollars 24) amount-in-dollars)
                     (> amount-in-dollars 0.0)
                 )
                 "Invalid Dollar Amount for Deposit"
@@ -1003,16 +1004,23 @@
                     (env:decimal (at "enviroment-amount" prices))
                     (cod:decimal (at "coding-amount" prices))
                     (rem:decimal (at "remainder-amount" prices))
+                    (non-enviroment:decimal (+ cod rem))
                     ;;
                     (ico1:object{IgnisCollectorV2.OutputCumulator}
+                        (if (= type 0)
+                            (ref-LIQUID::C_WrapKadena donor non-enviroment)
+                            EOC
+                        )
+                    )
+                    (ico2:object{IgnisCollectorV2.OutputCumulator}
                         (if (= type 1)
                             (ref-LIQUID::C_UnwrapKadena donor env)
                             EOC
                         )
                     )
-                    (ico2:object{IgnisCollectorV2.OutputCumulator}
+                    (ico3:object{IgnisCollectorV2.OutputCumulator}
                         (if (not direct-injection)
-                            (ref-TFT::C_Transfer working-id donor DEMIPAD|SC_NAME (+ cod rem) true)
+                            (ref-TFT::C_Transfer working-id donor DEMIPAD|SC_NAME non-enviroment true)
                             EOC
                             ;;When AQP LIVE, to be replaced by:
                             ;;(ref-AQP::C_Inject <pool-id> <working-id> <cod> <injection-type>)
@@ -1032,7 +1040,7 @@
                     ;;2.2]Save <rem> in <DEMIPAD|T|Ledger> (so that it may be withdrawed by Asset Seller)
                 (XI_DepositForAsset asset-id amount-in-dollars rem type)
                 ;;3]Output Cumulator
-                (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico1 ico2] [])
+                (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico1 ico2 ico3] [])
             )
         )
     )
@@ -1075,7 +1083,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
@@ -1096,7 +1104,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
@@ -1269,7 +1277,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))

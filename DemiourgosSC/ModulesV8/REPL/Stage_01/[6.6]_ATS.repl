@@ -99,7 +99,7 @@
 (namespace "free")
 (let 
     (
-        (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+        (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
         (aoz:string KST.AOZT)
         ;(atsc:string KST.ATSTK)
         ;(ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)

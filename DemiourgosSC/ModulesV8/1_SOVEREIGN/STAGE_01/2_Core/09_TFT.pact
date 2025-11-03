@@ -811,7 +811,7 @@
     (defun UEV_MoveRoleCheck (id:string sender:string receiver:string)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (verum-five:[string] (ref-DPTF::UR_Verum5 id))
                 (lvf:integer (length verum-five))

@@ -205,7 +205,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
             )
             (fold
                 (lambda
@@ -1095,13 +1095,13 @@
         (let
             (
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
                 ;;
                 (cold-r:bool (ref-ATS::UR_ToggleColdRecovery ats))
-                (cold-recovery-info:object{OuronetInfoV3.ClientInfo}
+                (cold-recovery-info:object{OuronetInfoV4.ClientInfoV2}
                     (ref-INFO-ONE::ATS|INFO_ColdRecovery patron recoverer ats ra)
                 )
-                (cull-info:object{OuronetInfoV3.ClientInfo}
+                (cull-info:object{OuronetInfoV4.ClientInfoV2}
                     (ref-INFO-ONE::ATS|INFO_Cull patron recoverer ats)
                 )
                 (cold-recovery-execute-text:[string]
@@ -1137,7 +1137,7 @@
         (let
             (
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
                 ;;
                 (hot-r:bool (ref-ATS::UR_ToggleHotRecovery ats))
                 (hot-recovery-execute-text:[string]
@@ -1154,10 +1154,10 @@
         (let
             (
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV4} INFO-ONE)
+                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
                 ;;
                 (direct-r:bool (ref-ATS::UR_ToggleDirectRecovery ats))
-                (direct-recovery-info:object{OuronetInfoV3.ClientInfo}
+                (direct-recovery-info:object{OuronetInfoV4.ClientInfoV2}
                     (ref-INFO-ONE::ATS|INFO_DirectRecovery patron recoverer ats ra)
                 )
                 (direct-recovery-execute-text:[string]

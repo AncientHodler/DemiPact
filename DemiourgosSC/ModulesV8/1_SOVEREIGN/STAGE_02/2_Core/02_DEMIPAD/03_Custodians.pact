@@ -315,7 +315,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;

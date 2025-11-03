@@ -11,7 +11,23 @@
     (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|SWPLC_ADMIN)))
-    (defcap GOV|SWPLC_ADMIN ()      (enforce-guard GOV|MD_SWPLC))
+    (defcap GOV|SWPLC_ADMIN ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (master:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+                (g1:guard GOV|MD_SWPLC)
+                (g2:guard (ref-DALOS::UR_AccountGuard master))
+            )
+            (enforce-one
+                "SWPLC Ownership not verified"
+                [
+                    (enforce-guard g1)
+                    (enforce-guard g2)
+                ]
+            )
+        )
+    )
     ;;
     (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}

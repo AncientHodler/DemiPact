@@ -127,7 +127,7 @@
     (defun UC_ShortAccount:string (account:string)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
             )
             (ref-I|OURONET::OI|UC_ShortAccount account)
         )
@@ -149,7 +149,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
@@ -635,7 +635,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
@@ -653,7 +653,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
@@ -683,7 +683,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount sender))
                     (ra:string (ref-I|OURONET::OI|UC_ShortAccount receiver))
@@ -718,7 +718,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     (nonce:integer (ref-DPDC-S::UR_NonceOfSet id set-class))
@@ -737,7 +737,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC:module{DpdcV4} DPDC)
                     (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (set-class:integer (ref-DPDC::UR_NonceClass id true nonce))
@@ -1027,7 +1027,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-F:module{DpdcFragmentsV4} DPDC-F)
                     (sf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
@@ -1278,7 +1278,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (ref-EQUITY:module{Equity} EQUITY)
                     ;;

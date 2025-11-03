@@ -234,7 +234,7 @@
     (defun A_MigrateMetaToOrtoFungibleAccount (id:string account:string)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
                 (iz-id:bool (ref-DPOF::UR_IzId id))
             )

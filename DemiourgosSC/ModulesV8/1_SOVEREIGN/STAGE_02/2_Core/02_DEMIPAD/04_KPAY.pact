@@ -173,15 +173,70 @@
     (defun UR_KpayID:string ()
         (at "asset-id" (read KPAY|T|Properties KPAY|INFO ["asset-id"]))
     )
+    (defun UR_GetPeriod:integer ()
+        (let
+            (
+                (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                ;;
+                (KpayID:string (UR_KpayID))
+                (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
+                (present-tm:time (at "block-time" (chain-data)))
+                (three-years:decimal 94608000.0)
+                (period-length:decimal (/ three-years 25.0))  ; 3,784,320 seconds
+                (elapsed:decimal (diff-time present-tm starting-tm))  ; Seconds between present and start
+            )
+            (if (< elapsed 0.0)
+                -1 ;;Before Starting Time
+                (if (>= elapsed three-years)
+                    0 ;;After three years
+                    (if (= elapsed 0.0)
+                        1
+                        (let
+                            (
+                                (p:integer (ceiling (/ elapsed period-length)))
+                            )
+                            (if (> p 25)
+                                25
+                                p
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (defun UR_PeriodAllocation:decimal (period:integer)
+        (enforce (and (>= period -1) (<= period 25)) "Invalid Period")
+        (if (or (= period -1) (= period 0))
+            0.0
+            (let
+                (
+                    (a1:decimal 4.4)
+                    (ak:decimal (- 4.5 (* 0.1 (dec period))))
+                    (sk:decimal (* (/ (dec period) 2.0)(+ a1 ak)))
+                )
+                (+ 20000000 (* sk 1000000.0))
+            )
+        )
+    )
     (defun UR_KpayLeft:decimal ()
+        @doc "Computes how much KPAY can still be bought this Period"
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 ;;
                 (KpayID:string (UR_KpayID))
                 (resident-amount:decimal (ref-DPTF::UR_AccountSupply KpayID DEMIPAD|SC_NAME))
+                (left-for-sale:decimal (* 0.4 resident-amount))
+                (sold:decimal (- 100000000.0 left-for-sale))
+                ;;
+                (period:integer (UR_GetPeriod))
+                (period-allocation:decimal (UR_PeriodAllocation period))
             )
-            (* 0.4 resident-amount)
+            (if (or (= period -1)(= period 0))
+                0.0
+                (- period-allocation sold)
+            )
         )
     )
     (defun UR_KpayPID:decimal (offset:decimal)
@@ -193,11 +248,14 @@
                 (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
                 (present-tm:time (add-time (at "block-time" (chain-data)) offset))
                 (elapsed-tm:decimal (diff-time present-tm starting-tm))
-                (five-years:decimal 157680000.0)
+                (three-years:decimal 94608000.0)
             )
-            (if (> elapsed-tm five-years)
-                -1.0
-                (floor (+ 0.01 (* 0.99 (/ elapsed-tm five-years))) 24)
+            (if (<= elapsed-tm 0.0)
+                0.01
+                (if (> elapsed-tm three-years)
+                    1.0
+                    (floor (+ 0.01 (* 0.99 (/ elapsed-tm three-years))) 24)
+                )
             )
         )
     )
@@ -206,33 +264,105 @@
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPL-UR:module{DeployerReadsV4} DPL-UR)
                 (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (KpayID:string (UR_KpayID))
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (resident-amount:decimal (ref-DPTF::UR_AccountSupply KpayID DEMIPAD|SC_NAME))
+                (left-for-sale:decimal (* 0.4 resident-amount))
+                (sold:decimal (- 100000000.0 left-for-sale))
+                (period:integer (UR_GetPeriod))
+                (period-ceiling:decimal (UR_PeriodAllocation period))
                 (remaining:decimal (UR_KpayLeft))
-                (bought:decimal (- 100000000.0 remaining))
+                (bought:decimal 
+                    (if (or (= period -1)(= period 0))
+                        sold
+                        (- period-ceiling remaining)
+                    )
+                )    
                 (circulating:decimal (* 2.5 bought))
+                ;;
                 (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
                 ;;
                 (single-costs:object{DemiourgosLaunchpadV2.Costs} (URC_KpayAmountCosts 1 0.0))
+                (stage-text:string
+                    (if (= period -1)
+                        "Stage 1 Starts in:"
+                        (if (= period 0)
+                            (format "KPay Sale has concluded")
+                            (format "Stage {}/25" [period])
+                        )
+                        
+                    )
+                )
+                (next-stage-text:string
+                    (if (= period -1)
+                        (format "Genesis Period Ceiling: {} KPAY" [(UR_PeriodAllocation 1)])
+                        (if (= period 0)
+                            (format "KPAY Circulating supply is {}" [circulating])
+                            (if (!= period 25)
+                                (format "Next  Stage Ceiling: {} KPAY" [(UR_PeriodAllocation (+ 1 period))])
+                                (format "Final Stage Ceiling: {} KPAY" [period-ceiling])
+                            )
+                        )
+                    )
+                )
+                (percent-value:string 
+                    (if (or (= period -1) (= period 0))
+                        (ref-DPL-UR::UC_FormatTokenAmount 0.0)
+                        (ref-DPL-UR::UC_FormatTokenAmount (* (/ bought period-ceiling) 100.0))
+                    )
+                )
+                (percent-text:string 
+                    (if (= period -1)
+                        "Sale hasn't started yet."
+                        (if (= period 0)
+                            (format "Sale has Concluded: {}% has been sold." [percent-value])
+                            (format "Sale Progress: {}% of Current Ceiling." [percent-value])
+                        )
+                    )
+                )
+                (ceiling-text:string 
+                    (if (= period -1)
+                        "Sale hasn't started yet."
+                        (if (= period 0)
+                            "Kpay Sale has concluded"
+                            (format "Stage {} Celing: {} KPAY" [period period-ceiling])
+                        )
+                    )
+                )   
             )
-            {"kpay-id"              : KpayID
-            ,"remaining-for-mint"   : remaining
-            ,"minted"               : bought
-            ,"circulating"          : circulating
+            {"stage-text"           : stage-text
+            ,"next-stage-text"      : next-stage-text
             ;;
-            ,"start-date"           : starting-tm
+            ,"sale-progress"        : percent-text
+            ,"ceiling-text"         : ceiling-text
+            ,"sold-text"            : (format "{} KPAY Sold" [bought])
+            ,"remaining-text"       : (format "{} KPAY left for Sale" [(if (= period -1) left-for-sale remaining)])
             ;;
+            ,"your-balance"         : (ref-DPTF::UR_AccountSupply KpayID account)
+            ,"circulating-supply"   : circulating
+            ;;
+            ;;Single Costs
             ,"kpay-pid"             : (at "pid" single-costs)
             ,"kpay-wkda"            : (at "wkda" single-costs)
             ;;
-            ,"native-buy-max"       : (URC_GetMaxBuy account true)
+            ;;Native Buy Maxes
+            ,"native-buy-max"       : (URC_GetMaxBuy account true)      ;; using 10 minutes in the future price to determine max
             ,"wkda-buy-max"         : (URC_GetMaxBuy account false)
             ;;
+            ;;Misc and Direct Values
+            ,"kpay-id"              : KpayID
+            ,"remaining-for-mint"   : remaining
+            ,"minted"               : bought
+            ,"start-date"           : starting-tm
+            ,"period"               : period
+            ,"period-ceiling"       : period-ceiling
             ,"account-kpay"         : (ref-DPTF::UR_AccountSupply KpayID account)
             ,"account-ignis"        : (ref-DPTF::UR_AccountSupply (ref-DALOS::UR_IgnisID) account)
-            ,"ignis-collection"     : (ref-DALOS::UR_VirtualToggle)}
+            ,"ignis-collection"     : (ref-DALOS::UR_VirtualToggle)
+            ,"open-for-business"    : (ref-DPAD::UR_OpenForBusiness KpayID)
+            }
         )
     )
     ;;{F1}  [URC]
@@ -293,7 +423,7 @@
                 (future-ten-minute-price:decimal (UR_KpayPID 600.0))
                 (present-price:decimal (UR_KpayPID 0.0))
                 (kpay-price:decimal
-                    (if (= future-ten-minute-price -1.0)
+                    (if (= present-price future-ten-minute-price)
                         present-price
                         future-ten-minute-price
                     )
@@ -313,10 +443,14 @@
                         (floor (/ client-kadena-value-in-dollarz kpay-price))
                     )
                 )
+                (period:integer (UR_GetPeriod))
             )
-            (if (<= can-buy-with-client-supply still-for-sale)
-                can-buy-with-client-supply
-                still-for-sale
+            (if (or (= period -1) (= period 0))
+                0
+                (if (<= can-buy-with-client-supply still-for-sale)
+                    can-buy-with-client-supply
+                    still-for-sale
+                )
             )
         )
     )
@@ -332,7 +466,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     ;;

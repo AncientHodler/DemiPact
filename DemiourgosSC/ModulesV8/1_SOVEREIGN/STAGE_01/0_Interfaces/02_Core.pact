@@ -281,16 +281,18 @@
     (defun XE_UpdateFeeExemptionRole (account:string snake-or-gas:bool new-fee-exemption:bool))
     (defun XE_UpdateTransferRole (account:string snake-or-gas:bool new-transfer:bool))
 )
-(interface OuronetInfoV3
-    @doc "Holds Information Schemas"
+(interface OuronetInfoV4
+    @doc "Holds Information Schemas \
+    \ V4 brings <output> field with ClientInfoV2"
     ;;
     ;;  SCHEMAS
     ;;
-    (defschema ClientInfo
+    (defschema ClientInfoV2
         pre-text:[string]
         post-text:[string]
         ignis:object{ClientIgnisCosts}
         kadena:object{ClientKadenaCosts}
+        output:list
     )
     (defschema ClientIgnisCosts
         ignis-discount:decimal
@@ -324,7 +326,7 @@
     ;;
     ;;  [UDC] Functions
     ;;
-    (defun OI|UDC_ClientInfo:object{ClientInfo} (a:[string] b:[string] c:object{ClientIgnisCosts} d:object{ClientKadenaCosts}))
+    (defun OI|UDC_ClientInfo:object{ClientInfoV2} (a:[string] b:[string] c:object{ClientIgnisCosts} d:object{ClientKadenaCosts} e:list))
     (defun OI|UDC_ClientIgnisCosts:object{ClientIgnisCosts} (a:decimal b:decimal c:decimal d:string))
     (defun OI|UDC_ClientKadenaCosts:object{ClientKadenaCosts} (a:decimal b:decimal c:decimal d:[decimal] e:[string] f:string))
         ;;
@@ -337,21 +339,22 @@
     (defun OI|UDC_NoIgnisCosts:object{ClientIgnisCosts} ())
     (defun OI|UDC_DynamicIgnisCost:object{ClientIgnisCosts} (patron:string ifp:decimal))
 )
-(interface DalosInfoV3
-    @doc "Exposes Information Function for the Dalos Client Functions"
+(interface DalosInfoV4
+    @doc "Exposes Information Function for the Dalos Client Functions \
+    \ V4 moves to OuronetInfoV2.ClientInfoV2"
     ;;
     ;;
     ;;  [URC] Functions
     ;;
-    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfoV3.ClientInfo} (account:string))
-    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfoV3.ClientInfo} (account:string))
-    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_UpdateEliteAccount:object{OuronetInfoV3.ClientInfo} (patron:string account:string))
-    (defun DALOS-INFO|URC_UpdateEliteAccountSquared:object{OuronetInfoV3.ClientInfo} (patron:string sender:string receiver:string))
+    (defun DALOS-INFO|URC_ControlSmartAccount:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_DeploySmartAccount:object{OuronetInfoV4.ClientInfoV2} (account:string))
+    (defun DALOS-INFO|URC_DeployStandardAccount:object{OuronetInfoV4.ClientInfoV2} (account:string))
+    (defun DALOS-INFO|URC_RotateGovernor:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateGuard:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateKadena:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_RotateSovereign:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_UpdateEliteAccount:object{OuronetInfoV4.ClientInfoV2} (patron:string account:string))
+    (defun DALOS-INFO|URC_UpdateEliteAccountSquared:object{OuronetInfoV4.ClientInfoV2} (patron:string sender:string receiver:string))
 )
 ;;
 ;;  [Branding]

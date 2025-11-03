@@ -1374,11 +1374,14 @@
     (
         ;(ref-DALOS:module{OuronetDalosV6} DALOS)
         ;(ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+        
         (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-TS01-C3:module{TalosStageOne_ClientThreeV2} TS01-C3)
         ;(ref-SWP:module{SwapperV6} SWP)
         ;(swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
         ;(pool1:string "W|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
         ;(pool2:string "S|DLK-98c486052a51|OURO-98c486052a51|DWK-98c486052a51")
         ;(pool3:string "P|OURO-98c486052a51|PKOSON-98c486052a51")
@@ -1424,6 +1427,12 @@
         ;(format "Burn role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleBurn pool8-lp swp-sc)])
         ;(format "Mint role for LP on SWP-SC is {}" [(ref-DPTF::UR_AccountRoleMint pool8-lp swp-sc)])
         ;(format "Pool8-LP Owner is {}" [(ref-DPTF::UR_Konto pool8-lp)])
+        (ref-TS01-C1::DPTF|C_MultiTransfer patron 
+            ["OURO-98c486052a51" "TEUR-98c486052a51" "EURT-98c486052a51" "EURC-98c486052a51" "EURD-98c486052a51" "AEUR-98c486052a51" "CEUR-98c486052a51"]
+            patron emma
+            [730.0 277.0 330.0 450.0 554.0 332.0 170.0]
+            false
+        )
     ]
     
 )
@@ -1452,6 +1461,7 @@
 (env-sigs 
     [   
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
     ]
 )
 
@@ -1459,25 +1469,41 @@
     (
         (ref-TS01-CP:module{TalosStageOne_ClientPactsV5} TS01-CP)
         (patron:string KST.ANHD)
+        (emma:string KST.EMMA)
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
-        (ia:[decimal] [730.0 250.0 330.0 450.0 554.0 332.0 0.0])
-        (liq-info:object{OuronetInfoV3.ClientInfo} 
-            (free.INFO-ONE.SWP|INFO_AddLiquidity
-                patron patron pool8 ia 1.0
-            )
-        )
+        (ia:[decimal] [730.0 277.0 330.0 450.0 554.0 332.0 170.0])
+        ;(liq-info:object{OuronetInfoV4.ClientInfoV2} 
+        ;    (free.INFO-ONE.SWP|INFO_AddLiquidity
+        ;        patron patron pool8 ia 1.0
+        ;    )
+        ;)
+        (kda-pid:decimal 1.0)
+        ;;
+        ;;FUNCTION 0
+        (function-zero:list (ref-TS01-CP::SWP|F0|A_AddStandardLiquidity emma emma pool8 ia kda-pid))
+        ;;
+        (yielded-pool-state:object{SwapperLiquidityV2.PoolState} (at "pool-state" (at 1 function-zero)))
+        (yielded-ld:object{SwapperLiquidityV2.LiquidityData} (at "ld" (at 1 function-zero)))
+        (yielded-clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData} (at "clad" (at 1 function-zero)))
+        ;;
+        ;;FUNCTION 1
+        (function-one:list (ref-TS01-CP::SWP|F1|A_AddStandardLiquidity emma emma pool8 ia kda-pid yielded-pool-state yielded-ld yielded-clad))
+        (yielded-primary-lp-amount:decimal (at "primary-lp-amount" (at 1 function-one)))
+        (yielded-secondary-lp-amount:decimal (at "secondary-lp-amount" (at 1 function-one)))
+        ;;
+        
+
     )
     [
-        (ref-TS01-CP::SWP|C_AddStandardLiquidity
-            patron
-            patron
-            pool8
-            ia
-        )
-        ;(format "LQ INFO STANDARD LIQ IZ {}" [liq-info])
-        ;(pact-state)
+        ;;FUNCTION 2
+        (ref-TS01-CP::SWP|F2|A_AddStandardLiquidity emma emma pool8 ia kda-pid yielded-primary-lp-amount yielded-secondary-lp-amount)
+        ;(ref-TS01-CP::SWP|C_AddStandardLiquidity
+        ;    emma
+        ;    emma
+        ;    pool8
+        ;    ia
+        ;)
     ]
-    
 )
 
 (print "")
@@ -1498,10 +1524,12 @@
 (env-sigs 
     [   
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
     ]
 )
 
-(continue-pact 1 false "2n12TVKIdyigszwESxXUSOkAtK48XfsKcVoUGxWYSSE")
+true
+;(continue-pact 1 false "2n12TVKIdyigszwESxXUSOkAtK48XfsKcVoUGxWYSSE")
 
 
 (print "")
@@ -1523,10 +1551,12 @@
 (env-sigs 
     [   
         { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
     ]
 )
 
-(continue-pact 2 false "2n12TVKIdyigszwESxXUSOkAtK48XfsKcVoUGxWYSSE")
+true
+;;(continue-pact 2 false "2n12TVKIdyigszwESxXUSOkAtK48XfsKcVoUGxWYSSE")
 
 
 (print "")
@@ -2446,7 +2476,7 @@
         (patron:string KST.ANHD)
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
         (ia:[decimal] [730.0 250.0 330.0 450.0 554.0 332.0 450.0])
-        ;(liq-info:object{OuronetInfoV3.ClientInfo} 
+        ;(liq-info:object{OuronetInfoV4.ClientInfoV2} 
         ;    (free.INFO-ONE.SWP|INFO_AddLiquidity
         ;        patron patron pool8 ia 1.0
         ;    )
@@ -2543,7 +2573,7 @@
         (ia:[decimal] [730.0 250.0 330.0 450.0 554.0 332.0 450.0])
         (ias:[decimal] [200.0 1000.0])
         (ias2:[decimal] [0.0 1000.0])
-        ;(liq-info:object{OuronetInfoV3.ClientInfo} 
+        ;(liq-info:object{OuronetInfoV4.ClientInfoV2} 
         ;    (free.INFO-ONE.SWP|INFO_AddLiquidity
         ;        patron patron pool8 ia 1.0
         ;    )
@@ -2696,12 +2726,12 @@
         (pool8:string "W|OURO-98c486052a51|TEUR-98c486052a51|EURT-98c486052a51|EURC-98c486052a51|EURD-98c486052a51|AEUR-98c486052a51|CEUR-98c486052a51")
         (s-vst:string "Z|VST-98c486052a51")
         (s-ouro:string "Z|OURO-98c486052a51")
-        ;(liq-info:object{OuronetInfoV3.ClientInfo} 
+        ;(liq-info:object{OuronetInfoV4.ClientInfoV2} 
         ;    (free.INFO-ONE.SWP|INFO_AddLiquidity
         ;        patron patron pool8 ia 1.0
         ;    )
         ;)
-        (sleeping-info:object{OuronetInfoV3.ClientInfo}
+        (sleeping-info:object{OuronetInfoV4.ClientInfoV2}
             (free.INFO-ONE.SWP|INFO_SleepingLiquidity
                 patron emma pool8 s-ouro 1 1.0
             )
@@ -2805,12 +2835,12 @@
         (patron:string KST.ANHD)
         (pool:string "P|OURO-98c486052a51|VST-98c486052a51")
         (f-vst:string "F|VST-98c486052a51")
-        ;(liq-info:object{OuronetInfoV3.ClientInfo} 
+        ;(liq-info:object{OuronetInfoV4.ClientInfoV2} 
         ;    (free.INFO-ONE.SWP|INFO_AddLiquidity
         ;        patron patron pool8 ia 1.0
         ;    )
         ;)
-        (frozen-info:object{OuronetInfoV3.ClientInfo}
+        (frozen-info:object{OuronetInfoV4.ClientInfoV2}
             (free.INFO-ONE.SWP|INFO_FrozenLiquidity
                 patron patron pool f-vst 50000.0 1.0
             )
@@ -3886,4 +3916,7 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
 

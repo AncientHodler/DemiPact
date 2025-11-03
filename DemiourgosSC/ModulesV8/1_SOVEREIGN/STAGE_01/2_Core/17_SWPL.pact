@@ -11,7 +11,23 @@
     (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|SWPL_ADMIN)))
-    (defcap GOV|SWPL_ADMIN ()       (enforce-guard GOV|MD_SWPL))
+    (defcap GOV|SWPL_ADMIN ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (master:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+                (g1:guard GOV|MD_SWPL)
+                (g2:guard (ref-DALOS::UR_AccountGuard master))
+            )
+            (enforce-one
+                "SWPL Ownership not verified"
+                [
+                    (enforce-guard g1)
+                    (enforce-guard g2)
+                ]
+            )
+        )
+    )
     ;;
     (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
@@ -301,7 +317,6 @@
                 (ref-U|LST:module{StringProcessor} U|LST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-SWP:module{SwapperV6} SWP)

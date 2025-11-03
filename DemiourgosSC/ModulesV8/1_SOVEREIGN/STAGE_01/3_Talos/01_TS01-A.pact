@@ -191,7 +191,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
@@ -205,7 +205,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeployStandardAccount account guard kadena public)
@@ -269,7 +269,7 @@
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_UpdatePublicKey account new-public)

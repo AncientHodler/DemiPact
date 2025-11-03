@@ -21,10 +21,33 @@
     (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer))
     ;;
 )
+(interface SparksV2
+    ;;
+    ;;  [UR]
+    ;;
+    (defun UR_SparkID:string ())
+    (defun UR_IzOpenForBusiness:bool ())
+    (defun UR_FrozenSparkID:string ())
+    (defun UR_Sparks (account:string))
+    ;;
+    ;;  [URC]
+    ;;
+    (defun URC_GetMaxBuy:integer (account:string native:bool))
+    (defun URC_SparkCost:decimal ())
+    (defun URC_SparkRedemptionCost:decimal ())
+    (defun URC_AccountRedemptionAmount:decimal (account:string))
+    ;;
+    ;;  [C]
+    ;;
+    (defun C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
+    (defun C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
+    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal))
+    ;;
+)
 (module DEMIPAD-SPARK GOV
     ;;
     (implements OuronetPolicy)
-    (implements Sparks)
+    (implements SparksV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -151,6 +174,7 @@
             )
             (enforce (<= amount remaining-supply) "Remaining Amount surpassed!")
             (compose-capability (P|PAD-SPARK|REMOTE-GOV))
+            (compose-capability (P|SECURE-CALLER))
         )
     )
     (defcap SPARK|C>REEDEM-ALL (account-to-redeem:string)
@@ -161,14 +185,14 @@
                 (spark-id:string (UR_SparkID))
                 (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account-to-redeem))
             )
-            (compose-capability SPARK|C>X_REEDEM account-to-redeem supply)
+            (compose-capability (SPARK|C>X_REEDEM account-to-redeem supply))
         )
     )
-    (defcap SPARK|C>REEDEM-FEW (account-to-redeem:string redemption-quantity:integer)
+    (defcap SPARK|C>REEDEM-FEW (account-to-redeem:string redemption-quantity:decimal)
         @event
-        (compose-capability SPARK|C>X_REEDEM account-to-redeem redemption-quantity)
+        (compose-capability (SPARK|C>X_REEDEM account-to-redeem redemption-quantity))
     )
-    (defcap SPARK|C>X_REEDEM (account-to-redeem:string redemption-quantity:integer)
+    (defcap SPARK|C>X_REEDEM (account-to-redeem:string redemption-quantity:decimal)
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
@@ -178,8 +202,8 @@
             (ref-DPTF::CAP_Owner spark-id)
             (enforce 
                 (and
-                    (> redemption-quantity 0)
-                    (<= (dec redemption-quantity) supply)
+                    (> redemption-quantity 0.0)
+                    (<= redemption-quantity supply)
                 )
                 "Invalid Redemmption Amount"
             )
@@ -375,7 +399,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-TFT:module{TrueFungibleTransferV9} TFT)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     ;;
@@ -410,31 +434,30 @@
             )
         )
     )
-    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer)
+    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal)
         (with-capability (SPARK|C>REEDEM-FEW account-to-redeem redemption-quantity)
             (XI_RedeemSparks patron redemption-payer account-to-redeem redemption-quantity)
         )
     )
     ;;{F7}  [X]
     (defun XI_RedeemSparks 
-        (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer)
+        (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal)
         (require-capability (SECURE))
         (let
             (
                 (ref-U|CT:module{OuronetConstants} U|CT)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV9} TFT)
                 (ref-VST:module{VestingV5} VST)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 ;;
                 (spark-id:string (UR_SparkID))
-                (spark-redemption-cost:decimal URC_SparkRedemptionCost)
+                (spark-redemption-cost:decimal (URC_SparkRedemptionCost))
                 (redemption-value:decimal (floor (* spark-redemption-cost redemption-quantity) kda-prec))
                 (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
-                (ra:decimal (dec redemption-quantity))
                 (sa-atr:string (ref-I|OURONET::OI|UC_ShortAccount account-to-redeem))
             )
             (ref-IGNIS::C_Collect patron
@@ -445,13 +468,13 @@
                         ;;2]Freeze <account-to-redeem>
                         (ref-DPTF::C_ToggleFreezeAccount spark-id account-to-redeem true)
                         ;;3]Partial Wipe <spark-id>
-                        (ref-DPTF::C_WipePartial spark-id account-to-redeem ra)
+                        (ref-DPTF::C_WipeSlim spark-id account-to-redeem redemption-quantity)
                         ;;4]Unfreeze <account-to-redeem>
-                        (ref-DPTF::C_ToggleFreezeAccount spark-id account-to-redeem true)
+                        (ref-DPTF::C_ToggleFreezeAccount spark-id account-to-redeem false)
                         ;;5]Remint wiped amount to <DEMIPAD|SC_NAME>
-                        (ref-DPTF::C_Mint spark-id DEMIPAD|SC_NAME ra false)
+                        (ref-DPTF::C_Mint spark-id DEMIPAD|SC_NAME redemption-quantity false)
                         ;;6]Freeze it to back to <account-to-redeem>
-                        (ref-VST::C_Freeze DEMIPAD|SC_NAME account-to-redeem spark-id ra)
+                        (ref-VST::C_Freeze DEMIPAD|SC_NAME account-to-redeem spark-id redemption-quantity)
                     ]
                     []
                 )

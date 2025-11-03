@@ -1,4 +1,4 @@
-(module MTX-SWP GOV
+(module MTX-SWP-V2 GOV
     ;;
     (implements OuronetPolicy)
     (implements SwapperMtxV3)
@@ -11,7 +11,23 @@
     (defconst SWP|SC_NAME           (GOV|SWP|SC_NAME))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|MTX-SWP_ADMIN)))
-    (defcap GOV|MTX-SWP_ADMIN ()    (enforce-guard GOV|MD_MTX-SWP))
+    (defcap GOV|MTX-SWP_ADMIN ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (master:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+                (g1:guard GOV|MD_MTX-SWP)
+                (g2:guard (ref-DALOS::UR_AccountGuard master))
+            )
+            (enforce-one
+                "MTX-SWP-V2 Ownership not verified"
+                [
+                    (enforce-guard g1)
+                    (enforce-guard g2)
+                ]
+            )
+        )
+    )
     ;;
     (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
@@ -24,22 +40,19 @@
     (deftable P|T:{OuronetPolicy.P|S})
     (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
-    (defcap P|MTX-SWP|CALLER ()
+    (defcap P|MTX-SWP-V2|CALLER ()
         true
     )
-    (defcap P|MTX-SWP|REMOTE-GOV ()
-        true
-    )
-    (defcap P|MTX-SWP|GAS-STATION-ACCESS ()
+    (defcap P|MTX-SWP-V2|REMOTE-GOV ()
         true
     )
     (defcap P|SECURE-CALLER ()
-        (compose-capability (P|MTX-SWP|CALLER))
+        (compose-capability (P|MTX-SWP-V2|CALLER))
         (compose-capability (SECURE))
     )
     (defcap P|DT ()
-        (compose-capability (P|MTX-SWP|REMOTE-GOV))
-        (compose-capability (P|MTX-SWP|CALLER))
+        (compose-capability (P|MTX-SWP-V2|REMOTE-GOV))
+        (compose-capability (P|MTX-SWP-V2|CALLER))
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
@@ -87,19 +100,15 @@
                 (ref-P|SWPT:module{OuronetPolicy} SWPT)
                 (ref-P|SWP:module{OuronetPolicy} SWP)
                 (ref-P|SWPL:module{OuronetPolicy} SWPL)
-                (mg:guard (create-capability-guard (P|MTX-SWP|CALLER)))
-            )
-            (ref-P|DALOS::P|A_Add
-                "MTX-SWP|GasStationAccess"
-                (create-capability-guard (P|MTX-SWP|GAS-STATION-ACCESS))
+                (mg:guard (create-capability-guard (P|MTX-SWP-V2|CALLER)))
             )
             (ref-P|VST::P|A_Add
-                "MTX-SWP|RemoteSwpGov"
-                (create-capability-guard (P|MTX-SWP|REMOTE-GOV))
+                "MTX-SWP-V2|RemoteSwpGov"
+                (create-capability-guard (P|MTX-SWP-V2|REMOTE-GOV))
             )
             (ref-P|SWP::P|A_Add
-                "MTX-SWP|RemoteSwpGov"
-                (create-capability-guard (P|MTX-SWP|REMOTE-GOV))
+                "MTX-SWP-V2|RemoteSwpGov"
+                (create-capability-guard (P|MTX-SWP-V2|REMOTE-GOV))
             )
             (ref-P|BRD::P|A_AddIMP mg)
             (ref-P|DPTF::P|A_AddIMP mg)
@@ -325,6 +334,182 @@
         )
     )
     ;;{F6.P}  [MTX|C]
+    (defun MTX|Step0|C_AddStandardLiquidity
+        (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+        (UEV_IMC)
+        (with-capability (MTX-SWP|S>ADD-LQ kda-pid)
+            (MTX|F0|C_AddLiquidity patron account swpair input-amounts true true kda-pid)
+        )
+    )
+    (defun MTX|Step1|C_AddStandardLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal
+            ;;
+            yielded-pool-state:object{SwapperLiquidityV2.PoolState} 
+            yielded-ld:object{SwapperLiquidityV2.LiquidityData} 
+            yielded-clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData}
+        )
+        (UEV_IMC)
+        (MTX|F1|C_AddLiquidity patron account swpair input-amounts true true kda-pid
+            yielded-pool-state yielded-ld yielded-clad
+        )
+    )
+    (defun MTX|Step2|C_AddStandardLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal
+            ;;
+            yielded-primary-lp-amount:decimal
+            yielded-secondary-lp-amount:decimal
+        )
+        (UEV_IMC)
+        (MTX|F2|C_AddLiquidity patron account swpair input-amounts true true kda-pid
+            yielded-primary-lp-amount
+            yielded-secondary-lp-amount
+        )
+    )
+    ;;
+    (defun MTX|F0|C_AddLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] 
+            asymmetric-collection:bool gaseous-collection:bool kda-pid:decimal
+        )
+        (UEV_IMC)
+        (let
+            (
+                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+                ;;
+                (pool-state:object{SwapperLiquidityV2.PoolState}
+                    (UR_PoolState swpair)
+                )
+                (ld:object{SwapperLiquidityV2.LiquidityData}
+                    (ref-SWPL::URC_LD swpair input-amounts)
+                )
+                (clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData}
+                    (ref-SWPL::URC|KDA-PID_CLAD 
+                        account swpair ld asymmetric-collection gaseous-collection kda-pid
+                    )
+                )
+            )
+            (require-capability (MTX-SWP|S>ADD-LQ kda-pid))
+            (ref-IGNIS::C_Collect patron 
+                (ref-IGNIS::UDC_ConstructOutputCumulator 100.0 SWP|SC_NAME false [])
+            )
+            ;;Output
+            [
+                (format "MTX LqAdd. computed succesfully and collected {} IGNIS before discounts; 1|3" [100.0])
+                {"pool-state"   : pool-state
+                ,"ld"           : ld
+                ,"clad"         : clad}
+            ]
+        )
+    )
+    (defun MTX|F1|C_AddLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] 
+            asymmetric-collection:bool gaseous-collection:bool kda-pid:decimal
+            ;;
+            yielded-pool-state:object{SwapperLiquidityV2.PoolState} 
+            yielded-ld:object{SwapperLiquidityV2.LiquidityData} 
+            yielded-clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData}
+        )
+        (UEV_IMC)
+        (let
+            (
+                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+                ;;
+                (current-pool-state:object{SwapperLiquidityV2.PoolState} (UR_PoolState swpair))
+                (primary:decimal (at "primary-lp" yielded-clad))
+                (secondary:decimal (at "secondary-lp" yielded-clad))
+                (sum-lp:decimal (+ primary secondary))
+            )
+            (enforce 
+                (= yielded-pool-state current-pool-state) 
+                "Execution Step of Adding Liquidity cannot execute on altered pool state!"
+            )
+            (ref-IGNIS::C_Collect patron 
+                (at "perfect-ignis-fee" (at "clad-op" yielded-clad))
+            )
+            (if (and asymmetric-collection gaseous-collection)
+                (with-capability (MTX-SWP|C>ADD-STANDARD-LQ swpair yielded-ld)
+                    ;;<asymmetric-collection=true> <gaseous-collection=true>
+                    (ref-SWPL::XE|KDA-PID_AddLiqudity 
+                        account swpair asymmetric-collection gaseous-collection kda-pid yielded-ld yielded-clad
+                    )
+                )
+                (if gaseous-collection
+                    (with-capability (MTX-SWP|C>ADD-ICED-LQ swpair yielded-ld)
+                        ;;<asymmetric-collection=false> <gaseous-collection=true>
+                        (ref-SWPL::XE|KDA-PID_AddLiqudity 
+                            account swpair asymmetric-collection gaseous-collection kda-pid yielded-ld yielded-clad
+                        )
+                    )
+                    (with-capability (MTX-SWP|C>ADD-GLACIAL-LQ swpair yielded-ld)
+                        ;;<asymmetric-collection=false> <gaseous-collection=false>
+                        (ref-SWPL::XE|KDA-PID_AddLiqudity 
+                            account swpair asymmetric-collection gaseous-collection kda-pid yielded-ld yielded-clad
+                        )
+                    )
+                )
+            )
+            [
+                (format "Succesfully Added Liquidity on {} and minted {} LP; 2|3" [swpair sum-lp])
+                {"primary-lp-amount"    : primary
+                ,"secondary-lp-amount"  : secondary}
+            ]
+        )
+    )
+    (defun MTX|F2|C_AddLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] 
+            asymmetric-collection:bool gaseous-collection:bool kda-pid:decimal
+            ;;
+            yielded-primary-lp-amount:decimal
+            yielded-secondary-lp-amount:decimal
+        )
+        (UEV_IMC)
+        (with-capability (P|DT)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-VST:module{VestingV5} VST)
+                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+                    ;;
+                    (lp-id:string (ref-SWP::UR_TokenLP swpair))
+                    (ico1:object{IgnisCollectorV2.OutputCumulator}
+                        (if (!= yielded-primary-lp-amount 0.0)
+                            (ref-TFT::C_Transfer lp-id SWP|SC_NAME account yielded-primary-lp-amount true)
+                            EOC
+                        )
+                    )
+                    (ico2:object{IgnisCollectorV2.OutputCumulator}
+                        (if (not asymmetric-collection)
+                            (ref-VST::C_Freeze SWP|SC_NAME account lp-id yielded-secondary-lp-amount)
+                            EOC
+                        )
+                    )
+                )
+                ;;Autonomous Swap Mangement
+                (ref-SWPL::XE_AutonomousSwapManagement swpair)
+                ;;Collect Last Gas
+                (ref-IGNIS::C_Collect patron 
+                    (ref-IGNIS::UDC_ConcatenateOutputCumulators 
+                        [ico1 ico2] 
+                        []
+                    ) 
+                )
+                (if (not asymmetric-collection)
+                    (format "Succesfully moved {} Native LP and {} Frozen LP to client; 3|3" [yielded-primary-lp-amount yielded-secondary-lp-amount])
+                    (format "Succesfully moved {} Native LP to client; 2|2" [yielded-primary-lp-amount])
+                )
+            )
+        )
+    )
+    ;;
+    ;;
     (defpact MTX|C_AddLiquidity 
         (
             patron:string account:string swpair:string input-amounts:[decimal] 

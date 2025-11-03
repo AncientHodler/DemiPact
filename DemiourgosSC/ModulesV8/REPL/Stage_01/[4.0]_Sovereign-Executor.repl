@@ -111,7 +111,7 @@
         (ref-P|SWPL:module{OuronetPolicy} SWPL)
         (ref-P|SWPLC:module{OuronetPolicy} SWPLC)
         (ref-P|SWPU:module{OuronetPolicy} SWPU)
-        (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP)
+        (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP-V2)
         ;;
         (ref-P|TS01-A:module{OuronetPolicy} TS01-A)
         (ref-P|TS01-C1:module{OuronetPolicy} TS01-C1)
@@ -289,7 +289,7 @@
         (vst-sc:string (ref-DALOS::GOV|VST|SC_NAME))
         (liquid-sc:string (ref-DALOS::GOV|LIQUID|SC_NAME))
         (ouroboros-sc:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
-        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME) )
+        (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
     )
     [
         (ref-TS01-A::DALOS|A_DeploySmartAccount
@@ -385,7 +385,7 @@
                 [
                     (create-capability-guard (VST.VST|GOV))
                     (ref-P|VST::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|VST::P|UR "MTX-SWP|RemoteSwpGov")
+                    (ref-P|VST::P|UR "MTX-SWP-V2|RemoteSwpGov")
                 ]
             )
         )
@@ -402,7 +402,7 @@
                     (ref-P|SWP::P|UR "SWPU|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPI|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|SWP::P|UR "MTX-SWP|RemoteSwpGov")
+                    (ref-P|SWP::P|UR "MTX-SWP-V2|RemoteSwpGov")
                 ]
             )
         )
@@ -457,7 +457,7 @@
                 dalos
                 ["Ouroboros" "Auryn" "EliteAuryn" "Ignis" "DalosWrappedKadena" "DalosLiquidKadena"]
                 ["OURO" "AURYN" "ELITEAURYN" "GAS" "DWK" "DLK"]
-                [24 24 24 24 24 24]
+                [24 24 24 24 12 24]
                 [true true true true true true]         ;;can change owner
                 [true true true true true true]         ;;can upgrade
                 [true true true true true true]         ;;can can-add-special-role

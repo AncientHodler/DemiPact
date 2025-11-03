@@ -149,7 +149,7 @@
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-            (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
+            (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
             (patron:string KST.ANHD)
             (ids:list
                 (ref-TS01-C1::DPTF|C_Issue
@@ -293,12 +293,6 @@
     ]
 )
 
-;"Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
-;"DHN-vQePGHkCAkR1"
-;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DALOS.GAS_PAYER "" 0 0.0)
-;(IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
-;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
-
 
 (print "")
 (print "")
@@ -434,6 +428,7 @@
             ;;Defines the starting point, which is the base for the price and ending period.
             (ref-TS02-DPAD::A_DefinePrice KpayID
                 {"starting-time" : (at "block-time" (chain-data))}
+                ;{"starting-time": (time "2030-10-25T18:00:00Z")}
             )
             (ref-TS02-DPAD::A_ToggleOpenForBusiness KpayID true)
         ]

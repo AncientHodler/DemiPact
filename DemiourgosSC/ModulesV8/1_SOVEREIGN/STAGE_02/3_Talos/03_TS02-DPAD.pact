@@ -71,6 +71,7 @@
     (defun P|A_Define ()
         (let
             (
+                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                 (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
                 (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
                 (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
@@ -78,11 +79,13 @@
                 (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
+            (ref-P|TS01-A::P|A_AddIMP mg)
             (ref-P|DPAD::P|A_AddIMP mg)
             (ref-P|SPARK::P|A_AddIMP mg)
             (ref-P|SNAKES::P|A_AddIMP mg)
             (ref-P|CUSTODIANS::P|A_AddIMP mg)
             (ref-P|KPAY::P|A_AddIMP mg)
+
         )
     )
     (defun UEV_IMC ()
@@ -115,7 +118,7 @@
     (defun UC_ShortAccount:string (account:string)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
             )
             (ref-I|OURONET::OI|UC_ShortAccount account)
         )
@@ -202,9 +205,23 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (retrieval-amount:decimal (ref-DEMIPAD::UR_Funds asset-id type))
+                    (working-id:string
+                        (if (= type 1)
+                            (ref-DALOS::UR_WrappedKadenaID)
+                            (if (= type 2)
+                                (ref-DALOS::UR_LiquidKadenaID)
+                                (ref-DALOS::UR_OuroborosID)
+                            )
+                        )
+                    )
+                    (sd:string (ref-I|OURONET::OI|UC_ShortAccount destination))
                 )
                 (ref-DEMIPAD::C_Withdraw patron asset-id type destination)
+                (format "Succesfuly withdrawn {} {} from Demipad to {}." [retrieval-amount working-id sd])
             )
         )
     )
@@ -234,7 +251,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
@@ -250,7 +267,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
@@ -287,7 +304,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
@@ -303,7 +320,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
@@ -320,9 +337,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
+                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_BuySparks patron buyer sparks-amount iz-native)
+                (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
     )
@@ -330,7 +349,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemAllSparks patron redemption-payer account-to-redeem)
             )
@@ -340,7 +359,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{Sparks} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemFewSparks patron redemption-payer account-to-redeem redemption-quantity)
             )
@@ -351,9 +370,11 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ref-SNAKES:module{SaleSnakesV2} DEMIPAD-SNAKES)
                 )
                 (ref-SNAKES::C_Acquire patron buyer nonce amount iz-native)
+                (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
     )
@@ -361,9 +382,11 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ref-CUSTODIANS:module{SaleCustodiansV2} DEMIPAD-CUSTODIANS)
                 )
                 (ref-CUSTODIANS::C_Acquire patron buyer nonce amount iz-native)
+                (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
     )
@@ -371,9 +394,16 @@
         (with-capability (P|TS)
             (let
                 (
+                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ref-KPAY:module{KadenaPay} DEMIPAD-KPAY)
                 )
                 (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (if iz-native
+                    (format "Succesfully acquired {} KPAY with Native Kadena" [kpay-amount])
+                    (format "Succesfully acquired {} KPAY with WKDA" [kpay-amount])
+                )
+                
             )
         )
     )

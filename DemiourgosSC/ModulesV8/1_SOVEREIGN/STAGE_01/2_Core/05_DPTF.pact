@@ -11,7 +11,23 @@
     (defconst GOV|MD_DPTF           (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
     (defcap GOV ()                  (compose-capability (GOV|DPTF_ADMIN)))
-    (defcap GOV|DPTF_ADMIN ()       (enforce-guard GOV|MD_DPTF))
+    (defcap GOV|DPTF_ADMIN ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (master:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+                (g1:guard GOV|MD_DPTF)
+                (g2:guard (ref-DALOS::UR_AccountGuard master))
+            )
+            (enforce-one
+                "DPTF Ownership not verified"
+                [
+                    (enforce-guard g1)
+                    (enforce-guard g2)
+                ]
+            )
+        )
+    )
     ;;{G3}
     (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
@@ -552,9 +568,9 @@
                             )
                         )
                     )
-                    (enforce (>= debit-result lowest-dispo) "Cannot Debit OURO, dispo capabilities exceeded!")
+                    (enforce (>= debit-result lowest-dispo) (format "Cannot Debit OURO from {}, dispo capabilities exceeded!" [account]))
                 )
-                (enforce (>= debit-result 0.0) (format "Cannot Debit DPTF {] into the negatives" [id]))
+                (enforce (>= debit-result 0.0) (format "Cannot Debit DPTF {} from {} into the negatives" [id account]))
             )
             (if wipe-mode
                 (CAP_Owner id)
@@ -2386,7 +2402,9 @@
             )
             (if (URC_IzCoreDPTF id)
                 ;;Updates for Core Tokens
-                (ref-DALOS::XB_UpdateBalance account (= id (ref-DALOS::UR_OuroborosID)) new-balance)
+                (with-capability (P|DPTF|CALLER)
+                    (ref-DALOS::XB_UpdateBalance account (= id (ref-DALOS::UR_OuroborosID)) new-balance)
+                )
                 ;;Updates for Non Core Tokens
                 (XII_UpdateBalance id account new-balance)
             )

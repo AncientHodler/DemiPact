@@ -998,6 +998,7 @@
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         ;;
@@ -1020,7 +1021,7 @@
     (env-sigs
         [   
             { "key": "PK_AncientHodler", "caps": [] }
-            ;{ "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
             { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
               "caps": 
                 [
@@ -1036,7 +1037,7 @@
                     (coin.TRANSFER 
                         "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        250.0       ;;total-kadena-amount
+                        2500.0       ;;total-kadena-amount
                     )
                     ;;
                     ;;
@@ -1045,25 +1046,25 @@
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        25.0        ;;(at "amount-one" prices-obj)
+                        250.0        ;;(at "amount-one" prices-obj)
                     )
                     ;;<amount-two> to <receiver-two>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        50.0        ;;(at "amount-two" prices-obj)
+                        500.0        ;;(at "amount-two" prices-obj)
                     )
                     ;;<amount-three> to <receiver-three>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        75.0        ;;(at "amount-three" prices-obj)
+                        750.0        ;;(at "amount-three" prices-obj)
                     )
                     ;;<amount-four> to <receiver-four>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        100.0       ;;(at "amount-four" prices-obj)
+                        1000.0       ;;(at "amount-four" prices-obj)
                     )
                 ]
             }
@@ -1086,6 +1087,7 @@
             ;;iz native False requires unwrapping, therefore the proper transfer capability must be set
             ;;<iz-native> = false => input WKDA, which will be unwrapped to KDA to satisfz enviroment
             (ref-TS02-DPAD::SNAKES|C_Acquire patron patron 4 1 false)
+            (ref-TS02-DPAD::SPARK|C_BuySparks patron patron 25 false)
         ]
         [
             (format "AH has Native Kadena after purchse {}" [(ref-coin::get-balance patron-kda)])
@@ -1095,8 +1097,18 @@
             (format "Launchpad Properties after Buy are {}" [(ref-DPAD::UR_LaunchpadState)])
             (format "Launchpad Holdings for {} are {}" [id (ref-DPAD::UR_AssetState id)])
         ]
-        (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 25000000.0)
-        
+        (format "244k is fee {}" [(free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 244000.0)])
+        (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
+        [
+            (ref-TS01-C1::DPTF|C_Transfer patron wkda-id patron KST.EMMA 
+                2500.0
+                false
+            )
+            (ref-TS02-DPAD::SPARK|C_RedemAllSparks
+                patron KST.EMMA patron
+            )
+            (format "AH should have no WKDA {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
+        ]
     ]
 
 
@@ -1125,7 +1137,7 @@
 )
 (env-chain-data
     {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
-     "block-time": TV.TIME07}
+     "block-time": TV.TIME02}
 )
 (let
     (
@@ -1137,23 +1149,16 @@
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
         ;;
-        (kpay-amount:integer 1400)
-        (kpay-price:decimal (ref-DPAD-KPAY::UR_KpayPID))
         (KpayID:string (ref-DPAD-KPAY::UR_KpayID))
-        (KpayCosts:object{DemiourgosLaunchpadV2.Costs} 
-            (ref-DPAD-KPAY::URC_KpayAmountCosts kpay-amount 0.0)
-        )
-        (correct-pid:decimal (at "pid" KpayCosts))
-        (correct-wkda:decimal (at "wkda" KpayCosts))
+        
+        
 
         ;;\ Type 0 = Native Kadena \
         ;;\ Type 1 = WKDA \
         ;;\ Type 2 = LKDA \
         ;;\ Type 3 = OURO \
 
-        (prices-obj:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
-            (ref-DPAD::URC_Prices KpayID correct-pid 1)
-        )
+        
         ;;
         (patron:string KST.ANHD)
         (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
@@ -1161,17 +1166,43 @@
         (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
         (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
         ;;
-        (acquire-kpay:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount false))
-        (acquire-kpay2:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount true))
         ;;
-        (env-amount:decimal (at "enviroment-amount" prices-obj))
-        (a1:decimal (at "amount-one" prices-obj))
-        (a2:decimal (at "amount-two" prices-obj))
-        (a3:decimal (at "amount-three" prices-obj))
-        (a4:decimal (at "amount-four" prices-obj))
+        (native-or-wkda:bool false)                                      ;; true = KDA | false = WKDA
         ;;
-        (mb1:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD false))   ;;wkda
-        (mb2:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD true))    ;;kda
+        ;;
+        ;;Function to get the Actual Prices
+        ;;
+        ;;0]Define Kpay Amount to be bought
+        (kpay-amount:integer 1400)
+        ;;1]Determine Kpay Costs for the amount above (0.0 = offset)
+        (KpayCosts:object{DemiourgosLaunchpadV2.Costs} 
+            (ref-DPAD-KPAY::URC_KpayAmountCosts kpay-amount 0.0)
+        )
+        ;;2]Get <PID-Price in Dollars> and <Price in WKDA>
+        (correct-pid:decimal (at "pid" KpayCosts))
+        (correct-wkda:decimal (at "wkda" KpayCosts))
+        ;;3]Get Complete Prices using the <pid>
+        (prices-obj:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
+            (ref-DPAD::URC_Prices KpayID correct-pid 1)
+        )
+        ;;
+        ;;4]Expand Prices
+        (a1:decimal (at "amount-one" prices-obj))                       ;;env 1
+        (a2:decimal (at "amount-two" prices-obj))                       ;;env 2
+        (a3:decimal (at "amount-three" prices-obj))                     ;;env 3
+        (a4:decimal (at "amount-four" prices-obj))                      ;;env 4
+        (env-amount:decimal (at "enviroment-amount" prices-obj))        ;;sum ENV
+        (coding-amount:decimal (at "coding-amount" prices-obj))         ;;coding amount - to be retained on pool
+        (remainder-amount:decimal (at "remainder-amount" prices-obj))   ;;remainder amount - the asset earns from launchpad.
+        (non-enviroment:decimal (+ coding-amount remainder-amount))     ;;Non Enviroment (must be wrapped wehn <native>)
+        ;;
+        ;;
+        ;;
+        ;;String to Set UP Capabilities (needed for setting up the function)
+        (acquire-kpay:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount native-or-wkda))
+        ;;
+        (mb1:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD false))       ;;wkda
+        (mb2:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD true))        ;;kda
     )
     (env-sigs
         [   
@@ -1180,19 +1211,19 @@
             { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", 
               "caps": 
                 [
-                    ;;for C_WrapKadena
+                    ;;for <native:true>, <non-enviroment> must be wrapped for use in <C_WrapKadena>
                     (coin.TRANSFER 
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
                         "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
-                        env-amount
+                        non-enviroment
                     )
                     ;;
                     ;;
-                    ;;for C_Acquire with <iz-native> = false, which will unwrap WKDA to KDA
+                    ;;for <native:false>, <env-amount> must be unwrapped for use in <C_UnwrapKadena>
                     (coin.TRANSFER 
                         "c:fQ9KNZrn8rBUW7wWYoQ2SENoBiqDTCuH9mOd_6Ggdz4"
                         "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        env-amount       ;;total-kadena-amount
+                        env-amount
                     )
                     ;;
                     ;;
@@ -1228,27 +1259,42 @@
     
     [
         [
+            (format "Capability String is {}" [acquire-kpay])
+            (format "NON-Enviroment is {}" [non-enviroment])
+            (format "Enviroment is {}" [env-amount])
+        ]
+        [
             (format "Price OBJ iz {}" [prices-obj])
             (format "Acquire String LIST is {}" [acquire-kpay])
-            (format "Acquire String LIST2 is {}" [acquire-kpay2])
-
         ]
-        (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 100000000.0)
-        (env-chain-data
-            {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
-             "block-time": TV.TIME00}
-        )
-        [env-amount a1 a2 a3 a4]
-        [mb1 mb2]
-        (format "Resident WKDA before buy is {}" [(ref-DPAD::UR_WKDA)])
-        (format "Before Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
-        (ref-TS02-DPAD::KPAY|C_BuyKpay KST.ANHD KST.ANHD kpay-amount true)
-        (format "Resident WKDA after buy is {}" [(ref-DPAD::UR_WKDA)])
-        (format "After Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
-
-
+        [
+            (free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 100000000.0)
+            (env-chain-data
+                {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+                 "block-time": TV.TIME02}
+            )
+            [env-amount a1 a2 a3 a4]
+            [mb1 mb2]
+            ;(format "Resident WKDA before buy is {}" [(ref-DPAD::UR_WKDA)])
+            ;(format "Before Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
+            ;(format "Left to buy {}" [(free.DEMIPAD-KPAY.UR_KpayLeft)])
+            ;;
+            (ref-TS02-DPAD::KPAY|C_BuyKpay KST.ANHD KST.ANHD kpay-amount false)
+            ;(format "Resident WKDA after buy is {}" [(ref-DPAD::UR_WKDA)])
+            ;(format "After Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
+        ]
+        [
+            (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
+            ;(map (free.DEMIPAD-KPAY.UR_PeriodAllocation) (enumerate 1 25))
+        ]
+        (acquire-module-admin MTX-SWP-V2)
     ]
 )
+
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-KPAY.UR_Kpay
+;    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
+;)
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS02-DPAD.KPAY|C_BuyKpay <patron:string> <user:string> <kpay-amount:integer> <iz-native:bool>)
 
 (print "")
 (print "")

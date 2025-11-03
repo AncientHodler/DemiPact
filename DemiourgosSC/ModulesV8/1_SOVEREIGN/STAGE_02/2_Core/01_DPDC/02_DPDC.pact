@@ -774,7 +774,7 @@
                 )
                 (let
                     (
-                        (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                        (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                         (nft-holder:string (UR_NonceHolder id false nonce))
                         (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     )
@@ -1025,7 +1025,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV3} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (iz-bar:bool (if (= new-holder-account BAR) true false))
                 (sh:string
                     (if iz-bar

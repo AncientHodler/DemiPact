@@ -1,4 +1,3 @@
-
 (module TS01-CP GOV
     @doc "TALOS Administrator and Client Module for Stage 1"
     ;;
@@ -22,6 +21,16 @@
     (deftable P|T:{OuronetPolicy.P|S})
     (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
+    (defcap P|ATS ()
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (master:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership master)
+            (compose-capability (P|TS))
+        )
+    )
     (defcap P|TS ()
         (let
             (
@@ -72,7 +81,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP)
+                (ref-P|MTX-SWP:module{OuronetPolicy} MTX-SWP-V2)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|MTX-SWP::P|A_AddIMP mg)
@@ -125,7 +134,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_IssueStablePool patron account pool-tokens fee-lp amp p)
             )
@@ -136,7 +145,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_IssueWeightedPool patron account pool-tokens fee-lp weights p)
             )
@@ -147,9 +156,63 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_IssueStandardPool patron account pool-tokens fee-lp p)
+            )
+        )
+    )
+    ;;
+    ;;Get KDA-PID
+    (defun SWP|F0|A_AddStandardLiquidity
+        (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal)
+        (with-capability (P|ATS)
+            (let
+                (
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
+                )
+                (ref-MTX-SWP::MTX|Step0|C_AddStandardLiquidity
+                    patron account swpair input-amounts kda-pid
+                )
+            )
+        )
+    )
+    (defun SWP|F1|A_AddStandardLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal
+            ;;
+            yielded-pool-state:object{SwapperLiquidityV2.PoolState} 
+            yielded-ld:object{SwapperLiquidityV2.LiquidityData} 
+            yielded-clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData}
+        )
+        (with-capability (P|ATS)
+            (let
+                (
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
+                )
+                (ref-MTX-SWP::MTX|Step1|C_AddStandardLiquidity
+                    patron account swpair input-amounts kda-pid
+                    yielded-pool-state yielded-ld yielded-clad
+                )
+            )
+        )
+    )
+    (defun SWP|F2|A_AddStandardLiquidity
+        (
+            patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal
+            ;;
+            yielded-primary-lp-amount:decimal
+            yielded-secondary-lp-amount:decimal
+        )
+        (with-capability (P|ATS)
+            (let
+                (
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
+                )
+                (ref-MTX-SWP::MTX|Step2|C_AddStandardLiquidity
+                    patron account swpair input-amounts kda-pid
+                    yielded-primary-lp-amount yielded-secondary-lp-amount
+                )
             )
         )
     )
@@ -161,7 +224,7 @@
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_AddStandardLiquidity 
                     patron account swpair input-amounts kda-pid
@@ -176,7 +239,7 @@
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_AddIcedLiquidity 
                     patron account swpair input-amounts kda-pid
@@ -191,7 +254,7 @@
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_AddGlacialLiquidity 
                     patron account swpair input-amounts kda-pid
@@ -206,7 +269,7 @@
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_AddFrozenLiquidity
                     patron account swpair frozen-dptf input-amount kda-pid
@@ -221,7 +284,7 @@
                 (
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
-                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP)
+                    (ref-MTX-SWP:module{SwapperMtxV3} MTX-SWP-V2)
                 )
                 (ref-MTX-SWP::C_AddSleepingLiquidity
                     patron account swpair sleeping-dpof nonce kda-pid
