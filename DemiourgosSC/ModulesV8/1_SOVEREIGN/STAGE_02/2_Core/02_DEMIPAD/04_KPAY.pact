@@ -488,11 +488,20 @@
                         )
                     )
                     (sb:string (ref-I|OURONET::OI|UC_ShortAccount buyer))
+                    (present-kpay-price:decimal (UR_KpayPID 0.0))
+                    (paid:decimal (at "wkda" costs))
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico1 ico2 ico3] [])
                 )
-                (format "User {} succesfuly acquired {} {} Tokens" [sb kpay-amount KpayID])
+                (if iz-native
+                    (format "Account {} succesfully acquired {} KPAY at {} $ per Unit with {} Native KADENA"
+                        [sb kpay-amount present-kpay-price paid]
+                    )
+                    (format "Account {} succesfully acquired {} KPAY at {} $ per Unit with {} WKDA"
+                        [sb kpay-amount present-kpay-price paid]
+                    )
+                )
             )
         )
     )

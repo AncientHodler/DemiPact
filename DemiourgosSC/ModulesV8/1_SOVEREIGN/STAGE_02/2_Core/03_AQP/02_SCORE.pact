@@ -9,19 +9,9 @@
     (defconst GOV|MD_AQP-SCORE              (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
     (defcap GOV ()                          (compose-capability (GOV|AQP-SCORE_ADMIN)))
-    (defcap GOV|AQP-SCORE_ADMIN ()          (enforce-guard GOV|MD_AQP))
+    (defcap GOV|AQP-SCORE_ADMIN ()          (enforce-guard GOV|MD_AQP-SCORE))
     ;;{G3}
     (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    ;;
-    ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|CollectiblesKey ()           (+ (GOV|NS_Use) ".dh_sc_aqp-keyset"))
-    ;;
-    ;; [SC-Names]
-    (defun GOV|AQP-SCORE|SC_NAME ()         (at 0 [""]))
-    ;;
-    ;; [PBLs]
-    (defun GOV|AQP-SCORE|PBL ()             (at 0 [""]))
     ;;
     ;;<====>
     ;;POLICY
@@ -102,6 +92,7 @@
         anchor-link:string                                      ;;Specifies the Anchor ID that is to boost the score.
         boost-link:string                                       ;;Specifies the Score ID that is used as Base for the Boosted Score.
         aqpool-link:string                                      ;;Specifies the Pool that employs the Score.
+        fvt-link:string                                         ;;Specifies the FVT the Score is part of.
         ;;Score Information
         deb-boost:bool                                          ;;Specifies if DEB boosting occurs.
         base-score-id:string                                    ;;Stores the Score ID for the Base. BAR if it uses its own Base.
@@ -137,13 +128,13 @@
         ;;Select Keys
         score-id:string                                         ;;Stores the ID of the Score
     )
-    (defschema SCR|EntitySchema
-        entity-base-score:decimal
-        entity-boosted-score:decimal
-        entity-deb-score:decimal
+    (defschema SCR|UserSchema
+        base-score:decimal
+        boosted-score:decimal
+        deb-score:decimal
         ;;
         ;;Select Keys
-        entity-id:string
+        ouronet-account:string
         pool-id:string
         score-id:string
     )
@@ -156,7 +147,7 @@
         dpsf-id:string
         nonce:integer
     )
-    (defschema ANK|NF|Schema
+    (defschema SCR|NF|Schema
         trait-score-value:decimal                               ;;Promile of Trait
         ;;
         ;;Select Keys
@@ -165,16 +156,16 @@
         trait-key:string
         trait-value:string
     )
+    ;;
+    ;;{2}
     ;;Score ID
     ;;1]Global and 2]Individual
     (deftable SCR|T|Score:{SCR|Schema})                         ;;Key = <Score-ID>
-    (deftable SCR|T|EntityScore:{SCR|EntitySchema})             ;;Key = <Entity-ID> | <Pool-ID> | <Score-ID>
+    (deftable SCR|T|UserScore:{SCR|UserSchema})                 ;;Key = <Ouronet-Account> | <Pool-ID> | <Score-ID>
     ;;
     ;;Score Definitions for SFT and NFT
     (deftable SCR|T|SF|Score:{SCR|SF|Schema})                   ;;Key = <Score-ID> | <DPSF-ID> | <Nonce>
     (deftable SCR|T|NF|Score:{SCR|NF|Schema})                   ;;Key = <Score-ID> | <DPNF-ID> | <Trait-Key> | <Trait-Value>
-    ;;
-    
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -205,3 +196,8 @@
 
 (create-table P|T)
 (create-table P|MT)
+;;
+(create-table SCR|T|Score)
+(create-table SCR|T|UserScore)
+(create-table SCR|T|SF|Score)
+(create-table SCR|T|NF|Score)

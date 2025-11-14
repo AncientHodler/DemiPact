@@ -1,4 +1,4 @@
-(interface TalosStageTwo_DemiPad
+(interface TalosStageTwo_DemiPadV2
     ;;
     ;;  [A]
     ;;
@@ -23,7 +23,7 @@
     ;;
     (defun SPARK|C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
     (defun SPARK|C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
-    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer))
+    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal))
     (defun SNAKES|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
     (defun CUSTODIANS|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
     ;;

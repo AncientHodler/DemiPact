@@ -2,7 +2,7 @@
     @doc "TALOS Stage 2 Demiourgos Launchpad Functions"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageTwo_DemiPad)
+    (implements TalosStageTwo_DemiPadV2)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -355,7 +355,7 @@
             )
         )
     )
-    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer)
+    (defun SPARK|C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal)
         (with-capability (P|TS)
             (let
                 (
@@ -396,14 +396,10 @@
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
                     (ref-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+                    (acquisition-text:string (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native))
                 )
-                (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native)
                 (ref-TS01-A::XB_DynamicFuelKDA)
-                (if iz-native
-                    (format "Succesfully acquired {} KPAY with Native Kadena" [kpay-amount])
-                    (format "Succesfully acquired {} KPAY with WKDA" [kpay-amount])
-                )
-                
+                acquisition-text
             )
         )
     )

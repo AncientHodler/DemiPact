@@ -1,4 +1,4 @@
-(module AQP GOV
+(module FVT GOV
     ;;
     (implements OuronetPolicy)
     ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
@@ -6,10 +6,10 @@
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defconst GOV|MD_AQP                    (keyset-ref-guard (GOV|Demiurgoi)))
+    (defconst GOV|MD_FVT                    (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
-    (defcap GOV ()                          (compose-capability (GOV|AQP_ADMIN)))
-    (defcap GOV|AQP_ADMIN ()                (enforce-guard GOV|MD_AQP))
+    (defcap GOV ()                          (compose-capability (GOV|FVT_ADMIN)))
+    (defcap GOV|FVT_ADMIN ()                (enforce-guard GOV|MD_FVT))
     ;;{G3}
     (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
@@ -20,11 +20,11 @@
     (deftable P|T:{OuronetPolicy.P|S})
     (deftable P|MT:{OuronetPolicy.P|MS})
     ;;{P3}
-    (defcap P|AQP|CALLER ()
+    (defcap P|FVT|CALLER ()
         true
     )
     (defcap P|SECURE-CALLER ()
-        (compose-capability (P|AQP|CALLER))
+        (compose-capability (P|FVT|CALLER))
         (compose-capability (SECURE))
     )
     ;;{P4}
@@ -37,14 +37,14 @@
         (at "m-policies" (read P|MT P|I ["m-policies"]))
     )
     (defun P|A_Add (policy-name:string policy-guard:guard)
-        (with-capability (GOV|AQP_ADMIN)
+        (with-capability (GOV|FVT_ADMIN)
             (write P|T policy-name
                 {"policy" : policy-guard}
             )
         )
     )
     (defun P|A_AddIMP (policy-guard:guard)
-        (with-capability (GOV|AQP_ADMIN)
+        (with-capability (GOV|FVT_ADMIN)
             (let
                 (
                     (ref-U|LST:module{StringProcessor} U|LST)
@@ -64,7 +64,7 @@
         (let
             (
                 (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (mg:guard (create-capability-guard (P|AQP|CALLER)))
+                (mg:guard (create-capability-guard (P|FVT|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
         )
@@ -81,77 +81,73 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
-    (defschema AQP|Schema
+    (defschema FVT|Schema
+        ;;FVT Type
+        fvt-class:integer                                       ;; 0 = Farm, 1 = Vault, 2 = Treasury
         ;;
-        aqp-class:integer                                       ;;Defines the Pool Class, there are 5
-                                                                ;;Class 0 = LPs allowed - native|sleeping|freezing
-                                                                ;;Class 1 = DPTF Allowed (non LP) - native|freezing|sleeping|hibernating
-                                                                ;;Class 2 = DPOF Allowed (non LP) - native only
-                                                                ;;Class 3 = DPSF Score (SFTs)
-                                                                ;;Class 4 = DPNF Score (NFTs)
-        asset-id:string                                         ;;ID of the Asset that is allowed to be staked in the Pool.
-                                                                ;;This must be in accordance with the <aqp-class> and together with it
-                                                                ;;defines which assets can be staked in the Pool
+        ;;Management
+        owner-konto:string
+        can-upgrade:bool
+        can-change-owner:bool
         ;;
-        ;;Score - Links
-        score-primary:string
-        score-secondary:string
-        score-tertiary:string
-        score-quaternary:string
-        score-quinary:string
-        score-senary:string
-        score-septenary:string
+        ;; 
+        common-denominator:string                               ;;Farm-only: common DPTF in all LPs (e.g. "OURO"), "|" for Vault/Treasury
         ;;
-        ;;Select Keys
-        aqp-id:string
+        ;;Aggregated Scores
+        total-base-score:decimal
+        total-boosted-score:decimal
+        total-deb-score:decimal
+        total-nzs-count:integer
+        ;;
+        ;; Select Keys
+        fvt-id:string
     )
-    ;;Staking Trackers
-    (defschema AQP|TrueFungibleTracker
-        balance:decimal                                         ;;Store DPTF Balance Amount
+    ;;FVT Memberships
+    (defschema FVT|ScoreLink
+        enabled:bool                                            ;;Defines if the Score is active in FVT
         ;;
         ;;Select Keys
-        pool-id:string                                          ;;Pool-ID
-        dptf-id:string                                          ;;DPTF-ID
-        owner-id:string                                         ;;Owner-ID
-        beneficiary-id:string                                   ;;Beneficiary-ID
+        fvt-id:string                                           ;;FVT the Score-ID operates in
+        score-id:string                                         ;;ID of the Score that is linked to the FVT
     )
-    (defschema AQP|OrtoFungibleTracker
-        owner-id:string                                         ;;Owner-ID
-        beneficiary-id:string                                   ;;Beneficiary-ID
+    (defschema FVT|RewardLink
+        enabled:bool                                            ;;Defines if the Reward is active in FVT
         ;;
         ;;Select Keys
-        pool-id:string                                          ;;Pool-ID
-        dpof-id:string                                          ;;DPOF-ID
-        nonce:integer                                           ;;Nonce-Value
+        fvt-id:string                                           ;;FVT the Reward-ID operates in
+        dptf-id:string                                          ;;ID of the Reward Token that operates in the FVT
     )
-    (defschema AQP|SemiFungibleTracker
-        balance:decimal                                         ;;Stores DPSF Balance
+    ;;RPS Schemas
+    ;;1]Global RPS fer FVT + Reward Token
+    (defschema FVT|RPS|Global
+        current-rps:decimal                                     ;; 48 decimals
+        available-rewards:decimal                               ;; 24 decimals
+        unclaimed-count:integer
+        segmentation:bool
         ;;
         ;;Select Keys
-        pool-id:string                                          ;;Pool-ID
-        dpsf-id:string                                          ;;DPSF-ID
-        owner-id:string                                         ;;Owner-ID
-        beneficiary-id:string                                   ;;Beneficiary-ID
-        nonce:integer                                           ;;Nonce-Value
+        fvt-id:string
+        dptf-id:string
     )
-    (defschema AQP|NonFungibleTracker
-        balance:decimal                                         ;;Stores DPNF Balance
+    ;;2]User Rewards per FVT + Reward Token
+    (defschema FVT|RPS|User
+        last-rps:decimal
+        pending-rewards:decimal
         ;;
         ;;Select Keys
-        pool-id:string                                          ;;Pool-ID
-        dpnf-id:string                                          ;;DPNF-ID
-        owner-id:string                                         ;;Owner-ID
-        beneficiary-id:string                                   ;;Beneficiary-ID
-        nonce:integer                                           ;;Nonce-Value
+        user-id:string                                          ;; <Ouronet-Account>
+        fvt-id:string                                           ;; <FVT-ID>
+        dptf-id:string                                          ;; <DPTF-ID>
     )
     ;;
     ;;{2}
-    (deftable AQP|T|Pool:{AQP|Schema})                          ;;Key = <Pool-ID>
-    ;;Trackers
-    (deftable AQP|T|DPTFTracker:{AQP|TrueFungibleTracker})      ;;Key = <Pool-ID> | <DPTF-ID> | <Owner-ID> | <Beneficiary-ID>
-    (deftable AQP|T|DPOFTracker:{AQP|OrtoFungibleTracker})      ;;Key = <Pool-ID> | <DPOF-ID> | <Nonce>
-    (deftable AQP|T|DPSFTracker:{AQP|SemiFungibleTracker})      ;;Key = <Pool-ID> | <DPSF-ID> | <Owner-ID> | <Beneficiary-ID> | <Nonce>
-    (deftable AQP|T|DPNFTracker:{AQP|NonFungibleTracker})       ;;Key = <Pool-ID> | <DPNF-ID> | <Owner-ID> | <Beneficiary-ID> | <Nonce>
+    (deftable FVT|T:{FVT|Schema})                               ;; Key = <FVT-ID>
+    ;;
+    (deftable FVT|T|ScoreLink:{FVT|ScoreLink})                  ;; Key = <FVT-ID> | <Score-ID>
+    (deftable FVT|T|RewardLink:{FVT|RewardLink})                ;; Key = <FVT-ID> | <DPTF-ID>
+    ;;
+    (deftable FVT|T|RPS|Global:{FVT|RPS|Global})                ;; Key = <FVT-ID> | <DPTF-ID>
+    (deftable FVT|T|RPS|User:{FVT|RPS|User})                    ;; Key = <Ouronet-Account> | <FVT-ID> | <DPTF-ID>
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -214,8 +210,8 @@
 (create-table P|T)
 (create-table P|MT)
 ;;
-(create-table AQP|T|Pool)
-(create-table AQP|T|DPTFTracker)
-(create-table AQP|T|DPOFTracker)
-(create-table AQP|T|DPSFTracker)
-(create-table AQP|T|DPNFTracker)
+(create-table FVT|T)
+(create-table FVT|T|ScoreLink)
+(create-table FVT|T|RewardLink)
+(create-table FVT|T|RPS|Global)
+(create-table FVT|T|RPS|User)

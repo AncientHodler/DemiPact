@@ -1,0 +1,66 @@
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                      [15 TXs]                                                ;;
+;;              1.1     NONE: [REPL] Pre-Loads execs (already done)             ;;
+;;              1.2     NONE: LIVE Pre-Loads execs [only comment]               ;;
+;;              2       Earning Pools Deployment                                ;;
+;;              3       [REPL] Post-Loads execs                                 ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;                                                                              ;;
+;;              2       Earning Pools Deployment                                ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 [2] - ANK Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/03_AQP/01_ANK.pact")
+(format "<<<<<<<ANCHOR Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [2] - SCORE Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/03_AQP/02_SCORE.pact")
+(format "<<<<<<<SCORE Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [2] - AQP Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/03_AQP/03_AQP.pact")
+(format "<<<<<<<AQP Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 [2] - FVT Module")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(namespace "free")
+(load "../../1_SOVEREIGN/STAGE_02/2_Core/03_AQP/04_FVT.pact")
+(format "<<<<<<<FVT Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -147,7 +147,7 @@
             (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
-            (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
             (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
             (patron:string KST.ANHD)
@@ -222,7 +222,7 @@
 )
 (let
     (
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
         (patron:string KST.ANHD)
         (shareholders-id "E|DH-98c486052a51")
         (s-key:string DEMIPAD-SNAKES.SNAKES|INFO)
@@ -269,7 +269,7 @@
 )
 (let
     (
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
         (patron:string KST.ANHD)
         (custodians-id "DHOC-98c486052a51")
         (s-key:string DEMIPAD-CUSTODIANS.CUSTODIANS|INFO)
@@ -367,7 +367,7 @@
             (ref-U|G:module{OuronetGuards} U|G)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-            (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
             ;;
             ;;
             (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))

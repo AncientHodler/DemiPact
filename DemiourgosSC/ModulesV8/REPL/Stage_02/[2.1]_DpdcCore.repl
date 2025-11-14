@@ -52,21 +52,31 @@
         (defconst DPTS_PBKY_0002 "PK_LPAD")
         (defconst PBLC_0002 "9F.gGCkuc2wMAnFAjuFphikftLdl6qFqBD4yfeMEe9u65yMqf4r340Jd6dphh1d7E1cE20btMwl4HJ2cBEMvp209GA1eD4syB96hu4nmpFbB7dKnJEMz4p8fGLcmhvrBCfDmM0axnGin8qedl5vDtwbgL3l1aK5BsmjkEEJartqCH8qG8ialtjxwCcIMf50t2lkeww6Dct5LlmmLG25FmfpcgnwMMnkJl4Gfn9gwoA6vm0jKebjhodeJLjxnh9L11ss8f26866dqv1tEphxFFqutGetH4Itj3rHkrcrGsnlqpf4gfJp94b0gBwIBe4vCj6ha8jm6kd3f8B6pEaJtkJ3fbs6rCcGibltz1BAMn0vvKME5ddFyGBnzssk1s2s0vFzwxs6vjC61Ma2l1xDxqdg1thAk2u01hDiGndLhzK73HAfgtk7bxscn0qKhymG6JAqnEFt282pyHAq5nIthK9bA8nH76x7FEpLz4eK9tLIBsyjb8M5DxaeEei6pEnLxFCAg7ulacgtjjpjMiAaqhpmM1jEHqjt4G85q4L33zrME7whgIkIpIgwnF2qKd4")
 
+        (defconst KADN_NAME_0003 "dee7795b6cea301d300e74131f14bd6a2fe75181a3e86daa34a551b6570abb78")
+        (defconst KADN_PBKY_0003 (drop 2 KADN_NAME_0003))
+        (defconst DPTS_NAME_0003 "Σ.ЖřÎzэóΣQз3ÌĄăådìÜλÅË9γğ7χûПæ0₳ПûÖŞrĄθXtFìмkщsGвÅgλąÇπЩAĚЭDíéαэБùđáżñИïПÆΣтцξsηåäялÃБц¢r6ÁíäзуμþĄĐЫîÉAćýìЧыQPнŁзßξĂйjay£üѺçRЫfУQșÏΠÜqîÔĄťß6ЗSρŠeΦñëdmûΦøШâΞýκъиřк")
+        (defconst ACQP DPTS_NAME_0003)
+        (defconst DPTS_PBKY_0003 "PK_ACQP")
+        (defconst PBLC_0003 "9G.632vHq208xaznBw9AfwrFGmLBqkr7tqEzf2Msq389xqEknmfAk8qI5MM1MaszdgMtEBpo6rbuC09Do7F6pjc91jzy3JxI6fjCkyuIbDpDD5i8CxeCBL0dKdDu3d2uAAwl6wE6npnm4Mjxx6JhiFq1sKddsGjLH9BjHF0ljtegHrn39qIADru76Ftr9Kgxh6Ds2aj4EufG07uK9sFG38ej5vooDMr0wp8alqGdnIiJxbhmwEKEg44l8pI5LDq2EotoM2jq86x1EJ5hM4wkfhtq4ye610tkAMIdLrDD87Euk14aJgMwnrLmytzcCc3Kakrnhs8Jxy5dFeowGxzlx1bGHqfwEen0pLcd6nl9udGE9hfFucLjM1seKzv542nwzz5jrpKmvzebI4BLK00Br1ocvxs4uor2nEv2Fng1l6qAiLcbv0hMnbLDEEcLpF1bD55gw55of7H2c3ieozahorkuCe5FEkAkEAhcGwJ35HCletrbcn2Ebo0fsD0tf2zxKsbzinpcJCtpv4EF4AyyhwD1LbtEd6qsEbgyJkA2DqdGBE5Fuqudzf8082Ei88d")
+
     )
     (env-data
         {
             ;;DEMI-SC-KEYS
             "KEY_SC_Collectables": { "keys": [KC2.DPTS_PBKY_0001]},
             "KEY_SC_Launchpad": { "keys": [KC2.DPTS_PBKY_0002]},
+            "KEY_SC_Acquisition": { "keys": [KC2.DPTS_PBKY_0003]},
 
             "KEY_KDA_Collectables": { "keys": [KC2.KADN_PBKY_0001]},
-            "KEY_KDA_Launchpad": { "keys": [KC2.KADN_PBKY_0002]}
+            "KEY_KDA_Launchpad": { "keys": [KC2.KADN_PBKY_0002]},
+            "KEY_KDA_Acquisition": { "keys": [KC2.KADN_PBKY_0003]}
         }
     )
 
     ;;DALOS Defined Keysets ==> For Repl Using Named Keys, ex PK_AncientHodler
     (define-keyset "free.dh_sc_dpdc-keyset" (read-keyset "KEY_SC_Collectables"))
     (define-keyset "free.dh_sc_mb-keyset" (read-keyset "KEY_SC_Launchpad"))
+    (define-keyset "free.dh_sc_aqp-keyset" (read-keyset "KEY_SC_Acquisition"))
 
     ;;Create Collectables KDA Accounts and Fuel Them (for use in Repl)
     (env-sigs
@@ -77,6 +87,7 @@
                     [
                         (coin.TRANSFER "alice" KC2.KADN_NAME_0001 5000.0)    ;;<PK_Collectables>    "k:35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8"
                         (coin.TRANSFER "alice" KC2.KADN_NAME_0002 5000.0)    ;;<PK_LPAD>            "k:2d4c9cd8d1bd30d9156b65c1259d2be9689f068927d8fee19bfb695619436e01"
+                        (coin.TRANSFER "alice" KC2.KADN_NAME_0003 5000.0)    ;;<PK_ACQP>             "k:dee7795b6cea301d300e74131f14bd6a2fe75181a3e86daa34a551b6570abb78"
                     ]
             }
         ]
@@ -88,9 +99,11 @@
         ;;Create Accounts:
         (ref-coin::create-account KC2.KADN_NAME_0001 (read-keyset "KEY_KDA_Collectables"))
         (ref-coin::create-account KC2.KADN_NAME_0002 (read-keyset "KEY_KDA_Launchpad"))
+        (ref-coin::create-account KC2.KADN_NAME_0003 (read-keyset "KEY_KDA_Acquisition"))
         ;;Fuel Account
         (ref-coin::transfer "alice" KC2.KADN_NAME_0001 5000.0)
         (ref-coin::transfer "alice" KC2.KADN_NAME_0002 5000.0)
+        (ref-coin::transfer "alice" KC2.KADN_NAME_0003 5000.0)
     )
 
     ;;Create Collectables Smart Ouronet Account
@@ -99,6 +112,7 @@
             { "key": "PK_AncientHodler", "caps": [] }
             { "key": "PK_Collectables", "caps": [] }
             { "key": "PK_LPAD", "caps": [] }
+            { "key": "PK_ACQP", "caps": [] }
         ]
     )
     (let
@@ -108,6 +122,7 @@
         )
         (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0001 (keyset-ref-guard "free.dh_sc_dpdc-keyset")  KC2.KADN_NAME_0001 patron KC2.PBLC_0001)
         (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0002 (keyset-ref-guard "free.dh_sc_mb-keyset")    KC2.KADN_NAME_0002 patron KC2.PBLC_0002)
+        (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0003 (keyset-ref-guard "free.dh_sc_aqp-keyset")   KC2.KADN_NAME_0003 patron KC2.PBLC_0003)
     )
 
 (env-gas)

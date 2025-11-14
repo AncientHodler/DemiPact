@@ -895,7 +895,7 @@
         (ref-DPDC:module{DpdcV4} DPDC)
         
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -1000,7 +1000,7 @@
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
         ;;
         (total-kadena-amount:decimal 5000.0)
         ;;
@@ -1147,7 +1147,7 @@
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
         (ref-DPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPad} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
         ;;
         (KpayID:string (ref-DPAD-KPAY::UR_KpayID))
         

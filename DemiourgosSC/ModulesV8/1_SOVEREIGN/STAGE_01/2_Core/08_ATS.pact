@@ -2027,7 +2027,7 @@
                 (id:string (ref-U|DALOS::UDC_Makeid atspair))
             )
             (ref-U|DALOS::UEV_Decimals index-decimals)
-            (ref-U|ATS::UEV_AutostakeIndex)
+            (ref-U|ATS::UEV_AutostakeIndex atspair)
             (insert ATS|Pairs id
                 {"id"                       : id
                 ,"owner-konto"              : account
