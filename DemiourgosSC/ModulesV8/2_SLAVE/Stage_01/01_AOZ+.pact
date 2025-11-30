@@ -246,7 +246,7 @@
     (defun C_SetupKosonicATS (index-name:string hot-rbt:string decay:integer)
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (EsothericKosonID:string (UR_PrimalTrueFungible 2))
                 (AncientKosonID:string (UR_PrimalTrueFungible 3))

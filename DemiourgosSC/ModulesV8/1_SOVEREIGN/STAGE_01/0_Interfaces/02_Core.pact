@@ -1528,6 +1528,25 @@
     (defun C_UnwrapKadena:object{IgnisCollectorV2.OutputCumulator} (unwrapper:string amount:decimal))
     (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator} (wrapper:string amount:decimal))
 )
+(interface KadenaLiquidStakingV6
+    @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap KDA"
+    ;;
+    (defun GOV|LIQUID|SC_KDA-NAME ())
+    (defun GOV|LIQUID|GUARD ())
+    ;;
+    ;;
+    (defun UEV_IzLiquidStakingLive ())
+    ;;
+    ;;
+    (defun A_ManageWrapper (replay:bool public:bool))
+    (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
+    (defun A_WrapKadena:object{IgnisCollectorV2.OutputCumulator} (wrapper:string amount:decimal))
+    ;;
+    (defun C_WrapKadenaForMigration:object{IgnisCollectorV2.OutputCumulator} (wrapper:string amount:decimal))
+    (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator} (wrapper:string amount:decimal))
+    (defun C_UnwrapKadena:object{IgnisCollectorV2.OutputCumulator} (unwrapper:string amount:decimal))
+    
+)
 ;;
 ;;  [OUROBOROS]
 ;;

@@ -2,7 +2,7 @@
 (module LIQUID GOV
     ;;
     (implements OuronetPolicy)
-    (implements KadenaLiquidStakingV5)
+    (implements KadenaLiquidStakingV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -117,10 +117,17 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
+    (defschema LIQUID|WrapperSchema
+        replay:bool
+        public:bool
+    )
     ;;{2}
+    (deftable LIQUID|Management:{LIQUID|WrapperSchema})
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun LIQUID|Info ()           (at 0 ["LiquidInformation"]))
     (defconst BAR                   (CT_Bar))
+    (defconst LIQUID|INFO           (LIQUID|Info))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -161,10 +168,38 @@
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
         (compose-capability (P|LQD|CALLER))
     )
+    (defcap SECURE-ADMIN ()
+        (compose-capability (SECURE))
+        (compose-capability (GOV|LIQUID_ADMIN))
+    )
+    (defcap LIQUID|C>ALLOW-WRAPPING ()
+        (let
+            (
+                (iz-allowed:bool (UR_Public))
+            )
+            (enforce iz-allowed "Standard Wrapping is not enabled yet")
+            (compose-capability (SECURE))
+        )
+    )
+    (defcap LIQUID|C>ALLOW-MIGRATION ()
+        (let
+            (
+                (iz-allowed:bool (UR_Replay))
+            )
+            (enforce iz-allowed "Migration Wrapping is not enabled yet")
+            (compose-capability (SECURE))
+        )
+    )
     ;;
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
+    (defun UR_Replay:bool ()
+        (at "replay" (read LIQUID|Management LIQUID|INFO ["replay"]))
+    )
+    (defun UR_Public:bool ()
+        (at "public" (read LIQUID|Management LIQUID|INFO ["public"]))
+    )
     ;;{F1}  [URC]
     ;(defun URC_WrapKadena:list (wrap-amount:decimal)
     ;    (let
@@ -215,6 +250,15 @@
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
+    (defun A_ManageWrapper (replay:bool public:bool)
+        (UEV_IMC)
+        (with-capability (GOV|LIQUID_ADMIN)
+            (update LIQUID|Management LIQUID|INFO
+                {"replay"   : replay
+                ,"public"   : public}
+            )
+        )
+    )
     (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
         (UEV_IMC)
         (with-capability (GOV|MIGRATE migration-target-kda-account)
@@ -231,7 +275,28 @@
             )
         )
     )
+    (defun A_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
+        (wrapper:string amount:decimal)
+        (UEV_IMC)
+        (with-capability (SECURE-ADMIN)
+            (X_WrapKadena wrapper amount true)
+        )
+    )
     ;;{F6}  [C]
+    (defun C_WrapKadenaForMigration:object{IgnisCollectorV2.OutputCumulator}
+        (wrapper:string amount:decimal)
+        (UEV_IMC)
+        (with-capability (LIQUID|C>ALLOW-MIGRATION)
+            (X_WrapKadena wrapper amount false)
+        )
+    )
+    (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
+        (wrapper:string amount:decimal)
+        (UEV_IMC)
+        (with-capability (LIQUID|C>ALLOW-WRAPPING)
+            (X_WrapKadena wrapper amount true)
+        )
+    )
     (defun C_UnwrapKadena:object{IgnisCollectorV2.OutputCumulator}
         (unwrapper:string amount:decimal)
         (UEV_IMC)
@@ -269,9 +334,10 @@
             )
         )
     )
-    (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
-        (wrapper:string amount:decimal)
-        (UEV_IMC)
+    ;;{F7}  [X]
+    (defun X_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
+        (wrapper:string amount:decimal full:bool)
+        (require-capability (SECURE))
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
@@ -286,11 +352,19 @@
             (with-capability (LIQUID|C>WRAP)
                 (let
                     (
+                        (ref-U|CT:module{OuronetConstants} U|CT)
+                        (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                        (received-amount:decimal
+                            (if full
+                                amount
+                                (floor (/ amount 10.0) kda-prec)
+                            )
+                        )
                         (output:object{IgnisCollectorV2.OutputCumulator}
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
-                                    (ref-DPTF::C_Mint w-kda-id lq-sc amount false)
-                                    (ref-TFT::C_Transfer w-kda-id lq-sc wrapper amount true)
+                                    (ref-DPTF::C_Mint w-kda-id lq-sc received-amount false)
+                                    (ref-TFT::C_Transfer w-kda-id lq-sc wrapper received-amount true)
                                 ]
                                 []
                             )
@@ -302,9 +376,9 @@
             )
         )
     )
-    ;;{F7}  [X]
     ;;
 )
 
 (create-table P|T)
 (create-table P|MT)
+(create-table LIQUID|Management)

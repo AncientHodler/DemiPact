@@ -2,7 +2,7 @@
     @doc "TALOS Client Module for Stage 1, namely ATS VST LIQUID and OUROBOROS Modules"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_ClientTwoV7)
+    (implements TalosStageOne_ClientTwoV8)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -84,7 +84,7 @@
                 (ref-P|SWPL:module{OuronetPolicy} SWPL)
                 (ref-P|SWPLC:module{OuronetPolicy} SWPLC)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|IGNIS::P|A_AddIMP mg)
@@ -162,7 +162,7 @@
             (let
                 (
                     (ref-B|ATS:module{BrandingUsageV9} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-B|ATS::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -190,7 +190,7 @@
             (let
                 (
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-ATS::C_HOT-RBT|UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -222,7 +222,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
@@ -316,7 +316,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-ATS::C_ToggleParameterLock patron ats toggle)
                     )
@@ -899,7 +899,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-VST::C_CreateFrozenLink patron dptf)
                     )
@@ -939,7 +939,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-VST::C_CreateReservationLink patron dptf)
                     )
@@ -978,7 +978,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-VST::C_CreateVestingLink patron dptf)
                     )
@@ -1017,7 +1017,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-VST::C_CreateSleepingLink patron dptf)
                     )
@@ -1053,7 +1053,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-VST::C_CreateHibernatingLink patron dptf)
                     )
@@ -1477,7 +1477,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                     (su:string (ref-I|OURONET::OI|UC_ShortAccount unwrapper))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1494,13 +1494,33 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                     (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-LIQUID::C_WrapKadena wrapper amount)
                 )
                 (format "Succesfully Wrapped {} KDA on Account {}" [amount sw])
+            )
+        )
+    )
+    (defun LQD|C_WrapKadenaForMigration (patron:string wrapper:string amount:decimal)
+        @doc "Wraps Native Kadena to DPTF Kadena"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-U|CT:module{OuronetConstants} U|CT)
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
+                    (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                    (output:decimal (floor (/ amount 10.0) kda-prec))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-LIQUID::C_WrapKadenaForMigration wrapper amount)
+                )
+                (format "Succesfully migrated {} KDA to {} WKDA on Account {}" [amount output sw])
             )
         )
     )

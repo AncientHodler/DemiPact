@@ -71,7 +71,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
                 (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
                 (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
@@ -337,7 +337,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_BuySparks patron buyer sparks-amount iz-native)
@@ -370,7 +370,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-SNAKES:module{SaleSnakesV2} DEMIPAD-SNAKES)
                 )
                 (ref-SNAKES::C_Acquire patron buyer nonce amount iz-native)
@@ -382,7 +382,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-CUSTODIANS:module{SaleCustodiansV2} DEMIPAD-CUSTODIANS)
                 )
                 (ref-CUSTODIANS::C_Acquire patron buyer nonce amount iz-native)
@@ -394,7 +394,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-KPAY:module{KadenaPay} DEMIPAD-KPAY)
                     (acquisition-text:string (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native))
                 )

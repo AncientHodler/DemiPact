@@ -71,7 +71,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 (ref-P|DPDC:module{OuronetPolicy} DPDC)
                 (ref-P|DPDC-C:module{OuronetPolicy} DPDC-C)
                 (ref-P|DPDC-I:module{OuronetPolicy} DPDC-I)
@@ -162,7 +162,7 @@
             (let
                 (
                     (ref-DPDC:module{DpdcV4} DPDC)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-DPDC::C_UpgradeBranding patron entity-id false months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -235,7 +235,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPDC-I:module{DpdcIssue} DPDC-I)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-DPDC-I::C_IssueDigitalCollection
                             patron false 

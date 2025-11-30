@@ -3,3 +3,8 @@
 (load "../../../kadena_repl_sandbox-main/kda-env/init.repl")
 (print "************************Initialise_Sandbox.repl LOADED**********************************************")
 (print "")
+
+;;Load Stoa Modules
+(print "")
+(load "../0_Stoa/coin-contract/stoa-v1.pact")
+(print "")

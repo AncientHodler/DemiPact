@@ -132,7 +132,7 @@
         (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
         ;;
         (ref-U|G:module{OuronetGuards} U|G)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)

@@ -80,7 +80,7 @@
                 (ref-P|SWPL:module{OuronetPolicy} SWPL)
                 (ref-P|SWPLC:module{OuronetPolicy} SWPLC)
                 (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|IGNIS::P|A_AddIMP mg)
@@ -154,7 +154,7 @@
             (let
                 (
                     (ref-B|SWP:module{BrandingUsageV9} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-B|SWP::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -184,7 +184,7 @@
             (let
                 (
                     (ref-B|SWPLC:module{BrandingUsageV10} SWPLC)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-B|SWPLC::C_UpgradeBrandingLPs patron swpair entity-pos months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -198,7 +198,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-SWP:module{SwapperV6} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-SWP::C_ChangeOwnership swpair new-owner)
@@ -215,7 +215,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (ref-SWP:module{SwapperV6} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     ;;
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
                     (current-frozen-link:string (ref-DPTF::UR_Frozen lp-id))
@@ -246,7 +246,7 @@
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                     (ref-SWP:module{SwapperV6} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     ;;
                     (lp-id:string (ref-SWP::UR_TokenLP swpair))
                     (current-sleeping-link:string (ref-DPTF::UR_Sleeping lp-id))
@@ -280,7 +280,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-SWPI:module{SwapperIssueV4} SWPI)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (weights:[decimal] (make-list (length pool-tokens) 1.0))
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights amp p)
@@ -309,7 +309,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-SWPI:module{SwapperIssueV4} SWPI)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-SWPI::C_Issue patron account pool-tokens fee-lp weights -1.0 p)
                     )
@@ -401,7 +401,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-SWP:module{SwapperV6} SWP)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-SWP::C_ToggleFeeLock patron swpair toggle)
                     )
@@ -655,7 +655,7 @@
                     (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                    (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                     (ref-ORBR:module{OuroborosV5} OUROBOROS)
                     (ref-SWP:module{SwapperV6} SWP)
                     (ref-SWPU:module{SwapperUsageV5} SWPU)

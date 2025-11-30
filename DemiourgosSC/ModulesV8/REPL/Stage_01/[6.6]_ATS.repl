@@ -29,7 +29,7 @@
         (atsc:string KST.ATSTK)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
 
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -104,7 +104,7 @@
         ;(atsc:string KST.ATSTK)
         ;(ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         ;(ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
 
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -280,7 +280,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -371,7 +371,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -569,7 +569,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -738,7 +738,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -837,7 +837,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -917,7 +917,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1002,7 +1002,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1186,7 +1186,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1260,7 +1260,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1318,7 +1318,7 @@
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
         (ref-TFT:module{TrueFungibleTransferV9} TFT)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1386,7 +1386,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1468,7 +1468,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1537,7 +1537,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1625,7 +1625,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
         (ref-ATS:module{AutostakeV6} ATS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (p-k:string "PKOSON-98c486052a51")
         (e-k:string "EKOSON-98c486052a51")
@@ -1740,7 +1740,7 @@
         
         (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (lq-idx:string "KdaLiquindex-98c486052a51")
         (lkda:string "DWK-98c486052a51")
@@ -1940,7 +1940,7 @@
         
         (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (lq-idx:string "KdaLiquindex-98c486052a51")
         (lkda:string "DWK-98c486052a51")
@@ -2062,7 +2062,7 @@
         
         (ref-ATS:module{AutostakeV6} ATS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (lq-idx:string "KdaLiquindex-98c486052a51")
         (lkda:string "DWK-98c486052a51")
@@ -2170,7 +2170,7 @@
 )
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -2212,7 +2212,7 @@
 )
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         ;;

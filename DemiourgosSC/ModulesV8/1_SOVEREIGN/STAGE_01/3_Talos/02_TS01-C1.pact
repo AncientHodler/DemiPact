@@ -78,7 +78,7 @@
                 (ref-P|ELITE:module{OuronetPolicy} ELITE)
                 (ref-P|ATS:module{OuronetPolicy} ATS)
                 (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -152,7 +152,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-I|DALOS:module{DalosInfoV4} INFO-ZERO)
                     (info:object{OuronetInfoV4.ClientInfoV2}
                         (ref-I|DALOS::DALOS-INFO|URC_DeploySmartAccount account)
@@ -176,7 +176,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-I|DALOS:module{DalosInfoV4} INFO-ZERO)
                     (info:object{OuronetInfoV4.ClientInfoV2}
                         (ref-I|DALOS::DALOS-INFO|URC_DeployStandardAccount account)
@@ -337,7 +337,7 @@
             (let
                 (
                     (ref-B|DPTF:module{BrandingUsageV9} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-B|DPTF::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -354,7 +354,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-DPTF::C_Issue patron account name ticker decimals can-change-owner can-upgrade can-add-special-role can-freeze can-wipe can-pause)
                     )
@@ -546,7 +546,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-DPTF::C_ToggleFeeLock patron id toggle)
                     )
@@ -903,7 +903,7 @@
             (let
                 (
                     (ref-B|DPOF:module{BrandingUsageV9} DPOF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-B|DPOF::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -919,7 +919,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
                         (ref-DPOF::C_Issue patron account name ticker decimals can-upgrade can-change-owner can-add-special-role can-transfer-oft-create-role can-freeze can-wipe can-pause)
                     )
@@ -966,7 +966,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPOF::C_TogglePause id toggle)
@@ -1000,7 +1000,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                    (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPOF::C_ToggleFreezeAccount id account toggle)

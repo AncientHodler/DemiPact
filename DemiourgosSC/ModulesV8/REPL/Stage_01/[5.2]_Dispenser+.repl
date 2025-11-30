@@ -138,7 +138,7 @@
     (let
         (
             (ref-DALOS:module{OuronetDalosV6} DALOS)
-            (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+            (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
             ;;
             (OuroID:string (ref-DALOS::UR_OuroborosID))
         )

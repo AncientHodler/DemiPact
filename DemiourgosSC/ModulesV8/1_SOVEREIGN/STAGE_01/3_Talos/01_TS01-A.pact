@@ -4,7 +4,7 @@
     \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
     (implements OuronetPolicy)
-    (implements TalosStageOne_AdminV5)
+    (implements TalosStageOne_AdminV6)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -385,9 +385,37 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                 )
                 (ref-LIQUID::A_MigrateLiquidFunds migration-target-kda-account)
+            )
+        )
+    )
+    (defun LIQUID|A_ManageWrapper (replay:bool public:bool)
+        @doc "Manages the Kadena Wrapper"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                )
+                (ref-LIQUID::A_ManageWrapper replay public)
+            )
+        )
+    )
+    (defun LIQUID|A_WrapKadena (patron:string wrapper:string amount:decimal)
+        @doc "Wraps Native Kadena to DPTF Kadena"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-LIQUID::A_WrapKadena wrapper amount)
+                )
+                (format "Succesfully Wrapped {} KDA on Account {}" [amount sw])
             )
         )
     )

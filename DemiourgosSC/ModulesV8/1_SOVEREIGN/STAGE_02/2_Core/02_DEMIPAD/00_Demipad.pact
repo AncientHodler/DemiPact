@@ -772,7 +772,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
@@ -804,7 +804,7 @@
             (
                 (ref-coin:module{fungible-v2} coin)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
@@ -988,7 +988,7 @@
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                    (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                     ;;
                     (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}  (URC_Prices asset-id amount-in-dollars type))
                     (working-id:string

@@ -146,7 +146,7 @@
             (ref-VST:module{VestingV5} VST)
             (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
             (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)

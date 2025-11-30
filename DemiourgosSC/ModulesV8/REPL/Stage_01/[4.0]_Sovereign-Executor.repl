@@ -40,7 +40,7 @@
 (let
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         ;;
         (ns-uze:string (ref-U|CT::CT_NS_USE))
     )
@@ -173,11 +173,13 @@
     (
         (ref-U|CT:module{OuronetConstants} U|CT)
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         ;;
         (bar:string (ref-U|CT::CT_BAR))
         (info:string (ref-DALOS::DALOS|Info))
         (vgd:string (ref-DALOS::DALOS|VirtualGasData))
+        (lqd:string (ref-LIQUID::LIQUID|Info))
     )
     [
         ;;Kadena Prices (Main-Net Prices x1000)
@@ -237,6 +239,14 @@
             ,"native-gas-spent"             : 0.0
             ,"native-gas-pump"              : false}
         )
+        ;;REPL-VARIANT:
+        (acquire-module-admin free.LIQUID)
+        ;;MAIN-NET VARIANT
+        ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.LIQUID)
+        (insert ref-LIQUID::LIQUID|Management lqd
+            {"replay"                       : false
+            ,"public"                       : true}
+        )
     ]
 )
 
@@ -277,10 +287,10 @@
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-ATS:module{AutostakeV6} ATS)
         (ref-VST:module{VestingV5} VST)
-        (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+        (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
         (ref-ORBR:module{OuroborosV5} OUROBOROS)
         (ref-SWP:module{SwapperV6} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
@@ -534,7 +544,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -569,7 +579,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -677,7 +687,7 @@
 
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (patron:string KST.ANHD)
         (aozt:string KST.AOZT)
         (emma:string KST.EMMA)
@@ -712,7 +722,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
         ;;
         (patron:string KST.ANHD)
@@ -771,7 +781,7 @@
 
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (patron:string KST.ANHD)
     )
     (ref-TS01-C2::LQD|C_WrapKadena patron patron 1.0)
@@ -799,7 +809,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
     )
@@ -834,7 +844,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_AurynID))))
@@ -866,7 +876,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (atspair:string  (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_EliteAurynID))))
@@ -1008,7 +1018,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         ;;
         (patron:string KST.ANHD)
         (OuroID:string (ref-DALOS::UR_OuroborosID))
@@ -1134,7 +1144,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-A:module{TalosStageOne_AdminV5} TS01-A)
+        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
         ;;
         (patron:string KST.ANHD)
         (p1:string (ref-DALOS::UR_LiquidKadenaID))
@@ -1240,7 +1250,7 @@
             (ref-coin:module{fungible-v2} coin)
             (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
             (ref-ATS:module{AutostakeV6} ATS)
             ;;
             (patron:string KST.ANHD)

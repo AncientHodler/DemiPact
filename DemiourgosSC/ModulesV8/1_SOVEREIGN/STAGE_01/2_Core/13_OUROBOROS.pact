@@ -347,7 +347,7 @@
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                (ref-LIQUID:module{KadenaLiquidStakingV5} LIQUID)
+                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
                 (orb-sc ORBR|SC_NAME)
                 (orb-kda ORBR|SC_KDA-NAME)
                 (lq-kda (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))

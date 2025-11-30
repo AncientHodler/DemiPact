@@ -58,6 +58,7 @@
         ;;
         (ref-P|TS02-C1:module{OuronetPolicy}    TS02-C1)
         (ref-P|TS02-C2:module{OuronetPolicy}    TS02-C2)
+        (ref-P|TS02-C3:module{OuronetPolicy}    TS02-C3)
         ;;
               
     )
@@ -78,6 +79,7 @@
         ;;Talos
         (ref-P|TS02-C1::P|A_Define)
         (ref-P|TS02-C2::P|A_Define)
+        (ref-P|TS02-C3::P|A_Define)
         ;;
         ;;Set DPDC Governor
         ;;REPL-VARIANT:

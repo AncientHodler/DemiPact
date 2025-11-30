@@ -314,3 +314,13 @@
     (defun DPNF|C_UpdateNonceURI            (patron:string id:string account:string nonce:integer nos:bool ay:object{DpdcUdcV3.URI|Type} u1:object{DpdcUdcV3.URI|Data} u2:object{DpdcUdcV3.URI|Data} u3:object{DpdcUdcV3.URI|Data}))
     ;;
 )
+(interface TalosStageTwo_ClientThree
+    @doc "Exposes Acquisition Pools Functions"
+    ;;
+    ;;  [ANK]
+    ;;
+    (defun AQP|C_IssueAnchor:string (patron:string ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer))
+    (defun AQP|C_DefineTrueFungibleAnchor (patron:string anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal))
+    (defun AQP|C_DefineSemiFungibleAnchor (patron:string anchor-id:string dpsf-id:string nonce:integer promile:decimal))
+    (defun AQP|C_DefineNonFungibleAnchor (patron:string anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal))
+)

@@ -374,7 +374,7 @@
     )
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
             (ref-AOZ:module{AgeOfZalmoxis} AOZ)
             (patron:string AOZ.AOZ|SC_NAME)
             ;;
@@ -459,7 +459,7 @@
     )
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
             (ref-AOZ:module{AgeOfZalmoxis} AOZ)
             (patron:string AOZ.AOZ|SC_NAME)
             ;;
@@ -544,7 +544,7 @@
     )
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
             (ref-AOZ:module{AgeOfZalmoxis} AOZ)
             (patron:string AOZ.AOZ|SC_NAME)
             ;;
@@ -595,7 +595,7 @@
 
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
         (patron:string AOZ.AOZ|SC_NAME)
         ;;
@@ -815,7 +815,7 @@
 
 (let
     (
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV7} TS01-C2)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
         (patron:string AOZ.AOZ|SC_NAME)
         ;;
