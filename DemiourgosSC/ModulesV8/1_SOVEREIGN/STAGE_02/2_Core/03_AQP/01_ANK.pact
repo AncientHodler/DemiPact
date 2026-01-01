@@ -1,10 +1,16 @@
 (interface AcquisitionAnchors
     (defun GOV|AQP|SC_NAME ())
     ;;
-    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator} (patron:string ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer))
-    (defun C_DefineTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} (anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal))
-    (defun C_DefineSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} (anchor-id:string dpsf-id:string nonce:integer promile:decimal))
-    (defun C_DefineNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} (anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal))
+    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
+    )
+    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+    )
+    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
+    )
+    (defun C_RevokeAnchor:object{IgnisCollectorV2.OutputCumulator} (anchor-id:string))
 )
 (module AQP-ANK GOV
     ;;
@@ -104,41 +110,34 @@
     ;;{1}
     ;;1]General Anchor Definition
     (defschema ANK|Schema
-        ank-asset:string                                        ;;ID of the the Anchored Asset
-        ank-fungibility:[bool]                                  ;;Stores the fungibility of the Asset the Anchor is based on.
-        precision:integer                                       ;;Precision of the Anchor Variable
+        @doc "General Anchor Definition \
+            \ Each Anchor is defined via a so called Anchored-Asset \
+            \ This may be a DPTF, DPSF or DPNF; It designation is stored here; \
+            \ Along with the Anchor Precision and the Anchor ID itself"
+        ank-asset:string                                            ;;ID of the the Anchored Asset
+        ank-fungibility:[bool]                                      ;;Stores the fungibility of the Asset the Anchor is based on.
+        ank-precision:integer                                       ;;Precision of the Anchor Variable [min 2 - max 8]
+        ank-active:bool                                             ;;Stores if the Anchor is active or not. It can be inactivated by revoking it
+        ank-promile:decimal                                         ;;Promile-value of Anchor
+        ;;
+        ;;DPTF Anchor ONLY
+        dptf-amount:decimal                                          ;;DPTF Amount for the defined <promile> [0.0 when not DPTF Anchor]
+        ;;
+        ;;DPSF Anchor ONLY
+        dpsf-nonce:integer                                           ;;DPSF Nonce for the defined <promile> [0 when not DPSF Anchor]
+        ;;
+        ;;DPNF Anchor ONLY
+        dpnf-trait-key:string                                        ;;DPNF Trait-Key for the defined <promile> [BAR when not DPNF Anchor]
+        dpnf-trait-value:string                                      ;;DPNF Trait-Value for the defined <promile> [BAR when not DPNF Anchor]
         ;;
         ;;Select Keys
         anchor-id:string
     )
-    ;;2]Anchor Definitions; Only True, Semi and Non Fungibles can be used as AnchorDefinitions
-    (defschema ANK|TF|Schema
-        unit-amount:decimal
-        promile:decimal                                         ;;Promile per Amount of DPTF
-        ;;
-        ;;Select Keys
-        anchor-id:string
-        dptf-id:string
-    )
-    (defschema ANK|SF|Schema
-        nonce:integer
-        nonce-promile:decimal                                   ;;Promile of Nonce
-        ;;
-        ;;Select Keys
-        anchor-id:string
-        dpsf-id:string
-    )
-    (defschema ANK|NF|Schema
-        trait-key:string
-        trait-value:string
-        trait-promile:decimal                                   ;;Promile of Trait
-        ;;
-        ;;Select Keys
-        anchor-id:string
-        dpnf-id:string
-    )
-    ;;3]Asset Anchors
+    ;;2]Asset Anchors
     (defschema ANK|AssetAnchors
+        @doc "Stores the Anchors existing for a specific DPTF, DPSF or DPNF. \
+        \ Each DPTF, DPSF or DPNF may have up to 7 Anchors tied to them; \
+        \ Any given Anchor is immutably tied to its DPTF, DPSF or DPNF Asset."
         anchor-primary:string
         anchor-secondary:string
         anchor-tertiary:string
@@ -152,8 +151,9 @@
         ;;Select Keys
         asset-id:string
     )
-    ;;4]Usert Anchor Values
+    ;;3]User Anchor Values
     (defschema ANK|UserSchema
+        @doc "Stores the cumulate promile of a given <ouronet-account> for a given <anchor-id>"
         promile:decimal                                         ;;Promile of User with Anchor
         ;;
         ;;Select Keys
@@ -163,9 +163,6 @@
     ;;
     ;;{2}
     (deftable ANK|T|Anchor:{ANK|Schema})                        ;;Key = <Anchor-ID>
-    (deftable ANK|T|TF|Anchor:{ANK|TF|Schema})                  ;;Key = <Anchor-ID> | <DPTF-ID>
-    (deftable ANK|T|SF|Anchor:{ANK|SF|Schema})                  ;;Key = <Anchor-ID> | <DPSF-ID>
-    (deftable ANK|T|NF|Anchor:{ANK|NF|Schema})                  ;;Key = <Anchor-ID> | <DPNF-ID>
     ;;
     (deftable ANK|T|TF|Anchors:{ANK|AssetAnchors})              ;;Key = <DPTF-ID>
     (deftable ANK|T|SF|Anchors:{ANK|AssetAnchors})              ;;Key = <DPSF-ID>
@@ -190,106 +187,186 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
-    (defcap ANK|C>ISSUE (ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer)
+    (defcap ANK|C>ISSUE-DPTF
+        (anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
         @event
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (fourth:string (drop 3 (take 4 dptf-id)))
+                (first-two:string (take 2 dptf-id))
             )
-            (ref-U|DALOS::UEV_Decimals prec)
-            (ref-U|ATS::UEV_AutostakeIndex ank-name)
-            (UEV_NewAssetAnchor ank-asset ank-fungibility)
+            ;;1]<anchor-name> must conform to the same rules as ATS Index Names
+            (ref-U|ATS::UEV_AutostakeIndex anchor-name)
+            ;;2]<dptf-id> must exist
+            (ref-DPTF::UEV_id dptf-id)
+            ;;3]Validation for <anchor-precision> and <anchor-promile>
+            (UEV_Promile anchor-precision anchor-promile)
+            ;;4]DPTF-amount must be conform with its precision
+            (ref-DPTF::UEV_Amount dptf-id dptf-amount)
+            ;;5]DPTF-ID may only be a Standard, Frozen or Reserved DPTF
+            (enforce
+                (fold (and) true 
+                    [
+                        (!= fourth BAR)         ;; Excludes Frozen LPs
+                        (!= first-two "S|")     ;; Excludes LPs of Stable Pools
+                        (!= first-two "W|")     ;; Excludes LPs of Weigthed Pools
+                        (!= first-two "P|")     ;; Excludes LPs of Product Pools
+                    ]
+                )
+                (format "Anchor cannot be issued for the DPTF {}." [dptf-id])
+            )
+            ;;6]Only the Owner of the DPTF-ID or the Owner of its Parent (in case of Frozen or Reserved DPTFs)
+            ;;  may create an Anchor based on this <dptf-id>
+            (CAP_TF|Owner dptf-id)
+            ;;7]DPTF may have at most already 6 Anchors
+            (UEV_IssueAnchor dptf-id [true true])
+            ;;8]Compose the SECURE Capability
             (compose-capability (SECURE))
         )
     )
-    (defcap ANK|C>DEFINE-TF (anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal)
+    (defcap ANK|C>ISSUE-DPSF
+        (anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
-            (ref-DPTF::UEV_Amount dptf-id dptf-amount)
-            (compose-capability (ANK|CX>DEFINE anchor-id promile))
+            ;;1]<anchor-name> must conform to the same rules as ATS Index Names
+            (ref-U|ATS::UEV_AutostakeIndex anchor-name)
+            ;;2]<dpsf-id> must exist
+            (ref-DPDC::UEV_id dpsf-id true)
+            ;;3]Validation for <anchor-precision> and <anchor-promile>
+            (UEV_Promile anchor-precision anchor-promile)
+            ;;4]<dpsf-nonce> must be valid
+            (ref-DPDC::UEV_Nonce dpsf-id true dpsf-nonce)
+            ;;5]Only the Owner or the Creator of the <dpsf-id> may create an Anchor based of it
+            (ref-DPDC::CAP_OwnerOrCreator dpsf-id true)
+            ;;6]DPTF may have at most already 6 Anchors
+            (UEV_IssueAnchor dpsf-id [false true])
+            ;;7]Compose the SECURE Capability
+            (compose-capability (SECURE))
         )
     )
-    (defcap ANK|C>DEFINE-SF (anchor-id:string dpsf-id:string nonce:integer promile:decimal)
-        @doc "Only Positive nonces can be used for Anchors; (No Fragments)"
+    (defcap ANK|C>ISSUE-DPNF
+        (anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
+                (ref-DPDC:module{DpdcV5} DPDC)
+                (meta-data:object
+                    (ref-DPDC::UR_N|RawMetaData
+                        (ref-DPDC::UR_NativeNonceData dpnf-id false 1)
+                    )
+                )
+                (iz-key-present:bool (contains dpnf-trait-key meta-data))
+                (l:integer (length dpnf-trait-value))
             )
-            (ref-DPDC::UEV_Nonce dpsf-id true nonce)
-            (enforce (> nonce 0) "Invalid Nonce for Anchoring")
-            (compose-capability (ANK|CX>DEFINE anchor-id promile))
-        )
-    )
-    (defcap ANK|C>DEFINE-NF (anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal)
-        @doc "Only Native Nonces can be used for Anchors; (No Fragments, no Sets)"
-        @event
-        (let
-            (
-                (ref-DPDC:module{DpdcV4} DPDC)
-                
-            )
+            ;;1]<anchor-name> must conform to the same rules as ATS Index Names
+            (ref-U|ATS::UEV_AutostakeIndex anchor-name)
+            ;;2]<dpnf-id> must exist
             (ref-DPDC::UEV_id dpnf-id false)
-            (compose-capability (ANK|CX>DEFINE anchor-id promile))
+            ;;3]Validation for <anchor-precision> and <anchor-promile>
+            (UEV_Promile anchor-precision anchor-promile)
+            ;;4]<dpnf-trait-key> must be valid. Considering all Nonces of the dpnf-id have the same object construction
+            ;;  the <dpnf-trait-key> must exist in the meta-data object. For this test, the first Nonce of the dpnf-id is used
+            ;;  As such, the <dpnf-id> must have at least one element already defined.
+            ;;  Only Positive DPNF-Nonces can be anchored. Negative DPNF-Nonces (Fragments) cannot be anchored.
+            (enforce iz-key-present "Non-Fungible Key is invalid")
+            ;;5]<dpnf-trait-value> must not be BAR, and its length must be min 2 and a maximum of 256 Glyphs
+            (enforce
+                (fold (and) true 
+                    [
+                        (>= l 2)                    ;;<l> must be minimum 2
+                        (<= l 256)                  ;;<l> must be maximum 256
+                        (!= dpnf-trait-value BAR)   ;;<dpnf-trait-value> cannot be BAR
+                    ]
+                )
+                "Invalid Promile DPNF Trait-Value"
+            )
+            ;;6]DPTF may have at most already 6 Anchors
+            (UEV_IssueAnchor dpnf-id [false false])
+            ;;7]Compose the SECURE Capability
+            (compose-capability (SECURE))
         )
     )
-    (defcap ANK|CX>DEFINE (anchor-id:string promile:decimal)
-        (UEV_Promile promile)
+    (defcap ANK|C>REVOKE (anchor-id:string)
+        @event
         (CAP_Owner anchor-id)
         (compose-capability (SECURE))
     )
-    ;;
-    (defcap ANK|C>UPDATE-TF (account:string anchor-id:string dptf-id:string dptf-amount:decimal)
+    (defcap ANK|C>UPDATE-DPTF (account:string anchor-id:string total-dptf-amount:decimal)
         @event
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ank-f:[bool] (UR_AnchorFungibility anchor-id))
+                (ank-asset:string (UR_AnchoredAsset anchor-id))
             )
+            ;;1]<account> must exist
             (ref-DALOS::UEV_EnforceAccountExists account)
-            (ref-DPTF::UEV_Amount dptf-id dptf-amount)
-            (enforce (= ank-f [true true]) "Invalid TrueFungible Anchor Fungibility !")
+            ;;2]<anchor-id> must have an underlying Asset of True Fungible Type
+            ;;  Verified with 3]
+            ;;3]<total-dptf-amount> must be conform with the <ank-asset> precision
+            (ref-DPTF::UEV_Amount ank-asset total-dptf-amount)
+            ;;4]<anchor-id> must be live, and not revoked
+            (UEV_LiveAnchor anchor-id)
         )
     )
-    (defcap ANK|C>UPDATE-SF (account:string anchor-id:string dpsf-id:string nonces:[integer])
+    (defcap ANK|C>UPDATE-DPSF (account:string anchor-id:string nonces:[integer])
         @event
+        (compose-capability (ANK|C>UPDATE-DPDC account anchor-id nonces true))
+    )
+    (defcap ANK|C>UPDATE-DPNF (account:string anchor-id:string nonces:[integer])
+        @event
+        (compose-capability (ANK|C>UPDATE-DPDC account anchor-id nonces false))
+    )
+    (defcap ANK|C>UPDATE-DPDC (account:string anchor-id:string nonces:[integer] son:bool)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
-                (ank-f:[bool] (UR_AnchorFungibility anchor-id))
+                (ref-DPDC:module{DpdcV5} DPDC)
+                (ank-asset:string (UR_AnchoredAsset anchor-id))
             )
+            ;;1]<account> must exist
             (ref-DALOS::UEV_EnforceAccountExists account)
-            (ref-DPDC::UEV_NonceMapper dpsf-id true nonces)
-            (enforce (= ank-f [false true]) "Invalid SemiFungible Anchor Fungibility !")
-        )
-    )
-    (defcap ANK|C>UPDATE-NF (account:string anchor-id:string dpnf-id:string nonces:[integer])
-        @event
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
-                (ank-f:[bool] (UR_AnchorFungibility anchor-id))
-            )
-            (ref-DALOS::UEV_EnforceAccountExists account)
-            (ref-DPDC::UEV_NonceMapper dpnf-id false nonces)
-            (enforce (= ank-f [false false]) "Invalid NonFungible Anchor Fungibility !")
+            ;;2]<anchor-id> must have an underlying Asset of Semi Fungible Type
+            ;;  Verified with 3]
+            ;;3]<nonces> must exist for the <ank-asset>
+            (ref-DPDC::UEV_NonceMapper ank-asset son nonces)
+            ;;4]<anchor-id> must be live, and not revoked
+            (UEV_LiveAnchor anchor-id)
         )
     )
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_Asset|AnchorKey:string (anchor-id:string asset-id:string)
-        (concat [anchor-id BAR asset-id])
-    )
-    (defun UC_UserAnchor:string (account:string anchor-id:string)
+    (defun UC_UserAnchor:string 
+        (account:string anchor-id:string)
         (concat [account BAR anchor-id])
+    )
+    (defun UC_TrueFungibleAnchorPromile:decimal 
+        (anchor-id:string total-dptf-amount:decimal)
+        (let
+            (
+                (ank-precision:integer (UR_AnchorPrecision anchor-id))
+                (ank-promile:decimal (UR_AnchorPromile anchor-id))
+                (dptf-amount:decimal (UR_TF|AnchorAmount anchor-id))
+            )
+            (floor (/ total-dptf-amount dptf-amount) ank-precision)
+        )
+    )
+    (defun UC_AssetAnchorsTable (ank-fungibility:[bool])
+        (if (= ank-fungibility [true true])
+            ANK|T|TF|Anchors
+            (if (= ank-fungibility [false true])
+                ANK|T|SF|Anchors
+                ANK|T|NF|Anchors
+            )
+        )
     )
     ;;{F0}  [UR]
     ;;[1] - <ANK|T|Anchor>
@@ -297,70 +374,38 @@
         (read ANK|T|Anchor anchor-id)
     )
     (defun UR_AnchoredAsset:string (anchor-id:string)
-        (at "ank-asset" (UR_Anchor anchor-id))
+        (at "ank-asset" (read ANK|T|Anchor anchor-id ["ank-asset"]))
     )
     (defun UR_AnchorFungibility:[bool] (anchor-id:string)
-        (at "ank-fungibility" (UR_Anchor anchor-id))
+        (at "ank-fungibility" (read ANK|T|Anchor anchor-id ["ank-fungibility"]))
     )
     (defun UR_AnchorPrecision:decimal (anchor-id:string)
-        (at "precision" (UR_Anchor anchor-id))
+        (at "ank-precision" (read ANK|T|Anchor anchor-id ["ank-precision"]))
+    )
+    (defun UR_AnchorState:bool (anchor-id:string)
+        (at "ank-active" (read ANK|T|Anchor anchor-id ["ank-active"]))
+    )
+    (defun UR_AnchorPromile:decimal (anchor-id:string)
+        (at "ank-promile" (read ANK|T|Anchor anchor-id ["ank-promile"]))
+    )
+    ;;
+    (defun UR_TF|AnchorAmount:decimal (anchor-id:string)
+        (at "dptf-amount" (read ANK|T|Anchor anchor-id ["dptf-amount"]))
+    )
+    (defun UR_SF|AnchorNonce:integer (anchor-id:string)
+        (at "dpsf-nonce" (read ANK|T|Anchor anchor-id ["dpsf-nonce"]))
+    )
+    (defun UR_NF|AnchorTraitKey:string (anchor-id:string)
+        (at "dpnf-trait-key" (read ANK|T|Anchor anchor-id ["dpnf-trait-key"]))
+    )
+    (defun UR_NF|AnchorTraitValue:string (anchor-id:string)
+        (at "dpnf-trait-value" (read ANK|T|Anchor anchor-id ["dpnf-trait-value"]))
     )
     (defun UR_AnchorID:string (anchor-id:string)
         (at "anchor-id" (UR_Anchor anchor-id))
     )
-    ;;2a] - <ANK|T|TF|Anchor>
-    (defun UR_TF|Anchor:object{ANK|TF|Schema} (anchor-id:string dptf-id:string)
-        (read ANK|T|TF|Anchor (UC_Asset|AnchorKey anchor-id dptf-id))
-    )
-    (defun UR_TF|Amount:decimal (anchor-id:string dptf-id:string)
-        (at "unit-amount" (UR_TF|Anchor anchor-id dptf-id))
-    )
-    (defun UR_TF|Promile:decimal (anchor-id:string dptf-id:string)
-        (at "promile" (UR_TF|Anchor anchor-id dptf-id))
-    )
-    (defun UR_TF|AnchorID:string (anchor-id:string dptf-id:string)
-        (at "anchor-id" (UR_TF|Anchor anchor-id dptf-id))
-    )
-    (defun UR_TF|DptfID:string (anchor-id:string dptf-id:string)
-        (at "dptf-id" (UR_TF|Anchor anchor-id dptf-id))
-    )
-    ;;2b] - <ANK|T|SF|Anchor>
-    (defun UR_SF|Anchor:object{ANK|SF|Schema} (anchor-id:string dpsf-id:string)
-        (read ANK|T|SF|Anchor (UC_Asset|AnchorKey anchor-id dpsf-id))
-    )
-    (defun UR_SF|Promile:decimal (anchor-id:string dpsf-id:string)
-        (at "nonce-promile" (UR_SF|Anchor anchor-id dpsf-id))
-    )
-    (defun UR_SF|AnchorID:string (anchor-id:string dpsf-id:string)
-        (at "anchor-id" (UR_SF|Anchor anchor-id dpsf-id))
-    )
-    (defun UR_SF|DpsfId:string (anchor-id:string dpsf-id:string)
-        (at "dpsf-id" (UR_SF|Anchor anchor-id dpsf-id))
-    )
-    (defun UR_SF|Nonce:integer (anchor-id:string dpsf-id:string)
-        (at "nonce" (UR_SF|Anchor anchor-id dpsf-id))
-    )
-    ;;2c] - <ANK|T|NF|Anchor>
-    (defun UR_NF|Anchor:object{ANK|NF|Schema} (anchor-id:string dpnf-id:string)
-        (read ANK|T|NF|Anchor (UC_Asset|AnchorKey anchor-id dpnf-id))
-    )
-    (defun UR_NF|Promile:decimal (anchor-id:string dpnf-id:string)
-        (at "trait-promile" (UR_NF|Anchor anchor-id dpnf-id))
-    )
-    (defun UR_NF|AnchorID:string (anchor-id:string dpnf-id:string)
-        (at "anchor-id" (UR_NF|Anchor anchor-id dpnf-id))
-    )
-    (defun UR_NF|DpnfID:string (anchor-id:string dpnf-id:string)
-        (at "dpnf-id" (UR_NF|Anchor anchor-id dpnf-id))
-    )
-    (defun UR_NF|TraitKey:string (anchor-id:string dpnf-id:string)
-        (at "trait-key" (UR_NF|Anchor anchor-id dpnf-id))
-    )
-    (defun UR_NF|TraitValue:string (anchor-id:string dpnf-id:string)
-        (at "trait-value" (UR_NF|Anchor anchor-id dpnf-id))
-    )
-    ;;3] - <ANK|T|TF|Anchors>|<ANK|T|SF|Anchors>|<ANK|T|NF|Anchors>
-    (defun UR_AssetAnchorData:object{ANK|AssetAnchors} (ank-asset:string ank-fungibility:[bool])
+    ;;2] - <ANK|T|TF|Anchors>|<ANK|T|SF|Anchors>|<ANK|T|NF|Anchors>
+    (defun UR_AssetAnchorsData:object{ANK|AssetAnchors} (ank-asset:string ank-fungibility:[bool])
         (UEV_AnkFungibility ank-fungibility)
         (if (= ank-fungibility [true true])
             (UR_TF|Anchors ank-asset)
@@ -463,31 +508,48 @@
     )
     ;;
     ;;{F1}  [URC]
-    (defun URC_AnkAssetOwner:string (ank-asset:string ank-fungibility:[bool])
+    (defun URC_SemiFungibleAnchorPromile:decimal
+        (account:string anchor-id:string nonces:[integer] nonce-amounts:[integer] direction:bool)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-U|LST:module{StringProcessor} U|LST)
+                ;;
+                (ank-promile:decimal (UR_AnchorPromile anchor-id))
+                (dpfs-nonce:integer (UR_SF|AnchorNonce anchor-id))
+                (current-promile:decimal (UR_UserAnchorPromile account anchor-id))
+                ;;
+                (anchor-nonce-position:[integer] (ref-U|LST::UC_Search nonces dpfs-nonce))
+                (l:integer (length anchor-nonce-position))
+                (conform-nonces:integer
+                    (if (= l 0)
+                        0
+                        (at (at 0 anchor-nonce-position) nonce-amounts)
+                    )
+                )
+                (computed-promile-to-consider:decimal (* (dec conform-nonces) ank-promile))
             )
-            (UEV_AnkFungibility ank-fungibility)
-            (cond
-                ((= ank-fungibility [true true]) (ref-DPTF::UR_Konto ank-asset))
-                ((= ank-fungibility [false true]) (ref-DPDC::UR_OwnerKonto ank-asset true))
-                ((= ank-fungibility [false false]) (ref-DPDC::UR_OwnerKonto ank-asset false))
-                BAR
+            (if direction
+                (+ current-promile computed-promile-to-consider)
+                (- current-promile computed-promile-to-consider)
             )
         )
     )
-    (defun URC_AssetAnchorTable (ank-fungibility:[bool] validation:bool)
-        (if validation
-            (UEV_AnkFungibility ank-fungibility)
-            true
-        )
-        (if (= ank-fungibility [true true])
-            ANK|T|TF|Anchors
-            (if (= ank-fungibility [false true])
-                ANK|T|SF|Anchors
-                ANK|T|NF|Anchors
+    (defun URC_NonFungibleAnchorPromile:decimal
+        (account:string anchor-id:string nonces:[integer] direction:bool)
+        (let
+            (
+                (ank-asset:string (UR_AnchoredAsset anchor-id))
+                (ank-promile:decimal (UR_AnchorPromile anchor-id))
+                (dpnf-trait-key:string (UR_NF|AnchorTraitKey anchor-id))
+                (dpnf-trait-value:string (UR_NF|AnchorTraitValue anchor-id))
+                (current-promile:decimal (UR_UserAnchorPromile account anchor-id))
+                ;;
+                (conform-nonces:integer (URC_ConformNonces ank-asset nonces dpnf-trait-key dpnf-trait-value))
+                (computed-promile-to-consider:decimal (* (dec conform-nonces) ank-promile))
+            )
+            (if direction
+                (+ current-promile computed-promile-to-consider)
+                (- current-promile computed-promile-to-consider)
             )
         )
     )
@@ -495,7 +557,7 @@
         @doc "Outputs how many nonces from <nonces> have the proper MetaData Trait"
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (fold
                 (lambda
@@ -503,7 +565,11 @@
                     (let
                         (
                             (nonce:integer (at idx nonces))
-                            (nonce-meta-data:object (ref-DPDC::UR_N|RawMetaData (ref-DPDC::UR_N|MetaData (ref-DPDC::UR_NativeNonceData dpnf-id false nonce))))
+                            (nonce-meta-data:object 
+                                (ref-DPDC::UR_N|RawMetaData 
+                                    (ref-DPDC::UR_NativeNonceData dpnf-id false nonce)
+                                )
+                            )
                             (has-trait-key:bool (contains trait-key nonce-meta-data))
                             (output:decimal
                                 (if (or (< nonce 0) (not has-trait-key))
@@ -532,103 +598,74 @@
             (enforce (and (= l 2) (!= ank-fungibility [true false])) "Invalid Fungibility")
         )
     )
-    (defun UEV_AnkAssetOwnership (ank-asset:string ank-fungibility:[bool])
-        (let
-            (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-            )
-            (ref-DALOS::CAP_EnforceAccountOwnership (URC_AnkAssetOwner ank-asset ank-fungibility))
-        )
-    )
-    (defun UEV_Promile (promile:decimal)
+    (defun UEV_Promile (anchor-precision:integer anchor-promile:decimal)
+        @doc "Validates Promile Variables"
         (enforce
             (fold (and) true 
                 [
-                    (> promile 0.0)                     ;;must be bigger than 0.0
-                    (< promile 100000000000.0)          ;;maximum 100 billion promile
-                    (= (floor promile 4) promile)       ;;max 4 decimal precision
+                    (>= anchor-precision 2)                                     ;;<anchor-precision> must be minimum 2
+                    (<= anchor-precision 8)                                     ;;<anchor-precision> must be maximum 2
+                    (= (floor anchor-promile anchor-precision) anchor-promile)  ;;variables must be conform with each-other
+                    (> anchor-promile 0.0)                                      ;;<anchor-promile> must be bigger than 0.0
+                    (< anchor-promile 100000000000.0)                           ;;<anchor-promile> has a max ceiling of 100 billion promile
+                    
                 ]
             )
-            "Invalid Promile Value"
+            "Invalid Promile Variables"
         )
     )
-    (defun UEV_UpdateTrueFungibleAnchor:decimal 
-        (account:string anchor-id:string dptf-id:string dptf-amount:decimal direction:bool)
+    (defun UEV_IssueAnchor (ank-asset:string ank-fungibility:[bool])
         (let
             (
-                (current-promile:decimal (UR_UserAnchorPromile account anchor-id))
-                (tf-ank-amount:decimal (UR_TF|Amount anchor-id dptf-id))
-                (tf-ank-promile:decimal (UR_TF|Promile anchor-id dptf-id))
-                (computed-promile-to-consider:decimal (floor (* tf-ank-promile (/ dptf-amount tf-ank-amount)) 4))
-                (new-computed-promile:decimal
-                    (if direction
-                        (+ current-promile computed-promile-to-consider)
-                        (- current-promile computed-promile-to-consider)
-                    )
-                )
-            )
-            (enforce (> new-computed-promile 0.0) "Newly computed promile cannot be less than 0.0")
-            new-computed-promile
-        )
-    )
-    (defun UEV_UpdateSemiFungibleAnchor:decimal
-        (account:string anchor-id:string dpsf-id:string nonces:[integer] nonce-amounts:[integer] direction:bool)
-        (let
-            (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (current-promile:decimal (UR_UserAnchorPromile account anchor-id))
-                (sf-ank-promile:decimal (UR_SF|Promile anchor-id dpsf-id))
-                (anchor-nonce:integer (UR_SF|Nonce anchor-id dpsf-id))
-                (anchor-nonce-position:[integer] (ref-U|LST::UC_Search nonces anchor-nonce))
-                (l:integer (length anchor-nonce-position))
-                (valid-nonces:integer
-                    (if (= l 0)
-                        0
-                        (at (at 0 anchor-nonce-position) nonce-amounts)
-                    )
-                )
-                (computed-promile-to-consider:decimal (* (dec valid-nonces) sf-ank-promile))
-                (new-computed-promile:decimal
-                    (if direction
-                        (+ current-promile computed-promile-to-consider)
-                        (- current-promile computed-promile-to-consider)
-                    )
-                )
-            )
-            (enforce (> new-computed-promile 0.0) "Newly computed promile cannot be less than 0.0")
-            new-computed-promile
-        )
-    )
-    (defun UEV_UpdateNonFungibleAnchor:decimal
-        (account:string anchor-id:string dpnf-id:string nonces:[integer] direction:bool)
-        (let
-            (
-                (anchor-trait-key:string (UR_NF|TraitKey anchor-id dpnf-id))
-                (anchor-trait-value:string (UR_NF|TraitValue anchor-id dpnf-id))
-                (current-promile:decimal (UR_UserAnchorPromile account anchor-id))
-                (nf-ank-promile:decimal (UR_NF|Promile anchor-id dpnf-id))
-                (conform-nonces:integer (URC_ConformNonces dpnf-id nonces anchor-trait-key anchor-trait-value))
-                (computed-promile-to-consider:decimal (* (dec conform-nonces) nf-ank-promile))
-                (new-computed-promile:decimal
-                    (if direction
-                        (+ current-promile computed-promile-to-consider)
-                        (- current-promile computed-promile-to-consider)
-                    )
-                )
-            )
-            (enforce (> new-computed-promile 0.0) "Newly computed promile cannot be less than 0.0")
-            new-computed-promile
-        )
-    )
-    (defun UEV_NewAssetAnchor (ank-asset:string ank-fungibility:[bool])
-        (let
-            (
-                (quantity:integer (UR_ANK|Quantity (UR_AssetAnchorData ank-asset ank-fungibility)))
+                (quantity:integer (UR_ANK|Quantity (UR_AssetAnchorsData ank-asset ank-fungibility)))
             )
             (enforce (<= quantity 6) (format "Cannot add new Anchor for Asset {} with Fungibility {}" [ank-asset ank-fungibility]))
         )
     )
+    (defun UEV_LiveAnchor (anchor-id:string)
+        (let
+            (
+                (iz-anchor-active:bool (UR_AnchorState anchor-id))
+            )
+            (enforce iz-anchor-active (format "Anchor {} must be alive for operation" [anchor-id]))
+        )
+    )
     ;;{F3}  [UDC]
+    (defun UDC_RevokedAssetAnchors:object{ANK|AssetAnchors}
+        (anchors:object{ANK|AssetAnchors} anchor-id:string)
+        (let
+            (
+                (ref-U|LST:module{StringProcessor} U|LST)
+                (p1:string (UR_ANK|First anchors))
+                (p2:string (UR_ANK|Second anchors))
+                (p3:string (UR_ANK|Third anchors))
+                (p4:string (UR_ANK|Fourth anchors))
+                (p5:string (UR_ANK|Fifth anchors))
+                (p6:string (UR_ANK|Sixth anchors))
+                (p7:string (UR_ANK|Seventh anchors))
+                (ank-qt:integer (UR_ANK|Quantity anchors))
+                (asset-id:string (UR_AssetAnchorsAssetID anchors))
+                (lst:[string] [p1 p2 p3 p4 p5 p6 p7])
+                (position-to-remove:integer
+                    (cond
+                        ((= anchor-id p1) 0)
+                        ((= anchor-id p2) 1)
+                        ((= anchor-id p3) 2)
+                        ((= anchor-id p4) 3)
+                        ((= anchor-id p5) 4)
+                        ((= anchor-id p6) 5)
+                        ((= anchor-id p7) 6)
+                        -1
+                    )
+                )
+                (lst-v1 (ref-U|LST::UC_RemoveItemAt lst position-to-remove))
+                (lst-v2 (ref-U|LST::UC_AppL lst-v1 BAR))
+            )
+            (UDC_AssetAnchors (at 0 lst-v2) (at 1 lst-v2) (at 2 lst-v2) (at 3 lst-v2)
+                (at 4 lst-v2) (at 5 lst-v2) (at 6 lst-v2) (- ank-qt 1) asset-id
+            )
+        )
+    )
     (defun UDC_AssetAnchors:object{ANK|AssetAnchors}
         (a:string b:string c:string d:string e:string f:string g:string h:integer i:string)
         {"anchor-primary"       : a
@@ -649,74 +686,222 @@
     )
     ;;{F4}  [CAP]
     (defun CAP_Owner (anchor-id:string)
-        (UEV_AnkAssetOwnership (UR_AnchoredAsset anchor-id) (UR_AnchorFungibility anchor-id))
+        @doc "Enforces Anchor Ownership; This is computed as: \
+        \ 1] For DPTFs Computed via <CAP_TF|Owner> \
+        \ 2] For DPSFs and DPNFs can be either its Owner or Creator"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPDC:module{DpdcV5} DPDC)
+                ;;
+                (ank-asset:string (UR_AnchoredAsset anchor-id))
+                (ank-fungibility:[bool] (UR_AnchorFungibility anchor-id))
+            )
+            (if (= ank-fungibility [true true])
+                (CAP_TF|Owner ank-asset)
+                (if (= ank-fungibility [false true])
+                    (ref-DPDC::CAP_OwnerOrCreator ank-asset true)
+                    (ref-DPDC::CAP_OwnerOrCreator ank-asset false)
+                )
+            )
+        )
+    )
+    (defun CAP_TF|Owner (dptf-id:string)
+        @doc "Enforces dptf-id Ownership, as underlying Dptf-Based Anchor Ownership \
+        \ 3 DPTF variants can exist as underlying anchored asset: \
+        \ 1] Pure DPTF      = Its Owner \
+        \ 2] Frozen DPTF    = DPTF Parent Ownership \
+        \ 3] Reserved DPTF  = DPTF Parent Ownership \
+        \ \
+        \ \
+        \ 4] LP DPTF        = Cannot exist as underlaying DPTF-Based Anchor \
+        \ 5] Frozen LP DPTF = Cannot exist as underlaying DPTF-Based Anchor"
+        (let
+            (
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (first-two:string (take 2 dptf-id))
+                (core-dptf-id:string
+                    (cond
+                        ((= first-two "F|") (ref-DPTF::UR_Frozen dptf-id))
+                        ((= first-two "R|") (ref-DPTF::UR_Reservation dptf-id))
+                        dptf-id
+                    )
+                )
+                (owner:string (ref-DPTF::UR_Konto core-dptf-id))
+            )
+            (ref-DALOS::CAP_EnforceAccountOwnership owner)
+        )
     )
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator} 
-        (patron:string ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer)
-        @doc "Issues an Anchor; 250 IGNIS and 10 KDA Costs"
+    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
+        @doc "Issues an Anchor tied to an existing True Fungible Asset \
+            \ Costs 1000 IGNIS and 10 KDA"
         (UEV_IMC)
-        (with-capability (ANK|C>ISSUE ank-name ank-asset ank-fungibility prec)
+        (with-capability (ANK|C>ISSUE-DPTF anchor-name dptf-id anchor-precision anchor-promile dptf-amount)
             (let
                 (
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (gas-costs:decimal 250.0)
+                    ;;
+                    (gas-costs:decimal 500.0)
                     (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
                     (standard:decimal (ref-DALOS::UR_UsagePrice "standard"))
                     ;;
-                    (asset-aqt:integer (UR_ANK|Quantity (UR_AssetAnchorData ank-asset ank-fungibility)))
-                    (anchor-id:string (XI_Issue ank-name ank-asset ank-fungibility prec))
+                    (fungibility:[bool] [true true])
+                    (asset-anchor-quantity:integer 
+                        (UR_ANK|Quantity (UR_TF|Anchors dptf-id))
+                    )
+                    ;;
+                    (anchor-id:string
+                        ;;1]Updates <ANK|T|Anchor> Table
+                        (XI_IssueAnchor 
+                            anchor-name dptf-id fungibility anchor-precision anchor-promile
+                            dptf-amount 0 BAR BAR
+                        )
+                    )
                 )
-                (if (!= asset-aqt 0)
-                    (XI_UpdateAssetAnchors anchor-id ank-asset ank-fungibility)
-                    true
+                ;;2]Updates <ANK|T|TF|Anchors> Table
+                (if (= asset-anchor-quantity 0)
+                    (write ANK|T|TF|Anchors dptf-id
+                        (UDC_AssetAnchors anchor-id BAR BAR BAR BAR BAR BAR 1 dptf-id)
+                    )
+                    (cond
+                        ((= asset-anchor-quantity 1) (update ANK|T|TF|Anchors dptf-id {"anchor-secondary"     : anchor-id, "anchors" : 2}))
+                        ((= asset-anchor-quantity 2) (update ANK|T|TF|Anchors dptf-id {"anchor-tertiary"      : anchor-id, "anchors" : 3}))
+                        ((= asset-anchor-quantity 3) (update ANK|T|TF|Anchors dptf-id {"anchor-quaternary"    : anchor-id, "anchors" : 4}))
+                        ((= asset-anchor-quantity 4) (update ANK|T|TF|Anchors dptf-id {"anchor-quinary"       : anchor-id, "anchors" : 5}))
+                        ((= asset-anchor-quantity 5) (update ANK|T|TF|Anchors dptf-id {"anchor-senary"        : anchor-id, "anchors" : 6}))
+                        ((= asset-anchor-quantity 6) (update ANK|T|TF|Anchors dptf-id {"anchor-septenary"     : anchor-id, "anchors" : 7}))
+                        true
+                    )
                 )
+                ;;3]Collect KDA and Output Ignis Cumulator
                 (ref-IGNIS::KDA|C_Collect patron standard)
-                (ref-IGNIS::UDC_ConstructOutputCumulator gas-costs AQP|SC_NAME trigger [anchor-id])
+                (ref-IGNIS::UDC_ConstructOutputCumulator gas-costs AQP|SC_NAME trigger [anchor-id])   
             )
         )
     )
-    (defun C_DefineTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} 
-        (anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal)
-        @doc "Defines a TrueFungible based Anchor - 5 IGNIS"
+    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        @doc "Issues an Anchor tied to an existing Semi Fungible Asset \
+            \ Costs 1000 IGNIS and 10 KDA"
+        ;;
         (UEV_IMC)
-        (with-capability (ANK|C>DEFINE-TF anchor-id dptf-id dptf-amount promile)
+        (with-capability (ANK|C>ISSUE-DPSF anchor-name dpsf-id anchor-precision anchor-promile dpsf-nonce)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    ;;
+                    (gas-costs:decimal 500.0)
+                    (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                    (standard:decimal (ref-DALOS::UR_UsagePrice "standard"))
+                    ;;
+                    (fungibility:[bool] [false true])
+                    (asset-anchor-quantity:integer 
+                        (UR_ANK|Quantity (UR_SF|Anchors dpsf-id))
+                    )
+                    ;;
+                    (anchor-id:string
+                        ;;1]Updates <ANK|T|Anchor> Table
+                        (XI_IssueAnchor 
+                            anchor-name dpsf-id fungibility anchor-precision anchor-promile
+                            0.0 dpsf-nonce BAR BAR
+                        )
+                    )
+                )
+                ;;2]Updates <ANK|T|SF|Anchors> Table
+                (if (= asset-anchor-quantity 0)
+                    (write ANK|T|SF|Anchors dpsf-id
+                        (UDC_AssetAnchors anchor-id BAR BAR BAR BAR BAR BAR 1 dpsf-id)
+                    )
+                    (cond
+                        ((= asset-anchor-quantity 1) (update ANK|T|SF|Anchors dpsf-id {"anchor-secondary"     : anchor-id, "anchors" : 2}))
+                        ((= asset-anchor-quantity 2) (update ANK|T|SF|Anchors dpsf-id {"anchor-tertiary"      : anchor-id, "anchors" : 3}))
+                        ((= asset-anchor-quantity 3) (update ANK|T|SF|Anchors dpsf-id {"anchor-quaternary"    : anchor-id, "anchors" : 4}))
+                        ((= asset-anchor-quantity 4) (update ANK|T|SF|Anchors dpsf-id {"anchor-quinary"       : anchor-id, "anchors" : 5}))
+                        ((= asset-anchor-quantity 5) (update ANK|T|SF|Anchors dpsf-id {"anchor-senary"        : anchor-id, "anchors" : 6}))
+                        ((= asset-anchor-quantity 6) (update ANK|T|SF|Anchors dpsf-id {"anchor-septenary"     : anchor-id, "anchors" : 7}))
+                        true
+                    )
+                )
+                ;;3]Collect KDA and Output Ignis Cumulator
+                (ref-IGNIS::KDA|C_Collect patron standard)
+                (ref-IGNIS::UDC_ConstructOutputCumulator gas-costs AQP|SC_NAME trigger [anchor-id])   
+            )
+        )
+    )
+    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
+        @doc "Issues an Anchor tied to an existing Non Fungible Asset \
+            \ Costs 1000 IGNIS and 10 KDA"
+        ;;
+        (UEV_IMC)
+        (with-capability (ANK|C>ISSUE-DPNF anchor-name dpnf-id anchor-precision anchor-promile dpnf-trait-key dpnf-trait-value)
+            (let
+                (
+                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    ;;
+                    (gas-costs:decimal 500.0)
+                    (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
+                    (standard:decimal (ref-DALOS::UR_UsagePrice "standard"))
+                    ;;
+                    (fungibility:[bool] [false false])
+                    (asset-anchor-quantity:integer 
+                        (UR_ANK|Quantity (UR_NF|Anchors dpnf-id))
+                    )
+                    ;;
+                    (anchor-id:string
+                        ;;1]Updates <ANK|T|Anchor> Table
+                        (XI_IssueAnchor 
+                            anchor-name dpnf-id fungibility anchor-precision anchor-promile
+                            0.0 0 dpnf-trait-key dpnf-trait-value
+                        )
+                    )
+                )
+                ;;2]Updates <ANK|T|NF|Anchors> Table
+                (if (= asset-anchor-quantity 0)
+                    (write ANK|T|NF|Anchors dpnf-id
+                        (UDC_AssetAnchors anchor-id BAR BAR BAR BAR BAR BAR 1 dpnf-id)
+                    )
+                    (cond
+                        ((= asset-anchor-quantity 1) (update ANK|T|NF|Anchors dpnf-id {"anchor-secondary"     : anchor-id, "anchors" : 2}))
+                        ((= asset-anchor-quantity 2) (update ANK|T|NF|Anchors dpnf-id {"anchor-tertiary"      : anchor-id, "anchors" : 3}))
+                        ((= asset-anchor-quantity 3) (update ANK|T|NF|Anchors dpnf-id {"anchor-quaternary"    : anchor-id, "anchors" : 4}))
+                        ((= asset-anchor-quantity 4) (update ANK|T|NF|Anchors dpnf-id {"anchor-quinary"       : anchor-id, "anchors" : 5}))
+                        ((= asset-anchor-quantity 5) (update ANK|T|NF|Anchors dpnf-id {"anchor-senary"        : anchor-id, "anchors" : 6}))
+                        ((= asset-anchor-quantity 6) (update ANK|T|NF|Anchors dpnf-id {"anchor-septenary"     : anchor-id, "anchors" : 7}))
+                        true
+                    )
+                )
+                ;;3]Collect KDA and Output Ignis Cumulator
+                (ref-IGNIS::KDA|C_Collect patron standard)
+                (ref-IGNIS::UDC_ConstructOutputCumulator gas-costs AQP|SC_NAME trigger [anchor-id])   
+            )
+        )
+    )
+    (defun C_RevokeAnchor:object{IgnisCollectorV2.OutputCumulator}
+        (anchor-id:string)
+        ;;
+        (UEV_IMC)
+        (with-capability (ANK|C>REVOKE anchor-id)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 )
-                (XI_DefineTrueFungibleAnchor anchor-id dptf-id dptf-amount promile)
-                (ref-IGNIS::UDC_BiggestCumulator AQP|SC_NAME)
-            )
-        )
-    )
-    (defun C_DefineSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} 
-        (anchor-id:string dpsf-id:string nonce:integer promile:decimal)
-        @doc "Defines a SemiFungible based Anchor - 5 IGNIS"
-        (UEV_IMC)
-        (with-capability (ANK|C>DEFINE-SF anchor-id dpsf-id nonce promile)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                ;;1]Updates <ANK|T|Anchor> Table
+                (update ANK|T|Anchor anchor-id
+                    {"ank-active"   : false}
                 )
-                (XI_DefineSemiFungibleAnchor anchor-id dpsf-id nonce promile)
-                (ref-IGNIS::UDC_BiggestCumulator AQP|SC_NAME)
-            )
-        )
-    )
-    (defun C_DefineNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator} 
-        (anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal)
-        @doc "Defines a NonFungible based Anchor - 5 IGNIS"
-        (UEV_IMC)
-        (with-capability (ANK|C>DEFINE-NF anchor-id dpnf-id trait-key trait-value promile)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                )
-                (XI_DefineNonFungibleAnchor anchor-id dpnf-id trait-key trait-value promile)
+                ;;2]Updates <ANK|T|NF|Anchors> Table
+                (XI_RevokeAnchor anchor-id)
+                ;;3]Outputs the Ignis Cumulator
                 (ref-IGNIS::UDC_BiggestCumulator AQP|SC_NAME)
             )
         )
@@ -724,125 +909,97 @@
     ;;
     ;;
     ;;{F7}  [X]
-    (defun XI_Issue:string (ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer)
+    (defun XI_IssueAnchor:string
+        (
+            ank-name:string ank-asset:string ank-fungibility:[bool] ank-precision:integer ank-promile:decimal
+            dptf-amount:decimal dpsf-nonce:integer dpnf-trait-key:string dpnf-trait-value:string
+        )
+        @doc "Core Anchor Issue Function; Populates the <ANK|T|Anchor> Table \
+            \ Outputs the <anchor-id>"
         (require-capability (SECURE))
         (let
             (
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
-                ;;
                 (anchor-id:string (ref-U|DALOS::UDC_Makeid ank-name))
-                (asset-aqt:integer (UR_ANK|Quantity (UR_AssetAnchorData ank-asset ank-fungibility)))
             )
             (insert ANK|T|Anchor anchor-id
-                {"ank-asset"        : ank-asset
-                ,"ank-fungibility"  : ank-fungibility
-                ,"precision"        : prec
-                ,"anchor-id"        : anchor-id
+                {"ank-asset"            : ank-asset
+                ,"ank-fungibility"      : ank-fungibility
+                ,"ank-precision"        : ank-precision
+                ,"ank-active"           : true
+                ,"ank-promile"          : ank-promile
+                ,"dptf-amount"          : dptf-amount
+                ,"dpsf-nonce"           : dpsf-nonce
+                ,"dpnf-trait-key"       : dpnf-trait-key
+                ,"dpnf-trait-value"     : dpnf-trait-value
+                ,"anchor-id"            : anchor-id
                 }
-            )
-            (if (= asset-aqt 0)
-                (let
-                    (
-                        (asset-anchors:object{ANK|AssetAnchors} (UDC_AssetAnchors anchor-id BAR BAR BAR BAR BAR BAR 1 ank-asset))
-                    )
-                    (if (= ank-fungibility [true true])
-                        (insert ANK|T|TF|Anchors ank-asset asset-anchors)
-                        (if (= ank-fungibility [false true])
-                            (insert ANK|T|SF|Anchors ank-asset asset-anchors)
-                            (insert ANK|T|NF|Anchors ank-asset asset-anchors)
-                        )
-                    )
-                )
-                true
             )
             anchor-id
         )
     )
-    (defun XI_UpdateAssetAnchors (anchor-id:string ank-asset:string ank-fungibility:[bool])
+    (defun XI_RevokeAnchor (anchor-id:string)
+        @doc "Revokes an anchor from its underlying Asset"
         (require-capability (SECURE))
         (let
             (
-                (asset-aqt:integer (UR_ANK|Quantity (UR_AssetAnchorData ank-asset ank-fungibility)))
-                (table-ref (URC_AssetAnchorTable ank-fungibility false))
+                (ank-asset:string (UR_AnchoredAsset anchor-id))
+                (ank-fungibility:[bool] (UR_AnchorFungibility anchor-id))
+                (anchors:object{ANK|AssetAnchors} (UR_AssetAnchorsData ank-asset ank-fungibility))
+                (table-ref (UC_AssetAnchorsTable ank-fungibility))
             )
-            (if (!= asset-aqt 0)
-                (cond
-                    ((= asset-aqt 1) (update table-ref ank-asset {"anchor-secondary"     : anchor-id, "anchors" : 2}))
-                    ((= asset-aqt 2) (update table-ref ank-asset {"anchor-tertiary"      : anchor-id, "anchors" : 3}))
-                    ((= asset-aqt 3) (update table-ref ank-asset {"anchor-quaternary"    : anchor-id, "anchors" : 4}))
-                    ((= asset-aqt 4) (update table-ref ank-asset {"anchor-quinary"       : anchor-id, "anchors" : 5}))
-                    ((= asset-aqt 5) (update table-ref ank-asset {"anchor-senary"        : anchor-id, "anchors" : 6}))
-                    ((= asset-aqt 6) (update table-ref ank-asset {"anchor-septenary"     : anchor-id, "anchors" : 7}))
-                    true
-                )
-                true
+            (update table-ref ank-asset
+                (UDC_RevokedAssetAnchors anchors anchor-id)
             )
-        )
-    )
-    (defun XI_DefineTrueFungibleAnchor (anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal)
-        (require-capability (SECURE))
-        (insert ANK|T|TF|Anchor (UC_Asset|AnchorKey anchor-id dptf-id)
-            {"unit-amount"          : dptf-amount
-            ,"promile"              : promile
-            ,"anchor-id"            : anchor-id
-            ,"dptf-id"              : dptf-id}
-        )
-    )
-    (defun XI_DefineSemiFungibleAnchor (anchor-id:string dpsf-id:string nonce:integer promile:decimal)
-        (require-capability (SECURE))
-        (insert ANK|T|SF|Anchor (UC_Asset|AnchorKey anchor-id dpsf-id)
-            {"nonce-promile"        : promile
-            ,"anchor-id"            : anchor-id
-            ,"dpsf-id"              : dpsf-id
-            ,"nonce"                : nonce
-            }
-        )
-    )
-    (defun XI_DefineNonFungibleAnchor (anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal)
-        (require-capability (SECURE))
-        (insert ANK|T|NF|Anchor (UC_Asset|AnchorKey anchor-id dpnf-id)
-            {"trait-promile"        : promile
-            ,"anchor-id"            : anchor-id
-            ,"dpnf-id"              : dpnf-id
-            ,"trait-key"            : trait-key
-            ,"trait-value"          : trait-value
-            }
         )
     )
     ;;
-    (defun XE_UpdateTrueFungibleAnchor (account:string anchor-id:string dptf-id:string dptf-amount:decimal direction:bool)
-        @doc "Updates the Anchor for a given <account> pertaining to a given <dptf-id> and <dptf-amount> \
-            \ <direction> true = adds amount; <direction> false = removes amount"
+    (defun XE_UpdateTrueFungibleAnchor
+        (account:string anchor-id:string total-dptf-amount:decimal)
+        @doc "Updates the Anchor Value <promile> for a given <account> and <anchor-id> \
+            \ It uses the <total-dptf-amount>, which is the end amount after a stake or unstake operation"
+        ;;
         (UEV_IMC)
-        (with-capability (ANK|C>UPDATE-TF account anchor-id dptf-id dptf-amount)
+        (with-capability (ANK|C>UPDATE-DPTF account anchor-id total-dptf-amount)
             (write ANK|T|Anchors (UC_UserAnchor account anchor-id)
                 (UDC_AccountAnchor
-                    (UEV_UpdateTrueFungibleAnchor account anchor-id dptf-id dptf-amount direction)
-                    account anchor-id
+                    (UC_TrueFungibleAnchorPromile anchor-id total-dptf-amount)
+                    account
+                    anchor-id
                 )
             )
         )
     )
-    (defun XE_UpdateSemiFungibleAnchor (account:string anchor-id:string dpsf-id:string nonces:[integer] nonce-amounts:[integer] direction:bool)
-        @doc "Updates the Anchor for a given <account> pertaining to a given <dpsf-id> and <nonce> with <nonce-amounts>"
+    (defun XE_UpdateSemiFungibleAnchor
+        (account:string anchor-id:string nonces:[integer] nonce-amounts:[integer] direction:bool)
+        @doc "Updates the Anchor Value <promile> for a given <account> and <anchor-id> \
+            \ <direction> determines if its a stake [true] or unstake [false] event \
+            \ <nonces> and <nonce-amounts> determine how many DPSFs are involved in the Update event"
+        ;;
         (UEV_IMC)
-        (with-capability (ANK|C>UPDATE-SF account anchor-id dpsf-id nonces)
+        (with-capability (ANK|C>UPDATE-DPSF account anchor-id nonces)
             (write ANK|T|Anchors (UC_UserAnchor account anchor-id)
                 (UDC_AccountAnchor
-                    (UEV_UpdateSemiFungibleAnchor account anchor-id dpsf-id nonces nonce-amounts direction)
-                    account anchor-id
+                    (URC_SemiFungibleAnchorPromile account anchor-id nonces nonce-amounts direction)
+                    account
+                    anchor-id
                 )
             )
         )
     )
-    (defun XE_UpdateNonFungibleAnchor (account:string anchor-id:string dpnf-id:string nonces:[integer] direction:bool)
-        @doc "Updates the Anchor for a given <account> pertaining to a given <dpnf-id> and <nonce> with <nonce-amounts>"
+    (defun XE_UpdateNonFungibleAnchor
+        (account:string anchor-id:string nonces:[integer] direction:bool)
+        @doc "Updates the Anchor Value <promile> for a given <account> and <anchor-id> \
+            \ <direction> determines if its a stake [true] or unstake [false] event \
+            \ <nonces> determines which DPNF nonces are involved in the update event "
+        ;;
         (UEV_IMC)
-        (with-capability (ANK|C>UPDATE-NF account anchor-id dpnf-id nonces)
+        (with-capability (ANK|C>UPDATE-DPNF account anchor-id nonces)
             (write ANK|T|Anchors (UC_UserAnchor account anchor-id)
                 (UDC_AccountAnchor
-                    (UEV_UpdateNonFungibleAnchor account anchor-id dpnf-id nonces direction)
-                    account anchor-id
+                    (URC_NonFungibleAnchorPromile account anchor-id nonces direction)
+                    account
+                    anchor-id
                 )
             )
         )
@@ -854,9 +1011,6 @@
 (create-table P|MT)
 ;;
 (create-table ANK|T|Anchor)
-(create-table ANK|T|TF|Anchor)
-(create-table ANK|T|SF|Anchor)
-(create-table ANK|T|NF|Anchor)
 (create-table ANK|T|TF|Anchors)
 (create-table ANK|T|SF|Anchors)
 (create-table ANK|T|NF|Anchors)

@@ -128,7 +128,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
             )
             ;;Nonces of Inactive Sets can still be broken down.
@@ -172,7 +172,7 @@
     (defcap DPDC-S|CX>DEFINE (id:string son:bool ind:object{DpdcUdcV3.DPDC|NonceData})
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
             )
             (ref-DPDC::CAP_Owner id son)
@@ -188,7 +188,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (iz-fragmented:bool (UEV_IzSetClassFragmented id son set-class))
             )
@@ -203,7 +203,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (UEV_SetActiveState id son set-class (not toggle))
             (ref-DPDC::CAP_Owner id son)
@@ -214,7 +214,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (current-name:string (UR_SetName id son set-class))
             )
             (enforce (!= new-name current-name) (format "The Set Name of <{}> must be different from the current name of <{}> for operation" [new-name current-name]))
@@ -227,7 +227,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (current-multiplier:string (UR_SetMultiplier id son set-class))
             )
             ;;Multiplier Precision Check, maximum 3 Precision for Set Multiplier
@@ -296,7 +296,7 @@
     (defun UR_N|Score:decimal (id:string son:bool nonce:integer)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
                 (raw-nonce-score:decimal (ref-DPDC::UR_N|RawScore (ref-DPDC::UR_NativeNonceData id son (abs nonce))))
             )
@@ -336,7 +336,7 @@
     (defun URC_NoncesSummedScore:decimal (id:string son:bool nonces:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (summed-score:decimal
                     (fold
                         (lambda
@@ -439,7 +439,7 @@
     (defun URC_NonFungibleConstituents:[integer] (id:string nonce:integer)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id false nonce))
             )
             (enforce (!= nonce-class 0) "Invalid NFT Nonce to Read Constituents")
@@ -451,7 +451,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (nonces-used-in-set-definition:[integer]
                     (fold
                         (lambda
@@ -491,7 +491,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (set-classes-used-in-set-definition:[integer]
                     (fold
                         (lambda
@@ -611,7 +611,7 @@
     (defun UEV_Composite (id:string son:bool nonces:[integer] csd:[object{DpdcUdcV3.DPDC|AllowedClassForSetPosition}])
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length csd))
             )
@@ -645,7 +645,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -666,7 +666,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -701,7 +701,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -750,7 +750,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -791,7 +791,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     ;;
                     (creator:string (ref-DPDC::UR_CreatorKonto id son))
@@ -823,7 +823,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     ;;
                     (creator:string (ref-DPDC::UR_CreatorKonto id son))
@@ -856,7 +856,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                     ;;
@@ -890,7 +890,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                 )
                 (XI_FragmentSetClass id son set-class fragmentation-ind)
                 (ref-IGNIS::UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
@@ -903,7 +903,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                 )
                 (XI_ToggleSetClass id son set-class toggle)
                 (ref-IGNIS::UDC_BiggestCumulator (ref-DPDC::UR_CreatorKonto id son))
@@ -916,7 +916,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                 )
                 (XI_RenameSet id son set-class new-name)
                 (ref-IGNIS::UDC_SmallCumulator (ref-DPDC::UR_CreatorKonto id son))
@@ -929,7 +929,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                 )
                 (XI_Multiplier id son set-class new-multiplier)
                 (ref-IGNIS::UDC_SmallestCumulator (ref-DPDC::UR_CreatorKonto id son))
@@ -947,7 +947,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
                 (set-class:integer (+ set-classes-used 1))
                 (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))
@@ -987,7 +987,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
                 (set-class:integer (+ set-classes-used 1))
                 (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))
@@ -1028,7 +1028,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (set-classes-used:integer (ref-DPDC::UR_SetClassesUsed id son))
                 (set-class:integer (+ set-classes-used 1))
                 (nonces-used:integer (ref-DPDC::UR_NoncesUsed id son))

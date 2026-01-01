@@ -125,7 +125,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
                 (iz-fragmented:bool (UEV_IzNonceFragmented id son nonce))
@@ -168,7 +168,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (sd:object{DpdcUdcV3.DPDC|NonceData} (ref-DPDC::UR_SplitNonceData id son nonce))
                 (zd:object{DpdcUdcV3.DPDC|NonceData} (ref-DPDC-UDC::UDC_ZeroNonceData))
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id son nonce))
@@ -208,7 +208,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     ;;
                     (l:integer (length fragment-nonces))
@@ -264,7 +264,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -292,7 +292,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -323,7 +323,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 )
                 (XI_EnableNonceFragmentation id son nonce fragmentation-ind)
@@ -341,7 +341,7 @@
         (require-capability (DPDC-F|C>ENABLE-FRAGMENTATION id son nonce fragmentation-ind))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|NonceOrSplitData id son nonce false fragmentation-ind)
         )

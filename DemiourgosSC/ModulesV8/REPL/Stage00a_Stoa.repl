@@ -1,0 +1,321 @@
+;;Load Stoa Modules
+(print "")
+(namespace "free")
+(load "../0_Stoa/coin-contract/stoa-v1.pact")
+(print "")
+;;
+;;
+;;================================================================================
+;;                                                                              ;;
+;;                                                                              ;;
+;;              STAGE ONE STARTER                                               ;;
+;;              Deploy a REPL only Module, to be used throughout Testing        ;;
+;;                                                                              ;;
+;;                                                                              ;;
+;;================================================================================
+;;
+;;
+(print "")
+(begin-tx "TX-01 - Keysets")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (module SKC GOVERNANCE
+        @doc "Only used in Repl to simulate Keys"
+        (defcap GOVERNANCE () true)
+
+        (defconst CK00 "PK_Foundation")
+        (defconst CK01 "PK_AncientHodler")
+        (defconst CK02 "PK_Florian")
+        (defconst CK03 "PK_Coca")
+        (defconst CK04 "PK_Bytales")
+        (defconst CK05 "PK_Emma")
+        (defconst CK06 "PK_Lumy")
+        (defconst CK07 "PK_Kiss")
+
+
+        (defconst CS00_NAME "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697")
+        (defconst CS01_NAME "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263")
+        (defconst CS02_NAME "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e")
+        (defconst CS03_NAME "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba")
+        (defconst CS04_NAME "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b")
+        (defconst CS05_NAME "k:ecaeae048b6e4b1d4cd9b5ba41041b39e05ac3a7b32f495a12823cb1c5ad0f48")
+        (defconst CS06_NAME "k:163320715f95957d1a15ea664fa6bd46f4c59dbb804f793ae93662a4c90b3189")
+        (defconst CS07_NAME "k:134cabaa0e22cd86630773e6e6e4c9c6851715428a49162dcde661b3550ccff9")
+
+        (defconst CS00_PBKY (drop 2 CS00_NAME))
+        (defconst CS01_PBKY (drop 2 CS01_NAME))
+        (defconst CS02_PBKY (drop 2 CS02_NAME))
+        (defconst CS03_PBKY (drop 2 CS03_NAME))
+        (defconst CS04_PBKY (drop 2 CS04_NAME))
+        (defconst CS05_PBKY (drop 2 CS05_NAME))
+        (defconst CS06_PBKY (drop 2 CS06_NAME))
+        (defconst CS07_PBKY (drop 2 CS07_NAME))
+    )
+
+    (env-data
+        {
+            ;;STOA-Masters Keys
+            "KEY_01_AncientHodler" : { "keys" : [SKC.CK01]},
+            "KEY_02_Florian" : { "keys" : [SKC.CK02]},
+            "KEY_03_Coca" : { "keys" : [SKC.CK03]},
+            "KEY_04_Bytales" : { "keys" : [SKC.CK04]},
+            "KEY_05_Emma" : { "keys" : [SKC.CK05]},
+            "KEY_06_Lumy" : { "keys" : [SKC.CK06]},
+            "KEY_07_Kiss" : { "keys" : [SKC.CK07]}
+        }
+    )
+
+    ;;STOA KEYSETS
+    (define-keyset "free.stoa_master_one" (read-keyset "KEY_01_AncientHodler"))
+    (define-keyset "free.stoa_master_two" (read-keyset "KEY_02_Florian"))
+    (define-keyset "free.stoa_master_three" (read-keyset "KEY_03_Coca"))
+    (define-keyset "free.stoa_master_four" (read-keyset "KEY_04_Bytales"))
+    (define-keyset "free.stoa_master_five" (read-keyset "KEY_05_Emma"))
+    (define-keyset "free.stoa_master_six" (read-keyset "KEY_06_Lumy"))
+    (define-keyset "free.stoa_master_seven" (read-keyset "KEY_07_Kiss"))
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 - Initialise")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-data
+        {
+            ;;STOA-Masters Keys
+            "KEY_STOA_00_Foundation" : { "keys" : [SKC.CS00_PBKY]},
+            "KEY_STOA_01_AncientHodler" : { "keys" : [SKC.CS01_PBKY]},
+            "KEY_STOA_02_Florian" : { "keys" : [SKC.CS02_PBKY]},
+            "KEY_STOA_03_Coca" : { "keys" : [SKC.CS03_PBKY]},
+            "KEY_STOA_04_Bytales" : { "keys" : [SKC.CS04_PBKY]},
+            "KEY_STOA_05_Emma" : { "keys" : [SKC.CS05_PBKY]},
+            "KEY_STOA_06_Lumy" : { "keys" : [SKC.CS06_PBKY]},
+            "KEY_STOA_07_Kiss" : { "keys" : [SKC.CS07_PBKY]}
+        }
+    )
+    (env-sigs 
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Foundation", "caps": [] } 
+        ]
+    )
+    (env-chain-data
+        {"chain-id": "0"}
+    )
+    (test-capability (STOA.GENESIS))
+    (STOA.A_InitialiseStoaChain SKC.CS00_NAME (read-keyset "KEY_STOA_00_Foundation"))
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 - Transfers UR Stoa")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-data
+        {
+            ;;STOA-Masters Keys
+            "KEY_STOA_00_Foundation" : { "keys" : [SKC.CS00_PBKY]},
+            "KEY_STOA_01_AncientHodler" : { "keys" : [SKC.CS01_PBKY]},
+            "KEY_STOA_02_Florian" : { "keys" : [SKC.CS02_PBKY]},
+            "KEY_STOA_03_Coca" : { "keys" : [SKC.CS03_PBKY]},
+            "KEY_STOA_04_Bytales" : { "keys" : [SKC.CS04_PBKY]},
+            "KEY_STOA_05_Emma" : { "keys" : [SKC.CS05_PBKY]},
+            "KEY_STOA_06_Lumy" : { "keys" : [SKC.CS06_PBKY]},
+            "KEY_STOA_07_Kiss" : { "keys" : [SKC.CS07_PBKY]}
+        }
+    )
+    (env-sigs
+        [
+            {
+                "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
+                "caps":
+                    [
+                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                    ]
+            }
+        ]
+    )
+    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
+
+    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
+    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
+
+    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
+    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
+
+    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 78.0)
+    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS04_NAME 63.0)
+
+    [
+        (format "AncientHodler has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS01_NAME)])
+        (format "Florian has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS02_NAME)])
+        (format "Coca has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS03_NAME)])
+        (format "Bytales has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS04_NAME)])
+        (format "URSTOA Supply is {}" [(STOA.UR_UR|LocalStoaSupply)])
+    ]
+    
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 - Transfers Stoa")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-data
+        {
+            ;;STOA-Masters Keys
+            "KEY_STOA_00_Foundation" : { "keys" : [SKC.CS00_PBKY]},
+            "KEY_STOA_01_AncientHodler" : { "keys" : [SKC.CS01_PBKY]},
+            "KEY_STOA_02_Florian" : { "keys" : [SKC.CS02_PBKY]},
+            "KEY_STOA_03_Coca" : { "keys" : [SKC.CS03_PBKY]},
+            "KEY_STOA_04_Bytales" : { "keys" : [SKC.CS04_PBKY]},
+            "KEY_STOA_05_Emma" : { "keys" : [SKC.CS05_PBKY]},
+            "KEY_STOA_06_Lumy" : { "keys" : [SKC.CS06_PBKY]},
+            "KEY_STOA_07_Kiss" : { "keys" : [SKC.CS07_PBKY]}
+        }
+    )
+    (env-sigs
+        [
+            {
+                "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
+                "caps":
+                    [
+                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                    ]
+            }
+        ]
+    )
+    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+    (STOA.C_Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
+
+    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
+    (STOA.C_Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
+
+    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
+    (STOA.C_Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
+
+    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 35.0)
+    (STOA.C_Transfer SKC.CS00_NAME SKC.CS04_NAME 47.0)
+
+    [
+        (format "AncientHodler has {} STOA" [(STOA.UR_Balance SKC.CS01_NAME)])
+        (format "Florian has {} STOA" [(STOA.UR_Balance SKC.CS02_NAME)])
+        (format "Coca has {} STOA" [(STOA.UR_Balance SKC.CS03_NAME)])
+        (format "Bytales has {} STOA" [(STOA.UR_Balance SKC.CS04_NAME)])
+        (format "STOA Supply on Chain0 is {}" [(STOA.UR_LocalStoaSupply)])
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 - URStoa Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs 
+        [   
+            { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;:Florian
+            { "key": "5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba", "caps": [] }   ;:Coca
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;:Bytales
+            
+        ]
+    )
+
+    ;;Stake URSTOA
+    [
+        (STOA.C_URV|Stake SKC.CS01_NAME 25.0)
+        [
+            (format "AH Staked URSTOA is {}" [(STOA.UR_URV|UserSupply SKC.CS01_NAME)])
+            (format "AH Last-RPS is {}" [(STOA.UR_URV|UserLastRps SKC.CS01_NAME)])
+            (format "AH Pending Rewards are {}" [(STOA.UR_URV|UserPendingRewards SKC.CS01_NAME)])
+        ]
+        ;;Inject STOA
+        (STOA.C_URV|Inject SKC.CS03_NAME 12.0)
+        [
+            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+        ]
+        ;;Stake URSTOA
+        (STOA.C_URV|Stake SKC.CS02_NAME 17.0)
+        (STOA.C_URV|Stake SKC.CS04_NAME 31.0)
+        [
+            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+        ]
+        ;;Inject Second Time
+        (STOA.C_URV|Inject SKC.CS00_NAME 1234.0)
+        [
+            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+        ]
+        [
+            (format "AH Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS01_NAME)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Florian Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS02_NAME)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Bytales Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS04_NAME)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Foundation Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS00_NAME)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            ;;17.137214137275
+        ]
+        (STOA.C_URV|Unstake SKC.CS04_NAME 7.0)
+        [
+            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+        ]
+        (STOA.C_URV|Inject SKC.CS00_NAME 67.0)
+        (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+    ]
+
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+

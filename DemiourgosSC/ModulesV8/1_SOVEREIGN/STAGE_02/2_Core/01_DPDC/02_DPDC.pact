@@ -2,7 +2,7 @@
     ;;
     (implements OuronetPolicy)
     (implements BrandingUsageV11)
-    (implements DpdcV4)
+    (implements DpdcV5)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -278,7 +278,7 @@
     (defun UR_N|Composition:[integer] (n:object{DpdcUdcV3.DPDC|NonceData})
         (at "composition" (UR_N|MetaData n))
     )
-    (defun UR_N|RawMetaData:[object] (n:object{DpdcUdcV3.DPDC|NonceData})
+    (defun UR_N|RawMetaData:object (n:object{DpdcUdcV3.DPDC|NonceData})
         (at "meta-data" (UR_N|MetaData n))
     )
     ;;  [2.2] - [Existing Nonce-Data Read]

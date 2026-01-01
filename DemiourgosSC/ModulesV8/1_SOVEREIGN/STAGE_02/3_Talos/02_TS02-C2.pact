@@ -147,7 +147,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-DPDC::C_UpdatePendingBranding entity-id false logo description website social)
@@ -161,7 +161,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                 )
                 (ref-DPDC::C_UpgradeBranding patron entity-id false months)
@@ -654,7 +654,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                     (nonce:integer (+ 1 (ref-DPDC::UR_NoncesUsed id false)))
@@ -674,7 +674,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
                     (set-class:integer (ref-DPDC::UR_NonceClass id false nonce))
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))

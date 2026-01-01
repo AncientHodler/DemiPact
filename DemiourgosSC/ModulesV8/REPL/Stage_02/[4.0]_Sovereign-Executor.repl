@@ -39,7 +39,7 @@
     (
         (ref-U|G:module{OuronetGuards} U|G)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))

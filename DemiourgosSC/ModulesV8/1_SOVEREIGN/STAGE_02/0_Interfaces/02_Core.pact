@@ -251,11 +251,12 @@
     (defun UDC_NoCompositeSet:[object{DPDC|AllowedClassForSetPosition}] ())
 )
 ;;
-(interface DpdcV4
+(interface DpdcV5
     @doc "Holds Schema for Digital Collectibles, these being the DPSF and DPNF \
         \ V2 fixes object origin to use DpdcUdc where it was missing \
         \ V3 updates the AccountSupply for more robust Read using Select \
-        \ V4 brings table optimisations for use with <select>"
+        \ V4 brings table optimisations for use with <select> \
+        \ V5 fixes <UR_N|RawMetaData> from [object] to object"
     (defun GOV|DPDC|SC_NAME ())
     ;;
     ;;  [UR]
@@ -299,7 +300,7 @@
     ;;  [2.1.1]
     (defun UR_N|RawScore:decimal (n:object{DpdcUdcV3.DPDC|NonceData}))
     (defun UR_N|Composition:[integer] (n:object{DpdcUdcV3.DPDC|NonceData}))
-    (defun UR_N|RawMetaData:[object] (n:object{DpdcUdcV3.DPDC|NonceData}))
+    (defun UR_N|RawMetaData:object (n:object{DpdcUdcV3.DPDC|NonceData}))
     ;;  [3]
     (defun UR_VerumRoles:object{DpdcUdcV3.DPDC|VerumRoles} (id:string son:bool))
     (defun UR_Verum1:[string] (id:string son:bool))

@@ -319,8 +319,14 @@
     ;;
     ;;  [ANK]
     ;;
-    (defun AQP|C_IssueAnchor:string (patron:string ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer))
-    (defun AQP|C_DefineTrueFungibleAnchor (patron:string anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal))
-    (defun AQP|C_DefineSemiFungibleAnchor (patron:string anchor-id:string dpsf-id:string nonce:integer promile:decimal))
-    (defun AQP|C_DefineNonFungibleAnchor (patron:string anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal))
+    (defun AQP|C_IssueTrueFungibleAnchor:string
+        (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
+    )
+    (defun AQP|C_IssueSemiFungibleAnchor:string
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+    )
+    (defun AQP|C_IssueNonFungibleAnchor:string
+        (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
+    )
+    (defun AQP|C_RevokeAnchor:string (patron:string anchor-id:string))
 )

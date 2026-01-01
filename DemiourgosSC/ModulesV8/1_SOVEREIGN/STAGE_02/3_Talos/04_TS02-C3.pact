@@ -128,8 +128,9 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun AQP|C_IssueAnchor:string (patron:string ank-name:string ank-asset:string ank-fungibility:[bool] prec:integer)
-        @doc "Issues an Anchor. Anchor are used for score boosting"
+    (defun AQP|C_IssueTrueFungibleAnchor:string
+        (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
+        @doc "Issues an Anchor with an underlying DPTF Asset. Anchors are used for percentual score boosting."
         (with-capability (P|TS)
             (let
                 (
@@ -137,7 +138,9 @@
                     (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
                     (ico:object{IgnisCollectorV2.OutputCumulator}
-                        (ref-ANK::C_Issue patron ank-name ank-asset ank-fungibility prec)
+                        (ref-ANK::C_IssueTrueFungibleAnchor 
+                            patron anchor-name dptf-id anchor-precision anchor-promile dptf-amount
+                        )
                     )
                 )
                 (ref-IGNIS::C_Collect patron ico)
@@ -146,52 +149,68 @@
             )
         )
     )
-    (defun AQP|C_DefineTrueFungibleAnchor (patron:string anchor-id:string dptf-id:string dptf-amount:decimal promile:decimal)
-        @doc "Defines an Anchor based on a True Fungible"
+    (defun AQP|C_IssueSemiFungibleAnchor:string
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        @doc "Issues an Anchor with an underlying DPSF Asset. Anchors are used for percentual score boosting."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
+                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                        (ref-ANK::C_IssueSemiFungibleAnchor 
+                            patron anchor-name dpsf-id anchor-precision anchor-promile dpsf-nonce
+                        )
+                    )
+                )
+                (ref-IGNIS::C_Collect patron ico)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun AQP|C_IssueNonFungibleAnchor:string
+        (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
+        @doc "Issues an Anchor with an underlying DPSF Asset. Anchors are used for percentual score boosting."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
+                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                        (ref-ANK::C_IssueNonFungibleAnchor 
+                            patron anchor-name dpnf-id anchor-precision anchor-promile dpnf-trait-key dpnf-trait-value
+                        )
+                    )
+                )
+                (ref-IGNIS::C_Collect patron ico)
+                (ref-TS01-A::XB_DynamicFuelKDA)
+                (at 0 (at "output" ico))
+            )
+        )
+    )
+    (defun AQP|C_RevokeAnchor:string (patron:string anchor-id:string)
+        @doc "Revokes an existing Anchor, unbinding it from its underlying Asset \
+            \ This frees an Anchor Spot from the possible maximum 7 that can exist for any given DPTF, DPSF or DPNF \
+            \ To be used in case an existing Anchor has been issued incorrectly \
+            \ Revoked Anchors are permanently taken out of circulation; \
+            \ Therefore if an Anchor was improperly issued, it must be revoked, then re-issued.\
+            \ 5 Ignis Cost"
         (with-capability (P|TS)
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
                 )
-                (ref-IGNIS::C_Collect patron
-                    (ref-ANK::C_DefineTrueFungibleAnchor anchor-id dptf-id dptf-amount promile)
+                (ref-IGNIS::C_Collect patron 
+                    (ref-ANK::C_RevokeAnchor anchor-id)
                 )
+                (format "Anchor {} has been succesfully revoked." [anchor-id])
             )
         )
     )
-    (defun AQP|C_DefineSemiFungibleAnchor (patron:string anchor-id:string dpsf-id:string nonce:integer promile:decimal)
-        @doc "Defines an Anchor based on a True Fungible"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
-                )
-                (ref-IGNIS::C_Collect patron
-                    (ref-ANK::C_DefineSemiFungibleAnchor anchor-id dpsf-id nonce promile)
-                )
-            )
-        )
-    )
-    (defun AQP|C_DefineNonFungibleAnchor (patron:string anchor-id:string dpnf-id:string trait-key:string trait-value:string promile:decimal)
-        @doc "Defines an Anchor based on a True Fungible"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
-                )
-                (ref-IGNIS::C_Collect patron
-                    (ref-ANK::C_DefineNonFungibleAnchor anchor-id dpnf-id trait-key trait-value promile)
-                )
-            )
-        )
-    )
-    ;;
-    ;;  [2] DPDC
-    ;;
-    
     ;;{F7}  [X]
     ;;
 )

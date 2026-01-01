@@ -117,7 +117,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
                 (l1:integer (length amounts))
                 (l2:integer (length input-nonce-datas))
@@ -173,7 +173,7 @@
     (defcap DPDC-C|C>SINGLE-CREDIT (id:string son:bool nonce:integer fragments-or-native:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (UEV_NonceType nonce fragments-or-native)
             (compose-capability (P|DPDC-C|CALLER))
@@ -213,7 +213,7 @@
     (defcap DPDC-C|CX>MULTI-CREDIT (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -243,7 +243,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (if wipe-mode
                 (ref-DPDC::CAP_Owner id son)
@@ -273,7 +273,7 @@
         (account:string id:string son:bool nonces:[integer] amounts:[integer] fragments-or-native:bool wipe-mode:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (UEV_NonceTypeMapper nonces fragments-or-native)
             (compose-capability (DPDC|CX>MULTI-DEBIT account id son nonces amounts wipe-mode))
@@ -292,7 +292,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
@@ -320,7 +320,7 @@
         (let
             (
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
                 (empty-data-dc:object{DpdcUdcV3.DPDC|NonceData}
                     (ref-DPDC-UDC::UDC_ZeroNonceData)
@@ -546,7 +546,7 @@
         (let
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
                 (split:object{OuronetIntegersV2.NonceSplitter} (ref-U|INT::UC_NonceSplitter nonces amounts))
                 (negative-nonces:[integer] (at "negative-nonces" split))
@@ -642,7 +642,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
                 ;;
                 (l:integer (length amounts))
@@ -748,7 +748,7 @@
             (
                 (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (new-element-nonce:integer (+ (ref-DPDC::UR_NoncesUsed id son) 1))
                 (account-for-supply-registering:string (ref-DPDC::UR_Verum5 id son))
                 (nonce-holder:string
@@ -778,7 +778,7 @@
     (defun MappedUpdateOwnerNFT (id:string nonces:[integer] account:string iz-bar:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (new-owner:string
                     (if iz-bar
                         BAR
@@ -808,7 +808,7 @@
     (defun CreditOrDebitDPDC (account:string id:string son:bool nonce:integer amount:integer cod:bool)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (read-current-supply:integer (ref-DPDC::UR_AccountNonceSupply account id son nonce))
                 (current-supply:integer 
                     (if (= read-current-supply -1)

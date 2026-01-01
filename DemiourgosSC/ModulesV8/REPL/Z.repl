@@ -4,11 +4,16 @@
 (print "************************LOADED - STAGE 00 - Kadena ENV**********************************************")
 (print "")
 
+(print "")
+(load "Stage00a_Stoa.repl")
+(print "************************LOADED - STAGE 00 - Kadena ENV**********************************************")
+(print "")
+
 ;;Load Stage 01 - Ouronet Stage 1 Deployment
-(print "")
-(load "Stage01_Tester.repl")
-(print "************************LOADED - STAGE 01 - OuronetENV**********************************************")
-(print "")
+;(print "")
+;(load "Stage01_Tester.repl")
+;(print "************************LOADED - STAGE 01 - OuronetENV**********************************************")
+;(print "")
 
 ;;Load Stage 02 - Ouronet Stage 1 Deployment
 ;(print "")

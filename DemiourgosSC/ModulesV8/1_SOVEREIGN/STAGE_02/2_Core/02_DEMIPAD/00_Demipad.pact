@@ -925,7 +925,7 @@
                 (fungibility:[bool] (UR_Fungibility asset-id))
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (cond
                 ((= fungibility TF) (ref-DPTF::CAP_Owner asset-id))

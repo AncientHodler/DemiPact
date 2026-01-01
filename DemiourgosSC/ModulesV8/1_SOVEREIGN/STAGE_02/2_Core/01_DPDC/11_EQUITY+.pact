@@ -229,7 +229,7 @@
     (defun UR_TierSupplies:[integer] (id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-U|LST:module{StringProcessor} U|LST)
             )
             (fold
@@ -252,7 +252,7 @@
         @doc "Computes Tier Shares; Example for 5 mil Company Shares it would output 5*[100 200 500 1000 2000 5000 10000]"
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (tcs-in-millions:integer (/ (ref-DPDC::UR_NonceSupply id true 1) 1000000))
             )
             (map (* tcs-in-millions) S)
@@ -265,7 +265,7 @@
     (defun URC_CombineCapacity:integer (id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (shares:integer (ref-DPDC::UR_NonceSupply id true 1))
                 (half-shares:integer (/ shares 2))
                 (spm:[integer] (URC_SharesPerMillion id))
@@ -360,7 +360,7 @@
                 (ref-U|VST:module{UtilityVstV2} U|VST)
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                 (ref-DPDC-I:module{DpdcIssue} DPDC-I)
                 ;;
@@ -478,7 +478,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -519,7 +519,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
@@ -555,7 +555,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG) 
                     (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
                     (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))

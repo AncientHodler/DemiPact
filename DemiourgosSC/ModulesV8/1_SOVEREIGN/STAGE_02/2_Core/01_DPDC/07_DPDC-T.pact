@@ -116,7 +116,7 @@
             (
                 (ref-U|INT:module{OuronetIntegersV2} U|INT)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (l1:integer (length ids))
                 (l2:integer (length sons))
                 (l3:integer (length nonces-array))
@@ -269,7 +269,7 @@
     (defun URC_TransferRoleChecker:bool (id:string son:bool sender:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
                 (verum:[string] (ref-DPDC::UR_Verum11 id son))
                 (lv:integer (length verum))
@@ -289,7 +289,7 @@
     (defun URC_SummedIgnisRoyalty:decimal (sender:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (creator:string (ref-DPDC::UR_CreatorKonto id son))
             )
             (if (= sender creator)
@@ -359,7 +359,7 @@
     (defun UEV_TransferRoles (id:string son:bool sender:string receiver:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (trc:bool (URC_TransferRoleChecker id son sender))
                 (s:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
                 (r:bool (ref-DPDC::UR_CA|R-Transfer id son sender))
@@ -383,7 +383,7 @@
     (defun UEV_AmountsForTransfer (id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -445,7 +445,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
                     ;;
                     (l:integer (length nonces))
@@ -514,7 +514,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
                 (ivgz:bool (ref-IGNIS::URC_IsVirtualGasZero))
                 ;;

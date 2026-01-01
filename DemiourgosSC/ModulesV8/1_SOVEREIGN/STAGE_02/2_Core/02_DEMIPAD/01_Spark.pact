@@ -44,10 +44,35 @@
     (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal))
     ;;
 )
+(interface SparksV3
+    ;;
+    ;;  [UR]
+    ;;
+    (defun UR_SparkID:string ())
+    (defun UR_IzOpenForBusiness:bool ())
+    (defun UR_FrozenSparkID:string ())
+    (defun UR_Sparks (account:string))
+    ;;
+    ;;  [URC]
+    ;;
+    (defun URC_GetMaxBuy:integer (account:string native:bool))
+    (defun URC_SparkCost:decimal ())
+    (defun URC_SparkRedemptionCost:decimal ())
+    (defun URC_AccountRedemptionAmount:decimal (account:string))
+    ;;
+    ;;  [C]
+    ;;
+    (defun C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
+    (defun C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
+    (defun C_CustomRedemAllSparks (patron:string redemption-payer:string account-to-redeem:string custom-kda-pid:decimal))
+    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal))
+    (defun C_CustomRedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal custom-kda-pid:decimal))
+    ;;
+)
 (module DEMIPAD-SPARK GOV
     ;;
     (implements OuronetPolicy)
-    (implements SparksV2)
+    (implements SparksV3)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -342,6 +367,18 @@
             (floor (/ (+ 1.0 (/ boost 1000.0)) kda-pid) kda-prec)
         )
     )
+    (defun URC_CustomSparkRedemptionCost:decimal (custom-kda-pid:decimal)
+        @doc "Returns the amount of KDA|WKDA a single Token can be redeemed for."
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                (boost:decimal (UR_BoostPromille))
+            )
+            (floor (/ (+ 1.0 (/ boost 1000.0)) custom-kda-pid) kda-prec)
+        )
+    )
     (defun URC_AccountRedemptionAmount:decimal (account:string)
         @doc "Returns Account Redemption Amount"
         (let
@@ -434,9 +471,26 @@
             )
         )
     )
+    (defun C_CustomRedemAllSparks (patron:string redemption-payer:string account-to-redeem:string custom-kda-pid:decimal)
+        (with-capability (SPARK|C>REEDEM-ALL account-to-redeem)
+            (let
+                (
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (spark-id:string (UR_SparkID))
+                    (supply:decimal (ref-DPTF::UR_AccountSupply spark-id account-to-redeem))
+                )
+                (XI_CustomRedeemSparks patron redemption-payer account-to-redeem supply custom-kda-pid)
+            )
+        )
+    )
     (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal)
         (with-capability (SPARK|C>REEDEM-FEW account-to-redeem redemption-quantity)
             (XI_RedeemSparks patron redemption-payer account-to-redeem redemption-quantity)
+        )
+    )
+    (defun C_CustomRedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal custom-kda-pid:decimal)
+        (with-capability (SPARK|C>REEDEM-FEW account-to-redeem redemption-quantity)
+            (XI_CustomRedeemSparks patron redemption-payer account-to-redeem redemption-quantity custom-kda-pid)
         )
     )
     ;;{F7}  [X]
@@ -456,6 +510,50 @@
                 ;;
                 (spark-id:string (UR_SparkID))
                 (spark-redemption-cost:decimal (URC_SparkRedemptionCost))
+                (redemption-value:decimal (floor (* spark-redemption-cost redemption-quantity) kda-prec))
+                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (sa-atr:string (ref-I|OURONET::OI|UC_ShortAccount account-to-redeem))
+            )
+            (ref-IGNIS::C_Collect patron
+                (ref-IGNIS::UDC_ConcatenateOutputCumulators 
+                    [
+                        ;;1]Move Wrapped Kadena to Target
+                        (ref-TFT::C_Transfer wkda-id redemption-payer account-to-redeem redemption-value true)
+                        ;;2]Freeze <account-to-redeem>
+                        (ref-DPTF::C_ToggleFreezeAccount spark-id account-to-redeem true)
+                        ;;3]Partial Wipe <spark-id>
+                        (ref-DPTF::C_WipeSlim spark-id account-to-redeem redemption-quantity)
+                        ;;4]Unfreeze <account-to-redeem>
+                        (ref-DPTF::C_ToggleFreezeAccount spark-id account-to-redeem false)
+                        ;;5]Remint wiped amount to <DEMIPAD|SC_NAME>
+                        (ref-DPTF::C_Mint spark-id DEMIPAD|SC_NAME redemption-quantity false)
+                        ;;6]Freeze it to back to <account-to-redeem>
+                        (ref-VST::C_Freeze DEMIPAD|SC_NAME account-to-redeem spark-id redemption-quantity)
+                    ]
+                    []
+                )
+            )
+            (format "Succesfully Redeemed {} {} for {} {} on Account {}"
+                [redemption-quantity spark-id redemption-value wkda-id sa-atr]
+            )
+        )
+    )
+    (defun XI_CustomRedeemSparks 
+        (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal custom-kda-pid:decimal)
+        (require-capability (SECURE))
+        (let
+            (
+                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-VST:module{VestingV5} VST)
+                (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
+                ;;
+                (spark-id:string (UR_SparkID))
+                (spark-redemption-cost:decimal (URC_CustomSparkRedemptionCost custom-kda-pid))
                 (redemption-value:decimal (floor (* spark-redemption-cost redemption-quantity) kda-prec))
                 (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
                 (sa-atr:string (ref-I|OURONET::OI|UC_ShortAccount account-to-redeem))

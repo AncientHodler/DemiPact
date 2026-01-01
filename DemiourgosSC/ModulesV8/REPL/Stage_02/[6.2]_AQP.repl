@@ -28,7 +28,7 @@
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
                 patron
-                (* (ref-DALOS::UR_UsagePrice "standard") 2.0)
+                (* (ref-DALOS::UR_UsagePrice "standard") 8.0)
             )
         )
     )
@@ -67,11 +67,19 @@
             (ref-TS02-C3:module{TalosStageTwo_ClientThree} TS02-C3)
             (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
         )
-        (ref-TS02-C3::AQP|C_IssueAnchor patron "Oronchor" "OURO-98c486052a51" [true true] 8)
-        (ref-TS02-C3::AQP|C_IssueAnchor patron "Pironchor" "OURO-98c486052a51" [true true] 8)
+        (ref-TS02-C3::AQP|C_IssueTrueFungibleAnchor patron "Oronchor" "OURO-98c486052a51" 8 50.0 750.0)
+        (ref-TS02-C3::AQP|C_IssueTrueFungibleAnchor patron "Pironchor" "OURO-98c486052a51" 8 40.0 650.0)
+        (ref-TS02-C3::AQP|C_IssueTrueFungibleAnchor patron "Pizdochor" "OURO-98c486052a51" 4 20.0 350.0)
+        (ref-TS02-C3::AQP|C_IssueTrueFungibleAnchor patron "Puliochor" "OURO-98c486052a51" 2 30.0 450.0)
+        (ref-TS02-C3::AQP|C_RevokeAnchor patron "Pizdochor-98c486052a51")
+        (ref-TS02-C3::AQP|C_IssueNonFungibleAnchor patron "OuroborosRain" "KBN-98c486052a51" 2 50.0 "Background" "Ouroboros Rain")
+        (ref-TS02-C3::AQP|C_IssueNonFungibleAnchor patron "AurynRain" "KBN-98c486052a51" 2 100.0 "Background" "Auryn Rain")
+        (ref-TS02-C3::AQP|C_IssueNonFungibleAnchor patron "LegendaryBunny" "KBN-98c486052a51" 2 400.0 "Rarity" "Legendary")
+        (ref-TS02-C3::AQP|C_IssueNonFungibleAnchor patron "EliteAurynRain" "KBN-98c486052a51" 2 400.0 "Background" "Elite-Auryn Rain")
         [
-            (ref-ANK::UR_Anchor "Oronchor-98c486052a51")
-            (ref-ANK::UR_AssetAnchorData "OURO-98c486052a51" [true true])
+            ;(ref-ANK::UR_Anchor "Oronchor-98c486052a51")
+            ;(ref-ANK::UR_AssetAnchorsData "OURO-98c486052a51" [true true])
+            (ref-ANK::UR_AssetAnchorsData "KBN-98c486052a51" [false false])
         ]
     )
     

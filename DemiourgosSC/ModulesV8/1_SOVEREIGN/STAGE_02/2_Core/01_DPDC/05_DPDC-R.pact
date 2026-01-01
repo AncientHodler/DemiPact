@@ -99,7 +99,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id true toggle)
             (ref-DPDC::UEV_AccountAddQuantityState id account (not toggle))
@@ -111,7 +111,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_CanFreezeON id son)
             (ref-DPDC::UEV_AccountFreezeState id son account (not frozen))
@@ -124,7 +124,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (type:bool (ref-DALOS::UR_AccountType account))
             )
             (enforce type "Only Smart Ouronet Accounts can get this role")
@@ -137,7 +137,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountBurnState id son account (not toggle))
@@ -149,7 +149,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountUpdateState id son account (not toggle))
@@ -161,7 +161,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountModifyCreatorState id son account (not toggle))
@@ -173,7 +173,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountModifyRoyaltiesState id son account (not toggle))
@@ -185,7 +185,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountTransferState id son account (not toggle))
@@ -198,7 +198,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountCreateState id son old-account true)
@@ -211,7 +211,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountRecreateState id son old-account true)
@@ -224,7 +224,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountSetUriState id son old-account true)
@@ -251,7 +251,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_ADD-QTY-R id account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id true)
@@ -266,7 +266,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>FRZ-ACC id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -281,7 +281,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_EXEMPTION-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -296,7 +296,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_BURN-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -311,7 +311,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_UPDATE-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -326,7 +326,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_MODIFY-CREATOR-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -341,7 +341,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -356,7 +356,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (with-capability (DPDC|C>TG_TRANSFER-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -372,7 +372,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum5 id son))
             )
             (with-capability (DPDC|C>MV_CREATE-R id son old-account new-account)
@@ -388,7 +388,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum6 id son))
             )
             (with-capability (DPDC|C>MV_RECREATE-R id son old-account new-account)
@@ -404,7 +404,7 @@
         (let
             (
                 (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum10 id son))
             )
             (with-capability (DPDC|C>MV_SET-URI-R id son old-account new-account)
@@ -419,7 +419,7 @@
         (require-capability (DPDC|C>TG_ADD-QTY-R id account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Rnaq id account toggle)
             (ref-DPDC::XE_U|VerumRoles id true 3 toggle account)
@@ -429,7 +429,7 @@
         (require-capability (DPDC|C>FRZ-ACC id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
             )
             (ref-DPDC::XE_U|Frozen id son account toggle)
@@ -440,7 +440,7 @@
         (require-capability (DPDC|C>TG_EXEMPTION-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 ;;
             )
             (ref-DPDC::XE_U|Exemption id son account toggle)
@@ -451,7 +451,7 @@
         (require-capability (DPDC|C>TG_BURN-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Burn id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 4 toggle account)
@@ -461,7 +461,7 @@
         (require-capability (DPDC|C>TG_UPDATE-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Update id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 7 toggle account)
@@ -471,7 +471,7 @@
         (require-capability (DPDC|C>TG_MODIFY-CREATOR-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|ModifyCreator id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 8 toggle account)
@@ -481,7 +481,7 @@
         (require-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|ModifyRoyalties id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 9 toggle account)
@@ -491,7 +491,7 @@
         (require-capability (DPDC|C>TG_TRANSFER-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Transfer id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 11 toggle account)
@@ -502,7 +502,7 @@
         (require-capability (DPDC|C>MV_CREATE-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Create id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 5 false old-account)
@@ -514,7 +514,7 @@
         (require-capability (DPDC|C>MV_RECREATE-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|Recreate id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 6 false old-account)
@@ -526,7 +526,7 @@
         (require-capability (DPDC|C>MV_SET-URI-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
             )
             (ref-DPDC::XE_U|SetNewUri id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 10 false old-account)

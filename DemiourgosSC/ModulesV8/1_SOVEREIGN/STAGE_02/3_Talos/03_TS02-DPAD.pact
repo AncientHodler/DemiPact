@@ -338,7 +338,7 @@
             (let
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_BuySparks patron buyer sparks-amount iz-native)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -349,7 +349,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemAllSparks patron redemption-payer account-to-redeem)
             )
@@ -359,7 +359,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{SparksV2} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemFewSparks patron redemption-payer account-to-redeem redemption-quantity)
             )

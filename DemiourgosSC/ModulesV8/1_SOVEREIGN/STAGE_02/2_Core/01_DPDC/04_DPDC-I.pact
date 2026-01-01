@@ -126,7 +126,7 @@
     (defun C_DeployAccountSFT (account:string id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (f:bool false)
             )
             (ref-DPDC::XB_DeployAccountSFT account id f f f f f f f f f f f)
@@ -135,7 +135,7 @@
     (defun C_DeployAccountNFT (account:string id:string)
         (let
             (
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (f:bool false)
             )
             (ref-DPDC::XB_DeployAccountNFT account id f f f f f f f f f f)
@@ -156,7 +156,7 @@
                     (ref-DALOS:module{OuronetDalosV6} DALOS)
                     (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
                     (ref-BRD:module{Branding} BRD)
-                    (ref-DPDC:module{DpdcV4} DPDC)
+                    (ref-DPDC:module{DpdcV5} DPDC)
                     ;;
                     (multiplier:decimal (if son 5.0 10.0))
                     (ti:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
@@ -289,7 +289,7 @@
                 (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
                 (ref-DALOS:module{OuronetDalosV6} DALOS)
                 (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-DPDC:module{DpdcV4} DPDC)
+                (ref-DPDC:module{DpdcV5} DPDC)
                 (id:string (ref-U|DALOS::UDC_Makeid collection-ticker))
                 (specifications:object{DpdcUdcV3.DPDC|PropertiesV2}
                     (ref-DPDC-UDC::UDC_DPDC|PropertiesV2

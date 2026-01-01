@@ -34,7 +34,7 @@
         (ouroboros:string (ref-DALOS::GOV|OUROBOROS|SC_NAME))
         (dalos:string (ref-DALOS::GOV|DALOS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (id:string "DHCD-98c486052a51")
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
@@ -75,7 +75,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
         (patron:string KST.ANHD)
@@ -179,7 +179,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -242,7 +242,7 @@
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
         (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
@@ -372,7 +372,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
@@ -444,7 +444,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-DPDC-MNG:module{DpdcManagement} DPDC-MNG)  
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (id:string "DHCD-98c486052a51")
@@ -509,7 +509,7 @@
         (emma:string KST.EMMA)
         (lumy:string KST.LUMY)
         ;;
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (id1:string "DHOC-98c486052a51")
         (id2:string "E|DH-98c486052a51")
         (id3:string "DHCD-98c486052a51")
@@ -573,7 +573,7 @@
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
         (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
@@ -623,7 +623,7 @@
 (let
     (
         
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
@@ -691,7 +691,7 @@
 (print "=============================================BEGIN DPTF TESTS==========================================")
 (let
     (
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
         (id:string "DHOC-98c486052a51")
@@ -734,7 +734,7 @@
 )
 (let
     (
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (id:string "DHCD-98c486052a51")
@@ -833,7 +833,7 @@
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         (ref-DPDC-S:module{DpdcSetsV4} DPDC-S)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
@@ -892,7 +892,7 @@
     (
         (ref-coin:module{fungible-v2} coin)
         (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-DPDC:module{DpdcV4} DPDC)
+        (ref-DPDC:module{DpdcV5} DPDC)
         
         (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
