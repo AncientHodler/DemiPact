@@ -31,8 +31,8 @@
 ;;SLAVE TESTER
 ;(load "Stage_01/[6.1]_Cumulator.repl")
     ;;
-(load "Stage_01/[6.2]_DPTF.repl")
-(load "Stage_01/[6.3]_SWP.repl")
+            ;(load "Stage_01/[6.2]_DPTF.repl")
+            ;(load "Stage_01/[6.3]_SWP.repl")
 ;(load "Stage_01/[6.4]_Admin.repl")
     ;;
 ;(load "Stage_01/[6.5]_DPOF.repl")

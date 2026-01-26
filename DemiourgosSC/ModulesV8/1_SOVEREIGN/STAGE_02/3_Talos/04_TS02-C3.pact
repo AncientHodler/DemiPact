@@ -150,7 +150,7 @@
         )
     )
     (defun AQP|C_IssueSemiFungibleAnchor:string
-        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
         @doc "Issues an Anchor with an underlying DPSF Asset. Anchors are used for percentual score boosting."
         (with-capability (P|TS)
             (let

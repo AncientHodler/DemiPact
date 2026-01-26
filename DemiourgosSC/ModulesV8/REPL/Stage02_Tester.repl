@@ -26,12 +26,13 @@
 (load "Stage_02/[4.0]_Sovereign-Executor.repl")
 
 ;;SLAVE DEPLOYER + EXECUTOR
-(load "Stage_02/[5.1]_PopulateNosferatu.repl")
+;(load "Stage_02/[5.1]_PopulateNosferatu.repl")
 ;(load "Stage_02/[5.2]_PopulateBloodshed.repl")
 (load "Stage_02/[5.4]_PopulateBunnies.repl")
 
 (load "Stage_02/[5.3]_Launchpad.repl")
-(load "Stage_02/[6.1]_DPDC.repl")
+;(load "Stage_02/[6.1]_DPDC.repl")
 (load "Stage_02/[6.2]_AQP.repl")
+(load "Stage_02/[6.3]_STOAICO.repl")
 
 ;(namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")

@@ -77,6 +77,7 @@
                 (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
                 (ref-P|CUSTODIANS:module{OuronetPolicy} DEMIPAD-CUSTODIANS)
                 (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
+                (ref-P|STOAICO:module{OuronetPolicy} STOAICO)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
@@ -85,6 +86,7 @@
             (ref-P|SNAKES::P|A_AddIMP mg)
             (ref-P|CUSTODIANS::P|A_AddIMP mg)
             (ref-P|KPAY::P|A_AddIMP mg)
+            (ref-P|STOAICO::P|A_AddIMP mg)
 
         )
     )

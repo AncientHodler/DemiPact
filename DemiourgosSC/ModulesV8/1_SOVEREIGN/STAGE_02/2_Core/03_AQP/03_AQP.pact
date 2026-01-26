@@ -84,14 +84,14 @@
     (defschema AQP|Schema
         ;;
         aqp-class:integer                                       ;;Defines the Pool Class, there are 5
-                                                                ;;Class 0 = LPs allowed - native|sleeping|freezing
-                                                                ;;Class 1 = DPTF Allowed (non LP) - native|freezing|sleeping|hibernating
-                                                                ;;Class 2 = DPOF Allowed (non LP) - native only
-                                                                ;;Class 3 = DPSF Score (SFTs)
-                                                                ;;Class 4 = DPNF Score (NFTs)
+        ;;                                                        Class 0 = LPs allowed - native|sleeping|freezing
+        ;;                                                        Class 1 = DPTF Allowed (non LP) - native|freezing|sleeping|hibernating
+        ;;                                                        Class 2 = DPOF Allowed (non LP) - native only
+        ;;                                                        Class 3 = DPSF Score (SFTs)
+        ;;                                                        Class 4 = DPNF Score (NFTs)
         asset-id:string                                         ;;ID of the Asset that is allowed to be staked in the Pool.
-                                                                ;;This must be in accordance with the <aqp-class> and together with it
-                                                                ;;defines which assets can be staked in the Pool
+        ;;                                                        This must be in accordance with the <aqp-class> and together with it
+        ;;                                                        Defines which assets can be staked in the Pool
         ;;
         ;;Score - Links
         score-primary:string
@@ -122,6 +122,8 @@
         ;;Select Keys
         pool-id:string                                          ;;Pool-ID
         dpof-id:string                                          ;;DPOF-ID
+        owner-id:string                                         ;;Owner-ID
+        beneficiary-id:string                                   ;;Beneficiary-ID
         nonce:integer                                           ;;Nonce-Value
     )
     (defschema AQP|SemiFungibleTracker
@@ -149,7 +151,7 @@
     (deftable AQP|T|Pool:{AQP|Schema})                          ;;Key = <Pool-ID>
     ;;Trackers
     (deftable AQP|T|DPTFTracker:{AQP|TrueFungibleTracker})      ;;Key = <Pool-ID> | <DPTF-ID> | <Owner-ID> | <Beneficiary-ID>
-    (deftable AQP|T|DPOFTracker:{AQP|OrtoFungibleTracker})      ;;Key = <Pool-ID> | <DPOF-ID> | <Nonce>
+    (deftable AQP|T|DPOFTracker:{AQP|OrtoFungibleTracker})      ;;Key = <Pool-ID> | <DPOF-ID> | <Owner-ID> | <Beneficiary-ID> | <Nonce>
     (deftable AQP|T|DPSFTracker:{AQP|SemiFungibleTracker})      ;;Key = <Pool-ID> | <DPSF-ID> | <Owner-ID> | <Beneficiary-ID> | <Nonce>
     (deftable AQP|T|DPNFTracker:{AQP|NonFungibleTracker})       ;;Key = <Pool-ID> | <DPNF-ID> | <Owner-ID> | <Beneficiary-ID> | <Nonce>
     ;;
@@ -173,6 +175,32 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_AddScore:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_RevokeScore:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun C_Stake:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_Unstake:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
     ;;
     ;;ACTIONS
     ;;

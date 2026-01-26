@@ -1,0 +1,184 @@
+(print "")
+(print "===================Initialise Ouronet_TX-002============================")
+(begin-tx "INIT TX 000 - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": TV.TIME00}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX000 - Set Intermodule Communication")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AncientHodler", "caps": [] }
+    ]
+)
+
+    (let
+        (
+            (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+            (ref-P|STOAICO:module{OuronetPolicy} STOAICO)
+            ;;
+            (ref-U|G:module{OuronetGuards} U|G)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+            ;;
+            (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
+            (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
+        )
+        ;;Backward IMC                      Sets IMC for backward Modules
+        (ref-P|STOAICO::P|A_Define)
+        ;;Forward IMC                       Sets IMC for forward Modules
+        ;(ref-P|STOAICO::P|A_AddIMP mg)     Needed on Mainnet
+        ;                                   Not needed on repl because it is already added on TS02-DPAD
+        ;;Governor Update for <lpad-sc>
+        (ref-TS01-C1::DALOS|C_RotateGovernor
+            KST.ANHD
+            lpad-sc
+            (ref-U|G::UEV_GuardOfAny
+                [
+                    (create-capability-guard (DEMIPAD.DEMIPAD|GOV))
+                    (ref-P|DPAD::P|UR "SPARK|RemoteGov")
+                    (ref-P|DPAD::P|UR "SNAKES|RemoteGov")
+                    (ref-P|DPAD::P|UR "CUSTODIANS|RemoteGov")
+                    (ref-P|DPAD::P|UR "KPAY|RemoteGov")
+                    (ref-P|DPAD::P|UR "STOAICO|RemoteGov")
+                ]
+            )
+        )
+    )
+
+
+(print "")
+(print "")
+(format "<<<<<<<TX000 - STOAICO intermodule Communictaion Setup costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX-01 - Initialise STOA ICO")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                KST.ANHD
+                (* 3.0 (ref-DALOS::UR_UsagePrice "dptf"))
+            )
+        )
+    )
+    (env-sigs
+        [
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+              "caps":
+                [
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+
+                    )
+                ]
+            }
+        ]
+    )
+    (STOAICO.A_InitialiseDistributionVault KST.ANHD)
+)
+
+
+(print "")
+(print "")
+(format "<<<<<<<TX-01 - Initialise STOA ICO Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "TX-02 - STOAICO Stake Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+        { "key": "PK_Lumy", "caps": [] }
+    ]
+)
+
+    (let
+        (
+            (emma:string KST.EMMA)
+            (lumy:string KST.LUMY)
+        )
+        (STOAICO.A_Stake KST.ANHD emma 2500.0)
+        (STOAICO.A_Stake KST.ANHD emma 341.0)
+        (STOAICO.A_Stake KST.ANHD emma 2.0)
+        ;(STOAICO.A_Unstake KST.ANHD emma 43.0)
+        ;(STOAICO.A_Unstake KST.ANHD emma 300.0)
+        (STOAICO.A_Stake KST.ANHD lumy 17500.0)
+        ;;
+        (STOAICO.A_Inject KST.ANHD KST.ANHD 10000000.0)
+        
+        [
+            [
+                (STOAICO.UR_User0 emma)
+                (STOAICO.UR_User0 lumy)
+                (STOAICO.UR_Global0)
+            ]
+            [
+                (STOAICO.C_Collect KST.ANHD emma)
+                (STOAICO.C_Collect KST.ANHD lumy)
+            ]
+        ]
+    )
+
+(print "")
+(print "")
+(format "<<<<<<<TX-01 - STOAICO Stake Tests Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)

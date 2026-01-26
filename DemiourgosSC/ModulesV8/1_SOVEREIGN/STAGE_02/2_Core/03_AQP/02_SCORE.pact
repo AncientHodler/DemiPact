@@ -82,51 +82,56 @@
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
     (defschema SCR|Schema
+        @doc "General Score Definition \
+            \ [.]   = fixed, cannot be changed \
+            \ [..]  = Once linked, cannot be changed \
+            \ [.t]  = Once set to true, cannot be changed \
+            \ [M]   = mutable, can be modified  <owner-konto> \
+            \ [Mu]  = mutable via upgrade, can be modified via <owner-konto> and true <can-upgrade>"
         ;;
         ;;Management
-        owner-konto:string                                      ;;Stores the Score Owner.
-        can-upgrade:string                                      ;;Defines if Score Settings can be upgraded
-        can-change-owner:string                                 ;;Defines if the Owner can be changed
+        owner-konto:string          ;;[Mu]  Stores the Score Owner.
+        can-upgrade:bool            ;;[Mu]  Defines if Score Settings can be upgraded
+        can-change-owner:bool       ;;[Mu]  Defines if the Owner can be changed
         ;;
         ;; Links
-        anchor-link:string                                      ;;Specifies the Anchor ID that is to boost the score.
-        boost-link:string                                       ;;Specifies the Score ID that is used as Base for the Boosted Score.
-        aqpool-link:string                                      ;;Specifies the Pool that employs the Score.
-        fvt-link:string                                         ;;Specifies the FVT the Score is part of.
+        anchor-link:string          ;;[..]  Specifies the Anchor ID that is to boost the score. BAR if not in use.
+        boost-link:string           ;;[..]  Specifies the Score ID that is used as Base for the Boosted Score. BAR if not in use (uses its own base)
+        aqpool-link:string          ;;[..]  Specifies the Pool that employs the Score. BAR if not in use.
+        fvt-link:string             ;;[..]  Specifies the FVT the Score is part of. BAR if not in use.
         ;;Score Information
-        deb-boost:bool                                          ;;Specifies if DEB boosting occurs.
-        base-score-id:string                                    ;;Stores the Score ID for the Base. BAR if it uses its own Base.
-        total-base-score:string                                 ;;Sum of all Entities Scores, 24 prec
-        total-boosted-score:string                              ;;Sum of all Entities Boosted Scores, 24 prec
-        total-deb-score:string                                  ;;Sum of all Entities Final Score, 24 prec
-        nzs-count:integer
+        deb-boost:bool              ;;[.t]  Specifies if DEB boosting occurs.
+        total-base-score:decimal    ;;[M]   Sum of all Entities Scores, 24 prec
+        total-boosted-score:decimal ;;[M]   Sum of all Entities Boosted Scores, 24 prec
+        total-deb-score:decimal     ;;[M]   Sum of all Entities Final Score, 24 prec
+        nzs-count:integer           ;;[M]   Store the amount of Non-Zero-Scores
         ;;
         ;;Score Class
-        score-class:integer                                     ;;Defines the Score Class, there are 5
-                                                                ;;Class 0 = LP Score (LP - native|sleeping|freezing)
-                                                                ;;Class 1 = DPTF Score (non LP) 
-                                                                ;;Class 2 = DPOF Score (non LP)
-                                                                ;;Class 3 = DPSF Score (SFTs)
-                                                                ;;Class 4 = DPNF Score (NFTs)
+        score-class:integer         ;;[.]   Defines the Score Class, there are 5
+        ;;                                  Class 0 = LP Score (LP - native|sleeping|freezing)
+        ;;                                  Class 1 = DPTF Score (non LP) 
+        ;;                                  Class 2 = DPOF Score (non LP)
+        ;;                                  Class 3 = DPSF Score (SFTs)
+        ;;                                  Class 4 = DPNF Score (NFTs)
         ;;
         ;;DPTF & DPOF
-        mx-frozen:decimal                                       ;;Multiplier for Frozen Tokens (Default 2.0)
-        mx-sleeping:decimal                                     ;;Multiplier for Sleeping Tokens (Default 1.0)
-        mx-hibernated:decimal                                   ;;Multiplier for Hibernated Tokens (Default 1.0)
+        mx-frozen:decimal           ;;[.]   Multiplier for Frozen Tokens (Default 2.0)
+        mx-sleeping:decimal         ;;[.]   Multiplier for Sleeping Tokens (Default 1.0)
+        mx-hibernated:decimal       ;;[.]   Multiplier for Hibernated Tokens (Default 1.0)
         ;;
         ;;DPSF
-        sft-equality:bool                                       ;;When true all SFTs are equal. When <false>, <nonce-score-value> is checked.
+        sft-equality:bool           ;;[.]   When true all SFTs are equal. When <false>, <nonce-score-value> is checked.
         ;;
         ;;DPNF
-        nft-score-model:integer                                 ;;Sets NFT Score Model; Omly 3 Models Allowed [-1 0 1]
-                                                                ;;Model -1 = All NFTs are equal, and will have a score of 1
-                                                                ;;Model  0 = NFTs will be scored by their native Score Systems
-                                                                ;;Model  1 = NFTs will be scored based on Scores defined per Trait <trait-score-value>
-                                                                ;;(Multiple Traits can be used, must be specified in the key below)
-        nft-trait-keys:[string]                                 ;;Specifies which NFT Traits will be used for scoring.
+        nft-score-model:integer     ;;[.]   Sets NFT Score Model; Only 3 Models Allowed [-1 0 1]
+        ;;                                  Model -1 = All NFTs are equal, and will have a score of 1
+        ;;                                  Model  0 = NFTs will be scored by their native Score Systems
+        ;;                                  Model  1 = NFTs will be scored based on Scores defined per Trait <trait-score-value>
+        ;;                                  (Multiple Traits can be used, must be specified in the key below)
+        nft-trait-keys:[string]     ;;[.]   Specifies which NFT Traits will be used for scoring.
         ;;
         ;;Select Keys
-        score-id:string                                         ;;Stores the ID of the Score
+        score-id:string             ;;[.]   Stores the ID of the Score
     )
     (defschema SCR|UserSchema
         base-score:decimal
@@ -140,7 +145,7 @@
     )
     ;;
     (defschema SCR|SF|Schema
-        nonce-score-value:decimal                               ;;Score Value of DPSF Nonce
+        nonce-score-value:decimal   ;;[M]   Score Value of DPSF Nonce
         ;;
         ;;Select Keys
         score-id:string
@@ -148,7 +153,7 @@
         nonce:integer
     )
     (defschema SCR|NF|Schema
-        trait-score-value:decimal                               ;;Promile of Trait
+        trait-score-value:decimal   ;;[M]   Score Value of DPNF Trait
         ;;
         ;;Select Keys
         score-id:string
@@ -187,10 +192,129 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
+    (defun C_IssueLiquidityScore:object{IgnisCollectorV2.OutputCumulator}
+        (
+
+        )
+        @doc ""
+        true
+    )
+    (defun C_IssueTrueFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+        (
+
+        )
+        @doc ""
+        true
+    )
+    (defun C_IssueOrtoFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+        (
+
+        )
+        @doc ""
+        true
+    )
+    (defun C_IssueSemiFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+        (
+
+        )
+        @doc ""
+        true
+    )
+    (defun C_IssueNonFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+        (
+
+        )
+        @doc ""
+        true
+    )
     ;;
-    
+    (defun C_RotateOwnership:object{IgnisCollectorV2.OutputCumulator} 
+        ()
+        @doc ""
+        true
+    )
+    (defun C_Control:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun C_CreateAnchorLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_CreateBoostLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun C_EnableDebBoost:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreMultipliers:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreSftEquality:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreNftModel:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreNftTraitKeys:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun C_IssueSemiFungibleScoreDefinition:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_IssueNonFungibleScoreDefinition:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
     ;;
     ;;{F7}  [X]
+    (defun XE_CreateAqpoolLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun XE_CreateFvtLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun XE_RevokeAqpoolLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun XE_RevokeFvtLink:object{IgnisCollectorV2.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun XE_UpdateUserScore
+        ()
+        @doc ""
+        true
+    )
     ;;
 )
 

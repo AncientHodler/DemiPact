@@ -118,7 +118,7 @@
         dptf-id:string                                          ;;ID of the Reward Token that operates in the FVT
     )
     ;;RPS Schemas
-    ;;1]Global RPS fer FVT + Reward Token
+    ;;1]Global RPS per FVT + Reward Token
     (defschema FVT|RPS|Global
         current-rps:decimal                                     ;; 48 decimals
         available-rewards:decimal                               ;; 24 decimals

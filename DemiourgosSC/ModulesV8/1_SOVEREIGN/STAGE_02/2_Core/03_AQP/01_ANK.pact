@@ -5,7 +5,7 @@
         (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
     )
     (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
-        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
     )
     (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
         (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
@@ -113,22 +113,24 @@
         @doc "General Anchor Definition \
             \ Each Anchor is defined via a so called Anchored-Asset \
             \ This may be a DPTF, DPSF or DPNF; It designation is stored here; \
-            \ Along with the Anchor Precision and the Anchor ID itself"
-        ank-asset:string                                            ;;ID of the the Anchored Asset
-        ank-fungibility:[bool]                                      ;;Stores the fungibility of the Asset the Anchor is based on.
-        ank-precision:integer                                       ;;Precision of the Anchor Variable [min 2 - max 8]
-        ank-active:bool                                             ;;Stores if the Anchor is active or not. It can be inactivated by revoking it
-        ank-promile:decimal                                         ;;Promile-value of Anchor
+            \ Along with the Anchor Precision and the Anchor ID itself \
+            \ [.]   = fixed, cannot be changed \
+            \ [M]   = mutable, can be modified via <CAP_Owner>"
+        ank-asset:string            ;;[.]   ID of the the Anchored Asset
+        ank-fungibility:[bool]      ;;[.]   Stores the fungibility of the Asset the Anchor is based on.
+        ank-precision:integer       ;;[.]   Precision of the Anchor Variable [min 2 - max 8]
+        ank-active:bool             ;;[M]   Stores if the Anchor is active or not. It can be inactivated by revoking it
+        ank-promile:decimal         ;;[.]   Promile-value of Anchor
         ;;
         ;;DPTF Anchor ONLY
-        dptf-amount:decimal                                          ;;DPTF Amount for the defined <promile> [0.0 when not DPTF Anchor]
+        dptf-amount:decimal         ;;[.]   DPTF Amount for the defined <promile> [0.0 when not DPTF Anchor]
         ;;
         ;;DPSF Anchor ONLY
-        dpsf-nonce:integer                                           ;;DPSF Nonce for the defined <promile> [0 when not DPSF Anchor]
+        dpsf-nonce:integer          ;;[.]   DPSF Nonce for the defined <promile> [0 when not DPSF Anchor]
         ;;
         ;;DPNF Anchor ONLY
-        dpnf-trait-key:string                                        ;;DPNF Trait-Key for the defined <promile> [BAR when not DPNF Anchor]
-        dpnf-trait-value:string                                      ;;DPNF Trait-Value for the defined <promile> [BAR when not DPNF Anchor]
+        dpnf-trait-key:string       ;;[.]   DPNF Trait-Key for the defined <promile> [BAR when not DPNF Anchor]
+        dpnf-trait-value:string     ;;[.]   DPNF Trait-Value for the defined <promile> [BAR when not DPNF Anchor]
         ;;
         ;;Select Keys
         anchor-id:string
@@ -136,29 +138,33 @@
     ;;2]Asset Anchors
     (defschema ANK|AssetAnchors
         @doc "Stores the Anchors existing for a specific DPTF, DPSF or DPNF. \
-        \ Each DPTF, DPSF or DPNF may have up to 7 Anchors tied to them; \
-        \ Any given Anchor is immutably tied to its DPTF, DPSF or DPNF Asset."
-        anchor-primary:string
-        anchor-secondary:string
-        anchor-tertiary:string
-        anchor-quaternary:string
-        anchor-quinary:string
-        anchor-senary:string
-        anchor-septenary:string
+            \ Each DPTF, DPSF or DPNF may have up to 7 Anchors tied to them; \
+            \ Any given Anchor is immutably tied to its DPTF, DPSF or DPNF Asset. \
+            \ [.]   = fixed, cannot be changed \
+            \ [M]   = mutable, can be modified"
+        anchor-primary:string       ;;[M]   1st Asset Anchor
+        anchor-secondary:string     ;;[M]   2nd Asset Anchor
+        anchor-tertiary:string      ;;[M]   3rd Asset Anchor
+        anchor-quaternary:string    ;;[M]   4th Asset Anchor
+        anchor-quinary:string       ;;[M]   5th Asset Anchor
+        anchor-senary:string        ;;[M]   6th Asset Anchor
+        anchor-septenary:string     ;;[M]   7th Asset Anchor
         ;;
-        anchors:integer
+        anchors:integer             ;;[M]   Stores the number of active Asset Anchors (1 to 7)
         ;;
         ;;Select Keys
-        asset-id:string
+        asset-id:string             ;;[.]   Stores the Asset ID
     )
     ;;3]User Anchor Values
     (defschema ANK|UserSchema
-        @doc "Stores the cumulate promile of a given <ouronet-account> for a given <anchor-id>"
-        promile:decimal                                         ;;Promile of User with Anchor
+        @doc "Stores the cumulate promile of a given <ouronet-account> for a given <anchor-id> \
+            \ [.]   = fixed, cannot be changed \
+            \ [M]   = mutable, can be modified via <ouronet-account> Ownership"
+        promile:decimal             ;;[M]   Promile of User with Anchor
         ;;
         ;;Select Keys
-        ouronet-account:string
-        anchor-id:string
+        ouronet-account:string      ;;[.]   Stores the Ouronet Account for which the Anchor Value is saved
+        anchor-id:string            ;;[.]   Stores the Anchor-ID
     )
     ;;
     ;;{2}
@@ -227,7 +233,7 @@
         )
     )
     (defcap ANK|C>ISSUE-DPSF
-        (anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        (anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
         @event
         (let
             (
@@ -787,7 +793,7 @@
         )
     )
     (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
-        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:decimal)
+        (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
         @doc "Issues an Anchor tied to an existing Semi Fungible Asset \
             \ Costs 1000 IGNIS and 10 KDA"
         ;;
