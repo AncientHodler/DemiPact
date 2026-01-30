@@ -117,8 +117,6 @@
     (defconst CSK                       "chain-supply-key")
     ;;
     (defconst GENESIS-SUPPLY            16000000.0)
-    ;(defconst GENESIS-CEILING           500000000.0)
-    ;(defconst YEARLY-EMISSION-SPEED     100.0)
     (defconst GENESIS-TIME              (time "2026-01-01T00:00:00Z"))
     (defconst BPD                       2880)
     ;;
@@ -227,6 +225,29 @@
             )
         )
     )
+    (defun UC_YearZeroBlocks ()
+        @doc "Computes how many blocks Year 0 has on all chains"
+        (let
+            (
+                (genesis-time:time GENESIS-TIME)
+                (year (format-time "%Y" genesis-time))
+                (year-end (parse-time "%Y-%m-%d %H:%M:%S" (format "{}-21-31 23:59:59" year)))
+                (seconds-remaining 
+                    ;;Seconds remaining untill year end
+                    (diff-time year-end genesis-time)
+                )
+                (blocks:integer (floor (/ seconds-remaining 30.0)))
+                (chains:integer (length VALID_CHAIN_IDS))
+            )
+            (*
+                chains
+                (if (>= seconds-remaining 0.0)
+                    blocks
+                    0
+                )
+            )
+        )
+    )
     (defun UC_YearDays:integer (year:integer)
         @doc "Computes the number of days in a given year, using the Gregorian Formula"
         (let
@@ -249,9 +270,9 @@
         ;;(Ceiling-Supply[at year start])/(Speed);;
         ;;
         ;;Starting Parameters:
-        ;;GENESIS-SUPPLY = 16 000 000,0 STOA
-        ;;GENESIS-CEILING = 500 000 000,0 STOA
-        ;;SPEED = 100
+        ;;GENESIS-SUPPLY    =  16 000 000,0 STOA
+        ;;GENESIS-CEILING   = 500 000 000,0 STOA (+ mil each year)
+        ;;SPEED             = 100 (+ 1 each year)
         ;;
         ;;Year 0 Supply = (500 000 000,0 - 16 000 000,000000000000)/100 = 4 840 000,0
         ;;Year 1 Supply = (501 000 000,0 - 20 840 000,000000000000)/101 = 4 754 059,405940594059
@@ -335,33 +356,10 @@
         )
     )
     ;;{F1}  [URC]
-    (defun UC_YearZeroBlocks ()
-        @doc "Computes how many blocks Year 0 has on all chains"
-        (let
-            (
-                (genesis-time:time GENESIS-TIME)
-                (year (format-time "%Y" genesis-time))
-                (year-end (parse-time "%Y-%m-%d %H:%M:%S" (format "{}-21-31 23:59:59" year)))
-                (seconds-remaining 
-                    ;;Seconds remaining untill year end
-                    (diff-time year-end genesis-time)
-                )
-                (blocks:integer (floor (/ seconds-remaining 30.0)))
-                (chains:integer (length VALID_CHAIN_IDS))
-            )
-            (*
-                chains
-                (if (>= seconds-remaining 0.0)
-                    blocks
-                    0
-                )
-            )
-        )
-    )
     (defun URC_Emissions:[decimal] ()
         @doc "Computes the current Block Emission \
         \ Ouputs two values: \
-        \ [<block-emission> <URV_emission>] \
+        \ [<block-emission> <urv-emission>] \
         \ <block-emission> = how much each block on each chain gets = 90% split to all chains \
         \ <urv-emission> = how much the UrstoaVault gets = 10% from all chains"   
         (let
@@ -638,7 +636,9 @@
             \ \
             \ Mints 90% of <block-emission> on each chain \
             \ And additionally a tenth of (* <block-emission> <chains>) \
-            \ on Chain0 for the UrStoa Vault."
+            \ on Chain0 for the UrStoa Vault. \
+            \ \
+            \ The correct amounts are computed via <URC_Emissions>"
         (require-capability (COINBASE))
         (UEV_Account account)
         (let
