@@ -726,7 +726,6 @@
             )
         )
     )
-
 )
 
 (create-table P|T)

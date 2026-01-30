@@ -1,7 +1,7 @@
 ;;Load Stoa Modules
 (print "")
 (namespace "free")
-(load "../0_Stoa/coin-contract/stoa-v1.pact")
+(load "../0_Stoa/coin-contract/stoa-v2.pact")
 (print "")
 ;;
 ;;
@@ -318,4 +318,57 @@
 (commit-tx)
 (print "")
 (print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-00 [C0] - Chain Data Time SetUp Definition")
+(namespace "free")
+(env-chain-data
+    {"prev-block-hash": "98c486052a5147fdd30fa43cc6d67e0a4e680c856c37f9157cb788cd67d58006",
+     "block-time": (time "2028-02-17T00:00:00Z")}
+)
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-gas)
+(commit-tx)
+(print "")
 
+
+
+(print "")
+(begin-tx "TX-01 - Supply Tests")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs 
+        [   
+            { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;:Florian
+            { "key": "5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba", "caps": [] }   ;:Coca
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;:Bytales
+            
+        ]
+    )
+
+    [
+        [
+            (STOA.UC_GetYear (time "2026-01-01T00:00:00Z"))
+            (STOA.UC_YearEmission 0)
+            (STOA.UC_YearEmission 1)
+            (STOA.UC_YearEmission 2)
+            (STOA.URC_YearEmission)
+            (STOA.UC_YearEmission 3)
+            (STOA.UC_YearEmission 7)
+        ]
+        [
+            (STOA.URC_Emissions)
+        ]
+    ]
+    
+    
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
