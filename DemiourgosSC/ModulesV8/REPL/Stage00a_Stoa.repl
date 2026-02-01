@@ -1,7 +1,7 @@
 ;;Load Stoa Modules
 (print "")
 (namespace "free")
-(load "../0_Stoa/coin-contract/stoa-v2.pact")
+(load "../0_Stoa/coin-contract/coinn.pact")
 (print "")
 ;;
 ;;
@@ -109,8 +109,8 @@
     (env-chain-data
         {"chain-id": "0"}
     )
-    (test-capability (STOA.GENESIS))
-    (STOA.A_InitialiseStoaChain SKC.CS00_NAME (read-keyset "KEY_STOA_00_Foundation"))
+    (test-capability (coinn.GENESIS))
+    (coinn.A_InitialiseStoaChain SKC.CS00_NAME (read-keyset "KEY_STOA_00_Foundation"))
 
 (env-gas)
 (commit-tx)
@@ -143,32 +143,32 @@
                 "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
                 "caps":
                     [
-                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
-                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
-                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
-                        ;(STOA.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
                     ]
             }
         ]
     )
-    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
-    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
+    (coinn.C_UR|TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+    (coinn.C_UR|Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
 
-    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
-    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
+    (coinn.C_UR|TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
+    (coinn.C_UR|Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
 
-    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
-    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
+    (coinn.C_UR|TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
+    (coinn.C_UR|Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
 
-    (STOA.C_UR|TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 78.0)
-    (STOA.C_UR|Transfer SKC.CS00_NAME SKC.CS04_NAME 63.0)
+    (coinn.C_UR|TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 78.0)
+    (coinn.C_UR|Transfer SKC.CS00_NAME SKC.CS04_NAME 63.0)
 
     [
-        (format "AncientHodler has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS01_NAME)])
-        (format "Florian has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS02_NAME)])
-        (format "Coca has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS03_NAME)])
-        (format "Bytales has {} URSTOA" [(STOA.UR_UR|Balance SKC.CS04_NAME)])
-        (format "URSTOA Supply is {}" [(STOA.UR_UR|LocalStoaSupply)])
+        (format "AncientHodler has {} URSTOA" [(coinn.UR_UR|Balance SKC.CS01_NAME)])
+        (format "Florian has {} URSTOA" [(coinn.UR_UR|Balance SKC.CS02_NAME)])
+        (format "Coca has {} URSTOA" [(coinn.UR_UR|Balance SKC.CS03_NAME)])
+        (format "Bytales has {} URSTOA" [(coinn.UR_UR|Balance SKC.CS04_NAME)])
+        (format "URSTOA Supply is {}" [(coinn.UR_UR|LocalStoaSupply)])
     ]
     
 
@@ -203,32 +203,32 @@
                 "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
                 "caps":
                     [
-                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
-                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
-                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
-                        ;(STOA.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
                     ]
             }
         ]
     )
-    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
-    (STOA.C_Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
+    (coinn.C_TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+    (coinn.C_Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
 
-    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
-    (STOA.C_Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
+    (coinn.C_TransferAnew SKC.CS00_NAME SKC.CS02_NAME (read-keyset "KEY_STOA_02_Florian") 60.0)
+    (coinn.C_Transfer SKC.CS00_NAME SKC.CS02_NAME 20.0)
 
-    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
-    (STOA.C_Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
+    (coinn.C_TransferAnew SKC.CS00_NAME SKC.CS03_NAME (read-keyset "KEY_STOA_03_Coca") 70.0)
+    (coinn.C_Transfer SKC.CS00_NAME SKC.CS03_NAME 60.0)
 
-    (STOA.C_TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 35.0)
-    (STOA.C_Transfer SKC.CS00_NAME SKC.CS04_NAME 47.0)
+    (coinn.C_TransferAnew SKC.CS00_NAME SKC.CS04_NAME (read-keyset "KEY_STOA_04_Bytales") 35.0)
+    (coinn.C_Transfer SKC.CS00_NAME SKC.CS04_NAME 47.0)
 
     [
-        (format "AncientHodler has {} STOA" [(STOA.UR_Balance SKC.CS01_NAME)])
-        (format "Florian has {} STOA" [(STOA.UR_Balance SKC.CS02_NAME)])
-        (format "Coca has {} STOA" [(STOA.UR_Balance SKC.CS03_NAME)])
-        (format "Bytales has {} STOA" [(STOA.UR_Balance SKC.CS04_NAME)])
-        (format "STOA Supply on Chain0 is {}" [(STOA.UR_LocalStoaSupply)])
+        (format "AncientHodler has {} STOA" [(coinn.UR_Balance SKC.CS01_NAME)])
+        (format "Florian has {} STOA" [(coinn.UR_Balance SKC.CS02_NAME)])
+        (format "Coca has {} STOA" [(coinn.UR_Balance SKC.CS03_NAME)])
+        (format "Bytales has {} STOA" [(coinn.UR_Balance SKC.CS04_NAME)])
+        (format "STOA Supply on Chain0 is {}" [(coinn.UR_LocalCoinSupply)])
     ]
 
 (env-gas)
@@ -256,61 +256,61 @@
 
     ;;Stake URSTOA
     [
-        (STOA.C_URV|Stake SKC.CS01_NAME 25.0)
+        (coinn.C_URV|Stake SKC.CS01_NAME 25.0)
         [
-            (format "AH Staked URSTOA is {}" [(STOA.UR_URV|UserSupply SKC.CS01_NAME)])
-            (format "AH Last-RPS is {}" [(STOA.UR_URV|UserLastRps SKC.CS01_NAME)])
-            (format "AH Pending Rewards are {}" [(STOA.UR_URV|UserPendingRewards SKC.CS01_NAME)])
+            (format "AH Staked URSTOA is {}" [(coinn.UR_URV|UserSupply SKC.CS01_NAME)])
+            (format "AH Last-RPS is {}" [(coinn.UR_URV|UserLastRps SKC.CS01_NAME)])
+            (format "AH Pending Rewards are {}" [(coinn.UR_URV|UserPendingRewards SKC.CS01_NAME)])
         ]
         ;;Inject STOA
-        (STOA.C_URV|Inject SKC.CS03_NAME 12.0)
+        (coinn.C_URV|Inject SKC.CS03_NAME 12.0)
         [
-            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
-            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
-            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+            (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(coinn.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
         ;;Stake URSTOA
-        (STOA.C_URV|Stake SKC.CS02_NAME 17.0)
-        (STOA.C_URV|Stake SKC.CS04_NAME 31.0)
+        (coinn.C_URV|Stake SKC.CS02_NAME 17.0)
+        (coinn.C_URV|Stake SKC.CS04_NAME 31.0)
         [
-            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
-            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
-            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+            (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(coinn.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
         ;;Inject Second Time
-        (STOA.C_URV|Inject SKC.CS00_NAME 1234.0)
+        (coinn.C_URV|Inject SKC.CS00_NAME 1234.0)
         [
-            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
-            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
-            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+            (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(coinn.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
         [
-            (format "AH Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS01_NAME)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Florian Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS02_NAME)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Bytales Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS04_NAME)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Foundation Claimed {} STOA" [(STOA.C_URV|Collect SKC.CS00_NAME)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
+            (format "AH Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS01_NAME)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Florian Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS02_NAME)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Bytales Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS04_NAME)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Foundation Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS00_NAME)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
             ;;17.137214137275
         ]
-        (STOA.C_URV|Unstake SKC.CS04_NAME 7.0)
+        (coinn.C_URV|Unstake SKC.CS04_NAME 7.0)
         [
-            (format "Vault UR Supply is {}" [(STOA.UR_URV|VaultUrSupply)])
-            (format "Vault STOA Supply is {}" [(STOA.UR_URV|VaultSupply)])
-            (format "Vault NZS Count is {}" [(STOA.UR_URV|VaultNZS)])
-            (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
-            (format "Vault UnclaimedCount is {}" [(STOA.UR_URV|VaultUnclaimedCount)])
+            (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
+            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+            (format "Vault NZS Count is {}" [(coinn.UR_URV|VaultNZS)])
+            (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
+            (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
-        (STOA.C_URV|Inject SKC.CS00_NAME 67.0)
-        (format "Vault RPS is {}" [(STOA.UR_URV|VaultRPS)])
+        (coinn.C_URV|Inject SKC.CS00_NAME 67.0)
+        (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
     ]
 
 
@@ -353,16 +353,16 @@
 
     [
         [
-            (STOA.UC_GetYear (time "2026-01-01T00:00:00Z"))
-            (STOA.UC_YearEmission 0)
-            (STOA.UC_YearEmission 1)
-            (STOA.UC_YearEmission 2)
-            (STOA.URC_YearEmission)
-            (STOA.UC_YearEmission 3)
-            (STOA.UC_YearEmission 7)
+            (coinn.UC_GetYear (time "2026-01-01T00:00:00Z"))
+            (coinn.UC_YearEmission 0)
+            (coinn.UC_YearEmission 1)
+            (coinn.UC_YearEmission 2)
+            (coinn.URC_YearEmission)
+            (coinn.UC_YearEmission 3)
+            (coinn.UC_YearEmission 7)
         ]
         [
-            (STOA.URC_Emissions)
+            (coinn.URC_Emissions)
         ]
     ]
     
