@@ -1036,15 +1036,24 @@
             \ Protected by the [REMEDIATE] capability \
             \ <remediate> decreases balance of <account> by <amount>"
         (require-capability (REMEDIATE))
-        (UEV_Account account)
-        (UEV_Amount amount "Remediation amount must be positive")
-        (UEV_CoinPrecision amount)
-        (UEV_SufficientBalance account amount)
-        (emit-event (TRANSFER "" account amount))
-        (update coin-table account
-            {"balance" : (- (UR_Balance account) amount)}
+        (let
+            (
+                (account-balance:decimal (UR_Balance account))
+                (remediated-balance:decimal (- account-balance amount))
+            )
+            (UEV_Account account)
+            (UEV_Amount amount "Remediation amount must be positive")
+            (UEV_CoinPrecision amount)
+            (UEV_SufficientBalance account amount)
+            (emit-event (TRANSFER "" account amount))
+            (update coin-table account
+                {"balance" : remediated-balance}
+            )
+            (with-capability (UPDATE-LOCAL-SUPPLY)
+                (X_UpdateLocalSupply amount false)
+            )
+            (format "Remediated {} STOA on Account {}" [amount account])
         )
-        (format "Remediated {} STOA on Account {}" [amount account])
     )
     ;;
     ;;Appendiges - Coin Allocations. Functions kept for backward Compatibility
