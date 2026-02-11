@@ -275,7 +275,7 @@
     (defconst STOA_PREC                             MINIMUM_PRECISION)
     ;;
     (defconst GENESIS-SUPPLY                        16000000.0)
-    (defconst GENESIS-TIME                          (time "2026-01-01T00:00:00Z"))
+    (defconst GENESIS-TIME                          (time "2026-02-11T20:00:00Z"))
     (defconst BPD                                   2880)
     ;;
     (defconst GENESIS-MIN-GAS-PRICE                 10000)          ; 10,000 ANU
@@ -393,7 +393,7 @@
             (
                 (genesis-time:time GENESIS-TIME)
                 (year (format-time "%Y" genesis-time))
-                (year-end (parse-time "%Y-%m-%d %H:%M:%S" (format "{}-21-31 23:59:59" year)))
+                (year-end (parse-time "%Y-%m-%d %H:%M:%S" (format "{}-12-31 23:59:59" [year])))
                 (seconds-remaining 
                     ;;Seconds remaining untill year end
                     (diff-time year-end genesis-time)
