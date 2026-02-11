@@ -1603,7 +1603,6 @@
             )
             (C_CreateAccount vault-account vault-guard)
             (C_UR|CreateAccount vault-account vault-guard)
-            
             (insert URV|UrStoaVault USV
                 {"urstoa-supply"    : 1.0
                 ,"stoa-supply"      : 0.0
