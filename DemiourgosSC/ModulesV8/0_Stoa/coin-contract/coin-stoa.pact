@@ -1496,6 +1496,8 @@
                 (XI_URV|UpdateVaultSupply stoa-amount true)
                 ;;3]Reset <unclaimed-count> (set it to <nzs-count>)
                 (XI_URV|ResetUnclaimedCount)
+                ;;4]Returns Output Text
+                (format "Succesfully injected {} STOA to UrStoaVault" [stoa-amount])
             )
         )
     )
@@ -1526,6 +1528,8 @@
                 )
                 ;;2.4]Update <last-rps> with the Vaults <current-rps>
                 (XI_URV|UpdateUserRPS account (UR_URV|VaultRPS))
+                ;;3]Returns Output Text
+                (format "Succesfully staked {} UrStoa to UrStoaVault" [urstoa-amount])
             )
         )
     )
@@ -1552,6 +1556,8 @@
                 )
                 ;;2.4]Update <last-rps> with the Vaults <current-rps>
                 (XI_URV|UpdateUserRPS account (UR_URV|VaultRPS))
+                ;;3]Returns Output Text
+                (format "Succesfully unstaked {} UrStoa from UrStoaVault" [urstoa-amount])
             )
         )
     )
@@ -1574,6 +1580,8 @@
                 (XI_URV|UpdateVaultSupply available-rewards false)
                 ;;6]Return Claimed Amount
                 available-rewards
+                ;;7]Returns Output Text
+                (format "Account {} succesfully collected {} STOA from the UrStoaVault" [account available-rewards])
             )
         )
     )
@@ -1595,6 +1603,7 @@
             )
             (C_CreateAccount vault-account vault-guard)
             (C_UR|CreateAccount vault-account vault-guard)
+            
             (insert URV|UrStoaVault USV
                 {"urstoa-supply"    : 1.0
                 ,"stoa-supply"      : 0.0
@@ -1606,6 +1615,9 @@
                 {"user-supply"      : 1.0
                 ,"last-rps"         : 0.0
                 ,"pending-rewards"  : 0.0}
+            )
+            (with-capability (UR|CREDIT vault-account)
+                (X_UR|Credit vault-account vault-guard 1.0)
             )
             (with-capability (UPDATE-LOCAL-SUPPLY)
                 (X_UR|UpdateLocalSupply 1.0 true)
