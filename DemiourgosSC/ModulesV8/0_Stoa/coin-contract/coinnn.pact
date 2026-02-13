@@ -216,25 +216,25 @@
     )
 )
   
-(module coin GOVERNANCE
+(module coinn GOVERNANCE
     @doc "Stoa represents the StoaChain Coin Contract \
         \ Forked from the latest original coin contract on Kadena Chain"
 
     (implements fungible-v3)                        ;;former <fungible-v2>
     (implements fungible-xchain-v2)                 ;;former <fungible-xchain-v1>
-    (implements StoaFungibleV1)                     ;;Incorporates <fungible-v2> and <fungible-xchain-v1> with extra functionality
+    (implements StoaFungibleV2)                     ;;Incorporates <fungible-v2> and <fungible-xchain-v1> with extra functionality
 
     ;;
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defconst STOA|MasterOne                        "stoa-ns.stoa_master_one")
-    (defconst STOA|MasterTwo                        "stoa-ns.stoa_master_two")
-    (defconst STOA|MasterThree                      "stoa-ns.stoa_master_three")
-    (defconst STOA|MasterFour                       "stoa-ns.stoa_master_four")
-    (defconst STOA|MasterFive                       "stoa-ns.stoa_master_five")
-    (defconst STOA|MasterSix                        "stoa-ns.stoa_master_six")
-    (defconst STOA|MasterSeven                      "stoa-ns.stoa_master_seven")
+    (defconst STOA|MasterOne                        "free.stoa_master_one")
+    (defconst STOA|MasterTwo                        "free.stoa_master_two")
+    (defconst STOA|MasterThree                      "free.stoa_master_three")
+    (defconst STOA|MasterFour                       "free.stoa_master_four")
+    (defconst STOA|MasterFive                       "free.stoa_master_five")
+    (defconst STOA|MasterSix                        "free.stoa_master_six")
+    (defconst STOA|MasterSeven                      "free.stoa_master_seven")
     ;;{G2}
     (defcap GOVERNANCE ()
         @doc "<ORIGINAL>"                           (compose-capability (GOV|STOA_MASTERS))

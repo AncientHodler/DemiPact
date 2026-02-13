@@ -1,7 +1,7 @@
 ;;Load Stoa Modules
 (print "")
 (namespace "free")
-(load "../0_Stoa/coin-contract/coinn.pact")
+(load "../0_Stoa/coin-contract/coinnn.pact")
 (print "")
 ;;
 ;;
@@ -203,10 +203,10 @@
                 "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
                 "caps":
                     [
-                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
-                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
-                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
-                        ;(coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                        (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
                     ]
             }
         ]
@@ -239,29 +239,53 @@
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 (print "")
-(begin-tx "TX-01 - URStoa Tests")
+(begin-tx "TX-03 - URStoa Tests 1")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-    (env-sigs 
-        [   
-            { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
+    (env-sigs
+        [
+            ;{ "key": "PK_AncientHodler", "caps": [] }
             { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
-            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;:Florian
-            { "key": "5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba", "caps": [] }   ;:Coca
-            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;:Bytales
-            
         ]
     )
-
-    ;;Stake URSTOA
     [
+        ;:Stakes 25 UrStoa. UrStoa Transfer isnt managed.
         (coinn.C_URV|Stake SKC.CS01_NAME 25.0)
         [
             (format "AH Staked URSTOA is {}" [(coinn.UR_URV|UserSupply SKC.CS01_NAME)])
             (format "AH Last-RPS is {}" [(coinn.UR_URV|UserLastRps SKC.CS01_NAME)])
             (format "AH Pending Rewards are {}" [(coinn.UR_URV|UserPendingRewards SKC.CS01_NAME)])
         ]
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 - URStoa Tests 2")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs
+        [
+            ;;Inject 12 from Coca
+            { "key": "5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba", "caps": 
+                [
+                    ;(coinn.TRANSFER 
+                    ;    "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 
+                    ;    "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                    ;    12.0
+                    ;)
+                ]
+            }
+        ]
+    )
+    [
         ;;Inject STOA
         (coinn.C_URV|Inject SKC.CS03_NAME 12.0)
         [
@@ -271,7 +295,29 @@
             (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
             (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
-        ;;Stake URSTOA
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-03 - URStoa Tests 3")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs
+        [
+            ;{ "key": "PK_AncientHodler", "caps": [] }
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+        ]
+    )
+    [
+        ;;Stake 17 UrStoa Florian, 31 UrStoa Bytales
         (coinn.C_URV|Stake SKC.CS02_NAME 17.0)
         (coinn.C_URV|Stake SKC.CS04_NAME 31.0)
         [
@@ -281,6 +327,35 @@
             (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
             (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 - URStoa Tests 4")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs
+        [
+            ;;Inject 1234 from Foundation
+            { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": 
+                [
+                    ;(coinn.TRANSFER 
+                    ;    "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
+                    ;    "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                    ;    1234.0
+                    ;)
+                ]
+            }
+        ]
+    )
+    [
         ;;Inject Second Time
         (coinn.C_URV|Inject SKC.CS00_NAME 1234.0)
         [
@@ -290,17 +365,90 @@
             (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
             (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 - URStoa Tests 5.1")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    ;;Collect only works one at a time
+    (env-sigs
         [
-            (format "AH Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS01_NAME)])
-            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
-            (format "Florian Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS02_NAME)])
-            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
-            (format "Bytales Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS04_NAME)])
-            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
-            (format "Foundation Claimed {} STOA" [(coinn.C_URV|Collect SKC.CS00_NAME)])
-            (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
-            ;;17.137214137275
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            ;{ "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
+            ;{ "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+            ;{ "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
         ]
+    )
+    [
+        (coinn.C_URV|Collect SKC.CS01_NAME)
+        (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        ;(coinn.C_URV|Collect SKC.CS02_NAME)
+        ;(format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        ;(coinn.C_URV|Collect SKC.CS04_NAME)
+        ;(format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        ;(coinn.C_URV|Collect SKC.CS00_NAME)
+        ;(format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-05 - URStoa Tests 5")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    ;;Collect only works one at a time
+    (env-sigs
+        [
+            ;{ "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+            ;{ "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
+        ]
+    )
+    [
+        ;(coinn.C_URV|Collect SKC.CS01_NAME)
+        ;(format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        (coinn.C_URV|Collect SKC.CS02_NAME)
+        (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        (coinn.C_URV|Collect SKC.CS04_NAME)
+        (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+        ;(coinn.C_URV|Collect SKC.CS00_NAME)
+        ;(format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-06 - URStoa Tests 6")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs
+        [
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+        ]
+    )
+    [
         (coinn.C_URV|Unstake SKC.CS04_NAME 7.0)
         [
             (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
@@ -309,15 +457,47 @@
             (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
             (format "Vault UnclaimedCount is {}" [(coinn.UR_URV|VaultUnclaimedCount)])
         ]
-        (coinn.C_URV|Inject SKC.CS00_NAME 67.0)
-        (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
     ]
-
 
 (env-gas)
 (commit-tx)
 (print "")
 (print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 - URStoa Tests 4")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    (env-sigs
+        [
+            ;;Inject 67 from Foundation
+            { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": 
+                [
+                    ;(coinn.TRANSFER 
+                    ;    "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
+                    ;    "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                    ;    67.0
+                    ;)
+                ]
+            }
+        ]
+    )
+    [
+        ;;Inject Last Time
+        (coinn.C_URV|Inject SKC.CS00_NAME 67.0)
+        (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
+    ]
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
