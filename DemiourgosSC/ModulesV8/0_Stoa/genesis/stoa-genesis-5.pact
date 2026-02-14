@@ -8,7 +8,7 @@
 
     (use coin)
     (use util.guards)
-    (use util.guards1)
+    (use util.gas-guards)
 
     ; ── Define the private/admin-only capability ───────────────────
     (defcap GOVERNANCE ()
@@ -18,17 +18,20 @@
 
     ; ── Create the xchain gas account (admin-only) ─────────────────
     (defun create-xchain-gas-account:string ()
-        @doc "Creates kadena-xchain-gas — only callable by module Governance"
+        @doc "Creates stoa-xchain-gas (former kadena-xchain-gas) — only callable by module Governance"
         (with-capability (GOVERNANCE)
             (let
                 (
+                    (minimum-gas-price-anu:integer (coin.UC_MinimumGasPriceANU))
+                    (minimum-stoa-gas-price:decimal (/ (dec minimum-gas-price-anu) 1000000000000.0))
                     (gas-restriction-guard:guard
                         (create-user-guard
-                            (util.guards1.enforce-guard-all
+                            (util.gas-guards.enforce-guard-all
                                 [ 
                                     (create-user-guard (coin.gas-only))
-                                    (create-user-guard (util.guards1.enforce-below-or-at-gas-price 0.00000001))
-                                    (create-user-guard (util.guards1.enforce-below-or-at-gas-limit 850))
+                                    ;(create-user-guard (util.gas-guards.enforce-below-or-at-gas-price 0.00000001))
+                                    (create-user-guard (util.gas-guards.enforce-below-or-at-gas-price minimum-stoa-gas-price))
+                                    (create-user-guard (util.gas-guards.enforce-below-or-at-gas-limit 850))
                                 ]
                             )
                         )
@@ -42,8 +45,8 @@
                         )
                     )
                 )
-                (coin.C_CreateAccount "kadena-xchain-gas" final-guard)
-                "kadena-xchain-gas account successfully created"
+                (coin.C_CreateAccount "stoa-xchain-gas" final-guard)
+                "stoa-xchain-gas account successfully created"
             )
         )
     )

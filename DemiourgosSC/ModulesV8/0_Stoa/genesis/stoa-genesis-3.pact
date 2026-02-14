@@ -67,7 +67,7 @@
     ;;
 )
 
-(module guards1 AUTONOMOUS
+(module gas-guards AUTONOMOUS
     ;;
     @doc "Functions for implementing gas guards."
     ;;
