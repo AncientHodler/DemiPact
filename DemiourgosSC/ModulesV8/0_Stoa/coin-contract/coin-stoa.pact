@@ -222,7 +222,7 @@
 
     (implements fungible-v3)                        ;;former <fungible-v2>
     (implements fungible-xchain-v2)                 ;;former <fungible-xchain-v1>
-    (implements StoaFungibleV1)                     ;;Incorporates <fungible-v2> and <fungible-xchain-v1> with extra functionality
+    (implements StoaFungibleV2)                     ;;Incorporates <fungible-v2> and <fungible-xchain-v1> with extra functionality
 
     ;;
     ;;<========>
@@ -1065,7 +1065,7 @@
                         (credit account account-guard whole)
                     )
                     ;;3]Miner <account> injects <urv-emission> to UrStoaVault
-                    (C_URV|Inject account urv-emission)
+                    (C_URV|CoinbaseInject account urv-emission)
                     ;;4]Return the proper output string
                     (format
                         "Miner {} succesfully mined {} STOA, and injected an additional {} STOA to the UrStoa Vault"
@@ -1556,26 +1556,46 @@
     ;;
     ;;
     (defun C_URV|Inject:string (account:string stoa-amount:decimal)
-        @doc "Injects STOA <amount> into the URSTOA-Vault"
+        @doc "Injects Stoa into the UrStoa Vault. \
+            \ Uses the <C_Transfer> function to inject, which requires the <TRANSFER> cap to be scoped \
+            \ In this manner, the <account> itself can pay for the Gas."
         (with-capability (URV|INJECT)
-            (let
-                (
-                    (vault-score:decimal (UR_URV|VaultUrSupply))
-                    (gained-rps:decimal (floor (/ stoa-amount vault-score) STOA_PREC))
-                    (current-rps:decimal (UR_URV|VaultRPS))
-                    (new-rps:decimal (+ current-rps gained-rps))
-                )
-                ;;0]Move Stoa from Account to the URSTOA-Vault using Unmanaged Transfer via Transmit
-                (C_Transmit account URV|KONTO stoa-amount)
-                ;;1]Update Vault <current-rps> with new value gained from injecting <stoa-amount>
-                (XI_URV|UpdateVaultRPS new-rps)
-                ;;2]Update Vault <stoa-supply> with <stoa-amount>
-                (XI_URV|UpdateVaultSupply stoa-amount true)
-                ;;3]Reset <unclaimed-count> (set it to <nzs-count>)
-                (XI_URV|ResetUnclaimedCount)
-                ;;4]Returns Output Text
-                (format "Succesfully injected {} STOA to UrStoaVault" [stoa-amount])
+            (XI_URV|Inject account stoa-amount false)
+        )
+    )
+    (defun C_URV|CoinbaseInject:string (account:string stoa-amount:decimal)
+        @doc "Injects Stoa into the UrStoa Vault. \
+            \ Uses the <C_Transmit> function to inject \
+            \ In this manner, the <account> itself cannot pay for the Gas. \
+            \ An external account different than the <account> must cover the gas fees \
+            \ Used in <coinbase>, since there an external gas payer is not needed"
+        (with-capability (URV|INJECT)
+            (XI_URV|Inject account stoa-amount true)
+        )
+    )
+    (defun XI_URV|Inject:string (account:string stoa-amount:decimal coinbase:bool)
+        @doc "Injects STOA <amount> into the URSTOA-Vault"
+        (require-capability (URV|INJECT))
+        (let
+            (
+                (vault-score:decimal (UR_URV|VaultUrSupply))
+                (gained-rps:decimal (floor (/ stoa-amount vault-score) STOA_PREC))
+                (current-rps:decimal (UR_URV|VaultRPS))
+                (new-rps:decimal (+ current-rps gained-rps))
             )
+            ;;0]Move Stoa from Account to the URSTOA-Vault using Unmanaged Transfer via Transmit
+            (if coinbase
+                (C_Transmit account URV|KONTO stoa-amount)
+                (C_Transfer account URV|KONTO stoa-amount)
+            )
+            ;;1]Update Vault <current-rps> with new value gained from injecting <stoa-amount>
+            (XI_URV|UpdateVaultRPS new-rps)
+            ;;2]Update Vault <stoa-supply> with <stoa-amount>
+            (XI_URV|UpdateVaultSupply stoa-amount true)
+            ;;3]Reset <unclaimed-count> (set it to <nzs-count>)
+            (XI_URV|ResetUnclaimedCount)
+            ;;4]Returns Output Text
+            (format "Succesfully injected {} STOA to UrStoaVault" [stoa-amount])
         )
     )
     (defun C_URV|Stake:string (account:string urstoa-amount:decimal)
