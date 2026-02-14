@@ -520,7 +520,7 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_AccountDetails:object{fungible-v2.account-details}
+    (defun UDC_AccountDetails:object{kadena.fungible-v3.account-details}
         (a:string b:decimal c:guard)
         {"account"          : a
         ,"balance"          : b
@@ -993,7 +993,7 @@
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
-    (defun UR_UR|Details:object{fungible-v2.account-details} (account:string)
+    (defun UR_UR|Details:object{kadena.fungible-v3.account-details} (account:string)
         (UEV_ChainZero)
         (with-read UR|StoaTable account
             {"balance"  := bal

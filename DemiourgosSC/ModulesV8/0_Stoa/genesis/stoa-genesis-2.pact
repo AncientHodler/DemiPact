@@ -130,7 +130,7 @@
 (interface stoic-fungible-v1
     @doc "Standard Interface for Stoa based True Fungibles \
         \ Stoa based true fungibles must adhere to a special syntax and architecture, \
-        \ that incorporate <fungible-v1> and <fungible-xchain-v1> interfaces functionalitz, \
+        \ that incorporate <fungible-v1> and <fungible-xchain-v1> interfaces functionality, \
         \ while adding additional functionality, such as Supply Tracking, \
         \ Transmit functions (unmanaged Transfer function) \
         \ Must allways allow for crosschain-transfers."
