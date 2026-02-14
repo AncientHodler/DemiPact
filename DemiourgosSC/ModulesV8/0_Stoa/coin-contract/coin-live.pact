@@ -1,4 +1,4 @@
-(module coinn GOVERNANCE
+(module coin GOVERNANCE
     @doc "Stoa represents the StoaChain Coin Contract \
         \ Forked from the latest original coin contract on Kadena Chain"
     ;;
