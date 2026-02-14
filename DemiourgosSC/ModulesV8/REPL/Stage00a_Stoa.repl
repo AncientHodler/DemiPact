@@ -287,7 +287,7 @@
     )
     [
         ;;Inject STOA
-        (coinn.C_URV|Inject SKC.CS03_NAME 12.0 false)
+        (coinn.C_URV|CoinbaseInject SKC.CS03_NAME 12.0)
         [
             (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
             (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
@@ -357,7 +357,7 @@
     )
     [
         ;;Inject Second Time
-        (coinn.C_URV|Inject SKC.CS00_NAME 1234.0 false)
+        (coinn.C_URV|CoinbaseInject SKC.CS00_NAME 1234.0)
         [
             (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
             (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
@@ -476,18 +476,18 @@
             ;;Inject 67 from Foundation
             { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": 
                 [
-                    ;(coinn.TRANSFER 
-                    ;    "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
-                    ;    "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
-                    ;    67.0
-                    ;)
+                    (coinn.TRANSFER 
+                        "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
+                        "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                        67.0
+                    )
                 ]
             }
         ]
     )
     [
         ;;Inject Last Time
-        (coinn.C_URV|Inject SKC.CS00_NAME 67.0 false)
+        (coinn.C_URV|Inject SKC.CS00_NAME 67.0)
         (format "Vault RPS is {}" [(coinn.UR_URV|VaultRPS)])
     ]
 

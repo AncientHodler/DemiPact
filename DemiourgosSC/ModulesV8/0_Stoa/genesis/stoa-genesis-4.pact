@@ -848,9 +848,7 @@
                         (credit account account-guard whole)
                     )
                     ;;3]Miner <account> injects <urv-emission> to UrStoaVault
-                    (with-capability (URV|INJECT)
-                        (C_URV|Inject account urv-emission true)
-                    )
+                    (C_URV|CoinbaseInject account urv-emission)
                     ;;4]Return the proper output string
                     (format
                         "Miner {} succesfully mined {} STOA, and injected an additional {} STOA to the UrStoa Vault"
@@ -1346,6 +1344,16 @@
             \ In this manner, the <account> itself can pay for the Gas."
         (with-capability (URV|INJECT)
             (XI_URV|Inject account stoa-amount false)
+        )
+    )
+    (defun C_URV|CoinbaseInject:string (account:string stoa-amount:decimal)
+        @doc "Injects Stoa into the UrStoa Vault. \
+            \ Uses the <C_Transmit> function to inject \
+            \ In this manner, the <account> itself cannot pay for the Gas. \
+            \ An external account different than the <account> must cover the gas fees \
+            \ Used in <coinbase>, since there an external gas payer is not needed"
+        (with-capability (URV|INJECT)
+            (XI_URV|Inject account stoa-amount true)
         )
     )
     (defun XI_URV|Inject:string (account:string stoa-amount:decimal coinbase:bool)
