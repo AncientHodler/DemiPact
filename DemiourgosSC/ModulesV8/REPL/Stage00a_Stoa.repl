@@ -143,14 +143,17 @@
                 "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
                 "caps":
                     [
-                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
-                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
-                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
-                        ;(coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
+                        (coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "ancient-hodler-urstoa-nonprincipal" 250.0)
+                        (coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
+                        (coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
+                        (coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
+                        (coinn.UR|TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 250.0)
                     ]
             }
         ]
     )
+    (coinn.C_UR|TransferAnew SKC.CS00_NAME "ancient-hodler-urstoa-nonprincipal" (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+
     (coinn.C_UR|TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
     (coinn.C_UR|Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
 
@@ -203,6 +206,7 @@
                 "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697",
                 "caps":
                     [
+                        (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "ancient-hodler-stoa-nonprincipal" 250.0)
                         (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 250.0)
                         (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 250.0)
                         (coinn.TRANSFER "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" "k:5825727fa44c23e1c7345e98922e811ace780618fd7a603d4bbad68d31cdcdba" 250.0)
@@ -211,6 +215,8 @@
             }
         ]
     )
+    (coinn.C_TransferAnew SKC.CS00_NAME "ancient-hodler-stoa-nonprincipal" (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
+
     (coinn.C_TransferAnew SKC.CS00_NAME SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 150.0)
     (coinn.C_Transfer SKC.CS00_NAME SKC.CS01_NAME 50.0)
 
@@ -239,6 +245,58 @@
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 (print "")
+(begin-tx "TX-03 - Rotate")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+    ;;Enviroment Keys
+    (env-data
+        {
+            ;;STOA-Masters Keys
+            "KEY_STOA_00_Foundation" : { "keys" : [SKC.CS00_PBKY]},
+            "KEY_STOA_01_AncientHodler" : { "keys" : [SKC.CS01_PBKY]},
+            "KEY_STOA_02_Florian" : { "keys" : [SKC.CS02_PBKY]},
+            "KEY_STOA_03_Coca" : { "keys" : [SKC.CS03_PBKY]},
+            "KEY_STOA_04_Bytales" : { "keys" : [SKC.CS04_PBKY]},
+            "KEY_STOA_05_Emma" : { "keys" : [SKC.CS05_PBKY]},
+            "KEY_STOA_06_Lumy" : { "keys" : [SKC.CS06_PBKY]},
+            "KEY_STOA_07_Kiss" : { "keys" : [SKC.CS07_PBKY]}
+        }
+    )
+
+    (env-sigs
+        [
+            {
+                "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263",
+                "caps":
+                    [
+                        (coinn.GAS)
+                    ]
+            }
+            {
+                "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e",
+                "caps":
+                    [
+            
+                    ]
+            }
+        ]
+    )
+    (coinn.C_RotateAccount "ancient-hodler-stoa-nonprincipal" (read-keyset "KEY_STOA_02_Florian"))
+    (coinn.C_RotateAccount "ancient-hodler-stoa-nonprincipal" (read-keyset "KEY_STOA_01_AncientHodler"))
+
+
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+(print "")
 (begin-tx "TX-03 - URStoa Tests 1")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
@@ -246,7 +304,15 @@
     (env-sigs
         [
             ;{ "key": "PK_AncientHodler", "caps": [] }
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": 
+                [
+                    (coinn.URV|STAKE
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        ;"c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                        25.0
+                    )
+                ] 
+            }   ;;AH
         ]
     )
     [
@@ -312,8 +378,22 @@
     (env-sigs
         [
             ;{ "key": "PK_AncientHodler", "caps": [] }
-            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
-            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": 
+                [
+                    (coinn.URV|STAKE
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 
+                        17.0
+                    )
+                ] 
+            }   ;;Florian
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": 
+                [
+                    (coinn.URV|STAKE
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 
+                        31.0
+                    )
+                ] 
+            }   ;;Bytales
         ]
     )
     [
@@ -346,18 +426,18 @@
             ;;Inject 1234 from Foundation
             { "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": 
                 [
-                    ;(coinn.TRANSFER 
-                    ;    "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
-                    ;    "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
-                    ;    1234.0
-                    ;)
+                    (coinn.TRANSFER
+                        "k:65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697" 
+                        "c:fxSmpw8VKah5NGCu7k2t09k9QFktOpbELqBnqmot8l4" 
+                        1234.0
+                    )
                 ]
             }
         ]
     )
     [
         ;;Inject Second Time
-        (coinn.C_URV|CoinbaseInject SKC.CS00_NAME 1234.0)
+        (coinn.C_URV|Inject SKC.CS00_NAME 1234.0)
         [
             (format "Vault UR Supply is {}" [(coinn.UR_URV|VaultUrSupply)])
             (format "Vault STOA Supply is {}" [(coinn.UR_URV|VaultSupply)])
@@ -382,7 +462,13 @@
     ;;Collect only works one at a time
     (env-sigs
         [
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": 
+                [
+                    (coinn.URV|COLLECT
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                    )
+                ] 
+            }   ;;AH
             ;{ "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
             ;{ "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
             ;{ "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
@@ -411,12 +497,24 @@
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
-    ;;Collect only works one at a time
+    ;;Collect works multiple at a time
     (env-sigs
         [
             ;{ "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": [] }   ;;AH
-            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": [] }   ;;Florian
-            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+            { "key": "0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e", "caps": 
+                [
+                    (coinn.URV|COLLECT
+                    "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e" 
+                    )
+                ]
+            }   ;;Florian
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": 
+                [
+                    (coinn.URV|COLLECT
+                    "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 
+                    )
+                ]
+            }   ;;Bytales
             ;{ "key": "65235cc5131cba0404592f9ef56391be733fde51d47498ebdaa2f15528ccf697", "caps": [] }   ;;Foundation
         ]
     )
@@ -445,7 +543,14 @@
 
     (env-sigs
         [
-            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": [] }   ;;Bytales
+            { "key": "50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b", "caps": 
+                [
+                    (coinn.URV|UNSTAKE
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b" 
+                        7.0
+                    )
+                ] 
+            }   ;;Bytales
         ]
     )
     [

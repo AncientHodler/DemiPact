@@ -2,11 +2,10 @@
 (module coin GOVERNANCE
     @doc "Stoa represents the StoaChain Coin Contract \
         \ Forked from the latest original coin contract on Kadena Chain"
-
+    ;;
     (implements fungible-v1)                        ;;former <fungible-v2>, starting on StoaChain as v1
     (implements fungible-xchain-v1)                 ;;former <fungible-xchain-v1>
     (implements stoic-fungible-v1)                  ;;Incorporates <fungible-v1> and <fungible-xchain-v1> with extra functionality
-
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -46,8 +45,6 @@
     (defschema coin-schema
         @doc "<ORIGINAL> \
             \ The STOA contract token schema"
-        ;;@model [(invariant (>= balance 0.0))]
-    
         balance:decimal
         guard:guard
     )
@@ -454,7 +451,6 @@
         ;;1]Enforces existing account guard
         (CAP_Account account)
         (UEV_PureRotate account new-guard)
-        
     )
     (defun UEV_PureRotate:bool (account:string new-guard:guard)
         ;;1]Allow rotation only for vanity accounts, or
@@ -954,8 +950,28 @@
     )
     ;;{C3}
     ;;{C4}
-    (defcap UR|TRANSFER:bool (sender:string receiver:string amount:decimal)
+    (defcap UR|TRANSMIT:bool (sender:string receiver:string amount:decimal)
+        @doc "Similar to UR|TRANSFER, but unmanaged"
         @event
+        (compose-capability (X_UR|TRANSFER sender receiver amount))
+    )
+    (defcap UR|TRANSFER:bool (sender:string receiver:string amount:decimal)
+        @managed amount UR|TRANSFER-mgr
+        (compose-capability (X_UR|TRANSFER sender receiver amount))
+    )
+    (defun UR|TRANSFER-mgr:decimal (managed:decimal requested:decimal)
+        (let
+            (
+                (newbal:decimal (- managed requested))
+            )
+            (enforce 
+                (>= newbal 0.0)
+                (format "URSTOA TRANSFER exceeded for balance {}" [managed])
+            )
+            newbal
+        )
+    )
+    (defcap X_UR|TRANSFER:bool (sender:string receiver:string amount:decimal)
         (let
             (
                 (urv-konto:string URV|KONTO)
@@ -1064,6 +1080,16 @@
     )
     (defun C_UR|TransferAnew:string (sender:string receiver:string receiver-guard:guard amount:decimal)
         (with-capability (UR|TRANSFER sender receiver amount)
+            (X_UR|Transfer sender receiver receiver-guard amount)
+        )
+    )
+    (defun C_UR|Transmit:string (sender:string receiver:string amount:decimal)
+        (with-capability (UR|TRANSMIT sender receiver amount)
+            (X_UR|Transfer sender receiver (UR_UR|Guard receiver) amount)
+        )
+    )
+    (defun C_UR|TransmitAnew:string (sender:string receiver:string receiver-guard:guard amount:decimal)
+        (with-capability (UR|TRANSMIT sender receiver amount)
             (X_UR|Transfer sender receiver receiver-guard amount)
         )
     )
@@ -1207,6 +1233,46 @@
     ;;{C2}
     ;;{C3}
     ;;{C4}
+    (defcap URV|INJECT ()
+        @event
+        (let
+            (
+                (vault-score:decimal (UR_URV|VaultUrSupply))
+            )
+            (enforce (> vault-score 0.0) "URSTOA-Vault Score must be greater than 0.0 for injection")
+            (compose-capability (SECURE))
+        )
+    )
+    (defcap URV|STAKE (account:string amount:decimal)
+        @managed
+        (compose-capability (UR|DEBIT account amount))
+        (compose-capability (UR|CREDIT URV|KONTO))
+        (compose-capability (SECURE))
+    )
+    (defcap URV|UNSTAKE (account:string amount:decimal)
+        @managed
+        (let
+            (
+                (vault-score:decimal (UR_URV|VaultUrSupply))
+                (user-score:decimal (UR_URV|UserSupply account))
+                (remaining:decimal (- user-score amount))
+                (vault-remaining:decimal (- vault-score amount))
+            )
+            (enforce (>= remaining 0.0) (format "Account {} Vault Balance exceded by {}" [account (abs remaining)]))
+            (enforce (>= vault-remaining 1.0) "At least 1.0 URSTOA must remain in the URSTOA-Vault")
+            (CAP_UR|Account account)
+            (compose-capability (URV|NATIVE-AUTOMATIC))
+            (compose-capability (UR|DEBIT URV|KONTO amount))
+            (compose-capability (UR|CREDIT account))
+            (compose-capability (SECURE))
+        )
+    )
+    (defcap URV|COLLECT (account:string)
+        @managed
+        (CAP_Account account)
+        (compose-capability (URV|NATIVE-AUTOMATIC))
+        (compose-capability (SECURE))
+    )
     ;;
     ;;<=======>
     ;;FUNCTIONS
@@ -1296,52 +1362,10 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defcap URV|INJECT ()
-        @event
-        (let
-            (
-                (vault-score:decimal (UR_URV|VaultUrSupply))
-            )
-            (enforce (> vault-score 0.0) "URSTOA-Vault Score must be greater than 0.0 for injection")
-            (compose-capability (SECURE))
-        )
-    )
-    (defcap URV|STAKE (account:string amount:decimal)
-        @event
-        (compose-capability (UR|DEBIT account amount))
-        (compose-capability (UR|CREDIT URV|KONTO))
-        (compose-capability (SECURE))
-    )
-    (defcap URV|UNSTAKE (account:string amount:decimal)
-        @event
-        (let
-            (
-                (vault-score:decimal (UR_URV|VaultUrSupply))
-                (user-score:decimal (UR_URV|UserSupply account))
-                (remaining:decimal (- user-score amount))
-                (vault-remaining:decimal (- vault-score amount))
-            )
-            (enforce (>= remaining 0.0) (format "Account {} Vault Balance exceded by {}" [account (abs remaining)]))
-            (enforce (>= vault-remaining 1.0) "At least 1.0 URSTOA must remain in the URSTOA-Vault")
-            (CAP_UR|Account account)
-            (compose-capability (URV|NATIVE-AUTOMATIC))
-            (compose-capability (UR|DEBIT URV|KONTO amount))
-            (compose-capability (UR|CREDIT account))
-            (compose-capability (SECURE))
-        )
-    )
-    (defcap URV|COLLECT (account:string)
-        @event
-        (CAP_Account account)
-        (compose-capability (URV|NATIVE-AUTOMATIC))
-        (compose-capability (SECURE))
-    )
-    ;;
-    ;;
     (defun C_URV|Inject:string (account:string stoa-amount:decimal)
         @doc "Injects Stoa into the UrStoa Vault. \
             \ Uses the <C_Transfer> function to inject, which requires the <TRANSFER> cap to be scoped \
-            \ In this manner, the <account> itself can pay for the Gas."
+            \ In this manner, the <account> itself can also pay for the tx Gas."
         (with-capability (URV|INJECT)
             (XI_URV|Inject account stoa-amount false)
         )
