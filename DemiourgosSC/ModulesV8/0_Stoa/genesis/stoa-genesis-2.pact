@@ -1,5 +1,5 @@
 ;;0]Payload requires
-;;  <payload_stoa-master-one> 
+;;  <payload_stoa-master-one>
 ;;  <payload_stoa-master-two>
 ;;  <payload_stoa-master-three>
 ;;  <payload_stoa-master-four>

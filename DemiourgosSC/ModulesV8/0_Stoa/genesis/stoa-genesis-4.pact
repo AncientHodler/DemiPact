@@ -1,3 +1,5 @@
+;;0]Payload requires
+;;  <payload_stoa-foundation>
 ;;1]Deploys the coin module
 (module coin GOVERNANCE
     @doc "Stoa represents the StoaChain Coin Contract \
@@ -1653,3 +1655,7 @@
 
 (create-table URV|UrStoaVault)      ;;Stores UrStoaVault Data
 (create-table URV|UrStoaVaultUser)  ;;Stores UrStoaVault User Data
+
+;;2]Initialises StoaChain on Chain 0
+(define-keyset "stoa-foundation-keyset" (read-keyset "payload_stoa-foundation"))
+(A_InitialiseStoaChain "stoa-foundation" (keyset-ref-guard "stoa-foundation-keyset"))
