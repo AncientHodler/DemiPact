@@ -5,9 +5,9 @@
     @doc "Stoa represents the StoaChain Coin Contract \
         \ Forked from the latest original coin contract on Kadena Chain"
     ;;
-    (implements fungible-v1)                        ;;former <fungible-v2>, starting on StoaChain as v1
-    (implements fungible-xchain-v1)                 ;;former <fungible-xchain-v1>
-    (implements stoic-fungible-v1)                  ;;Incorporates <fungible-v1> and <fungible-xchain-v1> with extra functionality
+    (implements stoa-ns.fungible-v1)                ;;former <fungible-v2>, starting on StoaChain as v1
+    (implements stoa-ns.fungible-xchain-v1)         ;;former <fungible-xchain-v1>
+    (implements stoa-ns.stoic-fungible-v1)          ;;Incorporates <fungible-v1> and <fungible-xchain-v1> with extra functionality
     ;;
     ;;<========>
     ;;GOVERNANCE

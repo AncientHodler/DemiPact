@@ -9,7 +9,7 @@
 ;;
 ;;
 ;;1]Deploy <stoa-ns> assets
-(namespace "stoa-ns")   ;;Not Required for Keys, but required for interfaces and modules
+(namespace "stoa-ns")
 ;;1.1]Keys
 (define-keyset "stoa-ns.stoa_master_one" (read-keyset "payload_stoa-master-one"))
 (define-keyset "stoa-ns.stoa_master_two" (read-keyset "payload_stoa-master-two"))
@@ -238,7 +238,6 @@
         \ Must require [UPDATE-LOCAL-SUPPLY] for the supply to be updated safely"
     )
 )
-
 ;;
 ;;1.3]Modules
 (module stoic-predicates "stoa-ns.stoa_master_one"
