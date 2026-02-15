@@ -114,3 +114,5 @@
 (define-namespace "util" (keyset-ref-guard "util-ns-users") (keyset-ref-guard "util-ns-admin"))
 ;;
 ;;
+;;4]Rotate to real operate keyset
+(define-keyset "ns-operate-keyset" (read-keyset "payload_ns-genesis-keyset"))

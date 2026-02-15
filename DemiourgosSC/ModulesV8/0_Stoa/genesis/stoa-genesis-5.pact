@@ -3,8 +3,8 @@
 
 (module stoic-xchain GOVERNANCE
     ;;
-    @doc "Module for initializing the kadena-xchain-gas Account \
-        \ needed to autonomously pay crosschain-transactions"
+    @doc "Module for initializing the <kadena-xchain-gas> and <stoa-xchain-gas> Account \
+        \ needed to autonomously pay crosschain-transactions."
 
     (use coin)
     (use util.guards)
@@ -65,4 +65,13 @@
     ;;
 )
 
+;;2]Define the account
+;;2.1] Define <kadena-xchain-gas> account
+(create-xchain-gas-account true)
+;;2.2] Define <stoa-xchain-gas> account
+;;     <stoa-xchain-gas> uses a minim Gas Price computed via <coin.UC_MinimumGasPriceANU>
 (create-xchain-gas-account false)
+;;
+;;3]Initialy the <kadena-xchain-gas> will be used for CrossChain Transaction payouts, and thez need to be fueled on every chain
+;;4]Later on, with the minimum GasCost Update, payment will be switched to <stoa-xchain-gas>, 
+;;  while the <kadena-xchain-gas> accounts will be decommissioned.

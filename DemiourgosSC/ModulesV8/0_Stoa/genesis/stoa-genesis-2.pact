@@ -11,13 +11,12 @@
 ;;1]Deploy <stoa-ns> assets
 (namespace "stoa-ns")
 ;;1.1]Keys
-(define-keyset "stoa-ns.stoa_master_one" (read-keyset "payload_stoa-master-one"))
-(define-keyset "stoa-ns.stoa_master_two" (read-keyset "payload_stoa-master-two"))
-(define-keyset "stoa-ns.stoa_master_three" (read-keyset "payload_stoa-master-three"))
-(define-keyset "stoa-ns.stoa_master_four" (read-keyset "payload_stoa-master-four"))
-(define-keyset "stoa-ns.stoa_master_five" (read-keyset "payload_stoa-master-five"))
-(define-keyset "stoa-ns.stoa_master_six" (read-keyset "payload_stoa-master-six"))
-(define-keyset "stoa-ns.stoa_master_seven" (read-keyset "payload_stoa-master-seven"))
+(define-keyset "stoa-ns.stoa_master_one" (read-keyset "payload_stoa-master-one"))       ;;Initial Definition
+(define-keyset "stoa-ns.stoa_master_two" (read-keyset "payload_stoa-master-two"))       ;;Initial Definition
+(define-keyset "stoa-ns.stoa_master_three" (read-keyset "payload_stoa-master-three"))   ;;Initial Definition
+(define-keyset "stoa-ns.stoa_master_four" (read-keyset "payload_stoa-master-four"))     ;;Initial Definition
+(define-keyset "stoa-ns.stoa_master_five" (read-keyset "payload_stoa-master-five"))     ;;Initial Definition
+(define-keyset "stoa-ns.stoa_master_six" (read-keyset "payload_stoa-master-six"))       ;;Initial Definition
 ;;
 ;;1.2]Interfaces
 (interface fungible-v1
@@ -321,3 +320,6 @@
     )
 
 )
+;;  Define the last <stoa_master_seven> using the custom predicate "stoa-ns.stoic.predicates.keys-3-of-5" 
+;;  using 5 public keys.
+(define-keyset "stoa-ns.stoa_master_seven" (read-keyset "payload_stoa-master-seven"))   ;;Initial Definition
