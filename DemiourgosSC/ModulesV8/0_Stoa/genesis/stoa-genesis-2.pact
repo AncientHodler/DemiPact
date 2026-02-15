@@ -11,13 +11,13 @@
 ;;1]Deploy <stoa-ns> assets
 (namespace "stoa-ns")   ;;Not Required for Keys, but required for interfaces and modules
 ;;1.1]Keys
-(define-keyset "stoa-ns.stoa-master-one" (read-keyset "payload_stoa-master-one"))
-(define-keyset "stoa-ns.stoa-master-two" (read-keyset "payload_stoa-master-two"))
-(define-keyset "stoa-ns.stoa-master-three" (read-keyset "payload_stoa-master-three"))
-(define-keyset "stoa-ns.stoa-master-four" (read-keyset "payload_stoa-master-four"))
-(define-keyset "stoa-ns.stoa-master-five" (read-keyset "payload_stoa-master-five"))
-(define-keyset "stoa-ns.stoa-master-six" (read-keyset "payload_stoa-master-six"))
-(define-keyset "stoa-ns.stoa-master-seven" (read-keyset "payload_stoa-master-seven"))
+(define-keyset "stoa-ns.stoa_master_one" (read-keyset "payload_stoa-master-one"))
+(define-keyset "stoa-ns.stoa_master_two" (read-keyset "payload_stoa-master-two"))
+(define-keyset "stoa-ns.stoa_master_three" (read-keyset "payload_stoa-master-three"))
+(define-keyset "stoa-ns.stoa_master_four" (read-keyset "payload_stoa-master-four"))
+(define-keyset "stoa-ns.stoa_master_five" (read-keyset "payload_stoa-master-five"))
+(define-keyset "stoa-ns.stoa_master_six" (read-keyset "payload_stoa-master-six"))
+(define-keyset "stoa-ns.stoa_master_seven" (read-keyset "payload_stoa-master-seven"))
 ;;
 ;;1.2]Interfaces
 (interface fungible-v1
@@ -241,7 +241,7 @@
 
 ;;
 ;;1.3]Modules
-(module stoic-predicates "stoa-ns.ns-admin-keyset"
+(module stoic-predicates "stoa-ns.stoa_master_one"
 
     @doc "Collection of custom keyset predicates for Stoa chain / Ouronet accounts"
 
