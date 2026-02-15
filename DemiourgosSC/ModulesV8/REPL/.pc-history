@@ -96,5 +96,5 @@
 (load "Z.repl")
 (load "Z.repl")
 (load "Z.repl")
-(+ (* 10.0 0.398791536578) 0.44310170731)
+(load "Z.repl")
 (load "Z.repl")

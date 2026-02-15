@@ -293,8 +293,32 @@
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-01 - Coinbase Test")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
+    (env-sigs
+        [
+            ;{ "key": "PK_AncientHodler", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263", "caps": 
+                []
+            }   ;;AH
+        ]
+    )
+    (env-chain-data
+        {"chain-id": "0"}
+    )
+    (test-capability (coinn.COINBASE))
+    (coinn.coinbase SKC.CS01_NAME (read-keyset "KEY_STOA_01_AncientHodler") 7.77)
 
+(env-gas)
+(commit-tx)
+(print "")
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 
 (print "")
 (begin-tx "TX-03 - URStoa Tests 1")

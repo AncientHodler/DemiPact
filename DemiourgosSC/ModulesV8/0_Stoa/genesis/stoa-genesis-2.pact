@@ -187,7 +187,7 @@
     ;;  [UR]
     ;;
     (defun UR_Precision:integer ())
-    (defun UR_Details:object{fungible-v3.account-details} (account:string))
+    (defun UR_Details:object{fungible-v1.account-details} (account:string))
     (defun UR_Balance:decimal (account:string))
     (defun UR_Guard:guard (account:string))
     (defun UR_LocalCoinSupply:decimal ())

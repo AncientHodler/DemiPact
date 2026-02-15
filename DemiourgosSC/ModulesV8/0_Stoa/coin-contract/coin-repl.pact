@@ -1032,7 +1032,7 @@
             \ <amount> is discarded, and proper amount are computed within. \
             \ <amount is kept for csv read compatibility> \
             \ \
-            \ Mints 90% of emissions split on everz chain \
+            \ Mints 90% of emissions split on every chain \
             \ Mints and injects 10% of emissions on Chain 0 in the UrStoa Vault \
             \ \ 
             \ The proper amounts are computed via <URC_Emissions>"
