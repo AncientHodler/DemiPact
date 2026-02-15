@@ -17,20 +17,26 @@
     )
 
     ; ── Create the xchain gas account (admin-only) ─────────────────
-    (defun create-xchain-gas-account:string ()
-        @doc "Creates stoa-xchain-gas (former kadena-xchain-gas) — only callable by module Governance"
+    (defun create-xchain-gas-account:string (kadena-or-stoa:bool)
+        @doc "Creates the CrossChain Gas Paying Account, either in the legacy name of <kadena-xchain-gas> \
+            \ or in the new StoaChain name, now being <stoa-xchain-gas>"
         (with-capability (GOVERNANCE)
             (let
                 (
                     (minimum-gas-price-anu:integer (coin.UC_MinimumGasPriceANU))
                     (minimum-stoa-gas-price:decimal (/ (dec minimum-gas-price-anu) 1000000000000.0))
+                    (below-or-at-gas-price:guard
+                        (if kadena-or-stoa
+                            (create-user-guard (util.gas-guards.enforce-below-or-at-gas-price 0.00000001))
+                            (create-user-guard (util.gas-guards.enforce-below-or-at-gas-price minimum-stoa-gas-price))
+                        )
+                    )
                     (gas-restriction-guard:guard
                         (create-user-guard
                             (util.gas-guards.enforce-guard-all
                                 [ 
                                     (create-user-guard (coin.gas-only))
-                                    ;(create-user-guard (util.gas-guards.enforce-below-or-at-gas-price 0.00000001))
-                                    (create-user-guard (util.gas-guards.enforce-below-or-at-gas-price minimum-stoa-gas-price))
+                                    below-or-at-gas-price
                                     (create-user-guard (util.gas-guards.enforce-below-or-at-gas-limit 850))
                                 ]
                             )
@@ -44,13 +50,19 @@
                             )
                         )
                     )
+                    (account-name:string
+                        (if kadena-or-stoa
+                            "kadena-xchain-gas"
+                            "stoa-xchain-gas"
+                        )
+                    )
                 )
-                (coin.C_CreateAccount "stoa-xchain-gas" final-guard)
-                "stoa-xchain-gas account successfully created"
+                (coin.C_CreateAccount account-name final-guard)
+                (format "Account <{}> succesfully created" [account-name])
             )
         )
     )
     ;;
 )
 
-(create-xchain-gas-account)
+(create-xchain-gas-account false)
