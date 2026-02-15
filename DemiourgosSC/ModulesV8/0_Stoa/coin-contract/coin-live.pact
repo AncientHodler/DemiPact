@@ -309,7 +309,7 @@
                 (current-time:time (at "block-time" (chain-data)))
                 (seconds-elapsed:decimal (diff-time current-time GENESIS-TIME))
                 (intervals:integer (floor (/ seconds-elapsed GAS-PRICE-INTERVAL)))
-                (raw-price:integer (+ GENESIS-MIN-GAS-PRICE (round intervals)))
+                (raw-price:integer (+ GENESIS-MIN-GAS-PRICE intervals))
             )
             (if (> raw-price MAX-GAS-PRICE) 
                 MAX-GAS-PRICE 
