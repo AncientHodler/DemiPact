@@ -8,8 +8,8 @@
 ;;1]Define <ns-admin-keyset> and <ns-operate-keyset> conceptually on the <null/root> namespace
 (define-keyset "ns-admin-keyset" (read-keyset "payload_ns-admin-keyset"))
 (define-keyset "ns-operate-keyset" (read-keyset "payload_ns-genesis-keyset"))
-(define-keyset "util-ns-users" (read-keyset "payload_util-ns-users"))
 (define-keyset "util-ns-admin" (read-keyset "payload_util-ns-admin"))
+(define-keyset "util-ns-users" (read-keyset "payload_util-ns-users"))
 ;;
 ;;
 ;;2]Deploy <ns> module on the <null/root> namespace
