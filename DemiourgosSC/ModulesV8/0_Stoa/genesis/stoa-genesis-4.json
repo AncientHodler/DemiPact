@@ -1,0 +1,9 @@
+{
+    "payload_stoa-foundation": {
+      "keys": [
+        "625ad78ab8c1df826d69e1f0e6457334b8e085b7d256d10be41726ced17fdf74",
+        "35d7f82a7754d10fc1128d199aadb51cb1461f0eb52f4fa89790a44434f12ed8"
+      ],
+      "pred": "keys-any"
+    }
+  }
