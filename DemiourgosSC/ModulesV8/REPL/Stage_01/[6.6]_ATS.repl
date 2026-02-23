@@ -1075,12 +1075,42 @@
         (ref-TS01-C2::ATS|C_SwitchColdRecovery aoz ps false)
         (ref-TS01-C2::ATS|C_SwitchHotRecovery aoz ps false)
         (ref-TS01-C2::ATS|C_ToggleParameterLock aoz ps false)
-        (ref-TS01-C2::ATS|C_SwitchColdRecovery aoz ps true)
-        (ref-TS01-C2::ATS|C_SwitchHotRecovery aoz ps true)
-
     ]
     
+    
 )
+
+(print "")
+(print "")
+(format "<<<<<<<Parameter Unlock with KDA Fee Collection costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Parameter Unlock with KDA Fee Collection")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_Emma", "caps": [] }
+    ]
+)
+(namespace "free")
+    (let
+        (
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
+            (aoz:string KST.AOZT)
+            (ps:string "PlebeicStrength-98c486052a51")
+        )
+        [
+            (ref-TS01-C2::ATS|C_SwitchColdRecovery aoz ps true)
+            (ref-TS01-C2::ATS|C_SwitchHotRecovery aoz ps true)
+        ]
+    )
 
 (print "")
 (print "")
@@ -1336,19 +1366,34 @@
         (ea-idx:string "EliteAuryndex-98c486052a51")
         (ouro:string "OURO-98c486052a51")
         ;;
-        (keyz:[string] (ref-TFT::DPTF-DPOF-ATS|UR_TableKeys 3 false))
-        (listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString "|" x)) keyz))
-        (fl:[string] (ref-U|DALOS::UC_InverseFilterId listoflists ps))
+        ;(keyz:[string] (ref-TFT::DPTF-DPOF-ATS|UR_TableKeys 3 false))
+        ;(listoflists:[[string]] (map (lambda (x:string) (ref-U|LST::UC_SplitString "|" x)) keyz))
+        ;(fl:[string] (ref-U|DALOS::UC_InverseFilterId listoflists ps))
+        ;;
+        (accounts-with-ats-data:[string] (ref-ATS::URD_ExistingAutostakePairs ps))
     )
-    (print "Remove Secondary++++++++++++++++++++")
-    (print "NOOOOOOOOOOOOOOOOT Remove Secondary++++++++++++++++++++")
     
-    (ref-TS01-C2::ATS|C_RemoveSecondary aoz aoz ps a-k)
+    
     [
-        ;keyz
-        ;listoflists
-        (ref-TFT::DPTF-DPOF-ATS|UR_FilterKeysForInfo ps 3 false)
-        (format "{} has as RTs: {}" [ps (ref-ATS::UR_RewardTokenList ps)])
+        [
+            (print "Remove Secondary++++++++++++++++++++")
+            (print "NOOOOOOOOOOOOOOOOT Remove Secondary++++++++++++++++++++")
+        ]
+        [
+            (format "Accounts with ATS-Data are {}" [accounts-with-ats-data])
+        ]
+        [
+            ;keyz
+            ;listoflists
+            ;(ref-TFT::DPTF-DPOF-ATS|UR_FilterKeysForInfo ps 3 false)
+            (format "BEFORE {} has as RTs: {}" [ps (ref-ATS::UR_RewardTokenList ps)])
+            (format "BEFORE {} has registered ATS as {}" [a-k (ref-DPTF::UR_RewardToken a-k)])
+            (ref-TS01-C2::ATS|C_RemoveSecondary aoz aoz ps a-k)
+        ]
+        [
+            (format "AFTER {} has as RTs: {}" [ps (ref-ATS::UR_RewardTokenList ps)])
+            (format "AFTER {} has registered ATS as {}" [a-k (ref-DPTF::UR_RewardToken a-k)])
+        ]
     ]
     
 )

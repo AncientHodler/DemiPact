@@ -1087,7 +1087,7 @@
             ;;iz native False requires unwrapping, therefore the proper transfer capability must be set
             ;;<iz-native> = false => input WKDA, which will be unwrapped to KDA to satisfz enviroment
             (ref-TS02-DPAD::SNAKES|C_Acquire patron patron 4 1 false)
-            (ref-TS02-DPAD::SPARK|C_BuySparks patron patron 25 false)
+            ;(ref-TS02-DPAD::SPARK|C_BuySparks patron patron 25 false)
         ]
         [
             (format "AH has Native Kadena after purchse {}" [(ref-coin::get-balance patron-kda)])
@@ -1100,13 +1100,13 @@
         (format "244k is fee {}" [(free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 244000.0)])
         (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
         [
-            (ref-TS01-C1::DPTF|C_Transfer patron wkda-id patron KST.EMMA 
-                2500.0
-                false
-            )
-            (ref-TS02-DPAD::SPARK|C_RedemAllSparks
-                patron KST.EMMA patron
-            )
+            ;(ref-TS01-C1::DPTF|C_Transfer patron wkda-id patron KST.EMMA 
+            ;    2500.0
+            ;    false
+            ;)
+            ;(ref-TS02-DPAD::SPARK|C_RedemAllSparks
+            ;    patron KST.EMMA patron
+            ;)
             (format "AH should have no WKDA {}" [(ref-DPTF::UR_AccountSupply wkda-id patron)])
         ]
     ]
@@ -1287,7 +1287,7 @@
             (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
             ;(map (free.DEMIPAD-KPAY.UR_PeriodAllocation) (enumerate 1 25))
         ]
-        (acquire-module-admin MTX-SWP-V2)
+        ;(acquire-module-admin MTX-SWP-V2)
     ]
 )
 

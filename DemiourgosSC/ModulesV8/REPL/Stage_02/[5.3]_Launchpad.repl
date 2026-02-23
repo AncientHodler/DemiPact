@@ -100,6 +100,153 @@
         { "key": "PK_LPAD", "caps": [] }
     ]
 )
+
+    (let
+        (
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (split-kda:[decimal]
+                (ref-DALOS::URC_SplitKDAPrices
+                    KST.ANHD
+                    (* (ref-DALOS::UR_UsagePrice "dptf") 2.0)
+                )
+            )
+            (patron:string KST.ANHD)
+        )
+        (env-sigs
+            [
+                { "key": "PK_AncientHodler", "caps": [] }
+                { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+                "caps":
+                    [
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                            (at 2 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                            (at 0 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                            (at 3 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                            (at 1 split-kda)
+
+                        )
+                    ]
+                }
+            ]
+        )
+        (ref-TS01-C1::DPTF|C_Issue
+            patron
+            patron
+            ["Spark"]
+            ["SPARK"]
+            [6]
+            [true]
+            [true]
+            [true]
+            [true]
+            [true]
+            [true]
+        )
+    )
+
+(print "")
+(print "")
+(format "<<<<<<<Init Spark Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Movie Booster aka Spark")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+
+    (let
+        (
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
+            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (split-kda:[decimal]
+                (ref-DALOS::URC_SplitKDAPrices
+                    KST.ANHD
+                    (* (ref-DALOS::UR_UsagePrice "dptf") 2.0)
+                )
+            )
+            (patron:string KST.ANHD)
+            (SparkID:string "SPARK-98c486052a51")
+        )
+        (env-sigs
+            [
+                { "key": "PK_AncientHodler", "caps": [] }
+                { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+                "caps":
+                    [
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                            (at 2 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                            (at 0 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                            (at 3 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                            (at 1 split-kda)
+
+                        )
+                    ]
+                }
+            ]
+        )
+        (ref-TS01-C2::VST|C_CreateFrozenLink patron SparkID)
+    )
+    
+(print "")
+(print "")
+(format "<<<<<<<Init Spark Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Movie Booster aka Spark")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
 (let
     (
         (ref-DALOS:module{OuronetDalosV6} DALOS)
@@ -113,32 +260,6 @@
     (env-sigs
         [
             { "key": "PK_AncientHodler", "caps": [] }
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
-              "caps":
-                [
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 2 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        (at 0 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 3 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 1 split-kda)
-
-                    )
-                ]
-            }
         ]
     )
     (let
@@ -151,25 +272,11 @@
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
             (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
             (patron:string KST.ANHD)
-            (ids:list
-                (ref-TS01-C1::DPTF|C_Issue
-                    patron
-                    patron
-                    ["Spark"]
-                    ["SPARK"]
-                    [6]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                )
-            )
+            
             (s-key:string DEMIPAD-SPARK.SPARK|INFO)
             (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
-            (SparkID:string (at 0 ids))
-            (FrozenSparkID:string (at 1 (ref-TS01-C2::VST|C_CreateFrozenLink patron SparkID)))
+            (SparkID:string "SPARK-98c486052a51")
+            (FrozenSparkID:string "F|SPARK-98c486052a51")
             (vst-sc:string (ref-VST::GOV|VST|SC_NAME))
             (tr:bool (ref-DPTF::UR_AccountRoleTransfer FrozenSparkID vst-sc))
         )
@@ -302,6 +409,92 @@
 (print "===^^^===")
 (env-sigs [])
 (commit-tx)
+
+
+
+
+
+
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(begin-tx "TX-01 - Initialise Kadena Pay")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs
+    [
+        { "key": "PK_AncientHodler", "caps": [] }
+        { "key": "PK_LPAD", "caps": [] }
+    ]
+)
+
+    (let
+        (
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (split-kda:[decimal]
+                (ref-DALOS::URC_SplitKDAPrices
+                    KST.ANHD
+                    (ref-DALOS::UR_UsagePrice "dptf")
+                )
+            )
+            (patron:string KST.ANHD)
+            (SparkID:string "SPARK-98c486052a51")
+        )
+        (env-sigs
+            [
+                { "key": "PK_AncientHodler", "caps": [] }
+                { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
+                "caps":
+                    [
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                            (at 2 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                            (at 0 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                            (at 3 split-kda)
+                        )
+                        (coin.TRANSFER
+                            "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
+                            "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                            (at 1 split-kda)
+
+                        )
+                    ]
+                }
+            ]
+        )
+        (ref-TS01-C1::DPTF|C_Issue
+            patron
+            patron
+            ["KadenaPay"]
+            ["KPAY"]
+            [24]
+            [true]
+            [true]
+            [true]
+            [true]
+            [true]
+            [true]
+        )
+    )
+    
+(print "")
+(print "")
+(format "<<<<<<<Init Kpay Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(env-sigs [])
+(commit-tx)
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -327,32 +520,6 @@
     (env-sigs
         [
             { "key": "PK_AncientHodler", "caps": [] }
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" ,
-              "caps":
-                [
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 2 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        (at 0 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 3 split-kda)
-                    )
-                    (coin.TRANSFER
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263"
-                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 1 split-kda)
-
-                    )
-                ]
-            }
         ]
     )
     (let
@@ -370,22 +537,7 @@
             (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
             ;;
             (patron:string KST.ANHD)
-            (ids:list
-                (ref-TS01-C1::DPTF|C_Issue
-                    patron
-                    patron
-                    ["KadenaPay"]
-                    ["KPAY"]
-                    [24]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                    [true]
-                )
-            )
-            (KpayID:string (at 0 ids))
+            (KpayID:string "KPAY-98c486052a51")
             (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
             (s-key:string DEMIPAD-KPAY.KPAY|INFO)
         )

@@ -505,7 +505,7 @@
     ;;{F5}  [A]
     (defun A_RemoveSecondary:object{IgnisCollectorV2.OutputCumulator}
         (remover:string ats:string reward-token:string accounts-with-ats-data:[string])
-        @doc "Administrative Variant, queries <accounts-with-ats-data> via <DPTF-DPOF-ATS|UR_FilterKeysForInfo>"
+        @doc "Administrative Variant, queries <accounts-with-ats-data> via <ATS.URD_ExistingAutostakePairs ats>"
         (UEV_IMC)
         (with-capability (ATSU|C>ADMINISTRATIVE-REMOVE-SECONDARY ats reward-token)
             (X_RemoveSecondary remover ats reward-token accounts-with-ats-data)
@@ -514,14 +514,14 @@
     ;;{F6}  [C]
     (defun C_RemoveSecondary:object{IgnisCollectorV2.OutputCumulator}
         (remover:string ats:string reward-token:string)
-        @doc "Client Variant if <DPTF-DPOF-ATS|UR_FilterKeysForInfo> is cheap enough \
+        @doc "Client Variant if <ATS.URD_ExistingAutostakePairs ats> is cheap enough \
             \ for the whole function to fit inside one Transaction. \
             \ In case it isnt, the Administrative Variant Must be used, with pre-read Data."
         (UEV_IMC)
         (let
             (
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                (accounts-with-ats-data:[string] (ref-TFT::DPTF-DPOF-ATS|UR_FilterKeysForInfo ats 3 false))
+                (ref-ATS:module{AutostakeV6} ATS)
+                (accounts-with-ats-data:[string] (ref-ATS::URD_ExistingAutostakePairs ats))
             )
             (with-capability (ATSU|C>REMOVE-SECONDARY ats reward-token)
                 (X_RemoveSecondary remover ats reward-token accounts-with-ats-data)

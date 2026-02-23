@@ -154,6 +154,47 @@
     )
     (let
         (
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            ;;Input Variables
+            (patron:string issuing-account)
+            (collection-owner:string patron)
+            (collection-creator:string patron)
+        )
+        (ref-TS02-C1::DPSF|C_Issue
+            patron
+            collection-owner collection-creator "OuronetCustodians" "DHOC"
+            true true true true
+            true true true true
+        )
+    )
+
+)
+
+
+(format "<<<<<<<Issue Ouronet Custodians Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-02 [4.2] - Issue Ouronet Custodians Collection")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (issuing-account:string KST.ANHD)
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+        ]
+    )
+    (let
+        (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
             (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
@@ -166,14 +207,14 @@
             (collection-owner:string patron)
             (collection-creator:string patron)
             ;;
-            (dhoc-id:string
+            (dhoc-id:string "DHOC-98c486052a51"
                 ;;1]Issue Custodians Collection
-                (ref-TS02-C1::DPSF|C_Issue
-                    patron
-                    collection-owner collection-creator "OuronetCustodians" "DHOC"
-                    true true true true
-                    true true true true
-                )
+                ;(ref-TS02-C1::DPSF|C_Issue
+                ;    patron
+                ;    collection-owner collection-creator "OuronetCustodians" "DHOC"
+                ;    true true true true
+                ;    true true true true
+                ;)
             )
             (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
             (b:string "|")
@@ -467,7 +508,7 @@
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 (print "")
-(begin-tx "TX-04 [4.4] - Issue Coding Division Collection")
+(begin-tx "TX-02 [4.2] - Issue Coding Division Collection")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
@@ -514,6 +555,56 @@
     )
     (let
         (
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            ;;Input Variables
+            (patron:string issuing-account)
+            (collection-owner:string patron)
+            (collection-creator:string patron)
+        )
+        (ref-TS02-C1::DPSF|C_Issue
+            patron
+            collection-owner collection-creator "CodingDivision" "DHCD"
+            true true true true 
+            true true true true
+        )
+    )
+
+)
+
+
+(format "<<<<<<<Issue Ouronet Custodians Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+
+
+
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-04 [4.4] - Issue Coding Division Collection")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (issuing-account:string KST.ANHD)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                issuing-account
+                (ref-DALOS::UR_UsagePrice "dpsf")
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+        ]
+    )
+    (let
+        (
             (ref-U|LST:module{StringProcessor} U|LST)
             (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
             (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
@@ -529,13 +620,13 @@
             (collection-creator:string patron)
             ;;
             ;;
-            (dhcd-id:string
-                (ref-TS02-C1::DPSF|C_Issue
-                    patron
-                    collection-owner collection-creator "CodingDivision" "DHCD"
-                    true true true true 
-                    true true true true
-                )
+            (dhcd-id:string "DHCD-98c486052a51"
+                ;(ref-TS02-C1::DPSF|C_Issue
+                ;    patron
+                ;    collection-owner collection-creator "CodingDivision" "DHCD"
+                ;    true true true true 
+                ;    true true true true
+                ;)
             )
             ;;
             (b:string "|")
@@ -690,7 +781,7 @@
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 (print "")
-(begin-tx "TX-05 [4.5] - Issue VestaX.Finance Collection")
+(begin-tx "TX-02 [4.2] - Issue Wonder Coach Collection")
 (namespace "free")
 (env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
 
@@ -737,98 +828,28 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
             (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
-            ;;
             ;;Input Variables
             (patron:string issuing-account)
             (collection-owner:string patron)
             (collection-creator:string patron)
-            ;;
-            (dhvx-id:string
-                ;;1]Issue VestaX.Finance Collection
-                (ref-TS02-C1::DPSF|C_Issue
-                    patron
-                    collection-owner collection-creator "VestaX" "DHVX"
-                    true true true true
-                    true true true true
-                )
-            )
-            ;;
-            (b:string "|")
-            (md:object{DpdcUdcV3.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
-            (v-asset-type:object{DpdcUdcV3.URI|Type}
-                (ref-DPDC-UDC::UDC_URI|Type false false true false false false false)
-            )
-            (zd:object{DpdcUdcV3.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
-            ;;
-            (royalty:decimal            150.0)
-            (ignis-royalty:[decimal]    [32.0 18.0 10.0])
-            (names:[string]
-                ["GoldenVestaX" "SilverVestaX" "BronzeVestaX"]
-            )
-            (descriptions:[string]
-                [
-                    "Financial Ownership over 15% of VestaX.Finance Revenues. Multiple Ouronet Benefits. For Demiourgos OGs."
-                    "Financial Ownership over 15% of VestaX.Finance Revenues. Multiple Ouronet Benefits. For Demiourgos Partners."
-                    "Financial Ownership over 15% of VestaX.Finance Revenues. Multiple Ouronet Benefits. For Demiourgos Investors."
-                ]
-            )
-            (image-links:[string]
-                [
-                    "https://gateway.pinata.cloud/ipfs/QmZ6TcrEEWcuJmZMcue3jFcX3BUXXn7CznAK2J5VhgFqEo"
-                    "https://gateway.pinata.cloud/ipfs/QmVCQ13cN2o91bnB45ByDEXqwMZmFd1CtDeEyqcVZD79Vc"
-                    "https://gateway.pinata.cloud/ipfs/QmQVVEFALsQKigZQHVRNBHgEQQ4pUJMtSMjE7K1Ge18eYH"
-                ]
-            )
-            (primary-uri-lst:[object{DpdcUdcV3.URI|Data}]
-                (fold
-                    (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
-                        (ref-U|LST::UC_AppL acc
-                            (ref-DPDC-UDC::UDC_URI|Data b b (at idx image-links) b b b b)
-                        )
-                    )
-                    []
-                    [0 1 2]
-                )
-            )
-            (native-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
-                ;;Construct the Native Nonce Data in a 3 element list
-                (fold
-                    (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
-                        (ref-U|LST::UC_AppL acc
-                            (ref-DPDC-UDC::UDC_NonceData
-                                royalty
-                                (at idx ignis-royalty)
-                                (at idx names)
-                                (at idx descriptions)
-                                md
-                                v-asset-type
-                                (at idx primary-uri-lst)
-                                zd
-                                zd
-                            )
-                        )
-                    )
-                    []
-                    [0 1 2]
-                )
-            )      
         )
-        [
-            ;;2]Create Nonces [1 2 3]
-            (ref-TS02-C1::DPSF|C_Create patron dhvx-id [1000 2000 4000] native-nonce-data)
-        ]
+        (ref-TS02-C1::DPSF|C_Issue
+            patron
+            collection-owner collection-creator "WonderCoach" "DHWC"
+            true true true true 
+            true true true true
+        )
     )
+
 )
 
-(format "<<<<<<<Issue VestaX.Finance Costs {} GAS>>>>>>>" [(env-gas)])
+
+(format "<<<<<<<Issue Ouronet Custodians Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (commit-tx)
 (print "")
+
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;|| NEXT                   >
 ;;||>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -851,31 +872,6 @@
     (env-sigs
         [   
             { "key": "PK_AncientHodler", "caps": [] }
-            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
-              "caps": 
-                [
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
-                        (at 2 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
-                        (at 0 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
-                        (at 3 split-kda)
-                    )
-                    (coin.TRANSFER 
-                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
-                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
-                        (at 1 split-kda)
-                    )
-                ]
-            }
         ]
     )
     (let
@@ -894,13 +890,13 @@
             (collection-owner:string patron)
             (collection-creator:string patron)
             ;;
-            (dhwc-id:string
-                (ref-TS02-C1::DPSF|C_Issue
-                    patron
-                    collection-owner collection-creator "WonderCoach" "DHWC"
-                    true true true true 
-                    true true true true
-                )
+            (dhwc-id:string "DHWC-98c486052a51"
+                ;(ref-TS02-C1::DPSF|C_Issue
+                ;    patron
+                ;    collection-owner collection-creator "WonderCoach" "DHWC"
+                ;    true true true true 
+                ;    true true true true
+                ;)
             )
             ;;
             (b:string "|")
@@ -1333,6 +1329,88 @@
                 collection-owner collection-creator "DemiourgosHoldingsBloodshed" "DHB"
                 true true true true true true true true
             )
+            ;(ref-TS02-C2::DPNF|C_Issue
+            ;    patron
+            ;    collection-owner collection-creator "DemiBunnies" "KBN"
+            ;    true true true true true true true true
+            ;)
+        ]
+    )
+)
+
+(format "<<<<<<<Issue Bloodshed Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(commit-tx)
+(print "")
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+;;|| NEXT                   >
+;;||>>>>>>>>>>>>>>>>>>>>>>>>>
+(print "")
+(begin-tx "TX-08 [4.8] - Issue Bloodshed Collection and Bunny")
+(namespace "free")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+
+(let
+    (
+        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (issuing-account:string KST.ANHD)
+        (split-kda:[decimal]
+            (ref-DALOS::URC_SplitKDAPrices
+                issuing-account
+                (* 2.0 (ref-DALOS::UR_UsagePrice "dpnf"))
+            )
+        )
+    )
+    (env-sigs
+        [   
+            { "key": "PK_AncientHodler", "caps": [] }
+            { "key": "PK_Emma", "caps": [] }
+            { "key": "PK_Lumy", "caps": [] }
+            { "key": "6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" , 
+              "caps": 
+                [
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:50d6c59b21e5e6e55baecaa75a1007de37576bde12d8230dc82459cc01b9484b"
+                        (at 2 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "k:0cb30c0121ff919266121a99ff9359871818932211df94dae4137c29bc0e8f7e"
+                        (at 0 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:Y_iaJ6fE-ic7kwTtLfty66e3zyGGYIX7OdiMrIdkYBg"
+                        (at 3 split-kda)
+                    )
+                    (coin.TRANSFER 
+                        "k:6fa1d9c3e5078a54038159c9a6bd7182301e16d6f280615eddb18b8bd2d6c263" 
+                        "c:HVNhO-WfROlC-guMUNk91MJWPzfSiP1O7Ip4T4g93O0"
+                        (at 1 split-kda)
+                    )
+                ]
+            }
+        ]
+    )
+    (let
+        (
+            (ref-U|LST:module{StringProcessor} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
+            ;;
+            ;;Input Variables
+            (patron:string issuing-account)
+            (collection-owner:string KST.LUMY)
+            (collection-creator:string KST.EMMA)
+            ;;
+        )
+        [
+            ;(ref-TS02-C2::DPNF|C_Issue
+            ;    patron
+            ;    collection-owner collection-creator "DemiourgosHoldingsBloodshed" "DHB"
+            ;    true true true true true true true true
+            ;)
             (ref-TS02-C2::DPNF|C_Issue
                 patron
                 collection-owner collection-creator "DemiBunnies" "KBN"

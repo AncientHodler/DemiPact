@@ -2325,7 +2325,7 @@
                 (ref-U|ATS:module{UtilityAtsV2} U|ATS)
             )
             (with-read ATS|Ledger (UC_AtspairAccount atspair account)
-                {"P0" := p0, "P1" := p1, "P2" := p2, "P3" := p3, "P4" := p4, "P5" := p5, "P6" := p6, "P7" := p7}
+                {"P0" := p0, "P1" := p1, "P2" := p2, "P3" := p3, "P4" := p4, "P5" := p5, "P6" := p6, "P7" := p7, "id" := id, "account" := acc}
                 (update ATS|Ledger (UC_AtspairAccount atspair account)
                     (UDCX_Balance
                         (ref-U|ATS::UC_MultiReshapeUnstakeObject p0 rp)
@@ -2336,6 +2336,8 @@
                         (ref-U|ATS::UC_ReshapeUnstakeObject p5 rp)
                         (ref-U|ATS::UC_ReshapeUnstakeObject p6 rp)
                         (ref-U|ATS::UC_ReshapeUnstakeObject p7 rp)
+                        id
+                        acc
                     )
                 )
             )
