@@ -29,16 +29,16 @@
 (load "Stage_01/[5.3]_Reader+.repl")
 
 ;;SLAVE TESTER
-;(load "Stage_01/[6.1]_Cumulator.repl")
+(load "Stage_01/[6.1]_Cumulator.repl")
     ;;
-;(load "Stage_01/[6.2]_DPTF.repl")
-;(load "Stage_01/[6.3]_SWP.repl")
+(load "Stage_01/[6.2]_DPTF.repl")
+(load "Stage_01/[6.3]_SWP.repl")
 ;(load "Stage_01/[6.4]_Admin.repl")
     ;;
-;(load "Stage_01/[6.5]_DPOF.repl")
+(load "Stage_01/[6.5]_DPOF.repl")
     ;;
-;(load "Stage_01/[6.6]_ATS.repl")
+(load "Stage_01/[6.6]_ATS.repl")
     ;;
-;(load "Stage_01/[6.7]_VST.repl")
+(load "Stage_01/[6.7]_VST.repl")
     ;;
 (load "Stage_01/[6.8]_Dispenser.repl")

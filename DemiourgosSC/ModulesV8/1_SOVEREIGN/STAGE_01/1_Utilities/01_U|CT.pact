@@ -1,7 +1,7 @@
 (module U|CT GOV
     ;;
-    (implements OuronetConstants)
-    (implements DiaKdaPid)
+    (implements OuronetConstantsV1)
+    (implements DiaKdaPidV1)
     ;;
     ;;<========>
     ;;GOVERNANCE

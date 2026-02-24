@@ -1,6 +1,6 @@
 (module U|INT GOV
     ;;
-    (implements OuronetIntegersV2)
+    (implements OuronetIntegersV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -10,7 +10,7 @@
     (defcap GOV|U|INT_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -50,7 +50,7 @@
             (drop 1 lst)
         )
     )
-    (defun UC_SplitAuxiliaryIntegerList:object{OuronetIntegersV2.SplitIntegers} (primary:[integer] auxiliary:[integer])
+    (defun UC_SplitAuxiliaryIntegerList:object{OuronetIntegersV1.SplitIntegers} (primary:[integer] auxiliary:[integer])
         @doc "Splits an auxiliary integer list into 2 integers list, according to the negatives and positives of the primary"
         (let 
             (
@@ -63,7 +63,7 @@
             (UDC_SplitIntegers neg-counterparts pos-counterparts)
         )
     )
-    (defun UC_SplitIntegerList:object{OuronetIntegersV2.SplitIntegers} (input:[integer])
+    (defun UC_SplitIntegerList:object{OuronetIntegersV1.SplitIntegers} (input:[integer])
         @doc "Splits an integer list into a negative and postive integer list"
         (let 
             (
@@ -73,14 +73,14 @@
             (UDC_SplitIntegers negatives positives)
         )
     )
-    (defun UC_NonceSplitter:object{OuronetIntegersV2.NonceSplitter} (nonces:[integer] amounts:[integer])
+    (defun UC_NonceSplitter:object{OuronetIntegersV1.NonceSplitter} (nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-U|INT:module{OuronetIntegersV2} U|INT)
-                (split-nonces:object{OuronetIntegersV2.SplitIntegers} (ref-U|INT::UC_SplitIntegerList nonces))
+                (ref-U|INT:module{OuronetIntegersV1} U|INT)
+                (split-nonces:object{OuronetIntegersV1.SplitIntegers} (ref-U|INT::UC_SplitIntegerList nonces))
                 (negative-nonces:[integer] (at "negative" split-nonces))
                 (positive-nonces:[integer] (at "positive" split-nonces))
-                (split-amounts:object{OuronetIntegersV2.SplitIntegers} (ref-U|INT::UC_SplitAuxiliaryIntegerList nonces amounts))
+                (split-amounts:object{OuronetIntegersV1.SplitIntegers} (ref-U|INT::UC_SplitAuxiliaryIntegerList nonces amounts))
                 (negative-counterparts:[integer] (at "negative" split-amounts))
                 (positive-counterparts:[integer] (at "positive" split-amounts))
             )
@@ -98,7 +98,7 @@
     (defun UEV_ContainsAll:bool (l1:[integer] l2:[integer])
         (let*
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (tl:[bool]
                     (fold
                         (lambda
@@ -139,11 +139,11 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_SplitIntegers:object{OuronetIntegersV2.SplitIntegers} (neg:[integer] pos:[integer])
+    (defun UDC_SplitIntegers:object{OuronetIntegersV1.SplitIntegers} (neg:[integer] pos:[integer])
         {"negative" : neg
         ,"positive" : pos}
     )
-    (defun UDC_NonceSplitter:object{OuronetIntegersV2.NonceSplitter}
+    (defun UDC_NonceSplitter:object{OuronetIntegersV1.NonceSplitter}
         (a:[integer] b:[integer] c:[integer] d:[integer])
         {"negative-nonces"          : a
         ,"positive-nonces"          : b

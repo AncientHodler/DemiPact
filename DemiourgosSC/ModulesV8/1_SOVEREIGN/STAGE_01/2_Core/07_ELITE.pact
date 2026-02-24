@@ -1,7 +1,7 @@
 (module ELITE GOV
     ;;
-    (implements OuronetPolicy)
-    (implements Elite)
+    (implements OuronetPolicyV1)
+    (implements EliteV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -15,18 +15,18 @@
         (compose-capability (P|ELITE|CALLER))
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     (defun GOV|CollectiblesKey ()           (+ (GOV|NS_Use) ".dh_sc_dpdc-keyset"))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|ELITE|CALLER ()
         true
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -55,7 +55,7 @@
         (with-capability (GOV|ELITE_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -71,8 +71,8 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|DPOF:module{OuronetPolicy} DPOF)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|DPOF:module{OuronetPolicyV1} DPOF)
                 (mg:guard (create-capability-guard (P|ELITE|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -82,7 +82,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -93,7 +93,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -113,9 +113,9 @@
     (defun URC_EliteAurynzSupply (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
             )
             (if (!= ea-id BAR)
@@ -167,8 +167,8 @@
     (defun URC_IzIdEA:bool (id:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (fea:string (ref-DPTF::UR_Frozen ea-id))
                 (rea:string (ref-DPTF::UR_Reservation ea-id))
@@ -184,144 +184,13 @@
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
-    (defun A_MigrateMetaToOrtoFungibleId (id:string)
-        (let
-            (
-                (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-            )
-            (with-capability (GOV|ELITE_ADMIN-CALLER)
-                (ref-DPOF::XI_InsertNewId id
-                    {"owner-konto"                  : (ref-DPMF::UR_Konto id)
-                    ,"name"                         : (ref-DPMF::UR_Name id)
-                    ,"ticker"                       : (ref-DPMF::UR_Ticker id)
-                    ,"decimals"                     : (ref-DPMF::UR_Decimals id)
-                    ;;
-                    ,"can-upgrade"                  : (ref-DPMF::UR_CanUpgrade id)
-                    ,"can-change-owner"             : (ref-DPMF::UR_CanChangeOwner id)
-                    ,"can-add-special-role"         : (ref-DPMF::UR_CanAddSpecialRole id)
-                    ,"can-transfer-oft-create-role" : (ref-DPMF::UR_CanTransferNFTCreateRole id)
-                    ;;
-                    ,"can-freeze"                   : (ref-DPMF::UR_CanFreeze id)
-                    ,"can-wipe"                     : (ref-DPMF::UR_CanWipe id)
-                    ,"can-pause"                    : (ref-DPMF::UR_CanPause id)
-                    ;;
-                    ,"is-paused"                    : (ref-DPMF::UR_Paused id)
-                    ,"nonces-used"                  : (ref-DPMF::UR_NoncesUsed id)
-                    ,"nonces-excluded"              : 0
-                    ;;
-                    ,"supply"                       : (ref-DPMF::UR_Supply id)
-                    ;;
-                    ,"segmentation"                 : false
-                    ,"reward-bearing-token"         : (ref-DPMF::UR_RewardBearingToken id)
-                    ,"vesting-link"                 : (ref-DPMF::UR_Vesting id)
-                    ,"sleeping-link"                : (ref-DPMF::UR_Sleeping id)
-                    ,"hibernation-link"             : BAR}
-                )
-                (ref-DPOF::XI_WriteRoles id
-                    (ref-DPOF::UDC_VerumRoles
-                        (ref-DPMF::UR_Roles id 5)
-                        (ref-DPMF::UR_Roles id 3)
-                        (ref-DPMF::UR_Roles id 1)
-                        (ref-DPMF::UR_CreateRoleAccount id)
-                        (ref-DPMF::UR_Roles id 4)
-                    )
-                )
-                (format "Succesfully migrated DPMF {} to DPOF" [id])
-            )
-        )
-    )
-    (defun A_MigrateMetaToOrtoFungibleAccount (id:string account:string)
-        (let
-            (
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                (iz-id:bool (ref-DPOF::UR_IzId id))
-            )
-            (enforce iz-id (format "Meta Fungible ID {} must be migrated to Ortofungible for Operation" [id]))
-            (let
-                (
-                    (ref-DPMF:module{DemiourgosPactMetaFungibleV6} DPMF)
-                    
-                    (unit:[object{DemiourgosPactMetaFungibleV6.DPMF|Schema}] (ref-DPMF::UR_AccountUnit id account))
-                    (dpmf-negative:object{DemiourgosPactMetaFungibleV6.DPMF|Schema}
-                        {"nonce": -1
-                        ,"balance": -1.0
-                        ,"meta-data": [{}]}
-                    )
-                )
-                (if (= unit dpmf-negative)
-                    ;;If <unit> is <dpmf-negative> no writing occurs for the migration
-                    (format "Account {} doesnt exist for DPMF {} and cant be migrated" [account id])
-                    (let
-                        (
-                            (total-account-supply:decimal
-                                (fold
-                                    (lambda
-                                        (acc:decimal item:object{DemiourgosPactMetaFungibleV6.DPMF|Schema})
-                                        (+ acc (at "balance" item))
-                                    )
-                                    0.0
-                                    unit
-                                )
-                            )
-                        )
-                        (with-capability (GOV|ELITE_ADMIN-CALLER)
-                            ;;Write Account Data
-                            (ref-DPOF::XB_W|AccountRoles id account
-                                (ref-DPOF::UDC_AccountRoles
-                                    total-account-supply
-                                    (ref-DPMF::UR_AccountFrozenState id account)
-                                    (ref-DPMF::UR_AccountRoleNFTAQ id account)
-                                    (ref-DPMF::UR_AccountRoleBurn id account)
-                                    (ref-DPMF::UR_AccountRoleCreate id account)
-                                    (ref-DPMF::UR_AccountRoleTransfer id account)
-                                    id
-                                    account
-                                )
-                            )
-                            ;;Insert Nonces
-                            (if (> total-account-supply 0.0)
-                                (format "No Orto-Fungible Insertion needed for the MetaFungible ID {} and Account {}" [id account])
-                                (map
-                                    (lambda
-                                        (item:object{DemiourgosPactMetaFungibleV6.DPMF|Schema})
-                                        (let
-                                            (
-                                                (nonce:integer (at "nonce" item))
-                                                (balance:decimal (at "balance" item))
-                                                (meta-data-chain:[object] (at "meta-data" item))
-                                            )
-                                            (if (!= nonce 0)
-                                                (ref-DPOF::XB_InsertNewNonce
-                                                    account id 
-                                                    nonce
-                                                    balance
-                                                    meta-data-chain
-                                                )
-                                                true
-                                            )
-                                        )
-                                    )
-                                    unit
-                                )
-                            )
-                        )
-                    )
-                )
-                (format "Succesfuly migrated DPMF {} Account of {} into DPOF" 
-                    [id (ref-I|OURONET::OI|UC_ShortAccount account)]
-                )
-            )
-        )
-    )
     ;;{F6}  [C]
     ;;{F7}  [X]
     (defun XE_UpdateEliteSingle (id:string account:string)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (a-type:bool (ref-DALOS::UR_AccountType account))
             )
@@ -340,7 +209,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-elite-auryn:bool (URC_IzIdEA id))
                 (s-type:bool (ref-DALOS::UR_AccountType sender))
                 (r-type:bool (ref-DALOS::UR_AccountType receiver))

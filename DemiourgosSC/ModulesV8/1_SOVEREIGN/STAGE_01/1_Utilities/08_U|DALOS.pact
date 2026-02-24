@@ -1,6 +1,6 @@
 (module U|DALOS GOV
     ;;
-    (implements UtilityDalosV3)
+    (implements UtilityDalosV1)
     (implements UtilityDalosGlyphs)
     ;;
     ;;<========>
@@ -11,7 +11,7 @@
     (defcap GOV|U|DALOS_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -106,7 +106,7 @@
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (result
                     (fold
                         (lambda
@@ -133,7 +133,7 @@
         @doc "Helper Function needed for returning DALOS ids for Account <account>"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (result
                     (fold
                         (lambda
@@ -156,8 +156,8 @@
     (defun UC_ConcatWithBar:string (input:[string])
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (b:string (ref-U|CT::CT_BAR))
                 (folded-lst:[string]
                     (fold
@@ -202,7 +202,7 @@
         @doc "Checks if a character is alphanumeric with or without Uppercase Only"
         (let*
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
 
                 (cl:[string] (ref-U|CT::CT_CAPITAL_LETTERS))
                 (n:[string] (ref-U|CT::CT_NUMBERS))
@@ -235,8 +235,8 @@
     (defun UC_NewRoleList (current-lst:[string] account:string direction:bool)
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (b:string (ref-U|CT::CT_BAR))
                 (l:integer (length current-lst))
                 (iz-within:bool (contains account current-lst))
@@ -334,7 +334,7 @@
         @doc "Enforces the decimal size is DALOS precision conform"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (min:integer (ref-U|CT::CT_MIN_PRECISION))
                 (max:integer (ref-U|CT::CT_MAX_PRECISION))
             )
@@ -351,7 +351,7 @@
         @doc "Validate input decimal as a fee value"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (fp:integer (ref-U|CT::CT_FEE_PRECISION))
             )
             (enforce
@@ -371,7 +371,7 @@
         @doc "Enforces correct DALOS Token Name and/or Ticker specifications"
         (let*
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (nl (length name-ticker))
                 (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
                 (max-n-standard:integer (ref-U|CT::CT_MAX_TOKEN_NAME_LENGTH))

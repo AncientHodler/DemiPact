@@ -1,8 +1,8 @@
 (module TS02-C3 GOV
     @doc "TALOS Stage 2 Client Functiones Part 3 - Acquisition Pools Functions"
     ;;
-    (implements OuronetPolicy)
-    (implements TalosStageTwo_ClientThree)
+    (implements OuronetPolicyV1)
+    (implements TalosStageTwo_ClientThreeV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,19 +12,19 @@
     (defcap GOV ()                  (compose-capability (GOV|TS02-C3_ADMIN)))
     (defcap GOV|TS02-C3_ADMIN ()    (enforce-guard GOV|MD_TS02-C3))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -55,7 +55,7 @@
         (with-capability (GOV|TS02-C3_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -71,11 +71,11 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                (ref-P|ANK:module{OuronetPolicy} AQP-ANK)
-                (ref-P|SCR:module{OuronetPolicy} AQP-SCORE)
-                (ref-P|AQP:module{OuronetPolicy} AQP)
-                (ref-P|FVT:module{OuronetPolicy} FVT)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                (ref-P|ANK:module{OuronetPolicyV1} AQP-ANK)
+                (ref-P|SCR:module{OuronetPolicyV1} AQP-SCORE)
+                (ref-P|AQP:module{OuronetPolicyV1} AQP)
+                (ref-P|FVT:module{OuronetPolicyV1} FVT)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|TS01-A::P|A_AddIMP mg)
@@ -88,7 +88,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -115,7 +115,7 @@
     (defun UC_ShortAccount:string (account:string)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
             )
             (ref-I|OURONET::OI|UC_ShortAccount account)
         )
@@ -134,10 +134,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ANK::C_IssueTrueFungibleAnchor 
                             patron anchor-name dptf-id anchor-precision anchor-promile dptf-amount
                         )
@@ -155,10 +155,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ANK::C_IssueSemiFungibleAnchor 
                             patron anchor-name dpsf-id anchor-precision anchor-promile dpsf-nonce
                         )
@@ -176,10 +176,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ANK::C_IssueNonFungibleAnchor 
                             patron anchor-name dpnf-id anchor-precision anchor-promile dpnf-trait-key dpnf-trait-value
                         )
@@ -201,7 +201,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
                 )
                 (ref-IGNIS::C_Collect patron 

@@ -1,8 +1,8 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module OUROBOROS GOV
     ;;
-    (implements OuronetPolicy)
-    (implements OuroborosV5)
+    (implements OuronetPolicyV1)
+    (implements OuroborosV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -33,9 +33,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
-    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|OuroborosKey ()      (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|OuroborosKey)))
+    (defun GOV|ORBR|SC_NAME ()      (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
     (defun GOV|ORBR|SC_KDA-NAME ()  (create-principal (GOV|ORBR|GUARD)))
     (defun GOV|ORBR|GUARD ()        (create-capability-guard (ORBR|NATIVE-AUTOMATIC)))
     ;;
@@ -43,8 +43,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|ORBR|CALLER ()
         true
@@ -55,7 +55,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -73,7 +73,7 @@
         (with-capability (GOV|ORBR_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -89,15 +89,15 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|BRD:module{OuronetPolicy} BRD)
-                (ref-P|DPTF:module{OuronetPolicy} DPTF)
-                ;(ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|ATSU:module{OuronetPolicy} ATSU)
-                (ref-P|VST:module{OuronetPolicy} VST)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|BRD:module{OuronetPolicyV1} BRD)
+                (ref-P|DPTF:module{OuronetPolicyV1} DPTF)
+                ;(ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|ATSU:module{OuronetPolicyV1} ATSU)
+                (ref-P|VST:module{OuronetPolicyV1} VST)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
                 (mg:guard (create-capability-guard (P|ORBR|CALLER)))
             )
             (ref-P|DALOS::P|A_Add
@@ -118,7 +118,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -129,8 +129,8 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
-    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV1} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     ;;
@@ -153,7 +153,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (compose-capability (IGNIS|C>CONVERT client))
@@ -167,7 +167,7 @@
     (defcap IGNIS|C>CONVERT(client:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (ref-DALOS::UEV_EnforceAccountType client false)
             (UEV_Exchange)
@@ -179,8 +179,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
             )
             (ref-DALOS::UEV_EnforceAccountType target false)
             (ref-DPTF::CAP_Owner id)
@@ -198,8 +198,8 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-ATS:module{AutostakeV6} ATS)
                 (orb-sc ORBR|SC_NAME)
                 (present-kda-balance:decimal (ref-coin::get-balance (ref-DALOS::UR_AccountKadena orb-sc)))
@@ -226,9 +226,9 @@
     (defun URC_Compress:[decimal] (ignis-amount:decimal)
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
             )
             (enforce (= (floor ignis-amount 0) ignis-amount) "Only whole Units of GAS(Ignis) can be compressed")
             (enforce (>= ignis-amount 1.00) "Only amounts greater than or equal to 1.0 can be used to compress gas")
@@ -251,8 +251,8 @@
     (defun URC_Sublimate:decimal (ouro-amount:decimal)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
             )
             (enforce (>= ouro-amount 0.99) "Only amounts greater than or equal to 1.0 can be used to make gas!")
             (ref-DPTF::UEV_Amount (ref-DALOS::UR_OuroborosID) ouro-amount)
@@ -279,8 +279,8 @@
     (defun UEV_Exchange ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (orb-sc ORBR|SC_NAME)
 
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -305,15 +305,15 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Compress:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Compress:object{IgnisCollectorV1.OutputCumulator}
         (client:string ignis-amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
@@ -338,16 +338,16 @@
             )
         )
     )
-    (defun C_Fuel:object{IgnisCollectorV2.OutputCumulator} ()
+    (defun C_Fuel:object{IgnisCollectorV1.OutputCumulator} ()
         (UEV_IMC)
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                 (orb-sc ORBR|SC_NAME)
                 (orb-kda ORBR|SC_KDA-NAME)
                 (lq-kda (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
@@ -365,7 +365,7 @@
                             (install-capability (ref-coin::TRANSFER orb-kda lq-kda present-kda-balance))
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
-                                    (ref-LIQUID::C_WrapKadena orb-sc present-kda-balance)
+                                    (ref-LIQUID::C_WrapStoa orb-sc present-kda-balance)
                                     (ref-ATSU::C_Fuel orb-sc liquid-idx w-kda present-kda-balance)
                                 ]
                                 []
@@ -378,16 +378,16 @@
             )
         )
     )
-    (defun C_Sublimate:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Sublimate:object{IgnisCollectorV1.OutputCumulator}
         (client:string target:string ouro-amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -414,16 +414,16 @@
             )
         )
     )
-    (defun C_SublimateV2:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_SublimateV2:object{IgnisCollectorV1.OutputCumulator}
         (client:string target:string ouro-amount:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -456,15 +456,15 @@
             )
         )
     )
-    (defun C_WithdrawFees:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WithdrawFees:object{IgnisCollectorV1.OutputCumulator}
         (id:string target:string)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (withdraw-amount:decimal (ref-DPTF::UR_AccountSupply id ORBR|SC_NAME))
                 (price:decimal (ref-DALOS::UR_UsagePrice "ignis|token-issue"))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))

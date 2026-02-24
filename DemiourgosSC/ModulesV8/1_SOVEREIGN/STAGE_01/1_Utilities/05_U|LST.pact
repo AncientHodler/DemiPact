@@ -1,6 +1,6 @@
 (module U|LST GOV
     ;;
-    (implements StringProcessor)
+    (implements StringProcessorV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -10,7 +10,7 @@
     (defcap GOV|U|LST_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -161,7 +161,7 @@
     (defun UEV_StringPresence (item:string item-lst:[string])
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (bar:string (ref-U|CT::CT_BAR))
                 (iz-present:bool (contains item item-lst))
             )

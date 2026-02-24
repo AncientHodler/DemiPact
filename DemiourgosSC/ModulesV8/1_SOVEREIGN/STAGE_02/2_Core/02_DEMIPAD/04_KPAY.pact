@@ -21,7 +21,7 @@
 (module DEMIPAD-KPAY GOV
     @doc "Module defining the Sale Mechanics for Kadena Pay Token"
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     (implements KadenaPay)
     ;;
     ;;<========>
@@ -34,7 +34,7 @@
     (defcap GOV ()                              (compose-capability (GOV|KPAY_ADMIN)))
     (defcap GOV|KPAY_ADMIN ()                   (enforce-guard GOV|MD_KPAY))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                     (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                     (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     (defun GOV|DEMIPAD|SC_NAME ()               (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;Repl
@@ -50,8 +50,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|KPAY|CALLER ()
         true
@@ -65,7 +65,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -83,7 +83,7 @@
         (with-capability (GOV|KPAY_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -99,8 +99,8 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
                 (mg:guard (create-capability-guard (P|KPAY|CALLER)))
             )
             (ref-P|DPAD::P|A_Add
@@ -114,7 +114,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -131,7 +131,7 @@
     ;;{3}
     (defun KPAY|Info ()                     (at 0 ["KadenaPay"]))
     (defconst KPAY|INFO                     (KPAY|Info))
-    (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
     
     ;;
@@ -148,7 +148,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (KpayID:string (UR_KpayID))
                 (remaining-supply:decimal (UR_KpayLeft))
                 (amount:decimal (dec kpay-amount))
@@ -223,7 +223,7 @@
         @doc "Computes how much KPAY can still be bought this Period"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 ;;
                 (KpayID:string (UR_KpayID))
                 (resident-amount:decimal (ref-DPTF::UR_AccountSupply KpayID DEMIPAD|SC_NAME))
@@ -262,8 +262,8 @@
     (defun UR_Kpay (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DPL-UR:module{DeployerReadsV4} DPL-UR)
                 (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
@@ -370,8 +370,8 @@
         @doc "Computes Prices;"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
@@ -407,10 +407,11 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                 ;;
                 ;;
@@ -465,23 +466,23 @@
         (with-capability (KPAY|C>BUY kpay-amount)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
                     ;;
                     (KpayID:string (UR_KpayID))
                     (costs:object{DemiourgosLaunchpadV2.Costs} (URC_KpayAmountCosts kpay-amount 0.0))
                     (pid:decimal (at "pid" costs))
                     (type:integer (if iz-native 0 1))
-                    (ico1:object{IgnisCollectorV2.OutputCumulator}
+                    (ico1:object{IgnisCollectorV1.OutputCumulator}
                         (ref-DEMIPAD::C_Deposit buyer KpayID pid type false)
                     )
-                    (ico2:object{IgnisCollectorV2.OutputCumulator}
+                    (ico2:object{IgnisCollectorV1.OutputCumulator}
                         (ref-TFT::C_Transfer KpayID DEMIPAD|SC_NAME buyer (dec kpay-amount) true)
                     )
                     (twenty-p:decimal (* 0.5 (dec kpay-amount)))
-                    (ico3:object{IgnisCollectorV2.OutputCumulator}
+                    (ico3:object{IgnisCollectorV1.OutputCumulator}
                         (ref-TFT::C_MultiBulkTransfer [KpayID] DEMIPAD|SC_NAME
                             [[(GOV|COMPANY) (GOV|PRIVATE) (GOV|VENTURE)]]
                             [[twenty-p twenty-p twenty-p]]

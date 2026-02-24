@@ -1,6 +1,6 @@
 (module U|ATS GOV
     ;;
-    (implements UtilityAtsV2)
+    (implements UtilityAtsV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -10,7 +10,7 @@
     (defcap GOV|U|ATS_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -40,7 +40,7 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_IzCullable:bool (input:object{UtilityAtsV2.Awo})
+    (defun UC_IzCullable:bool (input:object{UtilityAtsV1.Awo})
         (let*
             (
                 (present-time:time (at "block-time" (chain-data)))
@@ -53,7 +53,7 @@
             )
         )
     )
-    (defun UC_IzUnstakeObjectValid:bool (input:object{UtilityAtsV2.Awo})
+    (defun UC_IzUnstakeObjectValid:bool (input:object{UtilityAtsV1.Awo})
         (let*
             (
                 (values:[decimal] (at "reward-tokens" input))
@@ -70,7 +70,7 @@
         (enforce (= (mod start growth) 0) (format "{} must be divisible by {} and it is not" [start growth]))
         (let*
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (chain:[integer]
                     (fold
                         (lambda
@@ -96,7 +96,7 @@
         (enforce (= (mod growth 3) 0) (format "{} must be divisible by 3 and it is not" [growth]))
         (let*
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (small:integer (/ growth 3))
                 (medium:integer (* small 2))
                 (chain1:[integer] (fold (lambda (acc:[integer] item:integer) (ref-U|LST::UC_AppL acc (+ (ref-U|LST::UC_LE acc) item))) [start] (make-list 6 growth)))
@@ -113,14 +113,14 @@
             (reverse final-lst)
         )
     )
-    (defun UC_MultiReshapeUnstakeObject:[object{UtilityAtsV2.Awo}] (input:[object{UtilityAtsV2.Awo}] remove-position:integer)
+    (defun UC_MultiReshapeUnstakeObject:[object{UtilityAtsV1.Awo}] (input:[object{UtilityAtsV1.Awo}] remove-position:integer)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
-                    (acc:[object{UtilityAtsV2.Awo}] item:object{UtilityAtsV2.Awo})
+                    (acc:[object{UtilityAtsV1.Awo}] item:object{UtilityAtsV1.Awo})
                     (ref-U|LST::UC_AppL
                         acc
                         (UC_ReshapeUnstakeObject item remove-position)
@@ -135,14 +135,14 @@
         @doc "Helper Function used in the <ATS|C_ColdRecovery> Function"
         (let*
             (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
                 (fee:decimal (ref-U|DEC::UC_Promille input promille input-precision))
                 (remainder:decimal (- input fee))
             )
             [remainder fee]
         )
     )
-    (defun UC_ReshapeUnstakeObject:object{UtilityAtsV2.Awo} (input:object{UtilityAtsV2.Awo} remove-position:integer)
+    (defun UC_ReshapeUnstakeObject:object{UtilityAtsV1.Awo} (input:object{UtilityAtsV1.Awo} remove-position:integer)
         (let
             (
                 (is-valid:bool (UC_IzUnstakeObjectValid input))
@@ -153,7 +153,7 @@
             )
         )
     )
-    (defun UC_SolidifyUnstakeObject:object{UtilityAtsV2.Awo} (input:object{UtilityAtsV2.Awo} remove-position:integer)
+    (defun UC_SolidifyUnstakeObject:object{UtilityAtsV1.Awo} (input:object{UtilityAtsV1.Awo} remove-position:integer)
         (let*
             (
                 (values:[decimal] (at "reward-tokens" input))
@@ -163,7 +163,7 @@
             (enforce (and (> remove-position 0) (< remove-position how-many-rts)) "Invalid <remove-position>")
             (let*
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (primal:decimal (at 0 (at "reward-tokens" input)))
                     (removee:decimal (at remove-position (at "reward-tokens" input)))
                     (remove-lst:[decimal] (ref-U|LST::UC_RemoveItemAt values remove-position))
@@ -180,7 +180,7 @@
         (enforce (> milestones 0) "Cannot split with zero milestones")
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (split:decimal (floor (/ amount (dec milestones)) precision))
                 (tr-nr:integer (length (ref-U|LST::UC_Search boolean true)))
                 (multiply:integer (- milestones 1))
@@ -237,8 +237,8 @@
             resident-amounts
             (let*
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
-                    (ref-U|INT:module{OuronetIntegersV2} U|INT)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
+                    (ref-U|INT:module{OuronetIntegersV1} U|INT)
                     (max-precision:integer (ref-U|INT::UC_MaxInteger rt-precisions))
                     (max-pp:integer (at 0 (ref-U|LST::UC_Search rt-precisions max-precision)))
                     (indexed-rbt:decimal (floor (* rbt-amount index) max-precision))
@@ -267,7 +267,7 @@
             \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"
         (let
             (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
             )
             (ref-U|DEC::UC_UnlockPrice unlocks false)
         )
@@ -279,8 +279,8 @@
         @doc "Enforces that ATS Index Name <account> ID meets charset and length requirements"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
                 (aipc:[string] (ref-U|CT::CT_ACCOUNT_ID_PROH-CHAR))
                 (min:integer (ref-U|CT::CT_MIN_DESIGNATION_LENGTH))
                 (max:integer (ref-U|CT::CT_ACCOUNT_ID_MAX_LENGTH))
@@ -358,7 +358,7 @@
     (defun UEV_CRF|FeeArray (fee-positions:integer fee-thresholds:[decimal] fee-array:[[decimal]])
         (let
             (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
                 (l-ft:integer (length fee-thresholds))
                 (l-fa:integer (length fee-array))
                 (not-zero-fee-array:bool
@@ -463,7 +463,7 @@
         @doc "Returns an Object following DALOS|EliteSchema given a decimal input amount"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (et:[decimal] (ref-U|CT::CT_ET))
                 (deb:[decimal] (ref-U|CT::CT_DEB))
                 ;;

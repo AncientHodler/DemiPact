@@ -1,8 +1,8 @@
 (module TS01-C2 GOV
     @doc "TALOS Client Module for Stage 1, namely ATS VST LIQUID and OUROBOROS Modules"
     ;;
-    (implements OuronetPolicy)
-    (implements TalosStageOne_ClientTwoV8)
+    (implements OuronetPolicyV1)
+    (implements TalosStageOne_ClientTwoV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,19 +12,19 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-C1_ADMIN)))
     (defcap GOV|TS01-C1_ADMIN ()    (enforce-guard GOV|MD_TS01-C2))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|TS ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (gap:bool (ref-DALOS::UR_GAP))
             )
             (enforce (not gap) "While Global Administrative Pause is online, no client Functions can be executed")
@@ -37,7 +37,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -55,7 +55,7 @@
         (with-capability (GOV|TS01-C1_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -71,20 +71,20 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|IGNIS:module{OuronetPolicy} IGNIS)
-                (ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|ATSU:module{OuronetPolicy} ATSU)
-                (ref-P|VST:module{OuronetPolicy} VST)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
-                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
-                (ref-P|SWPT:module{OuronetPolicy} SWPT)
-                (ref-P|SWP:module{OuronetPolicy} SWP)
-                (ref-P|SWPI:module{OuronetPolicy} SWPI)
-                (ref-P|SWPL:module{OuronetPolicy} SWPL)
-                (ref-P|SWPLC:module{OuronetPolicy} SWPLC)
-                (ref-P|SWPU:module{OuronetPolicy} SWPU)
-                (ref-P|TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                (ref-P|IGNIS:module{OuronetPolicyV1} IGNIS)
+                (ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|ATSU:module{OuronetPolicyV1} ATSU)
+                (ref-P|VST:module{OuronetPolicyV1} VST)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicyV1} OUROBOROS)
+                (ref-P|SWPT:module{OuronetPolicyV1} SWPT)
+                (ref-P|SWP:module{OuronetPolicyV1} SWP)
+                (ref-P|SWPI:module{OuronetPolicyV1} SWPI)
+                (ref-P|SWPL:module{OuronetPolicyV1} SWPL)
+                (ref-P|SWPLC:module{OuronetPolicyV1} SWPLC)
+                (ref-P|SWPU:module{OuronetPolicyV1} SWPU)
+                (ref-P|TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
             (ref-P|IGNIS::P|A_AddIMP mg)
@@ -107,7 +107,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -118,7 +118,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -142,13 +142,13 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     ;;  [ATS_Client]
-    (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+    (defun ATS|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{BrandingV1.SocialSchema}])
         @doc "Updates <pending-branding> for ATSPair <entity-id> costing 500 IGNIS"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-B|ATS:module{BrandingUsageV9} ATS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-B|ATS:module{BrandingUsagePrimaryV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-B|ATS::C_UpdatePendingBranding entity-id logo description website social)
@@ -161,8 +161,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-B|ATS:module{BrandingUsageV9} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-B|ATS:module{BrandingUsagePrimaryV1} ATS)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                 )
                 (ref-B|ATS::C_UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -170,12 +170,12 @@
         )
     )
     ;;
-    (defun ATS|C_HOT-RBT|UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{Branding.SocialSchema}])
+    (defun ATS|C_HOT-RBT|UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{BrandingV1.SocialSchema}])
         @doc "Updates <pending-branding> for a HOT-RBT <entity-id> costing 150 IGNIS (Standard DPOF Costs)"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -190,7 +190,7 @@
             (let
                 (
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                 )
                 (ref-ATS::C_HOT-RBT|UpgradeBranding patron entity-id months)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -202,8 +202,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-ATS:module{AutostakeV6} ATS)
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -220,10 +220,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
                     )
                 )
@@ -238,7 +238,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -253,7 +253,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -268,7 +268,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -283,7 +283,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -298,7 +298,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -314,10 +314,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATS::C_ToggleParameterLock patron ats toggle)
                     )
                     (collect:bool (at 0 (at "output" ico)))
@@ -332,7 +332,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -352,7 +352,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -368,7 +368,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -384,7 +384,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -400,7 +400,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -418,7 +418,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -440,7 +440,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -455,7 +455,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -470,7 +470,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -485,7 +485,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -505,7 +505,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -520,7 +520,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
@@ -541,8 +541,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_RemoveSecondary remover ats reward-token)
@@ -556,9 +556,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount target))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -574,9 +574,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATSU::C_KickStart kickstarter ats rt-amounts rbt-request-amount)
                     )
                 )
@@ -590,9 +590,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (prev-index:decimal (ref-ATS::URC_Index ats))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -610,9 +610,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATSU::C_Coil coiler ats rt amount)
                     )
                 )
@@ -628,9 +628,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATSU::C_Curl curler ats1 ats2 rt amount)
                     )
                 )
@@ -653,10 +653,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ref-VST:module{VestingV1} VST)
                     ;;
                     (coil-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats coil-token amount)
@@ -688,10 +688,10 @@
         (with-capability (P|TS)
             (let*
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-ATS:module{AutostakeV6} ATS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ref-VST:module{VestingV1} VST)
                     ;;
                     (coil1-data:object{AutostakeV6.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 curl-token amount)
@@ -722,9 +722,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_Constrict constricter ats rt amount dayz)
                     )
                 )
@@ -742,9 +742,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_Brumate brumator ats1 ats2 rt amount dayz)
                     )
                 )
@@ -761,9 +761,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount syphon-target))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -780,8 +780,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_ColdRecovery recoverer ats ra)
@@ -795,9 +795,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATSU::C_Cull culler ats)
                     )
                     (cw:[decimal] (at "output" ico))
@@ -814,8 +814,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_HotRecovery recoverer ats ra)
@@ -830,9 +830,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (ats:string (ref-DPOF::UR_RewardBearingToken id))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -847,9 +847,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (ats:string (ref-DPOF::UR_RewardBearingToken id))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -865,8 +865,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::C_DirectRecovery recoverer ats ra)
@@ -897,10 +897,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_CreateFrozenLink patron dptf)
                     )
                     (output-id:string (at 0 (at "output" ico)))
@@ -937,10 +937,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_CreateReservationLink patron dptf)
                     )
                     (output-id:string (at 0 (at "output" ico)))
@@ -976,10 +976,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_CreateVestingLink patron dptf)
                     )
                     (output-id:string (at 0 (at "output" ico)))
@@ -1015,10 +1015,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_CreateSleepingLink patron dptf)
                     )
                     (output-id:string (at 0 (at "output" ico)))
@@ -1051,10 +1051,10 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_CreateHibernatingLink patron dptf)
                     )
                     (output-id:string (at 0 (at "output" ico)))
@@ -1076,9 +1076,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (sfa:string (ref-I|OURONET::OI|UC_ShortAccount freeze-output))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1093,9 +1093,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1111,8 +1111,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-VST::C_ToggleTransferRoleFrozenDPTF s-dptf target toggle)
@@ -1127,9 +1127,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (sr:string (ref-I|OURONET::OI|UC_ShortAccount reserver))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1144,9 +1144,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (su:string (ref-I|OURONET::OI|UC_ShortAccount unreserver))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1161,9 +1161,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1179,8 +1179,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-VST::C_ToggleTransferRoleReservedDPTF s-dptf target toggle)
@@ -1195,9 +1195,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (sv:string (ref-I|OURONET::OI|UC_ShortAccount vester))
                     (sta:string (ref-I|OURONET::OI|UC_ShortAccount target-account))
                 )
@@ -1213,9 +1213,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (su:string (ref-I|OURONET::OI|UC_ShortAccount unvester))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1230,9 +1230,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1249,9 +1249,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sta:string (ref-I|OURONET::OI|UC_ShortAccount target-account))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1266,9 +1266,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (su:string (ref-I|OURONET::OI|UC_ShortAccount unsleeper))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1285,9 +1285,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (sm:string (ref-I|OURONET::OI|UC_ShortAccount merger))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1302,9 +1302,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1322,9 +1322,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1342,8 +1342,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-VST::C_ToggleTransferRoleSleepingDPOF s-dpof target toggle)
@@ -1358,9 +1358,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sta:string (ref-I|OURONET::OI|UC_ShortAccount target-account))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1375,11 +1375,11 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount awaker))
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-VST::C_Awake awaker dpof nonce)
                     )
                     (output:list (at "output" ico))
@@ -1402,9 +1402,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-VST:module{VestingV1} VST)
                     (sm:string (ref-I|OURONET::OI|UC_ShortAccount merger))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -1419,9 +1419,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1439,9 +1439,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (srf:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-from))
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
@@ -1459,8 +1459,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-VST:module{VestingV5} VST)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-VST:module{VestingV1} VST)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-VST::C_ToggleTransferRoleHibernatingDPOF s-dpof target toggle)
@@ -1470,57 +1470,37 @@
         )
     )
     ;;  [LIQUID_Client]
-    (defun LQD|C_UnwrapKadena (patron:string unwrapper:string amount:decimal)
+    (defun LQD|C_UnwrapStoa (patron:string unwrapper:string amount:decimal)
         @doc "Unwraps DPTF Kadena to Native Kadena"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                     (su:string (ref-I|OURONET::OI|UC_ShortAccount unwrapper))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-LIQUID::C_UnwrapKadena unwrapper amount)
+                    (ref-LIQUID::C_UnwrapStoa unwrapper amount)
                 )
                 (format "Succesfully Unwrapped {} WKDA on Account {}" [amount su])
             )
         )
     )
-    (defun LQD|C_WrapKadena (patron:string wrapper:string amount:decimal)
+    (defun LQD|C_WrapStoa (patron:string wrapper:string amount:decimal)
         @doc "Wraps Native Kadena to DPTF Kadena"
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                     (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
                 )
                 (ref-IGNIS::C_Collect patron
-                    (ref-LIQUID::C_WrapKadena wrapper amount)
+                    (ref-LIQUID::C_WrapStoa wrapper amount)
                 )
                 (format "Succesfully Wrapped {} KDA on Account {}" [amount sw])
-            )
-        )
-    )
-    (defun LQD|C_WrapKadenaForMigration (patron:string wrapper:string amount:decimal)
-        @doc "Wraps Native Kadena to DPTF Kadena"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-U|CT:module{OuronetConstants} U|CT)
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
-                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
-                    (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
-                    (output:decimal (floor (/ amount 10.0) kda-prec))
-                )
-                (ref-IGNIS::C_Collect patron
-                    (ref-LIQUID::C_WrapKadenaForMigration wrapper amount)
-                )
-                (format "Succesfully migrated {} KDA to {} WKDA on Account {}" [amount output sw])
             )
         )
     )
@@ -1533,9 +1513,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ORBR:module{OuroborosV1} OUROBOROS)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ORBR::C_Compress client ignis-amount)
                     )
                 )
@@ -1552,9 +1532,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ORBR:module{OuroborosV1} OUROBOROS)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ORBR::C_Sublimate client target ouro-amount)
                     )
                 )
@@ -1571,9 +1551,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                    (ico:object{IgnisCollectorV2.OutputCumulator}
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ORBR:module{OuroborosV1} OUROBOROS)
+                    (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ORBR::C_SublimateV2 client target ouro-amount)
                     )
                 )
@@ -1589,9 +1569,9 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ORBR:module{OuroborosV1} OUROBOROS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (st:string (ref-I|OURONET::OI|UC_ShortAccount target))
                 )
                 (ref-IGNIS::C_Collect patron

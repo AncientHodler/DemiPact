@@ -124,7 +124,7 @@
     ;;
     ;;  [C]
     ;;
-    (defun C_Deposit:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Deposit:object{IgnisCollectorV1.OutputCumulator}
         (donor:string asset-id:string amount-in-dollars:decimal type:integer direct-injection:bool)
     )
     (defun C_Withdraw (patron:string asset-id:string type:integer destination:string)
@@ -132,10 +132,10 @@
     ;;
     (defun C_TransmitTrueFungible (patron:string client:string asset-id:string amount:decimal fuel-or-retrieve:bool))
     (defun C_TransmitOrtoFungible (patron:string client:string asset-id:string nonces:[integer] fuel-or-retrieve:bool))
-    (defun C_TransmitSemiFungibles:object{IgnisCollectorV2.OutputCumulator} 
+    (defun C_TransmitSemiFungibles:object{IgnisCollectorV1.OutputCumulator} 
         (client:string asset-id:string nonces:[integer] amounts:[integer] fuel-or-retrieve:bool)
     )
-    (defun C_TransmitNonFungibles:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_TransmitNonFungibles:object{IgnisCollectorV1.OutputCumulator}
         (client:string asset-id:string nonces:[integer] amounts:[integer] fuel-or-retrieve:bool)
     )
     ;;
@@ -180,7 +180,7 @@
         \ Permissioned Launchpad, means its part of the Core Modules from Stage 2 \
         \ A permissionless Launchpad, in the form of the IGNIS Market Place will be launched after the Acquisition Pools Deployment"
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     (implements DemiourgosLaunchpadV2)
     ;;
     ;;<========>
@@ -200,10 +200,10 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     (defun GOV|LaunchpadKey ()              (+ (GOV|NS_Use) ".dh_sc_mb-keyset"))
     ;;
     ;; [SC-Names]
@@ -216,8 +216,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|DEMIPAD|CALLER ()
         true
@@ -228,7 +228,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -246,7 +246,7 @@
         (with-capability (GOV|DEMIPAD_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -262,11 +262,11 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
-                (ref-P|DPDC:module{OuronetPolicy} DPDC)
-                (ref-P|DPDC-T:module{OuronetPolicy} DPDC-T)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
+                (ref-P|DPDC:module{OuronetPolicyV1} DPDC)
+                (ref-P|DPDC-T:module{OuronetPolicyV1} DPDC-T)
                 (mg:guard (create-capability-guard (P|DEMIPAD|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -279,7 +279,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -292,8 +292,8 @@
     (deftable DEMIPAD|T|Properties:{DemiourgosLaunchpadV2.DEMIPAD|Properties})
     (deftable DEMIPAD|T|Ledger:{DemiourgosLaunchpadV2.DEMIPAD|Holdings})
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
-    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV1} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     (defconst TF                    [true true])
@@ -404,7 +404,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-type:bool (contains type [0 1 2 3]))
                 (read-direct-injection:bool (UR_DirectInjection))
                 (iz-registered:bool (UR_CheckRegistration asset-id))
@@ -449,7 +449,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-type:bool (contains type [1 2 3]))
             )
             ;;Validate <type> to be either 0, 1, 2 or 3, and that the required Token Deposit is turned on
@@ -602,8 +602,8 @@
         \ 10%, 20%, 30%, 40% Split, outputed as a 4 element list."
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
             )
             (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit amount-in-kda kda-prec)
@@ -702,10 +702,10 @@
         (asset-id:string amount-in-dollars:decimal type:integer)
         (let
             (
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
                 ;;
                 (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
                 (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
@@ -771,8 +771,8 @@
         (buyer:string asset-id:string buy-amount-in-dollarz:decimal type:integer)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
@@ -803,8 +803,8 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
@@ -923,9 +923,9 @@
         (let
             (
                 (fungibility:[bool] (UR_Fungibility asset-id))
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (cond
                 ((= fungibility TF) (ref-DPTF::CAP_Owner asset-id))
@@ -968,7 +968,7 @@
         )
     )
     ;;{F6}  [C]
-    (defun C_Deposit:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Deposit:object{IgnisCollectorV1.OutputCumulator}
         (donor:string asset-id:string amount-in-dollars:decimal type:integer direct-injection:bool)
         @doc "Deposits Funds into the Launchpad, for a registered Asset \
             \ Type 0 = Native Kadena \
@@ -985,10 +985,10 @@
         (with-capability (DEMIPAD|C>DEPOSIT donor asset-id amount-in-dollars type direct-injection)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                     ;;
                     (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}  (URC_Prices asset-id amount-in-dollars type))
                     (working-id:string
@@ -1006,19 +1006,19 @@
                     (rem:decimal (at "remainder-amount" prices))
                     (non-enviroment:decimal (+ cod rem))
                     ;;
-                    (ico1:object{IgnisCollectorV2.OutputCumulator}
+                    (ico1:object{IgnisCollectorV1.OutputCumulator}
                         (if (= type 0)
-                            (ref-LIQUID::C_WrapKadena donor non-enviroment)
+                            (ref-LIQUID::C_WrapStoa donor non-enviroment)
                             EOC
                         )
                     )
-                    (ico2:object{IgnisCollectorV2.OutputCumulator}
+                    (ico2:object{IgnisCollectorV1.OutputCumulator}
                         (if (= type 1)
-                            (ref-LIQUID::C_UnwrapKadena donor env)
+                            (ref-LIQUID::C_UnwrapStoa donor env)
                             EOC
                         )
                     )
-                    (ico3:object{IgnisCollectorV2.OutputCumulator}
+                    (ico3:object{IgnisCollectorV1.OutputCumulator}
                         (if (not direct-injection)
                             (ref-TFT::C_Transfer working-id donor DEMIPAD|SC_NAME non-enviroment true)
                             EOC
@@ -1058,8 +1058,8 @@
             (with-capability (DEMIPAD|C>WITHDRAW asset-id type retrieval-amount destination)
                 (let
                     (
-                        (ref-DALOS:module{OuronetDalosV6} DALOS)
-                        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                        (ref-DALOS:module{OuronetDalosV1} DALOS)
+                        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                         (working-id:string
                             (if (= type 1)
                                 (ref-DALOS::UR_WrappedKadenaID)
@@ -1083,8 +1083,8 @@
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )
@@ -1104,8 +1104,8 @@
         (UEV_IMC)
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )
@@ -1121,14 +1121,14 @@
             )
         )
     )
-    (defun C_TransmitSemiFungibles:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_TransmitSemiFungibles:object{IgnisCollectorV1.OutputCumulator}
         (client:string asset-id:string nonces:[integer] amounts:[integer] fuel-or-retrieve:bool)
         (UEV_IMC)
         (with-capability (P|SECURE-CALLER)
             (X_TransmitCollectables client asset-id true nonces amounts fuel-or-retrieve)
         )
     )
-    (defun C_TransmitNonFungibles:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_TransmitNonFungibles:object{IgnisCollectorV1.OutputCumulator}
         (client:string asset-id:string nonces:[integer] amounts:[integer] fuel-or-retrieve:bool)
         (UEV_IMC)
         (with-capability (P|SECURE-CALLER)
@@ -1230,7 +1230,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 ;;
                 (donor-kda:string (ref-DALOS::UR_AccountKadena donor))
             )
@@ -1272,13 +1272,13 @@
         )
     )
     ;;
-    (defun X_TransmitCollectables:object{IgnisCollectorV2.OutputCumulator}
+    (defun X_TransmitCollectables:object{IgnisCollectorV1.OutputCumulator}
         (client:string asset-id:string son:bool nonces:[integer] amounts:[integer] fuel-or-retrieve:bool)
         (require-capability (SECURE))
         (let
             (
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                (ref-DPDC-T:module{DpdcTransferV4} DPDC-T)
+                (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                (ref-DPDC-T:module{DpdcTransferV1} DPDC-T)
                 (lpad:string DEMIPAD|SC_NAME)
                 (sa-s:string (ref-I|OURONET::OI|UC_ShortAccount client))
             )

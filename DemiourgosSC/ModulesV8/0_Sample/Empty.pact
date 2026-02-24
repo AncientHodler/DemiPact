@@ -3,22 +3,22 @@
 (let
     (
         (ref-IGNIS:module{IgnisCollector} DALOS)
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TFT:module{TrueFungibleTransferV9} TFT)
-        (ref-U|LST:module{StringProcessor} U|LST)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-TFT:module{TrueFungibleTransferV1} TFT)
+        (ref-U|LST:module{StringProcessorV1} U|LST)
         (ref-SWPI:module{SwapperIssueV2} SWPI)
-        (ref-SWP:module{SwapperV6} SWP)
+        (ref-SWP:module{SwapperV1} SWP)
         (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (ignis-id:string (ref-DALOS::UR_IgnisID))
         (account "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (pool:string "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W")
-        (ld:object{SwapperLiquidityV2.LiquidityData}
+        (ld:object{SwapperLiquidityV1.LiquidityData}
             (SWPL.URC_LD
                 pool
                 [0.0 10.0 0.0]
             )
         )
-        (clad:object{SwapperLiquidityV2.CompleteLiquidityAdditionData}
+        (clad:object{SwapperLiquidityV1.CompleteLiquidityAdditionData}
             (SWPL.URC|KDA-PID_CLAD
                 account
                 pool
@@ -66,7 +66,7 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (lp-id:string "W|LKDA-OURO-WKDA|LP-jxrD_V4ts9Ht")
         (swpair:string "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W")

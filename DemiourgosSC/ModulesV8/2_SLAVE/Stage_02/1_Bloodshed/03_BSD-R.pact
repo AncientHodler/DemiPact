@@ -8,7 +8,7 @@
     (defcap GOV ()                          (compose-capability (GOV|BLOODSHED-R_ADMIN)))
     (defcap GOV|BLOODSHED-R_ADMIN ()        (enforce-guard GOV|MD_BLOODSHED-R))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -22,7 +22,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     (defconst IPFS                  Bloodshed.IPFS)
     ;;
@@ -264,24 +264,24 @@
         @doc "Issue Bloodshed Rare NFT"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+                (ref-TS02-C2:module{TalosStageTwo_ClientTwoV1} TS02-C2)
                 (b:string BAR)
                 (t:bool true)
                 (f:bool false)
                 ;;
                 (d-l:string "Rare Bloodshed NFT")
                 ;;
-                (type:object{DpdcUdcV3.URI|Type} (ref-DPDC-UDC::UDC_URI|Type t f f f f f f))
-                (zd:object{DpdcUdcV3.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
+                (type:object{DpdcUdcV1.URI|Type} (ref-DPDC-UDC::UDC_URI|Type t f f f f f f))
+                (zd:object{DpdcUdcV1.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
                 ;;
             )
             (ref-TS02-C2::DPNF|C_Create
                 patron dhb
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
+                        (acc:[object{DpdcUdcV1.DPDC|NonceData}] idx:integer)
                         (let
                             (
                                 (p:integer (at idx pos))

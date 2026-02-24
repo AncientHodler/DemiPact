@@ -1,6 +1,6 @@
 (module STOAICO GOV
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
     ;;
     ;;<========>
@@ -13,10 +13,10 @@
     (defcap GOV|STOAICO_ADMIN ()            (enforce-guard GOV|MD_STOAICO))
     ;;{G3}
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     (defun GOV|LaunchpadKey ()              (+ (GOV|NS_Use) ".dh_sc_mb-keyset"))
     ;;
     ;; [SC-Names]
@@ -29,8 +29,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|STOAICO|CALLER ()
         true
@@ -44,7 +44,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -62,7 +62,7 @@
         (with-capability (GOV|STOAICO_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -78,7 +78,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+                (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
                 (mg:guard (create-capability-guard (P|STOAICO|CALLER)))
             )
             (ref-P|DPAD::P|A_Add
@@ -91,7 +91,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -133,7 +133,7 @@
     (deftable STOAICO|T|User:{UserContributionSchema})          ;;Key = <Ouronet-Account>
     (deftable STOAICO|T|General:{GeneralContributionSchema})    ;;Key = <STOAICO|INFO>
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     (defun STOAICO|Info ()          (at 0 ["StoaIcoInformation"]))
     (defconst STOAICO|INFO          (STOAICO|Info))
@@ -157,7 +157,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
             (compose-capability (STOAICO|ADMIN))
@@ -167,8 +167,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (v-usd-id:string (UR_Global10))
             )
             (ref-DALOS::UEV_EnforceAccountExists account)
@@ -180,7 +180,7 @@
         @event
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (v-usd-id:string (UR_Global10))
                 (user-score:decimal (UR_User1 account))
             )
@@ -196,7 +196,7 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-account:bool (UR_IzAccount account))
             )
             (ref-DALOS::CAP_EnforceAccountOwnership account)
@@ -344,8 +344,8 @@
         (with-capability (INIT-ICO-DISTRIBUTION)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-                    (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+                    (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
                     (dptf-ids:list 
                         (ref-TS01-C1::DPTF|C_Issue account account
                             ["WrappedStoa" "WrappedUrStoa" "VirtualIcoDollars"]
@@ -390,7 +390,7 @@
         (with-capability (STOAICO|INJECT account)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (wSTOA-ID:string (UR_Global8))
                     ;;
                     (vault-score:decimal (UR_Global1))
@@ -418,7 +418,7 @@
         (with-capability (STOAICO|ADD-CONTRIBUTION account v-usd-amount)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (v-usd-id:string (UR_Global10))
                     (user-score:decimal (UR_User1 account))
                 )
@@ -460,7 +460,7 @@
         (with-capability (STOAICO|REMOVE-CONTRIBUTION account v-usd-amount)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (v-usd-id:string (UR_Global10))
                     (user-score:decimal (UR_User1 account))
                     (remaining:decimal (- user-score v-usd-amount))
@@ -492,7 +492,7 @@
         (with-capability (STOAICO|REDEEM-CONTRIBUTION account)
             (let
                 (
-                    (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (wSTOA-supply:decimal (URC_ClaimableRewards account))
                     (urSTOA-supply:decimal (dec (UR_User2 account)))
                     (wSTOA-id:string (UR_Global8))

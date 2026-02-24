@@ -23,13 +23,13 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV6} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
-        (ref-TS01-C3:module{TalosStageOne_ClientThreeV2} TS01-C3)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-BRD:module{BrandingV1} BRD)
+        (ref-SWP:module{SwapperV1} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
+        (ref-TS01-C3:module{TalosStageOne_ClientThreeV1} TS01-C3)
         (patron:string KST.ANHD)
     )
     (ref-TS01-A::DALOS|A_SetIgnisSourcePrice 1.2)
@@ -171,12 +171,12 @@
 
 (let
     (
-        (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV6} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-U|CT:module{OuronetConstantsV1} U|CT)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-BRD:module{BrandingV1} BRD)
+        (ref-SWP:module{SwapperV1} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (patron:string KST.ANHD)
         (patron:string KST.EMMA)
 
@@ -228,11 +228,11 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-        (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+        (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+        (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (months:integer 3)
@@ -336,13 +336,13 @@
 
 (let
     (
-        (ref-U|CT:module{OuronetConstants} U|CT)
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-BRD:module{Branding} BRD)
-        (ref-SWP:module{SwapperV6} SWP)
-        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-U|CT:module{OuronetConstantsV1} U|CT)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-BRD:module{BrandingV1} BRD)
+        (ref-SWP:module{SwapperV1} SWP)
+        (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+        (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (patron:string KST.ANHD)
         (emma:string KST.EMMA)
         (dptf:string "GA-98c486052a51")

@@ -1,6 +1,6 @@
 (module U|DEC GOV
     ;;
-    (implements OuronetDecimals)
+    (implements OuronetDecimalsV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,7 +12,7 @@
     (defcap GOV|U|DEC_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -108,7 +108,7 @@
         \ Virtual Gas Token = IGNIS; Native Gas Token = KADENA"
         (let*
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (dptf:decimal (ref-U|CT::CT_DPTF-FeeLock))
                 (ats:decimal (ref-U|CT::CT_ATS-FeeLock))
                 (multiplier:decimal (dec (+ unlocks 1)))

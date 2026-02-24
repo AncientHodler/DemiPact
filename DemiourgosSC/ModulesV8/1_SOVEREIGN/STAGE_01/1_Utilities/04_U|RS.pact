@@ -1,6 +1,6 @@
 (module U|RS GOV
     ;;
-    (implements ReservedAccounts)
+    (implements ReservedAccountsV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -10,7 +10,7 @@
     (defcap GOV|U|RS_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)

@@ -1,8 +1,8 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module SWPU GOV
     ;;
-    (implements OuronetPolicy)
-    (implements SwapperUsageV5)
+    (implements OuronetPolicyV1)
+    (implements SwapperUsageV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -13,16 +13,16 @@
     (defcap GOV ()                  (compose-capability (GOV|SWPU_ADMIN)))
     (defcap GOV|SWPU_ADMIN ()       (enforce-guard GOV|MD_SWPU))
     ;;
-    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
+    (defun GOV|SWP|SC_NAME ()       (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|SWP|SC_NAME)))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|SWPU|CALLER ()
         true
@@ -36,7 +36,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -54,7 +54,7 @@
         (with-capability (GOV|SWPU_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -70,19 +70,19 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|BRD:module{OuronetPolicy} BRD)
-                (ref-P|DPTF:module{OuronetPolicy} DPTF)
-                ;(ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|ATSU:module{OuronetPolicy} ATSU)
-                (ref-P|VST:module{OuronetPolicy} VST)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
-                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
-                (ref-P|SWPT:module{OuronetPolicy} SWPT)
-                (ref-P|SWP:module{OuronetPolicy} SWP)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|BRD:module{OuronetPolicyV1} BRD)
+                (ref-P|DPTF:module{OuronetPolicyV1} DPTF)
+                ;(ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|ATSU:module{OuronetPolicyV1} ATSU)
+                (ref-P|VST:module{OuronetPolicyV1} VST)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicyV1} OUROBOROS)
+                (ref-P|SWPT:module{OuronetPolicyV1} SWPT)
+                (ref-P|SWP:module{OuronetPolicyV1} SWP)
                 (mg:guard (create-capability-guard (P|SWPU|CALLER)))
             )
             (ref-P|DALOS::P|A_Add
@@ -114,7 +114,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
                 (mp:[guard] (P|UR_IMP))
                 (g:guard (ref-U|G::UEV_GuardOfAny mp))
             )
@@ -127,8 +127,8 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
-    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV2} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV1} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
     (defconst BAR                   (CT_Bar))
     (defconst EOC                   (CT_EmptyCumulator))
     ;;
@@ -154,8 +154,8 @@
         (if toggle
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
-                    (ref-SWPI:module{SwapperIssueV4} SWPI)
+                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWPI:module{SwapperIssueV1} SWPI)
                     (pool-worth:decimal (at 0 (ref-SWPI::URC_PoolValue swpair)))
                     (inactive-limit:decimal (ref-SWP::UR_InactiveLimit))
                 )
@@ -169,46 +169,46 @@
         (compose-capability (P|SWPU|CALLER))
     )
     (defcap SWPU|OPU|C>SINGL-SWAP-WITH-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|OPU|C>SINGL-SWAP-NO-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|OPU|C>MULTI-SWAP-WITH-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|OPU|C>MULTI-SWAP-NO-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|C>SINGL-SWAP-WITH-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|C>SINGL-SWAP-NO-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|C>MULTI-SWAP-WITH-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
     (defcap SWPU|C>MULTI-SWAP-NO-SLIPPAGE
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage:decimal)
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage:decimal)
         @event
         (compose-capability (SWPU|X>SWAP swpair dsid))
     )
-    (defcap SWPU|X>SWAP (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData})
+    (defcap SWPU|X>SWAP (swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData})
         (let
             (
                 ;;Unwrap Object Data
@@ -216,9 +216,9 @@
                 (input-amounts:[decimal] (at "input-amounts" dsid))
                 (output-id:string (at "output-id" dsid))
                 ;;
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-SWP:module{SwapperV1} SWP)
                 (l1:integer (length input-ids))
                 (l2:integer (length input-amounts))
                 (can-swap:bool (ref-SWP::UR_CanSwap swpair))
@@ -249,7 +249,7 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_SlippageMinMax:[decimal] (input:object{SwapperUsageV5.Slippage})
+    (defun UC_SlippageMinMax:[decimal] (input:object{SwapperUsageV1.Slippage})
         (let
             (
                 (expected:decimal (at "expected-output-amount" input))
@@ -267,19 +267,19 @@
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
-    (defun UDC_Slippage:object{SwapperUsageV5.Slippage}
+    (defun UDC_Slippage:object{SwapperUsageV1.Slippage}
         (a:decimal b:integer c:decimal)
         {"expected-output-amount"   : a
         ,"output-precision"         : b
         ,"slippage-percent"         : c}
     )
-    (defun UDC_SlippageObject:object{SwapperUsageV5.Slippage}
-        (swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData} slippage-value:decimal)
+    (defun UDC_SlippageObject:object{SwapperUsageV1.Slippage}
+        (swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage-value:decimal)
         @doc "Makes a Slippage Object from <input amounts>"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
                 (o-prec:integer (ref-DPTF::UR_Decimals (at "output-id" dsid)))
                 (expected:decimal (ref-SWPI::URC_Swap swpair dsid false))
             )
@@ -301,26 +301,26 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_ToggleSwapCapability:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleSwapCapability:object{IgnisCollectorV1.OutputCumulator}
         (swpair:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWP:module{SwapperV1} SWP)
             )
             (with-capability (SPWU|C>TOGGLE-SWAP swpair toggle)
                 (ref-SWP::C_ToggleAddOrSwap swpair toggle false)
             )
         )
     )
-    (defun C_Swap:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Swap:object{IgnisCollectorV1.OutputCumulator}
         (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal kda-pid:decimal)
         (UEV_IMC)
         (let
             (
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV6} SWP)
-                (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+                (ref-SWP:module{SwapperV1} SWP)
+                (dsid:object{UtilitySwpV1.DirectSwapInputData}
                     (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
                 )
                 (pp:string (ref-SWP::UR_PrimordialPool))
@@ -368,19 +368,19 @@
         )
     )
     ;;{F7}
-    (defun XI|KDA-PID_Swap:object{IgnisCollectorV2.OutputCumulator}
+    (defun XI|KDA-PID_Swap:object{IgnisCollectorV1.OutputCumulator}
         (
-            account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData}
+            account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData}
             slippage:decimal kda-pid:decimal
         )
         (let
             (
-                (ico:object{IgnisCollectorV2.OutputCumulator}
+                (ico:object{IgnisCollectorV1.OutputCumulator}
                     (if (= slippage -1.0)
                         (XI_Swap account swpair dsid)
                         (let
                             (
-                                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                                (ref-SWPI:module{SwapperIssueV1} SWPI)
                                 ;;
                                 (max-toa:decimal (ref-SWPI::URC_Swap swpair dsid true))
                                 (min-max:[decimal] (UC_SlippageMinMax (UDC_SlippageObject swpair dsid slippage)))
@@ -417,8 +417,8 @@
             ico
         )
     )
-    (defun XI_Swap:object{IgnisCollectorV2.OutputCumulator}
-        (account:string swpair:string dsid:object{UtilitySwpV2.DirectSwapInputData})
+    (defun XI_Swap:object{IgnisCollectorV1.OutputCumulator}
+        (account:string swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData})
         (require-capability (SWPU|X>SWAP swpair dsid))
         (let
             (
@@ -427,17 +427,17 @@
                 (input-amounts:[decimal] (at "input-amounts" dsid))
                 (output-id:string (at "output-id" dsid))
                 ;;
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                (ref-SWP:module{SwapperV6} SWP)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
-                (ref-SWPL:module{SwapperLiquidityV2} SWPL)
-                (ref-SWPLC:module{SwapperLiquidityClientV2} SWPLC)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWPL:module{SwapperLiquidityV1} SWPL)
+                (ref-SWPLC:module{SwapperLiquidityClientV1} SWPLC)
                 ;;
                 ;;
                 (pool-type:string (ref-U|SWP::UC_PoolType swpair))
-                (fees:object{UtilitySwpV2.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
+                (fees:object{UtilitySwpV1.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
                 (A:decimal (ref-SWP::UR_Amplifier swpair))
                 (X:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                 (X-prec:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
@@ -446,7 +446,7 @@
                 (W:[decimal] (ref-SWP::UR_Weigths swpair))
                 ;;
                 ;;Do Swap Computation and Unwrap Object Data
-                (dtso:object{UtilitySwpV2.DirectTaxedSwapOutput}
+                (dtso:object{UtilitySwpV1.DirectTaxedSwapOutput}
                     (ref-SWPI::UC_BareboneSwapWithFeez account pool-type dsid fees A X X-prec input-positions output-position W)
                 )
                 (lp-fuel:[decimal] (at "lp-fuel" dtso))
@@ -454,10 +454,10 @@
                 (o-id-liquid:decimal (at "o-id-liquid" dtso))
                 (o-id-netto:decimal (at "o-id-netto" dtso))
                 ;;
-                (ico1:object{IgnisCollectorV2.OutputCumulator}
+                (ico1:object{IgnisCollectorV1.OutputCumulator}
                     (ref-TFT::C_MultiTransfer input-ids account SWP|SC_NAME input-amounts true)
                 )
-                (ico2:object{IgnisCollectorV2.OutputCumulator}
+                (ico2:object{IgnisCollectorV1.OutputCumulator}
                     (ref-SWPLC::C_Fuel account swpair lp-fuel false false)
                 )
                 (pt-amounts-after-fuel-update:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
@@ -465,7 +465,7 @@
                 (dra-o:[decimal] (ref-SWPI::URC_DirectRefillAmounts swpair [output-id] [(fold (+) 0.0 [o-id-special o-id-liquid o-id-netto])]))
                 (remaining-amounts-for-update:[decimal] (zip (-) (zip (-) dra lp-fuel) dra-o))
                 (new-balances:[decimal] (zip (+) pt-amounts-after-fuel-update remaining-amounts-for-update))
-                (ico3:object{IgnisCollectorV2.OutputCumulator}
+                (ico3:object{IgnisCollectorV1.OutputCumulator}
                     (if (!= o-id-special 0.0)
                         (let
                             (
@@ -506,12 +506,12 @@
             )
         )
     )
-    (defun XI_LiquidIndexPump:object{IgnisCollectorV2.OutputCumulator}
+    (defun XI_LiquidIndexPump:object{IgnisCollectorV1.OutputCumulator}
         (id:string amount:decimal)
         (require-capability (SECURE))
         (let
             (
-                (ico:object{IgnisCollectorV2.OutputCumulator}
+                (ico:object{IgnisCollectorV1.OutputCumulator}
                     (XI_RawLiquidPump id amount)
                 )
                 (raw-liquid-pump-data:list (at "output" ico))
@@ -523,16 +523,16 @@
             ico
         )
     )
-    (defun XI_RawLiquidPump:object{IgnisCollectorV2.OutputCumulator} 
+    (defun XI_RawLiquidPump:object{IgnisCollectorV1.OutputCumulator} 
         (id:string amount:decimal)
         @doc "Operation that pumps LiquidIndex, returns the Pump Increment in the output object \
             \ Can be used for a Pool Token that already exists in the SWP|SC_NAME"
         (require-capability (SECURE))
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-ATS:module{AutostakeV6} ATS)
                 ;;
                 (lkda:string (ref-DALOS::UR_LiquidKadenaID))
@@ -546,14 +546,14 @@
                 )
                 (let
                     (
-                        (ref-SWPI:module{SwapperIssueV4} SWPI)
+                        (ref-SWPI:module{SwapperIssueV1} SWPI)
                         ;;
-                        (h-obj:object{SwapperIssueV4.Hopper} (ref-SWPI::URC_Hopper id lkda amount))
+                        (h-obj:object{SwapperIssueV1.Hopper} (ref-SWPI::URC_Hopper id lkda amount))
                         (path-to-lkda:[string] (at "nodes" h-obj))
                         (edges:[string] (at "edges" h-obj))
                         (ovs:[decimal] (at "output-values" h-obj))
                         (final-boost-output:decimal (at 0 (take -1 ovs)))
-                        (ico:object{IgnisCollectorV2.OutputCumulator}
+                        (ico:object{IgnisCollectorV1.OutputCumulator}
                             (ref-DPTF::C_Burn lkda SWP|SC_NAME final-boost-output)
                         )
                     )
@@ -570,7 +570,7 @@
         (if (= (length raw-liquid-pump-data) 5)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                     (path-to-dlk:[string] (at 1 raw-liquid-pump-data))
                     (edges:[string] (at 2 raw-liquid-pump-data))
                     (ovs:[decimal] (at 3 raw-liquid-pump-data))
@@ -610,14 +610,14 @@
             \ Ouro price moves more that 1 promile, update price"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (iz-auto:bool (ref-DALOS::UR_OuroAutoPriceUpdate))
             )
             (if iz-auto
                 (let
                     (
-                        (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                        (ref-SWPI:module{SwapperIssueV4} SWPI)
+                        (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                        (ref-SWPI:module{SwapperIssueV1} SWPI)
                         (ouro-id:string (ref-DALOS::UR_OuroborosID))
                         (ouro-prec:integer (ref-DPTF::UR_Decimals ouro-id))
                         (stored-ouro-price:decimal (ref-DALOS::UR_OuroborosPrice))

@@ -44,8 +44,8 @@
     (defcap GOV ()                          (compose-capability (GOV|DPL_UR_ADMIN)))
     (defcap GOV|DPL_UR_ADMIN ()             (enforce-guard GOV|MD_DPL-UR))
     ;;{G3}
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -61,7 +61,7 @@
 
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
     ;;
     ;;<==========>
@@ -77,7 +77,7 @@
         @doc "Trims trailing zeros from a decimal number"
         (let* 
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (number-as-string:string (format "{}" [number]))
                 (split-nas:[string] (ref-U|LST::UC_SplitString "." number-as-string))
                 (integer-part:string (at 0 split-nas))
@@ -161,7 +161,7 @@
     (defun UC_LpFuelToLpStrings:[string] (input-ids:[string] lp-fuel:[decimal])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (l1:integer (length input-ids))
                 (l2:integer (length lp-fuel))
             )
@@ -189,7 +189,7 @@
     (defun UC_FormatDecimals:[string] (input:[decimal])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
@@ -204,8 +204,8 @@
     (defun UC_FormatAccountsShort:[string] (input-accounts:[string])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
             )
             (fold
                 (lambda
@@ -221,7 +221,7 @@
     (defun URC_TrueFungibleAmountPrice:decimal (id:string amount:decimal price:decimal)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (idp:integer (ref-DPTF::UR_Decimals id))
             )
             (floor (* amount price) idp)
@@ -230,7 +230,7 @@
     (defun URC_PrimordialIDs:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (ignis:string (ref-DALOS::UR_IgnisID))
                 (auryn:string (ref-DALOS::UR_AurynID))
@@ -246,11 +246,11 @@
         \ [WKDA LKDA OURO AURYN ELITEAURYN]"
         (let
             (
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
                 ;;
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 (p-ids:[string] (URC_PrimordialIDs))
@@ -285,7 +285,7 @@
     (defun URC_KadenaCollectionReceivers:[string] ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (r1:string (ref-DALOS::UR_AccountKadena (at 2 (ref-DALOS::UR_DemiurgoiID))))
                 (r2:string (ref-DALOS::UR_AccountKadena (ref-DALOS::GOV|DALOS|SC_NAME)))
                 (r3:string (ref-DALOS::UR_AccountKadena (at 1 (ref-DALOS::UR_DemiurgoiID))))
@@ -297,8 +297,8 @@
     (defun URC_SplitKdaPriceForReceivers (price:decimal)
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
                 (kp:integer (ref-U|CT::CT_KDA_PRECISION))
                 (receivers:[string] (URC_KadenaCollectionReceivers))
                 (prices:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit price kp))
@@ -317,8 +317,8 @@
         @doc "Computes an UI allowed <output-id> amount as a <promille> relative to its total <swpair> supply"
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-SWP:module{SwapperV1} SWP)
                 ;;
                 (output-id-supply:decimal (ref-SWP::UR_PoolTokenSupply swpair output-id))
                 (output-id-prec:integer (ref-DPTF::UR_Decimals output-id))
@@ -329,9 +329,9 @@
     (defun URC_SWPairCoreRead (swpair:string)
         (let
             (
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-SWP:module{SwapperV6} SWP)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
+                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
                 ;;
                 (ptp:[string] (UC_PoolTypeWord swpair))
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
@@ -359,16 +359,16 @@
     (defun URC_0001_HeaderV2 (account:string)
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
-                (ref-U|CT|DIA:module{DiaKdaPid} U|CT)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-DPOF:module{DemiourgosPactOrtoFungibleV3} DPOF)
-                (ref-ELITE:module{Elite} ELITE)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
+                (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
+                (ref-ELITE:module{EliteV1} ELITE)
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                (ref-ORBR:module{OuroborosV5} OUROBOROS)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (ref-ORBR:module{OuroborosV1} OUROBOROS)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
                 ;;
                 (IgnisID:string "IGNIS-slLyzPPCo22W")
                 (OuroID:string "OURO-slLyzPPCo22W")
@@ -528,11 +528,12 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                (ref-ORBR:module{OuroborosV5} OUROBOROS)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (ref-ORBR:module{OuroborosV1} OUROBOROS)
                 ;;
                 (payment-key:string (ref-DALOS::UR_AccountKadena account))
                 (payment-key-kda:decimal (try 0.0 (ref-coin::get-balance payment-key)))
@@ -628,10 +629,10 @@
     (defun URC_0002_Primordials (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-ATS:module{AutostakeV6} ATS)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
                 (ouro:string (at 0 p-ids))
@@ -768,7 +769,7 @@
     (defun URC_0003_SWPairGeneralInfo ()
         (let
             (
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWP:module{SwapperV1} SWP)
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
                 (glsb-word:string (if glsb "ON" "OFF"))
                 (asm:bool (ref-SWP::UR_Asymetric))
@@ -789,7 +790,7 @@
     (defun UC_PoolTypeWord:[string] (swpair:string)
         (let
             (
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (pool-type:string (ref-U|SWP::UC_PoolType swpair))
                 (pool-type-word:string
                     (if (= pool-type "S")
@@ -808,7 +809,7 @@
     (defun URC_0004_SWPairDashboardInfo (swpair:string)
         (let
             (
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-SWP:module{SwapperV1} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -848,7 +849,7 @@
     (defun URC_0005_SWPairMultiDashboardInfo (swpairs:[string])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
@@ -866,19 +867,19 @@
     (defun URC_0006_Swap (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV6} SWP)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
-                (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
-                (dsid:object{UtilitySwpV2.DirectSwapInputData}
+                (dsid:object{UtilitySwpV1.DirectSwapInputData}
                     (ref-U|SWP::UDC_DirectSwapInputData input-ids input-amounts output-id)
                 )
                 ;;
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (pool-type:string (ref-U|SWP::UC_PoolType swpair))
-                (fees:object{UtilitySwpV2.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
+                (fees:object{UtilitySwpV1.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
                 (A:decimal (ref-SWP::UR_Amplifier swpair))
                 (X:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                 (X-prec:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
@@ -887,7 +888,7 @@
                 (W:[decimal] (ref-SWP::UR_Weigths swpair))
                 ;;
                 ;;Do Swap Computation and Unwrap Object Data
-                (dtso:object{UtilitySwpV2.DirectTaxedSwapOutput}
+                (dtso:object{UtilitySwpV1.DirectTaxedSwapOutput}
                     (ref-SWPI::UC_BareboneSwapWithFeez account pool-type dsid fees A X X-prec input-positions output-position W)
                 )
                 (lp-fuel:[decimal] (at "lp-fuel" dtso))
@@ -907,12 +908,12 @@
     (defun URC_0007_InverseSwap (account:string swpair:string output-id:string output-amount:decimal input-id:string)
         (let
             (
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
-                (ref-SWP:module{SwapperV6} SWP)
-                (ref-SWPI:module{SwapperIssueV4} SWPI)
-                (ref-SWPL:module{SwapperLiquidityV2} SWPL)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
-                (rsid:object{UtilitySwpV2.ReverseSwapInputData}
+                (rsid:object{UtilitySwpV1.ReverseSwapInputData}
                     (ref-U|SWP::UDC_ReverseSwapInputData
                         output-id output-amount input-id
                     )
@@ -920,7 +921,7 @@
                 ;;
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (pool-type:string (ref-U|SWP::UC_PoolType swpair))
-                (fees:object{UtilitySwpV2.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
+                (fees:object{UtilitySwpV1.SwapFeez} (ref-SWPL::UDC_PoolFees swpair))
                 (A:decimal (ref-SWP::UR_Amplifier swpair))
                 (X:[decimal] (ref-SWP::UR_PoolTokenSupplies swpair))
                 (X-prec:[integer] (ref-SWP::UR_PoolTokenPrecisions swpair))
@@ -929,7 +930,7 @@
                 (W:[decimal] (ref-SWP::UR_Weigths swpair))
                 ;;
                 ;;Do Inverse Swap Computation and Unwrap Object Data
-                (itso:object{UtilitySwpV2.InverseTaxedSwapOutput}
+                (itso:object{UtilitySwpV1.InverseTaxedSwapOutput}
                     (ref-SWPI::UC_InverseBareboneSwapWithFeez
                         account pool-type rsid fees A X X-prec output-position input-position W
                     )
@@ -962,8 +963,8 @@
     (defun URC_0010_SwpairInternalDashboard (swpair:string)
         (let
             (
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-SWP:module{SwapperV1} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (read-pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -1026,11 +1027,11 @@
     (defun URC_0011_AccountSuppliesForSwpair (account:string swpair:string)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
-                (ref-SWP:module{SwapperV6} SWP)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (ref-SWP:module{SwapperV1} SWP)
                 ;;
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (account-pool-tokens-supplies:[decimal]
@@ -1098,10 +1099,10 @@
                 (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
                 ;;
                 (cold-r:bool (ref-ATS::UR_ToggleColdRecovery ats))
-                (cold-recovery-info:object{OuronetInfoV4.ClientInfoV2}
+                (cold-recovery-info:object{OuronetInfoV1.ClientInfo}
                     (ref-INFO-ONE::ATS|INFO_ColdRecovery patron recoverer ats ra)
                 )
-                (cull-info:object{OuronetInfoV4.ClientInfoV2}
+                (cull-info:object{OuronetInfoV1.ClientInfo}
                     (ref-INFO-ONE::ATS|INFO_Cull patron recoverer ats)
                 )
                 (cold-recovery-execute-text:[string]
@@ -1114,9 +1115,9 @@
                     (at "pre-text" cull-info)
                 )
                 ;;
-                (p0:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P0 ats recoverer))
+                (p0:[object{UtilityAtsV1.Awo}] (ref-ATS::UR_P0 ats recoverer))
                 (p0-size:integer (length p0))
-                (p7:[object{UtilityAtsV2.Awo}] (ref-ATS::UR_P-Seven ats recoverer))
+                (p7:[object{UtilityAtsV1.Awo}] (ref-ATS::UR_P-Seven ats recoverer))
             )
             {"recovery-dashboard"           : (URC_0012_RecoveryDashboard ats recoverer 1)
             ,"cold-recovery-info"           : cold-recovery-info
@@ -1157,7 +1158,7 @@
                 (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
                 ;;
                 (direct-r:bool (ref-ATS::UR_ToggleDirectRecovery ats))
-                (direct-recovery-info:object{OuronetInfoV4.ClientInfoV2}
+                (direct-recovery-info:object{OuronetInfoV1.ClientInfo}
                     (ref-INFO-ONE::ATS|INFO_DirectRecovery patron recoverer ats ra)
                 )
                 (direct-recovery-execute-text:[string]
@@ -1183,7 +1184,7 @@
             (enforce iz-allowed "Invalid Recovery Type")
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     (ref-ATS:module{AutostakeV6} ATS)
                     ;;
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
@@ -1194,7 +1195,7 @@
                     c-rbt-supply
                     (let
                         (
-                            (ref-DALOS:module{OuronetDalosV6} DALOS)
+                            (ref-DALOS:module{OuronetDalosV1} DALOS)
                             ;;
                             (elite:bool (ref-ATS::UR_EliteMode ats))
                             (iz-ea:bool (= c-rbt (ref-DALOS::UR_EliteAurynID)))
@@ -1203,7 +1204,7 @@
                             c-rbt-supply
                             (let
                                 (
-                                    (ref-U|CT:module{OuronetConstants} U|CT)
+                                    (ref-U|CT:module{OuronetConstantsV1} U|CT)
                                     (thresholds:[decimal] (ref-U|CT::CT_ET))
                                     (remain-pos:integer (+ (* (- usable-cold-recovery-position 1) 7) 1))
                                     (must-remain:decimal (at remain-pos thresholds))
@@ -1225,7 +1226,7 @@
     (defun DALOS|URC_DeployStandardAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "standard"))
             )
             (URC_SplitKdaPriceForReceivers price)
@@ -1234,7 +1235,7 @@
     (defun DALOS|URC_DeploySmartAccount:list ()
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (price:decimal (ref-DALOS::UR_UsagePrice "smart"))
             )
             (URC_SplitKdaPriceForReceivers price)
@@ -1244,10 +1245,10 @@
     (defun OUROBOROS|Sublimate (ouro-amount:decimal)
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-ORBR:module{OuroborosV5} OUROBOROS)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-ORBR:module{OuroborosV1} OUROBOROS)
                 ;;
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 (ouro-precision:integer (ref-DPTF::UR_Decimals ouro-id))
@@ -1261,7 +1262,7 @@
     (defun OUROBOROS|Compress (ignis-amount:decimal)
         (let
             (
-                (ref-ORBR:module{OuroborosV5} OUROBOROS)
+                (ref-ORBR:module{OuroborosV1} OUROBOROS)
             )
             (at 0 (ref-ORBR::URC_Compress ignis-amount))
         )
@@ -1270,7 +1271,7 @@
     (defun URC_KadenaDiscount (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (ref-DALOS::URC_GasDiscount account true)
         )
@@ -1278,7 +1279,7 @@
     (defun URC_IgnisDiscount (account:string)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (ref-DALOS::URC_GasDiscount account false)
         )

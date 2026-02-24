@@ -1,8 +1,8 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module LIQUID GOV
     ;;
-    (implements OuronetPolicy)
-    (implements KadenaLiquidStakingV6)
+    (implements OuronetPolicyV1)
+    (implements StoaLiquidStakingV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -33,9 +33,9 @@
         true
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|LiquidKey ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|LiquidKey)))
-    (defun GOV|LIQUID|SC_NAME ()    (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|LiquidKey ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|LiquidKey)))
+    (defun GOV|LIQUID|SC_NAME ()    (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|LIQUID|SC_NAME)))
     (defun GOV|LIQUID|SC_KDA-NAME () (create-principal (GOV|LIQUID|GUARD)))
     (defun GOV|LIQUID|GUARD ()      (create-capability-guard (LIQUID|NATIVE-AUTOMATIC)))
     ;;
@@ -43,15 +43,15 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|LQD|CALLER ()
         true
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -69,7 +69,7 @@
         (with-capability (GOV|LIQUID_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -85,14 +85,14 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|BRD:module{OuronetPolicy} BRD)
-                (ref-P|DPTF:module{OuronetPolicy} DPTF)
-                ;(ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|ATSU:module{OuronetPolicy} ATSU)
-                (ref-P|VST:module{OuronetPolicy} VST)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|BRD:module{OuronetPolicyV1} BRD)
+                (ref-P|DPTF:module{OuronetPolicyV1} DPTF)
+                ;(ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|ATSU:module{OuronetPolicyV1} ATSU)
+                (ref-P|VST:module{OuronetPolicyV1} VST)
                 (mg:guard (create-capability-guard (P|LQD|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -108,7 +108,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -117,14 +117,9 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
-    (defschema LIQUID|WrapperSchema
-        replay:bool
-        public:bool
-    )
     ;;{2}
-    (deftable LIQUID|Management:{LIQUID|WrapperSchema})
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defun LIQUID|Info ()           (at 0 ["LiquidInformation"]))
     (defconst BAR                   (CT_Bar))
     (defconst LIQUID|INFO           (LIQUID|Info))
@@ -143,7 +138,7 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (target-balance:decimal (ref-coin::get-balance migration-target-kda-account))
                 (gap:bool (ref-DALOS::UR_GAP))
             )
@@ -168,55 +163,18 @@
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
         (compose-capability (P|LQD|CALLER))
     )
-    (defcap SECURE-ADMIN ()
-        (compose-capability (SECURE))
-        (compose-capability (GOV|LIQUID_ADMIN))
-    )
-    (defcap LIQUID|C>ALLOW-WRAPPING ()
-        (let
-            (
-                (iz-allowed:bool (UR_Public))
-            )
-            (enforce iz-allowed "Standard Wrapping is not enabled yet")
-            (compose-capability (SECURE))
-        )
-    )
-    (defcap LIQUID|C>ALLOW-MIGRATION ()
-        (let
-            (
-                (iz-allowed:bool (UR_Replay))
-            )
-            (enforce iz-allowed "Migration Wrapping is not enabled yet")
-            (compose-capability (SECURE))
-        )
-    )
     ;;
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
-    (defun UR_Replay:bool ()
-        (at "replay" (read LIQUID|Management LIQUID|INFO ["replay"]))
-    )
-    (defun UR_Public:bool ()
-        (at "public" (read LIQUID|Management LIQUID|INFO ["public"]))
-    )
     ;;{F1}  [URC]
-    ;(defun URC_WrapKadena:list (wrap-amount:decimal)
-    ;    (let
-    ;        (
-    ;            (ref-DALOS:module{OuronetDalosV6} DALOS)
-    ;            (receiver:string (ref-DALOS::UR_AccountKadena LIQUID|SC_NAME))
-    ;        )
-    ;        [receiver wrap-amount]
-    ;    )
-    ;)
     ;;{F2}  [UEV]
     (defun UEV_IzLiquidStakingLive ()
         @doc "Enforces Liquid Staking is live with an existing Autostake Pair"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
                 (l-kda:string (ref-DALOS::UR_LiquidKadenaID))
             )
@@ -237,7 +195,7 @@
         @doc "Enforces amount to coin (Kadena) Precision, which uses 12 decimal"
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
             )
             (enforce
@@ -250,22 +208,13 @@
     ;;{F4}  [CAP]
     ;;
     ;;{F5}  [A]
-    (defun A_ManageWrapper (replay:bool public:bool)
-        (UEV_IMC)
-        (with-capability (GOV|LIQUID_ADMIN)
-            (update LIQUID|Management LIQUID|INFO
-                {"replay"   : replay
-                ,"public"   : public}
-            )
-        )
-    )
     (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string)
         (UEV_IMC)
         (with-capability (GOV|MIGRATE migration-target-kda-account)
             (let
                 (
-                    (ref-coin:module{fungible-v2} coin)
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-coin:module{fungible-v2} coin)    
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (lq-kda:string LIQUID|SC_KDA-NAME)
                     (present-kda-balance:decimal (ref-coin::get-balance lq-kda))
                 )
@@ -275,38 +224,17 @@
             )
         )
     )
-    (defun A_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
-        (wrapper:string amount:decimal)
-        (UEV_IMC)
-        (with-capability (SECURE-ADMIN)
-            (X_WrapKadena wrapper amount true)
-        )
-    )
     ;;{F6}  [C]
-    (defun C_WrapKadenaForMigration:object{IgnisCollectorV2.OutputCumulator}
-        (wrapper:string amount:decimal)
-        (UEV_IMC)
-        (with-capability (LIQUID|C>ALLOW-MIGRATION)
-            (X_WrapKadena wrapper amount false)
-        )
-    )
-    (defun C_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
-        (wrapper:string amount:decimal)
-        (UEV_IMC)
-        (with-capability (LIQUID|C>ALLOW-WRAPPING)
-            (X_WrapKadena wrapper amount true)
-        )
-    )
-    (defun C_UnwrapKadena:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_UnwrapStoa:object{IgnisCollectorV1.OutputCumulator}
         (unwrapper:string amount:decimal)
         (UEV_IMC)
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena unwrapper))
@@ -315,7 +243,7 @@
             (with-capability (LIQUID|C>UNWRAP)
                 (let
                     (
-                        (output:object{IgnisCollectorV2.OutputCumulator}
+                        (output:object{IgnisCollectorV1.OutputCumulator}
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
                                     (ref-TFT::C_Transfer w-kda-id unwrapper lq-sc amount true)
@@ -334,16 +262,15 @@
             )
         )
     )
-    ;;{F7}  [X]
-    (defun X_WrapKadena:object{IgnisCollectorV2.OutputCumulator}
-        (wrapper:string amount:decimal full:bool)
-        (require-capability (SECURE))
+    (defun C_WrapStoa:object{IgnisCollectorV1.OutputCumulator}
+        (wrapper:string amount:decimal)
+        (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-TFT:module{TrueFungibleTransferV9} TFT)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
@@ -352,19 +279,13 @@
             (with-capability (LIQUID|C>WRAP)
                 (let
                     (
-                        (ref-U|CT:module{OuronetConstants} U|CT)
+                        (ref-U|CT:module{OuronetConstantsV1} U|CT)
                         (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
-                        (received-amount:decimal
-                            (if full
-                                amount
-                                (floor (/ amount 10.0) kda-prec)
-                            )
-                        )
-                        (output:object{IgnisCollectorV2.OutputCumulator}
+                        (output:object{IgnisCollectorV1.OutputCumulator}
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
-                                    (ref-DPTF::C_Mint w-kda-id lq-sc received-amount false)
-                                    (ref-TFT::C_Transfer w-kda-id lq-sc wrapper received-amount true)
+                                    (ref-DPTF::C_Mint w-kda-id lq-sc amount false)
+                                    (ref-TFT::C_Transfer w-kda-id lq-sc wrapper amount true)
                                 ]
                                 []
                             )
@@ -376,9 +297,10 @@
             )
         )
     )
+    ;;{F7}  [X]
+    
     ;;
 )
 
 (create-table P|T)
 (create-table P|MT)
-(create-table LIQUID|Management)

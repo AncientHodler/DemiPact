@@ -1,6 +1,6 @@
 (module AQP-SCORE GOV
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
     ;;
     ;;<========>
@@ -11,14 +11,14 @@
     (defcap GOV ()                          (compose-capability (GOV|AQP-SCORE_ADMIN)))
     (defcap GOV|AQP-SCORE_ADMIN ()          (enforce-guard GOV|MD_AQP-SCORE))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|AQP-SCORE|CALLER ()
         true
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -47,7 +47,7 @@
         (with-capability (GOV|AQP-SCORE_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -63,7 +63,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
                 (mg:guard (create-capability-guard (P|AQP-SCORE|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -72,7 +72,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -192,35 +192,35 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_IssueLiquidityScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueLiquidityScore:object{IgnisCollectorV1.OutputCumulator}
         (
 
         )
         @doc ""
         true
     )
-    (defun C_IssueTrueFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueTrueFungibleScore:object{IgnisCollectorV1.OutputCumulator}
         (
 
         )
         @doc ""
         true
     )
-    (defun C_IssueOrtoFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueOrtoFungibleScore:object{IgnisCollectorV1.OutputCumulator}
         (
 
         )
         @doc ""
         true
     )
-    (defun C_IssueSemiFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueSemiFungibleScore:object{IgnisCollectorV1.OutputCumulator}
         (
 
         )
         @doc ""
         true
     )
-    (defun C_IssueNonFungibleScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueNonFungibleScore:object{IgnisCollectorV1.OutputCumulator}
         (
 
         )
@@ -228,83 +228,83 @@
         true
     )
     ;;
-    (defun C_RotateOwnership:object{IgnisCollectorV2.OutputCumulator} 
+    (defun C_RotateOwnership:object{IgnisCollectorV1.OutputCumulator} 
         ()
         @doc ""
         true
     )
-    (defun C_Control:object{IgnisCollectorV2.OutputCumulator}
-        ()
-        @doc ""
-        true
-    )
-    ;;
-    (defun C_CreateAnchorLink:object{IgnisCollectorV2.OutputCumulator}
-        ()
-        @doc ""
-        true
-    )
-    (defun C_CreateBoostLink:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Control:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
     ;;
-    (defun C_EnableDebBoost:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_CreateAnchorLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun C_SetScoreMultipliers:object{IgnisCollectorV2.OutputCumulator}
-        ()
-        @doc ""
-        true
-    )
-    (defun C_SetScoreSftEquality:object{IgnisCollectorV2.OutputCumulator}
-        ()
-        @doc ""
-        true
-    )
-    (defun C_SetScoreNftModel:object{IgnisCollectorV2.OutputCumulator}
-        ()
-        @doc ""
-        true
-    )
-    (defun C_SetScoreNftTraitKeys:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_CreateBoostLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
     ;;
-    (defun C_IssueSemiFungibleScoreDefinition:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_EnableDebBoost:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun C_IssueNonFungibleScoreDefinition:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_SetScoreMultipliers:object{IgnisCollectorV1.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreSftEquality:object{IgnisCollectorV1.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreNftModel:object{IgnisCollectorV1.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_SetScoreNftTraitKeys:object{IgnisCollectorV1.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    ;;
+    (defun C_IssueSemiFungibleScoreDefinition:object{IgnisCollectorV1.OutputCumulator}
+        ()
+        @doc ""
+        true
+    )
+    (defun C_IssueNonFungibleScoreDefinition:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
     ;;
     ;;{F7}  [X]
-    (defun XE_CreateAqpoolLink:object{IgnisCollectorV2.OutputCumulator}
+    (defun XE_CreateAqpoolLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun XE_CreateFvtLink:object{IgnisCollectorV2.OutputCumulator}
+    (defun XE_CreateFvtLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
     ;;
-    (defun XE_RevokeAqpoolLink:object{IgnisCollectorV2.OutputCumulator}
+    (defun XE_RevokeAqpoolLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun XE_RevokeFvtLink:object{IgnisCollectorV2.OutputCumulator}
+    (defun XE_RevokeFvtLink:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true

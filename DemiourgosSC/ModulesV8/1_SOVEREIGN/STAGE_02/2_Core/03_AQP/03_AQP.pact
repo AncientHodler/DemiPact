@@ -1,6 +1,6 @@
 (module AQP GOV
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
     ;;
     ;;<========>
@@ -11,14 +11,14 @@
     (defcap GOV ()                          (compose-capability (GOV|AQP_ADMIN)))
     (defcap GOV|AQP_ADMIN ()                (enforce-guard GOV|MD_AQP))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|AQP|CALLER ()
         true
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -47,7 +47,7 @@
         (with-capability (GOV|AQP_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -63,7 +63,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
                 (mg:guard (create-capability-guard (P|AQP|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -72,7 +72,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -175,28 +175,28 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Issue:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Issue:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun C_AddScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_AddScore:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun C_RevokeScore:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_RevokeScore:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
     ;;
-    (defun C_Stake:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Stake:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true
     )
-    (defun C_Unstake:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Unstake:object{IgnisCollectorV1.OutputCumulator}
         ()
         @doc ""
         true

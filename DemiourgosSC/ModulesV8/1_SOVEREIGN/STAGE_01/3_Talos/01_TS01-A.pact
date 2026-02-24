@@ -3,8 +3,8 @@
     \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
     \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
-    (implements OuronetPolicy)
-    (implements TalosStageOne_AdminV6)
+    (implements OuronetPolicyV1)
+    (implements TalosStageOne_AdminV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -14,14 +14,14 @@
     (defcap GOV ()                  (compose-capability (GOV|TS01-A_ADMIN)))
     (defcap GOV|TS01-A_ADMIN ()     (enforce-guard GOV|MD_TS01-A))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|TS ()
         @doc "Talos Summoner Capability"
@@ -45,7 +45,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -63,7 +63,7 @@
         (with-capability (GOV|TS01-A_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -79,15 +79,15 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|IGNIS:module{OuronetPolicy} IGNIS)
-                (ref-P|BRD:module{OuronetPolicy} BRD)
-                (ref-P|DPTF:module{OuronetPolicy} DPTF)
-                (ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
-                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
-                (ref-P|SWP:module{OuronetPolicy} SWP)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|IGNIS:module{OuronetPolicyV1} IGNIS)
+                (ref-P|BRD:module{OuronetPolicyV1} BRD)
+                (ref-P|DPTF:module{OuronetPolicyV1} DPTF)
+                (ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicyV1} OUROBOROS)
+                (ref-P|SWP:module{OuronetPolicyV1} SWP)
                 (mg:guard (create-capability-guard (P|TS)))
             )
             (ref-P|DALOS::P|A_Add
@@ -107,7 +107,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -118,7 +118,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
+    (defun TALOS|Gassless ()        (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
     (defconst GASLESS-PATRON        (TALOS|Gassless))
     ;;
     ;;<==========>
@@ -148,7 +148,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_MigrateLiquidFunds migration-target-kda-account)
                 (format "Liquid Funds succesfuly migrated to {}" [migration-target-kda-account])
@@ -160,7 +160,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_ToggleOAPU oapu)
                 (if oapu
@@ -175,7 +175,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_ToggleGAP gap)
                 (if gap
@@ -190,8 +190,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeploySmartAccount account guard kadena sovereign public)
@@ -204,8 +204,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_DeployStandardAccount account guard kadena public)
@@ -220,7 +220,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_ToggleGasCollection native toggle)
                 (if native
@@ -241,7 +241,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_SetIgnisSourcePrice price)
                 (format "Succesfuly set IGNIS price to {}" [price])
@@ -253,7 +253,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_SetAutoFueling toggle)
                 (if toggle
@@ -268,8 +268,8 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 (ref-DALOS::A_UpdatePublicKey account new-public)
@@ -282,7 +282,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                 )
                 (ref-DALOS::A_UpdateUsagePrice action new-price)
                 (format "Price for Action {} successfully updated with {}" [action new-price])
@@ -297,7 +297,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-BRD:module{Branding} BRD)
+                    (ref-BRD:module{BrandingV1} BRD)
                 )
                 (ref-BRD::A_Live entity-id)
             )
@@ -315,7 +315,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-BRD:module{Branding} BRD)
+                    (ref-BRD:module{BrandingV1} BRD)
                 )
                 (ref-BRD::A_SetFlag entity-id flag)
             )
@@ -332,7 +332,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 )
                 (ref-DPTF::A_UpdateTreasury type tdp tds)
             )
@@ -344,7 +344,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebt)
             )
@@ -356,7 +356,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 )
                 (ref-DPTF::A_WipeTreasuryDebtPartial debt-to-be-wiped)
             )
@@ -368,8 +368,8 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-ATSU:module{AutostakeUsageV6} ATSU)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATSU::A_RemoveSecondary remover ats reward-token accounts-with-ats-data)
@@ -385,37 +385,9 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                 )
                 (ref-LIQUID::A_MigrateLiquidFunds migration-target-kda-account)
-            )
-        )
-    )
-    (defun LIQUID|A_ManageWrapper (replay:bool public:bool)
-        @doc "Manages the Kadena Wrapper"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
-                )
-                (ref-LIQUID::A_ManageWrapper replay public)
-            )
-        )
-    )
-    (defun LIQUID|A_WrapKadena (patron:string wrapper:string amount:decimal)
-        @doc "Wraps Native Kadena to DPTF Kadena"
-        (with-capability (P|TS)
-            (let
-                (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                    (ref-I|OURONET:module{OuronetInfoV4} INFO-ZERO)
-                    (ref-LIQUID:module{KadenaLiquidStakingV6} LIQUID)
-                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
-                )
-                (ref-IGNIS::C_Collect patron
-                    (ref-LIQUID::A_WrapKadena wrapper amount)
-                )
-                (format "Succesfully Wrapped {} KDA on Account {}" [amount sw])
             )
         )
     )
@@ -441,7 +413,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                 )
                 (ref-SWP::A_UpdatePrincipal principal add-or-remove)
             )
@@ -454,7 +426,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                 )
                 (ref-SWP::A_UpdateLimit limit spawn)
             )
@@ -465,7 +437,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                 )
                 (ref-SWP::A_UpdateLiquidBoost new-boost-variable)
             )
@@ -476,7 +448,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                 )
                 (ref-SWP::A_DefinePrimordialPool primordial-pool)
             )
@@ -487,7 +459,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV6} SWP)
+                    (ref-SWP:module{SwapperV1} SWP)
                 )
                 (ref-SWP::A_ToggleAsymetricLiquidityAddition toggle)
             )
@@ -500,7 +472,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
             )
             (if (ref-DALOS::UR_AutoFuel)
                 (with-capability (SECURE)
@@ -525,7 +497,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-ORBR:module{OuroborosV5} OUROBOROS)
+                (ref-ORBR:module{OuroborosV1} OUROBOROS)
             )
             (with-capability (P|TS)
                 (ref-ORBR::C_Fuel)

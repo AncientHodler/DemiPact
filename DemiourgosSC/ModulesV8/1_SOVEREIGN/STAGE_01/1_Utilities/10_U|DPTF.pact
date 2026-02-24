@@ -1,7 +1,7 @@
 
 (module U|DPTF GOV
     ;;
-    (implements UtilityDptf)
+    (implements UtilityDptfV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -11,7 +11,7 @@
     (defcap GOV|U|DPTF_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -31,7 +31,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun EmptyDispo:object{UtilityDptf.DispoData} ()
+    (defun EmptyDispo:object{UtilityDptfV1.DispoData} ()
         {"elite-auryn-amount"           :0.0
         ,"auryndex-value"               :-1.0
         ,"elite-auryndex-value"         :-1.0
@@ -99,7 +99,7 @@
             )
         )
     )
-    (defun UC_OuroDispo:decimal (input:object{UtilityDptf.DispoData})
+    (defun UC_OuroDispo:decimal (input:object{UtilityDptfV1.DispoData})
         (let
             (
                 (ea-amount:decimal (at "elite-auryn-amount" input))
@@ -128,7 +128,7 @@
             \ Outputs [virtual-gas-costs (IGNIS) native-gas-cost(KDA)]"
         (let
             (
-                (ref-U|DEC:module{OuronetDecimals} U|DEC)
+                (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
             )
             (ref-U|DEC::UC_UnlockPrice unlocks true)
         )

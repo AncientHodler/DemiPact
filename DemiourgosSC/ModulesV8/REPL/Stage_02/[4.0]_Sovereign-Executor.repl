@@ -37,28 +37,28 @@
 
 (let
     (
-        (ref-U|G:module{OuronetGuards} U|G)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-DPDC:module{DpdcV5} DPDC)
+        (ref-U|G:module{OuronetGuardsV1} U|G)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+        (ref-DPDC:module{DpdcV1} DPDC)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (dpdc:string (ref-DPDC::GOV|DPDC|SC_NAME))
         ;;
-        (ref-P|DPDC-UDC:module{OuronetPolicy}   DPDC-UDC)
-        (ref-P|DPDC:module{OuronetPolicy}       DPDC)
-        (ref-P|DPDC-C:module{OuronetPolicy}     DPDC-C)
-        (ref-P|DPDC-I:module{OuronetPolicy}     DPDC-I)
-        (ref-P|DPDC-R:module{OuronetPolicy}     DPDC-R)
-        (ref-P|DPDC-MNG:module{OuronetPolicy}   DPDC-MNG)
-        (ref-P|DPDC-N:module{OuronetPolicy}     DPDC-N)
-        (ref-P|DPDC-T:module{OuronetPolicy}     DPDC-T)
-        (ref-P|DPDC-F:module{OuronetPolicy}     DPDC-F)
-        (ref-P|DPDC-S:module{OuronetPolicy}     DPDC-S)
-        (ref-P|EQUITY:module{OuronetPolicy}     EQUITY)
+        (ref-P|DPDC-UDC:module{OuronetPolicyV1}   DPDC-UDC)
+        (ref-P|DPDC:module{OuronetPolicyV1}       DPDC)
+        (ref-P|DPDC-C:module{OuronetPolicyV1}     DPDC-C)
+        (ref-P|DPDC-I:module{OuronetPolicyV1}     DPDC-I)
+        (ref-P|DPDC-R:module{OuronetPolicyV1}     DPDC-R)
+        (ref-P|DPDC-MNG:module{OuronetPolicyV1}   DPDC-MNG)
+        (ref-P|DPDC-N:module{OuronetPolicyV1}     DPDC-N)
+        (ref-P|DPDC-T:module{OuronetPolicyV1}     DPDC-T)
+        (ref-P|DPDC-F:module{OuronetPolicyV1}     DPDC-F)
+        (ref-P|DPDC-S:module{OuronetPolicyV1}     DPDC-S)
+        (ref-P|EQUITY:module{OuronetPolicyV1}     EQUITY)
         ;;
-        (ref-P|TS02-C1:module{OuronetPolicy}    TS02-C1)
-        (ref-P|TS02-C2:module{OuronetPolicy}    TS02-C2)
-        (ref-P|TS02-C3:module{OuronetPolicy}    TS02-C3)
+        (ref-P|TS02-C1:module{OuronetPolicyV1}    TS02-C1)
+        (ref-P|TS02-C2:module{OuronetPolicyV1}    TS02-C2)
+        (ref-P|TS02-C3:module{OuronetPolicyV1}    TS02-C3)
         ;;
               
     )
@@ -113,7 +113,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -154,7 +154,7 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;Input Variables
             (patron:string issuing-account)
             (collection-owner:string patron)
@@ -185,7 +185,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
     )
     (env-sigs
@@ -195,9 +195,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -218,11 +218,11 @@
             )
             (ipfs:string "https://ipfs.io/ipfs/QmYjHPWPxCeHGu9vgYUbzjmWo34A2z3CNuYmU6MEzgUSzP/")
             (b:string "|")
-            (md:object{DpdcUdcV3.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
-            (i-asset-type:object{DpdcUdcV3.URI|Type}
+            (md:object{DpdcUdcV1.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
+            (i-asset-type:object{DpdcUdcV1.URI|Type}
                 (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
             )
-            (zd:object{DpdcUdcV3.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
+            (zd:object{DpdcUdcV1.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             ;;
             (royalty:[decimal]                  [50.0 60.0 70.0 80.0])
             (ignis-royalty:[decimal]            [50.0 500.0 5000.0 500.0])
@@ -260,10 +260,10 @@
                     (+ ipfs "FULL/01_Custodians/4_OG.jpg")
                 ]
             )
-            (primary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (primary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links) b b b b b b)
                         )
@@ -272,10 +272,10 @@
                     (enumerate 0 3)
                 )
             )
-            (secondary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (secondary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
                         )
@@ -284,11 +284,11 @@
                     (enumerate 0 3)
                 )
             )
-            (native-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
+            (native-nonce-data:[object{DpdcUdcV1.DPDC|NonceData}]
                 ;;Construct the Native Nonce Data in a 4 element list
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
+                        (acc:[object{DpdcUdcV1.DPDC|NonceData}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_NonceData
                                 (at idx royalty)
@@ -338,10 +338,10 @@
                     (+ ipfs "FULL/01_Custodians/3_GoldenFragment.jpg")
                 ]
             )
-            (fragments-primary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (fragments-primary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx fragments-image-links) b b b b b b)
                         )
@@ -350,10 +350,10 @@
                     (enumerate 0 2)
                 )
             )
-            (fragments-secondary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (fragments-secondary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx fragments-image-links2) b b b b b b)
                         )
@@ -362,10 +362,10 @@
                     (enumerate 0 2)
                 )
             )
-            (fragments-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
+            (fragments-nonce-data:[object{DpdcUdcV1.DPDC|NonceData}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
+                        (acc:[object{DpdcUdcV1.DPDC|NonceData}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_NonceData
                                 (at idx fragments-royalty)
@@ -410,7 +410,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -451,7 +451,7 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -514,7 +514,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -555,7 +555,7 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;Input Variables
             (patron:string issuing-account)
             (collection-owner:string patron)
@@ -589,7 +589,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -605,9 +605,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -630,11 +630,11 @@
             )
             ;;
             (b:string "|")
-            (md:object{DpdcUdcV3.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
-            (i-asset-type:object{DpdcUdcV3.URI|Type}
+            (md:object{DpdcUdcV1.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
+            (i-asset-type:object{DpdcUdcV1.URI|Type}
                 (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
             )
-            (zd:object{DpdcUdcV3.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
+            (zd:object{DpdcUdcV1.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             ;;
             (royalty:decimal            150.0)
             (set-royalty:decimal        120.0)
@@ -701,10 +701,10 @@
                     (enumerate 0 10)
                 )
             )
-            (primary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (primary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links1) b b b b b b)
                         )
@@ -713,10 +713,10 @@
                     (enumerate 0 10)
                 )
             )
-            (secondary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (secondary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
                         )
@@ -725,11 +725,11 @@
                     (enumerate 0 10)
                 )
             )
-            (native-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
+            (native-nonce-data:[object{DpdcUdcV1.DPDC|NonceData}]
                 ;;Construct the Native Nonce Data in a 11 element list
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
+                        (acc:[object{DpdcUdcV1.DPDC|NonceData}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_NonceData
                                 (if (!= idx 10) royalty set-royalty)
@@ -787,7 +787,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -828,7 +828,7 @@
     )
     (let
         (
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;Input Variables
             (patron:string issuing-account)
             (collection-owner:string patron)
@@ -860,7 +860,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -876,9 +876,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C1:module{TalosStageTwo_ClientOneV8} TS02-C1)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
             ;;
             ;;Input Variables
             ;(patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -900,11 +900,11 @@
             )
             ;;
             (b:string "|")
-            (md:object{DpdcUdcV3.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
-            (i-asset-type:object{DpdcUdcV3.URI|Type}
+            (md:object{DpdcUdcV1.NonceMetaData} (ref-DPDC-UDC::UDC_NoMetaData))
+            (i-asset-type:object{DpdcUdcV1.URI|Type}
                 (ref-DPDC-UDC::UDC_URI|Type true false false false false false false)
             )
-            (zd:object{DpdcUdcV3.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
+            (zd:object{DpdcUdcV1.URI|Data} (ref-DPDC-UDC::UDC_ZeroURI|Data))
             ;;
             (royalty:[decimal]              [100.0 90.0 80.0])
             (set-royalty:[decimal]          [70.0 60.0 50.0 40.0])
@@ -1060,10 +1060,10 @@
                     (enumerate 0 33)
                 )
             )
-            (primary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (primary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links1) b b b b b b)
                         )
@@ -1072,10 +1072,10 @@
                     (enumerate 0 33)
                 )
             )
-            (secondary-uri-lst:[object{DpdcUdcV3.URI|Data}]
+            (secondary-uri-lst:[object{DpdcUdcV1.URI|Data}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.URI|Data}] idx:integer)
+                        (acc:[object{DpdcUdcV1.URI|Data}] idx:integer)
                         (ref-U|LST::UC_AppL acc 
                             (ref-DPDC-UDC::UDC_URI|Data (at idx image-links2) b b b b b b)
                         )
@@ -1084,10 +1084,10 @@
                     (enumerate 0 33)
                 )
             )
-            (native-nonce-data:[object{DpdcUdcV3.DPDC|NonceData}]
+            (native-nonce-data:[object{DpdcUdcV1.DPDC|NonceData}]
                 (fold
                     (lambda
-                        (acc:[object{DpdcUdcV3.DPDC|NonceData}] idx:integer)
+                        (acc:[object{DpdcUdcV1.DPDC|NonceData}] idx:integer)
                         (ref-U|LST::UC_AppL acc
                             (ref-DPDC-UDC::UDC_NonceData
                                 (at idx r)
@@ -1193,7 +1193,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -1236,9 +1236,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV1} TS02-C2)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -1270,7 +1270,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -1313,9 +1313,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV1} TS02-C2)
             ;;
             ;;Input Variables
             (patron:string issuing-account)
@@ -1352,7 +1352,7 @@
 
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (issuing-account:string KST.ANHD)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
@@ -1395,9 +1395,9 @@
     )
     (let
         (
-            (ref-U|LST:module{StringProcessor} U|LST)
-            (ref-DPDC-UDC:module{DpdcUdcV3} DPDC-UDC)
-            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV7} TS02-C2)
+            (ref-U|LST:module{StringProcessorV1} U|LST)
+            (ref-DPDC-UDC:module{DpdcUdcV1} DPDC-UDC)
+            (ref-TS02-C2:module{TalosStageTwo_ClientTwoV1} TS02-C2)
             ;;
             ;;Input Variables
             (patron:string issuing-account)

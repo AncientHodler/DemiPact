@@ -1,8 +1,8 @@
 ;(namespace "n_9d612bcfe2320d6ecbbaa99b47aab60138a2adea")
 (module SWPT GOV
     ;;
-    (implements OuronetPolicy)
-    (implements SwapTracer)
+    (implements OuronetPolicyV1)
+    (implements SwapTracerV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -12,21 +12,21 @@
     (defcap GOV ()                  (compose-capability (GOV|SWPT_ADMIN)))
     (defcap GOV|SWPT_ADMIN ()       (enforce-guard GOV|MD_SWPT))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|SWPT|CALLER ()
         true
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -44,7 +44,7 @@
         (with-capability (GOV|SWPT_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -60,16 +60,16 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
-                (ref-P|BRD:module{OuronetPolicy} BRD)
-                (ref-P|DPTF:module{OuronetPolicy} DPTF)
-                ;(ref-P|DPOF:module{OuronetPolicy} DPOF)
-                (ref-P|ATS:module{OuronetPolicy} ATS)
-                (ref-P|TFT:module{OuronetPolicy} TFT)
-                (ref-P|ATSU:module{OuronetPolicy} ATSU)
-                (ref-P|VST:module{OuronetPolicy} VST)
-                (ref-P|LIQUID:module{OuronetPolicy} LIQUID)
-                (ref-P|ORBR:module{OuronetPolicy} OUROBOROS)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+                (ref-P|BRD:module{OuronetPolicyV1} BRD)
+                (ref-P|DPTF:module{OuronetPolicyV1} DPTF)
+                ;(ref-P|DPOF:module{OuronetPolicyV1} DPOF)
+                (ref-P|ATS:module{OuronetPolicyV1} ATS)
+                (ref-P|TFT:module{OuronetPolicyV1} TFT)
+                (ref-P|ATSU:module{OuronetPolicyV1} ATSU)
+                (ref-P|VST:module{OuronetPolicyV1} VST)
+                (ref-P|LIQUID:module{OuronetPolicyV1} LIQUID)
+                (ref-P|ORBR:module{OuronetPolicyV1} OUROBOROS)
                 (mg:guard (create-capability-guard (P|SWPT|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -87,7 +87,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -97,12 +97,12 @@
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
     (defschema SWPT|TracerSchema
-        links:[object{SwapTracer.Edges}]
+        links:[object{SwapTracerV1.Edges}]
     )
     ;;{2}
     (deftable SWPT|Tracer:{SWPT|TracerSchema})
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     (defconst NLE [NLEO])
     (defconst NLEO
@@ -122,14 +122,14 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_PSwpairsFTO:[string] (traces:[object{SwapTracer.Edges}] id:string principal:string principals-lst:[string])
+    (defun UC_PSwpairsFTO:[string] (traces:[object{SwapTracerV1.Edges}] id:string principal:string principals-lst:[string])
         @doc "Principal Swpairs From Trace Object: given a trace object, id and principal, output the stored swpairs\
         \ UTILS.BAR can be used as principal, returning swpairs that contain no principals. \
         \ Swpairs that contain no principals, can only be stable swap pairs."
         (UEV_IdAsPrincipal principal true principals-lst)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (principals-from-traces:[string] (UC_PrincipalsFromTraces traces))
                 (search:[integer] (ref-U|LST::UC_Search principals-from-traces principal))
             )
@@ -139,10 +139,10 @@
             )
         )
     )
-    (defun UC_PrincipalsFromTraces:[string] (traces:[object{SwapTracer.Edges}])
+    (defun UC_PrincipalsFromTraces:[string] (traces:[object{SwapTracerV1.Edges}])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
@@ -158,16 +158,16 @@
         )
     )
     ;;{F0}  [UR]
-    (defun UR_PathTrace:[object{SwapTracer.Edges}] (id:string)
+    (defun UR_PathTrace:[object{SwapTracerV1.Edges}] (id:string)
         (at "links" (read SWPT|Tracer id ["links"]))
     )
     ;;{F1}  [URC]
-    (defun URC_PathTracer:[object{SwapTracer.Edges}] (old-path-tracer:[object{SwapTracer.Edges}] id:string swpair:string principals-lst:[string])
+    (defun URC_PathTracer:[object{SwapTracerV1.Edges}] (old-path-tracer:[object{SwapTracerV1.Edges}] id:string swpair:string principals-lst:[string])
         "Computes a new Path-tracer object list, given <old-path-tracer> object, token-id <id> and Swap-Pair <swpair>"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (swpair-tokens:[string] (ref-U|SWP::UC_TokensFromSwpairString swpair))
                 (has-principals:bool (URC_ContainsPrincipals swpair principals-lst))
                 (current-element-zero-swpairs:[string] (UC_PSwpairsFTO old-path-tracer id BAR principals-lst))
@@ -183,13 +183,13 @@
                         )
                     )
                 )
-                (element-zero:object{SwapTracer.Edges}
+                (element-zero:object{SwapTracerV1.Edges}
                     { "principal" : BAR , "swpairs" : new-element-zero-swpairs}
                 )
             )
             (fold
                 (lambda
-                    (acc:[object{SwapTracer.Edges}] idx:integer)
+                    (acc:[object{SwapTracerV1.Edges}] idx:integer)
                     (ref-U|LST::UC_AppL
                         acc
                         (let
@@ -235,7 +235,7 @@
     (defun URC_ContainsPrincipals:bool (swpair:string principals-lst:[string])
         (let
             (
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (swpair-tokens:[string] (ref-U|SWP::UC_TokensFromSwpairString swpair))
             )
             (fold
@@ -256,7 +256,7 @@
         \ from a passed down list of existing <swpairs>"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (all-paths:[[string]] (URC_AllGraphPaths input output swpairs principal-lst))
 
             )
@@ -295,23 +295,23 @@
         \ over a specific passed-down list of existing <swpairs>"
         (let
             (
-                (ref-U|BFS:module{BreadthFirstSearch} U|BFS)
-                (graph:[object{BreadthFirstSearch.GraphNode}] (URC_MakeGraph input output swpairs principal-lst))
-                (bfs-obj:object{BreadthFirstSearch.BFS} (ref-U|BFS::UC_BFS graph input))
+                (ref-U|BFS:module{BreadthFirstSearchV1} U|BFS)
+                (graph:[object{BreadthFirstSearchV1.GraphNode}] (URC_MakeGraph input output swpairs principal-lst))
+                (bfs-obj:object{BreadthFirstSearchV1.BFS} (ref-U|BFS::UC_BFS graph input))
             )
             (at "chains" bfs-obj)
         )
     )
-    (defun URC_MakeGraph:[object{BreadthFirstSearch.GraphNode}] (input:string output:string swpairs:[string] principal-lst:[string])
+    (defun URC_MakeGraph:[object{BreadthFirstSearchV1.GraphNode}] (input:string output:string swpairs:[string] principal-lst:[string])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (nodes:[string] (ref-U|SWP::UC_MakeGraphNodes input output swpairs))
             )
             (fold
                 (lambda
-                    (acc:[object{BreadthFirstSearch.GraphNode}] idx:integer)
+                    (acc:[object{BreadthFirstSearchV1.GraphNode}] idx:integer)
                     (ref-U|LST::UC_AppL
                         acc
                         {
@@ -328,8 +328,8 @@
     (defun URC_TokenNeighbours:[string] (token-id:string principal-lst:[string])
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (token-swpairs:[string] (URC_TokenSwpairs token-id principal-lst))
                 (unique-tokens:[string] (ref-U|SWP::UC_UniqueTokens token-swpairs))
             )
@@ -341,7 +341,7 @@
         \ Requires a list of principals through <principal-lst>"
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (cp:[string] (ref-U|LST::UC_InsertFirst principal-lst BAR))
                 (swpairs-array:[[string]]
                     (fold
@@ -375,7 +375,7 @@
     (defun URC_Edges:[string] (t1:string t2:string principal-lst:[string])
         (let
             (
-                (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 (swp1:[string] (URC_TokenSwpairs t1 principal-lst))
                 (swp2:[string] (URC_TokenSwpairs t2 principal-lst))
                 (swps:[string] (+ swp1 swp2))
@@ -407,7 +407,7 @@
         (with-capability (SECURE)
             (let
                 (
-                    (ref-U|SWP:module{UtilitySwpV2} U|SWP)
+                    (ref-U|SWP:module{UtilitySwpV1} U|SWP)
                 )
                 (map
                     (lambda

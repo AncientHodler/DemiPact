@@ -1,7 +1,7 @@
 (module DPDC-R GOV
     ;;
-    (implements OuronetPolicy)
-    (implements DpdcRoles)
+    (implements OuronetPolicyV1)
+    (implements DpdcRolesV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -11,14 +11,14 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-R_ADMIN)))
     (defcap GOV|DPDC-R_ADMIN ()             (enforce-guard GOV|MD_DPDC-R))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|DPDC-R|CALLER ()
         true
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -47,7 +47,7 @@
         (with-capability (GOV|DPDC-R_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -63,7 +63,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DPDC:module{OuronetPolicy} DPDC)
+                (ref-P|DPDC:module{OuronetPolicyV1} DPDC)
                 (mg:guard (create-capability-guard (P|DPDC-R|CALLER)))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
@@ -72,7 +72,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -83,7 +83,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -99,7 +99,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id true toggle)
             (ref-DPDC::UEV_AccountAddQuantityState id account (not toggle))
@@ -111,7 +111,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_CanFreezeON id son)
             (ref-DPDC::UEV_AccountFreezeState id son account (not frozen))
@@ -123,8 +123,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (type:bool (ref-DALOS::UR_AccountType account))
             )
             (enforce type "Only Smart Ouronet Accounts can get this role")
@@ -137,7 +137,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountBurnState id son account (not toggle))
@@ -149,7 +149,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountUpdateState id son account (not toggle))
@@ -161,7 +161,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountModifyCreatorState id son account (not toggle))
@@ -173,7 +173,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountModifyRoyaltiesState id son account (not toggle))
@@ -185,7 +185,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_ToggleSpecialRole id son toggle)
             (ref-DPDC::UEV_AccountTransferState id son account (not toggle))
@@ -198,7 +198,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountCreateState id son old-account true)
@@ -211,7 +211,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountRecreateState id son old-account true)
@@ -224,7 +224,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::UEV_CanAddSpecialRoleON id son)
             (ref-DPDC::UEV_AccountSetUriState id son old-account true)
@@ -245,13 +245,13 @@
     ;;{F5}  [A]
     ;;{F6}  [C]
     ;;Role Toggling
-    (defun C_ToggleAddQuantityRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleAddQuantityRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_ADD-QTY-R id account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id true)
@@ -260,13 +260,13 @@
             )
         )
     )
-    (defun C_ToggleFreezeAccount:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleFreezeAccount:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>FRZ-ACC id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -275,13 +275,13 @@
             )
         )
     )
-    (defun C_ToggleExemptionRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleExemptionRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_EXEMPTION-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -290,13 +290,13 @@
             )
         )
     )
-    (defun C_ToggleBurnRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleBurnRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_BURN-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -305,13 +305,13 @@
             )
         )
     )
-    (defun C_ToggleUpdateRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleUpdateRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_UPDATE-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -320,13 +320,13 @@
             )
         )
     )
-    (defun C_ToggleModifyCreatorRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleModifyCreatorRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_MODIFY-CREATOR-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -335,13 +335,13 @@
             )
         )
     )
-    (defun C_ToggleModifyRoyaltiesRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleModifyRoyaltiesRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -350,13 +350,13 @@
             )
         )
     )
-    (defun C_ToggleTransferRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_ToggleTransferRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool account:string toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC|C>TG_TRANSFER-R id son account toggle)
                 (ref-DPDC::XE_DeployAccountWNE account id son)
@@ -366,13 +366,13 @@
         )
     )
     ;;
-    (defun C_MoveCreateRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_MoveCreateRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool new-account:string)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum5 id son))
             )
             (with-capability (DPDC|C>MV_CREATE-R id son old-account new-account)
@@ -382,13 +382,13 @@
             )
         )
     )
-    (defun C_MoveRecreateRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_MoveRecreateRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool new-account:string)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum6 id son))
             )
             (with-capability (DPDC|C>MV_RECREATE-R id son old-account new-account)
@@ -398,13 +398,13 @@
             )
         )
     )
-    (defun C_MoveSetUriRole:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_MoveSetUriRole:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool new-account:string)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (old-account:string (ref-DPDC::UR_Verum10 id son))
             )
             (with-capability (DPDC|C>MV_SET-URI-R id son old-account new-account)
@@ -419,7 +419,7 @@
         (require-capability (DPDC|C>TG_ADD-QTY-R id account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Rnaq id account toggle)
             (ref-DPDC::XE_U|VerumRoles id true 3 toggle account)
@@ -429,7 +429,7 @@
         (require-capability (DPDC|C>FRZ-ACC id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 ;;
             )
             (ref-DPDC::XE_U|Frozen id son account toggle)
@@ -440,7 +440,7 @@
         (require-capability (DPDC|C>TG_EXEMPTION-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 ;;
             )
             (ref-DPDC::XE_U|Exemption id son account toggle)
@@ -451,7 +451,7 @@
         (require-capability (DPDC|C>TG_BURN-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Burn id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 4 toggle account)
@@ -461,7 +461,7 @@
         (require-capability (DPDC|C>TG_UPDATE-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Update id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 7 toggle account)
@@ -471,7 +471,7 @@
         (require-capability (DPDC|C>TG_MODIFY-CREATOR-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|ModifyCreator id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 8 toggle account)
@@ -481,7 +481,7 @@
         (require-capability (DPDC|C>TG_MODIFY-ROYALTIES-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|ModifyRoyalties id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 9 toggle account)
@@ -491,7 +491,7 @@
         (require-capability (DPDC|C>TG_TRANSFER-R id son account toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Transfer id son account toggle)
             (ref-DPDC::XE_U|VerumRoles id son 11 toggle account)
@@ -502,7 +502,7 @@
         (require-capability (DPDC|C>MV_CREATE-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Create id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 5 false old-account)
@@ -514,7 +514,7 @@
         (require-capability (DPDC|C>MV_RECREATE-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Recreate id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 6 false old-account)
@@ -526,7 +526,7 @@
         (require-capability (DPDC|C>MV_SET-URI-R id son old-account new-account))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|SetNewUri id son old-account false)
             (ref-DPDC::XE_U|VerumRoles id son 10 false old-account)

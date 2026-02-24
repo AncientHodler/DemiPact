@@ -24,7 +24,7 @@
 (let
     (
         (patron:string KST.ANHD)
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (split-kda:[decimal] 
             (ref-DALOS::URC_SplitKDAPrices
                 patron
@@ -64,7 +64,7 @@
     )
     (let
         (
-            (ref-TS02-C3:module{TalosStageTwo_ClientThree} TS02-C3)
+            (ref-TS02-C3:module{TalosStageTwo_ClientThreeV1} TS02-C3)
             (ref-ANK:module{AcquisitionAnchors} AQP-ANK)
         )
         (ref-TS02-C3::AQP|C_IssueTrueFungibleAnchor patron "Oronchor" "OURO-98c486052a51" 8 50.0 750.0)

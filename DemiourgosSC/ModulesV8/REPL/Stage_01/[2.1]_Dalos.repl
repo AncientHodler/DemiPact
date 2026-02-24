@@ -52,6 +52,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
+
         )
         (ref-coin::create-account KC.KADN_NAME_0004 (read-keyset "KEY_KDA_DalosAutostake"))
         (ref-coin::create-account KC.KADN_NAME_0005 (read-keyset "KEY_KDA_DalosVesting"))

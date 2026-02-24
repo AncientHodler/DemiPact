@@ -60,8 +60,8 @@
         )
     )
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     ;;
     ;;<====>
     ;;POLICY
@@ -246,7 +246,7 @@
     (defun C_SetupKosonicATS (index-name:string hot-rbt:string decay:integer)
         (let
             (
-                (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
+                (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
                 (patron:string AOZ|SC_NAME)
                 (EsothericKosonID:string (UR_PrimalTrueFungible 2))
                 (AncientKosonID:string (UR_PrimalTrueFungible 3))

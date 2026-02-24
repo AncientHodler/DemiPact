@@ -1,6 +1,6 @@
 (module SAMPLE GOV
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
     ;;
     ;;<========>
@@ -11,10 +11,10 @@
     (defcap GOV ()                          (compose-capability (GOV|SAMPLE_ADMIN)))
     (defcap GOV|SAMPLE_ADMIN ()             (enforce-guard GOV|MD_SAMPLE))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     (defun GOV|CollectiblesKey ()           (+ (GOV|NS_Use) ".dh_sc_dpdc-keyset"))
     ;;
     ;; [SC-Names]
@@ -27,8 +27,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|SAMPLE|CALLER ()
         true
@@ -39,7 +39,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -57,7 +57,7 @@
         (with-capability (GOV|SAMPLE_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -73,7 +73,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DPDC:module{OuronetPolicy} DPDC)
+                (ref-P|DPDC:module{OuronetPolicyV1} DPDC)
                 (mg:guard (create-capability-guard (P|SAMPLE|CALLER)))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
@@ -82,7 +82,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -93,7 +93,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -128,14 +128,14 @@
 (let
     
     (
-        (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
-        (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
+        (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
+        (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-KPAY)
         ;;
-        (ref-U|G:module{OuronetGuards} U|G)
-        (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-U|G:module{OuronetGuardsV1} U|G)
+        (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
@@ -206,7 +206,7 @@
 (let
     (
         (ref-DEMIPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         ;;
         (KpayID:string (ref-DEMIPAD-KPAY::UR_KpayID))
     )

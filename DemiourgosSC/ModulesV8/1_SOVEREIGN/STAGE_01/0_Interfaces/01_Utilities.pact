@@ -1,7 +1,7 @@
 ;;
 ;;  [1]      [U|CT]
 ;;
-(interface OuronetConstants
+(interface OuronetConstantsV1
     @doc "Exported Constants as Functions from this Module via interface"
     ;;
     (defun CT_NS_USE ())
@@ -94,7 +94,7 @@
     (defun CT_N76 ())
     (defun CT_N77 ())
 )
-(interface DiaKdaPid
+(interface DiaKdaPidV1
     @doc "Exposes the UR Function that Reads KDA Price in Dollars (KDA-PID) via Dia Oracle on Chain 2"
     ;;
     (defun UR|KDA-PID:decimal ())
@@ -102,7 +102,7 @@
 ;;
 ;;  [2]      [U|G]
 ;;
-(interface OuronetGuards
+(interface OuronetGuardsV1
     @doc "Exported Functions from this Module via interface"
     ;;
     (defun UC_Try (g:guard))
@@ -115,7 +115,7 @@
 ;;
 ;;  [3]      [U|ST]
 ;;
-(interface OuronetGasStation
+(interface OuronetGasStationV1
     @doc "Exported Ouronet Gas Station Functions"
     ;;
     (defun UR_chain-gas-price ())
@@ -136,7 +136,7 @@
 ;;
 ;;  [4]      [U|RS]
 ;;
-(interface ReservedAccounts
+(interface ReservedAccountsV1
     @doc "Exported Reserved Account Functions"
     ;;
     (defun UEV_CheckReserved:string (account:string))
@@ -145,7 +145,7 @@
 ;;
 ;;  [5]      [U|LST]
 ;;
-(interface StringProcessor
+(interface StringProcessorV1
     @doc "Exported List and String Processor Functions"
     ;;
     (defun UC_AppL:list (in:list item))
@@ -169,7 +169,7 @@
 ;;
 ;;  [6]      [U|INT]
 ;;
-(interface OuronetIntegersV2
+(interface OuronetIntegersV1
     @doc "Exported Integer Functions"
     (defschema NonceSplitter
         negative-nonces:[integer]
@@ -197,7 +197,7 @@
 ;;
 ;;  [7]      [U|DEC]
 ;;
-(interface OuronetDecimals
+(interface OuronetDecimalsV1
     @doc "Exported Decimal Functions"
     ;;
     (defun UC_AddArray:[decimal] (array:[[decimal]]))
@@ -212,7 +212,7 @@
 ;;
 ;;  [8]      [U|DALOS]
 ;;
-(interface UtilityDalosV3
+(interface UtilityDalosV1
     @doc "Exported Utility Functions for the DALOS Module \
     \ \
     \ Added <UC_TenTwentyThirtyFourtySplit>"
@@ -243,7 +243,7 @@
 ;;
 ;;  [9]      [U|ATS]
 ;;
-(interface UtilityAtsV2
+(interface UtilityAtsV1
     @doc "Exported Utility Functions for the ATS and ATSU Modules"
     ;;
     (defschema Awo
@@ -280,7 +280,7 @@
 ;;
 ;;  [10]     [U|DPTF]
 ;;
-(interface UtilityDptf
+(interface UtilityDptfV1
     @doc "Exported Utility Functions for the DPTF Module \
         \ Commented Functions are internal use only and have no use outside the module"
     ;;
@@ -308,7 +308,7 @@
 ;;  [11]     [U|VST]
 ;;
 
-(interface UtilityVstV2
+(interface UtilityVstV1
     @doc "Exported Utility Functions for the VST Module"
     ;;
     (defun UC_MakeVestingDateList:[time] (offset:integer duration:integer milestones:integer))
@@ -328,9 +328,8 @@
 ;;
 ;;  [12]     [U|SWP]
 ;;
-(interface UtilitySwpV2
-    @doc "Exported Utility Functions for the SWP Module \
-    \ V2 adds Reverse Swap Computation Functions, and fixes Stable Swap math"
+(interface UtilitySwpV1
+    @doc "Exported Utility Functions for the SWP Module"
     ;;
     ;;Raw Swap INPUT Data - <drsi> and <irsi>
     ;;Data needed to perform the actual swap computation with no fees.
@@ -473,7 +472,7 @@
 ;;
 ;;  [13]     [U|BFS]
 ;;
-(interface BreadthFirstSearch
+(interface BreadthFirstSearchV1
     @doc "Interface exposing a Breadth-First-Search Implementation on Pact \
     \ Used in the SWP Modules to compute Paths between SWPair Tokens."
     ;;

@@ -34,14 +34,14 @@
 
 (let
     (
-        (ref-U|G:module{OuronetGuards} U|G)
-        (ref-TFT:module{TrueFungibleTransferV9} TFT)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-        (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
-        (ref-P|SPARK:module{OuronetPolicy} DEMIPAD-SPARK)
-        (ref-P|SNAKES:module{OuronetPolicy} DEMIPAD-SNAKES)
-        (ref-P|CUSTODIANS:module{OuronetPolicy} DEMIPAD-CUSTODIANS)
-        (ref-P|TS02-DPAD:module{OuronetPolicy} TS02-DPAD)
+        (ref-U|G:module{OuronetGuardsV1} U|G)
+        (ref-TFT:module{TrueFungibleTransferV1} TFT)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+        (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
+        (ref-P|SPARK:module{OuronetPolicyV1} DEMIPAD-SPARK)
+        (ref-P|SNAKES:module{OuronetPolicyV1} DEMIPAD-SNAKES)
+        (ref-P|CUSTODIANS:module{OuronetPolicyV1} DEMIPAD-CUSTODIANS)
+        (ref-P|TS02-DPAD:module{OuronetPolicyV1} TS02-DPAD)
         (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
         (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
         (pkey:string DEMIPAD.PP)
@@ -103,8 +103,8 @@
 
     (let
         (
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+            (ref-DALOS:module{OuronetDalosV1} DALOS)
             (split-kda:[decimal]
                 (ref-DALOS::URC_SplitKDAPrices
                     KST.ANHD
@@ -182,8 +182,8 @@
 
     (let
         (
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
-            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
+            (ref-DALOS:module{OuronetDalosV1} DALOS)
             (split-kda:[decimal]
                 (ref-DALOS::URC_SplitKDAPrices
                     KST.ANHD
@@ -249,7 +249,7 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -264,11 +264,11 @@
     )
     (let
         (
-            (ref-VST:module{VestingV5} VST)
-            (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-            (ref-TS01-C2:module{TalosStageOne_ClientTwoV8} TS01-C2)
-            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+            (ref-VST:module{VestingV1} VST)
+            (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+            (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
             (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
             (patron:string KST.ANHD)
@@ -329,7 +329,7 @@
 )
 (let
     (
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         (patron:string KST.ANHD)
         (shareholders-id "E|DH-98c486052a51")
         (s-key:string DEMIPAD-SNAKES.SNAKES|INFO)
@@ -376,7 +376,7 @@
 )
 (let
     (
-        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+        (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         (patron:string KST.ANHD)
         (custodians-id "DHOC-98c486052a51")
         (s-key:string DEMIPAD-CUSTODIANS.CUSTODIANS|INFO)
@@ -430,8 +430,8 @@
 
     (let
         (
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
-            (ref-DALOS:module{OuronetDalosV6} DALOS)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+            (ref-DALOS:module{OuronetDalosV1} DALOS)
             (split-kda:[decimal]
                 (ref-DALOS::URC_SplitKDAPrices
                     KST.ANHD
@@ -509,7 +509,7 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD
@@ -524,14 +524,14 @@
     )
     (let
         (
-            (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
-            (ref-P|KPAY:module{OuronetPolicy} DEMIPAD-KPAY)
-            (ref-P|TS02-DPAD:module{OuronetPolicy} TS02-DPAD)
+            (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
+            (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-KPAY)
+            (ref-P|TS02-DPAD:module{OuronetPolicyV1} TS02-DPAD)
             ;;
-            (ref-U|G:module{OuronetGuards} U|G)
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-U|G:module{OuronetGuardsV1} U|G)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV2} TS02-DPAD)
+            (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
             ;;
             ;;
             (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))

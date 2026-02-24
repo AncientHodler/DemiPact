@@ -1,6 +1,6 @@
 (module U|VST GOV
     ;;
-    (implements UtilityVstV2)
+    (implements UtilityVstV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -10,7 +10,7 @@
     (defcap GOV|U|VST_ADMIN ()
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (g:guard (ref-U|CT::CT_GOV|UTILS))
             )
             (enforce-guard g)
@@ -30,7 +30,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -116,7 +116,7 @@
     (defun UCX_SpecialID:[string] (dptf-name:string dptf-ticker:string special-name:string special-prefix:string)
         (let
             (
-                (ref-U|CT:module{OuronetConstants} U|CT)
+                (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (max-name:integer (ref-U|CT::CT_MAX_TOKEN_NAME_LENGTH))
                 (max-ticker:integer (ref-U|CT::CT_MAX_TOKEN_TICKER_LENGTH))
                 (caron:string "^")

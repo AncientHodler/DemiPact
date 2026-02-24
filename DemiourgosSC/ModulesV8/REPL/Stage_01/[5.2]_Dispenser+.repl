@@ -115,6 +115,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
+
         )
         ;;Issue
         (ref-coin::create-account KC2.KADN_NAME_a (read-keyset "KEY_KDA_Dispenser"))
@@ -137,8 +138,8 @@
     )
     (let
         (
-            (ref-DALOS:module{OuronetDalosV6} DALOS)
-            (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+            (ref-DALOS:module{OuronetDalosV1} DALOS)
+            (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
             ;;
             (OuroID:string (ref-DALOS::UR_OuroborosID))
         )
@@ -199,12 +200,12 @@
 
 (let
     (
-        (ref-U|G:module{OuronetGuards} U|G)
-        (ref-P|DALOS:module{OuronetPolicy} DALOS)
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
-        (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+        (ref-U|G:module{OuronetGuardsV1} U|G)
+        (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
+        (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (ref-AOZ:module{AgeOfZalmoxis} AOZ)
-        (ref-P|DSP:module{OuronetPolicy} DSP)
+        (ref-P|DSP:module{OuronetPolicyV1} DSP)
         (ref-DSP:module{Dispenser} DSP)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")

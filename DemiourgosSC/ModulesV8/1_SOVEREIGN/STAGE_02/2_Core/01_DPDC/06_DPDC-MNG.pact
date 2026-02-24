@@ -1,7 +1,7 @@
 (module DPDC-MNG GOV
     ;;
-    (implements OuronetPolicy)
-    (implements DpdcManagement)
+    (implements OuronetPolicyV1)
+    (implements DpdcManagementV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -11,14 +11,14 @@
     (defcap GOV ()                          (compose-capability (GOV|DPDC-MNG_ADMIN)))
     (defcap GOV|DPDC-MNG_ADMIN ()           (enforce-guard GOV|MD_DPDC-MNG))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|DPDC-MNG|CALLER ()
         true
@@ -29,7 +29,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -47,7 +47,7 @@
         (with-capability (GOV|DPDC-MNG_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -63,8 +63,8 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DPDC:module{OuronetPolicy} DPDC)
-                (ref-P|DPDC-C:module{OuronetPolicy} DPDC-C)
+                (ref-P|DPDC:module{OuronetPolicyV1} DPDC)
+                (ref-P|DPDC-C:module{OuronetPolicyV1} DPDC-C)
                 (mg:guard (create-capability-guard (P|DPDC-MNG|CALLER)))
             )
             (ref-P|DPDC::P|A_AddIMP mg)
@@ -74,7 +74,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -85,7 +85,7 @@
     ;;{1}
     ;;{2}
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     ;;
     ;;<==========>
@@ -99,7 +99,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::CAP_Owner id son)
             (ref-DPDC::UEV_CanUpgradeON id son)
@@ -109,7 +109,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (if toggle
                 (ref-DPDC::UEV_CanPauseON id son)
@@ -125,8 +125,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (nonce-class:integer (ref-DPDC::UR_NonceClass id true nonce))
             )
             (enforce
@@ -151,7 +151,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;Account Ownership - via Debit Function
             ;;Correct burn role
@@ -172,7 +172,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (amounts:[integer] (ref-DPDC::UR_AccountNoncesSupplies account id true nonces))
             )
             (compose-capability (DPDC-MNG|C>WIPE-SFT account id nonces amounts))
@@ -181,7 +181,7 @@
     (defcap DPDC-MNG|C>WIPE-SFT (account:string id:string nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;Semi-Fungible <id> is frozen on <account>
             (ref-DPDC::UEV_AccountFreezeState id true account true)
@@ -198,8 +198,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;Account Ownership
             (ref-DALOS::CAP_EnforceAccountOwnership account)
@@ -215,7 +215,7 @@
         @event
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;Account Ownership - via Debit Function
             ;;Correct Role
@@ -238,7 +238,7 @@
     (defcap DPDC-MNG|C>WIPE-NFT (account:string id:string nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;Semi-Fungible <id> is frozen on <account>
             (ref-DPDC::UEV_AccountFreezeState id false account true)
@@ -255,7 +255,7 @@
         (account:string id:string son:bool nonces:[integer] amounts:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (l1:integer (length nonces))
                 (l2:integer (length amounts))
             )
@@ -295,8 +295,8 @@
     ;;
     ;;<=======>
     ;;FUNCTIONS
-    (defun UC_TakePureWipe:object{DpdcManagement.RemovableNonces} (input:object{DpdcManagement.RemovableNonces} size:integer)
-        @doc "Takes <size> and returns a smaller |object{DpdcManagement.RemovableNonces}|"
+    (defun UC_TakePureWipe:object{DpdcManagementV1.RemovableNonces} (input:object{DpdcManagementV1.RemovableNonces} size:integer)
+        @doc "Takes <size> and returns a smaller |object{DpdcManagementV1.RemovableNonces}|"
         (let
             (
                 (nonces:[integer] (at "r-nonces" input))
@@ -310,13 +310,13 @@
             )
         )
     )
-    (defun UC_WipeCumulator:object{IgnisCollectorV2.OutputCumulator}
-        (id:string son:bool removable-nonces-obj:object{DpdcManagement.RemovableNonces})
+    (defun UC_WipeCumulator:object{IgnisCollectorV1.OutputCumulator}
+        (id:string son:bool removable-nonces-obj:object{DpdcManagementV1.RemovableNonces})
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (no-of-nonces:integer (length (at "r-nonces" removable-nonces-obj)))
             )
             (ref-IGNIS::UDC_ConstructOutputCumulator
@@ -332,12 +332,12 @@
     )
     ;;{F0}  [UR]
     ;;{F1}  [URC]
-    (defun URDC_WipePure:object{DpdcManagement.RemovableNonces} (account:string id:string son:bool)
-        @doc "Uses Expensive Read Functions to obtain a |object{DpdcManagement.RemovableNonces}| that can be used \
+    (defun URDC_WipePure:object{DpdcManagementV1.RemovableNonces} (account:string id:string son:bool)
+        @doc "Uses Expensive Read Functions to obtain a |object{DpdcManagementV1.RemovableNonces}| that can be used \
         \ to execute a <C_WipePure>, bypassing the expensive gas costs of using (keys...) or (select...) functions"
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (URC_FilterAccountViableNonces account id son (ref-DPDC::URD_AccountNonces account id son))
         )
@@ -345,7 +345,7 @@
     (defun URC_FilterClassZeroNonces:[integer] (id:string son:bool nonces:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (filter 
                 (lambda 
@@ -356,12 +356,12 @@
             )
         )
     )
-    (defun URC_FilterAccountViableNonces:object{DpdcManagement.RemovableNonces}
+    (defun URC_FilterAccountViableNonces:object{DpdcManagementV1.RemovableNonces}
         (account:string id:string son:bool nonces:[integer])
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (matrix:[[integer]]
                     (fold
                         (lambda
@@ -403,7 +403,7 @@
     )
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
-    (defun UDC_RemovableNonces:object{DpdcManagement.RemovableNonces}
+    (defun UDC_RemovableNonces:object{DpdcManagementV1.RemovableNonces}
         (a:[integer] b:[integer])
         {"r-nonces"     : a
         ,"r-amounts"    : b}
@@ -412,13 +412,13 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_Control:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_Control:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool cu:bool cco:bool ccc:bool casr:bool ctncr:bool cf:bool cw:bool cp:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
             )
             (with-capability (DPDC-MNG|S>CTRL id son)
@@ -430,13 +430,13 @@
             )
         )
     )
-    (defun C_TogglePause:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_TogglePause:object{IgnisCollectorV1.OutputCumulator}
         (id:string son:bool toggle:bool)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC-MNG|S>TG_PAUSE id son toggle)
                 (XI_TogglePause id son toggle)
@@ -447,14 +447,14 @@
     ;;
     ;;  [CREDIT-SINGLE]
     ;;  [SFT]
-    (defun C_AddQuantity:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_AddQuantity:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string nonce:integer amount:integer)
         @doc "Add Quantity for an SFT"
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC-MNG|C>ADD-QUANTITY account id nonce amount)
                 (XI_IncreaseClassZeroSemiFungible account id nonce amount)
@@ -463,14 +463,14 @@
         )
     )
     ;;  [NFT]
-    (defun C_RespawnNFT:object{IgnisCollectorV2.OutputCumulator} (account:string id:string nonce:integer)
+    (defun C_RespawnNFT:object{IgnisCollectorV1.OutputCumulator} (account:string id:string nonce:integer)
         @doc "Respawns a previously burned NFT"
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-DPDC-C:module{DpdcCreateV1} DPDC-C)
             )
             (with-capability (DPDC-MNG|C>RESPAWN-NFT account id nonce)
                 (ref-DPDC-C::XB_CreditNFT-Nonce account id nonce 1)
@@ -481,13 +481,13 @@
     ;;
     ;;  [DEBIT-SINGLE]
     ;;  [SFT]
-    (defun C_BurnSFT:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_BurnSFT:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC-MNG|C>BURN-SFT account id nonce amount)
                 ;;Burn Semifungible and Update Supplies
@@ -497,13 +497,13 @@
             )
         )
     )
-    (defun C_WipeSlim:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WipeSlim:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string nonce:integer amount:integer)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (with-capability (DPDC-MNG|C>WIPE-SFT-NONCE-PARTIALLY account id nonce amount)
                 ;;Burn Semifungible and Update Supplies
@@ -514,13 +514,13 @@
         )
     )
     ;;  [NFT]
-    (defun C_BurnNFT:object{IgnisCollectorV2.OutputCumulator} (account:string id:string nonce:integer)
+    (defun C_BurnNFT:object{IgnisCollectorV1.OutputCumulator} (account:string id:string nonce:integer)
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-DPDC-C:module{DpdcCreateV1} DPDC-C)
             )
             (with-capability (DPDC-MNG|C>BURN-NFT account id nonce)
                 (ref-DPDC-C::XI_DecreaseClassZeroNonFungibles id account [nonce] false)
@@ -529,14 +529,14 @@
         )
     )
     ;;  [SFT+NFT]
-    (defun C_WipeNonce:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WipeNonce:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string son:bool nonce:integer)
         @doc "Wipes a viable SFT or NFT Nonce in its entirety"
         (UEV_IMC)
         (let
             (
-                (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (owner:string (ref-DPDC::UR_OwnerKonto id son))
             )
             (if son
@@ -559,7 +559,7 @@
     ;;
     ;;  [DEBIT-MULTIPLE]
     ;;  [SFT+NFT]
-    (defun C_WipeHeavy:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WipeHeavy:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string son:bool)
         @doc "Wipes all viable <id> Nonces of an SFT or NFT <account> \
             \ \
@@ -569,8 +569,8 @@
         (UEV_IMC)
         (C_WipePure account id son (URDC_WipePure account id son))
     )
-    (defun C_WipePure:object{IgnisCollectorV2.OutputCumulator}
-        (account:string id:string son:bool removable-nonces-obj:object{DpdcManagement.RemovableNonces})
+    (defun C_WipePure:object{IgnisCollectorV1.OutputCumulator}
+        (account:string id:string son:bool removable-nonces-obj:object{DpdcManagementV1.RemovableNonces})
         @doc "Wipes all <id> Nonces of an SFT or NFT <account>, presented via an <removable-nonces-obj> object \
             \ \
             \ The object must be pre-read (dirty read) \
@@ -599,14 +599,14 @@
             (UC_WipeCumulator id son removable-nonces-obj)
         )
     )
-    (defun C_WipeClean:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WipeClean:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string son:bool nonces:[integer])
         @doc "Wipes <id> select viable <nonces> of an SFT or NFT <account> \
             \ Fails if a single nonce is not viable"
         (UEV_IMC)
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (C_WipePure account id son
                 (UDC_RemovableNonces
@@ -616,7 +616,7 @@
             )
         )
     )
-    (defun C_WipeDirty:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_WipeDirty:object{IgnisCollectorV1.OutputCumulator}
         (account:string id:string son:bool nonces:[integer])
         @doc "Wipes <id> select <nonces> of an SFT or NFT <account> (at least 1 nonce must be viable)"
         (UEV_IMC)
@@ -627,7 +627,7 @@
         (require-capability (DPDC-MNG|S>CTRL id son))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|Specs id son 
                 (ref-DPDC::UDC_Control id son cu cco ccc casr ctncr cf cw cp)
@@ -638,7 +638,7 @@
         (require-capability (DPDC-MNG|S>TG_PAUSE id son toggle))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (ref-DPDC::XE_U|IsPaused id son toggle)
         )
@@ -648,8 +648,8 @@
         (require-capability (DPDC-MNG|C>ADD-QUANTITY account id nonce amount))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-DPDC-C:module{DpdcCreateV1} DPDC-C)
                 (nonce-supply:integer (ref-DPDC::UR_NonceSupply id true nonce))
             )
             ;;Credit SFT Nonce
@@ -665,8 +665,8 @@
         (require-capability (DPDC-MNG|C>IZ-CLASS-ZERO id true nonces))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-DPDC-C:module{DpdcCreateV1} DPDC-C)
                 ;;
                 (l1:integer (length nonces))
             )
@@ -699,8 +699,8 @@
         (require-capability (DPDC-MNG|C>IZ-CLASS-ZERO id false nonces))
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
-                (ref-DPDC-C:module{DpdcCreateV4} DPDC-C)
+                (ref-DPDC:module{DpdcV1} DPDC)
+                (ref-DPDC-C:module{DpdcCreateV1} DPDC-C)
                 ;;
                 (l1:integer (length nonces))
             )

@@ -260,6 +260,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
+
         )
         ;;Create Accounts:
         (ref-coin::create-account KC.KADN_NAME_0000 (read-keyset "KEY_KDA_AncientHodler"))  ;;Fuel KDA

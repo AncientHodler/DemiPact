@@ -52,6 +52,13 @@
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
 (load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
+(load "Stage02_Tester.repl")
 (load "Z.repl")
 (load "Z.repl")
 (load "Z.repl")
@@ -91,10 +98,3 @@
    no trusted hand. The emission curve is set. The ceiling slides,\n\
    These rules ask nothing of future governance — no vote, no foundation,\n\
    A chain is only as honest as the rules written into its first block.\n\
-   ════════════════════════════════════════════\n\n\
-  "Block {} | Chain Zero | StoaChain Genesis\n\
-(format
-(at "block-height" (chain-data))
-(at "block-height" (chjain-data))
-(floor (/ 1234245.0 623.2))
-(floor (/ 12345.0 123.2))

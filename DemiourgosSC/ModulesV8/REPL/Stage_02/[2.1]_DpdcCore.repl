@@ -95,6 +95,7 @@
     (let
         (
             (ref-coin:module{fungible-v2} coin)
+
         )
         ;;Create Accounts:
         (ref-coin::create-account KC2.KADN_NAME_0001 (read-keyset "KEY_KDA_Collectables"))
@@ -117,7 +118,7 @@
     )
     (let
         (
-            (ref-TS01-A:module{TalosStageOne_AdminV6} TS01-A)
+            (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
             (patron:string KST.ANHD)
         )
         (ref-TS01-A::DALOS|A_DeploySmartAccount KC2.DPTS_NAME_0001 (keyset-ref-guard "free.dh_sc_dpdc-keyset")  KC2.KADN_NAME_0001 patron KC2.PBLC_0001)

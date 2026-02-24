@@ -26,11 +26,11 @@
 
     (let
         (
-            (ref-P|DPAD:module{OuronetPolicy} DEMIPAD)
-            (ref-P|STOAICO:module{OuronetPolicy} STOAICO)
+            (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
+            (ref-P|STOAICO:module{OuronetPolicyV1} STOAICO)
             ;;
-            (ref-U|G:module{OuronetGuards} U|G)
-            (ref-TS01-C1:module{TalosStageOne_ClientOneV6} TS01-C1)
+            (ref-U|G:module{OuronetGuardsV1} U|G)
+            (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
             (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
             ;;
             (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
@@ -80,7 +80,7 @@
 )
 (let
     (
-        (ref-DALOS:module{OuronetDalosV6} DALOS)
+        (ref-DALOS:module{OuronetDalosV1} DALOS)
         (split-kda:[decimal]
             (ref-DALOS::URC_SplitKDAPrices
                 KST.ANHD

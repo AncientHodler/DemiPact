@@ -1,20 +1,20 @@
 (interface AcquisitionAnchors
     (defun GOV|AQP|SC_NAME ())
     ;;
-    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
     )
-    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
     )
-    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
     )
-    (defun C_RevokeAnchor:object{IgnisCollectorV2.OutputCumulator} (anchor-id:string))
+    (defun C_RevokeAnchor:object{IgnisCollectorV1.OutputCumulator} (anchor-id:string))
 )
 (module AQP-ANK GOV
     ;;
-    (implements OuronetPolicy)
+    (implements OuronetPolicyV1)
     (implements AcquisitionAnchors)
     ;;
     ;;<========>
@@ -28,10 +28,10 @@
     (defcap GOV ()                          (compose-capability (GOV|ANK_ADMIN)))
     (defcap GOV|ANK_ADMIN ()                (enforce-guard GOV|MD_AQP-ANK))
     ;;{G3}
-    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()                 (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;; [Keys]
-    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_NS_USE)))
+    (defun GOV|NS_Use ()                    (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_NS_USE)))
     (defun GOV|AqpKey ()                    (+ (GOV|NS_Use) ".dh_sc_aqp-keyset"))
     ;;
     ;; [SC-Names]
@@ -44,8 +44,8 @@
     ;;POLICY
     ;;{P1}
     ;;{P2}
-    (deftable P|T:{OuronetPolicy.P|S})
-    (deftable P|MT:{OuronetPolicy.P|MS})
+    (deftable P|T:{OuronetPolicyV1.P|S})
+    (deftable P|MT:{OuronetPolicyV1.P|MS})
     ;;{P3}
     (defcap P|ANK|CALLER ()
         true
@@ -56,7 +56,7 @@
     )
     ;;{P4}
     (defconst P|I                   (P|Info))
-    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV6} DALOS)) (ref-DALOS::P|Info)))
+    (defun P|Info ()                (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::P|Info)))
     (defun P|UR:guard (policy-name:string)
         (at "policy" (read P|T policy-name ["policy"]))
     )
@@ -74,7 +74,7 @@
         (with-capability (GOV|ANK_ADMIN)
             (let
                 (
-                    (ref-U|LST:module{StringProcessor} U|LST)
+                    (ref-U|LST:module{StringProcessorV1} U|LST)
                     (dg:guard (create-capability-guard (SECURE)))
                 )
                 (with-default-read P|MT P|I
@@ -90,7 +90,7 @@
     (defun P|A_Define ()
         (let
             (
-                (ref-P|DALOS:module{OuronetPolicy} DALOS)
+                (ref-P|DALOS:module{OuronetPolicyV1} DALOS)
                 (mg:guard (create-capability-guard (P|ANK|CALLER)))
             )
             (ref-P|DALOS::P|A_AddIMP mg)
@@ -99,7 +99,7 @@
     (defun UEV_IMC ()
         (let
             (
-                (ref-U|G:module{OuronetGuards} U|G)
+                (ref-U|G:module{OuronetGuardsV1} U|G)
             )
             (ref-U|G::UEV_Any (P|UR_IMP))
         )
@@ -176,7 +176,7 @@
     ;;
     (deftable ANK|T|Anchors:{ANK|UserSchema})                   ;;Key = <Ouronet-Account> | <Anchor-ID>
     ;;{3}
-    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstants} U|CT)) (ref-U|CT::CT_BAR)))
+    (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                   (CT_Bar))
     (defconst E-ANK
         {"promile"                  : 0.0
@@ -198,8 +198,8 @@
         @event
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (fourth:string (drop 3 (take 4 dptf-id)))
                 (first-two:string (take 2 dptf-id))
             )
@@ -237,8 +237,8 @@
         @event
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             ;;1]<anchor-name> must conform to the same rules as ATS Index Names
             (ref-U|ATS::UEV_AutostakeIndex anchor-name)
@@ -261,8 +261,8 @@
         @event
         (let
             (
-                (ref-U|ATS:module{UtilityAtsV2} U|ATS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-U|ATS:module{UtilityAtsV1} U|ATS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (meta-data:object
                     (ref-DPDC::UR_N|RawMetaData
                         (ref-DPDC::UR_NativeNonceData dpnf-id false 1)
@@ -308,8 +308,8 @@
         @event
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ank-asset:string (UR_AnchoredAsset anchor-id))
             )
             ;;1]<account> must exist
@@ -333,8 +333,8 @@
     (defcap ANK|C>UPDATE-DPDC (account:string anchor-id:string nonces:[integer] son:bool)
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 (ank-asset:string (UR_AnchoredAsset anchor-id))
             )
             ;;1]<account> must exist
@@ -518,7 +518,7 @@
         (account:string anchor-id:string nonces:[integer] nonce-amounts:[integer] direction:bool)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 ;;
                 (ank-promile:decimal (UR_AnchorPromile anchor-id))
                 (dpfs-nonce:integer (UR_SF|AnchorNonce anchor-id))
@@ -563,7 +563,7 @@
         @doc "Outputs how many nonces from <nonces> have the proper MetaData Trait"
         (let
             (
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DPDC:module{DpdcV1} DPDC)
             )
             (fold
                 (lambda
@@ -641,7 +641,7 @@
         (anchors:object{ANK|AssetAnchors} anchor-id:string)
         (let
             (
-                (ref-U|LST:module{StringProcessor} U|LST)
+                (ref-U|LST:module{StringProcessorV1} U|LST)
                 (p1:string (UR_ANK|First anchors))
                 (p2:string (UR_ANK|Second anchors))
                 (p3:string (UR_ANK|Third anchors))
@@ -697,9 +697,9 @@
         \ 2] For DPSFs and DPNFs can be either its Owner or Creator"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
-                (ref-DPDC:module{DpdcV5} DPDC)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-DPDC:module{DpdcV1} DPDC)
                 ;;
                 (ank-asset:string (UR_AnchoredAsset anchor-id))
                 (ank-fungibility:[bool] (UR_AnchorFungibility anchor-id))
@@ -725,8 +725,8 @@
         \ 5] Frozen LP DPTF = Cannot exist as underlaying DPTF-Based Anchor"
         (let
             (
-                (ref-DALOS:module{OuronetDalosV6} DALOS)
-                (ref-DPTF:module{DemiourgosPactTrueFungibleV8} DPTF)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (first-two:string (take 2 dptf-id))
                 (core-dptf-id:string
                     (cond
@@ -743,7 +743,7 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueTrueFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dptf-id:string anchor-precision:integer anchor-promile:decimal dptf-amount:decimal)
         @doc "Issues an Anchor tied to an existing True Fungible Asset \
             \ Costs 1000 IGNIS and 10 KDA"
@@ -751,8 +751,8 @@
         (with-capability (ANK|C>ISSUE-DPTF anchor-name dptf-id anchor-precision anchor-promile dptf-amount)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     ;;
                     (gas-costs:decimal 500.0)
                     (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -792,7 +792,7 @@
             )
         )
     )
-    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueSemiFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dpsf-id:string anchor-precision:integer anchor-promile:decimal dpsf-nonce:integer)
         @doc "Issues an Anchor tied to an existing Semi Fungible Asset \
             \ Costs 1000 IGNIS and 10 KDA"
@@ -801,8 +801,8 @@
         (with-capability (ANK|C>ISSUE-DPSF anchor-name dpsf-id anchor-precision anchor-promile dpsf-nonce)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     ;;
                     (gas-costs:decimal 500.0)
                     (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -842,7 +842,7 @@
             )
         )
     )
-    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_IssueNonFungibleAnchor:object{IgnisCollectorV1.OutputCumulator}
         (patron:string anchor-name:string dpnf-id:string anchor-precision:integer anchor-promile:decimal dpnf-trait-key:string dpnf-trait-value:string)
         @doc "Issues an Anchor tied to an existing Non Fungible Asset \
             \ Costs 1000 IGNIS and 10 KDA"
@@ -851,8 +851,8 @@
         (with-capability (ANK|C>ISSUE-DPNF anchor-name dpnf-id anchor-precision anchor-promile dpnf-trait-key dpnf-trait-value)
             (let
                 (
-                    (ref-DALOS:module{OuronetDalosV6} DALOS)
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     ;;
                     (gas-costs:decimal 500.0)
                     (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -892,14 +892,14 @@
             )
         )
     )
-    (defun C_RevokeAnchor:object{IgnisCollectorV2.OutputCumulator}
+    (defun C_RevokeAnchor:object{IgnisCollectorV1.OutputCumulator}
         (anchor-id:string)
         ;;
         (UEV_IMC)
         (with-capability (ANK|C>REVOKE anchor-id)
             (let
                 (
-                    (ref-IGNIS:module{IgnisCollectorV2} IGNIS)
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 )
                 ;;1]Updates <ANK|T|Anchor> Table
                 (update ANK|T|Anchor anchor-id
@@ -925,7 +925,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-U|DALOS:module{UtilityDalosV3} U|DALOS)
+                (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
                 (anchor-id:string (ref-U|DALOS::UDC_Makeid ank-name))
             )
             (insert ANK|T|Anchor anchor-id
