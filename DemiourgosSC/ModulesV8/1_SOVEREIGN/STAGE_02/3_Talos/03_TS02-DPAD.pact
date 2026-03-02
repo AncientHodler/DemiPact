@@ -7,12 +7,12 @@
     ;;<========>
     ;;GOVERNANCE
     ;;{G1}
-    (defconst GOV|MD_TS02-DPAD        (keyset-ref-guard (GOV|Demiurgoi)))
+    (defconst GOV|MD_TS02-DPAD          (keyset-ref-guard (GOV|Demiurgoi)))
     ;;{G2}
-    (defcap GOV ()                   (compose-capability (GOV|TS02-DPAD_ADMIN)))
-    (defcap GOV|TS02-DPAD_ADMIN ()    (enforce-guard GOV|MD_TS02-DPAD))
+    (defcap GOV ()                      (compose-capability (GOV|TS02-DPAD_ADMIN)))
+    (defcap GOV|TS02-DPAD_ADMIN ()      (enforce-guard GOV|MD_TS02-DPAD))
     ;;{G3}
-    (defun GOV|Demiurgoi ()         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
+    (defun GOV|Demiurgoi ()             (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
     ;;
     ;;<====>
     ;;POLICY
@@ -76,7 +76,7 @@
                 (ref-P|SPARK:module{OuronetPolicyV1} DEMIPAD-SPARK)
                 (ref-P|SNAKES:module{OuronetPolicyV1} DEMIPAD-SNAKES)
                 (ref-P|CUSTODIANS:module{OuronetPolicyV1} DEMIPAD-CUSTODIANS)
-                (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-KPAY)
+                (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-STOICPAY)
                 (ref-P|STOAICO:module{OuronetPolicyV1} STOAICO)
                 (mg:guard (create-capability-guard (P|TALOS-SUMMONER)))
             )
@@ -147,7 +147,7 @@
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (ref-TS02-C1:module{TalosStageTwo_ClientOneV1} TS02-C1)
                     (ref-TS02-C2:module{TalosStageTwo_ClientTwoV1} TS02-C2)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (lpad:string (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME))
                     (tf:[bool] [true true])
                     (of:[bool] [true false])
@@ -170,7 +170,7 @@
         (with-capability (P|TALOS-SUMMONER)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::A_ToggleOpenForBusiness asset-id toggle)
             )
@@ -181,7 +181,7 @@
         (with-capability (P|TALOS-SUMMONER)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::A_DefinePrice asset-id price)
             )
@@ -192,7 +192,7 @@
         (with-capability (P|TALOS-SUMMONER)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::A_ToggleRetrieval asset-id toggle)
             )
@@ -209,13 +209,13 @@
                 (
                     (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (retrieval-amount:decimal (ref-DEMIPAD::UR_Funds asset-id type))
                     (working-id:string
                         (if (= type 1)
-                            (ref-DALOS::UR_WrappedKadenaID)
+                            (ref-DALOS::UR_WrappedStoaID)
                             (if (= type 2)
-                                (ref-DALOS::UR_LiquidKadenaID)
+                                (ref-DALOS::UR_SilverStoaID)
                                 (ref-DALOS::UR_OuroborosID)
                             )
                         )
@@ -232,7 +232,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::C_TransmitTrueFungible patron client asset-id amount true)
             )      
@@ -242,7 +242,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::C_TransmitOrtoFungible patron client asset-id nonces true)
             )      
@@ -254,7 +254,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -270,7 +270,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -285,7 +285,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::C_TransmitTrueFungible patron client asset-id amount false)
             )      
@@ -295,7 +295,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 )
                 (ref-DEMIPAD::C_TransmitOrtoFungible patron client asset-id nonces false)
             )      
@@ -307,7 +307,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -323,7 +323,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     (c:string (ref-I|OURONET::OI|UC_ShortAccount client))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -340,7 +340,7 @@
             (let
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
-                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV1} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_BuySparks patron buyer sparks-amount iz-native)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -351,7 +351,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV1} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemAllSparks patron redemption-payer account-to-redeem)
             )
@@ -361,7 +361,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
+                    (ref-SPARK:module{SparksV1} DEMIPAD-SPARK)
                 )
                 (ref-SPARK::C_RedemFewSparks patron redemption-payer account-to-redeem redemption-quantity)
             )
@@ -373,7 +373,7 @@
             (let
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
-                    (ref-SNAKES:module{SaleSnakesV2} DEMIPAD-SNAKES)
+                    (ref-SNAKES:module{SaleSnakesV1} DEMIPAD-SNAKES)
                 )
                 (ref-SNAKES::C_Acquire patron buyer nonce amount iz-native)
                 (ref-TS01-A::XB_DynamicFuelKDA)
@@ -385,20 +385,20 @@
             (let
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
-                    (ref-CUSTODIANS:module{SaleCustodiansV2} DEMIPAD-CUSTODIANS)
+                    (ref-CUSTODIANS:module{SaleCustodiansV1} DEMIPAD-CUSTODIANS)
                 )
                 (ref-CUSTODIANS::C_Acquire patron buyer nonce amount iz-native)
                 (ref-TS01-A::XB_DynamicFuelKDA)
             )
         )
     )
-    (defun KPAY|C_BuyKpay (patron:string buyer:string kpay-amount:integer iz-native:bool)
+    (defun KPAY|C_BuyStoicPay (patron:string buyer:string kpay-amount:integer iz-native:bool)
         (with-capability (P|TS)
             (let
                 (
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
-                    (ref-KPAY:module{KadenaPay} DEMIPAD-KPAY)
-                    (acquisition-text:string (ref-KPAY::C_BuyKpay patron buyer kpay-amount iz-native))
+                    (ref-KPAY:module{StoicPayV1} DEMIPAD-STOICPAY)
+                    (acquisition-text:string (ref-KPAY::C_BuyStoicPay patron buyer kpay-amount iz-native))
                 )
                 (ref-TS01-A::XB_DynamicFuelKDA)
                 acquisition-text

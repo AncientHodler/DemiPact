@@ -1,4 +1,4 @@
-(interface InfoOneV5
+(interface InfoOneV1
     @doc "Exposes Functions from Information One Module"
     ;;
     ;;
@@ -82,7 +82,7 @@
 )
 (module INFO-ONE GOV
     ;;
-    (implements InfoOneV5)
+    (implements InfoOneV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -1168,11 +1168,11 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
-                (coil-data:object{AutostakeV6.CoilData}
+                (coil-data:object{AutostakeV1.CoilData}
                     (ref-ATS::URC_RewardBearingTokenAmounts ats rt amount)
                 )
                 (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1223,11 +1223,11 @@
             (
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
-                (coil-data:object{AutostakeV6.CoilData} 
+                (coil-data:object{AutostakeV1.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats rt amount dayz)
                 )
                 (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1288,12 +1288,12 @@
         (let
             (
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 ;;<ats1>
-                (coil1-data:object{AutostakeV6.CoilData} 
+                (coil1-data:object{AutostakeV1.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                 )
                 (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1302,7 +1302,7 @@
                 (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                 ;;
                 ;;<ats2>
-                (coil2-data:object{AutostakeV6.CoilData} 
+                (coil2-data:object{AutostakeV1.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats2 c-rbt1 c-rbt1-amount)
                 )
                 (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -1362,12 +1362,12 @@
             (
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
                 ;;<ats1>
-                (coil1-data:object{AutostakeV6.CoilData} 
+                (coil1-data:object{AutostakeV1.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                 )
                 (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1376,7 +1376,7 @@
                 (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                 ;;
                 ;;<ats2>
-                (coil2-data:object{AutostakeV6.CoilData} 
+                (coil2-data:object{AutostakeV1.CoilData} 
                     (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats2 c-rbt1 c-rbt1-amount dayz)
                 )
                 (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -1448,7 +1448,7 @@
                 (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
@@ -1551,7 +1551,7 @@
                 (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ref-ATSU:module{AutostakeUsageV1} ATSU)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
@@ -1605,7 +1605,7 @@
                 (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;
@@ -1674,7 +1674,7 @@
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
                 (dptf:string (ref-DPTF::UR_Frozen frozen-dptf))
@@ -1705,7 +1705,7 @@
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
                 (dptf:string (ref-DPOF::UR_Sleeping sleeping-dpof))

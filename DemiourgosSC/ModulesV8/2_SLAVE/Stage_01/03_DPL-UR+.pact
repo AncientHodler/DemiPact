@@ -1,4 +1,4 @@
-(interface DeployerReadsV4
+(interface DeployerReadsV1
     ;;
     (defun UC_TrimDecimalTrailingZeros:string (number:decimal))
     (defun UC_ConvertPrice:string (input-price:decimal))
@@ -33,7 +33,7 @@
 )
 (module DPL-UR GOV
     ;;
-    (implements DeployerReadsV4)
+    (implements DeployerReadsV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -235,8 +235,8 @@
                 (ignis:string (ref-DALOS::UR_IgnisID))
                 (auryn:string (ref-DALOS::UR_AurynID))
                 (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
-                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
-                (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+                (wkda:string (ref-DALOS::UR_WrappedStoaID))
+                (lkda:string (ref-DALOS::UR_SilverStoaID))
             )
             [ouro ignis auryn elite-auryn wkda lkda]
         )
@@ -249,8 +249,8 @@
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-ATS:module{AutostakeV1} ATS)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 ;;
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 (p-ids:[string] (URC_PrimordialIDs))
@@ -261,8 +261,8 @@
                 (wkda:string (at 4 p-ids))
                 (lkda:string (at 5 p-ids))
                 ;;
-                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
-                (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+                (wkda:string (ref-DALOS::UR_WrappedStoaID))
+                (lkda:string (ref-DALOS::UR_SilverStoaID))
                 (ouro:string (ref-DALOS::UR_OuroborosID))
                 (auryn:string (ref-DALOS::UR_AurynID))
                 (elite-auryn:string (ref-DALOS::UR_EliteAurynID))
@@ -318,7 +318,7 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 ;;
                 (output-id-supply:decimal (ref-SWP::UR_PoolTokenSupply swpair output-id))
                 (output-id-prec:integer (ref-DPTF::UR_Decimals output-id))
@@ -330,8 +330,8 @@
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
-                (ref-SWP:module{SwapperV1} SWP)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWP:module{SwapperV2} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 ;;
                 (ptp:[string] (UC_PoolTypeWord swpair))
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
@@ -365,10 +365,10 @@
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
                 (ref-ELITE:module{EliteV1} ELITE)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ref-ORBR:module{OuroborosV1} OUROBOROS)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 ;;
                 (IgnisID:string "IGNIS-slLyzPPCo22W")
                 (OuroID:string "OURO-slLyzPPCo22W")
@@ -528,10 +528,9 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ref-ORBR:module{OuroborosV1} OUROBOROS)
                 ;;
@@ -631,7 +630,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (p-ids:[string] (URC_PrimordialIDs))
@@ -769,7 +768,7 @@
     (defun URC_0003_SWPairGeneralInfo ()
         (let
             (
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 (glsb:bool (ref-SWP::UR_LiquidBoost))
                 (glsb-word:string (if glsb "ON" "OFF"))
                 (asm:bool (ref-SWP::UR_Asymetric))
@@ -809,7 +808,7 @@
     (defun URC_0004_SWPairDashboardInfo (swpair:string)
         (let
             (
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -869,8 +868,8 @@
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
                 (ref-U|SWP:module{UtilitySwpV1} U|SWP)
-                (ref-SWP:module{SwapperV1} SWP)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWP:module{SwapperV2} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
                 (dsid:object{UtilitySwpV1.DirectSwapInputData}
@@ -909,8 +908,8 @@
         (let
             (
                 (ref-U|SWP:module{UtilitySwpV1} U|SWP)
-                (ref-SWP:module{SwapperV1} SWP)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWP:module{SwapperV2} SWP)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 (ref-SWPL:module{SwapperLiquidityV1} SWPL)
                 ;;
                 (rsid:object{UtilitySwpV1.ReverseSwapInputData}
@@ -964,7 +963,7 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 ;;
                 (core:object (URC_SWPairCoreRead swpair))
                 (read-pool-token-supplies:[decimal] (at "pool-token-supplies" core))
@@ -1031,7 +1030,7 @@
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 ;;
                 (pool-tokens:[string] (ref-SWP::UR_PoolTokens swpair))
                 (account-pool-tokens-supplies:[decimal]
@@ -1095,8 +1094,8 @@
     (defun URC_0013_ColdRecovery (patron:string recoverer:string ats:string ra:decimal)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
+                (ref-ATS:module{AutostakeV1} ATS)
+                (ref-INFO-ONE:module{InfoOneV1} INFO-ONE)
                 ;;
                 (cold-r:bool (ref-ATS::UR_ToggleColdRecovery ats))
                 (cold-recovery-info:object{OuronetInfoV1.ClientInfo}
@@ -1137,8 +1136,8 @@
     (defun URC_0014_HotRecovery (ats:string recoverer:string)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
+                (ref-ATS:module{AutostakeV1} ATS)
+                (ref-INFO-ONE:module{InfoOneV1} INFO-ONE)
                 ;;
                 (hot-r:bool (ref-ATS::UR_ToggleHotRecovery ats))
                 (hot-recovery-execute-text:[string]
@@ -1154,8 +1153,8 @@
     (defun URC_0015_DirectRecovery (patron:string recoverer:string ats:string ra:decimal)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
-                (ref-INFO-ONE:module{InfoOneV5} INFO-ONE)
+                (ref-ATS:module{AutostakeV1} ATS)
+                (ref-INFO-ONE:module{InfoOneV1} INFO-ONE)
                 ;;
                 (direct-r:bool (ref-ATS::UR_ToggleDirectRecovery ats))
                 (direct-recovery-info:object{OuronetInfoV1.ClientInfo}
@@ -1185,7 +1184,7 @@
             (let
                 (
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     ;;
                     (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                     (c-rbt-supply:decimal (ref-DPTF::UR_AccountSupply c-rbt recoverer))

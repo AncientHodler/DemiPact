@@ -197,7 +197,7 @@
                                 (current-element-swpairs:[string] (UC_PSwpairsFTO old-path-tracer id (at idx principals-lst) principals-lst))
                                 (lopt:integer (length old-path-tracer))
                                 (iz-principal-on-swpair:bool (contains (at idx principals-lst) swpair-tokens))
-                                (check:bool (and (!= id (at idx principals-lst)) iz-principal-on-swpair))
+                                (check:bool iz-principal-on-swpair)
                                 (swpairs-to-add:[string]
                                     (if (= lopt 1)
                                         (if check

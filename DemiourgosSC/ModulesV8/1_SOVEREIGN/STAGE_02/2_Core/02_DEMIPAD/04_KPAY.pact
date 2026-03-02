@@ -1,4 +1,4 @@
-(interface KadenaPay
+(interface StoicPayV1
     ;;
     ;;  [UR]
     ;;
@@ -9,20 +9,20 @@
     ;)
     ;;  [URC]
     ;;
-    (defun URC_KpayAmountCosts:object{DemiourgosLaunchpadV2.Costs} (amount:integer offset:decimal))
+    (defun URC_KpayAmountCosts:object{DemiourgosLaunchpadV1.Costs} (amount:integer offset:decimal))
     (defun URC_Acquire:[string] (buyer:string amount:integer iz-native:bool))
     (defun URC_GetMaxBuy:integer (account:string native:bool))
     ;;
     ;;  [C]
     ;;
-    (defun C_BuyKpay (patron:string buyer:string kpay-amount:integer iz-native:bool))
+    (defun C_BuyStoicPay (patron:string buyer:string kpay-amount:integer iz-native:bool))
 
 )
-(module DEMIPAD-KPAY GOV
+(module DEMIPAD-STOICPAY GOV
     @doc "Module defining the Sale Mechanics for Kadena Pay Token"
     ;;
     (implements OuronetPolicyV1)
-    (implements KadenaPay)
+    (implements StoicPayV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -35,16 +35,18 @@
     (defcap GOV|KPAY_ADMIN ()                   (enforce-guard GOV|MD_KPAY))
     ;;{G3}
     (defun GOV|Demiurgoi ()                     (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|DEMIPAD|SC_NAME ()               (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
+    (defun GOV|DEMIPAD|SC_NAME ()               (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;Repl
     (defun GOV|COMPANY ()                       (at 0 ["Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"]))
-    (defun GOV|PRIVATE ()                       (at 0 ["Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"]))
-    (defun GOV|VENTURE ()                       (at 0 ["Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι"]))
+    (defun GOV|VENTURE1 ()                       (at 0 ["Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"]))
+    (defun GOV|VENTURE2 ()                       (at 0 ["Ѻ.ÍăüÙÜЦżΦF₿ÈшÕóñĐĞGюѺλωÇțnθòoйEςк₱0дş3ôPpxŞțqgЖ€šωbэočΞìČ5òżŁdŒИöùЪøŤяжλзÜ2ßżpĄγïčѺöэěτČэεSčDõžЩУЧÀ₳ŚàЪЙĎpЗΣ2ÃлτíČнÙyéÕãďWŹŘĘźσПåbã€éѺι€ΓφŠ₱ŽyWcy5ŘòmČ₿nβÁ¢¥NЙëOι"]))
     ;;Deploy
-    ;(defun GOV|COMPANY ()                       (at 0 ["Ѻ.ĄÀтмωωàŹČлďÜhÍηЛνÙνûĘõțЫåÒÛHážNÍЧψξïžŹЬΛξП¥ЮςĄEйNĄЧ9óпиÃЗ2äÔвœ₿£ČóΩÞдréě7νшDÅЬXтBørŸĂBςąЙęìvÆлμЛáΩγĘЗôåУțτжéδÚνpÍżȘĘï4ąŹȘkφNθþÀωΞÀWžIи5ь€ÊOôΣëñэÔÿνÜw1юÔzźцξńѺfś"]))
-    ;(defun GOV|PRIVATE ()                       (at 0 ["Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"]))
-    ;(defun GOV|VENTURE ()                       (at 0 ["Ѻ.ÃěqÒřщюãovÊΦиν6žтŃñĐMrî¥ÜNÚфî6WLnëѺąöÙЙÂRжUč7eдiÒöbJŻ₳pĆνÛ¢νΛ∇мęqZβłωõĚЫłзȚdtbΨαÇπЬШź1Õ6νσSъПgúΞáejTÑěδK¥õfäĘ3ęìțã₱8H∇уYêŽvXÍЪÀуyΓШąΘČψxÉψýÈœЖPΓÈăjтüdGãLΠςЛùÈČф"]))
+    ;(defun GOV|COMPANY ()                       (at 0 ["Ѻ.ъΦĞρλξäFφVПÉЫÍЬÙGěЭыц¥ĄïsKзŤ8£ΞδĚãlÍŃÝþáΩĘΞȘĎĄЛδůÖîĎĄΠДÈrЪqyςkѺδKłĄρțØänÀŚxчtÍςÃΩ₳9ť7ÇяŠΛδÓdťЗΞŻÛπΩ∇цжuлiØłÛáYπOкæáYoùχmŒуŞËЛΞьPĘáÛÝaBÑБžя₳țςhrĚë₱dÑLÞЛεñeîÓУłëΦ"]))
+    ;(defun GOV|VENTURE1 ()                      (at 0 ["Ѻ.CЭΞŸNGúůρhãmИΘÛ¢₳šШдìAÚwŚGýηЗПAÊУÔȘřŽÍζЗηmΔφDmcдΛъ₳tĂýăŮsПÞ$öœGθeBŽvąαÃfçл¢ĎĆď$şbsЦэΘNÄëÍĂνуãöž¥àZjÆůšÁœôñχŽâЩåτâн4μфAOçĎΓuЗŮnøЙãĚè6Дżîþż$цÑûρψŻïZÉλûæřΨeèÎígςeL"]))
+    ;(defun GOV|VENTURE2 ()                      (at 0 ["Ѻ.ĄÀтмωωàŹČлďÜhÍηЛνÙνûĘõțЫåÒÛHážNÍЧψξïžŹЬΛξП¥ЮςĄEйNĄЧ9óпиÃЗ2äÔвœ₿£ČóΩÞдréě7νшDÅЬXтBørŸĂBςąЙęìvÆлμЛáΩγĘЗôåУțτжéδÚνpÍżȘĘï4ąŹȘkφNθþÀωΞÀWžIи5ь€ÊOôΣëñэÔÿνÜw1юÔzźцξńѺfś"]))
+    ;(defun GOV|VENTURE3 ()                      (at 0 ["Ѻ.ìѺďΘčμЮÚşŁì92lźřWмPòíFùЛgßCÊȚδğďŘTπΠrπмЮ6ŁYŘэHóęÀSăλьПO€ЮrØòш2ΓεîțůOÂŁŻДÍ¥ôWxí4ïçдå₿ЙÒεЗzÝăÚÆπБцìcÕyьΘæěЖù₱фщđÝKÚßzUÉÍЬŒΠYvVŻUЫýčWŘвůćCČΦú2ãбşèуÓçË€ïmôrýмúüÄЬáó"]))
+    ;(defun GOV|VENTURE4 ()                      (at 0 ["Ѻ.BPΩÉ5eønDMRзΣÛł4áÃÄПNΩFзÌõãBЙĞńŒμЗŽτЯÈЙÓDд5țσÆďΔÂиĂqtVŒ3ЦтòȚиåâ8юđhýZNтě∇ŹÀĂkÖѺζEğOüбĆ6мθÈSoш∇ŠmHŒДiÖĎďнÈèTuĎSжğĎЫěIťčç$ÇíżùàĐZξÁτÞFxPÎÎπÿWÖàыДŤγEψàýÔу€эjĆ2ĎżÃς"]))
     ;;
     ;;<====>
     ;;POLICY
@@ -129,7 +131,7 @@
     ;;{2}
     (deftable KPAY|T|Properties:{KPAY|PropertiesSchema})
     ;;{3}
-    (defun KPAY|Info ()                     (at 0 ["KadenaPay"]))
+    (defun KPAY|Info ()                     (at 0 ["StoicPayV1"]))
     (defconst KPAY|INFO                     (KPAY|Info))
     (defun CT_Bar ()                        (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR                           (CT_Bar))
@@ -176,7 +178,7 @@
     (defun UR_GetPeriod:integer ()
         (let
             (
-                (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (KpayID:string (UR_KpayID))
                 (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
@@ -243,7 +245,7 @@
         @doc "Offset is used to compute the time with a future offset in seconds"
         (let
             (
-                (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (KpayID:string (UR_KpayID))
                 (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
                 (present-tm:time (add-time (at "block-time" (chain-data)) offset))
@@ -264,8 +266,8 @@
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DPL-UR:module{DeployerReadsV4} DPL-UR)
-                (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DPL-UR:module{DeployerReadsV1} DPL-UR)
+                (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (KpayID:string (UR_KpayID))
                 (resident-amount:decimal (ref-DPTF::UR_AccountSupply KpayID DEMIPAD|SC_NAME))
@@ -284,7 +286,7 @@
                 ;;
                 (starting-tm:time (at "starting-time" (ref-DPAD::UR_Price KpayID)))
                 ;;
-                (single-costs:object{DemiourgosLaunchpadV2.Costs} (URC_KpayAmountCosts 1 0.0))
+                (single-costs:object{DemiourgosLaunchpadV1.Costs} (URC_KpayAmountCosts 1 0.0))
                 (stage-text:string
                     (if (= period -1)
                         "Stage 1 Starts in:"
@@ -366,13 +368,13 @@
         )
     )
     ;;{F1}  [URC]
-    (defun URC_KpayAmountCosts:object{DemiourgosLaunchpadV2.Costs} (amount:integer offset:decimal)
+    (defun URC_KpayAmountCosts:object{DemiourgosLaunchpadV1.Costs} (amount:integer offset:decimal)
         @doc "Computes Prices;"
         (let
             (
                 (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
@@ -391,7 +393,7 @@
         @doc "An offset of 15 minutes (900.0 seconds) is used to compute values for the Coin.Transfer Capabilities"
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (KpayID:string (UR_KpayID))
                 (type:integer (if iz-native 0 1))
                 (pid:decimal (at "pid" (URC_KpayAmountCosts amount 900.0)))
@@ -412,14 +414,14 @@
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 ;;
                 (k-account:string (ref-DALOS::UR_AccountKadena account))
-                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda:string (ref-DALOS::UR_WrappedStoaID))
                 (KpayID:string (UR_KpayID))
                 (future-ten-minute-price:decimal (UR_KpayPID 600.0))
                 (present-price:decimal (UR_KpayPID 0.0))
@@ -461,7 +463,7 @@
     ;;
     ;;{F5}  [A]
     ;;{F6}  [C]
-    (defun C_BuyKpay (patron:string buyer:string kpay-amount:integer iz-native:bool)
+    (defun C_BuyStoicPay (patron:string buyer:string kpay-amount:integer iz-native:bool)
         (UEV_IMC)
         (with-capability (KPAY|C>BUY kpay-amount)
             (let
@@ -469,10 +471,10 @@
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     ;;
                     (KpayID:string (UR_KpayID))
-                    (costs:object{DemiourgosLaunchpadV2.Costs} (URC_KpayAmountCosts kpay-amount 0.0))
+                    (costs:object{DemiourgosLaunchpadV1.Costs} (URC_KpayAmountCosts kpay-amount 0.0))
                     (pid:decimal (at "pid" costs))
                     (type:integer (if iz-native 0 1))
                     (ico1:object{IgnisCollectorV1.OutputCumulator}
@@ -481,11 +483,12 @@
                     (ico2:object{IgnisCollectorV1.OutputCumulator}
                         (ref-TFT::C_Transfer KpayID DEMIPAD|SC_NAME buyer (dec kpay-amount) true)
                     )
+                    (ten-p:decimal (* 0.25 (dec kpay-amount)))
                     (twenty-p:decimal (* 0.5 (dec kpay-amount)))
                     (ico3:object{IgnisCollectorV1.OutputCumulator}
                         (ref-TFT::C_MultiBulkTransfer [KpayID] DEMIPAD|SC_NAME
-                            [[(GOV|COMPANY) (GOV|PRIVATE) (GOV|VENTURE)]]
-                            [[twenty-p twenty-p twenty-p]]
+                            [[(GOV|COMPANY) (GOV|VENTURE1) (GOV|VENTURE2)]]
+                            [[twenty-p ten-p ten-p]]
                         )
                     )
                     (sb:string (ref-I|OURONET::OI|UC_ShortAccount buyer))
@@ -496,10 +499,10 @@
                     (ref-IGNIS::UDC_ConcatenateOutputCumulators [ico1 ico2 ico3] [])
                 )
                 (if iz-native
-                    (format "Account {} succesfully acquired {} KPAY at {} $ per Unit with {} Native KADENA"
+                    (format "Account {} succesfully acquired {} STOICPAY at {} $ per Unit with {} Native STOA"
                         [sb kpay-amount present-kpay-price paid]
                     )
-                    (format "Account {} succesfully acquired {} KPAY at {} $ per Unit with {} WKDA"
+                    (format "Account {} succesfully acquired {} STOICPAY at {} $ per Unit with {} OWS"
                         [sb kpay-amount present-kpay-price paid]
                     )
                 )

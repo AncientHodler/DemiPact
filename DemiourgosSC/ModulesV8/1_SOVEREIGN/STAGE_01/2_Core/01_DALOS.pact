@@ -22,12 +22,12 @@
             (enforce-one
                 "Payable Modules not satisfied"
                 [
-                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS" (take 46 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
-                    (enforce (= "(n_7d40ccda457e374d8eb07b658fd38c282c545038.DSP" (take 47 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                    (enforce (= "(ouronet-ns.TS" (take 14 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
+                    (enforce (= "(ouronet-ns.DSP" (take 15 (at 0 (at "exec-code" (read-msg))))) "Only TALOS or DSP Modules allowed")
                     (enforce
                         (fold (and) true
                             [
-                                (= "(namespace \"n_7d40ccda457e374d8eb07b658fd38c282c545038\")" (at 0 (at "exec-code" (read-msg))))
+                                (= "(namespace \"ouronet-ns\")" (at 0 (at "exec-code" (read-msg))))
                                 (= "(IGNIS.C_Collect \"Ѻ." (take 20 (at 1 (at "exec-code" (read-msg)))))
                                 (= "(IGNIS.UDC_CustomCodeCumulator))" (take -32 (at 1 (at "exec-code" (read-msg)))))
                             ]
@@ -214,8 +214,10 @@
         gas-id:string                       ;;IGNIS
         ats-gas-source-id:string            ;;AURYN
         elite-ats-gas-source-id:string      ;;ELITE-AURYN
-        wrapped-kda-id:string               ;;DWK - Dalos Wrapped Kadena
-        liquid-kda-id:string                ;;DLK - Dalos Liquid Kadena
+        wrapped-stoa-id:string              ;;OWS - Ouronet Wrapped Stoa
+        silver-stoa-id:string               ;;OSS - Ouronet Silver (Liquid) Stoa
+        golden-stoa-id:string               ;;OGS - Ouronet Golden (Pension) Stoa
+        ur-stoa-id:string                   ;;OUS - Ouronet UrStoa
         ;;
         treasury-dispo-type:integer
         treasury-dynamic-promille:decimal
@@ -227,8 +229,8 @@
         virtual-gas-tank:string             ;;IGNIS|SC_NAME = "GasTanker"
         virtual-gas-toggle:bool             ;;IGNIS collection toggle
         virtual-gas-spent:decimal           ;;IGNIS spent
-        native-gas-toggle:bool              ;;KADENA collection toggle
-        native-gas-spent:decimal            ;;KADENA spent
+        native-gas-toggle:bool              ;;STOA collection toggle
+        native-gas-spent:decimal            ;;STOA spent
         native-gas-pump:bool                ;;controls automatic LiquidStaking fueling
     )
     (defschema DALOS|PricesSchema
@@ -361,11 +363,17 @@
         @event
         (let
             (
+                (ref-U|G:module{OuronetGuardsV1} U|G)
                 (first:string (take 1 account))
                 (ouroboros:string "Ѻ")
             )
             (enforce (= first ouroboros) (format "Account {} doesn|t have the corrrect Format for a Standard DALOS Account" [account]))
-            (enforce-guard guard)
+            (ref-U|G::UEV_Any
+                [
+                    guard
+                    (create-capability-guard (GOV))
+                ]
+            )
             (UEV_Glyph account)
             (compose-capability (SECURE))
         )
@@ -374,11 +382,17 @@
         @event
         (let
             (
+                (ref-U|G:module{OuronetGuardsV1} U|G)
                 (first:string (take 1 account))
                 (sigma:string "Σ")
             )
             (enforce (= first sigma) (format "Account {} doesn|t have the corrrect Format for a Smart DALOS Account" [account]))
-            (enforce-guard guard)
+            (ref-U|G::UEV_Any
+                [
+                    guard
+                    (create-capability-guard (GOV))
+                ]
+            )
             (UEV_Glyph account)
             (UEV_EnforceAccountType sovereign false)
             (compose-capability (SECURE))
@@ -440,11 +454,17 @@
     (defun UR_EliteAurynID:string ()
         (at "elite-ats-gas-source-id" (read DALOS|PropertiesTable DALOS|INFO ["elite-ats-gas-source-id"]))
     )
-    (defun UR_WrappedKadenaID:string ()
-        (at "wrapped-kda-id" (read DALOS|PropertiesTable DALOS|INFO ["wrapped-kda-id"]))
+    (defun UR_WrappedStoaID:string ()
+        (at "wrapped-stoa-id" (read DALOS|PropertiesTable DALOS|INFO ["wrapped-stoa-id"]))
     )
-    (defun UR_LiquidKadenaID:string ()
-        (at "liquid-kda-id" (read DALOS|PropertiesTable DALOS|INFO ["liquid-kda-id"]))
+    (defun UR_SilverStoaID:string ()
+        (at "silver-stoa-id" (read DALOS|PropertiesTable DALOS|INFO ["silver-stoa-id"]))
+    )
+    (defun UR_GoldenStoaID:string ()
+        (at "golden-stoa-id" (read DALOS|PropertiesTable DALOS|INFO ["golden-stoa-id"]))
+    )
+    (defun UR_UrStoaID:string ()
+        (at "ur-stoa-id" (read DALOS|PropertiesTable DALOS|INFO ["ur-stoa-id"]))
     )
     (defun UR_DispoType:integer ()
         (at "treasury-dispo-type" (read DALOS|PropertiesTable DALOS|INFO ["treasury-dispo-type"]))
@@ -601,6 +621,7 @@
                 (= account (GOV|LIQUID|SC_NAME))
                 (= account (GOV|OUROBOROS|SC_NAME)) 
                 (= account (GOV|SWP|SC_NAME))
+                (= account (GOV|DHV2|SC_NAME))
             ]
         )
     )
@@ -786,7 +807,7 @@
     (defun UEV_Glyph (account:string)
         (let
             (
-                (ref-U|GLYPHS:module{UtilityDalosGlyphs} U|DALOS)
+                (ref-U|GLYPHS:module{UtilityDalosGlyphsV1} U|DALOS)
             )
             (ref-U|GLYPHS::GLYPH|UEV_DalosAccount account)
         )
@@ -909,27 +930,18 @@
         (UEV_IMC)
         (with-capability (DALOS|C>CONTROL-SMART-OURONET-ACCOUNT account payable-as-smart-contract payable-by-smart-contract payable-by-method)
             (XI_UpdateSmartAccountParameters account payable-as-smart-contract payable-by-smart-contract payable-by-method)
-            ;(UDC_SmallCumulator account)
         )
     )
     (defun C_DeploySmartAccount (account:string guard:guard kadena:string sovereign:string public:string)
         (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeploySmartAccount account guard kadena sovereign public)
-            ;(if (not (IC|URC_IsNativeGasZero))
-            ;    (KDA|C_Collect account (UR_UsagePrice "smart"))
-            ;    true
-            ;)
         )
     )
     (defun C_DeployStandardAccount (account:string guard:guard kadena:string public:string)
         (UEV_IMC)
         (with-capability (SECURE)
             (XI_DeployStandardAccount account guard kadena public)
-            ;(if (not (IC|URC_IsNativeGasZero))
-            ;    (KDA|C_Collect account (UR_UsagePrice "standard"))
-            ;    true
-            ;)
         )
     )
     (defun C_RotateGovernor
@@ -937,7 +949,6 @@
         (UEV_IMC)
         (with-capability (DALOS|C>ROTATE-OA_GOVERNOR account)
             (XI_RotateGovernor account governor)
-            ;(UDC_SmallCumulator account)
         )
     )
     (defun C_RotateGuard
@@ -945,7 +956,6 @@
         (UEV_IMC)
         (with-capability (DALOS|C>ROTATE-OA-GUARD account)
             (XI_RotateGuard account new-guard safe)
-            ;(UDC_SmallCumulator account)
         )
     )
     (defun C_RotateKadena
@@ -955,7 +965,6 @@
             (XI_RotateKadena account kadena)
             (XI_UpdateKadenaLedger (UR_AccountKadena account) account false)
             (XI_UpdateKadenaLedger kadena account true)
-            ;(UDC_SmallCumulator account)
         )
     )
     (defun C_RotateSovereign
@@ -963,7 +972,6 @@
         (UEV_IMC)
         (with-capability (DALOS|S>ROTATE-OA-SOVEREIGN account new-sovereign)
             (XI_RotateSovereign account new-sovereign)
-            ;(UDC_SmallCumulator account)
         )
     )
     ;;

@@ -1255,7 +1255,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
-                    (ref-EQUITY:module{Equity} EQUITY)
+                    (ref-EQUITY:module{EquityV1} EQUITY)
                     ;;
                     (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-EQUITY::C_IssueShareholderCollection 
@@ -1280,7 +1280,7 @@
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-DPDC-T:module{DpdcTransferV1} DPDC-T)
-                    (ref-EQUITY:module{Equity} EQUITY)
+                    (ref-EQUITY:module{EquityV1} EQUITY)
                     ;;
                     (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-EQUITY::C_MorphPackageShares

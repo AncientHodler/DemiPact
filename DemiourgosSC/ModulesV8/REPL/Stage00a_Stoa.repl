@@ -1,6 +1,11 @@
 ;;Load Stoa Modules
 (print "")
 (namespace "free")
+(load "../0_Stoa/coin-contract/coin-interfaces-repl.pact")
+(print "")
+;;
+(print "")
+(namespace "free")
 (load "../0_Stoa/coin-contract/coin-repl.pact")
 (print "")
 ;;

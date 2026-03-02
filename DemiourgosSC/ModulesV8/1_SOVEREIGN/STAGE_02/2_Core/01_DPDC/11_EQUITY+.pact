@@ -1,4 +1,4 @@
-(interface Equity
+(interface EquityV1
     ;;
     ;;  [UC]
     ;;
@@ -39,7 +39,7 @@
     ;;
     @doc "Defines the rules for creating Shareholder DPSF Collections"
     (implements OuronetPolicyV1)
-    (implements Equity)
+    (implements EquityV1)
     ;;
     ;;<========>
     ;;GOVERNANCE

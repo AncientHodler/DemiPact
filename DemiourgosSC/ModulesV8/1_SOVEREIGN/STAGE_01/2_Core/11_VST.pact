@@ -445,7 +445,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (h:bool (ref-ATS::UR_Hibernate ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
@@ -457,7 +457,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (h1:bool (ref-ATS::UR_Hibernate ats1))
                 (h2:bool (ref-ATS::UR_Hibernate ats2))
             )
@@ -471,10 +471,10 @@
     ;;FUNCTIONS
     (defun UC_MergeAll:[decimal] (balances:[decimal] seconds-to-unsleep:[decimal])
         @doc "Combines an equal length <balances> list representing Sleeping DPOF Account Balances \
-        \ with a <seconds-to-unsleep> list to create an output decimal list with 3 decimals: \
-        \ 1] 1st decimal, representing the amount of DPTF token that can be awakend \
-        \ 2] 2nd decimal, representing the amount of Sleeping DPOF that must still exist in a sleeping state \
-        \ 3] 3rd decimal, representing the mean computed weigthed average time in seconds until the the sleeping part must still remain asleep"
+            \ with a <seconds-to-unsleep> list to create an output decimal list with 3 decimals: \
+            \ 1] 1st decimal, representing the amount of DPTF token that can be awakend \
+            \ 2] 2nd decimal, representing the amount of Sleeping DPOF that must still exist in a sleeping state \
+            \ 3] 3rd decimal, representing the mean computed weigthed average time in seconds until the the sleeping part must still remain asleep"
         (let
             (
                 (sum:decimal (fold (+) 0.0 balances))
@@ -1141,12 +1141,12 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     ;;
                     ;;<ats>
-                    (coil-data:object{AutostakeV6.CoilData} 
+                    (coil-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats rt amount dayz)
                     )
                     (input-amount:decimal (at "first-input-amount" coil-data))
@@ -1184,12 +1184,12 @@
                 (
                     (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     ;;
                     ;;<ats1>
-                    (coil1-data:object{AutostakeV6.CoilData} 
+                    (coil1-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                     )
                     (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -1198,7 +1198,7 @@
                     (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                     ;;
                     ;;<ats2>
-                    (coil2-data:object{AutostakeV6.CoilData} 
+                    (coil2-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmountsWithHibernation ats2 c-rbt1 c-rbt1-amount dayz)
                     )
                     (input2-amount:decimal (at "first-input-amount" coil2-data))

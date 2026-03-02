@@ -176,7 +176,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_HOT-RBT|UpdatePendingBranding entity-id logo description website social)
@@ -189,7 +189,7 @@
         (with-capability (P|TS)
             (let
                 (
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                 )
                 (ref-ATS::C_HOT-RBT|UpgradeBranding patron entity-id months)
@@ -204,7 +204,7 @@
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (srt:string (ref-I|OURONET::OI|UC_ShortAccount repurpose-to))
                 )
                 (ref-IGNIS::C_Collect patron
@@ -221,7 +221,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                     (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATS::C_Issue patron account ats index-decimals reward-token rt-nfr reward-bearing-token rbt-nfr)
@@ -239,7 +239,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_RotateOwnership ats new-owner)
@@ -254,7 +254,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_Control ats can-change-owner syphoning hibernate)
@@ -269,7 +269,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_UpdateRoyalty ats royalty)
@@ -284,7 +284,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_UpdateSyphon ats syphon)
@@ -299,7 +299,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetHibernationFees ats peak decay)
@@ -315,7 +315,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
                     (ico:object{IgnisCollectorV1.OutputCumulator}
                         (ref-ATS::C_ToggleParameterLock patron ats toggle)
@@ -333,7 +333,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_AddSecondary ats reward-token rt-nfr)
@@ -353,7 +353,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ControlColdRecoveryFees ats c-nfr c-fr)
@@ -369,7 +369,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetColdRecoveryFees ats fee-positions fee-thresholds fee-array)
@@ -385,7 +385,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetColdRecoveryDuration ats soft-or-hard base growth)
@@ -401,7 +401,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ToggleElite ats toggle)
@@ -419,7 +419,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchColdRecovery ats toggle)
@@ -441,7 +441,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_AddHotRBT ats hot-rbt)
@@ -456,7 +456,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_ControlHotRecoveryFee ats h-fr)
@@ -471,7 +471,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetHotRecoveryFees ats promile decay)
@@ -486,7 +486,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchHotRecovery ats toggle)
@@ -506,7 +506,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SetDirectRecoveryFee ats promile)
@@ -521,7 +521,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                 )
                 (ref-IGNIS::C_Collect patron
                     (ref-ATS::C_SwitchDirectRecovery ats toggle)
@@ -581,7 +581,7 @@
                     )
                 )
                 (ref-IGNIS::C_Collect patron ico)
-                (format "Succesfully Kickstarted ATS-Pair to an Index of {}" [ (at 0 (at "output" ico))])
+                (format "Succesfully Kickstarted ATS-Pair {} to an Index of {}" [ats (at 0 (at "output" ico))])
             )
         )
     )
@@ -591,7 +591,7 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (prev-index:decimal (ref-ATS::URC_Index ats))
                 )
@@ -654,11 +654,11 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (ref-VST:module{VestingV1} VST)
                     ;;
-                    (coil-data:object{AutostakeV6.CoilData} 
+                    (coil-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats coil-token amount)
                     )
                     (c-rbt:string (at "rbt-id" coil-data))
@@ -689,14 +689,14 @@
             (let*
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-ATSU:module{AutostakeUsageV1} ATSU)
                     (ref-VST:module{VestingV1} VST)
                     ;;
-                    (coil1-data:object{AutostakeV6.CoilData} 
+                    (coil1-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 curl-token amount)
                     )
-                    (coil2-data:object{AutostakeV6.CoilData} 
+                    (coil2-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats2 (at "rbt-id" coil1-data) (at "rbt-amount" coil1-data))
                     )
                     (c-rbt2-amount:decimal (at "rbt-amount" coil2-data))
@@ -1471,7 +1471,7 @@
     )
     ;;  [LIQUID_Client]
     (defun LQD|C_UnwrapStoa (patron:string unwrapper:string amount:decimal)
-        @doc "Unwraps DPTF Kadena to Native Kadena"
+        @doc "Unwraps DPTF Stoa to Native Stoa"
         (with-capability (P|TS)
             (let
                 (
@@ -1483,12 +1483,12 @@
                 (ref-IGNIS::C_Collect patron
                     (ref-LIQUID::C_UnwrapStoa unwrapper amount)
                 )
-                (format "Succesfully Unwrapped {} WKDA on Account {}" [amount su])
+                (format "Succesfully Unwrapped {} STOA on Account {}" [amount su])
             )
         )
     )
     (defun LQD|C_WrapStoa (patron:string wrapper:string amount:decimal)
-        @doc "Wraps Native Kadena to DPTF Kadena"
+        @doc "Wraps Native Stoa to DPTF Stoa"
         (with-capability (P|TS)
             (let
                 (
@@ -1500,7 +1500,69 @@
                 (ref-IGNIS::C_Collect patron
                     (ref-LIQUID::C_WrapStoa wrapper amount)
                 )
-                (format "Succesfully Wrapped {} KDA on Account {}" [amount sw])
+                (format "Succesfully Wrapped {} STOA on Account {}" [amount sw])
+            )
+        )
+    )
+    ;;
+    (defun LQD|C_RegisterOuronetAccountForUrstoaHoldings (ouronet-account:string guard:guard)
+        @doc "Registers the <ouronet-account> attached Kadena Address, using its principal-guard \
+            \ in the UrStoa Ledger; the chosen <guard> must match the <ouronet-account> attached Kadena Address Principal \
+            \ This prepares the <ouronet-account> for wrapping and unwrapping UrStoa \
+            \ This functions is used by Ouronet Account Users that need to wrap unwrap UrStoa."
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
+                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount ouronet-account))
+                )
+                (ref-LIQUID::C_RegisterOuronetAccountForUrstoaHoldings ouronet-account guard)
+                (format "Succesfully registered Ouronet Account {} for UrStoaHoldings" [sw])
+            )
+        )
+    )
+    (defun LQD|C_UnwrapUrStoa (patron:string unwrapper:string amount:decimal)
+        @doc "Unwrapper is the Ouronet Account doing the Unwrapping. \
+            \ Its attached Kadena address k:xxx must be registered in the UrStoa Account Table for this to work \
+            \ If its not registered there yet, its account must be created with \
+            \ <LQD|C_RegisterOuronetAccountForUrstoaHoldings> \
+            \ \
+            \ Its register status can be verified with <LIQUID.UR_IzOuronetAccountRegisteredForUrstoaHoldings>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
+                    (su:string (ref-I|OURONET::OI|UC_ShortAccount unwrapper))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-LIQUID::C_UnwrapUrStoa unwrapper amount)
+                )
+                (format "Succesfully Unwrapped {} URSTOA on Account {}" [amount su])
+            )
+        )
+    )
+    (defun LQD|C_WrapUrStoa (patron:string wrapper:string amount:decimal)
+        @doc "Wrapper is the Ouronet Account doing the Wrapping. \
+            \ Its attached Kadena address k:xxx must be registered in the UrStoa Account Table for this to work \
+            \ If its not registered there yet, its account must be created with \
+            \ <C_RegisterOuronetAccountForUrstoaHoldings>\ 
+            \ \
+            \ Its register status can be verified with <LIQUID.UR_IzOuronetAccountRegisteredForUrstoaHoldings>"
+        (with-capability (P|TS)
+            (let
+                (
+                    (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
+                    (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
+                    (sw:string (ref-I|OURONET::OI|UC_ShortAccount wrapper))
+                )
+                (ref-IGNIS::C_Collect patron
+                    (ref-LIQUID::C_WrapUrStoa wrapper amount)
+                )
+                (format "Succesfully Wrapped {} URSTOA on Account {}" [amount sw])
             )
         )
     )

@@ -3,7 +3,7 @@
     ;;
     (implements OuronetPolicyV1)
     (implements BrandingUsagePrimaryV1)
-    (implements AutostakeV6)
+    (implements AutostakeV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -125,7 +125,7 @@
         parameter-lock:bool
         unlocks:integer
         ;;
-        reward-tokens:[object{AutostakeV6.ATS|RewardTokenSchemaV2}]
+        reward-tokens:[object{AutostakeV1.ATS|RewardTokenSchemaV2}]
         ;;
         ;;Cold Recovery
         c-rbt:string
@@ -637,7 +637,7 @@
         (at "unlocks" (read ATS|Pairs atspair ["unlocks"]))
     )
     ;;
-    (defun UR_RewardTokens:[object{AutostakeV6.ATS|RewardTokenSchemaV2}] (atspair:string)
+    (defun UR_RewardTokens:[object{AutostakeV1.ATS|RewardTokenSchemaV2}] (atspair:string)
         (let
             (
                 (temp:list (at "reward-tokens" (read ATS|Pairs atspair ["reward-tokens"])))
@@ -650,10 +650,10 @@
                     (
                         (default-royalty:decimal 0.0)
                         (ref-U|LST:module{StringProcessorV1} U|LST)
-                        (new-obj:[object{AutostakeV6.ATS|RewardTokenSchemaV2}]
+                        (new-obj:[object{AutostakeV1.ATS|RewardTokenSchemaV2}]
                             (fold
                                 (lambda
-                                    (acc:[object{AutostakeV6.ATS|RewardTokenSchemaV2}] idx:integer)
+                                    (acc:[object{AutostakeV1.ATS|RewardTokenSchemaV2}] idx:integer)
                                     (ref-U|LST::UC_AppL acc
                                         (+
                                             (at idx temp)
@@ -678,7 +678,7 @@
     (defun UR_RewardTokenList:[string] (atspair:string)
         (fold
             (lambda
-                (acc:[string] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
+                (acc:[string] item:object{AutostakeV1.ATS|RewardTokenSchemaV2})
                 (+ acc [(at "token" item)])
             )
             []
@@ -688,7 +688,7 @@
     (defun UR_RewardTokenNFR:[bool] (atspair:string)
         (fold
             (lambda
-                (acc:[bool] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
+                (acc:[bool] item:object{AutostakeV1.ATS|RewardTokenSchemaV2})
                 (+ acc [(at "nfr" item)])
             )
             []
@@ -708,7 +708,7 @@
             (ref-U|INT::UEV_PositionalVariable rur 3 "Invalid RUR Integer")
             (fold
                 (lambda
-                    (acc:[decimal] item:object{AutostakeV6.ATS|RewardTokenSchemaV2})
+                    (acc:[decimal] item:object{AutostakeV1.ATS|RewardTokenSchemaV2})
                     (ref-U|LST::UC_AppL acc
                         (cond
                             ((= rur 1) (at "resident" item))
@@ -1269,21 +1269,21 @@
         )
     )
     ;;
-    (defun URC_RewardBearingTokenAmounts:object{AutostakeV6.CoilData}
+    (defun URC_RewardBearingTokenAmounts:object{AutostakeV1.CoilData}
         (ats:string rt:string amount:decimal)
         (URCX_RBT-Amount ats rt amount 1)
     )
-    (defun URC_RewardBearingTokenAmountsWithHibernation:object{AutostakeV6.CoilData}
+    (defun URC_RewardBearingTokenAmountsWithHibernation:object{AutostakeV1.CoilData}
         (ats:string rt:string amount:decimal hibernation-dayz:integer)
         (URCX_RBT-Amount ats rt amount hibernation-dayz)
     )
-    (defun URCX_RBT-Amount:object{AutostakeV6.CoilData} 
+    (defun URCX_RBT-Amount:object{AutostakeV1.CoilData} 
         (ats:string rt:string amount:decimal dayz:integer)
         (let
             (
                 (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 ;;
                 (h:bool (ref-ATS::UR_Hibernate ats))
@@ -1500,10 +1500,10 @@
     (defun UDC_MakeNegativeUnstakeObject:object{UtilityAtsV1.Awo} (atspair:string)
         (UDC_MakeUnstakeObject atspair ANTITIME)
     )
-    (defun UDC_ComposePrimaryRewardToken:object{AutostakeV6.ATS|RewardTokenSchemaV2} (token:string nfr:bool)
+    (defun UDC_ComposePrimaryRewardToken:object{AutostakeV1.ATS|RewardTokenSchemaV2} (token:string nfr:bool)
         (UDC_RT token nfr 0.0 0.0 0.0)
     )
-    (defun UDC_RT:object{AutostakeV6.ATS|RewardTokenSchemaV2} 
+    (defun UDC_RT:object{AutostakeV1.ATS|RewardTokenSchemaV2} 
         (a:string b:bool c:decimal d:decimal e:decimal)
         (enforce 
             (fold (and) true [(>= c 0.0)(>= d 0.0)(>= e 0.0)]) 
@@ -1534,7 +1534,7 @@
         ,"id"       : i
         ,"account"  : j}
     )
-    (defun UDC_CoilData:object{AutostakeV6.CoilData}
+    (defun UDC_CoilData:object{AutostakeV1.CoilData}
         (a:decimal b:decimal c:decimal d:decimal e:decimal f:decimal g:string)
         {"primal-input-amount"  : a
         ,"first-input-amount"   : b
@@ -2276,7 +2276,7 @@
                         0.0
                     )
                 )
-                (new-rt-obj:object{AutostakeV6.ATS|RewardTokenSchemaV2}
+                (new-rt-obj:object{AutostakeV1.ATS|RewardTokenSchemaV2}
                     (cond
                         ((= rur 1) (UDC_RT reward-token nfr rur-amount unbonding royalty))
                         ((= rur 2) (UDC_RT reward-token nfr resident rur-amount royalty))

@@ -705,7 +705,6 @@
     )
 )
 ;;
-
 (interface DpdcNonceV1
     @doc "Exposes Collectables Nonce Management related Functions"
     ;;

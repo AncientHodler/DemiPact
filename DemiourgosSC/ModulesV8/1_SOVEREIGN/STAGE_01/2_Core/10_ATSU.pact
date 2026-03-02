@@ -140,7 +140,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (compose-capability (GOV|ATSU_ADMIN))
             (compose-capability (ATSU|C>X_REMOVE-SECONDARY ats reward-token))
@@ -150,7 +150,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (ref-ATS::CAP_Owner ats)
             (compose-capability (ATSU|C>X_REMOVE-SECONDARY ats reward-token))
@@ -159,7 +159,7 @@
     (defcap ATSU|C>X_REMOVE-SECONDARY (ats:string reward-token:string)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (rt-position:integer (ref-ATS::URC_RewardTokenPosition ats reward-token))
             )
             (enforce (> rt-position 0) "Primal RT cannot be removed")
@@ -174,7 +174,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (royalties:[decimal] (ref-ATS::UR_RewardTokenRUR ats 3))
                 (sum:decimal (fold (+) 0.0 royalties))
             )
@@ -190,7 +190,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l1:integer (length rt-amounts))
@@ -208,7 +208,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (index:decimal (ref-ATS::URC_Index ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats reward-token true)
@@ -220,7 +220,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (h:bool (ref-ATS::UR_Hibernate ats))
             )
             (ref-ATS::UEV_RewardTokenExistance ats coil-token true)
@@ -232,7 +232,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (h1:bool (ref-ATS::UR_Hibernate ats1))
                 (h2:bool (ref-ATS::UR_Hibernate ats2))
             )
@@ -246,7 +246,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (cold-recovery-positions:integer (ref-ATS::UR_ColdRecoveryPositions ats))
             )
             (enforce (<= usable-cold-recovery-position cold-recovery-positions) 
@@ -270,7 +270,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (dalos-admin:guard GOV|MD_ATSU)
                 (autos-admin:guard GOV|SC_ATSU)
                 (acc-g:guard (ref-DALOS::UR_AccountGuard acc))
@@ -309,7 +309,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_HotRecoveryState ats true)
@@ -348,7 +348,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (ref-DALOS::CAP_EnforceAccountOwnership recoverer)
             (ref-ATS::UEV_DirectRecoveryState ats true)
@@ -360,7 +360,7 @@
         @event
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-U|LST:module{StringProcessorV1} U|LST)
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
                 (l0:integer (length syphon-amounts))
@@ -401,7 +401,7 @@
                 (ref-U|LST:module{StringProcessorV1} U|LST)
                 (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
                 (ref-U|ATS:module{UtilityAtsV1} U|ATS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 ;;
                 (zr:object{UtilityAtsV1.Awo} (ref-ATS::UDC_MakeZeroUnstakeObject ats))
                 (ng:object{UtilityAtsV1.Awo} (ref-ATS::UDC_MakeNegativeUnstakeObject ats))
@@ -473,7 +473,7 @@
         @doc "Outputs <cull-output> as a value of RTs"
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 ;;
                 (unstake-obj:object{UtilityAtsV1.Awo} (ref-ATS::UR_P1-7 ats acc position))
                 (cull-output:[decimal] (ref-ATS::URC_CullValue ats unstake-obj))
@@ -489,7 +489,7 @@
             (
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 ;;
                 (p0:[object{UtilityAtsV1.Awo}] (ref-ATS::UR_P0 ats account))
                 (size:decimal (dec (length p0)))
@@ -520,7 +520,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (accounts-with-ats-data:[string] (ref-ATS::URD_ExistingAutostakePairs ats))
             )
             (with-capability (ATSU|C>REMOVE-SECONDARY ats reward-token)
@@ -534,7 +534,7 @@
         (with-capability (ATSU|C>WITHDRAW-ROYALTIES ats target)
             (let
                 (
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (reward-tokens:[string] (ref-ATS::UR_RewardTokenList ats))
                     (royalties:[decimal] (ref-ATS::UR_RewardTokenRUR ats 3))
@@ -560,7 +560,7 @@
                 (
                     (ref-U|LST:module{StringProcessorV1} U|LST)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     ;;
@@ -603,7 +603,7 @@
         (UEV_IMC)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
             )
             (with-capability (ATSU|C>FUEL ats reward-token)
@@ -622,12 +622,12 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     ;;
                     ;;<ats>
-                    (coil-data:object{AutostakeV6.CoilData} 
+                    (coil-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats rt amount)
                     )
                     (input-amount:decimal (at "first-input-amount" coil-data))
@@ -663,12 +663,12 @@
             (let
                 (
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                     ;;
                     ;;<ats1>
-                    (coil1-data:object{AutostakeV6.CoilData} 
+                    (coil1-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats1 rt amount)
                     )
                     (input1-amount:decimal (at "first-input-amount" coil1-data))
@@ -677,7 +677,7 @@
                     (c-rbt1-amount:decimal (at "rbt-amount" coil1-data))
                     ;;
                     ;;<ats2>
-                    (coil2-data:object{AutostakeV6.CoilData} 
+                    (coil2-data:object{AutostakeV1.CoilData} 
                         (ref-ATS::URC_RewardBearingTokenAmounts ats2 c-rbt1 c-rbt1-amount)
                     )
                     (input2-amount:decimal (at "first-input-amount" coil2-data))
@@ -720,7 +720,7 @@
             (XI_DeployAccount ats recoverer)
             (let
                 (
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (usable-cold-recovery-position:integer (ref-ATS::URC_WhichPosition ats ra recoverer))
                 )
                 (enforce (!= usable-cold-recovery-position 0) "Cold Recovery Unavailable! All existing Positions are used!")
@@ -834,7 +834,7 @@
                     (ref-U|DEC:module{OuronetDecimalsV1} U|DEC)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-DALOS:module{OuronetDalosV1} DALOS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -893,13 +893,13 @@
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (c-rbt:string (ref-ATS::UR_ColdRewardBearingToken ats))
                 (h-rbt:string (ref-ATS::UR_HotRewardBearingToken ats))
                 (present-time:time (at "block-time" (chain-data)))
-                (meta-data-obj:object{AutostakeV6.ATS|Hot} {"mint-time" : present-time})
+                (meta-data-obj:object{AutostakeV1.ATS|Hot} {"mint-time" : present-time})
                 (new-nonce:integer (+ (ref-DPOF::UR_NoncesUsed h-rbt) 1))
                 ;;
             )
@@ -940,7 +940,7 @@
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (ats:string (ref-DPOF::UR_RewardBearingToken id))
@@ -977,7 +977,7 @@
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                 (ref-DPOF:module{DemiourgosPactOrtoFungibleV1} DPOF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 ;;
                 (precision:integer (ref-DPOF::UR_Decimals id))
@@ -1066,7 +1066,7 @@
                     (ref-U|ATS:module{UtilityAtsV1} U|ATS)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -1112,7 +1112,7 @@
                 (
                     (ref-U|LST:module{StringProcessorV1} U|LST)
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     ;;
                     (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -1145,7 +1145,7 @@
         (require-capability (ATSU|C>DEPLOY ats acc))
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (ref-ATS::XE_SpawnAutostakeAccount ats acc)
             (XI_Normalize ats acc)
@@ -1156,7 +1156,7 @@
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (p0:[object{UtilityAtsV1.Awo}] (ref-ATS::UR_P0 ats acc))
                 (p1:object{UtilityAtsV1.Awo} (ref-ATS::UR_P1-7 ats acc 1))
                 (p2:object{UtilityAtsV1.Awo} (ref-ATS::UR_P1-7 ats acc 2))
@@ -1222,7 +1222,7 @@
     (defun XI_UUP (ats:string acc:string data:[object{UtilityAtsV1.Awo}])
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (ref-ATS::XE_UpP0 ats acc (drop -7 data))
             (ref-ATS::XE_UpP1 ats acc (at 0 (take 1 (take -7 data))))
@@ -1239,7 +1239,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (p0:[object{UtilityAtsV1.Awo}] (ref-ATS::UR_P0 ats acc))
                 (size:integer (length p0))
             )
@@ -1276,7 +1276,7 @@
         (require-capability (SECURE))
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (multi-cull-obj:object (URC_MultiCull ats acc))
                 (after-cull:[object{UtilityAtsV1.Awo}] (at "after-cull" multi-cull-obj))
                 (culled-values:[[decimal]] (at "culled-values" multi-cull-obj))
@@ -1289,7 +1289,7 @@
     (defun XI_SingleCull:[decimal] (ats:string acc:string position:integer)
         (let
             (
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 ;;
                 (cull-output:[decimal] (URC_SingleCull ats acc position))
                 (rt-lst:[string] (ref-ATS::UR_RewardTokenList ats))
@@ -1313,7 +1313,7 @@
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                 (ats-sc:string (ref-ATS::GOV|ATS|SC_NAME))
                 ;;

@@ -1,7 +1,6 @@
 (module STOAICO GOV
     ;;
     (implements OuronetPolicyV1)
-    ;(implements DemiourgosPactDigitalCollectibles-UtilityPrototype)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -325,7 +324,6 @@
             (+ current-pending-rewards gained-pending-rewards)
         )
     )
-
     ;;{F2}  [UEV]
     ;;{F3}  [UDC]
     (defun UDC_UserData:object{UserContributionSchema}
@@ -344,42 +342,39 @@
         (with-capability (INIT-ICO-DISTRIBUTION)
             (let
                 (
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
                     (dptf-ids:list 
                         (ref-TS01-C1::DPTF|C_Issue account account
-                            ["WrappedStoa" "WrappedUrStoa" "VirtualIcoDollars"]
-                            ["WSTOA" "WURSTOA" "VUSDC"]
-                            [STOA_PREC 3 2]
-                            [true true true]
-                            [true true true]
-                            [true true true]
-                            [false false false]
-                            [false false false]
-                            [false false false]
+                            ["WrappedUrStoa" "VirtualIcoDollars"]
+                            ["WURSTOA" "VUSDC"]
+                            [3 2]
+                            [true true]
+                            [true true]
+                            [true true]
+                            [false false]
+                            [false false]
+                            [false false]
                         )
                     )
-                    (wstoa-id:string (at 0 dptf-ids))
-                    (wurstoa-id:string (at 1 dptf-ids))
-                    (vusd-id:string (at 2 dptf-ids))
+                    (wstoa-id:string (ref-DALOS::UR_WrappedStoaID))
+                    (wurstoa-id:string (at 0 dptf-ids))
+                    (vusd-id:string (at 1 dptf-ids))
                 )
-                ;;1]Issue wSTOA as a DPTF
-                ;;2]Issue wURSTOA as DPTF
-                ;;3]Issue vUSD as mockup virtual Dollarz
-                ;;4]Toggle mint and burn roles
+                ;;1]Issue wURSTOA as DPTF
+                ;;2]Issue vUSD as mockup virtual Dollarz
+                ;;3]Toggle mint and burn roles
                 (ref-TS01-C1::DPTF|C_ToggleMintRole account vusd-id DEMIPAD|SC_NAME true)
                 (ref-TS01-C1::DPTF|C_ToggleBurnRole account vusd-id DEMIPAD|SC_NAME true)
                 (ref-TS01-C1::DPTF|C_ToggleMintRole account wstoa-id account true)
                 (ref-TS01-C1::DPTF|C_ToggleMintRole account wurstoa-id DEMIPAD|SC_NAME true)
-                ;;5]Mint 10 mil wSTOA (injection will follow after ICO concludes)    
+                ;;4]Mint 10 mil wSTOA (injection will follow after ICO concludes)    
                 (ref-TS01-C1::DPTF|C_Mint account wstoa-id account 10000000.0 true)
-                ;;6]Initialises the distribution Vault
-                (XI_InitialiseDistributionVault dptf-ids)
-                ;;7]Output Message
-                (format 
-                    "StoaICO Distribution Vault initialise correctly, with Token IDs {} {} {}" 
-                    [wstoa-id wurstoa-id vusd-id]
-                )
+                ;;5]Initialises the distribution Vault
+                (XI_InitialiseDistributionVault [wstoa-id wurstoa-id vusd-id])
+                ;;6]Output Message
+                [wurstoa-id vusd-id]
             )
         )
     )
@@ -411,16 +406,18 @@
     )
     (defun A_Stake (patron:string account:string v-usd-amount:decimal)
         @doc "Adds a contribution in virtual $ to the Distribution Vault \
-        \ Contributing with v-dollars allows for a piece of the 10 mil wSTOA \
-        \ placed for distribution in this Vault.\
-        \ Also earns urSTOA (up to 300k) \
-        \ Can only be done by the Admin"
+            \ Contributing with v-dollars allows for a piece of the 10 mil wSTOA \
+            \ placed for distribution in this Vault.\
+            \ Also earns urSTOA (up to 300k) \
+            \ Can only be done by the Admin"
         (with-capability (STOAICO|ADD-CONTRIBUTION account v-usd-amount)
             (let
                 (
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (v-usd-id:string (UR_Global10))
                     (user-score:decimal (UR_User1 account))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 ;;0]Mint the v-USD amount to the <DEMIPAD|SC_NAME>
                 (ref-TS01-C1::DPTF|C_Mint patron v-usd-id DEMIPAD|SC_NAME v-usd-amount false)
@@ -451,19 +448,24 @@
                 ;;1.5]Update Vault Score and User Score
                 (XI_UpdateVaultScore v-usd-amount true)
                 (XI_UpdateUserScore account v-usd-amount true)
+                (format "Succesfully contributed {} $ for Ouronet Account {}"
+                    [v-usd-amount sa]
+                )
             )
         )
     )
     (defun A_Unstake (patron:string account:string v-usd-amount:decimal)
         @doc "Removes a contribution of virtual $ from the Distribution Vault for an <account> \
-        \ Can only be done by the ADMIN"
+            \ Can only be done by the ADMIN"
         (with-capability (STOAICO|REMOVE-CONTRIBUTION account v-usd-amount)
             (let
                 (
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (v-usd-id:string (UR_Global10))
                     (user-score:decimal (UR_User1 account))
                     (remaining:decimal (- user-score v-usd-amount))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 ;;0]Burn the v-USD amount from the <DEMIPAD|SC_NAME> that is to be removed
                 (ref-TS01-C1::DPTF|C_Burn patron v-usd-id DEMIPAD|SC_NAME v-usd-amount)
@@ -481,22 +483,27 @@
                 ;;1.5]Update Vault Score and User Score
                 (XI_UpdateVaultScore v-usd-amount false)
                 (XI_UpdateUserScore account v-usd-amount false)
+                (format "Succesfully uncontributed {} $ for Ouronet Account {}"
+                    [v-usd-amount sa]
+                )
             )
         )
     )
     ;;{F6}  [C]
     (defun C_Collect (patron:string account:string)
         @doc "Collects from the distribution Vault \
-        \ Can only be done once, after the ICO has concluded. \
-        \ Can only be done by <account> owner."
+            \ Can only be done once, after the ICO has concluded. \
+            \ Can only be done by <account> owner."
         (with-capability (STOAICO|REDEEM-CONTRIBUTION account)
             (let
                 (
+                    (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (wSTOA-supply:decimal (URC_ClaimableRewards account))
                     (urSTOA-supply:decimal (dec (UR_User2 account)))
                     (wSTOA-id:string (UR_Global8))
                     (urSTOA-id:string (UR_Global9))
+                    (sa:string (ref-I|OURONET::OI|UC_ShortAccount account))
                 )
                 ;;1]Collect wSTOA and URSTOA Rewards
                 (ref-TS01-C1::DPTF|C_Mint patron urSTOA-id DEMIPAD|SC_NAME urSTOA-supply false)
@@ -520,14 +527,13 @@
                 (if (!= urSTOA-supply 0.0)
                     (format 
                         "Account {} succesfully claimed {} {} and {} {}"
-                        [account wSTOA-supply wSTOA-id urSTOA-supply urSTOA-id]
+                        [sa wSTOA-supply wSTOA-id urSTOA-supply urSTOA-id]
                     )
                     (format 
                         "Account {} succesfully claimed {} {} and no {}"
-                        [account wSTOA-supply wSTOA-id urSTOA-id]
+                        [sa wSTOA-supply wSTOA-id urSTOA-id]
                     )
                 )
-                
             )
         )
     )
@@ -560,7 +566,7 @@
         (require-capability (SECURE))
         (insert STOAICO|T|General STOAICO|INFO
             {"dollarz"          : 0.0
-            ,"urstoa-left"      : 300000
+            ,"urstoa-left"      : 250000
             ,"users"            : 0
             ,"wstoa-supply"     : 0.0
             ,"nzs-count"        : 0

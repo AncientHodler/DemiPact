@@ -1,4 +1,4 @@
-(interface DemiourgosLaunchpadV2
+(interface DemiourgosLaunchpadV1
     ;;
     ;;  [Schemas]
     ;;
@@ -181,7 +181,7 @@
         \ A permissionless Launchpad, in the form of the IGNIS Market Place will be launched after the Acquisition Pools Deployment"
     ;;
     (implements OuronetPolicyV1)
-    (implements DemiourgosLaunchpadV2)
+    (implements DemiourgosLaunchpadV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -289,8 +289,8 @@
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
     ;;{2}
-    (deftable DEMIPAD|T|Properties:{DemiourgosLaunchpadV2.DEMIPAD|Properties})
-    (deftable DEMIPAD|T|Ledger:{DemiourgosLaunchpadV2.DEMIPAD|Holdings})
+    (deftable DEMIPAD|T|Properties:{DemiourgosLaunchpadV1.DEMIPAD|Properties})
+    (deftable DEMIPAD|T|Ledger:{DemiourgosLaunchpadV1.DEMIPAD|Holdings})
     ;;{3}
     (defun CT_Bar ()                (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defun CT_EmptyCumulator ()     (let ((ref-IGNIS:module{IgnisCollectorV1} IGNIS)) (ref-IGNIS::DALOS|EmptyOutputCumulatorV2)))
@@ -484,7 +484,7 @@
             ""
         )
     )
-    (defun UC_GenerateRoyaltyIntervals:[object{DemiourgosLaunchpadV2.RoyaltyInterval}] ()
+    (defun UC_GenerateRoyaltyIntervals:[object{DemiourgosLaunchpadV1.RoyaltyInterval}] ()
         @doc "Generate list of fee intervals until fee reaches 3 promille"
         (let* 
             (
@@ -495,7 +495,7 @@
             )
             (fold
                 (lambda 
-                    (acc:[object{DemiourgosLaunchpadV2.RoyaltyInterval}] idx:integer)
+                    (acc:[object{DemiourgosLaunchpadV1.RoyaltyInterval}] idx:integer)
                     (let* 
                         (
                             (start:decimal
@@ -547,8 +547,8 @@
             (
                 (deposit-start:decimal current-balance)
                 (deposit-end:decimal (+ current-balance deposit-amount))
-                (intervals:[object{DemiourgosLaunchpadV2.RoyaltyInterval}] (UC_GenerateRoyaltyIntervals))
-                (last-interval:object{DemiourgosLaunchpadV2.RoyaltyInterval} (at (- (length intervals) 1) intervals) )
+                (intervals:[object{DemiourgosLaunchpadV1.RoyaltyInterval}] (UC_GenerateRoyaltyIntervals))
+                (last-interval:object{DemiourgosLaunchpadV1.RoyaltyInterval} (at (- (length intervals) 1) intervals) )
                 (last-interval-end:decimal (at "end" last-interval))
                 (min-fee:decimal (at "fee-promille" last-interval))
                 (min-fee-rate:decimal (/ min-fee 1000.0))
@@ -556,7 +556,7 @@
             (+
                 ;;Interval Fees
                 (fold
-                    (lambda (total-fee:decimal interval:object{DemiourgosLaunchpadV2.RoyaltyInterval})
+                    (lambda (total-fee:decimal interval:object{DemiourgosLaunchpadV1.RoyaltyInterval})
                         (let 
                             (
                                 (interval-start (at "start" interval))
@@ -610,7 +610,7 @@
         )
     )
     ;;{F0}  [UR]
-    (defun UR_LaunchpadState:object{DemiourgosLaunchpadV2.DEMIPAD|Properties} ()
+    (defun UR_LaunchpadState:object{DemiourgosLaunchpadV1.DEMIPAD|Properties} ()
         (read DEMIPAD|T|Properties PP)
     )
     (defun UR_DirectInjection:bool ()
@@ -626,7 +626,7 @@
         (at "resident-ouro" (UR_LaunchpadState))
     )
     ;;
-    (defun UR_AssetState:object{DemiourgosLaunchpadV2.DEMIPAD|Holdings} (asset-id:string)
+    (defun UR_AssetState:object{DemiourgosLaunchpadV1.DEMIPAD|Holdings} (asset-id:string)
         (read DEMIPAD|T|Ledger asset-id)
     )
     (defun UR_TotalDollarzRaised:decimal (asset-id:string)
@@ -698,17 +698,17 @@
         )
     )
     ;;{F1}  [URC]
-    (defun URC_Prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices} 
+    (defun URC_Prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices} 
         (asset-id:string amount-in-dollars:decimal type:integer)
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                (ref-SWPI:module{SwapperIssueV2} SWPI)
                 ;;
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
-                (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
+                (lkda-id:string (ref-DALOS::UR_SilverStoaID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
                 ;;
                 (wkda-prec:integer (ref-DPTF::UR_Decimals wkda-id))
@@ -776,7 +776,7 @@
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
-                (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
+                (prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
                 ;;
                 (s1:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-one" prices) (at "amount-one" prices)]))
                 (s2:string (format "<(coin.TRANSFER \"{}\" \"{}\" {})>" [buyer-kda (at "receiver-two" prices) (at "amount-two" prices)]))
@@ -808,7 +808,7 @@
                 ;;
                 (buyer-kda:string (ref-DALOS::UR_AccountKadena buyer))
                 (lq-kda:string (ref-LIQUID::GOV|LIQUID|SC_KDA-NAME))
-                (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
+                (prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices} (URC_Prices asset-id buy-amount-in-dollarz type))
                 ;;
 
                 (r1:string (at "receiver-one" prices))
@@ -869,12 +869,12 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_Costs:object{DemiourgosLaunchpadV2.Costs} 
+    (defun UDC_Costs:object{DemiourgosLaunchpadV1.Costs} 
         (a:decimal b:decimal)
         {"pid"  : a
         ,"wkda" : b}
     )
-    (defun UDC_DEMIPAD|Holdings:object{DemiourgosLaunchpadV2.DEMIPAD|Holdings}
+    (defun UDC_DEMIPAD|Holdings:object{DemiourgosLaunchpadV1.DEMIPAD|Holdings}
         (
             a:decimal b:decimal c:decimal d:decimal
             e:decimal f:decimal g:decimal
@@ -898,7 +898,7 @@
         ,"retrieval"                    : m
         }
     )
-    (defun UDC_LaunchpadPrices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
+    (defun UDC_LaunchpadPrices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices}
         (
             a:string b:string c:string d:string
             e:decimal f:decimal g:decimal h:decimal
@@ -990,12 +990,12 @@
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
                     (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
                     ;;
-                    (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}  (URC_Prices asset-id amount-in-dollars type))
+                    (prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices}  (URC_Prices asset-id amount-in-dollars type))
                     (working-id:string
                         (if (or (= type 0) (= type 1))
-                            (ref-DALOS::UR_WrappedKadenaID)
+                            (ref-DALOS::UR_WrappedStoaID)
                             (if (= type 2)
-                                (ref-DALOS::UR_LiquidKadenaID)
+                                (ref-DALOS::UR_SilverStoaID)
                                 (ref-DALOS::UR_OuroborosID)
                             )
                         )
@@ -1062,9 +1062,9 @@
                         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                         (working-id:string
                             (if (= type 1)
-                                (ref-DALOS::UR_WrappedKadenaID)
+                                (ref-DALOS::UR_WrappedStoaID)
                                 (if (= type 2)
-                                    (ref-DALOS::UR_LiquidKadenaID)
+                                    (ref-DALOS::UR_SilverStoaID)
                                     (ref-DALOS::UR_OuroborosID)
                                 )
                             )
@@ -1225,7 +1225,7 @@
         (update DEMIPAD|T|Properties PP {"resident-ouro" : value})
     )
     ;;
-    (defun XI_SatisfyEnviroment (donor:string prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices})
+    (defun XI_SatisfyEnviroment (donor:string prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices})
         (require-capability (SECURE))
         (let
             (
@@ -1240,7 +1240,7 @@
             (ref-coin::transfer donor-kda (at "receiver-four" prices)   (at "amount-four" prices))      ;;for LQ-St
         )
     )
-    (defun XI_DepositResidents (prices:object{DemiourgosLaunchpadV2.DEMIPAD|Prices} type:integer)
+    (defun XI_DepositResidents (prices:object{DemiourgosLaunchpadV1.DEMIPAD|Prices} type:integer)
         (require-capability (SECURE))
         (with-capability (SECURE)
             (let

@@ -1,50 +1,4 @@
-(interface Sparks
-    ;;
-    ;;  [UR]
-    ;;
-    (defun UR_SparkID:string ())
-    (defun UR_IzOpenForBusiness:bool ())
-    (defun UR_FrozenSparkID:string ())
-    (defun UR_Sparks (account:string))
-    ;;
-    ;;  [URC]
-    ;;
-    (defun URC_GetMaxBuy:integer (account:string native:bool))
-    (defun URC_SparkCost:decimal ())
-    (defun URC_SparkRedemptionCost:decimal ())
-    (defun URC_AccountRedemptionAmount:decimal (account:string))
-    ;;
-    ;;  [C]
-    ;;
-    (defun C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
-    (defun C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
-    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:integer))
-    ;;
-)
-(interface SparksV2
-    ;;
-    ;;  [UR]
-    ;;
-    (defun UR_SparkID:string ())
-    (defun UR_IzOpenForBusiness:bool ())
-    (defun UR_FrozenSparkID:string ())
-    (defun UR_Sparks (account:string))
-    ;;
-    ;;  [URC]
-    ;;
-    (defun URC_GetMaxBuy:integer (account:string native:bool))
-    (defun URC_SparkCost:decimal ())
-    (defun URC_SparkRedemptionCost:decimal ())
-    (defun URC_AccountRedemptionAmount:decimal (account:string))
-    ;;
-    ;;  [C]
-    ;;
-    (defun C_BuySparks (patron:string buyer:string sparks-amount:integer iz-native:bool))
-    (defun C_RedemAllSparks (patron:string redemption-payer:string account-to-redeem:string))
-    (defun C_RedemFewSparks (patron:string redemption-payer:string account-to-redeem:string redemption-quantity:decimal))
-    ;;
-)
-(interface SparksV3
+(interface SparksV1
     ;;
     ;;  [UR]
     ;;
@@ -72,7 +26,7 @@
 (module DEMIPAD-SPARK GOV
     ;;
     (implements OuronetPolicyV1)
-    (implements SparksV3)
+    (implements SparksV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -85,7 +39,7 @@
     (defcap GOV|SPARK_ADMIN ()                 (enforce-guard GOV|MD_SPARK))
     ;;{G3}
     (defun GOV|Demiurgoi ()                    (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|DEMIPAD|SC_NAME ()              (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
+    (defun GOV|DEMIPAD|SC_NAME ()              (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;<====>
     ;;POLICY
@@ -247,7 +201,7 @@
     (defun UR_BoostPromille:decimal ()
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
             )
             (at "boost" (ref-DEMIPAD::UR_Price (UR_SparkID)))
         )
@@ -255,7 +209,7 @@
     (defun UR_IzOpenForBusiness:bool ()
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
             )
             (ref-DEMIPAD::UR_OpenForBusiness (UR_SparkID))
         )
@@ -305,18 +259,17 @@
         (let
             (
                 (ref-coin:module{fungible-v2} coin)
-
                 (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 ;;
                 (k-account:string (ref-DALOS::UR_AccountKadena account))
-                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda:string (ref-DALOS::UR_WrappedStoaID))
                 (spark-id:string (UR_SparkID))
                 (spark-price:decimal (at "pid" (ref-DEMIPAD::UR_Price spark-id)))
                 (still-for-sale:decimal (ref-DPTF::UR_AccountSupply spark-id DEMIPAD|SC_NAME))
@@ -344,7 +297,7 @@
             (
                 (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
@@ -394,12 +347,12 @@
             (floor (* supply rc) kda-prec)
         )
     )
-    (defun URC_SparkAmountCosts:object{DemiourgosLaunchpadV2.Costs} (amount:integer)
+    (defun URC_SparkAmountCosts:object{DemiourgosLaunchpadV1.Costs} (amount:integer)
         (let
             (
                 (ref-U|CT:module{OuronetConstantsV1} U|CT)
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
@@ -417,7 +370,7 @@
         (buyer:string amount:integer iz-native:bool)
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (asset-id:string (UR_SparkID))
                 (type:integer (if iz-native 0 1))
                 (pid:decimal (at "pid" (URC_SparkAmountCosts amount)))
@@ -439,10 +392,10 @@
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                     (ref-TFT:module{TrueFungibleTransferV1} TFT)
-                    (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                    (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                     ;;
                     (spark-id:string (UR_SparkID))
-                    (costs:object{DemiourgosLaunchpadV2.Costs} (URC_SparkAmountCosts sparks-amount))
+                    (costs:object{DemiourgosLaunchpadV1.Costs} (URC_SparkAmountCosts sparks-amount))
                     (pid:decimal (at "pid" costs))
                     (type:integer (if iz-native 0 1))
                     (ico1:object{IgnisCollectorV1.OutputCumulator}
@@ -512,7 +465,7 @@
                 (spark-id:string (UR_SparkID))
                 (spark-redemption-cost:decimal (URC_SparkRedemptionCost))
                 (redemption-value:decimal (floor (* spark-redemption-cost redemption-quantity) kda-prec))
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
                 (sa-atr:string (ref-I|OURONET::OI|UC_ShortAccount account-to-redeem))
             )
             (ref-IGNIS::C_Collect patron
@@ -556,7 +509,7 @@
                 (spark-id:string (UR_SparkID))
                 (spark-redemption-cost:decimal (URC_CustomSparkRedemptionCost custom-kda-pid))
                 (redemption-value:decimal (floor (* spark-redemption-cost redemption-quantity) kda-prec))
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
                 (sa-atr:string (ref-I|OURONET::OI|UC_ShortAccount account-to-redeem))
             )
             (ref-IGNIS::C_Collect patron

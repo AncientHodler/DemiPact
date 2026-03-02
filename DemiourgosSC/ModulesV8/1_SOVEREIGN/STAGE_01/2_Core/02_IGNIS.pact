@@ -615,32 +615,38 @@
                 (ignis-prices:[decimal] (at "ignis-prices" (at "primed-cumulator" primed-cumulator)))
                 (ignis-sum:decimal (fold (+) 0.0 ignis-prices))
                 (iz-gassles-patron:bool (ref-DALOS::UR_AccountType patron))
+                (virtual-gas-toggle:bool (ref-DALOS::UR_VirtualToggle))
             )
             (if (and (!= ignis-sum 0.0) (not iz-gassles-patron))
-                (with-capability (IGNIS|C>DC patron)
-                    (let
-                        (
-                            (icl:integer (length ignis-prices))
-                            (primed-collector:object{IgnisCollectorV1.CompressedCumulator} 
-                                (at "primed-cumulator" primed-cumulator)
-                            )
-                        )
-                        (map
-                            (lambda
-                                (idx:integer)
-                                (let
-                                    (
-                                        (interactor:string (at idx (at "interactors" primed-collector)))
-                                        (amount:decimal (at idx (at "ignis-prices" primed-collector)))
-                                    )
-                                    (with-capability (IGNIS|C>COLLECT patron interactor amount)
-                                        (XI_IgnisCollector patron interactor amount)
-                                    )
+                (if virtual-gas-toggle
+                    (with-capability (IGNIS|C>DC patron)
+                        (let
+                            (
+                                (icl:integer (length ignis-prices))
+                                (primed-collector:object{IgnisCollectorV1.CompressedCumulator} 
+                                    (at "primed-cumulator" primed-cumulator)
                                 )
                             )
-                            (enumerate 0 (- icl 1))
+                            (map
+                                (lambda
+                                    (idx:integer)
+                                    (let
+                                        (
+                                            (interactor:string (at idx (at "interactors" primed-collector)))
+                                            (amount:decimal (at idx (at "ignis-prices" primed-collector)))
+                                        )
+                                        (with-capability (IGNIS|C>COLLECT patron interactor amount)
+                                            (XI_IgnisCollector patron interactor amount)
+                                        )
+                                    )
+                                )
+                                (enumerate 0 (- icl 1))
+                            )
+                            (ref-DALOS::XE_IncrementOuronetAccountNonce patron)
                         )
-                        (ref-DALOS::XE_IncrementOuronetAccountNonce patron)
+                    )
+                    (with-capability (IGNIS|S>FREE)
+                        true
                     )
                 )
                 (with-capability (IGNIS|S>FREE)

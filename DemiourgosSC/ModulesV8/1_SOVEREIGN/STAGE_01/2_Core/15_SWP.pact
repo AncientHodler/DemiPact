@@ -3,7 +3,7 @@
     ;;
     (implements OuronetPolicyV1)
     (implements BrandingUsagePrimaryV1)
-    (implements SwapperV1)
+    (implements SwapperV2)
     ;;{G1}
     (defconst GOV|MD_SWP            (keyset-ref-guard (GOV|Demiurgoi)))
     (defconst GOV|SC_SWP            (keyset-ref-guard SWP|SC_KEY))
@@ -142,12 +142,12 @@
         can-swap:bool
         genesis-weights:[decimal]
         weights:[decimal]
-        genesis-ratio:[object{SwapperV1.PoolTokens}]
-        pool-tokens:[object{SwapperV1.PoolTokens}]
+        genesis-ratio:[object{SwapperV2.PoolTokens}]
+        pool-tokens:[object{SwapperV2.PoolTokens}]
         token-lp:string
         fee-lp:decimal
         fee-special:decimal
-        fee-special-targets:[object{SwapperV1.FeeSplit}]
+        fee-special-targets:[object{SwapperV2.FeeSplit}]
         fee-lock:bool
         unlocks:integer
         amplifier:decimal
@@ -282,7 +282,7 @@
             (enforce (> current-amp 0.0) "Amplifier can only be updated for Stable Pools")
         )
     )
-    (defcap SPW|S>UPDATE_SPECIAL-FEE-TARGETS (swpair:string targets:[object{SwapperV1.FeeSplit}])
+    (defcap SPW|S>UPDATE_SPECIAL-FEE-TARGETS (swpair:string targets:[object{SwapperV2.FeeSplit}])
         @event
         (let
             (
@@ -292,18 +292,19 @@
                 (major:integer (ref-DALOS::UR_Elite-Tier-Major owner))
                 (max:integer
                     (cond
-                        ((or (= major 0) (= major 1)) 1)
-                        ((or (= major 2) (= major 3)) 2)
-                        ((or (= major 4) (= major 5)) 3)
-                        4
+                        ((= major 2) 2)
+                        ((= major 3) 3)
+                        ((= major 4) 4)
+                        ((fold (or) true [(= major 5)(= major 6)(= major 7)]) 7)
+                        1
                     )
                 )
             )
-            (enforce (and (>= target-no 1) (<= target-no max)) "Between 1 and 4 special fee Targets allowed")
+            (enforce (and (>= target-no 1) (<= target-no max)) "Increase Major Elite Tier to add more Special Targets")
             (CAP_Owner swpair)
             (map
                 (lambda
-                    (obj:object{SwapperV1.FeeSplit})
+                    (obj:object{SwapperV2.FeeSplit})
                     (UEV_FeeSplit obj)
                 )
                 targets
@@ -391,8 +392,8 @@
                 (primality:bool (UR_Primality primordial-pool))
                 (pt:[string] (UR_PoolTokens primordial-pool))
                 (ouro:string (ref-DALOS::UR_OuroborosID))
-                (wkda:string (ref-DALOS::UR_WrappedKadenaID))
-                (lkda:string (ref-DALOS::UR_LiquidKadenaID))
+                (wkda:string (ref-DALOS::UR_WrappedStoaID))
+                (lkda:string (ref-DALOS::UR_SilverStoaID))
                 (pool-type:string (ref-U|SWP::UC_PoolType primordial-pool))
                 (iz-weigthed:bool (= pool-type "W"))
                 (has-ouro:bool (contains ouro pt))
@@ -416,14 +417,14 @@
         )
     )
     ;;{FC}
-    (defun UC_ExtractTokens:[string] (input:[object{SwapperV1.PoolTokens}])
+    (defun UC_ExtractTokens:[string] (input:[object{SwapperV2.PoolTokens}])
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
-                    (acc:[string] item:object{SwapperV1.PoolTokens})
+                    (acc:[string] item:object{SwapperV2.PoolTokens})
                     (ref-U|LST::UC_AppL acc (at "token-id" item))
                 )
                 []
@@ -431,14 +432,14 @@
             )
         )
     )
-    (defun UC_ExtractTokenSupplies:[decimal] (input:[object{SwapperV1.PoolTokens}])
+    (defun UC_ExtractTokenSupplies:[decimal] (input:[object{SwapperV2.PoolTokens}])
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
             )
             (fold
                 (lambda
-                    (acc:[decimal] item:object{SwapperV1.PoolTokens})
+                    (acc:[decimal] item:object{SwapperV2.PoolTokens})
                     (ref-U|LST::UC_AppL acc (at "token-supply" item))
                 )
                 []
@@ -446,7 +447,7 @@
             )
         )
     )
-    (defun UC_CustomSpecialFeeTargets:[string] (io:[object{SwapperV1.FeeSplit}])
+    (defun UC_CustomSpecialFeeTargets:[string] (io:[object{SwapperV2.FeeSplit}])
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
@@ -464,7 +465,7 @@
             )
         )
     )
-    (defun UC_CustomSpecialFeeTargetsProportions:[decimal] (io:[object{SwapperV1.FeeSplit}])
+    (defun UC_CustomSpecialFeeTargetsProportions:[decimal] (io:[object{SwapperV2.FeeSplit}])
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
@@ -520,10 +521,10 @@
     (defun UR_Weigths:[decimal] (swpair:string)
         (at "weights" (read SWP|Pairs swpair ["weights"]))
     )
-    (defun UR_GenesisRatio:[object{SwapperV1.PoolTokens}] (swpair:string)
+    (defun UR_GenesisRatio:[object{SwapperV2.PoolTokens}] (swpair:string)
         (at "genesis-ratio" (read SWP|Pairs swpair ["genesis-ratio"]))
     )
-    (defun UR_PoolTokenObject:[object{SwapperV1.PoolTokens}] (swpair:string)
+    (defun UR_PoolTokenObject:[object{SwapperV2.PoolTokens}] (swpair:string)
         (at "pool-tokens" (read SWP|Pairs swpair ["pool-tokens"]))
     )
     (defun UR_TokenLP:string (swpair:string)
@@ -535,7 +536,7 @@
     (defun UR_FeeSP:decimal (swpair:string)
         (at "fee-special" (read SWP|Pairs swpair ["fee-special"]))
     )
-    (defun UR_FeeSPT:[object{SwapperV1.FeeSplit}] (swpair:string)
+    (defun UR_FeeSPT:[object{SwapperV2.FeeSplit}] (swpair:string)
         (at "fee-special-targets" (read SWP|Pairs swpair ["fee-special-targets"]))
     )
     (defun UR_FeeLock:bool (swpair:string)
@@ -699,6 +700,15 @@
             (floor (/ (* n swap-fee) (* 4.0 (- n 1.0))) (ref-U|CT::CT_FEE_PRECISION))
         )
     )
+    (defun URC_AllPoolTokens:[string] ()
+        @doc "Outputs all unique tokens existing across all Swap Pools"
+        (let
+            (
+                (ref-U|SWP:module{UtilitySwpV1} U|SWP)
+            )
+            (ref-U|SWP::UC_UniqueTokens (URC_Swpairs))
+        )
+    )
     (defun URC_Swpairs:[string] ()
         @doc "Outputs all current Existing Swpairs. Cheaper than <keys SWP|Pairs>"
         (let
@@ -722,7 +732,7 @@
             (fold (+) [] (ref-U|LST::UC_RemoveItem fl [BAR]))
         )
     )
-    (defun URC_LpComposer:[string] (pool-tokens:[object{SwapperV1.PoolTokens}] weights:[decimal] amp:decimal)
+    (defun URC_LpComposer:[string] (pool-tokens:[object{SwapperV2.PoolTokens}] weights:[decimal] amp:decimal)
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
@@ -773,7 +783,7 @@
         )
     )
     ;;{F2}
-    (defun UEV_FeeSplit (input:object{SwapperV1.FeeSplit})
+    (defun UEV_FeeSplit (input:object{SwapperV2.FeeSplit})
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
@@ -998,7 +1008,7 @@
                 (
                     (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     ;;
                     (ignis-id:string (ref-DALOS::UR_IgnisID))
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -1163,7 +1173,7 @@
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (biggest:decimal (ref-DALOS::UR_UsagePrice "ignis|biggest"))
                 (price:decimal (* 5.0 biggest))
                 (trigger:bool (ref-IGNIS::URC_IsVirtualGasZero))
@@ -1284,7 +1294,7 @@
         )
     )
     (defun C_UpdateSpecialFeeTargets:object{IgnisCollectorV1.OutputCumulator}
-        (swpair:string targets:[object{SwapperV1.FeeSplit}])
+        (swpair:string targets:[object{SwapperV2.FeeSplit}])
         (UEV_IMC)
         (let
             (
@@ -1312,7 +1322,7 @@
             (let
                 (
                     (pool-tokens:[string] (UR_PoolTokens swpair))
-                    (new-pool-tokens:[object{SwapperV1.PoolTokens}]
+                    (new-pool-tokens:[object{SwapperV2.PoolTokens}]
                         (zip (lambda (x:string y:decimal) { "token-id": x, "token-supply": y }) pool-tokens new-supplies)
                     )
                 )
@@ -1327,10 +1337,10 @@
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
-                (current-pool-tokens:[object{SwapperV1.PoolTokens}] (UR_PoolTokenObject swpair))
+                (current-pool-tokens:[object{SwapperV2.PoolTokens}] (UR_PoolTokenObject swpair))
                 (id-pos:integer (UR_PoolTokenPosition swpair id))
-                (new:object{SwapperV1.PoolTokens} { "token-id" : id, "token-supply" : new-supply})
-                (new-pool-tokens:[object{SwapperV1.PoolTokens}] (ref-U|LST::UC_ReplaceAt current-pool-tokens id-pos new))
+                (new:object{SwapperV2.PoolTokens} { "token-id" : id, "token-supply" : new-supply})
+                (new-pool-tokens:[object{SwapperV2.PoolTokens}] (ref-U|LST::UC_ReplaceAt current-pool-tokens id-pos new))
             )
             (with-capability (SWP|S>UPDATE-SUPPLY swpair id new-supply)
                 (update SWP|Pairs swpair
@@ -1339,7 +1349,7 @@
             )
         )
     )
-    (defun XE_Issue:string (account:string pool-tokens:[object{SwapperV1.PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool)
+    (defun XE_Issue:string (account:string pool-tokens:[object{SwapperV2.PoolTokens}] token-lp:string fee-lp:decimal weights:[decimal] amp:decimal p:bool)
         (UEV_IMC)
         (let
             (
@@ -1500,7 +1510,7 @@
             )
         )
     )
-    (defun XI_UpdateSpecialFeeTargets (swpair:string targets:[object{SwapperV1.FeeSplit}])
+    (defun XI_UpdateSpecialFeeTargets (swpair:string targets:[object{SwapperV2.FeeSplit}])
         (require-capability (SPW|S>UPDATE_SPECIAL-FEE-TARGETS swpair targets))
         (update SWP|Pairs swpair
             {"fee-special-targets"                : targets}

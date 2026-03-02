@@ -102,10 +102,10 @@
         meta-data-array:[[object]]
     )
     ;;{2}
-    (deftable DPOF|T|Properties:{DpofUdcV1.DPOF|Properties})      ;;Key = <DPOF-id>      
+    (deftable DPOF|T|Properties:{DpofUdcV1.DPOF|Properties})        ;;Key = <DPOF-id>      
     (deftable DPOF|T|Nonces:{DpofUdcV1.DPOF|NonceElement})          ;;Key = <DSOF-id> + BAR + <nonce>
     (deftable DPOF|T|VerumRoles:{DpofUdcV1.DPOF|VerumRoles})        ;;Key = <DPOF-id>
-    (deftable DPOF|T|AccountRoles:{DpofUdcV1.DPOF|AccountRoles})  ;;Key = <DPOF-id> + BAR + <account> 
+    (deftable DPOF|T|AccountRoles:{DpofUdcV1.DPOF|AccountRoles})    ;;Key = <DPOF-id> + BAR + <account> 
     ;;{3}
     (defun CT_Bar ()        (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR           (CT_Bar))

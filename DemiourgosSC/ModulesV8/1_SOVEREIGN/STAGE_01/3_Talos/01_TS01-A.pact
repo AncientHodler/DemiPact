@@ -1,7 +1,7 @@
 (module TS01-A GOV
     @doc "TALOS Stage 1 Administrator Functions \
-    \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
-    \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
+        \ Contains All Administrator functions [DALOS BRD ORBR SWP]\
+        \ Also contains Fueling Functions needed in all subsequent TALOS Modules"
     ;;
     (implements OuronetPolicyV1)
     (implements TalosStageOne_AdminV1)
@@ -413,7 +413,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
                 (ref-SWP::A_UpdatePrincipal principal add-or-remove)
             )
@@ -426,7 +426,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
                 (ref-SWP::A_UpdateLimit limit spawn)
             )
@@ -437,7 +437,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
                 (ref-SWP::A_UpdateLiquidBoost new-boost-variable)
             )
@@ -448,7 +448,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
                 (ref-SWP::A_DefinePrimordialPool primordial-pool)
             )
@@ -459,7 +459,7 @@
         (with-capability (P|ADMINISTRATIVE-SUMMONER)
             (let
                 (
-                    (ref-SWP:module{SwapperV1} SWP)
+                    (ref-SWP:module{SwapperV2} SWP)
                 )
                 (ref-SWP::A_ToggleAsymetricLiquidityAddition toggle)
             )

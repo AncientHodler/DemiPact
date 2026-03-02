@@ -213,9 +213,7 @@
 ;;  [8]      [U|DALOS]
 ;;
 (interface UtilityDalosV1
-    @doc "Exported Utility Functions for the DALOS Module \
-    \ \
-    \ Added <UC_TenTwentyThirtyFourtySplit>"
+    @doc "Exported Utility Functions for the DALOS Module"
     ;;
     (defun UC_TenTwentyThirtyFourtySplit:[decimal] (input:decimal ip:integer))
     (defun UC_DirectFilterId:[string] (listoflists:[[string]] account:string))
@@ -235,7 +233,7 @@
     (defun UDC_Makeid:string (ticker:string))
     (defun UDC_MakeMVXNonce:string (nonce:integer))
 )
-(interface UtilityDalosGlyphs
+(interface UtilityDalosGlyphsV1
     (defun GLYPH|UEV_DalosAccountCheck (account:string))
     (defun GLYPH|UEV_DalosAccount (account:string))
     (defun GLYPH|UEV_MsDc:bool (multi-s:string))
@@ -392,7 +390,7 @@
         boost:decimal
     )
     ;;Virtual Swap Engine (VSE) Schema
-    ;:The Virtual Swap Engine is used to perform Swap Computations on Data 
+    ;;The Virtual Swap Engine is used to perform Swap Computations on Data 
     ;;(that can be either true Swap Pool Data or Virtual Data), Performing always Direct Swaps, 
     ;;The Swaps being carried out are stored in the <swaps> field in an Object{VirtualSwap}
     ;;with their Input-Ids, Input-Amounts, and Output-ID;

@@ -12,8 +12,8 @@
 ;;
 ;;STARTER - Loads Stage 0 and 1 as Starter - Use for Standalone Run
 ;;          Dont Use for Z.repl Run
-(load "Stage00.repl")
-(load "Stage01_Tester.repl")
+;(load "Stage00.repl")
+;(load "Stage01_Tester.repl")
 
 ;;SOVEREING DEPLOYER
 (load "Stage_02/[0.1]_Interfaces.repl")

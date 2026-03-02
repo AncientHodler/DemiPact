@@ -149,24 +149,50 @@
         )
     )
     (defcap LIQUID|C>WRAP ()
-        @doc "Capability needed to wrap KDA to DWK"
+        @doc "Capability needed to wrap STOA to Ouronet Wrapped Stoa"
         @event
-        (UEV_IzLiquidStakingLive)
-        (compose-capability (LIQUID|GOV))
-        (compose-capability (P|LQD|CALLER))
+        (compose-capability (LIQUID|CONVERTER))
     )
     (defcap LIQUID|C>UNWRAP ()
-        @doc "Capability needed to unwrap KDA to DWK"
+        @doc "Capability needed to unwrap STOA to Ouronet Wrapped Stoa"
         @event
-        (UEV_IzLiquidStakingLive)
-        (compose-capability (LIQUID|GOV))
+        (compose-capability (LIQUID|CONVERTER))
         (compose-capability (LIQUID|NATIVE-AUTOMATIC))
+    )
+    (defcap LIQUID|C>UR-WRAP ()
+        @doc "Capability needed to wrap URSTOA to Ouronet Wrapped UrStoa"
+        @event
+        (compose-capability (LIQUID|CONVERTER))
+    )
+    (defcap LIQUID|C>UR-UNWRAP ()
+        @doc "Capability needed to unwrap URSTOA to Ouronet Wrapped UrStoa"
+        @event
+        (compose-capability (LIQUID|CONVERTER))
+        (compose-capability (LIQUID|NATIVE-AUTOMATIC))
+    )
+    (defcap LIQUID|CONVERTER ()
+        (UEV_IzLiquidStakingLive)
+        (compose-capability (LIQUID|CALLER))
+    )
+    (defcap LIQUID|CALLER ()
+        (compose-capability (LIQUID|GOV))
         (compose-capability (P|LQD|CALLER))
     )
     ;;
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
+    (defun UR_IzOuronetAccountRegisteredForUrstoaHoldings:bool (ouronet-account:string)
+        (let
+            (
+                (ref-ur-coin:module{stoa-ns.ur-stoic-fungible-v1} coinn)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (kadena-patron:string (ref-DALOS::UR_AccountKadena ouronet-account))
+                (trial (try false (ref-ur-coin::UR_UR|Details kadena-patron)))
+            )
+            (if (= (typeof trial) "bool") false true)
+        )
+    )
     ;;{F1}  [URC]
     ;;{F2}  [UEV]
     (defun UEV_IzLiquidStakingLive ()
@@ -175,8 +201,8 @@
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (w-kda:string (ref-DALOS::UR_WrappedKadenaID))
-                (l-kda:string (ref-DALOS::UR_LiquidKadenaID))
+                (w-kda:string (ref-DALOS::UR_WrappedStoaID))
+                (l-kda:string (ref-DALOS::UR_SilverStoaID))
             )
             (enforce (!= w-kda BAR) "Wrapped-Kadena is not set")
             (enforce (!= l-kda BAR) "Liquid-Kadena is not set")
@@ -238,7 +264,7 @@
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena unwrapper))
-                (w-kda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (w-stoa-id:string (ref-DALOS::UR_WrappedStoaID))
             )
             (with-capability (LIQUID|C>UNWRAP)
                 (let
@@ -246,8 +272,8 @@
                         (output:object{IgnisCollectorV1.OutputCumulator}
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
-                                    (ref-TFT::C_Transfer w-kda-id unwrapper lq-sc amount true)
-                                    (ref-DPTF::C_Burn w-kda-id lq-sc amount)
+                                    (ref-TFT::C_Transfer w-stoa-id unwrapper lq-sc amount true)
+                                    (ref-DPTF::C_Burn w-stoa-id lq-sc amount)
                                 ]
                                 []
                             )
@@ -274,13 +300,11 @@
                 (lq-sc:string LIQUID|SC_NAME)
                 (lq-kda:string LIQUID|SC_KDA-NAME)
                 (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
-                (w-kda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (w-kda-id:string (ref-DALOS::UR_WrappedStoaID))
             )
             (with-capability (LIQUID|C>WRAP)
                 (let
                     (
-                        (ref-U|CT:module{OuronetConstantsV1} U|CT)
-                        (kda-prec:integer (ref-U|CT::CT_KDA_PRECISION))
                         (output:object{IgnisCollectorV1.OutputCumulator}
                             (ref-IGNIS::UDC_ConcatenateOutputCumulators
                                 [
@@ -297,6 +321,100 @@
             )
         )
     )
+    ;;
+    (defun C_RegisterOuronetAccountForUrstoaHoldings
+        (ouronet-account:string guard:guard)
+        
+        (UEV_IMC)
+        (let
+            (
+                (ref-ur-coin:module{stoa-ns.ur-stoic-fungible-v1} coinn)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (kadena-patron:string (ref-DALOS::UR_AccountKadena ouronet-account))
+            )
+            (ref-ur-coin::C_UR|CreateAccount kadena-patron guard)
+        )
+    )
+    (defun C_UnwrapUrStoa:object{IgnisCollectorV1.OutputCumulator}
+        (unwrapper:string amount:decimal)
+        @doc "Unwrapper is the Ouronet Account doing the Unwrapping. \
+            \ Its attached Kadena address k:xxx must be registered in the UrStoa Account Table for this to work \
+            \ If its not registered there yet, its account must be created with \
+            \ <C_RegisterOuronetAccountForUrstoaHoldings>"
+        (UEV_IMC)
+        (let
+            (
+                (ref-ur-coin:module{stoa-ns.ur-stoic-fungible-v1} coinn)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (lq-sc:string LIQUID|SC_NAME)
+                (lq-kda:string LIQUID|SC_KDA-NAME)
+                (kadena-patron:string (ref-DALOS::UR_AccountKadena unwrapper))
+                (w-ur-stoa-id:string (ref-DALOS::UR_UrStoaID))
+            )
+            (with-capability (LIQUID|C>UR-UNWRAP)
+                (let
+                    (
+                        (output:object{IgnisCollectorV1.OutputCumulator}
+                            (ref-IGNIS::UDC_ConcatenateOutputCumulators
+                                [
+                                    (ref-TFT::C_Transfer w-ur-stoa-id unwrapper lq-sc amount true)
+                                    (ref-DPTF::C_Burn w-ur-stoa-id lq-sc amount)
+                                ]
+                                []
+                            )
+                            
+                        )
+                    )
+                    ;;(install-capability (ref-ur-coin::UR|TRANSFER lq-kda kadena-patron amount))
+                    ;;Capability is added instead in the JavaCode - NOT NEEDED because TRANSMIT is used.
+                    (ref-ur-coin::C_UR|Transmit lq-kda kadena-patron amount)
+                    output
+                )
+            )
+        )
+    )
+    (defun C_WrapUrStoa:object{IgnisCollectorV1.OutputCumulator}
+        (wrapper:string amount:decimal)
+        @doc "Wrapper is the Ouronet Account doing the Wrapping. \
+            \ Its attached Kadena address k:xxx must be registered in the UrStoa Account Table for this to work \
+            \ If its not registered there yet, its account must be created with \
+            \ <C_RegisterOuronetAccountForUrstoaHoldings>"
+        (UEV_IMC)
+        (let
+            (
+                (ref-ur-coin:module{stoa-ns.ur-stoic-fungible-v1} coinn)
+                (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
+                (ref-DALOS:module{OuronetDalosV1} DALOS)
+                (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                (ref-TFT:module{TrueFungibleTransferV1} TFT)
+                (lq-sc:string LIQUID|SC_NAME)
+                (lq-kda:string LIQUID|SC_KDA-NAME)
+                (kadena-patron:string (ref-DALOS::UR_AccountKadena wrapper))
+                (w-ur-stoa-id:string (ref-DALOS::UR_UrStoaID))
+            )
+            (with-capability (LIQUID|C>UR-WRAP)
+                (let
+                    (
+                        (output:object{IgnisCollectorV1.OutputCumulator}
+                            (ref-IGNIS::UDC_ConcatenateOutputCumulators
+                                [
+                                    (ref-DPTF::C_Mint w-ur-stoa-id lq-sc amount false)
+                                    (ref-TFT::C_Transfer w-ur-stoa-id lq-sc wrapper amount true)
+                                ]
+                                []
+                            )
+                        )
+                    )
+                    (ref-ur-coin::C_UR|Transmit kadena-patron lq-kda amount)
+                    output
+                )
+            )
+        )
+    )
+    
     ;;{F7}  [X]
     
     ;;

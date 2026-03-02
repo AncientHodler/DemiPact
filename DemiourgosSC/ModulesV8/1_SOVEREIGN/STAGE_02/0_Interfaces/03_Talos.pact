@@ -29,8 +29,7 @@
     (defun CUSTODIANS|C_Acquire (patron:string buyer:string nonce:integer amount:integer iz-native:bool))
     ;;
 )
-
-
+;;
 (interface TalosStageTwo_ClientOneV1
     @doc "Exposes Stage Two First Batch of Client Functions: \
         \ the SemiFungible Client Functions"
@@ -176,6 +175,7 @@
     (defun DPSF|C_MorphEquity (patron:string account:string id:string input-nonce:integer input-amount:integer output-nonce:integer))
     ;;
 )
+;;
 (interface TalosStageTwo_ClientTwoV1
     @doc "Exposes Stage Two Second Batch of Client Functions: \
         \ the NonFungible Client Functions"

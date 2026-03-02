@@ -129,19 +129,19 @@
     
     (
         (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
-        (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-KPAY)
+        (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-STOICPAY)
         ;;
         (ref-U|G:module{OuronetGuardsV1} U|G)
         (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
-        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         ;;
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
         (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
         ;;
-        (s-key:string DEMIPAD-KPAY.KPAY|INFO)
+        (s-key:string DEMIPAD-STOICPAY.KPAY|INFO)
     )
     [
         ;;1]Turn Off KDA Collection to Mint DPTF without KDA Cost
@@ -152,7 +152,7 @@
                     (ref-TS01-C1::DPTF|C_Issue
                         patron
                         patron
-                        ["KadenaPay"]
+                        ["StoicPayV1"]
                         ["KPAY"]
                         [24]
                         [true]
@@ -190,8 +190,8 @@
                 (ref-TS01-C1::DPTF|C_Mint patron KpayID lpad-sc 250000000.0 true)
                 (ref-TS01-C1::DPTF|C_ToggleBurnRole patron KpayID lpad-sc true)
                 ;;7]Store Kpay ID
-                (acquire-module-admin DEMIPAD-KPAY)
-                (insert DEMIPAD-KPAY.KPAY|T|Properties s-key
+                (acquire-module-admin DEMIPAD-STOICPAY)
+                (insert DEMIPAD-STOICPAY.KPAY|T|Properties s-key
                     {"asset-id"            : KpayID}
                 )
                 ;;8]Register KPAY To Launchpad
@@ -205,10 +205,10 @@
 (IGNIS.C_Collect "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî" (IGNIS.UDC_CustomCodeCumulator))
 (let
     (
-        (ref-DEMIPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+        (ref-DEMIPAD-STOICPAY:module{StoicPayV1} DEMIPAD-STOICPAY)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         ;;
-        (KpayID:string (ref-DEMIPAD-KPAY::UR_KpayID))
+        (KpayID:string (ref-DEMIPAD-STOICPAY::UR_KpayID))
     )
     [
         ;;9]Defines the starting point, which is the base for the price and ending period.

@@ -12,6 +12,7 @@
     ;;  [A]
     ;;
     (defun A_OuroMinterStageOne:[decimal] ())
+    (defun A_KosonMinterStageOne ())
     (defun A_KosonMinterStageOne_1of3 ())
     (defun A_KosonMinterStageOne_2of3 ())
     (defun A_KosonMinterStageOne_3of3 ())
@@ -176,9 +177,9 @@
                 (one:decimal 0.0625)
                 (ps:decimal (floor (* one input) ip))
                 (cc:decimal (* ps 2.0))
-                (pp:decimal (* ps 2.5))
+                (pp:decimal (floor (* ps 2.5) ip))
                 (tt:decimal (* ps 3.0))
-                (sv:decimal (* ps 3.5))
+                (sv:decimal (floor (* ps 3.5) ip))
                 (aa:decimal (- input (fold (+) 0.0 [ps cc pp tt sv])))
             )
             [ps cc pp tt sv aa]
@@ -252,7 +253,7 @@
                     (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
                     (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
                     (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
                     (ouro:string (ref-DALOS::UR_OuroborosID))
@@ -293,6 +294,72 @@
         )
     )
     ;;
+    (defun A_KosonMinterStageOne ()
+        @doc "Executes the daily Koson Emission, in a single Tx"
+        (with-capability (DSP|STAGE-ONE-MINTER)
+            (let
+                (
+                    (ref-U|DALOS:module{UtilityDalosV1} U|DALOS)
+                    (ref-DALOS:module{OuronetDalosV1} DALOS)
+                    (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
+                    (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
+                    (ref-AOZ:module{AgeOfZalmoxis} AOZ)
+                    ;;
+                    (PrimordialKosonID:string      (ref-AOZ::UR_PrimalTrueFungible 1))
+                    (EsothericKosonID:string       (ref-AOZ::UR_PrimalTrueFungible 2))
+                    (op0:integer (ref-DPTF::UR_Decimals PrimordialKosonID))
+                    (op1:integer (ref-DPTF::UR_Decimals EsothericKosonID))
+                    ;;
+                    (daily:[decimal] (URC_DailyKOSON false))
+                    (ps:[decimal] (ref-U|DALOS::UC_TenTwentyThirtyFourtySplit (at 0 daily) op0))
+                    (ps10:decimal (at 0 ps))
+                    (ps20:decimal (at 1 ps))
+                    (ps40:decimal (at 3 ps))
+                    ;;
+                    (standard-treasury:string (ref-DALOS::GOV|DHV1|SC_NAME))
+                    (smart-treasury:string (ref-DALOS::GOV|DHV2|SC_NAME))
+                    (validators:string CST1|SC_NAME)
+                    (dispenser:string DSP1|SC_NAME)
+                )
+                ;;Mints Primordial Koson and Esoteric Koson Amounts
+                (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON PrimordialKosonID dispenser (at 0 daily) false)
+                (ref-TS01-C1::DPTF|C_Mint GASLESS-PATRON EsothericKosonID dispenser (at 1 daily) false)
+                ;;Moves Primordial Kosons: 10% To Standard-Treasury, 20% to Smart-Treasury, 40% to Custodians(Validators)
+                ;;Leaving 30% of the Primordial Kosons to <dispenser>
+                (let
+                    (
+                        (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
+                        (PlebeicStrengthID:string       (ref-AOZ::UR_AutostakePair 1))
+                        (ComatiCommandID:string         (ref-AOZ::UR_AutostakePair 2))
+                        (PileatiPowerID:string          (ref-AOZ::UR_AutostakePair 3))
+                        (TarabostesTenacityID:string    (ref-AOZ::UR_AutostakePair 4))
+                        (StrategonVigorID:string        (ref-AOZ::UR_AutostakePair 5))
+                        (AsAuthorityID:string           (ref-AOZ::UR_AutostakePair 6))
+                        ;;
+                        (daily-primordial-left:decimal (ref-DPTF::UR_AccountSupply PrimordialKosonID dispenser))
+                        (primordial-split-for-ats:[decimal] (UC_KosonicAutostakeSplit daily-primordial-left op0))
+                        ;;
+                        (daily-esoteric:decimal (ref-DPTF::UR_AccountSupply EsothericKosonID dispenser))
+                        (esoteric-split-for-ats:[decimal] (UC_KosonicAutostakeSplit daily-esoteric op1))
+                    )
+                ;;Splits the 30% of Primordial Kosons from Dispenser into 6 parts to Fuel Autostake Pools
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PlebeicStrengthID     PrimordialKosonID (at 0 primordial-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser ComatiCommandID       PrimordialKosonID (at 1 primordial-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PileatiPowerID        PrimordialKosonID (at 2 primordial-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser TarabostesTenacityID  PrimordialKosonID (at 3 primordial-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser StrategonVigorID      PrimordialKosonID (at 4 primordial-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser AsAuthorityID         PrimordialKosonID (at 5 primordial-split-for-ats))
+                ;;Splits the Esoteric Kosons using the same split, and fuels the Autostake Pools
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PlebeicStrengthID     EsothericKosonID (at 0 esoteric-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser ComatiCommandID       EsothericKosonID (at 1 esoteric-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser PileatiPowerID        EsothericKosonID (at 2 esoteric-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser TarabostesTenacityID  EsothericKosonID (at 3 esoteric-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser StrategonVigorID      EsothericKosonID (at 4 esoteric-split-for-ats))
+                    (ref-TS01-C2::ATS|C_Fuel GASLESS-PATRON dispenser AsAuthorityID         EsothericKosonID (at 5 esoteric-split-for-ats))
+                )
+            )
+        )
+    )
     (defun A_KosonMinterStageOne_1of3 ()
         @doc "Executes Stage One Daily Koson Emission, Part 1 of 3"
         (with-capability (DSP|STAGE-ONE-MINTER)
@@ -325,6 +392,7 @@
                 ;;Moves Primordial Kosons: 10% To Standard-Treasury, 20% to Smart-Treasury, 40% to Custodians(Validators)
                 (ref-TS01-C1::DPTF|C_BulkTransfer GASLESS-PATRON PrimordialKosonID dispenser [standard-treasury validators] [ps10 ps40])
                 (ref-TS01-C1::DPTF|C_Transfer GASLESS-PATRON PrimordialKosonID dispenser smart-treasury ps20 true)
+                
             )
         )
     )

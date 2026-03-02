@@ -101,8 +101,8 @@
     ;;<======================>
     ;;SCHEMAS-TABLES-CONSTANTS
     ;;{1}
-    (defschema DPTF|PropertiesSchemaV3
-        id:string                               ;added in V3
+    (defschema DPTF|PropertiesSchema
+        id:string
         owner-konto:string
         name:string
         ticker:string
@@ -121,8 +121,6 @@
         origin-mint:bool
         origin-mint-amount:decimal
         ;;
-        ;;role-transfer-amount:integer          [x]Removed in V2
-        ;;
         fee-toggle:bool
         min-move:decimal
         fee-promile:decimal
@@ -137,7 +135,7 @@
         ;;
         vesting-link:string
         sleeping-link:string
-        hibernation-link:string                 ;[x]Added in V2
+        hibernation-link:string
         frozen-link:string
         reservation-link:string
         reservation:bool
@@ -150,9 +148,9 @@
         r-transfer:[string]
     )
     ;;{2}
-    (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchemaV3})           ;;Key = <DPTF-id>
+    (deftable DPTF|PropertiesTable:{DPTF|PropertiesSchema})             ;;Key = <DPTF-id>
     (deftable DPTF|RoleTable:{DPTF|RoleSchema})                         ;;Key = <DPTF-id>
-    (deftable DPTF|BalanceTable:{OuronetDalosV1.DPTF|BalanceSchema})  ;;Key = <DPTF-id> + BAR + <account> 
+    (deftable DPTF|BalanceTable:{OuronetDalosV1.DPTF|BalanceSchema})    ;;Key = <DPTF-id> + BAR + <account> 
     ;;{3}
     (defun CT_Bar ()            (let ((ref-U|CT:module{OuronetConstantsV1} U|CT)) (ref-U|CT::CT_BAR)))
     (defconst BAR               (CT_Bar))

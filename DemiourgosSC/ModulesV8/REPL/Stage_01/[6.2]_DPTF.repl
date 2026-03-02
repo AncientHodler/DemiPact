@@ -66,7 +66,7 @@
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-TFT:module{TrueFungibleTransferV1} TFT)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
 
         (receiver:string KST.EMMA)
         (a-id:string "AURYN-98c486052a51")
@@ -102,7 +102,7 @@
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-TFT:module{TrueFungibleTransferV1} TFT)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
 
         (patron:string KST.ANHD)
         (receiver:string KST.EMMA)
@@ -189,7 +189,7 @@
         ;;refs
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (ref-TFT:module{TrueFungibleTransferV1} TFT)
 
         (patron:string KST.ANHD)
@@ -267,7 +267,7 @@
         ;;refs
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (receiver:string KST.EMMA)
         (a-id:string "AURYN-98c486052a51")
         (ea-id:string "ELITEAURYN-98c486052a51")
@@ -668,7 +668,7 @@
         (receiver:string KST.EMMA)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (auryn:string "AURYN-98c486052a51")
         (auryndex:decimal (ref-ATS::URC_Index "EliteAuryndex-98c486052a51"))
     )
@@ -704,7 +704,7 @@
         (receiver:string KST.EMMA)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (auryn:string "ELITEAURYN-98c486052a51")
         (eauryndex:decimal (ref-ATS::URC_Index "EliteAuryndex-98c486052a51"))
     )

@@ -161,8 +161,10 @@
     (defun UR_IgnisID:string ())
     (defun UR_AurynID:string ())
     (defun UR_EliteAurynID:string ())
-    (defun UR_WrappedKadenaID:string ())
-    (defun UR_LiquidKadenaID:string ())
+    (defun UR_WrappedStoaID:string ())
+    (defun UR_SilverStoaID:string ())
+    (defun UR_GoldenStoaID:string ())
+    (defun UR_UrStoaID:string ())
     (defun UR_DispoType:integer ())
     (defun UR_DispoTDP:decimal ())
     (defun UR_DispoTDS:decimal ())
@@ -358,10 +360,10 @@
 ;;
 (interface BrandingV1
     @doc "Interface Exposing the Branding Functions needed to create the Branding Functionality \
-    \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
-    \ Should Future entities be added, they too can be branded via this module \
-    \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
-    \ are NOT sorted alphabetically"
+        \ Entities are DPTF DPMF DPSF DPNF ATSPairs SWPairs \
+        \ Should Future entities be added, they too can be branded via this module \
+        \ UR(Utility-Read), URC(Utility-Read-Compute), UDC(Utility-Data-Composition) \
+        \ are NOT sorted alphabetically"
     ;;
     (defschema Schema
         logo:string
@@ -439,7 +441,7 @@
     (defun UR_P-KEYS:[string] ())
     (defun UR_KEYS:[string] ())
     ;;
-    ;;  [0] DPTF|PropertiesTable:{DPTF|PropertiesSchemaV3}
+    ;;  [0] DPTF|PropertiesTable:{DPTF|PropertiesSchema}
     (defun UR_Konto:string (id:string))
     (defun UR_Name:string (id:string))
     (defun UR_Ticker:string (id:string))
@@ -897,18 +899,17 @@
         r-amounts:[decimal]
     )
 )
-
 (interface DemiourgosPactOrtoFungibleV1
     @doc "Exposes Functions related to Orto-Fungibles \
-    \ Orto-Fungibles are the next Evoloution of the Meta-Fungibles \
-    \ using a newer and more efficient Architecture, and fixing discovered bugs \
-    \ \
-    \ The most important functionality is the ability for an Ouronet Account to own \
-    \ as many Nonces (Elements) as needed without any limitations \
-    \ which was the main reason Orto-Fungible was created \
-    \ \
-    \ Existing Meta-Fungible <id> and <accounts> will have to be migrated to Orto-Fungibles \
-    \ Luckily Meta-Fungible usage hasnt properly started at the time of Orto-Fungible Deployment"
+        \ Orto-Fungibles are the next Evoloution of the Meta-Fungibles \
+        \ using a newer and more efficient Architecture, and fixing discovered bugs \
+        \ \
+        \ The most important functionality is the ability for an Ouronet Account to own \
+        \ as many Nonces (Elements) as needed without any limitations \
+        \ which was the main reason Orto-Fungible was created \
+        \ \
+        \ Existing Meta-Fungible <id> and <accounts> will have to be migrated to Orto-Fungibles \
+        \ Luckily Meta-Fungible usage hasnt properly started at the time of Orto-Fungible Deployment"
     ;;
     ;;  [UC]
     ;;
@@ -1124,7 +1125,7 @@
     (defun XE_UpdateElite (id:string sender:string receiver:string))
 
 )
-(interface AutostakeV6
+(interface AutostakeV1
     @doc "Brings not only Improved Autostake Architecture but also added Functionality: \
         \ \
         \ \
@@ -1175,7 +1176,7 @@
         \ \
         \ \
         \ \
-        \ V6 brings table optimisations for use with <select>"
+        \ Also brings table optimisations for use with <select>"
     ;;
     ;;  SCHEMAS
     ;;
@@ -1493,19 +1494,32 @@
 ;;  [LIQUID]
 ;;
 (interface StoaLiquidStakingV1
-    @doc "Exposes the two functions needed Liquid Staking Functions, Wrap and Unwrap STOA and URSTOA"
+    @doc "Exposes the functions needed for Stoa Liquid Staking, Wrap and Unwrap STOA \
+        \ as well as their URSTOA Counterparts"
     ;;
     (defun GOV|LIQUID|SC_KDA-NAME ())
     (defun GOV|LIQUID|GUARD ())
     ;;
+    ;;  [UR]
+    ;;
+    (defun UR_IzOuronetAccountRegisteredForUrstoaHoldings:bool (ouronet-account:string))
+    ;;
+    ;;  [UEV]
     ;;
     (defun UEV_IzLiquidStakingLive ())
     ;;
+    ;;  [A]
     ;;
     (defun A_MigrateLiquidFunds:decimal (migration-target-kda-account:string))
     ;;
+    ;;  [C]
+    ;;
     (defun C_UnwrapStoa:object{IgnisCollectorV1.OutputCumulator} (unwrapper:string amount:decimal))
     (defun C_WrapStoa:object{IgnisCollectorV1.OutputCumulator} (wrapper:string amount:decimal))
+    ;;
+    (defun C_RegisterOuronetAccountForUrstoaHoldings (ouronet-account:string guard:guard))
+    (defun C_UnwrapUrStoa:object{IgnisCollectorV1.OutputCumulator} (unwrapper:string amount:decimal))
+    (defun C_WrapUrStoa:object{IgnisCollectorV1.OutputCumulator} (wrapper:string amount:decimal))
 )
 ;;
 ;;  [OUROBOROS]
@@ -1559,8 +1573,9 @@
     ;;
     (defun XE_MultiPathTracer (swpair:string principals-lst:[string]))
 )
-(interface SwapperV1
-    @doc "Exposes Swapper Related Functions, except those related to adding and swapping liquidity"
+(interface SwapperV2
+    @doc "Exposes Swapper Related Functions, except those related to adding and swapping liquidity \
+        \ V2: Added URC_AllPoolTokens - returns all unique tokens across all pools"
     ;;
     (defschema PoolTokens
         token-id:string
@@ -1618,6 +1633,7 @@
     (defun URC_CheckID:bool (swpair:string))
     (defun URC_PoolTotalFee:decimal (swpair:string))
     (defun URC_LiquidityFee:decimal (swpair:string))
+    (defun URC_AllPoolTokens:[string] ())
     (defun URC_Swpairs:[string] ())
     (defun URC_LpComposer:[string] (pool-tokens:[object{PoolTokens}] weights:[decimal] amp:decimal))
     ;;
@@ -1661,9 +1677,10 @@
     (defun XE_CanAddOrSwapToggle (swpair:string toggle:bool add-or-swap:bool))
     ;;
 )
-(interface SwapperIssueV1
+(interface SwapperIssueV2
     @doc "Exposes SWP Issuing Functions. \
-    \ Also contains Swap Computation Functions, and the Hopper Function"
+        \ Also contains Swap Computation Functions, and the Hopper Function \
+        \ V2 switches to SwapperV2 in UEV_Issue"
     ;;
     ;;
     ;;  SCHEMAS
@@ -1738,7 +1755,7 @@
     (defun UEV_SwapData (swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData}))
     (defun UEV_InverseSwapData (swpair:string rsid:object{UtilitySwpV1.ReverseSwapInputData}))
         ;;
-    (defun UEV_Issue (account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
+    (defun UEV_Issue (account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))
     ;;
     ;;
     ;;  [UDC] Functions
@@ -1755,7 +1772,7 @@
     ;;  []C] Functions
     ;;
     ;;
-    (defun C_Issue:object{IgnisCollectorV1.OutputCumulator} (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))    
+    (defun C_Issue:object{IgnisCollectorV1.OutputCumulator} (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal weights:[decimal] amp:decimal p:bool))    
 )
 (interface SwapperLiquidityV1
     @doc "Exposes Liquidity Functions;"
@@ -1949,8 +1966,11 @@
         ;;
     (defun C_RemoveLiquidity:object{IgnisCollectorV1.OutputCumulator} (account:string swpair:string lp-amount:decimal))
 )
-(interface SwapperUsageV1
-    @doc "Exposes Adding|Removing Liquidty and Swapping Functions of the SWP Module"
+(interface SwapperUsageV2
+    @doc "Exposes Adding|Removing Liquidty and Swapping Functions of the SWP Module \
+    \    V2: Added the already existing <UDC_SpawnSlippageBounds> to the interface \
+    \    V2: Smart Swap slippage quote using fee-less multi-hop path tracing via <UDC_SpawnSmartSwapSlippageBounds> \
+    \    V2: Smart Swap Multi-hop swap across the entire pool base using BFS path tracing with per-hop liquid pump via <C_SmartSwap>"
     ;;
     ;;
     ;;  SCHEMAS
@@ -1969,6 +1989,8 @@
     ;;
     ;;  [UDC] Functions
     ;;
+    (defun UDC_SpawnSmartSwapSlippageBounds:object{Slippage} (input-id:string input-amount:decimal output-id:string slippage:decimal))
+    (defun UDC_SpawnSlippageBounds:object{Slippage} (swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal))
     (defun UDC_Slippage:object{Slippage} (a:decimal b:integer c:decimal))
     (defun UDC_SlippageObject:object{Slippage} (swpair:string dsid:object{UtilitySwpV1.DirectSwapInputData} slippage-value:decimal))
     ;;
@@ -1977,18 +1999,20 @@
     ;;
     ;;
     (defun C_ToggleSwapCapability:object{IgnisCollectorV1.OutputCumulator} (swpair:string toggle:bool))
-    (defun C_Swap:object{IgnisCollectorV1.OutputCumulator} (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal kda-pid:decimal))
+    (defun C_SmartSwap:object{IgnisCollectorV1.OutputCumulator} (account:string input-id:string input-amount:decimal output-id:string slippage:decimal kda-pid:decimal slippage-bounds:object{Slippage}))
+    (defun C_Swap:object{IgnisCollectorV1.OutputCumulator} (account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal kda-pid:decimal slippage-bounds:object{Slippage}))
 )
-(interface SwapperMtxV1
-    @doc "Exposes SWP MultiStep (via defpact) Functions."
+(interface SwapperMtxV2
+    @doc "Exposes SWP MultiStep (via defpact) Functions. \
+        \ V2 switches to SwapperV2 interface"
     ;;
     ;;
     ;;  []C] Functions
     ;;
     ;;
-    (defun C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    (defun C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal p:bool))
+    (defun C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal p:bool))
     ;;
     (defun C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))
     (defun C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal] kda-pid:decimal))

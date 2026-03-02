@@ -111,7 +111,7 @@
         (ref-P|SWPL:module{OuronetPolicyV1} SWPL)
         (ref-P|SWPLC:module{OuronetPolicyV1} SWPLC)
         (ref-P|SWPU:module{OuronetPolicyV1} SWPU)
-        (ref-P|MTX-SWP:module{OuronetPolicyV1} MTX-SWP-V2)
+        (ref-P|MTX-SWP:module{OuronetPolicyV1} MTX-SWP)
         ;;
         (ref-P|TS01-A:module{OuronetPolicyV1} TS01-A)
         (ref-P|TS01-C1:module{OuronetPolicyV1} TS01-C1)
@@ -224,8 +224,10 @@
             ,"gas-id"                       : bar
             ,"ats-gas-source-id"            : bar
             ,"elite-ats-gas-source-id"      : bar
-            ,"wrapped-kda-id"               : bar
-            ,"liquid-kda-id"                : bar
+            ,"wrapped-stoa-id"              : bar
+            ,"silver-stoa-id"               : bar
+            ,"golden-stoa-id"               : bar
+            ,"ur-stoa-id"                   : bar
             ,"treasury-dispo-type"          : 3
             ,"treasury-dynamic-promille"    : 320.0
             ,"treasury-static-tds"          : 250.0
@@ -283,11 +285,11 @@
         ;;
         (ref-U|G:module{OuronetGuardsV1} U|G)
         (ref-DALOS:module{OuronetDalosV1} DALOS)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (ref-VST:module{VestingV1} VST)
         (ref-LIQUID:module{StoaLiquidStakingV1} LIQUID)
         (ref-ORBR:module{OuroborosV1} OUROBOROS)
-        (ref-SWP:module{SwapperV1} SWP)
+        (ref-SWP:module{SwapperV2} SWP)
         (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         ;;
@@ -393,7 +395,7 @@
                 [
                     (create-capability-guard (VST.VST|GOV))
                     (ref-P|VST::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|VST::P|UR "MTX-SWP-V2|RemoteSwpGov")
+                    (ref-P|VST::P|UR "MTX-SWP|RemoteSwpGov")
                 ]
             )
         )
@@ -410,7 +412,7 @@
                     (ref-P|SWP::P|UR "SWPU|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPI|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|SWP::P|UR "MTX-SWP-V2|RemoteSwpGov")
+                    (ref-P|SWP::P|UR "MTX-SWP|RemoteSwpGov")
                 ]
             )
         )
@@ -494,8 +496,8 @@
             , "gas-id"                  : GasID
             , "ats-gas-source-id"       : AurynID
             , "elite-ats-gas-source-id" : EliteAurynID
-            , "wrapped-kda-id"          : WrappedKadenaID
-            , "liquid-kda-id"           : StakedKadenaID
+            , "wrapped-stoa-id"          : WrappedKadenaID
+            , "silver-stoa-id"           : StakedKadenaID
             }
         )
         ;;Set Token Roles Part I
@@ -516,7 +518,7 @@
         ;(ref-TS01-C1::DPTF|C_ToggleBurnRole patron OuroID ouroboros true)
         ;(ref-TS01-C1::DPTF|C_ToggleMintRole patron GasID ouroboros true)
         ;(ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID ouroboros true)
-        (ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury-sc true)
+        ;(ref-TS01-C1::DPTF|C_ToggleMintRole patron OuroID treasury-sc true)
     ]
 )
 
@@ -583,8 +585,8 @@
         (OuroID:string (ref-DALOS::UR_OuroborosID))
         (AurynID:string (ref-DALOS::UR_AurynID))
         (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
-        (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
-        (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
+        (WrappedKadenaID:string (ref-DALOS::UR_WrappedStoaID))
+        (StakedKadenaID:string (ref-DALOS::UR_SilverStoaID))
         (ats-ids:list
             (ref-TS01-C2::ATS|C_Issue
                 patron
@@ -726,8 +728,8 @@
         (patron:string KST.ANHD)
         (AurynID:string (ref-DALOS::UR_AurynID))
         (EliteAurynID:string (ref-DALOS::UR_EliteAurynID))
-        (WrappedKadenaID:string (ref-DALOS::UR_WrappedKadenaID))
-        (StakedKadenaID:string (ref-DALOS::UR_LiquidKadenaID))
+        (WrappedKadenaID:string (ref-DALOS::UR_WrappedStoaID))
+        (StakedKadenaID:string (ref-DALOS::UR_SilverStoaID))
         ;;
         (ats:string (ref-DALOS::GOV|ATS|SC_NAME))
         (liquid:string (ref-DALOS::GOV|LIQUID|SC_NAME))
@@ -814,8 +816,8 @@
     (ref-TS01-C2::ATS|C_Coil
         patron
         patron
-        (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_LiquidKadenaID)))
-        (ref-DALOS::UR_WrappedKadenaID)
+        (at 0 (ref-DPTF::UR_RewardBearingToken (ref-DALOS::UR_SilverStoaID)))
+        (ref-DALOS::UR_WrappedStoaID)
         1.0
     )
 )
@@ -1063,7 +1065,7 @@
 
 (let
     (
-        (ref-SWP:module{SwapperV1} SWP)
+        (ref-SWP:module{SwapperV2} SWP)
         (u:[string] ["|"])
     )
     [
@@ -1145,7 +1147,7 @@
         (ref-TS01-A:module{TalosStageOne_AdminV1} TS01-A)
         ;;
         (patron:string KST.ANHD)
-        (p1:string (ref-DALOS::UR_LiquidKadenaID))
+        (p1:string (ref-DALOS::UR_SilverStoaID))
         (p2:string (ref-DALOS::UR_OuroborosID))
         (swp:string (ref-DALOS::GOV|SWP|SC_NAME))
     )
@@ -1250,13 +1252,13 @@
             (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
-            (ref-ATS:module{AutostakeV6} ATS)
+            (ref-ATS:module{AutostakeV1} ATS)
             ;;
             (patron:string KST.ANHD)
             (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
             (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
-            (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
-            (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
+            (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
+            (lkda-id:string (ref-DALOS::UR_SilverStoaID))
             (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
             ;;
             (ids:list

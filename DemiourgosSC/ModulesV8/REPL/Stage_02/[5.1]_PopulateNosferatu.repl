@@ -58,7 +58,7 @@
 
 (let
     (
-        (patron:string  "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
+        (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî") 
         (dhn-id:string "DHN-98c486052a51")
     )
     (NOSFERATU.A_Step01 patron dhn-id
@@ -492,7 +492,7 @@
             ["Pub" "Ghoul's Claw" "$Auryn" "1875 Blue Coat with Ghoul's Claw" "Pen Right" "Golden Glow Eye" "Aristocrat Golden Glasses" "Copper Ring" "Tillted Peacky Hat" "Nine of Diamonds" "Bloodlust Filter" "Epic" "Silver Tooth"]
             ["City Bank" "Mugshot" "$Auryn" "1830 Open Coat" "Copper Earring Right" "Turquoise Eyes" "Aristocrat Golden Glasses" "No Accessories" "Stylish Dusted Hat" "Nine of Clubs" "Fangs Glow Enhancement" "Epic" "Silver Tooth"]
             ["City Bank" "Mugshot" "$Elite Auryn" "1875 Blue Coat" "Pen Left" "Emerald Eyes" "No Glasses" "No Accessories" "Stylish Dusted Hat" "Nine of Spades" "Moonlit Shadows Overlay" "Epic" "Normal Tooth"]
-
+            ;;
             ["Blackthorn Crescent" "Ghoul's Claw" "Broken Pocket Watch" "Black Worker Collar with Ghoul's Claw" "Double Silver Earrings Left" "Yellow Eyes" "Red Steampunk Glasses" "Copper Ring" "Stylish Tilted Dusted Hat" "Five of Diamonds" "Moonlit Shadows Overlay" "Rare" "Normal Tooth"]
             ["Fangwood Terrace" "Mugshot" "$Auryn" "White Coat with Red Shirt" "Copper Earring Left" "Turquoise Eyes" "Clockwork Steampunk Goggles" "No Accessories" "Stylish Red Dusted Hat" "Seven of Hearts" "Nightfall Mist Distortion" "Rare" "Silver Tooth"]
             ["Storehouse" "Ghoul's Claw" "Broken Pocket Watch" "Black Worker Collar with Ghoul's Claw" "Pen Right" "Emerald Eyes" "Blue Steampunk Glasses" "Golden Ring" "Miner Hat" "Six of Hearts" "Fangs Glow Enhancement" "Rare" "Normal Tooth"]

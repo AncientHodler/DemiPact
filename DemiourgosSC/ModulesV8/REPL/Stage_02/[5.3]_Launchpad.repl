@@ -42,7 +42,7 @@
         (ref-P|SNAKES:module{OuronetPolicyV1} DEMIPAD-SNAKES)
         (ref-P|CUSTODIANS:module{OuronetPolicyV1} DEMIPAD-CUSTODIANS)
         (ref-P|TS02-DPAD:module{OuronetPolicyV1} TS02-DPAD)
-        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
         (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
         (pkey:string DEMIPAD.PP)
     )
@@ -269,8 +269,8 @@
             (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
             (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
-            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-            (ref-SPARK:module{SparksV3} DEMIPAD-SPARK)
+            (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
+            (ref-SPARK:module{SparksV1} DEMIPAD-SPARK)
             (patron:string KST.ANHD)
             
             (s-key:string DEMIPAD-SPARK.SPARK|INFO)
@@ -475,7 +475,7 @@
         (ref-TS01-C1::DPTF|C_Issue
             patron
             patron
-            ["KadenaPay"]
+            ["StoicPayV1"]
             ["KPAY"]
             [24]
             [true]
@@ -525,12 +525,12 @@
     (let
         (
             (ref-P|DPAD:module{OuronetPolicyV1} DEMIPAD)
-            (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-KPAY)
+            (ref-P|KPAY:module{OuronetPolicyV1} DEMIPAD-STOICPAY)
             (ref-P|TS02-DPAD:module{OuronetPolicyV1} TS02-DPAD)
             ;;
             (ref-U|G:module{OuronetGuardsV1} U|G)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
-            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+            (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
             (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
             ;;
             ;;
@@ -539,7 +539,7 @@
             (patron:string KST.ANHD)
             (KpayID:string "KPAY-98c486052a51")
             (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))
-            (s-key:string DEMIPAD-KPAY.KPAY|INFO)
+            (s-key:string DEMIPAD-STOICPAY.KPAY|INFO)
         )
         [
             ;;Backward IMC
@@ -566,10 +566,10 @@
             (ref-TS01-C1::DPTF|C_Mint patron KpayID lpad-sc 250000000.0 true)
             (ref-TS01-C1::DPTF|C_ToggleBurnRole patron KpayID lpad-sc true)
             ;;REPL-VARIANT:
-            (acquire-module-admin free.DEMIPAD-KPAY)
+            (acquire-module-admin free.DEMIPAD-STOICPAY)
             ;;MAIN-NET VARIANT
-            ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-KPAY)
-            (insert DEMIPAD-KPAY.KPAY|T|Properties s-key
+            ;;(acquire-module-admin n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-STOICPAY)
+            (insert DEMIPAD-STOICPAY.KPAY|T|Properties s-key
                 {"asset-id"            : KpayID}
             )
             ;;Register KPAY To Launchpad

@@ -116,7 +116,7 @@
     (defconst DALOS|SC_NAME         (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|DALOS|SC_NAME)))
     (defconst ATS|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|ATS|SC_NAME)))
     (defconst OUROBOROS|SC_NAME     (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|OUROBOROS|SC_NAME)))
-    (defconst VST|SC_NAME       (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
+    (defconst VST|SC_NAME           (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|VST|SC_NAME)))
     ;;
     ;;<==========>
     ;;CAPABILITIES
@@ -634,7 +634,7 @@
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (rt-ats-pairs:[string] (ref-DPTF::UR_RewardToken id))
                 (rbt-ats-pairs:[string] (ref-DPTF::UR_RewardBearingToken id))
                 (length-rt:integer (length rt-ats-pairs))
@@ -703,7 +703,7 @@
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ats-pairs:[string] (ref-DPTF::UR_RewardToken id))
                 (ats-pairs-bool:[bool] (URCX_NFR-Boolean_RT-RBT id ats-pairs true))
                 (milestones:integer (length (ref-U|LST::UC_Search ats-pairs-bool true)))
@@ -735,7 +735,7 @@
         (let
             (
                 (ref-U|LST:module{StringProcessorV1} U|LST)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
             )
             (fold
                 (lambda
@@ -853,7 +853,7 @@
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (a-id:string (ref-DALOS::UR_AurynID))
                 (ea-id:string (ref-DALOS::UR_EliteAurynID))
                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
@@ -1127,7 +1127,7 @@
                     (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                     (ref-DALOS:module{OuronetDalosV1} DALOS)
                     (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                    (ref-ATS:module{AutostakeV6} ATS)
+                    (ref-ATS:module{AutostakeV1} ATS)
                     ;;
                     (ouro-id:string (ref-DALOS::UR_OuroborosID))
                     (a-id:string (ref-DALOS::UR_AurynID))
@@ -1624,7 +1624,7 @@
         (let
             (
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-ATS:module{AutostakeV6} ATS)
+                (ref-ATS:module{AutostakeV1} ATS)
                 (ats:string (ref-ATS::GOV|ATS|SC_NAME))
             )
             (if (!= credit-fee 0.0)

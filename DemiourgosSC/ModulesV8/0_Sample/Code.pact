@@ -1,5 +1,8 @@
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
 
+(DPTF.UR_Supply "OURO-slLyzPPCo22W")
+
+
 
 ;"Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
 ;"DHN-vQePGHkCAkR1"
@@ -103,7 +106,7 @@
 
 
 (namespace "n_7d40ccda457e374d8eb07b658fd38c282c545038")
-(acquire-module-admin MTX-SWP-V2)
+(acquire-module-admin MTX-SWP)
 (acquire-module-admin SWPL)
 (acquire-module-admin DPTF)
 (let
@@ -137,7 +140,7 @@
     (ref-IGNIS::C_Collect patron 
         (at "perfect-ignis-fee" (at "clad-op" yielded-clad))
     )
-    (with-capability (MTX-SWP-V2.MTX-SWP|C>ADD-STANDARD-LQ swpair yielded-ld)
+    (with-capability (MTX-SWP.MTX-SWP|C>ADD-STANDARD-LQ swpair yielded-ld)
         ;;<asymmetric-collection=true> <gaseous-collection=true>
         ;;(ref-SWPL::XE|KDA-PID_AddLiqudity 
         ;;    patron swpair true true kda-pid yielded-ld yielded-clad
@@ -151,7 +154,7 @@
                 (clad:object{SwapperLiquidityV1.CompleteLiquidityAdditionData} yielded-clad)
                 (account:string patron)
                 ;;
-                (ref-SWP:module{SwapperV1} SWP)
+                (ref-SWP:module{SwapperV2} SWP)
                 ;;
                 (balanced-liquidity:[decimal] (at "balanced" (at "sorted-lq" ld)))
                 (asymmetric-liquidity:[decimal] (at "asymmetric" (at "sorted-lq" ld)))
@@ -192,11 +195,11 @@
                                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
                                 (ref-TFT:module{TrueFungibleTransferV1} TFT)
                                 (ref-ORBR:module{OuroborosV1} OUROBOROS)
-                                (ref-SWPI:module{SwapperIssueV1} SWPI)
+                                (ref-SWPI:module{SwapperIssueV2} SWPI)
                                 ;;
                                 (ignis-id:string (ref-DALOS::UR_IgnisID))
                                 (ouro-id:string (ref-DALOS::UR_OuroborosID))
-                                (lkda-id:string (ref-DALOS::UR_LiquidKadenaID))
+                                (lkda-id:string (ref-DALOS::UR_SilverStoaID))
                                 (primordial-swpair:string (ref-SWP::UR_PrimordialPool))
                                 (lqboost-ignis-tax:decimal (at "lqboost-ignis-tax" clad))
                                 (primordial-supplies:[decimal] (ref-SWP::UR_PoolTokenSupplies primordial-swpair))
@@ -290,7 +293,7 @@
 (let
     (
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-SWP:module{SwapperV1} SWP)
+        (ref-SWP:module{SwapperV2} SWP)
         (account:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
         (swpair:string "W|LKDA-slLyzPPCo22W|OURO-slLyzPPCo22W|WKDA-slLyzPPCo22W")
         (lp-id:string (ref-SWP::UR_TokenLP swpair))
@@ -402,7 +405,7 @@
         (ref-P|SWP:module{OuronetPolicyV1} SWP)
         (ref-U|G:module{OuronetGuardsV1} U|G)
         (ref-DALOS:module{OuronetDalosV1} DALOS)
-        (ref-P|MTX-SWP:module{OuronetPolicyV1} MTX-SWP-V2)
+        (ref-P|MTX-SWP:module{OuronetPolicyV1} MTX-SWP)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (ref-P|TS01-CP:module{OuronetPolicyV1} TS01-CP)
         (patron:string "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")
@@ -417,7 +420,7 @@
                 [
                     (create-capability-guard (VST.VST|GOV))
                     (ref-P|VST::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|VST::P|UR "MTX-SWP-V2|RemoteSwpGov")
+                    (ref-P|VST::P|UR "MTX-SWP|RemoteSwpGov")
                 ]
             )
         )
@@ -428,7 +431,7 @@
                     (ref-P|SWP::P|UR "SWPU|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPI|RemoteSwpGov")
                     (ref-P|SWP::P|UR "SWPLC|RemoteSwpGov")
-                    (ref-P|SWP::P|UR "MTX-SWP-V2|RemoteSwpGov")
+                    (ref-P|SWP::P|UR "MTX-SWP|RemoteSwpGov")
                 ]
             )
         )

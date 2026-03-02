@@ -7,7 +7,7 @@
         (ref-TFT:module{TrueFungibleTransferV1} TFT)
         (ref-U|LST:module{StringProcessorV1} U|LST)
         (ref-SWPI:module{SwapperIssueV2} SWPI)
-        (ref-SWP:module{SwapperV1} SWP)
+        (ref-SWP:module{SwapperV2} SWP)
         (swp-sc:string (ref-DALOS::GOV|SWP|SC_NAME))
         (ignis-id:string (ref-DALOS::UR_IgnisID))
         (account "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî")

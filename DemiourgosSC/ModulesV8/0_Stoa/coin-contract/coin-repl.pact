@@ -215,14 +215,15 @@
         \ Must required [UPDATE-LOCAL-SUPPLY] for the supply to be updated safely"
     )
 )
-  
+
 (module coinn GOVERNANCE
     @doc "Stoa represents the StoaChain Coin Contract \
         \ Forked from the latest original coin contract on Kadena Chain"
     ;;
-    (implements fungible-v3)                        ;;former <fungible-v2>, starting on StoaChain as v1
-    (implements fungible-xchain-v2)                 ;;former <fungible-xchain-v1>
-    (implements StoaFungibleV2)                     ;;Incorporates <fungible-v1> and <fungible-xchain-v1> with extra functionality
+    (implements stoa-ns.fungible-v1)                ;;former <fungible-v2>, starting on StoaChain as v1
+    (implements stoa-ns.fungible-xchain-v1)         ;;former <fungible-xchain-v1>
+    (implements stoa-ns.stoic-fungible-v1)          ;;Incorporates <fungible-v1> and <fungible-xchain-v1> with extra functionality
+    (implements stoa-ns.ur-stoic-fungible-v1)       ;;Incorporates UrStoa and UrStoaVault Functionality
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -275,7 +276,7 @@
     )
     ;;{2}
     (deftable coin-table:{coin-schema})             ;;<ORIGINAL>
-    (deftable LocalSupply:{StoaFungibleV2.LocalSupplySchema})
+    (deftable LocalSupply:{stoa-ns.stoic-fungible-v1.LocalSupplySchema})
     ;;{3}
     (defconst COIN_CHARSET                          CHARSET_LATIN1
         "<ORIGINAL> - The default coin contract character set"
@@ -296,7 +297,7 @@
     (defconst STOA_PREC                             MINIMUM_PRECISION)
     ;;
     (defconst GENESIS-SUPPLY                        16000000.0)
-    (defconst GENESIS-TIME                          (time "2026-02-11T20:00:00Z"))
+    (defconst GENESIS-TIME                          (time "2026-02-18T21:30:00Z"))
     (defconst BPD                                   2880)
     ;;
     (defconst GENESIS-MIN-GAS-PRICE                 10000)          ; 10,000 ANU
@@ -308,7 +309,7 @@
         MINIMUM_PRECISION
     )
     (defun CoinSupplyKey ()
-        StoaFungibleV2.CSK
+        stoa-ns.stoic-fungible-v1.CSK
     )
     ;;
     ;;<==========>
@@ -544,7 +545,7 @@
         @doc "Returns the precision of the Stoa Coin"
         (precision)
     )
-    (defun UR_Details:object{fungible-v3.account-details} (account:string)
+    (defun UR_Details:object{stoa-ns.fungible-v1.account-details} (account:string)
         (details account)
     )
     (defun UR_Balance:decimal (account:string)
@@ -569,7 +570,7 @@
             balance
         )
     )
-    (defun details:object{fungible-v3.account-details} (account:string)
+    (defun details:object{stoa-ns.fungible-v1.account-details} (account:string)
         @doc "<ORIGINAL> - Gets full details of a Stoa Account"
         (with-read coin-table account
             {"balance"  := bal
@@ -738,7 +739,7 @@
         )
     )
     ;;{F3}  [UDC]
-    (defun UDC_AccountDetails:object{fungible-v3.account-details}
+    (defun UDC_AccountDetails:object{stoa-ns.fungible-v1.account-details}
         (a:string b:decimal c:guard)
         {"account"          : a
         ,"balance"          : b
@@ -1140,7 +1141,7 @@
     ;;{1}
     ;;{2}
     (deftable UR|StoaTable:{coin-schema})
-    (deftable UR|LocalSupply:{StoaFungibleV2.LocalSupplySchema})
+    (deftable UR|LocalSupply:{stoa-ns.stoic-fungible-v1.LocalSupplySchema})
     ;;{3}
     (defconst URSTOA_PREC               3)
     (defconst URGENESIS-SUPPLY          1000000.0)
@@ -1211,7 +1212,7 @@
     ;;<=======>
     ;;FUNCTIONS
     ;;{F0}  [UR]
-    (defun UR_UR|Details:object{fungible-v3.account-details} (account:string)
+    (defun UR_UR|Details:object{stoa-ns.fungible-v1.account-details} (account:string)
         (UEV_ChainZero)
         (with-read UR|StoaTable account
             {"balance"  := bal
@@ -1553,6 +1554,13 @@
         )
     )
     ;;{F1}  [URC]
+    (defun URC_URV|ClaimableRewards:decimal (account:string)
+        @doc "Computes Claimable Reward of Account"
+        (if (= (UR_URV|VaultUnclaimedCount) 1)
+            (UR_URV|VaultSupply)
+            (URC_AvailableRewards account)
+        )
+    )
     (defun URC_AvailableRewards (account:string)
         (let
             (
@@ -1702,13 +1710,6 @@
                 ;;6]Returns Output Text
                 (format "Account {} succesfully collected {} STOA from the UrStoaVault" [account available-rewards])
             )
-        )
-    )
-    (defun URC_URV|ClaimableRewards:decimal (account:string)
-        @doc "Computes Claimable Reward of Account"
-        (if (= (UR_URV|VaultUnclaimedCount) 1)
-            (UR_URV|VaultSupply)
-            (URC_AvailableRewards account)
         )
     )
     ;;{F7}  [X]

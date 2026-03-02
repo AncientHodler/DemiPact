@@ -31,7 +31,7 @@
             ;;
             (ref-U|G:module{OuronetGuardsV1} U|G)
             (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
-            (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+            (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
             ;;
             (mg:guard (create-capability-guard (TS02-DPAD.P|TALOS-SUMMONER)))
             (lpad-sc:string (ref-DPAD::GOV|DEMIPAD|SC_NAME))

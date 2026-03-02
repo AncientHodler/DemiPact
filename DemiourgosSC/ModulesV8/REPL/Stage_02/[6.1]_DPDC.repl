@@ -999,7 +999,7 @@
 
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+        (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
         (ref-TS01-C1:module{TalosStageOne_ClientOneV1} TS01-C1)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
@@ -1008,14 +1008,14 @@
         ;;
         (id:string "E|DH-98c486052a51")
         (type:integer 1)
-        (prices-obj:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
+        (prices-obj:object{DemiourgosLaunchpadV1.DEMIPAD|Prices}
             (ref-DPAD::URC_Prices id total-kadena-amount 1)
         )
         ;;
         (patron:string KST.ANHD)
         (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
         (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
-        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
         (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
         ;;
         (aquire-snakes:[string] (DEMIPAD-SNAKES.URC_Acquire patron 4 1 false))
@@ -1100,7 +1100,7 @@
             (format "Launchpad Holdings for {} are {}" [id (ref-DPAD::UR_AssetState id)])
         ]
         (format "244k is fee {}" [(free.DEMIPAD.UC_ComputeDepositRoyalty 0.0 244000.0)])
-        (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
+        (free.DEMIPAD-STOICPAY.UR_Kpay KST.ANHD)
         [
             ;(ref-TS01-C1::DPTF|C_Transfer patron wkda-id patron KST.EMMA 
             ;    2500.0
@@ -1147,8 +1147,8 @@
 
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-DPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
-        (ref-DPAD-KPAY:module{KadenaPay} DEMIPAD-KPAY)
+        (ref-DPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
+        (ref-DPAD-KPAY:module{StoicPayV1} DEMIPAD-STOICPAY)
         (ref-TS01-C2:module{TalosStageOne_ClientTwoV1} TS01-C2)
         (ref-TS02-DPAD:module{TalosStageTwo_DemiPadV1} TS02-DPAD)
         ;;
@@ -1166,7 +1166,7 @@
         (patron:string KST.ANHD)
         (patron-kda:string (ref-DALOS::UR_AccountKadena patron))
         (patron-kda-balance:decimal (ref-coin::get-balance patron-kda))
-        (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+        (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
         (patron-wkda-balance:decimal (ref-DPTF::UR_AccountSupply wkda-id patron))
         ;;
         ;;
@@ -1178,14 +1178,14 @@
         ;;0]Define Kpay Amount to be bought
         (kpay-amount:integer 1400)
         ;;1]Determine Kpay Costs for the amount above (0.0 = offset)
-        (KpayCosts:object{DemiourgosLaunchpadV2.Costs} 
+        (KpayCosts:object{DemiourgosLaunchpadV1.Costs} 
             (ref-DPAD-KPAY::URC_KpayAmountCosts kpay-amount 0.0)
         )
         ;;2]Get <PID-Price in Dollars> and <Price in WKDA>
         (correct-pid:decimal (at "pid" KpayCosts))
         (correct-wkda:decimal (at "wkda" KpayCosts))
         ;;3]Get Complete Prices using the <pid>
-        (prices-obj:object{DemiourgosLaunchpadV2.DEMIPAD|Prices}
+        (prices-obj:object{DemiourgosLaunchpadV1.DEMIPAD|Prices}
             (ref-DPAD::URC_Prices KpayID correct-pid 1)
         )
         ;;
@@ -1202,10 +1202,10 @@
         ;;
         ;;
         ;;String to Set UP Capabilities (needed for setting up the function)
-        (acquire-kpay:[string] (DEMIPAD-KPAY.URC_Acquire patron kpay-amount native-or-wkda))
+        (acquire-kpay:[string] (DEMIPAD-STOICPAY.URC_Acquire patron kpay-amount native-or-wkda))
         ;;
-        (mb1:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD false))       ;;wkda
-        (mb2:integer (DEMIPAD-KPAY.URC_GetMaxBuy KST.ANHD true))        ;;kda
+        (mb1:integer (DEMIPAD-STOICPAY.URC_GetMaxBuy KST.ANHD false))       ;;wkda
+        (mb2:integer (DEMIPAD-STOICPAY.URC_GetMaxBuy KST.ANHD true))        ;;kda
     )
     (env-sigs
         [   
@@ -1280,24 +1280,24 @@
             [mb1 mb2]
             ;(format "Resident WKDA before buy is {}" [(ref-DPAD::UR_WKDA)])
             ;(format "Before Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
-            ;(format "Left to buy {}" [(free.DEMIPAD-KPAY.UR_KpayLeft)])
+            ;(format "Left to buy {}" [(free.DEMIPAD-STOICPAY.UR_KpayLeft)])
             ;;
-            (ref-TS02-DPAD::KPAY|C_BuyKpay KST.ANHD KST.ANHD kpay-amount false)
+            (ref-TS02-DPAD::KPAY|C_BuyStoicPay KST.ANHD KST.ANHD kpay-amount false)
             ;(format "Resident WKDA after buy is {}" [(ref-DPAD::UR_WKDA)])
             ;(format "After Asset State is {}" [(ref-DPAD::UR_AssetState KpayID)])
         ]
         [
-            (free.DEMIPAD-KPAY.UR_Kpay KST.ANHD)
-            ;(map (free.DEMIPAD-KPAY.UR_PeriodAllocation) (enumerate 1 25))
+            (free.DEMIPAD-STOICPAY.UR_Kpay KST.ANHD)
+            ;(map (free.DEMIPAD-STOICPAY.UR_PeriodAllocation) (enumerate 1 25))
         ]
-        ;(acquire-module-admin MTX-SWP-V2)
+        ;(acquire-module-admin MTX-SWP)
     ]
 )
 
-;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-KPAY.UR_Kpay
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.DEMIPAD-STOICPAY.UR_Kpay
 ;    "Ѻ.éXødVțrřĄθ7ΛдUŒjeßćιiXTПЗÚĞqŸœÈэαLżØôćmч₱ęãΛě$êůáØCЗшõyĂźςÜãθΘзШË¥şEÈnxΞЗÚÏÛjDVЪжγÏŽнăъçùαìrпцДЖöŃȘâÿřh£1vĎO£κнβдłпČлÿáZiĐą8ÊHÂßĎЩmEBцÄĎвЙßÌ5Ï7ĘŘùrÑckeñëδšПχÌàî"
 ;)
-;(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS02-DPAD.KPAY|C_BuyKpay <patron:string> <user:string> <kpay-amount:integer> <iz-native:bool>)
+;(n_7d40ccda457e374d8eb07b658fd38c282c545038.TS02-DPAD.KPAY|C_BuyStoicPay <patron:string> <user:string> <kpay-amount:integer> <iz-native:bool>)
 
 (print "")
 (print "")

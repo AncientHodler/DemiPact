@@ -235,6 +235,9 @@
     ;;LQD (Liquid-Staking KDA) Functions
     (defun LQD|C_UnwrapStoa (patron:string unwrapper:string amount:decimal))
     (defun LQD|C_WrapStoa (patron:string wrapper:string amount:decimal))
+    (defun LQD|C_RegisterOuronetAccountForUrstoaHoldings (ouronet-account:string guard:guard))
+    (defun LQD|C_UnwrapUrStoa (patron:string unwrapper:string amount:decimal))
+    (defun LQD|C_WrapUrStoa (patron:string wrapper:string amount:decimal))
     ;;
     ;;
     ;;ORBR (Ouroboros) Functions
@@ -248,9 +251,11 @@
 ;;
 ;;  [TALOS Stage One Client Three]
 ;;
-(interface TalosStageOne_ClientThreeV1
+(interface TalosStageOne_ClientThreeV2
     @doc "Exposes Ouronet Stage One Third Batch of Client Functions \
-        \ Modules: SWP are included in the Second Batch"
+        \ Modules: SWP are included in the Second Batch\
+        \ V2: Added Smart Swap entry points - SWP|C_SmartSwapWithSlippage and SWP|C_SmartSwapNoSlippage \
+        \ for multi-hop token swaps across the entire pool base using BFS path tracing."
     ;;
     ;;SWP (Swap-Pair) Functions
     (defun SWP|C_UpdatePendingBranding (patron:string entity-id:string logo:string description:string website:string social:[object{BrandingV1.SocialSchema}]))
@@ -262,9 +267,9 @@
     (defun SWP|C_EnableFrozenLP:string (patron:string swpair:string))
     (defun SWP|C_EnableSleepingLP:string (patron:string swpair:string))
     ;;Issue
-    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal p:bool))
-    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStable:list (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueStandard:list (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueWeighted:list (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
     ;;Management
     (defun SWP|C_ModifyCanChangeOwner (patron:string swpair:string new-boolean:bool))
     (defun SWP|C_ModifyWeights (patron:string swpair:string new-weights:[decimal]))
@@ -273,7 +278,7 @@
     (defun SWP|C_ToggleFeeLock (patron:string swpair:string toggle:bool))
     (defun SWP|C_UpdateAmplifier (patron:string swpair:string amp:decimal))
     (defun SWP|C_UpdateFee (patron:string swpair:string new-fee:decimal lp-or-special:bool))
-    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV1.FeeSplit}]))
+    (defun SWP|C_UpdateSpecialFeeTargets (patron:string swpair:string targets:[object{SwapperV2.FeeSplit}]))
     ;;Liquidity
     (defun SWP|C_AddLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_AddIcedLiquidity:string (patron:string account:string swpair:string input-amounts:[decimal]))
@@ -281,26 +286,30 @@
     (defun SWP|C_AddFrozenLiquidity:string (patron:string account:string swpair:string frozen-dptf:string input-amount:decimal))
     (defun SWP|C_AddSleepingLiquidity:string (patron:string account:string swpair:string sleeping-dpof:string nonce:integer))
     (defun SWP|C_RemoveLiquidity (patron:string account:string swpair:string lp-amount:decimal))
+    ;;Smart Swap
+    (defun SWP|C_SmartSwapWithSlippage (patron:string account:string input-id:string input-amount:decimal output-id:string slippage-bounds:object{SwapperUsageV2.Slippage}))
+    (defun SWP|C_SmartSwapNoSlippage (patron:string account:string input-id:string input-amount:decimal output-id:string))
     ;;Swap
-    (defun SWP|C_SingleSwapWithSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage:decimal))
+    (defun SWP|C_SingleSwapWithSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string slippage-bounds:object{SwapperUsageV2.Slippage}))
     (defun SWP|C_SingleSwapNoSlippage (patron:string account:string swpair:string input-id:string input-amount:decimal output-id:string))
-    (defun SWP|C_MultiSwapWithSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage:decimal))
+    (defun SWP|C_MultiSwapWithSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string slippage-bounds:object{SwapperUsageV2.Slippage}))
     (defun SWP|C_MultiSwapNoSlippage (patron:string account:string swpair:string input-ids:[string] input-amounts:[decimal] output-id:string))
 )
 ;;
 ;;  [TALOS Stage One PactedMultistep]
 ;;
-(interface TalosStageOne_ClientPactsV1
+(interface TalosStageOne_ClientPactsV2
     @doc "Exposes Ouronet Stage One Client Multistep Functions \
-    \ Currently including functions from SWP Module"
+        \ Currently including functions from SWP Module \
+        \ V2 switches to SwapperV2"
 
     ;;
     ;;
     ;;SWP (Swap-Pair) Pact Initiating Functions
     ;;Issue
-    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
-    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
-    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV1.PoolTokens}] fee-lp:decimal p:bool))
+    (defun SWP|C_IssueStablePool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal amp:decimal p:bool))
+    (defun SWP|C_IssueWeightedPool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal weights:[decimal] p:bool))
+    (defun SWP|C_IssueStandardPool (patron:string account:string pool-tokens:[object{SwapperV2.PoolTokens}] fee-lp:decimal p:bool))
     ;;
     (defun SWP|C_AddStandardLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))
     (defun SWP|C_AddIcedLiquidity (patron:string account:string swpair:string input-amounts:[decimal]))

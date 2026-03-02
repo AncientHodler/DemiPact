@@ -1,4 +1,4 @@
-(interface SaleCustodiansV2
+(interface SaleCustodiansV1
     ;;
     ;;  [UC]
     ;;
@@ -12,9 +12,9 @@
     ;;
     ;;  [URC]
     ;;
-    (defun URC_QuintessenceCosts:object{DemiourgosLaunchpadV2.Costs} ())
-    (defun URC_NonceCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer))
-    (defun URC_NonceAmountCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer amount:integer))
+    (defun URC_QuintessenceCosts:object{DemiourgosLaunchpadV1.Costs} ())
+    (defun URC_NonceCosts:object{DemiourgosLaunchpadV1.Costs} (nonce:integer))
+    (defun URC_NonceAmountCosts:object{DemiourgosLaunchpadV1.Costs} (nonce:integer amount:integer))
     ;;
     ;;  [UEV]
     ;;
@@ -30,7 +30,7 @@
     @doc "Module defining the Sale Mechanics for Ouronet Custodians Collection"
     ;;
     (implements OuronetPolicyV1)
-    (implements SaleCustodiansV2)
+    (implements SaleCustodiansV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
@@ -43,7 +43,7 @@
     (defcap GOV|CUSTODIANS_ADMIN ()             (enforce-guard GOV|MD_CUSTODIANS))
     ;;{G3}
     (defun GOV|Demiurgoi ()                     (let ((ref-DALOS:module{OuronetDalosV1} DALOS)) (ref-DALOS::GOV|Demiurgoi)))
-    (defun GOV|DEMIPAD|SC_NAME ()               (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
+    (defun GOV|DEMIPAD|SC_NAME ()               (let ((ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)) (ref-DEMIPAD::GOV|DEMIPAD|SC_NAME)))
     ;;
     ;;<====>
     ;;POLICY
@@ -178,7 +178,7 @@
     (defun UR_QuitessencePrice:decimal ()
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
             )
             (at "quintessence-price" (ref-DEMIPAD::UR_Price (UR_AssetID)))
         )
@@ -188,7 +188,7 @@
         (let
             (
                 (ref-DPDC:module{DpdcV1} DPDC)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (lpad:string (ref-DEMIPAD::GOV|LAUNCHPAD|SC_NAME))
                 (asset:string (UR_AssetID))
             )
@@ -196,18 +196,18 @@
         )
     )
     ;;{F1}  [URC]
-    (defun URC_QuintessenceCosts:object{DemiourgosLaunchpadV2.Costs} ()
+    (defun URC_QuintessenceCosts:object{DemiourgosLaunchpadV1.Costs} ()
         (let
             (
                 (ref-U|CT|DIA:module{DiaKdaPidV1} U|CT)
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (q-pid:decimal (UR_QuitessencePrice))
                 (kda-pid:decimal (ref-U|CT|DIA::UR|KDA-PID))
                 ;;
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
                 (wkda-prec:integer (ref-DPTF::UR_Decimals wkda-id))
             )
             (ref-DEMIPAD::UDC_Costs
@@ -216,17 +216,17 @@
             )
         )
     )
-    (defun URC_NonceCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer)
+    (defun URC_NonceCosts:object{DemiourgosLaunchpadV1.Costs} (nonce:integer)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
-                (q-costs:object{DemiourgosLaunchpadV2.Costs} (URC_QuintessenceCosts))
+                (q-costs:object{DemiourgosLaunchpadV1.Costs} (URC_QuintessenceCosts))
                 (nonce-value-in-quintessence:integer (UC_NonceQuintessence nonce true))
                 ;;
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
                 (wkda-prec:integer (ref-DPTF::UR_Decimals wkda-id))
             )
             (ref-DEMIPAD::UDC_Costs
@@ -235,16 +235,16 @@
             )
         )
     )
-    (defun URC_NonceAmountCosts:object{DemiourgosLaunchpadV2.Costs} (nonce:integer amount:integer)
+    (defun URC_NonceAmountCosts:object{DemiourgosLaunchpadV1.Costs} (nonce:integer amount:integer)
         (let
             (
                 (ref-DALOS:module{OuronetDalosV1} DALOS)
                 (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
-                (nonce-costs:object{DemiourgosLaunchpadV2.Costs} (URC_NonceCosts nonce))
+                (nonce-costs:object{DemiourgosLaunchpadV1.Costs} (URC_NonceCosts nonce))
                 ;;
-                (wkda-id:string (ref-DALOS::UR_WrappedKadenaID))
+                (wkda-id:string (ref-DALOS::UR_WrappedStoaID))
                 (wkda-prec:integer (ref-DPTF::UR_Decimals wkda-id))
             )
             (ref-DEMIPAD::UDC_Costs
@@ -257,7 +257,7 @@
         (buyer:string nonce:integer amount:integer iz-native:bool)
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (asset-id:string (UR_AssetID))
                 (type:integer (if iz-native 0 1))
                 (pid:decimal (at "pid" (URC_NonceAmountCosts nonce amount)))
@@ -269,7 +269,7 @@
         (buyer:string nonce:integer amount:integer iz-native:bool)
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (asset-id:string (UR_AssetID))
                 (type:integer (if iz-native 0 1))
                 (pid:decimal (at "pid" (URC_NonceAmountCosts nonce amount)))
@@ -301,7 +301,7 @@
         @doc "Updates the Quintessence Price"
         (let
             (
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 (asset:string (UR_AssetID))
             )
             (ref-DEMIPAD::A_DefinePrice asset
@@ -317,10 +317,10 @@
                 (ref-IGNIS:module{IgnisCollectorV1} IGNIS)
                 (ref-I|OURONET:module{OuronetInfoV1} INFO-ZERO)
                 (ref-DPDC-T:module{DpdcTransferV1} DPDC-T)
-                (ref-DEMIPAD:module{DemiourgosLaunchpadV2} DEMIPAD)
+                (ref-DEMIPAD:module{DemiourgosLaunchpadV1} DEMIPAD)
                 ;;
                 (asset:string (UR_AssetID))
-                (costs:object{DemiourgosLaunchpadV2.Costs} (URC_NonceAmountCosts nonce amount))
+                (costs:object{DemiourgosLaunchpadV1.Costs} (URC_NonceAmountCosts nonce amount))
                 (pid:decimal (at "pid" costs))
                 (type:integer (if iz-native 0 1))
                 (ico1:object{IgnisCollectorV1.OutputCumulator}

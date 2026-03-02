@@ -32,7 +32,7 @@
         (ref-DSP:module{Dispenser} DSP)
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
-        (ref-ATS:module{AutostakeV6} ATS)
+        (ref-ATS:module{AutostakeV1} ATS)
         (ouro:string (ref-DALOS::UR_OuroborosID))
         (os:decimal (ref-DPTF::UR_Supply ouro))
 
@@ -65,6 +65,38 @@
 (print "")
 (print "")
 (format "<<<<<<<Manual Ouro Price Update Costs {} GAS>>>>>>>" [(env-gas)])
+(print "")
+(print "")
+(print "===^^^===")
+(commit-tx)
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+;;
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;
+(begin-tx "Koson Minter FullTilt Testing")
+(env-gasmodel "table")(env-gaslimit 10000000)(env-gas 0)
+(env-sigs 
+    [   
+        { "key": "PK_AOZ", "caps": [] }
+        { "key": "PK_AncientHodler", "caps": [] }
+        ;{ "key": "PK_DHV", "caps": [] }
+        ;{ "key": "PK_CST", "caps": [] }
+        { "key": "PK_DSP", "caps": [] }
+    ]
+)
+(namespace "free")
+(let
+    (
+        (ref-DSP:module{Dispenser} DSP)
+    )
+    (ref-DSP::A_KosonMinterStageOne)
+)
+
+(print "")
+(print "")
+(format "<<<<<<<Minting Koson FullTilt Costs {} GAS>>>>>>>" [(env-gas)])
 (print "")
 (print "")
 (print "===^^^===")
@@ -154,7 +186,7 @@
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-TFT:module{TrueFungibleTransferV1} TFT)
         (ref-DSP:module{Dispenser} DSP)
-        (ref-DPL|UR:module{DeployerReadsV4} DPL-UR)
+        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
         (patron:string  KST.ANHD)
         (ats:string KST.ATSTK)
         (vst:string KST.VESTG)
@@ -228,7 +260,7 @@
         (ref-DALOS:module{OuronetDalosV1} DALOS)
         (ref-DPTF:module{DemiourgosPactTrueFungibleV1} DPTF)
         (ref-DSP:module{Dispenser} DSP)
-        (ref-DPL|UR:module{DeployerReadsV4} DPL-UR)
+        (ref-DPL|UR:module{DeployerReadsV1} DPL-UR)
         (patron:string  KST.ANHD)
     )
     [

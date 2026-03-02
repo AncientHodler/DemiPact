@@ -1,7 +1,7 @@
 (module U|DALOS GOV
     ;;
     (implements UtilityDalosV1)
-    (implements UtilityDalosGlyphs)
+    (implements UtilityDalosGlyphsV1)
     ;;
     ;;<========>
     ;;GOVERNANCE
